@@ -1,6 +1,11 @@
 import { execSync } from "child_process";
 import type { AgentProvider, ProviderStatus } from "../provider-interface";
-import { checkCliProviderAvailable, resolveCliCommand, RUNTIME_PATH } from "../provider-cli";
+import {
+  buildCommandCandidates,
+  checkCliProviderAvailable,
+  resolveCliCommand,
+  RUNTIME_PATH,
+} from "../provider-cli";
 
 const CODEX_REASONING_LEVELS = [
   { id: "low", name: "Low", description: "Faster, lighter reasoning" },
@@ -96,12 +101,7 @@ export const codexCliProvider: AgentProvider = {
     },
   ],
   command: "codex",
-  commandCandidates: [
-    `${process.env.HOME || ""}/.local/bin/codex`,
-    "/usr/local/bin/codex",
-    "/opt/homebrew/bin/codex",
-    "codex",
-  ],
+  commandCandidates: buildCommandCandidates("codex"),
 
   buildArgs(prompt: string, _workdir: string): string[] {
     return [

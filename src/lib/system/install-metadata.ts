@@ -21,6 +21,10 @@ const APP_PATH_IGNORES = [
   ".cabinet-backups/",
 ];
 
+export function inferElectronInstallKind(platform: NodeJS.Platform = process.platform): InstallKind {
+  return platform === "win32" ? "electron-windows" : "electron-macos";
+}
+
 export async function readInstallMetadata(): Promise<InstallMetadata | null> {
   const candidates = [ROOT_INSTALL_METADATA_PATH, DATA_INSTALL_METADATA_PATH];
 
@@ -47,10 +51,11 @@ export async function writeInstallMetadata(metadata: InstallMetadata): Promise<v
 
 export function detectInstallKind(metadata: InstallMetadata | null): InstallKind {
   if (process.env.CABINET_INSTALL_KIND === "electron-macos") return "electron-macos";
+  if (process.env.CABINET_INSTALL_KIND === "electron-windows") return "electron-windows";
   if (process.env.CABINET_INSTALL_KIND === "source-managed") return "source-managed";
   if (process.env.CABINET_INSTALL_KIND === "source-custom") return "source-custom";
 
-  if (isElectronRuntime()) return "electron-macos";
+  if (isElectronRuntime()) return inferElectronInstallKind();
   if (metadata?.installKind === "source-managed" && metadata.managed) {
     return "source-managed";
   }
@@ -94,6 +99,9 @@ export async function detectInstallState(): Promise<{
     installKind,
     metadata,
     dirtyAppFiles,
-    managed: metadata?.managed === true || installKind === "electron-macos",
+    managed:
+      metadata?.managed === true ||
+      installKind === "electron-macos" ||
+      installKind === "electron-windows",
   };
 }

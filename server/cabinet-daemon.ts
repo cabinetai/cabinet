@@ -43,7 +43,8 @@ import {
   flushClaudeStreamJson,
   type ClaudeStreamAccumulator,
 } from "../src/lib/agents/adapters/claude-stream";
-import { getNvmNodeBin } from "../src/lib/agents/nvm-path";
+import { buildPtyCliInvocation } from "../src/lib/agents/provider-cli";
+import { ADAPTER_RUNTIME_PATH } from "../src/lib/agents/adapters/utils";
 import {
   appendConversationTranscript,
   finalizeConversation,
@@ -113,14 +114,7 @@ console.log("Initializing Cabinet database...");
 getDb();
 console.log("Database ready.");
 
-const nvmBin = getNvmNodeBin();
-const enrichedPath = [
-  `${process.env.HOME}/.local/bin`,
-  "/usr/local/bin",
-  "/opt/homebrew/bin",
-  ...(nvmBin ? [nvmBin] : []),
-  process.env.PATH,
-].join(":");
+const enrichedPath = ADAPTER_RUNTIME_PATH;
 
 // ===== PTY Terminal Server =====
 
@@ -586,7 +580,9 @@ function createDetachedSession(input: {
     };
   }
 
-  const term = pty.spawn(launch.command, launch.args, {
+  const invocation = buildPtyCliInvocation(launch.command, launch.args);
+
+  const term = pty.spawn(invocation.command, invocation.args, {
     name: "xterm-256color",
     cols: 120,
     rows: 30,

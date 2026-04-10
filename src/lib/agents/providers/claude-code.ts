@@ -1,6 +1,11 @@
 import { execSync } from "child_process";
 import type { AgentProvider, ProviderStatus } from "../provider-interface";
-import { checkCliProviderAvailable, resolveCliCommand, RUNTIME_PATH } from "../provider-cli";
+import {
+  buildCommandCandidates,
+  checkCliProviderAvailable,
+  resolveCliCommand,
+  RUNTIME_PATH,
+} from "../provider-cli";
 import { getNvmNodeBin } from "../nvm-path";
 
 const CLAUDE_THINKING_LEVELS = [
@@ -12,7 +17,7 @@ const CLAUDE_THINKING_LEVELS = [
 
 const nvmClaudePath = (() => {
   const bin = getNvmNodeBin();
-  return bin ? `${bin}/claude` : null;
+  return bin || null;
 })();
 
 export const claudeCodeProvider: AgentProvider = {
@@ -50,13 +55,7 @@ export const claudeCodeProvider: AgentProvider = {
   detachedPromptLaunchMode: "session",
   effortLevels: [...CLAUDE_THINKING_LEVELS],
   command: "claude",
-  commandCandidates: [
-    `${process.env.HOME || ""}/.local/bin/claude`,
-    "/usr/local/bin/claude",
-    "/opt/homebrew/bin/claude",
-    ...(nvmClaudePath ? [nvmClaudePath] : []),
-    "claude",
-  ],
+  commandCandidates: buildCommandCandidates("claude", { nvmBin: nvmClaudePath }),
 
   buildArgs(prompt: string, _workdir: string): string[] {
     return ["--dangerously-skip-permissions", "-p", prompt, "--output-format", "text"];

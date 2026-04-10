@@ -1,10 +1,14 @@
 import { WebSocketServer, WebSocket } from "ws";
 import * as pty from "node-pty";
-import path from "path";
 import http from "http";
-import { execSync } from "child_process";
 import { DATA_DIR } from "../src/lib/storage/path-utils";
 import { getDaemonPort } from "../src/lib/runtime/runtime-config";
+import {
+  buildPtyCliInvocation,
+  buildCommandCandidates,
+  resolveCliCommand,
+  RUNTIME_PATH,
+} from "../src/lib/agents/provider-cli";
 
 const PORT = getDaemonPort();
 
@@ -84,34 +88,25 @@ function submitInitialPrompt(session: Session): void {
 
 // Resolve the claude binary path at startup
 function resolveClaudePath(): string {
-  const candidates = [
-    path.join(process.env.HOME || "", ".local", "bin", "claude"),
-    "/usr/local/bin/claude",
-    "/opt/homebrew/bin/claude",
-  ];
-
-  for (const candidate of candidates) {
-    try {
-      const fs = require("fs");
-      if (fs.existsSync(candidate)) {
-        console.log(`Found claude at: ${candidate}`);
-        return candidate;
-      }
-    } catch {}
-  }
-
   try {
-    const resolved = execSync("which claude", {
-      encoding: "utf8",
-      env: {
-        ...process.env,
-        PATH: `${process.env.HOME}/.local/bin:${process.env.PATH}`,
+    return resolveCliCommand({
+      id: "claude-code",
+      name: "Claude Code Max",
+      type: "cli",
+      icon: "sparkles",
+      command: "claude",
+      commandCandidates: buildCommandCandidates("claude"),
+      async isAvailable() {
+        return true;
       },
-    }).trim();
-    if (resolved) {
-      console.log(`Resolved claude via which: ${resolved}`);
-      return resolved;
-    }
+      async healthCheck() {
+        return {
+          available: true,
+          authenticated: true,
+          version: "Claude Code Max",
+        };
+      },
+    });
   } catch {}
 
   console.warn("Could not resolve claude path, using 'claude' directly");
@@ -120,10 +115,7 @@ function resolveClaudePath(): string {
 
 const CLAUDE_PATH = resolveClaudePath();
 
-const enrichedPath = [
-  `${process.env.HOME}/.local/bin`,
-  process.env.PATH,
-].join(":");
+const enrichedPath = RUNTIME_PATH;
 
 // Create HTTP server to handle both WebSocket upgrades and REST endpoints
 const server = http.createServer((req, res) => {
@@ -247,17 +239,15 @@ wss.on("connection", (ws, req) => {
   }
 
   // New session — spawn PTY
-  let shell: string;
-  let args: string[];
-
-  shell = CLAUDE_PATH;
-  args = prompt
+  const shell = CLAUDE_PATH;
+  const args = prompt
     ? ["--dangerously-skip-permissions", prompt]
     : ["--dangerously-skip-permissions"];
 
   let term: pty.IPty;
   try {
-    term = pty.spawn(shell, args, {
+    const invocation = buildPtyCliInvocation(shell, args);
+    term = pty.spawn(invocation.command, invocation.args, {
       name: "xterm-256color",
       cols: 120,
       rows: 30,

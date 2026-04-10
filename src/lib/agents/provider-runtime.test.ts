@@ -15,11 +15,20 @@ import {
 import { claudeCodeProvider } from "./providers/claude-code";
 import { codexCliProvider } from "./providers/codex-cli";
 
-async function createExecutableScript(source: string): Promise<string> {
+async function createExecutableScript(source: string, windowsSource?: string): Promise<string> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-provider-test-"));
-  const scriptPath = path.join(dir, "fake-provider.sh");
-  await fs.writeFile(scriptPath, source, "utf8");
-  await fs.chmod(scriptPath, 0o755);
+  const scriptPath = path.join(
+    dir,
+    process.platform === "win32" ? "fake-provider.cmd" : "fake-provider.sh"
+  );
+  await fs.writeFile(
+    scriptPath,
+    process.platform === "win32" ? (windowsSource || "@echo off\r\nexit /b 0\r\n") : source,
+    "utf8"
+  );
+  if (process.platform !== "win32") {
+    await fs.chmod(scriptPath, 0o755);
+  }
   return scriptPath;
 }
 
@@ -77,7 +86,10 @@ test("provider runtime resolves launch specs through registered providers", asyn
     path.join(process.cwd(), "data", ".agents", ".config", "providers.json"),
     "utf8"
   ).catch(() => null);
-  const scriptPath = await createExecutableScript("#!/bin/sh\nprintf '%s' \"$1\"\n");
+  const scriptPath = await createExecutableScript(
+    "#!/bin/sh\nprintf '%s' \"$1\"\n",
+    "@echo off\r\n<nul set /p =%~1\r\nexit /b 0\r\n"
+  );
   const provider: AgentProvider = {
     id: "test-session-provider",
     name: "Test Session Provider",
@@ -169,7 +181,8 @@ test("provider runtime falls back to the enabled default when the requested prov
 test("runOneShotProviderPrompt closes stdin for CLI providers", async (t) => {
   const previousDefaultProvider = providerRegistry.defaultProvider;
   const scriptPath = await createExecutableScript(
-    "#!/bin/sh\ncat >/dev/null\nprintf '%s' \"$1\"\n"
+    "#!/bin/sh\ncat >/dev/null\nprintf '%s' \"$1\"\n",
+    "@echo off\r\n<nul set /p =%~1\r\nexit /b 0\r\n"
   );
   const provider: AgentProvider = {
     id: "test-run-provider",

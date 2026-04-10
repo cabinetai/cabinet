@@ -1,15 +1,29 @@
-import { execSync, spawn } from "child_process";
+import fs from "fs";
+import { execFileSync, spawn } from "child_process";
 import { getNvmNodeBin } from "../nvm-path";
 
-const nvmBin = getNvmNodeBin();
+const nvmBin = process.platform !== "win32" ? getNvmNodeBin() : null;
 
-export const ADAPTER_RUNTIME_PATH = [
-  `${process.env.HOME || ""}/.local/bin`,
-  "/usr/local/bin",
-  "/opt/homebrew/bin",
-  ...(nvmBin ? [nvmBin] : []),
-  process.env.PATH || "",
-].filter(Boolean).join(":");
+function buildAdapterRuntimePath(): string {
+  if (process.platform === "win32") {
+    const home = process.env.USERPROFILE || process.env.HOME || "";
+    return [
+      process.env.APPDATA ? `${process.env.APPDATA}\\npm` : "",
+      `${home}\\AppData\\Local\\Microsoft\\WinGet\\Links`,
+      process.env.PATH || "",
+    ].filter(Boolean).join(";");
+  }
+
+  return [
+    `${process.env.HOME || ""}/.local/bin`,
+    "/usr/local/bin",
+    "/opt/homebrew/bin",
+    ...(nvmBin ? [nvmBin] : []),
+    process.env.PATH || "",
+  ].filter(Boolean).join(":");
+}
+
+export const ADAPTER_RUNTIME_PATH = buildAdapterRuntimePath();
 
 export interface RunChildProcessOptions {
   cwd: string;
@@ -43,35 +57,55 @@ export function withAdapterRuntimeEnv(
   };
 }
 
+const SAFE_COMMAND_NAME_RE = /^[\w.+/-]+$/;
+
 export function resolveCommandFromCandidates(
   candidates: string[],
   env: NodeJS.ProcessEnv = process.env
 ): string | null {
+  const resolvedEnv = withAdapterRuntimeEnv(env);
+
   for (const candidate of candidates) {
     if (!candidate) continue;
-    if (candidate.includes("/")) {
+
+    const isAbsolute = candidate.includes("/") || candidate.includes("\\") || /^[A-Za-z]:/.test(candidate);
+
+    if (isAbsolute) {
       try {
-        const resolved = execSync(`test -x ${JSON.stringify(candidate)} && printf '%s' ${JSON.stringify(candidate)}`, {
+        fs.accessSync(candidate, fs.constants.X_OK);
+        return candidate;
+      } catch {
+        // not executable — keep trying
+      }
+      continue;
+    }
+
+    if (!SAFE_COMMAND_NAME_RE.test(candidate)) continue;
+
+    if (process.platform === "win32") {
+      try {
+        const output = execFileSync("where.exe", [candidate], {
           encoding: "utf8",
-          env: withAdapterRuntimeEnv(env),
+          env: resolvedEnv,
           stdio: ["ignore", "pipe", "ignore"],
         }).trim();
-        if (resolved) return resolved;
+        const first = output.split(/\r?\n/).find(Boolean);
+        if (first) return first;
       } catch {
-        // Ignore and keep trying.
+        // keep trying
       }
       continue;
     }
 
     try {
-      const resolved = execSync(`command -v ${candidate}`, {
+      const output = execFileSync("/bin/sh", ["-c", "command -v \"$C\""], {
         encoding: "utf8",
-        env: withAdapterRuntimeEnv(env),
+        env: { ...resolvedEnv, C: candidate },
         stdio: ["ignore", "pipe", "ignore"],
       }).trim();
-      if (resolved) return resolved;
+      if (output) return output;
     } catch {
-      // Ignore and keep trying.
+      // keep trying
     }
   }
 
@@ -89,6 +123,9 @@ export async function runChildProcess(
   options: RunChildProcessOptions
 ): Promise<RunChildProcessResult> {
   const startedAt = new Date().toISOString();
+  const isWindows = process.platform === "win32";
+  const useShell = isWindows && !command.includes("/") && !command.includes("\\");
+
   const child = spawn(command, args, {
     cwd: options.cwd,
     env: withAdapterRuntimeEnv({
@@ -96,6 +133,8 @@ export async function runChildProcess(
       ...(options.env || {}),
     }),
     stdio: ["pipe", "pipe", "pipe"],
+    ...(isWindows ? { windowsHide: true, detached: false } : {}),
+    ...(useShell ? { shell: true } : {}),
   });
 
   const processGroupId = resolveProcessGroupId(child.pid);
@@ -119,7 +158,7 @@ export async function runChildProcess(
   };
 
   const signalChild = (signal: NodeJS.Signals) => {
-    if (process.platform !== "win32" && processGroupId && processGroupId > 0) {
+    if (!isWindows && processGroupId && processGroupId > 0) {
       try {
         process.kill(-processGroupId, signal);
         return;
@@ -186,4 +225,3 @@ export async function runChildProcess(
     });
   });
 }
-

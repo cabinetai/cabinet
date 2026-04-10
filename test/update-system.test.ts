@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compareVersions, isStableVersion } from "@/lib/system/version-utils";
 import { readBundledReleaseManifest } from "@/lib/system/release-manifest";
-import { detectInstallKind } from "@/lib/system/install-metadata";
+import { detectInstallKind, inferElectronInstallKind } from "@/lib/system/install-metadata";
 import type { InstallMetadata } from "@/types";
 
 const pkgVersion = JSON.parse(
@@ -54,4 +54,9 @@ test("detectInstallKind respects explicit environment hints first", () => {
       process.env.CABINET_INSTALL_KIND = original;
     }
   }
+});
+
+test("inferElectronInstallKind maps Windows and macOS runtimes distinctly", () => {
+  assert.equal(inferElectronInstallKind("win32"), "electron-windows");
+  assert.equal(inferElectronInstallKind("darwin"), "electron-macos");
 });

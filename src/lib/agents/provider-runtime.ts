@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import type { AgentProvider, CliProviderInvocation } from "./provider-interface";
 import { providerRegistry } from "./provider-registry";
-import { resolveCliCommand, RUNTIME_PATH } from "./provider-cli";
+import { buildWindowsShellCommand, resolveCliCommand, RUNTIME_PATH } from "./provider-cli";
 import {
   resolveDetachedPromptLaunchMode,
   type DetachedLaunchMode,
@@ -135,14 +135,23 @@ export async function runOneShotProviderPrompt(input: {
   });
 
   return new Promise<string>((resolve, reject) => {
-    const proc = spawn(launch.command, launch.args, {
-      cwd: input.cwd,
-      env: {
-        ...process.env,
-        PATH: RUNTIME_PATH,
-      },
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    const env = {
+      ...process.env,
+      PATH: RUNTIME_PATH,
+    };
+    const proc =
+      process.platform === "win32"
+        ? spawn(buildWindowsShellCommand(launch.command, launch.args), {
+            cwd: input.cwd,
+            env,
+            shell: true,
+            stdio: ["ignore", "pipe", "pipe"],
+          })
+        : spawn(launch.command, launch.args, {
+            cwd: input.cwd,
+            env,
+            stdio: ["ignore", "pipe", "pipe"],
+          });
     let settled = false;
     const timeoutHandle = setTimeout(() => {
       if (settled) return;
