@@ -7,6 +7,7 @@ import {
   resolveCommandFromCandidates,
   withAdapterRuntimeEnv,
 } from "./adapters/utils";
+import { terminateChildProcess } from "./process-utils";
 
 export const RUNTIME_PATH = ADAPTER_RUNTIME_PATH;
 
@@ -174,8 +175,9 @@ export async function checkCliProviderAvailable(provider: AgentProvider): Promis
     });
 
     const timeout = setTimeout(() => {
-      proc.kill();
-      settle(false);
+      void terminateChildProcess(proc).finally(() => {
+        settle(false);
+      });
     }, 5000);
   });
 }

@@ -3,6 +3,7 @@ import path from "path";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 import { buildWindowsShellCommand, RUNTIME_PATH } from "./provider-cli";
 import { getOneShotLaunchSpec } from "./provider-runtime";
+import { terminateChildProcess } from "./process-utils";
 
 export interface AgentSession {
   id: string;
@@ -159,7 +160,7 @@ export function stopAgent(id: string): boolean {
   const session = sessions.get(id);
   if (!session || !session.process) return false;
 
-  session.process.kill();
+  void terminateChildProcess(session.process);
   session.status = "failed";
   session.completedAt = new Date().toISOString();
   delete session.process;
