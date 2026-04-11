@@ -12,6 +12,7 @@ import {
   readProviderSettingsSync,
   resolveEnabledProviderId,
 } from "./provider-settings";
+import { terminateChildProcess } from "./process-utils";
 
 export interface ProviderLaunchSpec extends CliProviderInvocation {
   providerId: string;

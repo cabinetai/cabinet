@@ -129,3 +129,40 @@ test("resolveCliCommand prefers a bare Windows command when it is on PATH", () =
 
   assert.equal(resolved, "codex");
 });
+
+test("resolveCliCommand skips unsafe non-path command candidates during lookup", () => {
+  const provider: AgentProvider = {
+    id: "unsafe-provider",
+    name: "Unsafe Provider",
+    type: "cli",
+    icon: "bot",
+    command: "safe-provider",
+    commandCandidates: ["bad;command", "safe-provider"],
+    async isAvailable() {
+      return true;
+    },
+    async healthCheck() {
+      return {
+        available: true,
+        authenticated: true,
+        version: "test",
+      };
+    },
+  };
+
+  const lookupCalls: string[] = [];
+  const resolved = resolveCliCommand(provider, {
+    platform: "linux",
+    env: {
+      HOME: "/tmp/test-user",
+      PATH: "/usr/bin",
+    },
+    commandLookup(command) {
+      lookupCalls.push(command);
+      return command === "safe-provider" ? "/usr/bin/safe-provider" : null;
+    },
+  });
+
+  assert.equal(resolved, "/usr/bin/safe-provider");
+  assert.deepEqual(lookupCalls, ["safe-provider"]);
+});
