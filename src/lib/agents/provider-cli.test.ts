@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import type { AgentProvider } from "./provider-interface";
 import {
+  buildCommandCandidates,
   buildRuntimePath,
   checkCliProviderAvailable,
   resolveCliCommand,
@@ -92,6 +93,69 @@ test("buildRuntimePath uses Windows delimiters and npm global bin paths", () => 
       "C:\\Windows\\System32",
     ].join(";")
   );
+});
+
+test("buildRuntimePath uses requested platform path semantics even on a different host OS", () => {
+  const runtimePath = buildRuntimePath({
+    platform: "win32",
+    env: {
+      USERPROFILE: "C:/Users/TestUser",
+      APPDATA: "C:/Users/TestUser/AppData/Roaming",
+      PATH: "C:/Windows/System32",
+    },
+    nvmBin: "C:/Users/TestUser/.nvm/bin",
+  });
+
+  assert.equal(
+    runtimePath,
+    [
+      "C:\\Users\\TestUser\\AppData\\Roaming\\npm",
+      "C:\\Users\\TestUser\\.local\\bin",
+      "C:\\Users\\TestUser\\.nvm\\bin",
+      "C:/Windows/System32",
+    ].join(";")
+  );
+});
+
+test("buildRuntimePath uses POSIX separators when a POSIX platform is requested", () => {
+  const runtimePath = buildRuntimePath({
+    platform: "linux",
+    env: {
+      HOME: "/home/test-user",
+      PATH: "/usr/bin",
+    },
+    nvmBin: "/home/test-user/.nvm/versions/node/v22/bin",
+  });
+
+  assert.equal(
+    runtimePath,
+    [
+      "/home/test-user/.local/bin",
+      "/usr/local/bin",
+      "/opt/homebrew/bin",
+      "/home/test-user/.nvm/versions/node/v22/bin",
+      "/usr/bin",
+    ].join(":")
+  );
+});
+
+test("buildCommandCandidates only returns Windows cmd paths plus bare command", () => {
+  const candidates = buildCommandCandidates("codex", {
+    platform: "win32",
+    env: {
+      USERPROFILE: "C:/Users/TestUser",
+      APPDATA: "C:/Users/TestUser/AppData/Roaming",
+      PATH: "C:/Windows/System32",
+    },
+    nvmBin: "C:/Users/TestUser/.nvm/bin",
+  });
+
+  assert.deepEqual(candidates, [
+    "C:\\Users\\TestUser\\AppData\\Roaming\\npm\\codex.cmd",
+    "C:\\Users\\TestUser\\.local\\bin\\codex.cmd",
+    "C:\\Users\\TestUser\\.nvm\\bin\\codex.cmd",
+    "codex",
+  ]);
 });
 
 test("resolveCliCommand prefers a bare Windows command when it is on PATH", () => {

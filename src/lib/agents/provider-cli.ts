@@ -20,6 +20,21 @@ function resolveHomeDir(env: NodeJS.ProcessEnv): string {
   return env.USERPROFILE || env.HOME || process.cwd();
 }
 
+function isExplicitPath(candidate: string): boolean {
+  return candidate.includes("/") || candidate.includes("\\") || /^[A-Za-z]:/.test(candidate);
+}
+
+function isSafeCommandName(candidate: string): boolean {
+  return /^[A-Za-z0-9._/-]+$/.test(candidate);
+}
+
+function getPlatformPathTools(platform: NodeJS.Platform) {
+  return {
+    api: platform === "win32" ? path.win32 : path.posix,
+    delimiter: platform === "win32" ? ";" : ":",
+  };
+}
+
 function quoteWindowsCmdArg(value: string): string {
   const escaped = value.replace(/"/g, '""').replace(/%/g, "%%");
   return /[\s"&()^|<>]/.test(value) ? `"${escaped}"` : escaped;
@@ -61,16 +76,17 @@ export function buildCommandCandidates(
   const platform = options?.platform || process.platform;
   const env = options?.env || process.env;
   const runtimeNvmBin = options?.nvmBin ?? null;
+  const { api: pathApi } = getPlatformPathTools(platform);
 
   if (platform === "win32") {
     const homeDir = resolveHomeDir(env);
     return [
-      env.APPDATA ? path.join(env.APPDATA, "npm", `${command}.cmd`) : "",
-      env.APPDATA ? path.join(env.APPDATA, "npm", `${command}.ps1`) : "",
-      env.APPDATA ? path.join(env.APPDATA, "npm", command) : "",
-      path.join(homeDir, ".local", "bin", `${command}.cmd`),
-      path.join(homeDir, ".local", "bin", command),
-      ...(runtimeNvmBin ? [path.join(runtimeNvmBin, `${command}.cmd`), path.join(runtimeNvmBin, command)] : []),
+      env.APPDATA ? pathApi.join(env.APPDATA, "npm", `${command}.cmd`) : "",
+      env.APPDATA ? pathApi.join(env.APPDATA, "npm", `${command}.ps1`) : "",
+      env.APPDATA ? pathApi.join(env.APPDATA, "npm", command) : "",
+      pathApi.join(homeDir, ".local", "bin", `${command}.cmd`),
+      pathApi.join(homeDir, ".local", "bin", command),
+      ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, `${command}.cmd`), pathApi.join(runtimeNvmBin, command)] : []),
       command,
     ].filter(Boolean);
   }
@@ -79,7 +95,7 @@ export function buildCommandCandidates(
     `${env.HOME || ""}/.local/bin/${command}`,
     `/usr/local/bin/${command}`,
     `/opt/homebrew/bin/${command}`,
-    ...(runtimeNvmBin ? [path.join(runtimeNvmBin, command)] : []),
+    ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, command)] : []),
     command,
   ].filter(Boolean);
 }
@@ -89,6 +105,7 @@ function lookupCommandOnPath(
   env: NodeJS.ProcessEnv,
   platform: NodeJS.Platform
 ): string | null {
+  if (!isSafeCommandName(command)) return null;
   try {
     if (platform === "win32") {
       const output = execFileSync("where.exe", [command], {
@@ -120,14 +137,13 @@ export function resolveCliCommand(provider: AgentProvider): string {
   if (resolved) return resolved;
 
   for (const candidate of candidates) {
-    if (candidate.includes("/") && fs.existsSync(candidate)) return candidate;
+    if (isExplicitPath(candidate) && fs.existsSync(candidate)) return candidate;
   }
 
   if (process.platform === "win32") {
-    const runtimePath = ADAPTER_RUNTIME_PATH;
     for (const candidate of candidates) {
-      if (candidate.includes("/") || candidate.includes("\\") || /^[A-Za-z]:/.test(candidate)) continue;
-      const found = lookupCommandOnPath(candidate, { ...process.env, PATH: runtimePath }, "win32");
+      if (isExplicitPath(candidate)) continue;
+      const found = lookupCommandOnPath(candidate, { ...process.env, PATH: ADAPTER_RUNTIME_PATH }, "win32");
       if (found) return found;
     }
   }
