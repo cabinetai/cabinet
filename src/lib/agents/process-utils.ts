@@ -14,7 +14,7 @@ function killDirectly(proc: ChildProcess): void {
 
 async function defaultTaskkill(command: string, args: string[]): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    execFile(command, args, { stdio: "ignore" }, (error) => {
+    execFile(command, args, (error: Error | null) => {
       if (error) {
         reject(error);
         return;

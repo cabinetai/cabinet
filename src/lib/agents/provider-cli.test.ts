@@ -81,7 +81,7 @@ test("buildRuntimePath uses Windows delimiters and npm global bin paths", () => 
       USERPROFILE: "C:\\Users\\TestUser",
       APPDATA: "C:\\Users\\TestUser\\AppData\\Roaming",
       PATH: "C:\\Windows\\System32",
-    },
+    } as unknown as NodeJS.ProcessEnv,
     nvmBin: null,
   });
 
@@ -102,7 +102,7 @@ test("buildRuntimePath uses requested platform path semantics even on a differen
       USERPROFILE: "C:/Users/TestUser",
       APPDATA: "C:/Users/TestUser/AppData/Roaming",
       PATH: "C:/Windows/System32",
-    },
+    } as unknown as NodeJS.ProcessEnv,
     nvmBin: "C:/Users/TestUser/.nvm/bin",
   });
 
@@ -123,7 +123,7 @@ test("buildRuntimePath uses POSIX separators when a POSIX platform is requested"
     env: {
       HOME: "/home/test-user",
       PATH: "/usr/bin",
-    },
+    } as unknown as NodeJS.ProcessEnv,
     nvmBin: "/home/test-user/.nvm/versions/node/v22/bin",
   });
 
@@ -146,7 +146,7 @@ test("buildCommandCandidates only returns Windows cmd paths plus bare command", 
       USERPROFILE: "C:/Users/TestUser",
       APPDATA: "C:/Users/TestUser/AppData/Roaming",
       PATH: "C:/Windows/System32",
-    },
+    } as unknown as NodeJS.ProcessEnv,
     nvmBin: "C:/Users/TestUser/.nvm/bin",
   });
 
@@ -184,8 +184,8 @@ test("resolveCliCommand prefers a bare Windows command when it is on PATH", () =
       USERPROFILE: "C:\\Users\\TestUser",
       APPDATA: "C:\\Users\\TestUser\\AppData\\Roaming",
       PATH: "C:\\Windows\\System32",
-    },
-    commandLookup(command) {
+    } as unknown as NodeJS.ProcessEnv,
+    commandLookup(command: string) {
       assert.equal(command, "codex");
       return "C:\\Users\\TestUser\\AppData\\Roaming\\npm\\codex.cmd";
     },
@@ -220,8 +220,8 @@ test("resolveCliCommand skips unsafe non-path command candidates during lookup",
     env: {
       HOME: "/tmp/test-user",
       PATH: "/usr/bin",
-    },
-    commandLookup(command) {
+    } as unknown as NodeJS.ProcessEnv,
+    commandLookup(command: string) {
       lookupCalls.push(command);
       return command === "safe-provider" ? "/usr/bin/safe-provider" : null;
     },

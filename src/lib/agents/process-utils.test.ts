@@ -3,16 +3,20 @@ import assert from "node:assert/strict";
 import type { ChildProcess } from "node:child_process";
 import { terminateChildProcess } from "./process-utils";
 
-test("terminateChildProcess uses taskkill on Windows when pid exists", async () => {
+function makeMockProc(pid?: number): ChildProcess & { killCalled: boolean } {
   const proc = {
-    pid: 4321,
-    killCalled: false,
+    pid,
+    killCalled: false as boolean,
     kill() {
-      this.killCalled = true;
+      proc.killCalled = true;
       return true;
     },
-  } as unknown as ChildProcess & { killCalled: boolean };
+  };
+  return proc as unknown as ChildProcess & { killCalled: boolean };
+}
 
+test("terminateChildProcess uses taskkill on Windows when pid exists", async () => {
+  const proc = makeMockProc(4321);
   const calls: Array<{ command: string; args: string[] }> = [];
   await terminateChildProcess(proc, {
     platform: "win32",
@@ -29,15 +33,7 @@ test("terminateChildProcess uses taskkill on Windows when pid exists", async () 
 });
 
 test("terminateChildProcess falls back to proc.kill on Windows when taskkill fails", async () => {
-  const proc = {
-    pid: 4321,
-    killCalled: false,
-    kill() {
-      this.killCalled = true;
-      return true;
-    },
-  } as unknown as ChildProcess & { killCalled: boolean };
-
+  const proc = makeMockProc(4321);
   await terminateChildProcess(proc, {
     platform: "win32",
     taskkill() {
@@ -49,15 +45,7 @@ test("terminateChildProcess falls back to proc.kill on Windows when taskkill fai
 });
 
 test("terminateChildProcess uses proc.kill on non-Windows", async () => {
-  const proc = {
-    pid: 123,
-    killCalled: false,
-    kill() {
-      this.killCalled = true;
-      return true;
-    },
-  } as unknown as ChildProcess & { killCalled: boolean };
-
+  const proc = makeMockProc(123);
   await terminateChildProcess(proc, {
     platform: "linux",
   });
@@ -66,15 +54,7 @@ test("terminateChildProcess uses proc.kill on non-Windows", async () => {
 });
 
 test("terminateChildProcess handles missing pid on Windows without throwing", async () => {
-  const proc = {
-    pid: undefined,
-    killCalled: false,
-    kill() {
-      this.killCalled = true;
-      return true;
-    },
-  } as unknown as ChildProcess & { killCalled: boolean };
-
+  const proc = makeMockProc(undefined);
   await terminateChildProcess(proc, {
     platform: "win32",
     taskkill() {

@@ -9,6 +9,12 @@ import {
 } from "./adapters/utils";
 import { terminateChildProcess } from "./process-utils";
 
+type ResolveCliCommandOptions = {
+  platform?: NodeJS.Platform;
+  env?: NodeJS.ProcessEnv;
+  commandLookup?: (command: string, env: NodeJS.ProcessEnv, platform: NodeJS.Platform) => string | null;
+};
+
 export const RUNTIME_PATH = ADAPTER_RUNTIME_PATH;
 
 export type CliInvocation = {
@@ -33,6 +39,35 @@ function getPlatformPathTools(platform: NodeJS.Platform) {
     api: platform === "win32" ? path.win32 : path.posix,
     delimiter: platform === "win32" ? ";" : ":",
   };
+}
+
+export function buildRuntimePath(options?: {
+  platform?: NodeJS.Platform;
+  env?: NodeJS.ProcessEnv;
+  nvmBin?: string | null;
+}): string {
+  const platform = options?.platform || process.platform;
+  const env = options?.env || process.env;
+  const runtimeNvmBin = options?.nvmBin === undefined ? null : options.nvmBin;
+  const { api: pathApi, delimiter } = getPlatformPathTools(platform);
+
+  if (platform === "win32") {
+    const homeDir = resolveHomeDir(env);
+    return [
+      env.APPDATA ? pathApi.join(env.APPDATA, "npm") : "",
+      pathApi.join(homeDir, ".local", "bin"),
+      ...(runtimeNvmBin ? [pathApi.normalize(runtimeNvmBin)] : []),
+      env.PATH || "",
+    ].filter(Boolean).join(delimiter);
+  }
+
+  return [
+    `${env.HOME || ""}/.local/bin`,
+    "/usr/local/bin",
+    "/opt/homebrew/bin",
+    ...(runtimeNvmBin ? [pathApi.normalize(runtimeNvmBin)] : []),
+    env.PATH || "",
+  ].filter(Boolean).join(delimiter);
 }
 
 function quoteWindowsCmdArg(value: string): string {
@@ -82,11 +117,8 @@ export function buildCommandCandidates(
     const homeDir = resolveHomeDir(env);
     return [
       env.APPDATA ? pathApi.join(env.APPDATA, "npm", `${command}.cmd`) : "",
-      env.APPDATA ? pathApi.join(env.APPDATA, "npm", `${command}.ps1`) : "",
-      env.APPDATA ? pathApi.join(env.APPDATA, "npm", command) : "",
       pathApi.join(homeDir, ".local", "bin", `${command}.cmd`),
-      pathApi.join(homeDir, ".local", "bin", command),
-      ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, `${command}.cmd`), pathApi.join(runtimeNvmBin, command)] : []),
+      ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, `${command}.cmd`)] : []),
       command,
     ].filter(Boolean);
   }
@@ -127,24 +159,33 @@ function lookupCommandOnPath(
   }
 }
 
-export function resolveCliCommand(provider: AgentProvider): string {
+export function resolveCliCommand(provider: AgentProvider, options?: ResolveCliCommandOptions): string {
+  const platform = options?.platform || process.platform;
+  const env = options?.env || process.env;
+  const commandLookup = options?.commandLookup || lookupCommandOnPath;
+
   const candidates = [
     ...(provider.commandCandidates || []),
     provider.command,
   ].filter((candidate): candidate is string => !!candidate);
 
-  const resolved = resolveCommandFromCandidates(candidates, process.env);
-  if (resolved) return resolved;
+  if (!options) {
+    const resolved = resolveCommandFromCandidates(candidates, env);
+    if (resolved) return resolved;
+  }
 
   for (const candidate of candidates) {
     if (isExplicitPath(candidate) && fs.existsSync(candidate)) return candidate;
   }
 
-  if (process.platform === "win32") {
-    for (const candidate of candidates) {
-      if (isExplicitPath(candidate)) continue;
-      const found = lookupCommandOnPath(candidate, { ...process.env, PATH: ADAPTER_RUNTIME_PATH }, "win32");
-      if (found) return found;
+  for (const candidate of candidates) {
+    if (isExplicitPath(candidate)) continue;
+    if (!isSafeCommandName(candidate)) continue;
+    const found = commandLookup(candidate, { ...env, PATH: ADAPTER_RUNTIME_PATH }, platform);
+    if (found) {
+      // On Windows, return the bare candidate name so cmd.exe can resolve .cmd/.ps1 shims.
+      // On Unix, return the full resolved path.
+      return platform === "win32" ? candidate : found;
     }
   }
 
