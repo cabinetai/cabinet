@@ -70,10 +70,16 @@ export function TaskCard({
     <button
       type="button"
       onClick={(e) => onClick(e)}
+      // Audit #065: without an explicit aria-label, the card's accessible
+      // name concatenates the title + status icon + agent pill + provider
+      // glyph + relative time + action buttons into one 50-word string.
+      // Override with just the title; the metadata pieces remain
+      // separately readable but no longer inflate the card's name.
+      aria-label={task.title}
       className={cn(
         "relative w-full rounded-md border bg-card text-left transition-all",
         "hover:border-foreground/30 hover:shadow-sm",
-        compact ? "px-2.5 py-2" : "p-3",
+        compact ? "px-2 py-1.5" : "p-3",
         isActive ? "border-foreground/50 shadow-sm" : "border-border/60",
         isTerminal &&
           "border-l-2 border-l-emerald-500/60 bg-[linear-gradient(to_right,rgba(16,185,129,0.035),transparent_30%)]"
@@ -84,9 +90,10 @@ export function TaskCard({
           <StatusIcon state={state} />
         </span>
         <p
+          title={task.title}
           className={cn(
-            "flex-1 line-clamp-2 text-[13px] leading-snug text-foreground",
-            compact ? "pr-14" : "pr-[88px]"
+            "flex-1 leading-snug text-foreground",
+            compact ? "line-clamp-1 text-[12px] pr-14" : "line-clamp-2 text-[13px] pr-[88px]"
           )}
         >
           {task.title}
@@ -103,6 +110,16 @@ export function TaskCard({
           slug={task.agentSlug ?? "editor"}
           size={compact ? "sm" : "md"}
         />
+        {lane === "needs" && task.status === "awaiting-input" && (
+          <span className="inline-flex items-center rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
+            Input needed
+          </span>
+        )}
+        {lane === "needs" && task.status === "failed" && (
+          <span className="inline-flex items-center rounded bg-destructive/15 px-1.5 py-0.5 text-[9px] font-semibold text-destructive">
+            Failed
+          </span>
+        )}
         {groupSize > 0 && (
           <span
             title={`${groupSize} heartbeat runs collapsed — showing the latest`}

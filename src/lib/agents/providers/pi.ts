@@ -24,7 +24,7 @@ const PI_FALLBACK_MODELS = [
 
 export const piProvider: AgentProvider = {
   id: "pi",
-  name: "Pi",
+  name: "Pi (Inflection)",
   type: "cli",
   icon: "pi",
   iconAsset: "/providers/pi.svg",

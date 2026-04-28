@@ -235,8 +235,27 @@ export function AgentList() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-        Loading...
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <div className="h-4 w-16 rounded bg-muted animate-pulse" />
+          <div className="h-7 w-28 rounded bg-muted animate-pulse" />
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="bg-card border border-border rounded-lg p-4 animate-pulse">
+                <div className="flex justify-between">
+                  <div className="h-8 w-8 rounded-full bg-muted" />
+                  <div className="h-5 w-14 rounded-full bg-muted" />
+                </div>
+                <div className="h-3 w-1/2 bg-muted rounded mt-3" />
+                <div className="h-2 w-1/3 bg-muted rounded mt-2" />
+                <div className="h-2 w-2/3 bg-muted rounded mt-2" />
+                <div className="h-2 w-1/4 bg-muted rounded mt-3" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

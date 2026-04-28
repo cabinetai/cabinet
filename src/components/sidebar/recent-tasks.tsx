@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { conversationMetaToTaskMeta } from "@/lib/agents/conversation-to-task-view";
 import { getAgentColor, tintFromHex } from "@/lib/agents/cron-compute";
 import { isLegacyAdapterType } from "@/lib/agents/adapters/legacy-ids";
@@ -16,12 +17,17 @@ function normalizeConversation(meta: ConversationMeta): TaskMeta {
 
 // "Done, recently" = idle or done whose last activity landed within this window.
 const DONE_FRESH_MS = 60 * 60 * 1000; // 1 hour
-const MAX_VISIBLE = 6;
-// Fetch a larger slice from the API (which still sorts by startedAt) so we
-// can re-rank by lastActivityAt locally. 30 is generous — we'd rather pull a
-// few extra KB than miss a long-running conversation whose lastActivityAt is
-// fresher than several freshly-created-but-idle ones.
-const FETCH_POOL = 30;
+
+// Audit #132: progressive disclosure for the sidebar tasks list.
+// - INITIAL_VISIBLE rows show on first paint (clean, scannable).
+// - "Show older" reveals one PAGE_STEP more rows at a time, fading them
+//   in with the same stagger animation as the initial load.
+// - Once the locally-cached pool is exhausted, the button refetches with
+//   a higher limit until ABSOLUTE_CAP. Beyond that, the user is nudged
+//   to the full Tasks board.
+const INITIAL_VISIBLE = 20;
+const PAGE_STEP = 20;
+const ABSOLUTE_CAP = 100;
 
 /**
  * Minimal agent shape the sidebar passes down. We only need the slug + the
@@ -67,24 +73,35 @@ export function RecentTasks({
   );
   const [tasks, setTasks] = useState<TaskMeta[] | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  // How many rows the user wants visible. Bumps by PAGE_STEP on "Show older".
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+  // How many rows we ask the API for. Bumps when visibleCount exceeds the
+  // current pool so we don't show "Show older" with no actual older rows.
+  const [fetchLimit, setFetchLimit] = useState(INITIAL_VISIBLE + PAGE_STEP);
 
   useEffect(() => {
     if (!active) return;
     let cancelled = false;
 
     const loadTasks = async () => {
-      const params = new URLSearchParams({ limit: String(FETCH_POOL) });
+      const params = new URLSearchParams({ limit: String(fetchLimit) });
       if (cabinetPath) params.set("cabinetPath", cabinetPath);
       try {
-        const res = await fetch(`/api/agents/conversations?${params.toString()}`, {
-          cache: "no-store",
-        });
+        // Audit #104: use dedupFetch with a small TTL so sibling consumers
+        // mounting on the same tick (board, agents-workspace) coalesce to
+        // one underlying network request when their query strings match.
+        const res = await dedupFetch(
+          `/api/agents/conversations?${params.toString()}`,
+          { cache: "no-store" },
+          { ttlMs: 1500 }
+        );
         const data = await res.json();
         if (cancelled) return;
         const convos = Array.isArray(data.conversations) ? data.conversations : [];
         // API sorts by startedAt DESC. Re-sort by lastActivityAt ?? startedAt
         // so actively-streaming conversations outrank freshly-created idle
-        // ones. Then take the top MAX_VISIBLE.
+        // ones. Audit #132: keep the full ranked pool so "Show older" can
+        // reveal more rows without re-fetching every time.
         const ranked = convos
           .map(normalizeConversation)
           .sort((a: TaskMeta, b: TaskMeta) => {
@@ -95,8 +112,7 @@ export function RecentTasks({
               b.lastActivityAt ?? b.completedAt ?? b.startedAt ?? 0
             ).getTime();
             return tb - ta;
-          })
-          .slice(0, MAX_VISIBLE);
+          });
         setTasks(ranked);
       } catch {
         if (!cancelled) setTasks([]);
@@ -136,7 +152,15 @@ export function RecentTasks({
       if (reloadTimer !== null) window.clearTimeout(reloadTimer);
       clearInterval(tick);
     };
-  }, [active, cabinetPath]);
+  }, [active, cabinetPath, fetchLimit]);
+
+  // Reset visibility when the user changes cabinet — they're switching
+  // contexts and probably want to see the fresh top-of-list, not their
+  // "Show older" expansion from the previous cabinet.
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE);
+    setFetchLimit(INITIAL_VISIBLE + PAGE_STEP);
+  }, [cabinetPath]);
 
   const agentColorMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -170,9 +194,26 @@ export function RecentTasks({
     );
   }
 
+  const visibleTasks = tasks.slice(0, visibleCount);
+  // "Show older" appears when there's more local pool to reveal OR the API
+  // could return more (we haven't hit the absolute cap yet).
+  const hasMoreLocal = tasks.length > visibleCount;
+  const couldFetchMore = visibleCount >= fetchLimit && fetchLimit < ABSOLUTE_CAP;
+  const showLoadMore = hasMoreLocal || couldFetchMore;
+
+  const handleShowOlder = () => {
+    const nextVisible = Math.min(visibleCount + PAGE_STEP, ABSOLUTE_CAP);
+    setVisibleCount(nextVisible);
+    // If the next reveal would empty the pool, raise the fetch limit so
+    // the next render can actually show more rows. Capped at ABSOLUTE_CAP.
+    if (nextVisible >= fetchLimit && fetchLimit < ABSOLUTE_CAP) {
+      setFetchLimit(Math.min(fetchLimit + PAGE_STEP, ABSOLUTE_CAP));
+    }
+  };
+
   return (
     <>
-      {tasks.map((task, index) => {
+      {visibleTasks.map((task, index) => {
         const isActive = activeTaskId === task.id;
         const fresh = isRecentlyDone(task, now);
         const slugForColor = task.agentSlug || "editor";
@@ -251,6 +292,28 @@ export function RecentTasks({
           </button>
         );
       })}
+      {showLoadMore && (
+        <button
+          key="show-older"
+          type="button"
+          onClick={handleShowOlder}
+          className={cn(
+            itemClass(false),
+            "text-muted-foreground/70 hover:text-foreground",
+            "animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
+          )}
+          style={{
+            ...padStyle,
+            // Stagger the button just after the last visible row.
+            animationDelay: `${Math.min(visibleTasks.length, 12) * 22}ms`,
+            animationFillMode: "backwards",
+          }}
+          title="Reveal more older tasks"
+        >
+          <span className="size-1.5 shrink-0" aria-hidden />
+          <span>Show older</span>
+        </button>
+      )}
     </>
   );
 }

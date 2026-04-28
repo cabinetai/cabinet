@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, ArrowRight, HelpCircle } from "lucide-react";
+import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, ArrowRight, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal } from "lucide-react";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -22,6 +22,49 @@ import { dedupFetch } from "@/lib/api/dedup-fetch";
 
 const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
 const GITHUB_REPO_URL = "https://github.com/hilash/cabinet";
+
+// Audit #094: each "Not installed" provider row needs a one-click path to
+// the canonical install instructions. Mapped by the provider id used by
+// /api/agents/providers — falls back to a generic search if the id is new.
+const PROVIDER_INSTALL_URLS: Record<string, string> = {
+  "claude-code": "https://docs.claude.com/en/docs/claude-code/quickstart",
+  "codex-cli": "https://github.com/openai/codex#installation",
+  codex: "https://github.com/openai/codex#installation",
+  "openai-codex": "https://github.com/openai/codex#installation",
+  "cursor-cli": "https://cursor.com/cli",
+  cursor: "https://cursor.com/cli",
+  "gemini-cli": "https://github.com/google-gemini/gemini-cli#installation",
+  gemini: "https://github.com/google-gemini/gemini-cli#installation",
+  opencode: "https://opencode.ai/docs/install",
+  pi: "https://github.com/PiAPI-CLI/pi#install",
+  "grok-cli": "https://docs.x.ai/docs/quickstart",
+  grok: "https://docs.x.ai/docs/quickstart",
+  "copilot-cli": "https://docs.github.com/copilot/github-copilot-in-the-cli/configuring-github-copilot-in-the-cli",
+  copilot: "https://docs.github.com/copilot/github-copilot-in-the-cli/configuring-github-copilot-in-the-cli",
+  "github-copilot": "https://docs.github.com/copilot/github-copilot-in-the-cli/configuring-github-copilot-in-the-cli",
+};
+
+function installUrlForProvider(id: string): string {
+  return (
+    PROVIDER_INSTALL_URLS[id] ||
+    `https://www.google.com/search?q=${encodeURIComponent(`${id} CLI install`)}`
+  );
+}
+
+function describeUncommittedStatus(s: "M" | "?" | "A" | "D" | "R"): string {
+  switch (s) {
+    case "M":
+      return "Modified";
+    case "?":
+      return "New";
+    case "A":
+      return "Added";
+    case "D":
+      return "Deleted";
+    case "R":
+      return "Renamed";
+  }
+}
 
 function DiscordIcon({ className }: { className?: string }) {
   return (
@@ -50,6 +93,7 @@ function GitHubIcon({ className }: { className?: string }) {
 }
 
 function formatGithubStars(stars: number) {
+  if (stars >= 10_000) return `${(stars / 1000).toFixed(1)}k`;
   return new Intl.NumberFormat("en-US").format(stars);
 }
 
@@ -99,11 +143,14 @@ function StarExplosion() {
 
 export function StatusBar() {
   const { saveStatus, currentPath } = useEditorStore();
+  const retrySave = useEditorStore((s) => s.save);
   const loadTree = useTreeStore((s) => s.loadTree);
   const selectedPath = useTreeStore((s) => s.selectedPath);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
+  const terminalOpen = useAppStore((s) => s.terminalOpen);
+  const toggleTerminal = useAppStore((s) => s.toggleTerminal);
   const { open, addEditorSession } = useAIPanelStore();
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiSubmitting, setAiSubmitting] = useState(false);
@@ -145,7 +192,12 @@ export function StatusBar() {
       setAiSubmitting(false);
     }
   };
+  const [isGitRepo, setIsGitRepo] = useState(false);
   const [uncommitted, setUncommitted] = useState(0);
+  const [uncommittedFiles, setUncommittedFiles] = useState<Array<{ path: string; status: "M" | "?" | "A" | "D" | "R" }>>([]);
+  const [uncommittedTruncated, setUncommittedTruncated] = useState(false);
+  const [showUncommittedPopup, setShowUncommittedPopup] = useState(false);
+  const [showCommunityPopup, setShowCommunityPopup] = useState(false);
   const [pullStatus, setPullStatus] = useState<"idle" | "pulling" | "pulled" | "up-to-date" | "error">("idle");
   const [pulling, setPulling] = useState(false);
   // Stars: shared store so cross-navigation re-mounts don't restart the
@@ -223,7 +275,10 @@ export function StatusBar() {
       const res = await fetch("/api/git/commit");
       if (res.ok) {
         const data = await res.json();
+        setIsGitRepo(!!data.isGit);
         setUncommitted(data.uncommitted || 0);
+        setUncommittedFiles(Array.isArray(data.files) ? data.files : []);
+        setUncommittedTruncated(!!data.truncated);
       }
     } catch {
       // ignore
@@ -337,6 +392,11 @@ export function StatusBar() {
           <div className="flex items-center rounded-full border border-border/50 bg-muted/30 px-2.5 py-0.5 gap-1.5 focus-within:border-border/80 focus-within:bg-muted/60 transition-colors w-56">
             <input
               type="text"
+              // Audit #098: anonymous form field tripped the
+              // "needs id/name" warning on every page surface.
+              name="status-bar-ai-prompt"
+              aria-label="Ask AI to edit this page"
+              title="↵ to send"
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
               onKeyDown={(e) => {
@@ -391,17 +451,20 @@ export function StatusBar() {
             }
             aria-label="Server status — click for details"
           >
-            <span
-              className={`inline-block h-2 w-2 rounded-full ${
-                checkingHealth
-                  ? "bg-muted-foreground/60"
-                  : appAlive && daemonAlive && anyProviderReady
-                  ? "bg-green-500"
-                  : !appAlive
-                  ? "bg-red-500 animate-pulse"
-                  : "bg-amber-500 animate-pulse"
-              }`}
-            />
+            {/* Audit #100: pair color with a state-specific shape so
+                colorblind users (and anyone scanning fast) can read the
+                pill without relying on hue. The visible "Online" /
+                "Degraded" / "Offline" label below also covers screen
+                readers. */}
+            {checkingHealth ? (
+              <Loader2 className="h-3 w-3 shrink-0 animate-spin text-muted-foreground" aria-hidden="true" />
+            ) : appAlive && daemonAlive && anyProviderReady ? (
+              <CircleDot className="h-3 w-3 shrink-0 text-green-500" aria-hidden="true" />
+            ) : !appAlive ? (
+              <XCircle className="h-3 w-3 shrink-0 text-red-500 animate-pulse" aria-hidden="true" />
+            ) : (
+              <AlertTriangle className="h-3 w-3 shrink-0 text-amber-500 animate-pulse" aria-hidden="true" />
+            )}
             <span>
               {checkingHealth
                 ? "Checking…"
@@ -487,10 +550,24 @@ export function StatusBar() {
                           : "bg-red-500/50"
                         }`} />
                         <span>{p.name}</span>
-                        <span className="ml-auto">
-                          {p.available && p.authenticated ? "Ready"
-                          : p.available ? "Not logged in"
-                          : "Not installed"}
+                        <span className="ml-auto flex items-center gap-1.5">
+                          <span>
+                            {p.available && p.authenticated ? "Ready"
+                            : p.available ? "Not logged in"
+                            : "Not installed"}
+                          </span>
+                          {/* Audit #094: every "Not installed" row gets a link
+                              to the provider's canonical install docs. */}
+                          {!p.available && (
+                            <a
+                              href={installUrlForProvider(p.id)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded bg-foreground px-1.5 py-0.5 text-[9px] font-medium text-background hover:bg-foreground/85"
+                            >
+                              Install
+                            </a>
+                          )}
                         </span>
                       </div>
                     ))}
@@ -574,15 +651,28 @@ export function StatusBar() {
           )}
         </div>
         {currentPath && (
-          <span>
-            {saveStatus === "saving"
-              ? "Saving..."
-              : saveStatus === "saved"
-              ? "Saved"
-              : saveStatus === "error"
-              ? "Save failed"
-              : "Ready"}
-          </span>
+          saveStatus === "error" ? (
+            // Audit #126: clickable retry instead of forcing the user to
+            // type a character to re-trigger autosave. Successful retry
+            // flashes "Saved" via the existing 2s status flow.
+            <button
+              type="button"
+              onClick={() => void retrySave()}
+              title="Click to retry the failed save"
+              aria-label="Save failed — click to retry"
+              className="rounded-md px-1.5 py-0.5 text-red-500 transition-colors hover:bg-red-500/10 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+            >
+              Save failed — retry
+            </button>
+          ) : (
+            <span title="Force save: ⌘S">
+              {saveStatus === "saving"
+                ? "Saving..."
+                : saveStatus === "saved"
+                ? "Saved"
+                : "Ready"}
+            </span>
+          )
         )}
         {pullStatus === "pulling" && (
           <span className="flex items-center gap-1 text-blue-400">
@@ -627,82 +717,179 @@ export function StatusBar() {
             Update {update.latest.version} available
           </button>
         )}
-        <span className="flex items-center gap-1">
-          <GitBranch className="h-3 w-3" />
-          {uncommitted > 0 ? `${uncommitted} uncommitted` : "All committed"}
-        </span>
+        {/* Audit #015: clickable so users can see *what* is uncommitted
+            (file list popover) instead of guessing what the count refers
+            to. The dropdown is read-only — committing still goes through
+            the agent flow or `git` directly. */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => uncommitted > 0 && setShowUncommittedPopup((v) => !v)}
+            disabled={uncommitted === 0}
+            aria-label={
+              uncommitted > 0
+                ? `${uncommitted} uncommitted files — click to see the list`
+                : "All committed"
+            }
+            title={uncommitted > 0 ? "Click to see uncommitted files" : "All committed"}
+            className="flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted hover:text-foreground disabled:cursor-default disabled:hover:bg-transparent disabled:hover:text-current"
+          >
+            <GitBranch className="h-3 w-3" />
+            {uncommitted > 0 ? `${uncommitted} uncommitted` : "All committed"}
+          </button>
+          {showUncommittedPopup && uncommitted > 0 && (
+            <div className="absolute bottom-full left-0 mb-2 z-50 w-80 rounded-lg border border-border bg-background p-2 shadow-lg">
+              <div className="mb-1.5 flex items-center justify-between gap-2 border-b border-border/60 pb-1.5">
+                <span className="text-[11px] font-medium text-foreground/80">
+                  {uncommitted} uncommitted file{uncommitted === 1 ? "" : "s"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowUncommittedPopup(false)}
+                  aria-label="Close"
+                  className="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+              <ul className="max-h-64 overflow-y-auto pr-1 text-[10.5px]">
+                {uncommittedFiles.map((f) => (
+                  <li key={`${f.status}:${f.path}`} className="flex items-center gap-1.5 py-0.5">
+                    <span
+                      className={`inline-flex h-3.5 w-4 shrink-0 items-center justify-center rounded font-mono text-[9px] font-semibold ${
+                        f.status === "M" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                        : f.status === "?" ? "bg-blue-500/15 text-blue-600 dark:text-blue-400"
+                        : f.status === "A" ? "bg-green-500/15 text-green-600 dark:text-green-400"
+                        : f.status === "D" ? "bg-red-500/15 text-red-600 dark:text-red-400"
+                        : "bg-violet-500/15 text-violet-600 dark:text-violet-400"
+                      }`}
+                      title={describeUncommittedStatus(f.status)}
+                    >
+                      {f.status}
+                    </span>
+                    <span className="truncate font-mono text-foreground/80" title={f.path}>
+                      {f.path}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {uncommittedTruncated && (
+                <p className="mt-1 border-t border-border/60 pt-1 text-[10px] text-muted-foreground">
+                  Only the first {uncommittedFiles.length} files shown — run{" "}
+                  <code className="rounded bg-muted px-1 py-0.5">git status</code>{" "}
+                  for the full list.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+        {isGitRepo && (
+          <button
+            onClick={pullAndRefresh}
+            disabled={pulling}
+            aria-label="Pull latest changes from GitHub and refresh"
+            className="flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
+            title="Pull latest from GitHub & refresh"
+          >
+            <RefreshCw className={`h-3 w-3 ${pulling ? "animate-spin" : ""}`} />
+            Sync
+          </button>
+        )}
         <button
-          onClick={pullAndRefresh}
-          disabled={pulling}
-          aria-label="Pull latest changes from GitHub and refresh"
-          className="flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
-          title="Pull latest from GitHub & refresh"
+          onClick={toggleTerminal}
+          aria-label={terminalOpen ? "New terminal tab" : "Open terminal"}
+          title={terminalOpen ? "New terminal tab" : "Open terminal"}
+          className={`flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1 ${terminalOpen ? "text-primary" : ""}`}
         >
-          <RefreshCw className={`h-3 w-3 ${pulling ? "animate-spin" : ""}`} />
-          Sync
+          <Terminal className="h-3 w-3" />
+          Terminal
         </button>
       </div>
-      <div className="flex items-center gap-1.5">
+      {/* Audit #018: status-bar carries live state on the left (status pill,
+          uncommitted, save state, sync). Help / Discord / Contribute /
+          Stars used to live as four separate pills competing visually with
+          the live state. They're now collapsed into a single Help & community
+          popover so the status bar stays readable at a glance. */}
+      <div className="relative flex items-center">
         <button
           type="button"
-          onClick={() => setSection({ type: "help" })}
-          aria-label="Open the Help page"
-          title="Help — demos, videos, and guides"
+          onClick={() => setShowCommunityPopup((v) => !v)}
+          aria-label="Open Help & community menu"
+          aria-expanded={showCommunityPopup}
+          title="Help & community"
           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/55 px-2.5 py-1 text-muted-foreground transition-all hover:-translate-y-px hover:border-foreground/15 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
         >
           <HelpCircle className="h-3.5 w-3.5" />
           <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
             Help
           </span>
+          {displayStars !== null && (
+            <span className="-mr-0.5 inline-flex items-center gap-0.5 rounded-full bg-amber-500/15 px-1.5 py-px text-[9px] font-semibold text-amber-700 dark:text-amber-300">
+              <Star className="h-2.5 w-2.5 fill-current" />
+              {formatGithubStars(displayStars)}
+            </span>
+          )}
         </button>
-        <a
-          href={DISCORD_SUPPORT_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open Discord for support and feedback"
-          title="Support and feedback on Discord"
-          className="inline-flex items-center gap-1.5 rounded-full border border-[#5865F2]/20 bg-[#5865F2]/10 px-2.5 py-1 text-[#5865F2] transition-all hover:-translate-y-px hover:border-[#5865F2]/35 hover:bg-[#5865F2]/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
-        >
-          <DiscordIcon className="h-3.5 w-3.5" />
-          <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
-            Chat
-          </span>
-        </a>
-        <a
-          href={GITHUB_REPO_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open the Cabinet GitHub repository to contribute"
-          title="Contribute on GitHub"
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/55 px-2.5 py-1 transition-all hover:-translate-y-px hover:border-foreground/15 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
-        >
-          <GitHubIcon className="h-3.5 w-3.5" />
-          <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
-            Contribute
-          </span>
-        </a>
-        <a
-          href={GITHUB_REPO_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={
-            displayStars === null
-              ? "Star Cabinet on GitHub"
-              : `Star Cabinet on GitHub (${formatGithubStars(displayStars)} stars)`
-          }
-          title={
-            displayStars === null
-              ? "Star on GitHub"
-              : `Star on GitHub (${formatGithubStars(displayStars)} stars)`
-          }
-          className="relative inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-amber-700 transition-all hover:-translate-y-px hover:border-amber-500/35 hover:bg-amber-500/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1 dark:text-amber-300"
-        >
-          {starsExploding && <StarExplosion />}
-          <Star className="h-3.5 w-3.5 fill-current" />
-          <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
-            {displayStars === null ? "Star" : `${formatGithubStars(displayStars)} stars`}
-          </span>
-        </a>
+        {showCommunityPopup && (
+          <div className="absolute bottom-full right-0 mb-2 z-50 w-64 rounded-lg border border-border bg-background p-1.5 shadow-lg">
+            <button
+              type="button"
+              onClick={() => {
+                setSection({ type: "help" });
+                setShowCommunityPopup(false);
+              }}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
+            >
+              <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="flex flex-col">
+                <span className="font-medium text-foreground">Help</span>
+                <span className="text-[10px] text-muted-foreground">Demos, videos, and guides</span>
+              </span>
+            </button>
+            <a
+              href={DISCORD_SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setShowCommunityPopup(false)}
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
+            >
+              <DiscordIcon className="h-3.5 w-3.5 text-[#5865F2]" />
+              <span className="flex flex-col">
+                <span className="font-medium text-foreground">Chat on Discord</span>
+                <span className="text-[10px] text-muted-foreground">Support and feedback</span>
+              </span>
+            </a>
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setShowCommunityPopup(false)}
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
+            >
+              <GitHubIcon className="h-3.5 w-3.5 text-foreground" />
+              <span className="flex flex-col">
+                <span className="font-medium text-foreground">Contribute on GitHub</span>
+                <span className="text-[10px] text-muted-foreground">Source, issues, PRs</span>
+              </span>
+            </a>
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setShowCommunityPopup(false)}
+              className="relative flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
+            >
+              {starsExploding && <StarExplosion />}
+              <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+              <span className="flex flex-col">
+                <span className="font-medium text-foreground">
+                  {displayStars === null ? "Star Cabinet" : `${formatGithubStars(displayStars)} stars`}
+                </span>
+                <span className="text-[10px] text-muted-foreground">If you find it useful</span>
+              </span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -295,6 +295,7 @@ export function TasksBoard({
               onClick={() => setTriggerFilter("manual")}
               icon={<Bot className="size-3" />}
               tone="sky"
+              title="Manual — tasks you launched directly"
             >
               Manual
             </TriggerChip>
@@ -303,6 +304,7 @@ export function TasksBoard({
               onClick={() => setTriggerFilter("job")}
               icon={<Clock3 className="size-3" />}
               tone="emerald"
+              title="Jobs — scheduled recurring runs"
             >
               Jobs
             </TriggerChip>
@@ -311,6 +313,7 @@ export function TasksBoard({
               onClick={() => setTriggerFilter("heartbeat")}
               icon={<HeartPulse className="size-3" />}
               tone="pink"
+              title="Heartbeat — self-directed agent runs"
             >
               Heartbeat
             </TriggerChip>
@@ -402,6 +405,7 @@ export function TasksBoard({
                 }. This can't be undone.`,
                 confirmLabel: `Delete ${count}`,
                 destructive: true,
+                typedConfirmation: "DELETE",
                 onConfirm: async () => {
                   const ids = new Set(toDelete.map((t) => t.id));
                   await Promise.all(

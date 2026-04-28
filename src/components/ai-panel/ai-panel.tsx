@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { Button } from "@/components/ui/button";
 import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { useEditorStore } from "@/stores/editor-store";
@@ -219,9 +220,12 @@ export function AIPanel() {
     const restore = async () => {
       useAIPanelStore.getState().restoreSessionsFromStorage();
 
-      // Check which restored sessions are still alive on the terminal server
+      // Check which restored sessions are still alive on the terminal server.
+      // Audit #104: route through dedupFetch so React 18 StrictMode's
+      // double-mount in dev (and any sibling caller racing on the same
+      // tick) collapses to one network request.
       try {
-        const res = await fetch("/api/daemon/sessions");
+        const res = await dedupFetch("/api/daemon/sessions", undefined, { ttlMs: 1500 });
         if (res.ok) {
           const serverSessions: { id: string; exited: boolean }[] = await res.json();
           const aliveIds = new Set(serverSessions.filter((s) => !s.exited).map((s) => s.id));

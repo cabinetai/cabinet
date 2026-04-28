@@ -243,7 +243,7 @@ export function KanbanView({
   // manual toggle in between transitions still sticks.
   const [collapsedCsv, setCollapsedCsv] = usePersistentState<string>(
     "cabinet.tasks.v2.collapsedLanes",
-    "archive,running",
+    "archive",
     (raw) => raw
   );
   const collapsedLanes: Set<LaneKey> = new Set(
@@ -414,23 +414,9 @@ export function KanbanView({
                     strategy={verticalListSortingStrategy}
                   >
                     {items.length === 0 ? (
-                      isInbox && onAddTask ? (
-                        <button
-                          type="button"
-                          onClick={onAddTask}
-                          className="group flex flex-col items-center gap-1.5 rounded-md border border-dashed border-border/50 px-3 py-5 text-center text-muted-foreground transition-colors hover:border-foreground/40 hover:bg-muted/40 hover:text-foreground"
-                        >
-                          <Plus className="size-4 transition-transform group-hover:scale-110" />
-                          <span className="text-[11.5px] font-medium">New task</span>
-                          <span className="text-[10.5px] text-muted-foreground/70">
-                            {lane.hint}
-                          </span>
-                        </button>
-                      ) : (
-                        <div className="rounded-md border border-dashed border-border/50 px-3 py-4 text-center text-[11px] text-muted-foreground">
+                      <div className="rounded-md border border-dashed border-border/50 px-3 py-4 text-center text-[11px] text-muted-foreground">
                           {lane.hint}
                         </div>
-                      )
                     ) : (
                       items.map((task) => (
                         <SortableTaskCard

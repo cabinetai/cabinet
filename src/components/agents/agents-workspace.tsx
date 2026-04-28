@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bot,
-  CheckCircle2,
   ChevronDown,
   Copy,
   Clock3,
@@ -23,10 +22,10 @@ import {
   Settings,
   Trash2,
   X,
-  XCircle,
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -54,7 +53,6 @@ import { AgentAvatar } from "@/components/agents/agent-avatar";
 import { HeartbeatRow, RoutineRow } from "@/components/agents/schedule-row";
 import {
   appendConversationCabinetPath,
-  buildConversationInstanceKey,
 } from "@/lib/agents/conversation-identity";
 import { cronToHuman } from "@/lib/agents/cron-utils";
 import { SchedulePicker } from "@/components/mission-control/schedule-picker";
@@ -97,8 +95,6 @@ import {
   resolveAdapterTypeForProvider,
 } from "@/lib/agents/adapter-options";
 
-type TriggerFilter = "all" | "manual" | "job" | "heartbeat";
-type StatusFilter = "all" | "running" | "completed" | "failed";
 type MainPanelMode = "composer" | "conversation" | "settings";
 type SettingsTarget = "directory" | string | null;
 
@@ -266,68 +262,11 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function useHorizontalResize(initialWidth: number, minWidth: number, maxWidth: number, direction: "left" | "right" = "left") {
-  const [width, setWidth] = useState(initialWidth);
-  const dragStateRef = useRef<{ startX: number; startWidth: number } | null>(null);
-
-  useEffect(() => {
-    function handlePointerMove(event: PointerEvent) {
-      if (!dragStateRef.current) return;
-      const delta = event.clientX - dragStateRef.current.startX;
-      const nextWidth =
-        dragStateRef.current.startWidth + (direction === "right" ? -delta : delta);
-      setWidth(clamp(nextWidth, minWidth, maxWidth));
-    }
-
-    function handlePointerUp() {
-      dragStateRef.current = null;
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    }
-
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
-
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", handlePointerUp);
-    };
-  }, [maxWidth, minWidth]);
-
-  function startResize(event: ReactPointerEvent<HTMLDivElement>) {
-    dragStateRef.current = { startX: event.clientX, startWidth: width };
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
-  }
-
-  return { width, startResize };
-}
-
-function formatRelative(iso: string): string {
-  const delta = Date.now() - new Date(iso).getTime();
-  const minutes = Math.floor(delta / 60000);
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
-}
-
 function formatTimestamp(iso?: string): string {
   if (!iso) return "Not available";
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
   return date.toLocaleString();
-}
-
-function triggerFromFilter(filter: TriggerFilter): ConversationMeta["trigger"] | undefined {
-  if (filter === "all") return undefined;
-  return filter;
-}
-
-function statusFromFilter(filter: StatusFilter): ConversationMeta["status"] | undefined {
-  if (filter === "all") return undefined;
-  return filter;
 }
 
 async function readErrorMessage(
@@ -340,30 +279,6 @@ async function readErrorMessage(
   } catch {
     return fallback;
   }
-}
-
-function TriggerChip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "rounded-full px-2.5 py-1 text-[11px] transition-colors",
-        active
-          ? "bg-primary text-primary-foreground"
-          : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-      )}
-    >
-      {children}
-    </button>
-  );
 }
 
 function TriggerIcon({
@@ -416,8 +331,6 @@ export function AgentsWorkspace({
 }) {
   const [agents, setAgents] = useState<AgentListItem[]>([]);
   const [conversations, setConversations] = useState<ConversationMeta[]>([]);
-  const [conversationsLoading, setConversationsLoading] = useState(true);
-  const [hasLoadedConversations, setHasLoadedConversations] = useState(false);
   const [mode, setMode] = useState<MainPanelMode>("composer");
   const [activeAgentSlug, setActiveAgentSlug] = useState<string | null>(
     selectedScope === "agent" ? selectedAgentSlug || null : null
@@ -436,8 +349,6 @@ export function AgentsWorkspace({
   const [defaultProvider, setDefaultProvider] = useState("claude-code");
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [jobDraft, setJobDraft] = useState<JobConfig | null>(null);
-  const [triggerFilter, setTriggerFilter] = useState<TriggerFilter>("all");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [creatingAgent, setCreatingAgent] = useState(false);
   const [deletingAgent, setDeletingAgent] = useState(false);
   const [newAgentDraft, setNewAgentDraft] = useState<NewAgentDraft>(DEFAULT_NEW_AGENT);
@@ -461,13 +372,11 @@ export function AgentsWorkspace({
   const [savingSettings, setSavingSettings] = useState(false);
   const [savingJob, setSavingJob] = useState(false);
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
-  const [hoveredConvKey, setHoveredConvKey] = useState<string | null>(null);
   const [quickSendAgent, setQuickSendAgent] = useState<string | null>(null);
   const [taskRuntime, setTaskRuntime] = useState<TaskRuntimeSelection>({});
   const [handoffOpen, setHandoffOpen] = useState(false);
   const [handoffMode, setHandoffMode] = useState<StartWorkMode>("recurring");
   const [handoffAgentSlug, setHandoffAgentSlug] = useState<string | null>(null);
-  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [runningJobId, setRunningJobId] = useState<string | null>(null);
   const [agentJobsMap, setAgentJobsMap] = useState<Record<string, JobConfig[]>>({});
   const [orgChartJobDialog, setOrgChartJobDialog] = useState<{
@@ -488,7 +397,6 @@ export function AgentsWorkspace({
   const [orgChartHeartbeatRunning, setOrgChartHeartbeatRunning] = useState(false);
   const [orgChartHeartbeatSaving, setOrgChartHeartbeatSaving] = useState(false);
   const lastSavedSettingsRef = useRef<string | null>(null);
-  const conversationsPanel = useHorizontalResize(340, 260, 520, "right");
   const treeNodes = useTreeStore((state) => state.nodes);
   const section = useAppStore((state) => state.section);
   const setSection = useAppStore((state) => state.setSection);
@@ -705,9 +613,6 @@ export function AgentsWorkspace({
   }
 
   async function refreshConversations() {
-    if (!hasLoadedConversations) {
-      setConversationsLoading(true);
-    }
     try {
       const params = new URLSearchParams();
       if (activeAgentSlug) params.set("agent", activeAgentSlug);
@@ -717,22 +622,19 @@ export function AgentsWorkspace({
           params.set("visibilityMode", effectiveVisibilityMode);
         }
       }
-      const trigger = triggerFromFilter(triggerFilter);
-      const status = statusFromFilter(statusFilter);
-      if (trigger) params.set("trigger", trigger);
-      if (status) params.set("status", status);
       params.set("limit", "200");
 
-      const response = await fetch(`/api/agents/conversations?${params.toString()}`);
+      const response = await dedupFetch(
+        `/api/agents/conversations?${params.toString()}`,
+        undefined,
+        { ttlMs: 1500 }
+      );
       if (response.ok) {
         const data = await response.json();
         setConversations((data.conversations || []) as ConversationMeta[]);
       }
     } catch {
       // Ignore transient startup/network failures.
-    } finally {
-      setConversationsLoading(false);
-      setHasLoadedConversations(true);
     }
   }
 
@@ -835,7 +737,7 @@ export function AgentsWorkspace({
 
   useEffect(() => {
     void refreshConversations();
-  }, [activeAgentSlug, triggerFilter, statusFilter]);
+  }, [activeAgentSlug]);
 
   useEffect(() => {
     void refreshLibrary();
@@ -852,7 +754,7 @@ export function AgentsWorkspace({
       void refreshAgents();
     }, 3000);
     return () => clearInterval(interval);
-  }, [activeAgentSlug, triggerFilter, statusFilter, conversations]);
+  }, [activeAgentSlug]);
 
   // Re-fetch when cabinet visibility mode changes (separate effect to keep dep array sizes stable)
   useEffect(() => {
@@ -887,8 +789,6 @@ export function AgentsWorkspace({
     setSelectedConversationCabinetPath(pendingConvId ? section.cabinetPath : undefined);
     setSelectedConversation(null);
     setSettingsTarget(selectedScope === "agent" ? selectedAgentSlug || null : null);
-    setHasLoadedConversations(false);
-    setConversationsLoading(true);
     if (pendingConvId) {
       setMode("conversation");
     } else {
@@ -1734,9 +1634,6 @@ export function AgentsWorkspace({
       : null;
   const activeConversationMeta =
     activeSelectedConversation?.meta || selectedConversationMeta || null;
-  const activeAgent = activeAgentSlug
-    ? agents.find((agent) => agent.slug === activeAgentSlug) || null
-    : null;
   const settingsAgent = settingsAgentSlug
     ? agents.find((agent) => agent.slug === settingsAgentSlug) || null
     : null;
@@ -2223,217 +2120,7 @@ export function AgentsWorkspace({
   }
 
   return (
-    <div className="flex flex-1 flex-row-reverse overflow-hidden">
-      <div
-        className="shrink-0 bg-background"
-        style={{ width: conversationsPanel.width }}
-      >
-        <div className="border-b border-border px-4 py-3">
-          <div className="flex items-start justify-between gap-3">
-            {activeAgent ? (
-              <button
-                onClick={() => openAgentSettings(activeAgent.slug)}
-                className="rounded-xl bg-muted/40 px-3 py-2 text-left transition-colors hover:bg-muted/60"
-              >
-                <h3 className="text-[14px] font-semibold">
-                  {activeAgent.name}
-                </h3>
-                <p className="text-[11px] text-muted-foreground">
-                  {`Recent runs for ${activeAgent.name}`}
-                </p>
-              </button>
-            ) : (
-              <div
-                className="rounded-xl bg-muted/40 px-3 py-2"
-              >
-                <h3 className="text-[14px] font-semibold">All agents</h3>
-                <p className="text-[11px] text-muted-foreground">
-                  Recent runs across your whole team
-                </p>
-              </div>
-            )}
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => {
-                void refreshAgents();
-                void refreshConversations();
-              }}
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {(["all", "manual", "job", "heartbeat"] as TriggerFilter[]).map((filter) => (
-              <TriggerChip
-                key={filter}
-                active={triggerFilter === filter}
-                onClick={() => setTriggerFilter(filter)}
-              >
-                {filter === "all" ? (
-                  "All"
-                ) : filter === "job" ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <TriggerIcon trigger="job" />
-                    Jobs
-                  </span>
-                ) : filter === "heartbeat" ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <TriggerIcon trigger="heartbeat" />
-                    Heartbeat
-                  </span>
-                ) : (
-                  "Manual"
-                )}
-              </TriggerChip>
-            ))}
-          </div>
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {(["all", "running", "completed", "failed"] as StatusFilter[]).map((filter) => (
-              <TriggerChip
-                key={filter}
-                active={statusFilter === filter}
-                onClick={() => setStatusFilter(filter)}
-              >
-                {filter === "all" ? "Any status" : filter[0].toUpperCase() + filter.slice(1)}
-              </TriggerChip>
-            ))}
-          </div>
-        </div>
-        <ScrollArea className="h-[calc(100vh-115px)]">
-          <div>
-            {conversationsLoading && conversations.length > 0 ? (
-              <div className="flex items-center gap-2 px-3 py-6 text-[12px] text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading conversations...
-              </div>
-            ) : !hasLoadedConversations && conversations.length === 0 ? (
-              <div className="px-3 py-8" />
-            ) : conversations.length === 0 ? (
-              <div className="animate-in fade-in duration-300 px-3 py-8 text-[12px] text-muted-foreground">
-                No conversations yet.
-              </div>
-            ) : (
-              conversations.map((conversation) => {
-                const agent = agents.find((entry) => entry.slug === conversation.agentSlug);
-                const editedPagePath =
-                  conversation.agentSlug === "editor"
-                    ? conversation.mentionedPaths[0] || ""
-                    : "";
-                const conversationKey = buildConversationInstanceKey(conversation);
-                const isSelected =
-                  selectedConversationId === conversation.id &&
-                  (selectedConversationCabinetPath || "") === (conversation.cabinetPath || "");
-
-                return (
-                  <button
-                    key={conversationKey}
-                    onClick={() => {
-                      setSelectedConversationId(conversation.id);
-                      setSelectedConversationCabinetPath(conversation.cabinetPath);
-                      setMode("conversation");
-                    }}
-                    onPointerEnter={() => {
-                      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
-                      hoverTimerRef.current = setTimeout(
-                        () => setHoveredConvKey(conversationKey),
-                        1000
-                      );
-                    }}
-                    onPointerLeave={() => {
-                      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
-                      hoverTimerRef.current = null;
-                      setHoveredConvKey((prev) => (prev === conversationKey ? null : prev));
-                    }}
-                    className={cn(
-                      "relative flex w-full items-start gap-2 border-b border-border/70 px-3 py-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
-                      isSelected ? "bg-primary/5" : "hover:bg-accent/35"
-                    )}
-                  >
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary transition-opacity",
-                        isSelected ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    <div className="mt-0.5 shrink-0">
-                      {conversation.status === "running" ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-500" />
-                      ) : conversation.status === "failed" ? (
-                        <XCircle className="h-3.5 w-3.5 text-destructive" />
-                      ) : (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="truncate text-[11.5px] font-medium leading-[1.35] text-foreground">
-                          {conversation.title}
-                        </p>
-                        <div className="flex shrink-0 items-center gap-1">
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            aria-label="Delete conversation"
-                            title="Delete conversation"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              void deleteConversation(conversation.id, conversation.cabinetPath);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.stopPropagation();
-                                void deleteConversation(conversation.id, conversation.cabinetPath);
-                              }
-                            }}
-                            className={cn(
-                              "inline-flex h-5.5 w-5.5 items-center justify-center rounded-full text-muted-foreground transition-opacity hover:text-destructive",
-                              hoveredConvKey === conversationKey ? "opacity-100" : "opacity-0"
-                            )}
-                          >
-                            <Trash2 className="h-2.75 w-2.75" />
-                          </span>
-                          <span
-                            aria-label={TRIGGER_LABELS[conversation.trigger]}
-                            title={TRIGGER_LABELS[conversation.trigger]}
-                            className={cn(
-                              "inline-flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full",
-                              TASK_CARD_TRIGGER_STYLES[conversation.trigger]
-                            )}
-                          >
-                            <TriggerIcon trigger={conversation.trigger} className="h-2.75 w-2.75" />
-                          </span>
-                        </div>
-                      </div>
-                      {editedPagePath ? (
-                        <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
-                          edited: {editedPagePath}
-                        </p>
-                      ) : null}
-                      <div className="mt-0.5 flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
-                        <p className="truncate">{agent?.name || conversation.agentSlug}</p>
-                        <span className="shrink-0">{formatRelative(conversation.startedAt)}</span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </ScrollArea>
-      </div>
-
-      <div className="relative z-10 w-px shrink-0 bg-border">
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          aria-label="Resize conversations panel"
-          onPointerDown={conversationsPanel.startResize}
-          className="absolute inset-y-0 left-1/2 w-3 -translate-x-1/2 cursor-col-resize bg-transparent"
-        />
-      </div>
-
+    <div className="flex flex-1 overflow-hidden">
       <div className="min-h-0 flex-1 overflow-hidden">
         {mode === "conversation" && activeConversationMeta ? (
           <div className="flex h-full min-h-0 flex-col">
@@ -3335,61 +3022,26 @@ export function AgentsWorkspace({
 
                   {/* Jobs */}
                   <div className="space-y-2">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="space-y-1">
-                        <h3 className="inline-flex items-center gap-2 text-[16px] font-semibold tracking-tight text-foreground">
-                          <Clock3 className="size-4 text-emerald-400" />
-                          Routines
-                          <span className="text-[12px] font-normal text-muted-foreground">
-                            ({allJobs.length})
-                          </span>
-                        </h3>
-                        <p className="text-[12px] text-muted-foreground">
-                          Every routine this team runs on a schedule. Click any
-                          row to edit its prompt, schedule, or pause it.
-                        </p>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          className={cn(
-                            "inline-flex h-9 items-center gap-2 rounded-lg border border-border/70 bg-background px-3 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/50 disabled:pointer-events-none disabled:opacity-50"
-                          )}
-                          disabled={agents.length === 0}
-                        >
-                          <Plus className="size-3.5" />
-                          Add scheduled job
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="max-h-[320px] overflow-y-auto scrollbar-thin p-1">
-                          <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                            Assign to
-                          </div>
-                          {agents.map((agent) => (
-                            <DropdownMenuItem
-                              key={agent.scopedId ?? (agent.cabinetPath ? `${agent.cabinetPath}::${agent.slug}` : agent.slug)}
-                              onClick={() => openNewRoutineFor(agent)}
-                              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[12px]"
-                            >
-                              <AgentAvatar agent={agent} shape="circle" size="md" />
-                              <span className="flex min-w-0 flex-col leading-tight">
-                                <span className="truncate text-[12px] font-medium text-foreground">
-                                  {agent.name}
-                                </span>
-                                <span className="truncate text-[10px] text-muted-foreground">
-                                  {agent.role || agent.slug}
-                                </span>
-                              </span>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <div className="space-y-1">
+                      <h3 className="inline-flex items-center gap-2 text-[16px] font-semibold tracking-tight text-foreground">
+                        <Clock3 className="size-4 text-emerald-400" />
+                        Routines
+                        <span className="text-[12px] font-normal text-muted-foreground">
+                          ({allJobs.length})
+                        </span>
+                      </h3>
+                      <p className="text-[12px] text-muted-foreground">
+                        Every routine this team runs on a schedule. Click any
+                        row to edit its prompt, schedule, or pause it.
+                      </p>
                     </div>
                     {allJobs.length === 0 ? (
                       <p className="rounded-lg border border-dashed border-border/60 px-4 py-6 text-center text-[13px] text-muted-foreground">
                         No routines yet. Use{" "}
                         <span className="font-semibold text-foreground">
-                          Add scheduled job
+                          Add routine
                         </span>{" "}
-                        to create your first one.
+                        above to create your first one.
                       </p>
                     ) : (
                       <ul className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border/70 bg-card">

@@ -10,21 +10,27 @@ import { useEditorStore } from "@/stores/editor-store";
 /**
  * Sync app navigation state with URL hash + localStorage persistence.
  *
- * Hash format:
+ * Canonical hash forms (audit #121 — single taxonomy, every URL is
+ * cabinet-scoped):
+ *
  *   #/home
  *   #/cabinet/{cabinetPath}
- *   #/cabinet/{cabinetPath}/agents
- *   #/cabinet/{cabinetPath}/tasks
- *   #/cabinet/{cabinetPath}/agents/{slug}
- *   #/cabinet/{cabinetPath}/tasks/{taskId}
  *   #/cabinet/{cabinetPath}/data/{pagePath}
- *   #/page/{pagePath}
+ *   #/cabinet/{cabinetPath}/agents
+ *   #/cabinet/{cabinetPath}/agents/{slug}
+ *   #/cabinet/{cabinetPath}/tasks
+ *   #/cabinet/{cabinetPath}/tasks/{taskId}
  *   #/settings
  *   #/settings/{slug}
  *   #/help
  *
- * Scope is always a cabinet. Root uses cabinetPath = "." (ROOT_CABINET_PATH);
- * breadth is controlled by CabinetVisibilityMode stored per-cabinet.
+ * The root cabinet uses `cabinetPath = "."` (ROOT_CABINET_PATH); breadth is
+ * controlled by CabinetVisibilityMode stored per-cabinet.
+ *
+ * Legacy back-compat: `#/page/{pagePath}` is still parsed (it resolves to
+ * the root cabinet's data view) so older bookmarks keep working, but the
+ * builder no longer emits it — the next URL change rewrites the hash to
+ * the canonical form.
  */
 
 const LS_KEY = "cabinet.last-route";
@@ -54,10 +60,11 @@ function buildHash(section: SectionState, pagePath: string | null): string {
   const cabinetPath = section.cabinetPath || ROOT_CABINET_PATH;
 
   if (section.type === "page" && pagePath) {
-    if (section.cabinetPath) {
-      return `#/cabinet/${encodePathSegment(section.cabinetPath)}/data/${encodePathSegment(pagePath)}`;
-    }
-    return `#/page/${encodePathSegment(pagePath)}`;
+    // Always emit the cabinet-scoped form. Pages without an explicit
+    // cabinetPath belong to the root cabinet (`.`). The legacy
+    // `#/page/<pagePath>` shape is still accepted by parseHash for
+    // back-compat with old bookmarks.
+    return `#/cabinet/${encodePathSegment(section.cabinetPath || cabinetPath)}/data/${encodePathSegment(pagePath)}`;
   }
   if (section.type === "cabinet") {
     return `#/cabinet/${encodePathSegment(cabinetPath)}`;
@@ -93,8 +100,11 @@ function parseHash(hash: string): RouteState {
   }
 
   if (parts[0] === "page") {
+    // Legacy form — still accepted so old bookmarks keep working. Resolves
+    // to the root cabinet's data view; the builder rewrites to the
+    // canonical `#/cabinet/./data/<pagePath>` shape on the next URL change.
     return {
-      section: { type: "page" },
+      section: { type: "page", cabinetPath: ROOT_CABINET_PATH },
       pagePath: decodePathSegment(parts.slice(1).join("/")),
     };
   }
@@ -314,6 +324,19 @@ export function useHashRoute() {
 
     suppressHashUpdate.current = true;
     void applyRoute(route).finally(() => {
+      // Audit #121: if we entered via a legacy URL form (`#/page/<x>`,
+      // bare `#agents`, etc.), rewrite the hash to the canonical shape
+      // now. The store subscriber wouldn't fire for this — suppressHash
+      // was true while section + selection were being set — so the URL
+      // would otherwise stay on the legacy form for the user's session.
+      const canonical = buildHash(
+        useAppStore.getState().section,
+        useTreeStore.getState().selectedPath
+      );
+      if (window.location.hash && window.location.hash !== canonical) {
+        window.history.replaceState(null, "", canonical);
+        saveToLocalStorage(canonical);
+      }
       requestAnimationFrame(() => {
         suppressHashUpdate.current = false;
       });

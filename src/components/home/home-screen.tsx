@@ -81,6 +81,16 @@ const QUICK_ACTIONS: QuickAction[] = [
       "Create an interactive webapp inside this cabinet so I can study physics for beginners. Include clear explanations, simple animations where useful, and quick checks for understanding.",
   },
   {
+    label: "Summarise my recent work",
+    prompt:
+      "Read the most recently modified pages in this cabinet and write a concise summary of what I've been working on. Group by theme, note any open threads, and save the result as @Recent Work Summary.",
+  },
+  {
+    label: "Draft a recruiter reply",
+    prompt:
+      "Write a polite, direct reply to a recruiter outreach message. Ask the key qualifying questions (role, comp range, company stage, remote policy) without committing to anything. Keep it under 100 words.",
+  },
+  {
     label: "Map article connections",
     preferredAgents: LEAD_FALLBACKS,
     prompt:
@@ -215,6 +225,8 @@ function RegistryCarousel({
           );
         })}
       </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
     </div>
   );
 }
@@ -528,6 +540,10 @@ export function HomeScreen() {
           topRightOverlay={
             <WhenChip
               mode="now"
+              // Audit #020: home-screen composer has no agent context yet,
+              // so "Heartbeat" doesn't apply. Surface it only on agent
+              // detail / mid-conversation composers.
+              allowHeartbeat={false}
               onChange={(next) => {
                 if (next === "now") return;
                 setHandoffMode(next);
@@ -574,7 +590,7 @@ export function HomeScreen() {
           </h2>
           <button
             onClick={() => setSection({ type: "registry" })}
-            className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+            className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2 cursor-pointer transition-colors"
           >
             Browse all &rarr;
           </button>

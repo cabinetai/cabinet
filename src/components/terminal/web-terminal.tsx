@@ -10,6 +10,7 @@ interface WebTerminalProps {
   themeSurface?: "terminal" | "page";
   providerId?: string;
   adapterType?: string;
+  cwd?: string; // DATA_DIR-relative working directory for shell sessions
   onClose: () => void;
 }
 
@@ -66,6 +67,7 @@ export function WebTerminal({
   displayPrompt,
   providerId,
   adapterType,
+  cwd,
   reconnect,
   themeSurface = "terminal",
   onClose,
@@ -150,6 +152,7 @@ export function WebTerminal({
         if (prompt && !reconnect) params.set("prompt", prompt);
         if (providerId && !reconnect) params.set("providerId", providerId);
         if (adapterType && !reconnect) params.set("adapterType", adapterType);
+        if (cwd && !reconnect) params.set("cwd", cwd);
         if (reconnect) params.set("reconnect", "1");
 
         const wsOrigin =
@@ -381,7 +384,7 @@ export function WebTerminal({
       xtermRef.current = null;
       fitAddonRef.current = null;
     };
-  }, [sessionId, prompt, displayPrompt, providerId, adapterType, reconnect, themeSurface]);
+  }, [sessionId, prompt, displayPrompt, providerId, adapterType, cwd, reconnect, themeSurface]);
 
   const surfaceBackground = themeSurface === "page" ? "var(--background)" : "var(--terminal-bg)";
   const surfaceForeground = themeSurface === "page" ? "var(--foreground)" : "var(--terminal-fg)";

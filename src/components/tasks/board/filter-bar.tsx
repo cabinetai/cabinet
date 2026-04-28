@@ -23,6 +23,7 @@ export function TriggerChip({
   icon,
   tone,
   count,
+  title,
 }: {
   active: boolean;
   onClick: () => void;
@@ -30,11 +31,13 @@ export function TriggerChip({
   icon?: React.ReactNode;
   tone?: "sky" | "emerald" | "pink";
   count?: React.ReactNode;
+  title?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      title={title}
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] transition-colors",
         active
@@ -76,7 +79,10 @@ export function FilterBar({
   if (agents.length === 0) return null;
   return (
     <div className="border-b border-border/60 px-4 py-2 text-[11px]">
-      <div className="flex items-center gap-1.5 overflow-x-auto">
+      {/* Audit #133: hide the chunky native horizontal scrollbar — keeps
+          the scroll behavior, drops the visible track that ate vertical
+          space below the agent chips. */}
+      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
         <span className="inline-flex shrink-0 items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           <Users className="size-3" />
           Agents

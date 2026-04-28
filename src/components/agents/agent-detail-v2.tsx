@@ -21,6 +21,7 @@ import {
   FileCode,
   FileSpreadsheet,
   FileText,
+  FolderOpen,
   HelpCircle,
   Image as ImageIcon,
   Loader2,
@@ -64,7 +65,8 @@ import {
 import { ICON_CATALOG, ICON_PICKER_KEYS } from "@/lib/agents/icon-catalog";
 import { AVATAR_PRESETS } from "@/lib/agents/avatar-catalog";
 import type { AgentPersona } from "@/lib/agents/persona-manager";
-import type { AgentTask } from "@/types/agents";
+import type { AgentTask, ProviderInfo } from "@/types/agents";
+import { isAgentProviderSelectable } from "@/lib/agents/provider-filters";
 import type { ConversationMeta } from "@/types/conversations";
 import type {
   CabinetAgentSummary,
@@ -456,15 +458,17 @@ function TopBar({
 
   return (
     <div className="flex items-center justify-between px-6 pt-4">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-7 text-[12px] gap-1.5 -ml-2 text-muted-foreground"
-        onClick={onBack}
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Back to agents
-      </Button>
+      <nav className="flex items-center gap-1 text-[12px] text-muted-foreground -ml-2">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 rounded-md px-2 py-1 hover:bg-accent hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-3 w-3" />
+          Agents
+        </button>
+        <span aria-hidden>/</span>
+        <span className="px-2 py-1 font-medium text-foreground">{persona.name}</span>
+      </nav>
 
       <div className="flex items-center gap-1">
         <Tooltip>
@@ -1340,7 +1344,7 @@ function RecentWorkSection({
     >
       {top.length === 0 ? (
         <p className="text-[12px] text-muted-foreground py-6 text-center">
-          No edits yet. Files this agent writes to will appear here.
+          No edits yet — run a task to see files written here.
         </p>
       ) : (
         <ul className="space-y-0">
@@ -1548,6 +1552,15 @@ function DetailsSection({
   onSaveField: (field: string, value: string) => void;
   onSaveSkills: (slugs: string[]) => void;
 }) {
+  const [providers, setProviders] = useState<ProviderInfo[]>([]);
+  useEffect(() => {
+    fetch("/api/agents/providers")
+      .then((r) => r.json())
+      .then((d) => setProviders((d.providers as ProviderInfo[]) ?? []))
+      .catch(() => {});
+  }, []);
+  const selectableProviders = providers.filter(isAgentProviderSelectable);
+
   return (
     <Section title="Details">
       {persona.scope === "global" && (
@@ -1594,13 +1607,26 @@ function DetailsSection({
           className="col-span-4"
           onSave={(v) => onSaveField("tags", v)}
         />
-        <Field
-          label="Provider"
-          value={persona.provider}
-          className="col-span-2"
-          mono
-          readOnly
-        />
+        <div className="col-span-2 flex flex-col gap-1 min-w-0">
+          <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+            Provider
+          </label>
+          <select
+            value={persona.provider}
+            onChange={(e) => onSaveField("provider", e.target.value)}
+            className="bg-muted/30 border border-transparent rounded-md px-2.5 py-1.5 text-[12px] font-mono text-foreground outline-none transition-colors hover:border-border/60 focus:border-border focus:bg-background focus:ring-1 focus:ring-primary/30"
+          >
+            {selectableProviders.length === 0 ? (
+              <option value={persona.provider}>{persona.provider}</option>
+            ) : (
+              selectableProviders.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}{p.available ? "" : " (not installed)"}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
         <div className="col-span-6">
           <SkillsMultiSelect
             selected={persona.skills ?? []}
@@ -2462,8 +2488,12 @@ export function AgentDetailV2({
   };
 
   const handleOpenPath = (path: string) => {
-    // Demo route — open the KB page in the main app shell.
-    const hash = `#/page/${path.replace(/^\/+/, "")}`;
+    // Open the KB page in the main app shell using the canonical URL form
+    // (audit #121). Pages with no explicit cabinet context resolve under
+    // the root cabinet (`.`).
+    const cabinet = persona.cabinetPath || ".";
+    const cleanPath = path.replace(/^\/+/, "");
+    const hash = `#/cabinet/${encodeURIComponent(cabinet)}/data/${encodeURIComponent(cleanPath)}`;
     window.location.assign(`/${hash}`);
   };
 

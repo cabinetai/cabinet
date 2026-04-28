@@ -125,7 +125,8 @@ export function Sidebar() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSection({ type: "home" })}
-              className="font-logo text-[22px] italic tracking-[-0.01em] text-foreground hover:text-foreground/80 transition-colors"
+              className="font-logo text-[22px] italic tracking-[-0.01em] text-foreground hover:text-foreground/80 transition-colors cursor-pointer"
+              title="Home"
             >
               cabinet
             </button>
@@ -133,6 +134,8 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Collapse sidebar"
+            title="Collapse sidebar"
             className="h-7 w-7"
             onClick={() => setCollapsed(true)}
           >
@@ -155,7 +158,7 @@ export function Sidebar() {
           {sidebarDrawer === "agents" && (
             <button
               type="button"
-              title="Add Agent"
+              title="New Agent"
               onClick={() => {
                 setSection({
                   type: "agents",
@@ -168,7 +171,7 @@ export function Sidebar() {
               className="flex min-w-0 flex-1 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
             >
               <UserPlus className="h-4 w-4 shrink-0" />
-              <span className="min-w-0 truncate">Add Agent</span>
+              <span className="min-w-0 truncate">New Agent</span>
             </button>
           )}
           {sidebarDrawer === "tasks" && (
@@ -210,8 +213,10 @@ export function Sidebar() {
           <div
             role="separator"
             aria-orientation="vertical"
-            aria-label="Resize sidebar"
+            aria-label="Resize sidebar — double-click to reset"
+            title="Double-click to reset width"
             onPointerDown={startResize}
+            onDoubleClick={() => setSidebarWidth(SIDEBAR_DEFAULT_WIDTH)}
             className="absolute inset-y-0 left-1/2 w-3 -translate-x-1/2 cursor-col-resize bg-transparent"
           />
         </div>
@@ -220,6 +225,8 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="icon"
+          aria-label="Expand sidebar"
+          title="Expand sidebar"
           className={cn(
             "absolute top-3 h-7 w-7",
             isMobile ? "left-3 z-50" : "left-2 z-20"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface PendingConfirm {
@@ -12,6 +12,12 @@ export interface PendingConfirm {
   destructive?: boolean;
   /** Hide the cancel button — use for informational popups with just an OK. */
   infoOnly?: boolean;
+  /**
+   * If set, the user must type this exact string into a verification input
+   * before the confirm button enables. Used for high-blast-radius actions
+   * (bulk delete, etc.) per audit #073.
+   */
+  typedConfirmation?: string;
   onConfirm: () => Promise<void> | void;
 }
 
@@ -27,6 +33,22 @@ export function ConfirmPopover({
   pending: PendingConfirm | null;
   onDismiss: () => void;
 }) {
+  const [typed, setTyped] = useState("");
+  const typedInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Reset the typed-confirmation buffer whenever a new prompt mounts.
+  useEffect(() => {
+    setTyped("");
+  }, [pending?.id]);
+
+  // Autofocus the typed-confirmation input when it appears so the user can
+  // start typing immediately without an extra click.
+  useEffect(() => {
+    if (pending?.typedConfirmation) {
+      typedInputRef.current?.focus();
+    }
+  }, [pending?.id, pending?.typedConfirmation]);
+
   useEffect(() => {
     if (!pending) return;
     function onKey(e: KeyboardEvent) {
@@ -37,6 +59,10 @@ export function ConfirmPopover({
   }, [pending, onDismiss]);
 
   if (!pending) return null;
+
+  const requiresTyping = !!pending.typedConfirmation;
+  const typedMatches =
+    !requiresTyping || typed === pending.typedConfirmation;
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center p-4 sm:items-center">
@@ -51,6 +77,30 @@ export function ConfirmPopover({
             {pending.body}
           </p>
         )}
+        {requiresTyping && (
+          <div className="mt-3 space-y-1.5">
+            <label
+              htmlFor="confirm-typed-input"
+              className="block text-[11.5px] text-muted-foreground"
+            >
+              Type{" "}
+              <span className="rounded-sm bg-muted px-1 py-px font-mono text-[11px] text-foreground">
+                {pending.typedConfirmation}
+              </span>{" "}
+              to confirm
+            </label>
+            <input
+              id="confirm-typed-input"
+              ref={typedInputRef}
+              type="text"
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+              autoComplete="off"
+              spellCheck={false}
+              className="w-full rounded-md border border-border/60 bg-background px-2 py-1 font-mono text-[12px] text-foreground focus:border-border focus:outline-none focus:ring-1 focus:ring-primary/30"
+            />
+          </div>
+        )}
         <div className="mt-4 flex items-center justify-end gap-2">
           {!pending.infoOnly && (
             <button
@@ -63,7 +113,9 @@ export function ConfirmPopover({
           )}
           <button
             type="button"
+            disabled={!typedMatches}
             onClick={async () => {
+              if (!typedMatches) return;
               try {
                 await pending.onConfirm();
               } finally {
@@ -73,8 +125,8 @@ export function ConfirmPopover({
             className={cn(
               "rounded-md px-3 py-1 text-[12px] font-medium",
               pending.destructive
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-foreground text-background hover:bg-foreground/90"
+                ? "bg-red-500 text-white hover:bg-red-600 disabled:bg-red-500/40 disabled:cursor-not-allowed"
+                : "bg-foreground text-background hover:bg-foreground/90 disabled:bg-foreground/40 disabled:cursor-not-allowed"
             )}
           >
             {pending.confirmLabel}

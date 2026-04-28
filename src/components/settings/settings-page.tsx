@@ -69,6 +69,7 @@ import {
 } from "@/hooks/use-user-profile";
 import { ICON_PICKER_KEYS, getIconByKey } from "@/lib/agents/icon-catalog";
 import { AGENT_PALETTE } from "@/lib/themes";
+import { version as pkgVersion } from "../../../package.json";
 import {
   AVATAR_PRESETS,
   AVATAR_CATEGORY_LABEL,
@@ -621,11 +622,12 @@ export function SettingsPage() {
       {/* Tabs */}
       <div className="flex items-center gap-1 px-4 py-2 border-b border-border">
         {tabs.map((t) => (
-          <button
+          <a
             key={t.id}
-            onClick={() => setTab(t.id)}
+            href={`#/settings/${t.id}`}
+            onClick={(e) => { e.preventDefault(); setTab(t.id); }}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors",
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors no-underline",
               tab === t.id
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
@@ -633,7 +635,7 @@ export function SettingsPage() {
           >
             {t.icon}
             {t.label}
-          </button>
+          </a>
         ))}
       </div>
 
@@ -1420,7 +1422,7 @@ export function SettingsPage() {
               <div className="space-y-3 text-[13px]">
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Version</span>
-                  <span className="font-mono">0.2.6</span>
+                  <span className="font-mono">{pkgVersion}</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Framework</span>
@@ -1582,7 +1584,7 @@ export function SettingsPage() {
 function SkillsSettings() {
   // The full library lives in `src/components/skills/skill-library.tsx`.
   // Settings -> Skills is now the canonical surface (no separate /skills
-  // route or sidebar entry — see docs/SKILLS_PLAN.md Wave 11).
+  // route or sidebar entry; see docs/SKILLS_PLAN.md Wave 11).
   return <SkillLibrary />;
 }
 
@@ -1803,6 +1805,28 @@ function IconPicker({
   );
 }
 
+function hexToRgb(hex: string): [number, number, number] | null {
+  const clean = hex.replace(/^#/, "");
+  if (clean.length !== 6) return null;
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
+  return [r, g, b];
+}
+
+function wcagContrastVsWhite(hex: string): number | null {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+  const [rs, gs, bs] = rgb.map((c) => {
+    const v = c / 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  const l = 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  // Avatar fallback uses white icon — only warn when white-on-color contrast is low.
+  return (1.05) / (l + 0.05);
+}
+
 function hexFromPalette(i: number): string {
   const text = AGENT_PALETTE[i].text;
   const m = text.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
@@ -1944,6 +1968,47 @@ function ProfileTab() {
         </div>
       </div>
 
+      {/* Audit #085: Workspace used to live below ~110 avatars + ~120 icons,
+          which buried the more-frequently-edited fields under a wall of
+          decoration. Moved to right after Name/Role so the workspace
+          fields are above the fold and visible before the avatar grid. */}
+      <div className="border-t border-border pt-5">
+        <h3 className="mb-1 text-[13px] font-semibold">Workspace</h3>
+        <p className="mb-4 text-[12px] text-muted-foreground">
+          Captured during onboarding. Agents read these when planning work.
+        </p>
+        <div className="space-y-3">
+          <Field label="Workspace name">
+            <Input
+              value={workspace.workspaceName || ""}
+              onChange={(e) =>
+                update({ workspace: { workspaceName: e.target.value } })
+              }
+              placeholder="My Cabinet"
+            />
+          </Field>
+          <Field label="Description">
+            <textarea
+              value={workspace.description || ""}
+              onChange={(e) =>
+                update({ workspace: { description: e.target.value } })
+              }
+              className="min-h-[72px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              placeholder="What do you do?"
+            />
+          </Field>
+          <Field label="Team size">
+            <Input
+              value={workspace.teamSize || ""}
+              onChange={(e) =>
+                update({ workspace: { teamSize: e.target.value } })
+              }
+              placeholder="Solo / 2–5 / 6–20 / 20+"
+            />
+          </Field>
+        </div>
+      </div>
+
       <div>
         <h4 className="mb-2 text-[12px] font-semibold">Avatar</h4>
         <AvatarPicker
@@ -2024,6 +2089,17 @@ function ProfileTab() {
         <p className="mt-1 text-[11px] text-muted-foreground">
           Tints the fallback avatar when no image is set.
         </p>
+        {(() => {
+          const hex = (profile.color || "").trim();
+          if (!hex) return null;
+          const contrast = wcagContrastVsWhite(hex.startsWith("#") ? hex : `#${hex}`);
+          if (contrast === null || contrast >= 3) return null;
+          return (
+            <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
+              Low contrast ({contrast.toFixed(1)}:1) — initials may be hard to read on this background.
+            </p>
+          );
+        })()}
       </div>
 
       <div>
@@ -2037,44 +2113,7 @@ function ProfileTab() {
         </p>
       </div>
 
-      <div className="border-t border-border pt-5">
-        <h3 className="mb-1 text-[13px] font-semibold">Workspace</h3>
-        <p className="mb-4 text-[12px] text-muted-foreground">
-          Captured during onboarding. Agents read these when planning work.
-        </p>
-        <div className="space-y-3">
-          <Field label="Workspace name">
-            <Input
-              value={workspace.workspaceName || ""}
-              onChange={(e) =>
-                update({ workspace: { workspaceName: e.target.value } })
-              }
-              placeholder="My Cabinet"
-            />
-          </Field>
-          <Field label="Description">
-            <textarea
-              value={workspace.description || ""}
-              onChange={(e) =>
-                update({ workspace: { description: e.target.value } })
-              }
-              className="min-h-[72px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              placeholder="What do you do?"
-            />
-          </Field>
-          <Field label="Team size">
-            <Input
-              value={workspace.teamSize || ""}
-              onChange={(e) =>
-                update({ workspace: { teamSize: e.target.value } })
-              }
-              placeholder="Solo / 2–5 / 6–20 / 20+"
-            />
-          </Field>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2 border-t border-border pt-4">
+      <div className="sticky bottom-0 flex items-center gap-2 border-t border-border bg-background pt-4 pb-2 z-10">
         <Button onClick={() => void save()} disabled={saving} size="sm">
           {saving ? (
             <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />

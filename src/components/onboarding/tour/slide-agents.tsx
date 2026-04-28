@@ -170,9 +170,8 @@ export function SlideAgents() {
           }}
         >
           Each agent has a <span className="font-medium" style={{ color: P.text }}>persona</span>, a{" "}
-          <span className="font-medium" style={{ color: P.text }}>heartbeat</span> that keeps them
-          working in the background, and <span className="font-medium" style={{ color: P.text }}>jobs</span>{" "}
-          you can schedule. Your AI agents get the work done, 24/7. Go be human — they&apos;ll handle the rest.
+          <span className="font-medium" style={{ color: P.text }}>heartbeat</span>, and{" "}
+          <span className="font-medium" style={{ color: P.text }}>scheduled jobs</span>. Your AI agents get the work done, 24/7. Go be human — they&apos;ll handle the rest.
         </p>
       </div>
     </div>

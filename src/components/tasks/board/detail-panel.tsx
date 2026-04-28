@@ -88,7 +88,7 @@ export function DetailPanel({
           type="button"
           onClick={toggleFullscreen}
           className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-          title={fullscreen ? "Shrink (Esc)" : "Enlarge"}
+          title={fullscreen ? "Exit fullscreen" : "Enlarge"}
         >
           {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
         </button>
@@ -100,7 +100,18 @@ export function DetailPanel({
             "rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground",
             muted && "text-foreground"
           )}
-          title={muted ? "Unmute — done runs resurface in Just Finished" : "Mute — done runs go straight to Archive"}
+          // Audit #069: the original "Mute / Unmute" copy looked like a
+          // global preference. Clarify that the toggle scopes to *this
+          // task* only — future runs of this conversation skip the Just
+          // Finished lane and land directly in Archive.
+          title={
+            muted
+              ? "Unmute this task — its done runs will resurface in Just Finished again"
+              : "Mute this task — its done runs go straight to Archive"
+          }
+          aria-label={
+            muted ? "Unmute this task" : "Mute this task — auto-archive done runs"
+          }
         >
           {muted ? <BellOff className="size-4" /> : <Bell className="size-4" />}
         </button>

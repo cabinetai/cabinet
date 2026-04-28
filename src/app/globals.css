@@ -68,7 +68,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.4 0 0);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -82,7 +82,7 @@
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.4 0 0);
   --terminal-bg: color-mix(in oklch, var(--card) 94%, black 6%);
   --terminal-fg: var(--foreground);
   --terminal-cursor: var(--primary);
@@ -417,6 +417,16 @@ html[data-custom-theme] .font-logo,
   width: 100%;
   margin: 1rem 0;
   font-size: 0.875rem;
+  table-layout: fixed;
+}
+
+.tiptap .tableWrapper {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.tiptap .tableWrapper table {
+  margin: 0;
 }
 
 .tiptap th,
@@ -439,6 +449,33 @@ html[data-custom-theme] .font-logo,
 
 .tiptap tr:hover td {
   background: var(--muted);
+}
+
+.tiptap .selectedCell {
+  position: relative;
+}
+
+.tiptap .selectedCell::after {
+  background: color-mix(in oklch, var(--primary) 18%, transparent);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.tiptap .column-resize-handle {
+  background-color: var(--primary);
+  bottom: -1px;
+  pointer-events: none;
+  position: absolute;
+  right: -2px;
+  top: 0;
+  width: 3px;
+}
+
+.tiptap.resize-cursor {
+  cursor: col-resize;
 }
 
 /* Checklist/Task list styles */

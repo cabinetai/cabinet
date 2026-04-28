@@ -213,6 +213,10 @@ async function main() {
       cwd: PROJECT_ROOT,
       stdio: "inherit",
       env: {
+        // Audit #107: telemetry off by default in dev. Explicit user opt-in
+        // via CABINET_TELEMETRY_DISABLED=0 is honored (process.env spread
+        // happens after the default).
+        CABINET_TELEMETRY_DISABLED: "1",
         ...process.env,
         PORT: String(port),
         CABINET_APP_PORT: String(port),

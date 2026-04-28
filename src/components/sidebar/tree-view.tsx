@@ -35,6 +35,8 @@ import {
   SquareKanban,
   Pencil,
   FilePlus,
+  UserPlus,
+  ListPlus,
   FolderOpen,
   GitBranch,
   ClipboardCopy,
@@ -124,7 +126,18 @@ export function TreeView() {
   const tasksExpanded = activeDrawer === "tasks";
   const kbExpanded = activeDrawer === "data";
   const [agents, setAgents] = useState<AgentSummary[]>([]);
-  const [cabinetAgentScopeName, setCabinetAgentScopeName] = useState<string | null>(null);
+  const [cabinetAgentScopeName, setCabinetAgentScopeName] = useState<string | null>(() => {
+    // Audit #027: seed from localStorage on first paint so we don't flash
+    // the bare "Cabinet" placeholder before the cabinet-overview API
+    // responds. The active cabinet path isn't known here yet (depends on
+    // section state), so we read root's name as the initial fallback.
+    if (typeof window === "undefined") return null;
+    try {
+      return window.localStorage.getItem(`cabinet.name.${ROOT_CABINET_PATH}`);
+    } catch {
+      return null;
+    }
+  });
   const [kbSubPageOpen, setKbSubPageOpen] = useState(false);
   const [kbSubPageTitle, setKbSubPageTitle] = useState("");
   const [cabinetDeleteOpen, setCabinetDeleteOpen] = useState(false);
@@ -164,7 +177,15 @@ export function TreeView() {
         cabinetVisibilityMode,
         { force: true }
       );
-      setCabinetAgentScopeName(data.cabinet.name || "Cabinet");
+      // Audit #027: cache the resolved name so the next cold paint can
+      // skip the "Cabinet" flicker before the API responds.
+      const resolved = data.cabinet.name || "Cabinet";
+      try {
+        if (resolved && resolved !== "Cabinet") {
+          localStorage.setItem(`cabinet.name.${activeCabinet?.path || ROOT_CABINET_PATH}`, resolved);
+        }
+      } catch { /* ignore storage failures */ }
+      setCabinetAgentScopeName(resolved);
       setAgents(
         (data.agents || []).map((agent) => ({
           scopedId: agent.scopedId,
@@ -460,6 +481,7 @@ export function TreeView() {
                     id: "data" as DrawerId,
                     label: "Data",
                     icon: BookOpen,
+                    addIcon: FilePlus,
                     onOpen: () => {
                       if (activeCabinet) {
                         openCabinetDataPage(activeCabinet.path);
@@ -488,6 +510,7 @@ export function TreeView() {
                     id: "agents" as DrawerId,
                     label: "Agents",
                     icon: Users,
+                    addIcon: UserPlus,
                     onOpen: () =>
                       setSection({
                         type: "agents",
@@ -509,6 +532,7 @@ export function TreeView() {
                     id: "tasks" as DrawerId,
                     label: "Tasks",
                     icon: SquareKanban,
+                    addIcon: ListPlus,
                     onOpen: () =>
                       setSection({
                         type: "tasks",
@@ -528,6 +552,7 @@ export function TreeView() {
                   },
                 ] as const).map((drawer) => {
                   const Icon = drawer.icon;
+                  const AddIcon = drawer.addIcon;
                   const active = activeDrawer === drawer.id;
                   return (
                     <div key={drawer.id} className="relative group">
@@ -571,7 +596,7 @@ export function TreeView() {
                           aria-label={`Add to ${drawer.label}`}
                           className="absolute right-1 top-1 inline-flex size-4 items-center justify-center rounded text-muted-foreground/70 opacity-0 transition-opacity duration-150 hover:bg-muted hover:text-foreground group-hover:opacity-100"
                         >
-                          <Plus className="h-3 w-3" />
+                          <AddIcon className="h-3 w-3" />
                         </button>
                       )}
                     </div>

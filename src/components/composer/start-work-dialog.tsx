@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, HeartPulse, Repeat, Zap } from "lucide-react";
+import { ChevronDown, HeartPulse, Repeat, X, Zap } from "lucide-react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -356,15 +357,20 @@ export function StartWorkDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        showCloseButton={false}
         className={cn(
           "gap-0 overflow-visible p-0 transition-[max-width] duration-300",
           widthClass
         )}
       >
         <DialogHeader className="px-5 pb-3 pt-5">
-          <div className="flex items-start justify-between gap-3">
-            <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
+          <div className="flex items-start gap-3">
+            <DialogTitle className="flex-1 text-xl font-semibold">{title}</DialogTitle>
             <WhenChip mode={mode} onChange={handleModeChange} />
+            <DialogClose className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
           </div>
         </DialogHeader>
 
@@ -442,9 +448,16 @@ export function StartWorkDialog({
 export function WhenChip({
   mode,
   onChange,
+  allowHeartbeat = true,
 }: {
   mode: StartWorkMode;
   onChange: (next: StartWorkMode) => void;
+  /**
+   * Audit #020: heartbeat is per-agent — surface it only on composers that
+   * already have a specific agent context. The home-screen composer
+   * (free-text prompt with no agent picked yet) hides this option.
+   */
+  allowHeartbeat?: boolean;
 }) {
   const { icon: Icon, label, tone } = modeMeta(mode);
   return (
@@ -473,12 +486,14 @@ export function WhenChip({
           onSelect={() => onChange("recurring")}
           hint="Run this prompt on a schedule"
         />
-        <ModeItem
-          mode="heartbeat"
-          active={mode === "heartbeat"}
-          onSelect={() => onChange("heartbeat")}
-          hint="Wake the agent on its own rhythm"
-        />
+        {allowHeartbeat && (
+          <ModeItem
+            mode="heartbeat"
+            active={mode === "heartbeat"}
+            onSelect={() => onChange("heartbeat")}
+            hint="Wake the agent on its own rhythm"
+          />
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

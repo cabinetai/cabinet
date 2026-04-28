@@ -168,20 +168,40 @@ export async function gitPull(): Promise<{ pulled: boolean; summary: string }> {
   }
 }
 
-export async function getStatus(): Promise<{ uncommitted: number }> {
+export interface UncommittedFile {
+  path: string;
+  /** "M" modified, "?" untracked, "A" added, "D" deleted, "R" renamed. */
+  status: "M" | "?" | "A" | "D" | "R";
+}
+
+const MAX_UNCOMMITTED_LIST = 50;
+
+export async function getStatus(): Promise<{ uncommitted: number; files: UncommittedFile[]; truncated: boolean; isGit: boolean }> {
   const g = await getGit();
-  if (!g) return { uncommitted: 0 };
+  if (!g) return { uncommitted: 0, files: [], truncated: false, isGit: false };
 
   try {
     const status = await g.status();
+    // Audit #015: include the file list so the status bar can show it on
+    // hover/click, not just a bare count. Capped at 50 entries to keep
+    // payloads small; UI surfaces a "+N more" hint when truncated.
+    const files: UncommittedFile[] = [
+      ...status.modified.map((path): UncommittedFile => ({ path, status: "M" })),
+      ...status.not_added.map((path): UncommittedFile => ({ path, status: "?" })),
+      ...status.created.map((path): UncommittedFile => ({ path, status: "A" })),
+      ...status.deleted.map((path): UncommittedFile => ({ path, status: "D" })),
+      ...status.renamed.map((entry): UncommittedFile => ({
+        path: typeof entry === "string" ? entry : entry.to || entry.from,
+        status: "R",
+      })),
+    ];
     return {
-      uncommitted:
-        status.modified.length +
-        status.not_added.length +
-        status.created.length +
-        status.deleted.length,
+      uncommitted: files.length,
+      files: files.slice(0, MAX_UNCOMMITTED_LIST),
+      truncated: files.length > MAX_UNCOMMITTED_LIST,
+      isGit: true,
     };
   } catch {
-    return { uncommitted: 0 };
+    return { uncommitted: 0, files: [], truncated: false, isGit: false };
   }
 }

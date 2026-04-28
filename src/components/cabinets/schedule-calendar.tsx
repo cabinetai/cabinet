@@ -690,6 +690,8 @@ function MonthView({
                     </div>
                   ))}
                 </div>
+              ) : display.length === 0 ? (
+                <span className="text-[9px] text-muted-foreground/30 select-none">—</span>
               ) : (
                 <div className="flex flex-col gap-0.5">
                   {display.map(({ event, count }) => {

@@ -24,27 +24,30 @@ function relTime(fromIso: string | undefined, now: number): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+// Audit #134: badges used to ride saturated 500-tier sky/emerald/pink/
+// violet, which fought the warm paper theme. Now they share a single
+// muted/theme-aware look — the icon shape (Bot / Clock3 / HeartPulse /
+// Sparkles) carries the trigger meaning, and the badge just sits politely
+// on whatever surface the active theme paints.
 const TRIGGER_STYLES: Record<
   NonNullable<TaskMeta["trigger"]>,
   { label: string; className: string }
 > = {
   manual: {
     label: "Manual",
-    className: "bg-sky-500/12 text-sky-600 dark:text-sky-400 ring-1 ring-sky-500/20",
+    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
   },
   job: {
     label: "Job",
-    className:
-      "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20",
+    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
   },
   heartbeat: {
     label: "Heartbeat",
-    className: "bg-pink-500/12 text-pink-600 dark:text-pink-400 ring-1 ring-pink-500/20",
+    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
   },
   agent: {
     label: "Agent",
-    className:
-      "bg-violet-500/12 text-violet-600 dark:text-violet-400 ring-1 ring-violet-500/20",
+    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
   },
 };
 

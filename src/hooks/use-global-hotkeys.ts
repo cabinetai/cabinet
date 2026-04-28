@@ -94,6 +94,13 @@ export function useGlobalHotkeys(): void {
         useTreeStore.getState().toggleHiddenFiles();
         return;
       }
+
+      // Cmd+1/2/3 — switch sidebar drawer (Data / Agents / Tasks)
+      if (!e.shiftKey && !e.altKey) {
+        if (e.key === "1") { e.preventDefault(); useAppStore.getState().setSidebarDrawer("data"); return; }
+        if (e.key === "2") { e.preventDefault(); useAppStore.getState().setSidebarDrawer("agents"); return; }
+        if (e.key === "3") { e.preventDefault(); useAppStore.getState().setSidebarDrawer("tasks"); return; }
+      }
     };
 
     window.addEventListener("keydown", handle);

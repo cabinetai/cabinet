@@ -7,12 +7,14 @@ import { editorExtensions } from "./extensions";
 import { EditorToolbar } from "./editor-toolbar";
 import { SlashCommands } from "./slash-commands";
 import { EditorBubbleMenu } from "./bubble-menu";
+import { TableMenu } from "./table-menu";
 import { useEditorStore } from "@/stores/editor-store";
 import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
 import { detectEmbed } from "@/lib/embeds/detect";
+import { cellAround, isInTable } from "@tiptap/pm/tables";
 import type { TreeNode } from "@/types";
 
 async function uploadFile(pagePath: string, file: File): Promise<string | null> {
@@ -150,6 +152,25 @@ export function KBEditor() {
       attributes: {
         class:
           "focus:outline-none min-h-[calc(100vh-12rem)] px-4 sm:px-8 py-6 max-w-3xl mx-auto",
+      },
+      handleKeyDown: (view, event) => {
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "a" && isInTable(view.state)) {
+          const $cell = cellAround(view.state.selection.$from);
+          const cell = $cell?.nodeAfter;
+          if (!$cell || !cell) return false;
+
+          const from = $cell.pos + 1;
+          const to = $cell.pos + cell.nodeSize - 1;
+          if (view.state.selection.from === from && view.state.selection.to === to) {
+            return false;
+          }
+
+          event.preventDefault();
+          editor?.chain().focus().setTextSelection({ from, to }).run();
+          return true;
+        }
+
+        return false;
       },
       handleClick: (_view, _pos, event) => {
           const target = event.target as HTMLElement;
@@ -402,7 +423,7 @@ export function KBEditor() {
           }`}
         >
           <Code2 className="h-3 w-3" />
-          {sourceMode ? "Preview" : "Source"}
+          {sourceMode ? "Preview" : "Markdown"}
         </button>
       </div>
 
@@ -420,6 +441,7 @@ export function KBEditor() {
           <div className="absolute inset-0 overflow-y-auto" data-editor-scroll>
             <EditorContent editor={editor} />
             <EditorBubbleMenu editor={editor} />
+            <TableMenu editor={editor} />
             <SlashCommands editor={editor} />
 
             {/* AI Edit Prompt */}

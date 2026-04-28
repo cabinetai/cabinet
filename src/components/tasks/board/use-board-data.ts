@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { conversationMetaToTaskMeta } from "@/lib/agents/conversation-to-task-view";
 import type { ConversationMeta } from "@/types/conversations";
 import type { TaskMeta } from "@/types/tasks";
@@ -88,7 +89,13 @@ export function useBoardData({ cabinetPath, visibilityMode = "own" }: Options): 
   const refreshConversations = useCallback(async () => {
     const params = new URLSearchParams({ cabinetPath, limit: "400" });
     if (visibilityMode !== "own") params.set("visibilityMode", visibilityMode);
-    const res = await fetch(`/api/agents/conversations?${params.toString()}`, { cache: "no-store" });
+    // Audit #104: dedupFetch coalesces same-URL races (sidebar Recent
+    // Tasks + this board both fetch on the same tick on cold paint).
+    const res = await dedupFetch(
+      `/api/agents/conversations?${params.toString()}`,
+      { cache: "no-store" },
+      { ttlMs: 1500 }
+    );
     if (!res.ok) throw new Error("conversations fetch failed");
     const data = (await res.json()) as { conversations: ConversationMeta[] };
     if (mountedRef.current) setConversations(data.conversations ?? []);

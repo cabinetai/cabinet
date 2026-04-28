@@ -30,6 +30,7 @@ import { colorAndStyleExtensions } from "./extensions/color-highlight";
 import { DragHandle } from "./extensions/drag-handle";
 import { CabinetMath } from "./extensions/math-extension";
 import { IconExtension } from "./extensions/icon-extension";
+import { HeadingAnchors } from "./extensions/heading-anchors";
 
 // Curated language set: covers ~95% of real-world snippets. The full `common`
 // import bundles 35+ language parsers (~70 kB gzipped) that Cabinet users
@@ -77,7 +78,8 @@ export const editorExtensions = [
     allowBase64: false,
   }),
   Table.configure({
-    resizable: false,
+    resizable: true,
+    lastColumnResizable: false,
     HTMLAttributes: {
       class: "border-collapse w-full",
     },
@@ -138,4 +140,5 @@ export const editorExtensions = [
   IconExtension,
   WikiLink,
   CalloutExtension,
+  HeadingAnchors,
 ];

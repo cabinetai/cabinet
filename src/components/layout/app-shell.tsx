@@ -122,6 +122,8 @@ export function AppShell() {
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const terminalOpen = useAppStore((s) => s.terminalOpen);
+  const terminalPosition = useAppStore((s) => s.terminalPosition);
+  const setTerminalCwd = useAppStore((s) => s.setTerminalCwd);
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
   const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
@@ -176,6 +178,18 @@ export function AppShell() {
   useEffect(() => {
     void loadProviders();
   }, [loadProviders]);
+
+  // Track the last known file context so new terminal tabs open in the right CWD.
+  useEffect(() => {
+    const cabinetPath = section.cabinetPath ?? ".";
+    if (selectedPath) {
+      const lastSlash = selectedPath.lastIndexOf("/");
+      const dir = lastSlash > 0 ? selectedPath.slice(0, lastSlash) : "";
+      setTerminalCwd(dir ? `${cabinetPath}/${dir}` : cabinetPath);
+    } else {
+      setTerminalCwd(cabinetPath === "." ? "" : cabinetPath);
+    }
+  }, [section.cabinetPath, selectedPath, setTerminalCwd]);
 
   // Single /api/agents/events subscription for the whole app. Re-dispatches
   // each SSE event as a `cabinet:agents/<event>` window event so other panels
@@ -606,9 +620,10 @@ export function AppShell() {
         <main className="flex-1 flex flex-col overflow-hidden">
           {renderContent()}
         </main>
-        {terminalOpen && <TerminalTabs />}
+        {terminalOpen && terminalPosition === "bottom" && <TerminalTabs />}
         <StatusBar />
       </div>
+      {terminalOpen && terminalPosition === "right" && <TerminalTabs />}
       {taskPanelConversation && <TaskDetailPanel />}
       {!aiPanelCollapsed && <AIPanel />}
       <SearchPalette />

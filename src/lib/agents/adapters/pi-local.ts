@@ -130,7 +130,7 @@ export const piLocalAdapter: AgentExecutionAdapter = {
     return classifyChain(stderr, exitCode, [
       (s, c) =>
         classifyCommonError(s, c, {
-          providerDisplayName: "Pi",
+          providerDisplayName: "Pi (Inflection)",
           cliCommand: "pi",
         }),
     ]);

@@ -14,6 +14,7 @@ interface BaseRowProps {
   title: string;
   subtitle: string;
   schedule: string;
+  toggleVerb?: "pause" | "disable";
   onEdit: () => void;
   onRun: () => void | Promise<void>;
   onToggle: () => void | Promise<void>;
@@ -26,6 +27,7 @@ function ScheduleRow({
   title,
   subtitle,
   schedule,
+  toggleVerb = "disable",
   onEdit,
   onRun,
   onToggle,
@@ -174,8 +176,8 @@ function ScheduleRow({
                   ? "text-muted-foreground hover:text-emerald-500"
                   : "text-emerald-500 hover:text-muted-foreground"
               )}
-              aria-label={disabled ? "Enable" : "Disable"}
-              title={disabled ? "Enable" : "Disable"}
+              aria-label={disabled ? (toggleVerb === "pause" ? "Resume" : "Enable") : (toggleVerb === "pause" ? "Pause" : "Disable")}
+              title={disabled ? (toggleVerb === "pause" ? "Resume" : "Enable") : (toggleVerb === "pause" ? "Pause" : "Disable")}
             >
               {toggling ? (
                 <Loader2 className="size-3.5 animate-spin" />
@@ -264,6 +266,7 @@ export function HeartbeatRow({
       title={agent.name}
       subtitle="Heartbeat"
       schedule={agent.heartbeat || ""}
+      toggleVerb="pause"
       onEdit={onEdit}
       onRun={onRun}
       onToggle={onToggle}

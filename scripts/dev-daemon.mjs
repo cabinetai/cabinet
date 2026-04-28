@@ -133,6 +133,13 @@ async function main() {
       cwd: PROJECT_ROOT,
       stdio: "inherit",
       env: {
+        // Audit #107: dev:all should not report telemetry by default —
+        // contributors, CI, and audit pipelines on localhost shouldn't be
+        // emitting "anonymous usage" signals. Explicit user opt-in
+        // (`CABINET_TELEMETRY_DISABLED=0`) is honored if set; otherwise
+        // we default to off in dev. Packaged builds keep their own
+        // onboarding prompt.
+        CABINET_TELEMETRY_DISABLED: "1",
         ...process.env,
         CABINET_DAEMON_PORT: String(port),
         CABINET_DAEMON_URL: origin,

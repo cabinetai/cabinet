@@ -87,7 +87,8 @@ export interface PtyManager {
 export function createPtyManager(deps: PtyManagerDeps): PtyManager {
   function spawn(input: SpawnPtyInput): PtySession {
     const cwd = deps.resolveSessionCwd(input.cwd);
-    const executionProviderId = resolveLegacyExecutionProviderId({
+    const isShell = input.adapterType === "shell";
+    const executionProviderId = isShell ? "shell" : resolveLegacyExecutionProviderId({
       adapterType: input.adapterType,
       providerId: input.providerId,
     });
@@ -95,8 +96,9 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
       typeof input.adapterResumeId === "string" && input.adapterResumeId.trim()
         ? input.adapterResumeId.trim()
         : undefined;
-    let launch =
-      input.launchMode === "one-shot" && input.prompt?.trim()
+    let launch = isShell
+      ? { command: process.env.SHELL || "/bin/zsh", args: [] as string[], initialPrompt: undefined, readyStrategy: undefined }
+      : input.launchMode === "one-shot" && input.prompt?.trim()
         ? getOneShotLaunchSpec({
             providerId: executionProviderId,
             prompt: input.prompt,
@@ -109,7 +111,7 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
             workdir: cwd,
             resumeId,
           });
-    const resolvedProviderId = resolveProviderId(executionProviderId);
+    const resolvedProviderId = isShell ? "shell" : resolveProviderId(executionProviderId);
 
     if (
       input.launchMode === "one-shot" &&
@@ -164,9 +166,9 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
         // ZDOTDIR at /dev/null makes zsh skip .zshenv/.zshrc/.zlogin;
         // clearing BASH_ENV prevents non-interactive bash from sourcing
         // anything analogous. Neither affects the agent CLI itself —
-        // these only matter if the CLI shells out.
-        ZDOTDIR: "/dev/null",
-        BASH_ENV: "",
+        // these only matter if the CLI shells out. Skip for plain shell
+        // sessions so the user's dotfiles load normally.
+        ...(!isShell ? { ZDOTDIR: "/dev/null", BASH_ENV: "" } : {}),
       },
     });
 

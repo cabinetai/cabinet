@@ -19,6 +19,28 @@ export type SectionType =
 
 const CABINET_VISIBILITY_STORAGE_KEY = "cabinet.visibility.modes";
 const SIDEBAR_DRAWER_STORAGE_KEY = "cabinet.sidebar.drawer";
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "cabinet.sidebar.collapsed";
+const TERMINAL_POSITION_STORAGE_KEY = "cabinet.terminal.position";
+
+function loadSidebarCollapsed(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function loadTerminalPosition(): "bottom" | "right" {
+  if (typeof window === "undefined") return "bottom";
+  try {
+    const stored = window.localStorage.getItem(TERMINAL_POSITION_STORAGE_KEY);
+    if (stored === "bottom" || stored === "right") return stored;
+  } catch {
+    // ignore
+  }
+  return "bottom";
+}
 
 export type SidebarDrawer = "data" | "agents" | "tasks";
 
@@ -48,6 +70,8 @@ interface TerminalTab {
   id: string;
   label: string;
   prompt?: string;
+  adapterType?: string;
+  cwd?: string;
 }
 
 interface AppState {
@@ -56,6 +80,8 @@ interface AppState {
   terminalOpen: boolean;
   terminalTabs: TerminalTab[];
   activeTerminalTab: string | null;
+  terminalPosition: "bottom" | "right";
+  terminalCwd: string | null;
   sidebarCollapsed: boolean;
   sidebarDrawer: SidebarDrawer;
   aiPanelCollapsed: boolean;
@@ -74,10 +100,12 @@ interface AppState {
   popReturnTo: () => void;
   toggleTerminal: () => void;
   closeTerminal: () => void;
-  addTerminalTab: (label?: string, prompt?: string) => void;
+  addTerminalTab: (label?: string, prompt?: string, adapterType?: string) => void;
   removeTerminalTab: (id: string) => void;
   setActiveTerminalTab: (id: string) => void;
   openAgentTab: (taskTitle: string, prompt: string) => void;
+  setTerminalPosition: (pos: "bottom" | "right") => void;
+  setTerminalCwd: (cwd: string | null) => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
   setSidebarDrawer: (drawer: SidebarDrawer) => void;
   setAiPanelCollapsed: (collapsed: boolean) => void;
@@ -132,7 +160,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   terminalOpen: false,
   terminalTabs: [],
   activeTerminalTab: null,
-  sidebarCollapsed: false,
+  terminalPosition: loadTerminalPosition(),
+  terminalCwd: null,
+  sidebarCollapsed: loadSidebarCollapsed(),
   sidebarDrawer: loadSidebarDrawer(),
   aiPanelCollapsed: false,
   cabinetVisibilityModes: loadCabinetVisibilityModes(),
@@ -210,29 +240,37 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   toggleTerminal: () => {
-    const { terminalOpen, terminalTabs } = get();
-    if (!terminalOpen && terminalTabs.length === 0) {
+    const { terminalOpen, terminalTabs, terminalCwd } = get();
+    if (terminalOpen) {
+      // Panel is already visible — open a new tab rather than closing
+      const num = terminalTabs.length + 1;
+      const id = `term-${Date.now()}`;
+      set({
+        terminalTabs: [...terminalTabs, { id, label: `Terminal ${num}`, adapterType: "shell", cwd: terminalCwd ?? undefined }],
+        activeTerminalTab: id,
+      });
+    } else if (terminalTabs.length === 0) {
       const id = `term-${Date.now()}`;
       set({
         terminalOpen: true,
-        terminalTabs: [{ id, label: "Claude 1" }],
+        terminalTabs: [{ id, label: "Terminal 1", adapterType: "shell", cwd: terminalCwd ?? undefined }],
         activeTerminalTab: id,
       });
     } else {
-      set({ terminalOpen: !terminalOpen });
+      set({ terminalOpen: true });
     }
   },
 
-  closeTerminal: () => set({ terminalOpen: false }),
+  closeTerminal: () => set({ terminalOpen: false, terminalTabs: [], activeTerminalTab: null }),
 
-  addTerminalTab: (label?: string, prompt?: string) => {
-    const { terminalTabs } = get();
+  addTerminalTab: (label?: string, prompt?: string, adapterType?: string) => {
+    const { terminalTabs, terminalCwd } = get();
     const num = terminalTabs.length + 1;
     const id = `term-${Date.now()}`;
     set({
       terminalTabs: [
         ...terminalTabs,
-        { id, label: label || `Claude ${num}`, prompt },
+        { id, label: label || `Terminal ${num}`, prompt, adapterType: adapterType || "shell", cwd: terminalCwd ?? undefined },
       ],
       activeTerminalTab: id,
       terminalOpen: true,
@@ -255,7 +293,23 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setActiveTerminalTab: (id) => set({ activeTerminalTab: id }),
 
-  setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+  setTerminalPosition: (pos) => {
+    const next: Partial<AppState> = { terminalPosition: pos };
+    if (pos === "right") next.aiPanelCollapsed = true;
+    try {
+      window.localStorage.setItem(TERMINAL_POSITION_STORAGE_KEY, pos);
+    } catch {
+      // ignore
+    }
+    set(next);
+  },
+
+  setTerminalCwd: (cwd) => set({ terminalCwd: cwd }),
+
+  setSidebarCollapsed: (collapsed) => {
+    try { window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(collapsed)); } catch { /* ignore */ }
+    set({ sidebarCollapsed: collapsed });
+  },
   setSidebarDrawer: (drawer) => {
     try {
       window.localStorage.setItem(SIDEBAR_DRAWER_STORAGE_KEY, drawer);

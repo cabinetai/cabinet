@@ -47,7 +47,7 @@ export function Header() {
     <ViewerToolbar path={currentPath || undefined} showBreadcrumb={!!currentPath}>
       {currentPath && (
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
+          <DropdownMenuTrigger aria-label="Export page" title="Export page" className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
             <Download className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

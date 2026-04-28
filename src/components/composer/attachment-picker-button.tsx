@@ -37,6 +37,12 @@ export function AttachmentPickerButton({
       <input
         ref={inputRef}
         type="file"
+        // Audit #098: the picker is triggered programmatically by the
+        // visible button above, but the bare `type="file"` element still
+        // shows up to assistive tech. Give it both name and label so it
+        // stops tripping the "form field needs id/name" warning.
+        name="attachment-picker"
+        aria-label="Attach files"
         multiple
         accept={accept}
         className="hidden"
