@@ -3,12 +3,15 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import matter from "gray-matter";
-import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
-import { DATA_DIR } from "@/lib/storage/path-utils";
 import { listSkills, readSkill } from "@/lib/agents/skills/loader";
 import { readSkillStats } from "@/lib/agents/skills/stats";
 import { readSkillsLock } from "@/lib/agents/skills/lock";
 import { fetchUpstreamForLock } from "@/lib/agents/skills/upstream";
+import {
+  cabinetPathFromScope,
+  isValidSkillKey,
+  resolveSkillsScopeRoot,
+} from "@/lib/agents/skills/scope";
 
 interface CreateRequest {
   key: string;
@@ -21,7 +24,7 @@ interface CreateRequest {
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json().catch(() => ({}))) as CreateRequest;
-  if (!body.key || !/^[a-z0-9][a-z0-9-]*$/.test(body.key)) {
+  if (!body.key || !isValidSkillKey(body.key)) {
     return NextResponse.json(
       { error: "key is required and must be kebab-case (lowercase, digits, hyphens)" },
       { status: 400 },
@@ -29,10 +32,15 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   const scope = body.scope ?? "root";
-  const destRoot =
-    scope === "root"
-      ? path.join(PROJECT_ROOT, ".agents", "skills")
-      : path.join(DATA_DIR, scope.replace(/^cabinet:/, ""), ".agents", "skills");
+  let destRoot: string;
+  try {
+    destRoot = resolveSkillsScopeRoot(scope);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Invalid scope" },
+      { status: 400 },
+    );
+  }
 
   const skillDir = path.join(destRoot, body.key);
   const exists = await fs.stat(skillDir).then(() => true).catch(() => false);
@@ -52,7 +60,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   await fs.writeFile(path.join(skillDir, "SKILL.md"), md, "utf-8");
 
   const created = await readSkill(body.key, {
-    cabinetPath: scope.startsWith("cabinet:") ? scope.slice("cabinet:".length) : undefined,
+    cabinetPath: cabinetPathFromScope(scope),
   });
   return NextResponse.json({ skill: created }, { status: 201 });
 }

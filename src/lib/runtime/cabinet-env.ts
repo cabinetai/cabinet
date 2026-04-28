@@ -13,8 +13,10 @@ import { PROJECT_ROOT } from "./runtime-config";
  *
  * Trade-offs:
  *   - Not encrypted at rest. "Relatively secure" here means: gitignored
- *     (.gitignore covers `.env*`), file perms 0600, masked in the UI, and
- *     never serialized in plaintext over the local API after first save.
+ *     (an explicit `.cabinet.env` rule lives in .gitignore — note that the
+ *     `.env*` glob does NOT match `.cabinet.env`, since the glob anchors at
+ *     the basename's start), file perms 0600, masked in the UI, and never
+ *     serialized in plaintext over the local API after first save.
  *   - Single file per project root (matches `.cabinet-install.json`), not
  *     per-cabinet — simpler and matches every existing top-level convention.
  */
@@ -121,9 +123,10 @@ function serialize(values: Record<string, string>): string {
 }
 
 function ensureGitignoreCovers(): void {
-  // .gitignore at project root already has `.env*`. Warn loudly if a future
-  // edit removes that — secrets in the repo would be much worse than a noisy
-  // log line. Best-effort; never throws.
+  // .gitignore must explicitly cover `.cabinet.env` (the `.env*` glob does
+  // NOT match it; globs anchor at the basename's start). Warn loudly if a
+  // future edit removes the explicit rule — secrets in the repo would be
+  // much worse than a noisy log line. Best-effort; never throws.
   try {
     const gi = path.join(PROJECT_ROOT, ".gitignore");
     const text = fs.readFileSync(gi, "utf-8");

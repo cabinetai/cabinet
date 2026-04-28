@@ -57,8 +57,15 @@ async function walkRoot(workspace: string, subdir: string): Promise<ScanResult[]
     let name = entry.name;
     try {
       const md = await fs.readFile(path.join(skillDir, "SKILL.md"), "utf-8");
-      const match = md.match(/^---[\s\S]*?\nname:\s*(.+?)\s*\n[\s\S]*?\n---/);
-      if (match) name = match[1].trim();
+      // Pull the YAML frontmatter block, then look for `name:` on any line.
+      // The previous one-shot regex required at least one more key after
+      // `name:`, so it silently failed when `name:` was the only or last
+      // field — and minimal SKILL.md files (just `name:` + body) are common.
+      const block = md.match(/^---\s*\n([\s\S]*?)\n---/);
+      if (block) {
+        const nameLine = block[1].match(/^name:\s*(.+?)\s*$/m);
+        if (nameLine) name = nameLine[1].trim();
+      }
     } catch {
       /* fine */
     }

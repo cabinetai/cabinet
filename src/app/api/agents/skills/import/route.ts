@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 import { spawn } from "child_process";
-import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
-import { DATA_DIR } from "@/lib/storage/path-utils";
 import { readPersona, writePersona } from "@/lib/agents/persona-manager";
 import { updateSkillsLock } from "@/lib/agents/skills/lock";
 import { parseSource } from "@/lib/agents/skills/import-source";
+import {
+  isValidSkillKey,
+  resolveSkillsScopeRoot,
+} from "@/lib/agents/skills/scope";
 
 /**
  * POST /api/agents/skills/import
@@ -51,14 +53,10 @@ function gitClone(url: string, dest: string, ref?: string): Promise<void> {
 }
 
 function resolveDestRoot(scope: string | undefined): string {
-  if (!scope || scope === "root" || scope === "cabinet-root") {
-    return path.join(PROJECT_ROOT, ".agents", "skills");
-  }
-  if (scope.startsWith("cabinet:")) {
-    const cabinet = scope.slice("cabinet:".length);
-    return path.join(DATA_DIR, cabinet, ".agents", "skills");
-  }
-  return path.join(PROJECT_ROOT, ".agents", "skills");
+  // Accept "cabinet-root" as a legacy alias for "root"; otherwise delegate
+  // to the shared resolver, which enforces DATA_DIR boundary checks.
+  if (scope === "cabinet-root") return resolveSkillsScopeRoot("root");
+  return resolveSkillsScopeRoot(scope);
 }
 
 /**
@@ -161,7 +159,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  const destRoot = resolveDestRoot(body.scope);
+  let destRoot: string;
+  try {
+    destRoot = resolveDestRoot(body.scope);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Invalid scope" },
+      { status: 400 },
+    );
+  }
   await fs.mkdir(destRoot, { recursive: true });
 
   let importedKey: string;
@@ -173,6 +179,12 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "local source missing path" }, { status: 400 });
     }
     importedKey = path.basename(parsed.localPath);
+    if (!isValidSkillKey(importedKey)) {
+      return NextResponse.json(
+        { error: `local path basename "${importedKey}" is not a valid skill key (kebab-case only)` },
+        { status: 400 },
+      );
+    }
     const dest = path.join(destRoot, importedKey);
     await fs.cp(parsed.localPath, dest, { recursive: true });
     sourceLocator = parsed.localPath;
@@ -192,6 +204,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       // skills/ if present; else copy the repo itself as a single skill.
       let sourceDir: string;
       if (parsed.skillName) {
+        if (!isValidSkillKey(parsed.skillName)) {
+          throw new Error(
+            `skill name "${parsed.skillName}" is not a valid skill key (kebab-case only).`,
+          );
+        }
         // Try repo/<skillName> then repo/skills/<skillName>, then fall back
         // to the Claude Code plugin manifest at .claude-plugin/plugin.json
         // (used by `infsh-skills/skills` and similar plugin-marketplace
@@ -223,6 +240,11 @@ export async function POST(request: Request): Promise<NextResponse> {
         importedKey = parsed.skillName;
       } else {
         // No skill name → repo IS the skill (e.g. shadcn/skill-bundle pattern)
+        if (!isValidSkillKey(repo)) {
+          throw new Error(
+            `repo name "${repo}" is not a valid skill key (kebab-case only); pass a skill name explicitly.`,
+          );
+        }
         importedKey = repo;
         sourceDir = tmp;
       }
