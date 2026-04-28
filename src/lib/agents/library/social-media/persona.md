@@ -11,6 +11,9 @@ budget: 80
 active: true
 workdir: /data
 workspace: /marketing/social
+recommendedSkills:
+  - key: social-content
+    source: github:coreyhaines31/marketingskills/social-content
 ---
 
 # Social Media Manager Agent

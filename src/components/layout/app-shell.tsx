@@ -94,10 +94,6 @@ const RegistryBrowser = dynamic(
     import("@/components/registry/registry-browser").then((m) => m.RegistryBrowser),
   { ssr: false }
 );
-const SkillLibrary = dynamic(
-  () => import("@/components/skills/skill-library").then((m) => m.SkillLibrary),
-  { ssr: false }
-);
 const OnboardingWizard = dynamic(
   () =>
     import("@/components/onboarding/onboarding-wizard").then(
@@ -407,7 +403,6 @@ export function AppShell() {
     // System sections (non-page views)
     if (section.type === "home") return <HomeScreen />;
     if (section.type === "registry") return <RegistryBrowser />;
-    if (section.type === "skills") return <SkillLibrary cabinetPath={section.cabinetPath} />;
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "help") return <HelpPage />;
     if (section.type === "cabinet" && section.cabinetPath) {
@@ -637,8 +632,8 @@ export function AppShell() {
           void refreshUpdate();
         }}
         onApply={applyUpdate}
-        onCreateBackup={async () => {
-          await createBackup("data");
+        onCreateBackup={async (options) => {
+          await createBackup("data", options);
         }}
         onOpenDataDir={openDataDir}
         onLater={handleUpdateLater}

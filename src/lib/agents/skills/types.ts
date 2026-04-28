@@ -11,8 +11,6 @@ export type SkillOrigin =
 
 export type TrustLevel = "markdown_only" | "assets" | "scripts_executables";
 
-export type TrustPolicy = "auto-allow" | "prompt-once" | "always-prompt" | "refuse";
-
 export type SkillFileKind = "skill" | "markdown" | "reference" | "script" | "asset" | "other";
 
 export interface SkillFileInventoryEntry {
@@ -36,12 +34,25 @@ export interface SkillEntry {
   path: string;
   fileInventory: SkillFileInventoryEntry[];
   trustLevel: TrustLevel;
-  /** Author-declared trust policy in SKILL.md frontmatter; null if unspecified. */
-  trustPolicy: TrustPolicy | null;
   /** Parsed `allowed-tools` frontmatter list (comma-split, trimmed); empty when unset. */
   allowedTools: string[];
   /** Whether Cabinet permits in-app editing of this skill (false for system, linked, legacy). */
   editable: boolean;
+  /**
+   * When the skill came from a Claude Code plugin marketplace, identifies
+   * which marketplace + plugin shipped it. Used by the UI to label these
+   * separately from generic system skills. Layouts handled:
+   *   ~/.claude/plugins/marketplaces/<marketplace>/skills/<skill>/
+   *   ~/.claude/plugins/marketplaces/<marketplace>/plugins/<plugin>/skills/<skill>/
+   *   ~/.claude/plugins/marketplaces/<marketplace>/external_plugins/<plugin>/skills/<skill>/
+   */
+  pluginSource?: {
+    marketplace: string;
+    /** Plugin name; equals marketplace when the marketplace itself ships skills directly. */
+    plugin: string;
+    /** Whether the plugin came from `external_plugins/` (community) vs `plugins/` (curated). */
+    external?: boolean;
+  };
 }
 
 /** Full skill bundle — entry metadata plus the SKILL.md body. */

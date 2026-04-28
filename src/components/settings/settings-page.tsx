@@ -40,6 +40,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SkillLibrary } from "@/components/skills/skill-library";
+import { ApiKeysSection } from "@/components/settings/api-keys-section";
 import { UpdateSummary } from "@/components/system/update-summary";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useTheme } from "@/components/theme-provider";
@@ -910,8 +912,8 @@ export function SettingsPage() {
                 void refreshUpdate();
               }}
               onApply={applyUpdate}
-              onCreateBackup={async () => {
-                await createBackup("data");
+              onCreateBackup={async (options) => {
+                await createBackup("data", options);
               }}
               onOpenDataDir={openDataDir}
             />
@@ -1309,72 +1311,27 @@ export function SettingsPage() {
 
           {/* Integrations Tab */}
           {tab === "integrations" && (
-            <div className="relative">
-              {/* Blurred content preview */}
-              <div className="pointer-events-none select-none blur-[2px] opacity-70" aria-hidden="true">
-                <div>
-                  <h3 className="text-[14px] font-semibold mb-1">MCP Servers</h3>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Configure tool servers that agents can use. Enable a server and provide API credentials for agents to access external services.
-                  </p>
-                  <div className="space-y-3">
-                    {["Brave Search", "GitHub", "Slack"].map((name) => (
-                      <div key={name} className="bg-card border border-border rounded-lg p-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <div className="h-4 w-8 rounded-full bg-muted-foreground/30 relative">
-                              <span className="absolute top-0.5 left-0.5 h-3 w-3 rounded-full bg-white" />
-                            </div>
-                            <span className="text-[13px] font-medium">{name}</span>
-                          </div>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Disabled</span>
-                        </div>
-                        <div className="space-y-1.5">
-                          <div>
-                            <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide">Command</label>
-                            <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
-                          </div>
-                          <div>
-                            <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide">API Key</label>
-                            <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <div className="space-y-8">
+              <ApiKeysSection />
 
-                <div className="border-t border-border pt-6 mt-6">
-                  <h3 className="text-[14px] font-semibold mb-1">Scheduling Defaults</h3>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Configure default scheduling behavior for agents and jobs.
-                  </p>
-                  <div className="bg-card border border-border rounded-lg p-3 space-y-3">
-                    <div>
-                      <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide">Max Concurrent Agents</label>
-                      <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
-                    </div>
-                    <div>
-                      <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Active Hours
-                      </label>
-                      <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Coming Soon overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-2 bg-background/80 backdrop-blur-sm rounded-xl px-8 py-6 border border-border shadow-lg">
-                  <Plug className="h-6 w-6 text-muted-foreground/50" />
-                  <span className="text-[13px] font-semibold">Coming Soon</span>
-                  <p className="text-[12px] text-muted-foreground text-center max-w-[220px]">
-                    MCP servers, scheduling, and third-party integrations.
+              <section className="border-t border-border pt-6">
+                <h3 className="text-[14px] font-semibold mb-1 flex items-center gap-1.5">
+                  <Plug className="h-3.5 w-3.5 text-muted-foreground" />
+                  Connected integrations
+                </h3>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Prebuilt OAuth flows for services like Gmail, Slack, and Google
+                  Calendar. Connect once and Cabinet handles tokens, scopes, and
+                  refresh.
+                </p>
+                <div className="bg-card border border-dashed border-border rounded-lg px-4 py-6 text-center">
+                  <span className="text-[12px] font-semibold">Coming soon</span>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    For now, set service-specific API tokens above and add MCP
+                    servers in your CLI config.
                   </p>
                 </div>
-              </div>
+              </section>
             </div>
           )}
 
@@ -1622,129 +1579,11 @@ export function SettingsPage() {
   );
 }
 
-interface SkillEntry {
-  slug: string;
-  name: string;
-  description?: string;
-  path: string;
-}
-
-interface SkillCatalogResponse {
-  root: string;
-  skills: SkillEntry[];
-  count: number;
-}
-
 function SkillsSettings() {
-  const [catalog, setCatalog] = useState<SkillCatalogResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/agents/skills");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as SkillCatalogResponse;
-        if (!cancelled) setCatalog(data);
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : String(e));
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-[14px] font-semibold">Skills</h3>
-        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-          Coming soon
-        </span>
-      </div>
-      <p className="mb-4 text-xs text-muted-foreground">
-        Skills are reusable instruction bundles Cabinet symlinks into each run so
-        agents can reach for them on demand. Drop a directory under{" "}
-        <code className="rounded bg-muted px-1 py-0.5 text-[11px]">
-          {catalog?.root ?? "~/.cabinet/skills/"}
-        </code>{" "}
-        with a <code className="rounded bg-muted px-1 py-0.5 text-[11px]">SKILL.md</code> and
-        any scripts or reference files the skill needs. Editor + selection UI is
-        still in flight — read-only preview for now.
-      </p>
-
-      {loading ? (
-        <div className="rounded-lg border border-dashed border-border/70 bg-muted/30 px-4 py-8 text-center text-xs text-muted-foreground">
-          <Loader2 className="mx-auto mb-2 size-4 animate-spin" />
-          Scanning the catalog…
-        </div>
-      ) : error ? (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-xs text-destructive">
-          Failed to load skill catalog: {error}
-        </div>
-      ) : !catalog || catalog.count === 0 ? (
-        <div className="rounded-lg border border-dashed border-border/70 bg-muted/20 px-4 py-8 text-center">
-          <Sparkles className="mx-auto mb-2 size-5 text-muted-foreground/50" />
-          <p className="text-[13px] font-medium text-muted-foreground">
-            No skills detected yet
-          </p>
-          <p className="mt-1 text-[11px] text-muted-foreground/70">
-            Create <code className="rounded bg-muted px-1 py-0.5">{catalog?.root ?? "~/.cabinet/skills/"}</code>{" "}
-            and drop a skill directory there to see it listed.
-          </p>
-        </div>
-      ) : (
-        <div
-          className="pointer-events-none select-none space-y-2 opacity-60"
-          aria-disabled="true"
-          title="Coming soon — selection is not editable yet"
-        >
-          {catalog.skills.map((skill) => (
-            <div
-              key={skill.slug}
-              className="rounded-lg border border-border/70 bg-card px-4 py-3"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="size-3 shrink-0 text-muted-foreground/60" />
-                    <p className="truncate text-[13px] font-medium text-foreground">
-                      {skill.name}
-                    </p>
-                    <code className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                      {skill.slug}
-                    </code>
-                  </div>
-                  {skill.description && (
-                    <p className="mt-1 text-[11.5px] leading-snug text-muted-foreground">
-                      {skill.description}
-                    </p>
-                  )}
-                  <p className="mt-1 truncate font-mono text-[10px] text-muted-foreground/60">
-                    {skill.path}
-                  </p>
-                </div>
-                <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-border/70 bg-background">
-                  {/* Empty checkbox: visual-only, not interactive. */}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <p className="mt-4 text-[11px] text-muted-foreground/70">
-        For now, attach skills to an agent by editing that agent&apos;s markdown
-        frontmatter with{" "}
-        <code className="rounded bg-muted px-1 py-0.5">skills: [slug, slug]</code>.
-      </p>
-    </div>
-  );
+  // The full library lives in `src/components/skills/skill-library.tsx`.
+  // Settings -> Skills is now the canonical surface (no separate /skills
+  // route or sidebar entry — see docs/SKILLS_PLAN.md Wave 11).
+  return <SkillLibrary />;
 }
 
 // Audit #082: 110+ avatars in a single grid was overwhelming. Defaults

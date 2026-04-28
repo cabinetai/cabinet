@@ -11,6 +11,9 @@ budget: 50
 active: true
 workdir: /data
 workspace: /
+recommendedSkills:
+  - key: webapp-testing
+    source: github:anthropics/skills/webapp-testing
 channels:
   - general
   - content

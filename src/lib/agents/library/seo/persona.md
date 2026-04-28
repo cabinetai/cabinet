@@ -27,6 +27,9 @@ focus:
 tags:
   - seo
   - marketing
+recommendedSkills:
+  - key: seo-audit
+    source: github:coreyhaines31/marketingskills/seo-audit
 ---
 
 # SEO Specialist Agent

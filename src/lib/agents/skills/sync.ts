@@ -2,7 +2,6 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { resolveDesiredSkills } from "./loader";
-import { evaluateMountDecision } from "./trust";
 import { recordSkillsOffered } from "./stats";
 import type { SkillBundle } from "./types";
 
@@ -96,28 +95,29 @@ export interface SkillMount {
   dir: string;
   /** Skills successfully mounted. */
   mounted: SkillBundle[];
-  /** Skills that needed an operator prompt — surfaced for UI. */
-  needsPrompt: Array<{ skill: SkillBundle; reason: string }>;
-  /** Skills explicitly blocked. */
-  blocked: Array<{ skill: SkillBundle; reason: string }>;
 }
 
 export interface PrepareSkillMountInput {
   sessionId: string;
   desiredKeys: string[] | undefined;
   cabinetPath?: string | null;
-  /** Publisher slug if known (e.g. from import metadata). Optional. */
-  publisher?: string | null;
 }
 
 /**
- * Resolve a persona's desired skills, apply trust gating, and materialize a
- * symlink tmpdir for adapters that consume `adapterConfig.skillsDir`.
+ * Resolve a persona's desired skills and materialize a per-session plugin
+ * directory for adapters that consume `adapterConfig.skillsDir`. The dir is
+ * shaped like a Claude Code plugin (`.claude-plugin/plugin.json` manifest +
+ * `skills/<key>/` symlinks) so Claude can register the skills via
+ * `--plugin-dir`. (Plain `--add-dir` only grants read access; it doesn't
+ * make skills discoverable as `/skill-name`, which is why mounted skills
+ * weren't actually usable.)
+ *
+ * All resolved skills are mounted — the operator's act of attaching a skill
+ * to a persona is the trust signal. Trust level + skills.sh audits are
+ * surfaced as descriptive labels in the UI, not runtime gates.
  *
  * Returns null when nothing was selected (so the spawn isn't polluted with
- * an empty `skillsDir` flag). When a skill needs a prompt or is blocked, it
- * goes into the appropriate snapshot field — caller decides whether to
- * surface a UI prompt or proceed with the partial mount.
+ * an empty `skillsDir` flag).
  */
 export async function prepareSkillMount(
   input: PrepareSkillMountInput,
@@ -125,30 +125,6 @@ export async function prepareSkillMount(
   if (!input.desiredKeys || input.desiredKeys.length === 0) return null;
   const bundles = await resolveDesiredSkills(input.desiredKeys, input.cabinetPath ?? undefined);
   if (bundles.length === 0) return null;
-
-  const mounted: SkillBundle[] = [];
-  const needsPrompt: SkillMount["needsPrompt"] = [];
-  const blocked: SkillMount["blocked"] = [];
-
-  for (const skill of bundles) {
-    const decision = await evaluateMountDecision({
-      skill,
-      cabinetPath: input.cabinetPath,
-      publisher: input.publisher,
-    });
-    if (decision.status === "allow") {
-      mounted.push(skill);
-    } else if (decision.status === "needs-prompt") {
-      needsPrompt.push({ skill, reason: decision.reason });
-    } else {
-      blocked.push({ skill, reason: decision.reason });
-    }
-  }
-
-  if (mounted.length === 0 && needsPrompt.length === 0) {
-    // Nothing to mount; tmpdir would be empty.
-    return null;
-  }
 
   const base = path.join(os.tmpdir(), "cabinet-skills");
   fs.mkdirSync(base, { recursive: true });
@@ -160,22 +136,32 @@ export async function prepareSkillMount(
   }
   fs.mkdirSync(dir, { recursive: true });
 
-  for (const skill of mounted) {
-    ensureSymlink(skill.path, path.join(dir, skill.key));
+  // Plugin manifest — the bare minimum Claude Code accepts. Name must be
+  // a valid identifier; the session id (hex/uuid-ish) qualifies.
+  const manifestDir = path.join(dir, ".claude-plugin");
+  fs.mkdirSync(manifestDir, { recursive: true });
+  const manifest = {
+    name: `cabinet-session-${input.sessionId.replace(/[^a-zA-Z0-9_-]/g, "-")}`,
+    version: "0.0.0",
+    description: "Cabinet ephemeral per-session skill mount",
+  };
+  fs.writeFileSync(path.join(manifestDir, "plugin.json"), JSON.stringify(manifest, null, 2));
+
+  const skillsRoot = path.join(dir, "skills");
+  fs.mkdirSync(skillsRoot, { recursive: true });
+  for (const skill of bundles) {
+    ensureSymlink(skill.path, path.join(skillsRoot, skill.key));
   }
 
-  // Record that these skills were offered (mounted + needsPrompt count, not
-  // blocked). Honest C5 observability — drives the "last offered" timestamp
-  // shown in the library. Best-effort: stat write failures don't block the run.
-  const offeredKeys = [
-    ...mounted.map((s) => s.key),
-    ...needsPrompt.map((e) => e.skill.key),
-  ];
-  if (offeredKeys.length > 0) {
-    await recordSkillsOffered(offeredKeys, input.cabinetPath ?? null);
-  }
+  // Record that these skills were offered — drives the "last offered"
+  // timestamp shown in the library. Best-effort: stat write failures don't
+  // block the run.
+  await recordSkillsOffered(
+    bundles.map((s) => s.key),
+    input.cabinetPath ?? null,
+  );
 
-  return { dir, mounted, needsPrompt, blocked };
+  return { dir, mounted: bundles };
 }
 
 export function cleanupSkillMount(handle: SkillMount | null): void {

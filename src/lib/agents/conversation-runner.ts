@@ -10,7 +10,6 @@ import {
 } from "./adapters";
 import { agentAdapterRegistry } from "./adapters/registry";
 import type { AdapterExecutionContext } from "./adapters/types";
-import { syncSkillsToTmpdir } from "./adapters/_shared/skills-injection";
 import { buildSkillIndex, resolveDesiredSkills } from "./skills/loader";
 import { prepareSkillMount } from "./skills/sync";
 import { supportsTerminalResume } from "./adapters/legacy-ids";
@@ -331,6 +330,7 @@ export async function buildManualConversationPrompt(input: {
   agentSlug: string;
   userMessage: string;
   mentionedPaths?: string[];
+  mentionedSkills?: string[];
   cabinetPath?: string;
 }): Promise<{
   prompt: string;
@@ -349,7 +349,14 @@ export async function buildManualConversationPrompt(input: {
       ? `${DATA_DIR}/${persona.workdir.replace(/^\/+/, "")}`
       : baseCwd;
 
-  const skillBundles = await resolveDesiredSkills(persona?.skills, input.cabinetPath);
+  // Merge persona's persisted skills with @-mentioned skills so the skill
+  // index in the prompt matches the set the runner mounts via --add-dir.
+  // Without this, mentioned skills get their files mounted but the model is
+  // never told they exist.
+  const mergedSkillKeys = Array.from(
+    new Set([...(persona?.skills ?? []), ...(input.mentionedSkills ?? [])]),
+  );
+  const skillBundles = await resolveDesiredSkills(mergedSkillKeys, input.cabinetPath);
   const skillIndex = buildSkillIndex(skillBundles);
 
   const prompt = [
@@ -399,6 +406,7 @@ export async function buildEditorConversationPrompt(input: {
   pagePath: string;
   userMessage: string;
   mentionedPaths?: string[];
+  mentionedSkills?: string[];
   cabinetPath?: string;
 }): Promise<{
   prompt: string;
@@ -425,7 +433,10 @@ export async function buildEditorConversationPrompt(input: {
       ? `${DATA_DIR}/${persona.workdir.replace(/^\/+/, "")}`
       : baseCwd;
 
-  const skillBundles = await resolveDesiredSkills(persona?.skills, input.cabinetPath);
+  const mergedSkillKeys = Array.from(
+    new Set([...(persona?.skills ?? []), ...(input.mentionedSkills ?? [])]),
+  );
+  const skillBundles = await resolveDesiredSkills(mergedSkillKeys, input.cabinetPath);
   const skillIndex = buildSkillIndex(skillBundles);
 
   const prompt = [
@@ -588,29 +599,11 @@ export async function startConversationRun(
         cabinetPath: input.cabinetPath ?? null,
       })
     : null;
-  const legacyFallback =
-    !skillMount && requestedSkillSlugs
-      ? syncSkillsToTmpdir(meta.id, requestedSkillSlugs)
-      : null;
   const spawnAdapterConfig: Record<string, unknown> | undefined = skillMount
     ? {
         ...(baseAdapterConfig || {}),
         skillsDir: skillMount.dir,
         skills: skillMount.mounted.map((entry) => entry.key),
-        skillsNeedsPrompt: skillMount.needsPrompt.map((e) => ({
-          key: e.skill.key,
-          reason: e.reason,
-        })),
-        skillsBlocked: skillMount.blocked.map((e) => ({
-          key: e.skill.key,
-          reason: e.reason,
-        })),
-      }
-    : legacyFallback
-    ? {
-        ...(baseAdapterConfig || {}),
-        skillsDir: legacyFallback.dir,
-        skills: legacyFallback.resolved.map((entry) => entry.slug),
       }
     : baseAdapterConfig;
 
@@ -1271,6 +1264,7 @@ async function buildContinuationPrompt(options: {
   meta: ConversationMeta;
   userMessage: string;
   mentionedPaths: string[];
+  mentionedSkills?: string[];
   attachmentPaths?: string[];
   persona: AgentPersona | null;
   baseCwd: string;
@@ -1284,14 +1278,45 @@ async function buildContinuationPrompt(options: {
 
   const canDispatch = resolvePersonaCanDispatch(options.persona);
 
+  // Resolve the full skill set for this turn so the prompt can announce
+  // them. Includes skills already mounted on the conversation (persisted on
+  // meta.adapterConfig.skills) plus this turn's @-mentions. Replay mode
+  // inlines the skill index so a fresh CLI spawn knows what's available;
+  // resume mode appends a short "this turn also has access to X" note for
+  // newly-mentioned skills since the prior persona context is already in
+  // the live session.
+  const priorSkills = (() => {
+    const raw = (options.meta.adapterConfig as Record<string, unknown> | undefined)?.skills;
+    return Array.isArray(raw) ? raw.filter((s): s is string => typeof s === "string") : [];
+  })();
+  const newSkills = options.mentionedSkills ?? [];
+  const fullSkillKeys = Array.from(
+    new Set([...(options.persona?.skills ?? []), ...priorSkills, ...newSkills]),
+  );
+  const fullSkillBundles = await resolveDesiredSkills(
+    fullSkillKeys,
+    options.meta.cabinetPath,
+  );
+  const skillIndex = buildSkillIndex(fullSkillBundles);
+
   if (options.mode === "resume") {
     // Live session: persona + scope already live in the adapter's context.
+    // Only announce skills NEW to this turn (the prior set was already in
+    // the session). Skills the model already knew about don't need a re-hello.
+    const newKeys = newSkills.filter((k) => !priorSkills.includes(k));
+    const newBundles = newKeys.length > 0
+      ? await resolveDesiredSkills(newKeys, options.meta.cabinetPath)
+      : [];
+    const newSkillNote = newBundles.length > 0
+      ? `Additional skills mounted for this turn: ${newBundles.map((b) => `\`${b.key}\``).join(", ")}. Use them by name when relevant.`
+      : null;
     return [
       await buildCabinetEpilogueInstructions({
         canDispatch,
         cabinetPath: options.meta.cabinetPath,
         selfSlug: options.meta.agentSlug,
       }),
+      newSkillNote,
       mentionContext.trim(),
       "",
       `User follow-up:\n${options.userMessage}${attachmentContext}`,
@@ -1305,6 +1330,7 @@ async function buildContinuationPrompt(options: {
     buildCabinetRequirementHeader(),
     "",
     buildAgentContextHeader(options.persona, options.meta.agentSlug),
+    ...(skillIndex ? ["", skillIndex] : []),
     "",
     ...buildKnowledgeBaseScopeInstructions(options.baseCwd, options.meta.cabinetPath),
     "Reflect useful outputs in KB files, not only in terminal text.",
@@ -1423,6 +1449,7 @@ export async function continueConversationRun(
           meta,
           userMessage: input.userMessage,
           mentionedPaths: input.mentionedPaths || [],
+          mentionedSkills: input.mentionedSkills,
           attachmentPaths: input.attachmentPaths,
           persona: legacyPersona,
           baseCwd: legacyBaseCwd,
@@ -1502,6 +1529,54 @@ export async function continueConversationRun(
       ? `${DATA_DIR}/${persona.workdir.replace(/^\/+/, "")}`
       : baseCwd;
 
+  // 4b. Re-mount skills for this turn so newly @-mentioned skills get
+  // registered with the CLI. Each structured-adapter continuation is a fresh
+  // spawn (runId per turn), so we can update --plugin-dir per turn. We merge
+  // persona.skills + previously-mounted skills (so prior @-mentions stay
+  // sticky for subsequent turns) + this turn's mentionedSkills, then rebuild
+  // the same per-conversation tmpdir via prepareSkillMount. Skipped for
+  // legacy PTY adapters above (they returned early at the alive-PTY block).
+  const priorSkillsRaw = (meta.adapterConfig as Record<string, unknown> | undefined)?.skills;
+  const priorMountedSkills = Array.isArray(priorSkillsRaw)
+    ? priorSkillsRaw.filter((s): s is string => typeof s === "string")
+    : [];
+  const mergedSkillKeysForTurn = Array.from(
+    new Set([
+      ...(persona?.skills ?? []),
+      ...priorMountedSkills,
+      ...(input.mentionedSkills ?? []),
+    ]),
+  );
+  if (mergedSkillKeysForTurn.length > 0) {
+    const turnMount = await prepareSkillMount({
+      sessionId: conversationId,
+      desiredKeys: mergedSkillKeysForTurn,
+      cabinetPath: cp ?? null,
+    });
+    if (turnMount) {
+      turnAdapterConfig.skillsDir = turnMount.dir;
+      turnAdapterConfig.skills = turnMount.mounted.map((m) => m.key);
+      // Persist on meta so the NEXT turn inherits the latest set even if no
+      // new @-mention is sent. writeConversationMeta is best-effort; failure
+      // doesn't block this turn since turnAdapterConfig is already updated.
+      try {
+        await writeConversationMeta({
+          ...meta,
+          adapterConfig: {
+            ...(meta.adapterConfig || {}),
+            skillsDir: turnMount.dir,
+            skills: turnAdapterConfig.skills,
+          },
+        });
+      } catch (err) {
+        console.warn(
+          `[continueConversationRun] failed to persist updated skill mount for ${conversationId}:`,
+          err,
+        );
+      }
+    }
+  }
+
   // 5. Build prompts for both modes — resume uses the lightweight shape,
   //    but we keep the replay prompt ready as a fallback in case the
   //    adapter reports its session expired.
@@ -1514,6 +1589,7 @@ export async function continueConversationRun(
     meta,
     userMessage: input.userMessage,
     mentionedPaths: input.mentionedPaths || [],
+    mentionedSkills: input.mentionedSkills,
     attachmentPaths: input.attachmentPaths,
     persona,
     baseCwd,
@@ -1526,6 +1602,7 @@ export async function continueConversationRun(
         meta,
         userMessage: input.userMessage,
         mentionedPaths: input.mentionedPaths || [],
+        mentionedSkills: input.mentionedSkills,
         attachmentPaths: input.attachmentPaths,
         persona,
         baseCwd,

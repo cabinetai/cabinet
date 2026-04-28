@@ -21,6 +21,7 @@ import {
   type StartWorkMode,
 } from "@/components/composer/start-work-dialog";
 import { useComposer, type MentionableItem } from "@/hooks/use-composer";
+import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import {
@@ -379,6 +380,8 @@ export function HomeScreen() {
       .catch(() => {});
   }, []);
 
+  const skillItems = useSkillMentionItems();
+
   const mentionItems: MentionableItem[] = [
     ...agents
       .filter((a) => a.slug !== "editor")
@@ -389,6 +392,7 @@ export function HomeScreen() {
         sublabel: a.role || "",
         icon: a.emoji,
       })),
+    ...skillItems,
     ...flattenTree(treeNodes).map((p) => ({
       type: "page" as const,
       id: p.path,
@@ -419,6 +423,7 @@ export function HomeScreen() {
       message,
       mentionedPaths,
       mentionedAgents,
+      mentionedSkills,
       attachmentPaths,
       stagingClientUuid: turnStagingUuid,
     }) => {
@@ -429,6 +434,7 @@ export function HomeScreen() {
         agentSlug: targetAgent,
         userMessage: message,
         mentionedPaths,
+        mentionedSkills,
         attachmentPaths,
         stagingClientUuid: turnStagingUuid,
         ...taskRuntime,

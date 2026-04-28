@@ -28,11 +28,11 @@ import {
   type HeartbeatDraft,
 } from "@/components/composer/scheduling-fields";
 import { useComposer, type MentionableItem } from "@/hooks/use-composer";
+import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useTreeStore } from "@/stores/tree-store";
 import { useAppStore } from "@/stores/app-store";
 import { flattenTree } from "@/lib/tree-utils";
 import { createConversation } from "@/lib/agents/conversation-client";
-import type { SkillEntry } from "@/lib/agents/skills/types";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import type { JobConfig } from "@/types/jobs";
@@ -155,27 +155,7 @@ export function StartWorkDialog({
     });
   }, [selectedAgent]);
 
-  const [skillCatalog, setSkillCatalog] = useState<SkillEntry[]>([]);
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    const params = new URLSearchParams();
-    if (cabinetPath) params.set("cabinet", cabinetPath);
-    params.set("origins", "cabinet,linked");
-    fetch(`/api/agents/skills?${params}`)
-      .then((res) => (res.ok ? res.json() : { entries: [] }))
-      .then((data: { entries?: SkillEntry[] }) => {
-        if (cancelled) return;
-        const managed = (data.entries ?? []).filter(
-          (e) => e.origin !== "system" && e.origin !== "legacy-home",
-        );
-        setSkillCatalog(managed);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [open, cabinetPath]);
+  const skillItems = useSkillMentionItems({ cabinetPath, enabled: open });
 
   const mentionItems: MentionableItem[] = useMemo(
     () => [
@@ -186,12 +166,7 @@ export function StartWorkDialog({
         sublabel: a.role ?? "",
         icon: a.emoji,
       })),
-      ...skillCatalog.map((s) => ({
-        type: "skill" as const,
-        id: s.key,
-        label: s.name,
-        sublabel: s.description ?? `skill: ${s.key}`,
-      })),
+      ...skillItems,
       ...flattenTree(treeNodes).map((p) => ({
         type: "page" as const,
         id: p.path,
@@ -199,7 +174,7 @@ export function StartWorkDialog({
         sublabel: p.path,
       })),
     ],
-    [agents, skillCatalog, treeNodes]
+    [agents, skillItems, treeNodes]
   );
 
   // One composer for task + routine (both need a prompt). Heartbeat mode

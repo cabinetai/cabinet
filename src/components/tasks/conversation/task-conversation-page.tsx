@@ -651,6 +651,7 @@ export function TaskConversationPage({
     async (payload: {
       text: string;
       mentionedPaths: string[];
+      mentionedSkills: string[];
       attachmentPaths: string[];
       runtime: {
         providerId?: string;
@@ -724,6 +725,7 @@ export function TaskConversationPage({
             role: "user",
             content: payload.text,
             mentionedPaths: payload.mentionedPaths,
+            mentionedSkills: payload.mentionedSkills,
             attachmentPaths: payload.attachmentPaths,
             runtime: payload.runtime,
           },

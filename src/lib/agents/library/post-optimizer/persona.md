@@ -12,7 +12,8 @@ active: true
 workdir: /data
 workspace: /cabinet-example
 recommendedSkills:
-  - kb-page-author
+  - key: page-cro
+    source: github:coreyhaines31/marketingskills/page-cro
 channels:
   - general
   - content

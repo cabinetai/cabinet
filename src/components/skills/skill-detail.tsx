@@ -3,28 +3,23 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
-  ArrowLeft,
   Check,
   ClipboardCheck,
   Loader2,
   Save,
   ShieldAlert,
-  ShieldCheck,
   Shield,
   Trash2,
   Lock,
 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import type {
   SkillBundle,
   SkillOrigin,
-  TrustLevel,
-  TrustPolicy,
 } from "@/lib/agents/skills/types";
+import type { AuditSummary } from "@/lib/agents/skills/audits";
 
 const ORIGIN_LABEL: Record<SkillOrigin, string> = {
   "cabinet-scoped": "Cabinet (scoped)",
@@ -34,24 +29,40 @@ const ORIGIN_LABEL: Record<SkillOrigin, string> = {
   "legacy-home": "Legacy ~/.cabinet",
 };
 
-const TRUST_LABEL: Record<TrustLevel, string> = {
-  markdown_only: "Markdown only",
-  assets: "Assets",
-  scripts_executables: "Scripts",
-};
-
-function TrustIcon({ level }: { level: TrustLevel }) {
-  if (level === "markdown_only") return <ShieldCheck className="size-3.5 text-emerald-500" />;
-  if (level === "assets") return <Shield className="size-3.5 text-blue-500" />;
-  return <ShieldAlert className="size-3.5 text-amber-500" />;
+function SafetyCheck({
+  ok,
+  okLabel,
+  warnLabel,
+}: {
+  ok: boolean;
+  okLabel: string;
+  warnLabel: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-1.5 text-[11px]",
+        ok ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400",
+      )}
+    >
+      {ok ? <Check className="size-3" /> : <ShieldAlert className="size-3" />}
+      <span>{ok ? okLabel : warnLabel}</span>
+    </div>
+  );
 }
 
 interface SkillDetailProps {
   skillKey: string;
   cabinetPath?: string;
+  /**
+   * Called when the user successfully deletes the skill. Hosts (e.g. the
+   * Dialog inside SkillLibrary) use this to dismiss the surrounding chrome.
+   * If omitted, the component just clears local state on delete.
+   */
+  onClose?: () => void;
 }
 
-export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
+export function SkillDetail({ skillKey, cabinetPath, onClose }: SkillDetailProps) {
   const [bundle, setBundle] = useState<SkillBundle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,9 +72,9 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
   // Editable fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [trustPolicy, setTrustPolicy] = useState<TrustPolicy | "">("");
   const [allowedTools, setAllowedTools] = useState("");
   const [body, setBody] = useState("");
+  const [audits, setAudits] = useState<AuditSummary | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -73,13 +84,16 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
       if (cabinetPath) params.set("cabinet", cabinetPath);
       const res = await fetch(`/api/agents/skills/${encodeURIComponent(skillKey)}?${params}`);
       if (!res.ok) throw new Error(`load failed: ${res.statusText}`);
-      const data = (await res.json()) as { skill: SkillBundle };
+      const data = (await res.json()) as {
+        skill: SkillBundle;
+        audits?: AuditSummary | null;
+      };
       setBundle(data.skill);
       setName(data.skill.name);
       setDescription(data.skill.description ?? "");
-      setTrustPolicy(data.skill.trustPolicy ?? "");
-      setAllowedTools(data.skill.allowedTools.join(", "));
+      setAllowedTools(data.skill.allowedTools.join("\n"));
       setBody(data.skill.body);
+      setAudits(data.audits ?? null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "load failed");
     } finally {
@@ -99,8 +113,11 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
       const params = new URLSearchParams();
       if (cabinetPath) params.set("cabinet", cabinetPath);
       const frontmatter: Record<string, unknown> = { name, description };
-      if (trustPolicy) frontmatter["trust-policy"] = trustPolicy;
-      if (allowedTools.trim()) frontmatter["allowed-tools"] = allowedTools.trim();
+      const tools = allowedTools
+        .split(/[\n,]/)
+        .map((t) => t.trim())
+        .filter(Boolean);
+      if (tools.length > 0) frontmatter["allowed-tools"] = tools.join(", ");
       const res = await fetch(`/api/agents/skills/${encodeURIComponent(skillKey)}?${params}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
@@ -119,7 +136,7 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
     } finally {
       setSaving(false);
     }
-  }, [bundle, skillKey, cabinetPath, name, description, trustPolicy, allowedTools, body, refresh]);
+  }, [bundle, skillKey, cabinetPath, name, description, allowedTools, body, refresh]);
 
   const handleDelete = useCallback(async () => {
     if (!bundle) return;
@@ -133,24 +150,8 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
       alert(`Delete failed: ${(await res.json().catch(() => ({}))).error || res.statusText}`);
       return;
     }
-    window.location.href = "/skills";
-  }, [bundle, skillKey, cabinetPath]);
-
-  const handleRevokeTrust = useCallback(async () => {
-    if (!bundle) return;
-    const res = await fetch(`/api/agents/skills/${encodeURIComponent(skillKey)}/trust`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        status: "revoked",
-        cabinetPath: cabinetPath ?? null,
-        reason: "Revoked from skill detail page",
-      }),
-    });
-    if (res.ok) {
-      alert("Trust revoked. Next run will re-prompt.");
-    }
-  }, [bundle, skillKey, cabinetPath]);
+    onClose?.();
+  }, [bundle, skillKey, cabinetPath, onClose]);
 
   if (loading) {
     return (
@@ -171,39 +172,22 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
   const readOnly = !bundle.editable;
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="border-b border-border px-4 py-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <Link
-            href="/skills"
-            className="text-muted-foreground hover:text-foreground"
-            aria-label="Back to skills library"
-          >
-            <ArrowLeft className="size-4" />
-          </Link>
+    <div className="flex flex-col h-full min-h-0">
+      <div className="border-b border-border px-4 py-3 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <h2 className="text-sm font-semibold truncate">{bundle.name}</h2>
-          <code className="text-[11px] text-muted-foreground font-mono">{bundle.key}</code>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+          <code className="text-[11px] text-muted-foreground font-mono shrink-0">{bundle.key}</code>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
             {ORIGIN_LABEL[bundle.origin]}
           </span>
           {readOnly && (
             <Lock
-              className="size-3.5 text-muted-foreground"
+              className="size-3.5 text-muted-foreground shrink-0"
               aria-label={`Read-only — origin ${bundle.origin}`}
             />
           )}
         </div>
-        <div className="flex items-center gap-2">
-          {bundle.trustPolicy && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRevokeTrust}
-              title="Revoke trust decision for this skill"
-            >
-              Revoke trust
-            </Button>
-          )}
+        <div className="flex items-center gap-2 shrink-0">
           {!readOnly && (
             <>
               <Button
@@ -229,27 +213,25 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <ScrollArea className="flex-1 border-r border-border">
-          <div className="p-4 flex flex-col gap-4">
-            <div>
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                Body (markdown)
-              </label>
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                disabled={readOnly}
-                spellCheck={false}
-                className={cn(
-                  "mt-1 w-full h-[60vh] font-mono text-xs p-3 bg-card border border-border rounded-md",
-                  "focus:outline-none focus:ring-2 focus:ring-ring",
-                  readOnly && "cursor-not-allowed opacity-70",
-                )}
-              />
-            </div>
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex-1 min-w-0 border-r border-border overflow-y-auto">
+          <div className="p-4 flex flex-col gap-4 h-full">
+            <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground shrink-0">
+              Body (markdown)
+            </label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              disabled={readOnly}
+              spellCheck={false}
+              className={cn(
+                "block w-full flex-1 min-h-[40vh] font-mono text-xs p-3 bg-card border border-border rounded-md resize-none",
+                "focus:outline-none focus:ring-2 focus:ring-ring",
+                readOnly && "cursor-not-allowed opacity-70",
+              )}
+            />
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="w-80 shrink-0 overflow-y-auto">
           <div className="p-4 flex flex-col gap-4">
@@ -279,59 +261,23 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
 
             <section className="flex flex-col gap-2">
               <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                Trust policy
+                Allowed tools (one per line)
               </label>
-              <select
-                value={trustPolicy}
-                onChange={(e) => setTrustPolicy(e.target.value as TrustPolicy | "")}
-                disabled={readOnly}
-                className={cn(
-                  "w-full text-xs p-2 bg-card border border-border rounded-md",
-                  readOnly && "cursor-not-allowed opacity-70",
-                )}
-              >
-                <option value="">(default — auto from trust level)</option>
-                <option value="auto-allow">auto-allow</option>
-                <option value="prompt-once">prompt-once</option>
-                <option value="always-prompt">always-prompt</option>
-                <option value="refuse">refuse</option>
-              </select>
-            </section>
-
-            <section className="flex flex-col gap-2">
-              <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                Allowed tools (comma-separated)
-              </label>
-              <Input
+              <textarea
                 value={allowedTools}
                 onChange={(e) => setAllowedTools(e.target.value)}
                 disabled={readOnly}
-                placeholder="Bash(git status), Bash(npm *)"
-                className="font-mono text-[11px]"
+                rows={4}
+                placeholder={"Bash(git status)\nBash(npm *)"}
+                className={cn(
+                  "w-full font-mono text-[11px] p-2 bg-card border border-border rounded-md",
+                  "focus:outline-none focus:ring-2 focus:ring-ring",
+                  readOnly && "cursor-not-allowed opacity-70",
+                )}
               />
             </section>
 
-            <section className="flex flex-col gap-1.5 pt-2 border-t border-border">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground">Trust level</span>
-                <span className="flex items-center gap-1">
-                  <TrustIcon level={bundle.trustLevel} />
-                  {TRUST_LABEL[bundle.trustLevel]}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground">Origin</span>
-                <span>{ORIGIN_LABEL[bundle.origin]}</span>
-              </div>
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground">Files</span>
-                <span>{bundle.fileInventory.length}</span>
-              </div>
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground">Editable</span>
-                <span>{bundle.editable ? "yes" : "no"}</span>
-              </div>
-            </section>
+            <AuditsSection audits={audits} bundle={bundle} />
 
             {bundle.fileInventory.some((f) => f.path.startsWith("evals/")) && (
               <section className="border-t border-border pt-3">
@@ -355,7 +301,7 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
             )}
 
             {bundle.fileInventory.length > 0 && (
-              <section>
+              <section className="border-t border-border pt-3">
                 <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                   Bundle ({bundle.fileInventory.length})
                 </label>
@@ -376,5 +322,97 @@ export function SkillDetail({ skillKey, cabinetPath }: SkillDetailProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+const AUDIT_SOURCES = [
+  { key: "ath", label: "ATH" },
+  { key: "socket", label: "Socket" },
+  { key: "snyk", label: "Snyk" },
+  { key: "zeroleaks", label: "zeroleaks" },
+] as const;
+
+const PASSING_RISK = new Set(["safe", "low", "none"]);
+
+function AuditsSection({
+  audits,
+  bundle,
+}: {
+  audits: AuditSummary | null;
+  bundle: SkillBundle;
+}) {
+  const scriptCount = bundle.fileInventory.filter((f) => f.kind === "script").length;
+  const hasCatchAll = bundle.allowedTools.some((t) => /\(\s*\*\s*\)/.test(t));
+
+  return (
+    <section className="border-t border-border pt-3">
+      <label className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+        <Shield className="size-3" />
+        Security
+        {audits?.available && audits.total > 0 && (
+          <span className="ml-auto text-muted-foreground/70 normal-case">
+            audits {audits.passed}/{audits.total} passed
+          </span>
+        )}
+      </label>
+      <div className="mt-1.5 flex flex-col gap-1">
+        <SafetyCheck
+          ok={scriptCount === 0}
+          okLabel="No executable scripts"
+          warnLabel={`${scriptCount} executable script${scriptCount === 1 ? "" : "s"}`}
+        />
+        <SafetyCheck
+          ok={!hasCatchAll}
+          okLabel="No catch-all tool grants"
+          warnLabel="Catch-all tool grant (e.g. Bash(*))"
+        />
+      </div>
+      {!audits || !audits.available ? (
+        <p className="text-[11px] text-muted-foreground/70 mt-2">
+          Audits unavailable — no upstream source recorded.
+        </p>
+      ) : (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {AUDIT_SOURCES.map(({ key, label }) => {
+            const block = audits.raw[key];
+            if (!block?.risk) {
+              return (
+                <span
+                  key={key}
+                  className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground/60"
+                  title={`${label}: no signal`}
+                >
+                  <span className="font-medium">{label}</span>
+                  <span>—</span>
+                </span>
+              );
+            }
+            const passed = PASSING_RISK.has(block.risk.toLowerCase());
+            return (
+              <span
+                key={key}
+                className={cn(
+                  "inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full",
+                  passed
+                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                    : "bg-red-500/10 text-red-600 dark:text-red-400",
+                )}
+                title={`${label}: ${block.risk}${
+                  block.alerts != null ? ` · ${block.alerts} alerts` : ""
+                }`}
+              >
+                {passed ? (
+                  <Check className="size-2.5" />
+                ) : (
+                  <ShieldAlert className="size-2.5" />
+                )}
+                <span className="font-medium">{label}</span>
+                <span className="opacity-70">{block.risk}</span>
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </section>
   );
 }

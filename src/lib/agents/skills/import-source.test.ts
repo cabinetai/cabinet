@@ -4,22 +4,19 @@ import { parseSource } from "./import-source";
 
 test("parses github: shorthand without skill", () => {
   const parsed = parseSource("github:anthropics/skills");
-  assert.deepEqual(parsed, {
-    kind: "github",
-    owner: "anthropics",
-    repo: "skills",
-    skillName: undefined,
-  });
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.owner, "anthropics");
+  assert.equal(parsed?.repo, "skills");
+  assert.equal(parsed?.skillName, undefined);
 });
 
-test("parses github: shorthand with skill", () => {
+test("parses github: shorthand with path-style skill", () => {
   const parsed = parseSource("github:anthropics/skills/release");
-  assert.deepEqual(parsed, {
-    kind: "github",
-    owner: "anthropics",
-    repo: "skills",
-    skillName: "release",
-  });
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.owner, "anthropics");
+  assert.equal(parsed?.repo, "skills");
+  assert.equal(parsed?.skillName, "release");
+  assert.equal(parsed?.subPath, "release");
 });
 
 test("parses skills.sh URL with three segments", () => {
@@ -49,13 +46,14 @@ test("parses github.com URL with .git suffix", () => {
   });
 });
 
-test("parses github.com URL with extra path segments", () => {
+test("parses github.com URL with /tree/<ref>/<path>", () => {
   const parsed = parseSource("https://github.com/shadcn-ui/ui/tree/main/registry");
-  assert.deepEqual(parsed, {
-    kind: "github",
-    owner: "shadcn-ui",
-    repo: "ui",
-  });
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.owner, "shadcn-ui");
+  assert.equal(parsed?.repo, "ui");
+  assert.equal(parsed?.ref, "main");
+  assert.equal(parsed?.subPath, "registry");
+  assert.equal(parsed?.skillName, "registry");
 });
 
 test("parses local: with absolute path", () => {
@@ -89,5 +87,73 @@ test("returns null for local: with empty path", () => {
 
 test("preserves non-https github URLs", () => {
   const parsed = parseSource("http://github.com/foo/bar");
-  assert.deepEqual(parsed, { kind: "github", owner: "foo", repo: "bar" });
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.owner, "foo");
+  assert.equal(parsed?.repo, "bar");
+});
+
+test("github: shorthand with @skill filter", () => {
+  const parsed = parseSource("github:anthropics/skills@frontend-design");
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.owner, "anthropics");
+  assert.equal(parsed?.repo, "skills");
+  assert.equal(parsed?.skillName, "frontend-design");
+});
+
+test("github: shorthand with #ref", () => {
+  const parsed = parseSource("github:anthropics/skills#main");
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.ref, "main");
+  assert.equal(parsed?.skillName, undefined);
+});
+
+test("github: shorthand combining #ref and @skill", () => {
+  const parsed = parseSource("github:anthropics/skills#main@release");
+  assert.equal(parsed?.ref, "main");
+  assert.equal(parsed?.skillName, "release");
+});
+
+test("github: shorthand with path infers last segment as skillName", () => {
+  const parsed = parseSource("github:anthropics/skills/release");
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.owner, "anthropics");
+  assert.equal(parsed?.repo, "skills");
+  assert.equal(parsed?.subPath, "release");
+  assert.equal(parsed?.skillName, "release");
+});
+
+test("github: shorthand with multi-segment path", () => {
+  const parsed = parseSource("github:owner/repo/skills/web-design");
+  assert.equal(parsed?.subPath, "skills/web-design");
+  assert.equal(parsed?.skillName, "web-design");
+});
+
+test("gitlab: shorthand basic", () => {
+  const parsed = parseSource("gitlab:owner/repo");
+  assert.equal(parsed?.kind, "gitlab");
+  assert.equal(parsed?.owner, "owner");
+  assert.equal(parsed?.repo, "repo");
+});
+
+test("gitlab: shorthand with subgroup", () => {
+  const parsed = parseSource("gitlab:group/subgroup/repo");
+  assert.equal(parsed?.kind, "gitlab");
+  assert.equal(parsed?.owner, "group/subgroup");
+  assert.equal(parsed?.repo, "repo");
+});
+
+test("gitlab.com URL with tree/ref/path", () => {
+  const parsed = parseSource("https://gitlab.com/owner/repo/-/tree/main/skills/foo");
+  assert.equal(parsed?.kind, "gitlab");
+  assert.equal(parsed?.owner, "owner");
+  assert.equal(parsed?.repo, "repo");
+  assert.equal(parsed?.ref, "main");
+  assert.equal(parsed?.skillName, "foo");
+});
+
+test("github.com URL with /tree/<ref>/<path>", () => {
+  const parsed = parseSource("https://github.com/anthropics/skills/tree/main/release");
+  assert.equal(parsed?.kind, "github");
+  assert.equal(parsed?.ref, "main");
+  assert.equal(parsed?.skillName, "release");
 });

@@ -1,5 +1,6 @@
 import * as pty from "node-pty";
 import { WebSocket } from "ws";
+import { readCabinetEnvFile } from "../../src/lib/runtime/cabinet-env";
 import {
   getOneShotLaunchSpec,
   getSessionLaunchSpec,
@@ -139,12 +140,17 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
       };
     }
 
+    // Merge `.cabinet.env` values at spawn time so PTY runs see API keys
+    // edited via the UI without a daemon restart. mtime-cached; cheap.
+    // process.env wins over file values (shell-supplied keys debug-override).
+    const cabinetEnvValues = readCabinetEnvFile().values;
     const term = pty.spawn(launch.command, launch.args, {
       name: "xterm-256color",
       cols: 120,
       rows: 30,
       cwd,
       env: {
+        ...cabinetEnvValues,
         ...(process.env as Record<string, string>),
         PATH: deps.enrichedPath,
         TERM: "xterm-256color",

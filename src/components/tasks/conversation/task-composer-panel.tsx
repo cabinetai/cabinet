@@ -16,6 +16,7 @@ import {
   type StartWorkMode,
 } from "@/components/composer/start-work-dialog";
 import { useComposer, type MentionableItem } from "@/hooks/use-composer";
+import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
 import { cn } from "@/lib/utils";
 import type { ConversationRuntimeOverride } from "@/types/conversations";
@@ -66,6 +67,7 @@ export interface TaskComposerPanelProps {
   onSend: (payload: {
     text: string;
     mentionedPaths: string[];
+    mentionedSkills: string[];
     attachmentPaths: string[];
     runtime: ConversationRuntimeOverride;
   }) => void | Promise<void>;
@@ -150,24 +152,32 @@ export function TaskComposerPanel({
     };
   }, [mentionableItems, autoLoadMentions, loadedMentions]);
 
+  const skillItems = useSkillMentionItems({
+    cabinetPath,
+    enabled: !mentionableItems && autoLoadMentions,
+  });
+
   const items = useMemo(
-    () => mentionableItems ?? loadedMentions ?? [],
-    [mentionableItems, loadedMentions]
+    () => mentionableItems ?? [...(loadedMentions ?? []), ...skillItems],
+    [mentionableItems, loadedMentions, skillItems]
   );
 
   const handleSubmit = useCallback(
     async ({
       message,
       mentionedPaths,
+      mentionedSkills,
       attachmentPaths,
     }: {
       message: string;
       mentionedPaths: string[];
+      mentionedSkills: string[];
       attachmentPaths: string[];
     }) => {
       await onSend({
         text: message,
         mentionedPaths,
+        mentionedSkills,
         attachmentPaths,
         runtime: {
           providerId: effectiveRuntime.providerId,

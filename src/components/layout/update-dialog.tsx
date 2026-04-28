@@ -16,7 +16,7 @@ interface UpdateDialogProps {
   onOpenChange: (open: boolean) => void;
   onRefresh: () => void;
   onApply: () => Promise<void>;
-  onCreateBackup: () => Promise<void>;
+  onCreateBackup: (options: { includeEnvKeys?: boolean; includeSkills?: boolean }) => Promise<void>;
   onOpenDataDir: () => Promise<void>;
   onLater: () => void;
 }

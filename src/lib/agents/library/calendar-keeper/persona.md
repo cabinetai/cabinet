@@ -11,6 +11,9 @@ budget: 80
 active: true
 workdir: /data
 workspace: /calendar
+recommendedSkills:
+  - key: gws-calendar
+    source: github:googleworkspace/cli/gws-calendar
 channels:
   - general
   - calendar

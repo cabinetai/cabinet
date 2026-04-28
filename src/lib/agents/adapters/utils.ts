@@ -1,5 +1,6 @@
 import { execSync, spawn } from "child_process";
 import { getNvmNodeBin } from "../nvm-path";
+import { readCabinetEnvFile } from "@/lib/runtime/cabinet-env";
 
 const nvmBin = getNvmNodeBin();
 
@@ -37,7 +38,14 @@ export interface RunChildProcessResult {
 export function withAdapterRuntimeEnv(
   env: NodeJS.ProcessEnv = process.env
 ): NodeJS.ProcessEnv {
+  // Merge `.cabinet.env` values at spawn time. mtime-cached, so this is
+  // cheap on repeat calls and always reflects the latest disk contents
+  // without IPC between Next.js and the daemon. Caller-supplied env still
+  // wins over file values (so options.env / process.env shell-overrides
+  // take precedence — consistent with dotenv conventions).
+  const fileValues = readCabinetEnvFile().values;
   return {
+    ...fileValues,
     ...env,
     PATH: ADAPTER_RUNTIME_PATH,
   };

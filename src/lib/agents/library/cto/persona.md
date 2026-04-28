@@ -12,7 +12,8 @@ active: true
 workdir: /data
 workspace: /engineering
 recommendedSkills:
-  - git-commit-hygiene
+  - key: code-review-excellence
+    source: github:wshobson/agents/code-review-excellence
   - shadcn
 ---
 

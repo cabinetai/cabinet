@@ -768,6 +768,77 @@ function TeamBuildStep({
   // phase 3: (reserved)
   // phase 4: "or pick" label + agents
 
+  // Department-columns drag-to-scroll. The columns row has hidden scrollbars
+  // by design; click-and-drag horizontally to pan. A small movement threshold
+  // (DRAG_THRESHOLD_PX) keeps real clicks on column items from being eaten by
+  // the drag handler — only sustained motion counts as a drag.
+  const columnsScrollRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startScrollLeft: number;
+    moved: boolean;
+  } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const DRAG_THRESHOLD_PX = 5;
+
+  const onColumnsPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    // Ignore secondary buttons and touches that aren't primary contact.
+    if (e.button !== 0 && e.pointerType !== "touch") return;
+    const el = columnsScrollRef.current;
+    if (!el) return;
+    dragStateRef.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startScrollLeft: el.scrollLeft,
+      moved: false,
+    };
+  }, []);
+
+  const onColumnsPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    const el = columnsScrollRef.current;
+    if (!state || state.pointerId !== e.pointerId || !el) return;
+    const dx = e.clientX - state.startX;
+    if (!state.moved && Math.abs(dx) >= DRAG_THRESHOLD_PX) {
+      state.moved = true;
+      setIsDragging(true);
+      // Capture so we keep getting move/up events even if cursor leaves the
+      // container, and so text selection is suppressed for the duration.
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        /* some browsers reject capture on synthetic events; degrade gracefully */
+      }
+    }
+    if (state.moved) {
+      el.scrollLeft = state.startScrollLeft - dx;
+    }
+  }, []);
+
+  const onColumnsPointerEnd = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state || state.pointerId !== e.pointerId) return;
+    const wasDrag = state.moved;
+    dragStateRef.current = null;
+    if (wasDrag) {
+      setIsDragging(false);
+      // Suppress the click that would otherwise fire on whatever was under
+      // the cursor at pointer-up — the user was dragging, not clicking.
+      const swallow = (ev: MouseEvent) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+      };
+      window.addEventListener("click", swallow, { capture: true, once: true });
+      // Belt-and-braces: if no click materializes (drag ended off any
+      // element), drop the listener on the next frame so we don't eat a
+      // legitimate click later.
+      window.requestAnimationFrame(() => {
+        window.removeEventListener("click", swallow, { capture: true });
+      });
+    }
+  }, []);
+
   const [registryTemplates, setRegistryTemplates] = useState<RegistryTemplate[]>([]);
   const [importTemplate, setImportTemplate] = useState<RegistryTemplate | null>(null);
   const [importOpen, setImportOpen] = useState(false);
@@ -1022,7 +1093,20 @@ function TeamBuildStep({
             <Loader2 className="size-5 animate-spin" style={{ color: WEB.textTertiary }} />
           </div>
         ) : (
-          <div className="flex items-start justify-center gap-3 overflow-x-auto px-6 pb-2 scrollbar-hide" style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}>
+          <div
+            ref={columnsScrollRef}
+            onPointerDown={onColumnsPointerDown}
+            onPointerMove={onColumnsPointerMove}
+            onPointerUp={onColumnsPointerEnd}
+            onPointerCancel={onColumnsPointerEnd}
+            className="flex items-start justify-center gap-3 overflow-x-auto px-6 pb-2 scrollbar-hide select-none"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              cursor: isDragging ? "grabbing" : "grab",
+              touchAction: "pan-y",
+            } as React.CSSProperties}
+          >
             {groupByDepartment(suggestedAgents, libraryTemplates, roomType).map(([label, agents]) => (
               <div
                 key={label}

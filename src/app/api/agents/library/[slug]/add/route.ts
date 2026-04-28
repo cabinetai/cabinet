@@ -98,9 +98,18 @@ async function promoteRecommendedSkills(personaPath: string): Promise<string[]> 
     if (!Array.isArray(recommended) || recommended.length === 0) return [];
     const existing = parsed.data.skills;
     if (Array.isArray(existing) && existing.length > 0) return [];
-    const cleanRecommended = recommended.filter(
-      (v): v is string => typeof v === "string" && v.trim().length > 0,
-    );
+    // Only auto-promote bare-string entries — those reference skills assumed
+    // to already be in the local catalog (e.g. user-authored Cabinet skills).
+    // Object-form entries with a `source` URL need an explicit install step,
+    // so they stay in `recommendedSkills` for the UI's install-on-click flow.
+    // Promoting them here would land them in `skills:` as orphans (referenced
+    // but no bundle on disk).
+    const cleanRecommended = recommended
+      .map((v): string | null => {
+        if (typeof v === "string" && v.trim()) return v.trim();
+        return null;
+      })
+      .filter((v): v is string => v !== null);
     if (cleanRecommended.length === 0) return [];
     const nextData = { ...parsed.data, skills: cleanRecommended };
     const nextMd = matter.stringify(parsed.content, nextData);

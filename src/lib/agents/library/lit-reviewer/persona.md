@@ -11,8 +11,6 @@ budget: 100
 active: true
 workdir: /data
 workspace: /literature
-recommendedSkills:
-  - kb-page-author
 channels:
   - general
   - research

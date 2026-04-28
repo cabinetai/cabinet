@@ -7,6 +7,8 @@ import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 import { listSkills, readSkill } from "@/lib/agents/skills/loader";
 import { readSkillStats } from "@/lib/agents/skills/stats";
+import { readSkillsLock } from "@/lib/agents/skills/lock";
+import { fetchUpstreamForLock } from "@/lib/agents/skills/upstream";
 
 interface CreateRequest {
   key: string;
@@ -14,7 +16,6 @@ interface CreateRequest {
   description?: string;
   body?: string;
   scope?: string; // "root" | "cabinet:<path>"  default: "root"
-  trustPolicy?: "auto-allow" | "prompt-once" | "always-prompt" | "refuse";
   allowedTools?: string;
 }
 
@@ -44,7 +45,6 @@ export async function POST(request: Request): Promise<NextResponse> {
     name: body.name || body.key,
     description: body.description ?? "",
   };
-  if (body.trustPolicy) frontmatter["trust-policy"] = body.trustPolicy;
   if (body.allowedTools) frontmatter["allowed-tools"] = body.allowedTools;
 
   const skillBody = body.body ?? `# ${body.name || body.key}\n\n${body.description ?? ""}\n`;
@@ -65,7 +65,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const includeLinked = originsParam ? originsParam.split(",").includes("linked") : true;
   const includeLegacy = originsParam ? originsParam.split(",").includes("legacy") : true;
 
-  const [skills, stats] = await Promise.all([
+  const [skills, stats, lock] = await Promise.all([
     listSkills({
       cabinetPath,
       includeSystem,
@@ -73,13 +73,20 @@ export async function GET(request: Request): Promise<NextResponse> {
       includeLegacy,
     }),
     readSkillStats(cabinetPath ?? null),
+    readSkillsLock(),
   ]);
 
-  // Decorate each entry with stats (lastOfferedAt, offerCount) when we have
-  // them; missing entries indicate a skill that hasn't been offered yet.
+  // Upstream metadata (GitHub stars + skills.sh installs) for skills that
+  // have a github source recorded in skills-lock.json. Skills authored
+  // directly on disk lack a lock entry → upstream is null and the UI hides
+  // the chip. Fetches are cached aggressively (24h stars, 1h installs).
+  const upstream = await fetchUpstreamForLock(lock);
+
+  // Decorate each entry with stats + upstream when we have them.
   const entries = skills.map((entry) => ({
     ...entry,
     stats: stats.skills[entry.key] ?? null,
+    upstream: upstream.get(entry.key) ?? null,
   }));
 
   // Legacy clients consumed `{ root, skills, count }` where `skills[]` had

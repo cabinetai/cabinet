@@ -12,7 +12,8 @@ active: true
 workdir: /data
 workspace: /analytics
 recommendedSkills:
-  - kb-page-author
+  - key: data-analysis
+    source: github:bytedance/deer-flow/data-analysis
 ---
 
 # Data Analyst Agent

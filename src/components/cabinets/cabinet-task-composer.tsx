@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useComposer, type MentionableItem } from "@/hooks/use-composer";
+import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
 import { createConversation } from "@/lib/agents/conversation-client";
 import { flattenTree } from "@/lib/tree-utils";
@@ -73,6 +74,8 @@ export function CabinetTaskComposer({
   const activeAgents = agents.filter((agent) => agent.active);
   const assignableAgents = activeAgents.length > 0 ? activeAgents : agents;
 
+  const skillItems = useSkillMentionItems({ cabinetPath });
+
   const mentionItems = useMemo<MentionableItem[]>(
     () => [
       ...assignableAgents.map((agent) => ({
@@ -82,6 +85,7 @@ export function CabinetTaskComposer({
         sublabel: agent.inherited ? `${agent.role} · ${agent.cabinetName}` : agent.role,
         icon: agent.emoji,
       })),
+      ...skillItems,
       ...pages.map((page) => ({
         type: "page" as const,
         id: page.path,
@@ -89,7 +93,7 @@ export function CabinetTaskComposer({
         sublabel: page.path,
       })),
     ],
-    [assignableAgents, pages]
+    [assignableAgents, skillItems, pages]
   );
 
   const stagingClientUuid = useMemo(
@@ -126,6 +130,7 @@ export function CabinetTaskComposer({
     onSubmit: async ({
       message,
       mentionedPaths,
+      mentionedSkills,
       attachmentPaths,
       stagingClientUuid: turnStagingUuid,
     }) => {
@@ -135,6 +140,7 @@ export function CabinetTaskComposer({
         agentSlug: selectedAgent.slug,
         userMessage: message,
         mentionedPaths,
+        mentionedSkills,
         attachmentPaths,
         stagingClientUuid: turnStagingUuid,
         cabinetPath: agentCabinetPath,

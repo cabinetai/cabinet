@@ -33,6 +33,7 @@ yarn-error.log*
 # env files
 .env*
 !.env.example
+.cabinet.env
 
 # vercel
 .vercel
@@ -85,5 +86,5 @@ data/**/.DS_Store
 data/.agents/.library/.next/
 
 # cabinetai CLI
-cabinetai/dist/
-cabinetai/node_modules/
+cabinetai/
+skills-lock.json

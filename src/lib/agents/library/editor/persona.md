@@ -12,7 +12,8 @@ active: true
 workdir: /data
 workspace: /
 recommendedSkills:
-  - kb-page-author
+  - key: copy-editing
+    source: github:coreyhaines31/marketingskills/copy-editing
 channels:
   - general
   - content

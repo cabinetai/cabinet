@@ -7,7 +7,7 @@ import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
 import { normalizeCabinetPath } from "@/lib/cabinets/paths";
 import { getDefaultProviderId } from "./provider-runtime";
 import { resolveEnabledProviderId } from "./provider-settings";
-import { GLOBAL_AGENTS_DIR, type AgentPersona } from "./persona-manager";
+import { GLOBAL_AGENTS_DIR, type AgentPersona, type RecommendedSkill } from "./persona-manager";
 import { ensureAgentScaffold } from "./scaffold";
 
 export const SEEDED_AGENT_LIBRARY_DIR = path.join(DATA_DIR, ".agents", ".library");
@@ -58,6 +58,45 @@ export async function resolveAgentTemplateDir(slug: string): Promise<string | nu
   }
 
   return templateDir;
+}
+
+/**
+ * Read the `recommendedSkills` frontmatter from a library template, if it
+ * exists. Used to surface template suggestions on existing agents whose own
+ * persona file pre-dates the template's recommendations being added.
+ *
+ * Returns `[]` when no matching template exists or the template has no
+ * recommendations. Errors swallowed — best-effort enrichment.
+ */
+export async function getTemplateRecommendedSkills(
+  slug: string,
+): Promise<RecommendedSkill[]> {
+  try {
+    const templateDir = await resolveAgentTemplateDir(slug);
+    if (!templateDir) return [];
+    const raw = await fs.readFile(path.join(templateDir, "persona.md"), "utf-8");
+    const { data } = matter(raw);
+    const recommended = data.recommendedSkills;
+    if (!Array.isArray(recommended)) return [];
+    const out: RecommendedSkill[] = [];
+    for (const v of recommended) {
+      if (typeof v === "string" && v.trim()) {
+        out.push({ key: v.trim() });
+      } else if (v && typeof v === "object" && typeof (v as { key?: unknown }).key === "string") {
+        const rec = v as { key: string; source?: unknown };
+        const k = rec.key.trim();
+        if (!k) continue;
+        const entry: RecommendedSkill = { key: k };
+        if (typeof rec.source === "string" && rec.source.trim()) {
+          entry.source = rec.source.trim();
+        }
+        out.push(entry);
+      }
+    }
+    return out;
+  } catch {
+    return [];
+  }
 }
 
 export function mergeMandatoryAgentSlugs(

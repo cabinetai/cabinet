@@ -16,6 +16,12 @@
 import { ensureBetterSqlite3 } from "../src/lib/system/preflight-sqlite";
 ensureBetterSqlite3();
 
+// Load `.cabinet.env` into process.env on daemon boot. Adapter spawns also
+// re-merge from the file directly (mtime-cached), but loading here keeps the
+// daemon's own behavior consistent with Next.js.
+import { loadCabinetEnv } from "../src/lib/runtime/cabinet-env";
+loadCabinetEnv();
+
 import { WebSocketServer, WebSocket } from "ws";
 import path from "path";
 import http from "http";

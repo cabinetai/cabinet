@@ -11,6 +11,9 @@ budget: 60
 active: true
 workdir: /data
 workspace: /research
+recommendedSkills:
+  - key: tavily-search
+    source: github:tavily-ai/skills/tavily-search
 ---
 
 # Researcher Agent

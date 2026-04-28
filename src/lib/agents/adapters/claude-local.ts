@@ -78,12 +78,17 @@ function buildClaudeArgs(
   }
 
   // Skills injection — the runner materializes the agent's selected skills
-  // into a managed tmpdir and sticks the path here. Claude picks them up via
-  // --add-dir so they appear in its working-directory list and get read into
-  // context. Absent when the persona has no `skills:` field or the catalog
-  // is empty; harmless to omit.
+  // into a managed plugin-shaped tmpdir (manifest + skills/<key>/ symlinks)
+  // and sticks the path here. Claude registers the skills via --plugin-dir
+  // so they're discoverable as /<skill-name> and auto-invoked when the
+  // model decides one matches. (Plain --add-dir only grants file-read
+  // access — it doesn't make skills available as commands.) We also pass
+  // --add-dir for read access to bundle assets that live alongside SKILL.md.
+  // Absent when the persona has no `skills:` field or the catalog is empty;
+  // harmless to omit.
   const skillsDir = readStringConfig(config, "skillsDir");
   if (skillsDir) {
+    args.push("--plugin-dir", skillsDir);
     args.push("--add-dir", skillsDir);
   }
 

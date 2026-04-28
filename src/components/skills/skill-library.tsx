@@ -6,24 +6,28 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
+  Download,
   ExternalLink,
   Library,
   Loader2,
   Lock,
   Plus,
   RefreshCw,
-  Shield,
   ShieldAlert,
-  ShieldCheck,
+  Star,
   Trash2,
-  Download,
 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { SkillEntry, SkillOrigin, TrustLevel } from "@/lib/agents/skills/types";
+import type { SkillEntry, SkillOrigin } from "@/lib/agents/skills/types";
 import { SkillAddDialog } from "./skill-add-dialog";
+import { SkillDetail } from "./skill-detail";
 
 interface ScanResult {
   path: string;
@@ -35,6 +39,7 @@ interface ScanResult {
 
 interface SkillEntryWithStats extends SkillEntry {
   stats: { lastOfferedAt: string; offerCount: number } | null;
+  upstream: { source: string; stars: number | null; installs: number | null } | null;
 }
 
 type DiscoverState =
@@ -72,32 +77,36 @@ const ORIGIN_TINT: Record<SkillOrigin, string> = {
   "legacy-home": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
 
-const TRUST_LABEL: Record<TrustLevel, string> = {
-  markdown_only: "Markdown only",
-  assets: "Assets",
-  scripts_executables: "Scripts",
-};
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 10_000) return `${Math.round(n / 1_000)}K`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+}
 
-function TrustIcon({ level }: { level: TrustLevel }) {
-  if (level === "markdown_only") return <ShieldCheck className="size-3.5 text-emerald-500" />;
-  if (level === "assets") return <Shield className="size-3.5 text-blue-500" />;
-  return <ShieldAlert className="size-3.5 text-amber-500" />;
+function pluginBadgeLabel(skill: SkillEntryWithStats): string | null {
+  if (!skill.pluginSource) return null;
+  const { marketplace, plugin, external } = skill.pluginSource;
+  const label = marketplace === plugin ? marketplace : `${marketplace}/${plugin}`;
+  return external ? `${label} (external)` : label;
 }
 
 function SkillCard({
   skill,
   onDelete,
-  linkable,
+  onOpen,
 }: {
   skill: SkillEntryWithStats;
   onDelete?: (key: string) => void;
-  linkable?: boolean;
+  /** When provided, the card becomes a button that opens the skill detail dialog. */
+  onOpen?: (key: string) => void;
 }) {
+  const pluginLabel = pluginBadgeLabel(skill);
   const inner = (
     <div className="bg-card border border-border rounded-lg p-4 flex flex-col gap-2 hover:border-primary/30 transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h3 className="text-[13px] font-semibold truncate">{skill.name}</h3>
             <span
               className={cn(
@@ -108,6 +117,14 @@ function SkillCard({
             >
               {ORIGIN_LABEL[skill.origin]}
             </span>
+            {pluginLabel && (
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400"
+                title={`Claude Code plugin: ${pluginLabel}`}
+              >
+                {pluginLabel}
+              </span>
+            )}
             {!skill.editable && (
               <Lock
                 className="size-3 text-muted-foreground"
@@ -124,55 +141,96 @@ function SkillCard({
         </div>
       </div>
       <div className="flex items-center gap-3 mt-1">
-        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-          <TrustIcon level={skill.trustLevel} />
-          {TRUST_LABEL[skill.trustLevel]}
-        </div>
-        {skill.allowedTools.length > 0 && (
+        {skill.upstream && skill.upstream.stars != null ? (
           <div
-            className="text-[10px] text-muted-foreground truncate flex-1 min-w-0"
-            title={skill.allowedTools.join(", ")}
+            className="flex items-center gap-1 text-[10px] text-muted-foreground"
+            title={`${skill.upstream.stars.toLocaleString()} stars on ${skill.upstream.source}`}
           >
-            tools: {skill.allowedTools.length}
+            <Star className="size-3" />
+            {formatCount(skill.upstream.stars)}
+          </div>
+        ) : null}
+        {skill.upstream && skill.upstream.installs != null ? (
+          <div
+            className="flex items-center gap-1 text-[10px] text-muted-foreground"
+            title={`${skill.upstream.installs.toLocaleString()} installs on skills.sh`}
+          >
+            <Download className="size-3" />
+            {formatCount(skill.upstream.installs)}
+          </div>
+        ) : null}
+        {!skill.upstream && (
+          <span
+            className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground"
+            title="Authored directly in this cabinet — no upstream git source recorded"
+          >
+            Custom
+          </span>
+        )}
+        {skill.trustLevel === "scripts_executables" && (
+          <div
+            className="flex items-center gap-1 text-[10px] text-amber-500"
+            title="Bundle includes executable scripts — review before approving"
+          >
+            <ShieldAlert className="size-3" />
+            scripts
           </div>
         )}
-        <div className="text-[10px] text-muted-foreground">
-          {skill.fileInventory.length} files
+        <div className="ml-auto flex items-center gap-3">
+          {skill.allowedTools.length > 0 && (
+            <div
+              className="text-[10px] text-muted-foreground truncate min-w-0"
+              title={skill.allowedTools.join(", ")}
+            >
+              tools: {skill.allowedTools.length}
+            </div>
+          )}
+          {skill.stats && (
+            <div
+              className="text-[10px] text-muted-foreground"
+              title={`Offered ${skill.stats.offerCount} time${
+                skill.stats.offerCount === 1 ? "" : "s"
+              } · last ${skill.stats.lastOfferedAt}`}
+            >
+              {formatRelative(skill.stats.lastOfferedAt)}
+            </div>
+          )}
+          {onDelete && skill.editable && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete(skill.key);
+              }}
+              aria-label={`Delete ${skill.key}`}
+            >
+              <Trash2 className="size-3.5" />
+            </Button>
+          )}
         </div>
-        {skill.stats && (
-          <div
-            className="text-[10px] text-muted-foreground"
-            title={`Offered ${skill.stats.offerCount} time${
-              skill.stats.offerCount === 1 ? "" : "s"
-            } · last ${skill.stats.lastOfferedAt}`}
-          >
-            {formatRelative(skill.stats.lastOfferedAt)}
-          </div>
-        )}
-        {onDelete && skill.editable && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onDelete(skill.key);
-            }}
-            aria-label={`Delete ${skill.key}`}
-          >
-            <Trash2 className="size-3.5" />
-          </Button>
-        )}
       </div>
     </div>
   );
 
-  if (linkable) {
+  if (onOpen) {
     return (
-      <Link href={`/skills/${encodeURIComponent(skill.key)}`} className="block">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => onOpen(skill.key)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onOpen(skill.key);
+          }
+        }}
+        className="block text-left w-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+      >
         {inner}
-      </Link>
+      </div>
     );
   }
   return inner;
@@ -188,6 +246,7 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
   const [systemOpen, setSystemOpen] = useState(false);
   const [discoverOpen, setDiscoverOpen] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
+  const [openSkillKey, setOpenSkillKey] = useState<string | null>(null);
   const [discovered, setDiscovered] = useState<ScanResult[]>([]);
   const [discoverState, setDiscoverState] = useState<Record<string, DiscoverState>>({});
 
@@ -331,10 +390,10 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
 
           {managed.map((entry) => (
             <SkillCard
-              key={`${entry.origin}-${entry.key}`}
+              key={entry.path}
               skill={entry}
               onDelete={handleDelete}
-              linkable
+              onOpen={setOpenSkillKey}
             />
           ))}
 
@@ -420,7 +479,11 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
               {systemOpen && (
                 <div className="flex flex-col gap-2 mt-1 pl-2 border-l border-border">
                   {system.map((entry) => (
-                    <SkillCard key={`${entry.origin}-${entry.key}`} skill={entry} linkable />
+                    <SkillCard
+                      key={entry.path}
+                      skill={entry}
+                      onOpen={setOpenSkillKey}
+                    />
                   ))}
                   <p className="text-[10px] text-muted-foreground/80 px-1 py-2 flex items-start gap-1">
                     <AlertTriangle className="size-3 shrink-0 mt-0.5" />
@@ -445,6 +508,36 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
           }}
         />
       )}
+
+      <Dialog
+        open={openSkillKey !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setOpenSkillKey(null);
+            // Re-fetch on close so any edits made in the detail dialog
+            // (description, body, trust-policy) refresh the library cards.
+            void refresh();
+          }
+        }}
+      >
+        <DialogContent
+          className="w-[92vw] max-w-5xl sm:max-w-5xl p-0 gap-0 h-[85vh] flex flex-col overflow-hidden"
+        >
+          <DialogTitle className="sr-only">
+            Skill detail{openSkillKey ? `: ${openSkillKey}` : ""}
+          </DialogTitle>
+          {openSkillKey && (
+            <SkillDetail
+              skillKey={openSkillKey}
+              cabinetPath={cabinetPath}
+              onClose={() => {
+                setOpenSkillKey(null);
+                void refresh();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

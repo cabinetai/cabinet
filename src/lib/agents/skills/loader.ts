@@ -12,7 +12,6 @@ import type {
   SkillFileKind,
   SkillOrigin,
   TrustLevel,
-  TrustPolicy,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -46,6 +45,10 @@ function legacyHomeSkillsDir(): string {
   return path.join(homeDir(), ".cabinet", "skills");
 }
 
+function claudePluginMarketplacesDir(): string {
+  return path.join(homeDir(), ".claude", "plugins", "marketplaces");
+}
+
 // ---------------------------------------------------------------------------
 // File classification
 // ---------------------------------------------------------------------------
@@ -74,15 +77,6 @@ function deriveTrustLevel(inventory: SkillFileInventoryEntry[]): TrustLevel {
     if (entry.kind === "asset" || entry.kind === "other") hasNonMarkdown = true;
   }
   return hasNonMarkdown ? "assets" : "markdown_only";
-}
-
-function isTrustPolicy(value: unknown): value is TrustPolicy {
-  return (
-    value === "auto-allow" ||
-    value === "prompt-once" ||
-    value === "always-prompt" ||
-    value === "refuse"
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -190,9 +184,6 @@ function readOneSkill(
       ? fmDescription.trim()
       : firstBodyLine(body);
 
-  const trustPolicyRaw = frontmatter["trust-policy"];
-  const trustPolicy = isTrustPolicy(trustPolicyRaw) ? trustPolicyRaw : null;
-
   const allowedTools = parseAllowedTools(frontmatter["allowed-tools"]);
 
   const fileInventory = walkBundle(skillDir);
@@ -209,7 +200,6 @@ function readOneSkill(
     path: skillDir,
     fileInventory,
     trustLevel,
-    trustPolicy,
     allowedTools,
     editable,
   };
@@ -235,6 +225,81 @@ function listSkillsAtRoot(
     const result = readOneSkill(skillDir, origin, scope);
     if (result) out.push(result);
   }
+  return out;
+}
+
+/**
+ * Walk Claude Code's plugin-marketplace tree under `~/.claude/plugins/marketplaces/`.
+ * Three layouts coexist on real installations (verified 2026-04-26):
+ *   <marketplace>/skills/<skill>/                          (e.g. n8n-mcp-skills)
+ *   <marketplace>/plugins/<plugin>/skills/<skill>/         (claude-plugins-official curated)
+ *   <marketplace>/external_plugins/<plugin>/skills/<skill>/ (community plugins)
+ *
+ * Returns ReadOne[] tagged with origin "system" (read-only host install) plus
+ * `pluginSource` so the UI can label them by marketplace+plugin instead of
+ * lumping them in with the `~/.claude/skills/` flat user installs.
+ */
+function listClaudePluginSkills(): ReadOne[] {
+  const marketplacesDir = claudePluginMarketplacesDir();
+  let marketplaces: fs.Dirent[];
+  try {
+    marketplaces = fs.readdirSync(marketplacesDir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+
+  const out: ReadOne[] = [];
+
+  const collect = (dir: string, marketplace: string, plugin: string, external: boolean) => {
+    let dirents: fs.Dirent[];
+    try {
+      dirents = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const dirent of dirents) {
+      if (!dirent.isDirectory() && !dirent.isSymbolicLink()) continue;
+      if (dirent.name.startsWith(".")) continue;
+      const skillDir = path.join(dir, dirent.name);
+      const result = readOneSkill(skillDir, "system", null);
+      if (result) {
+        result.entry.pluginSource = { marketplace, plugin, external: external || undefined };
+        out.push(result);
+      }
+    }
+  };
+
+  for (const m of marketplaces) {
+    if (!m.isDirectory()) continue;
+    if (m.name.startsWith(".") || m.name.endsWith(".bak")) continue;
+    const marketplaceRoot = path.join(marketplacesDir, m.name);
+
+    // Layout 1: <marketplace>/skills/<skill>/ — marketplace ships skills directly.
+    collect(path.join(marketplaceRoot, "skills"), m.name, m.name, false);
+
+    // Layouts 2 + 3: <marketplace>/{plugins,external_plugins}/<plugin>/skills/<skill>/
+    for (const container of ["plugins", "external_plugins"] as const) {
+      const containerPath = path.join(marketplaceRoot, container);
+      let plugins: fs.Dirent[];
+      try {
+        plugins = fs.readdirSync(containerPath, { withFileTypes: true });
+      } catch {
+        continue;
+      }
+      const external = container === "external_plugins";
+      for (const plugin of plugins) {
+        if (!plugin.isDirectory()) continue;
+        if (plugin.name.startsWith(".")) continue;
+        collect(
+          path.join(containerPath, plugin.name, "skills"),
+          m.name,
+          plugin.name,
+          external,
+        );
+      }
+    }
+  }
+
   return out;
 }
 
@@ -277,21 +342,35 @@ export async function listSkills(opts: ListSkillsOptions = {}): Promise<SkillEnt
     for (const dir of systemSkillsDirs()) {
       collected.push(...listSkillsAtRoot(dir, "system", null));
     }
+    // Claude Code plugin marketplace skills — Claude Code auto-loads them
+    // for any of its runs, so they belong in the system tier alongside
+    // ~/.claude/skills/. Tagged with `pluginSource` for UI labeling.
+    collected.push(...listClaudePluginSkills());
   }
 
   if (includeLegacy) {
     collected.push(...listSkillsAtRoot(legacyHomeSkillsDir(), "legacy-home", null));
   }
 
-  // Resolve key collisions by precedence.
+  // Resolve key collisions by precedence. For plugin skills, namespace by
+  // marketplace+plugin so two plugins with same-named skills don't clobber
+  // each other (e.g. example-plugin's `example-skill` and another marketplace's).
+  const collisionKey = ({ entry }: ReadOne): string => {
+    if (entry.pluginSource) {
+      return `${entry.pluginSource.marketplace}::${entry.pluginSource.plugin}::${entry.key}`;
+    }
+    return entry.key;
+  };
   const byKey = new Map<string, SkillEntry>();
-  for (const { entry } of collected) {
-    const existing = byKey.get(entry.key);
+  for (const item of collected) {
+    const ck = collisionKey(item);
+    const entry = item.entry;
+    const existing = byKey.get(ck);
     if (
       !existing ||
       ORIGIN_PRECEDENCE[entry.origin] < ORIGIN_PRECEDENCE[existing.origin]
     ) {
-      byKey.set(entry.key, entry);
+      byKey.set(ck, entry);
     }
   }
   return Array.from(byKey.values()).sort((a, b) => a.key.localeCompare(b.key));
@@ -340,6 +419,16 @@ export async function readSkill(
       return { ...result.entry, body: result.body };
     }
   }
+
+  // Plugin marketplace fallback — search nested layouts for a same-key skill.
+  if (includeSystem) {
+    const pluginHits = listClaudePluginSkills().filter((r) => r.entry.key === key);
+    if (pluginHits.length > 0) {
+      const first = pluginHits[0];
+      return { ...first.entry, body: first.body };
+    }
+  }
+
   return null;
 }
 

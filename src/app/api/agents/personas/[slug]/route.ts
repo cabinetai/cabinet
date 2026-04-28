@@ -13,6 +13,7 @@ import {
   sendMessage,
   getHeartbeatHistory,
 } from "@/lib/agents/persona-manager";
+import { getTemplateRecommendedSkills } from "@/lib/agents/library-manager";
 import { startManualHeartbeat } from "@/lib/agents/heartbeat";
 import { updateGoal, getGoalHistory } from "@/lib/agents/goal-manager";
 import { reloadDaemonSchedules } from "@/lib/agents/daemon-client";
@@ -45,6 +46,25 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   const persona = await readPersona(slug, cabinetPath);
   if (!persona) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // Enrich `recommendedSkills` with the library template's recommendations
+  // when the agent slug matches a known template — covers the case where an
+  // agent was created before the template's `recommendedSkills` field was
+  // populated, so the on-disk persona is missing them. The persona's own
+  // entries take precedence on key collision.
+  const templateRecs = await getTemplateRecommendedSkills(slug);
+  if (templateRecs.length > 0) {
+    const personaRecs = persona.recommendedSkills ?? [];
+    const seen = new Set(personaRecs.map((r) => r.key));
+    const merged = [...personaRecs];
+    for (const rec of templateRecs) {
+      if (!seen.has(rec.key)) {
+        merged.push(rec);
+        seen.add(rec.key);
+      }
+    }
+    persona.recommendedSkills = merged;
   }
 
   const memoryFiles = await listMemoryFiles(slug, cabinetPath);

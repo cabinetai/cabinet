@@ -61,6 +61,79 @@ function resolveDestRoot(scope: string | undefined): string {
   return path.join(PROJECT_ROOT, ".agents", "skills");
 }
 
+/**
+ * Claude Code plugin marketplace layout: skills are listed in
+ * `.claude-plugin/plugin.json` under a `skills` array of relative
+ * `SKILL.md` paths (e.g. `./tools/image/ai-image-generation/SKILL.md`).
+ * Resolve a skill name to its bundle directory by matching against the
+ * basename of each entry's parent dir.
+ */
+async function resolveFromPluginManifest(
+  repoRoot: string,
+  skillName: string,
+): Promise<string | null> {
+  try {
+    const manifestPath = path.join(repoRoot, ".claude-plugin", "plugin.json");
+    const raw = await fs.readFile(manifestPath, "utf-8");
+    const parsed = JSON.parse(raw) as { skills?: unknown };
+    const skills = Array.isArray(parsed.skills) ? parsed.skills : [];
+    for (const entry of skills) {
+      if (typeof entry !== "string") continue;
+      // Normalize: drop leading "./" and trailing /SKILL.md
+      const normalized = entry.replace(/^\.\//, "");
+      const dir = normalized.replace(/\/SKILL\.md$/i, "");
+      if (path.basename(dir) === skillName) {
+        const abs = path.join(repoRoot, dir);
+        if (await fs.stat(abs).then(() => true).catch(() => false)) {
+          return abs;
+        }
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generic fallback: walk the repo for any directory named `skillName` that
+ * contains a `SKILL.md`. Covers Claude Code marketplace repos
+ * (`plugins/<plugin>/skills/<skill>/`) and other nested layouts where the
+ * manifest doesn't declare the skill directly. Depth-limited and
+ * ignores common noise dirs (`.git`, `node_modules`, etc).
+ */
+async function findSkillByDirName(
+  repoRoot: string,
+  skillName: string,
+  maxDepth = 6,
+): Promise<string | null> {
+  const SKIP = new Set([".git", "node_modules", ".next", "dist", "build", ".venv", "venv"]);
+  async function walk(dir: string, depth: number): Promise<string | null> {
+    if (depth > maxDepth) return null;
+    let entries: Array<{ name: string; isDirectory: () => boolean }>;
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return null;
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      if (SKIP.has(entry.name)) continue;
+      const childDir = path.join(dir, entry.name);
+      if (entry.name === skillName) {
+        const skillMd = path.join(childDir, "SKILL.md");
+        if (await fs.stat(skillMd).then(() => true).catch(() => false)) {
+          return childDir;
+        }
+      }
+      const found = await walk(childDir, depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+  return walk(repoRoot, 0);
+}
+
 async function attachToAgents(slugs: string[] | undefined, skillKey: string): Promise<string[]> {
   if (!slugs || slugs.length === 0) return [];
   const updated: string[] = [];
@@ -119,7 +192,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       // skills/ if present; else copy the repo itself as a single skill.
       let sourceDir: string;
       if (parsed.skillName) {
-        // Try repo/<skillName> then repo/skills/<skillName>
+        // Try repo/<skillName> then repo/skills/<skillName>, then fall back
+        // to the Claude Code plugin manifest at .claude-plugin/plugin.json
+        // (used by `infsh-skills/skills` and similar plugin-marketplace
+        // repos that scatter skills across nested category dirs).
         const direct = path.join(tmp, parsed.skillName);
         const nested = path.join(tmp, "skills", parsed.skillName);
         if (await fs.stat(direct).then(() => true).catch(() => false)) {
@@ -127,9 +203,22 @@ export async function POST(request: Request): Promise<NextResponse> {
         } else if (await fs.stat(nested).then(() => true).catch(() => false)) {
           sourceDir = nested;
         } else {
-          throw new Error(
-            `skill "${parsed.skillName}" not found in ${owner}/${repo} (looked in /, /skills/)`,
-          );
+          const fromManifest = await resolveFromPluginManifest(tmp, parsed.skillName);
+          if (fromManifest) {
+            sourceDir = fromManifest;
+          } else {
+            // Last-resort: walk the repo for any directory named `<skillName>`
+            // that contains SKILL.md. Catches marketplace-style repos
+            // (`plugins/<plugin>/skills/<skill>/`) without an explicit manifest.
+            const fromWalk = await findSkillByDirName(tmp, parsed.skillName);
+            if (fromWalk) {
+              sourceDir = fromWalk;
+            } else {
+              throw new Error(
+                `skill "${parsed.skillName}" not found in ${owner}/${repo} (looked in /, /skills/, .claude-plugin/plugin.json, recursive walk)`,
+              );
+            }
+          }
         }
         importedKey = parsed.skillName;
       } else {

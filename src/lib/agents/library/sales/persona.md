@@ -11,6 +11,9 @@ budget: 100
 active: true
 workdir: /data
 workspace: /sales
+recommendedSkills:
+  - key: sales-enablement
+    source: github:coreyhaines31/marketingskills/sales-enablement
 channels:
   - general
   - sales

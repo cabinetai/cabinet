@@ -13,7 +13,6 @@ export type SectionType =
   | "agent"
   | "tasks"
   | "task"
-  | "skills"
   | "settings"
   | "registry"
   | "help";

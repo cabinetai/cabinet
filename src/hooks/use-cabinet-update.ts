@@ -50,29 +50,39 @@ export function useCabinetUpdate(options: UseCabinetUpdateOptions = {}) {
     }
   }, []);
 
-  const createBackup = useCallback(async (scope: "data" | "project" = "data") => {
-    setBackupPending(true);
-    try {
-      const response = await fetch("/api/system/backup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope }),
-      });
-      const data = (await response.json()) as { backupPath?: string; error?: string };
-      if (!response.ok || !data.backupPath) {
-        throw new Error(data.error || `Backup failed (${response.status})`);
+  const createBackup = useCallback(
+    async (
+      scope: "data" | "project" = "data",
+      options: { includeEnvKeys?: boolean; includeSkills?: boolean } = {},
+    ) => {
+      setBackupPending(true);
+      try {
+        const response = await fetch("/api/system/backup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scope,
+            includeEnvKeys: options.includeEnvKeys === true,
+            includeSkills: options.includeSkills === true,
+          }),
+        });
+        const data = (await response.json()) as { backupPath?: string; error?: string };
+        if (!response.ok || !data.backupPath) {
+          throw new Error(data.error || `Backup failed (${response.status})`);
+        }
+        setBackupPath(data.backupPath);
+        setActionError(null);
+        return data.backupPath;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Backup failed";
+        setActionError(message);
+        throw error;
+      } finally {
+        setBackupPending(false);
       }
-      setBackupPath(data.backupPath);
-      setActionError(null);
-      return data.backupPath;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Backup failed";
-      setActionError(message);
-      throw error;
-    } finally {
-      setBackupPending(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const openDataDir = useCallback(async () => {
     try {

@@ -70,6 +70,8 @@ import type {
   CabinetAgentSummary,
   CabinetJobSummary,
 } from "@/types/cabinets";
+import { useAppStore } from "@/stores/app-store";
+import { SkillAddDialog } from "@/components/skills/skill-add-dialog";
 import { cronToHuman } from "@/lib/agents/cron-utils";
 import { getAgentColor, tintFromHex } from "@/lib/agents/cron-compute";
 import { ScheduleCalendar } from "@/components/cabinets/schedule-calendar";
@@ -86,8 +88,11 @@ import {
 } from "@/components/composer/start-work-dialog";
 import { ComposerInput } from "@/components/composer/composer-input";
 import { AgentPicker } from "@/components/composer/agent-picker";
-import { useComposer } from "@/hooks/use-composer";
+import { useComposer, type MentionableItem } from "@/hooks/use-composer";
+import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
+import { useTreeStore } from "@/stores/tree-store";
+import { flattenTree } from "@/lib/tree-utils";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { editorExtensions } from "@/components/editor/extensions";
 import { markdownToHtml } from "@/lib/markdown/to-html";
@@ -397,7 +402,7 @@ function StatusChip({
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-border/70 px-2 py-0.5 text-[11px] font-medium transition-colors",
+        "inline-flex items-center gap-1.5 rounded-full border border-border/70 px-2.5 py-1 text-[12.5px] font-medium transition-colors",
         onClick && "hover:border-border hover:bg-accent/40 cursor-pointer",
         status === "paused" && "text-muted-foreground"
       )}
@@ -938,7 +943,11 @@ function Composer({
   onSubmit: (
     message: string,
     runtime: TaskRuntimeSelection,
-    extras: { attachmentPaths: string[]; stagingClientUuid?: string }
+    extras: {
+      attachmentPaths: string[];
+      mentionedSkills?: string[];
+      stagingClientUuid?: string;
+    }
   ) => void;
   submitting: boolean;
   onScheduleHandoff?: (
@@ -983,17 +992,58 @@ function Composer({
     clientAttachmentId: stagingClientUuid,
   });
 
+  const skillItems = useSkillMentionItems({ cabinetPath: persona.cabinetPath });
+  const treeNodes = useTreeStore((s) => s.nodes);
+  const [otherAgents, setOtherAgents] = useState<
+    Array<{ slug: string; name: string; role?: string; emoji?: string }>
+  >([]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/agents/personas")
+      .then((r) => (r.ok ? r.json() : { personas: [] }))
+      .then((data: { personas?: Array<{ slug: string; name: string; role?: string; emoji?: string }> }) => {
+        if (cancelled) return;
+        setOtherAgents((data.personas ?? []).filter((a) => a.slug !== persona.slug));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [persona.slug]);
+
+  const mentionItems: MentionableItem[] = useMemo(
+    () => [
+      ...otherAgents.map((a) => ({
+        type: "agent" as const,
+        id: a.slug,
+        label: a.name,
+        sublabel: a.role ?? "",
+        icon: a.emoji,
+      })),
+      ...skillItems,
+      ...flattenTree(treeNodes).map((p) => ({
+        type: "page" as const,
+        id: p.path,
+        label: p.title,
+        sublabel: p.path,
+      })),
+    ],
+    [otherAgents, skillItems, treeNodes],
+  );
+
   const composer = useComposer({
-    items: [],
+    items: mentionItems,
     attachments,
     stagingClientUuid,
     onSubmit: async ({
       message,
       attachmentPaths,
+      mentionedSkills,
       stagingClientUuid: turnStagingUuid,
     }) => {
       onSubmit(message, runtime, {
         attachmentPaths,
+        mentionedSkills,
         stagingClientUuid: turnStagingUuid,
       });
     },
@@ -1010,6 +1060,7 @@ function Composer({
         variant="card"
         minHeight="78px"
         maxHeight="320px"
+        mentionDropdownPlacement="below"
         showKeyHint={false}
         textareaClassName="pt-3 pb-1 text-[14px] leading-relaxed"
         focusTint={{ borderColor: palette.text, ringColor: palette.bg }}
@@ -1553,6 +1604,8 @@ function DetailsSection({
         <div className="col-span-6">
           <SkillsMultiSelect
             selected={persona.skills ?? []}
+            recommended={persona.recommendedSkills ?? []}
+            agentSlug={persona.slug}
             onChange={onSaveSkills}
           />
         </div>
@@ -1570,23 +1623,34 @@ interface SkillCatalogEntry {
 
 function SkillsMultiSelect({
   selected,
+  recommended,
+  agentSlug,
   onChange,
 }: {
   selected: string[];
+  recommended: Array<{ key: string; source?: string }>;
+  agentSlug: string;
   onChange: (slugs: string[]) => void;
 }) {
   const [catalog, setCatalog] = useState<SkillCatalogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [installSource, setInstallSource] = useState<string | null>(null);
+
+  const refreshCatalog = useCallback(async (signal?: AbortSignal): Promise<SkillCatalogEntry[]> => {
+    const res = await fetch("/api/agents/skills?origins=linked,legacy", { signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = (await res.json()) as { skills: SkillCatalogEntry[] };
+    return data.skills || [];
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
+    const ctrl = new AbortController();
     (async () => {
       try {
-        const res = await fetch("/api/agents/skills");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as { skills: SkillCatalogEntry[] };
-        if (!cancelled) setCatalog(data.skills || []);
+        const skills = await refreshCatalog(ctrl.signal);
+        if (!cancelled) setCatalog(skills);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       } finally {
@@ -1595,10 +1659,12 @@ function SkillsMultiSelect({
     })();
     return () => {
       cancelled = true;
+      ctrl.abort();
     };
-  }, []);
+  }, [refreshCatalog]);
 
   const selectedSet = useMemo(() => new Set(selected), [selected]);
+  const catalogKeys = useMemo(() => new Set(catalog.map((c) => c.slug)), [catalog]);
   const toggle = (slug: string) => {
     if (selectedSet.has(slug)) {
       onChange(selected.filter((s) => s !== slug));
@@ -1606,6 +1672,32 @@ function SkillsMultiSelect({
       onChange([...selected, slug]);
     }
   };
+
+  // Suggestions: recommendedSkills minus what's already attached.
+  // - In catalog → "Attach" (one-click append to skills array).
+  // - Not in catalog but has source → "Install + attach".
+  // - Not in catalog and no source → hidden (can't act on it).
+  const suggestions = useMemo(
+    () =>
+      recommended
+        .filter((r) => !selectedSet.has(r.key))
+        .filter((r) => catalogKeys.has(r.key) || !!r.source),
+    [recommended, selectedSet, catalogKeys]
+  );
+
+  const handleInstalled = useCallback(
+    async (key: string) => {
+      // The dialog has finished a successful import + attach. Refresh the
+      // catalog so the new entry appears as a regular chip, and reflect the
+      // new attachment in local state.
+      const next = await refreshCatalog();
+      setCatalog(next);
+      if (!selectedSet.has(key)) onChange([...selected, key]);
+      setInstallSource(null);
+    },
+    [refreshCatalog, selected, selectedSet, onChange]
+  );
+
   // Slugs the persona lists that don't exist in the catalog — still render
   // them as chips so the user sees them and can remove them.
   const orphanSlugs = selected.filter((slug) =>
@@ -1614,9 +1706,16 @@ function SkillsMultiSelect({
 
   return (
     <div>
-      <label className="mb-1 block text-[10.5px] font-medium uppercase tracking-wide text-muted-foreground">
-        Skills
-      </label>
+      <button
+        type="button"
+        onClick={() =>
+          useAppStore.getState().setSection({ type: "settings", slug: "skills" })
+        }
+        className="mb-1.5 block text-[12px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+        title="Open Settings → Skills"
+      >
+        Skills →
+      </button>
       {loading ? (
         <div className="flex items-center gap-2 rounded-md border border-border/70 bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
           <Loader2 className="size-3 animate-spin" />
@@ -1628,11 +1727,9 @@ function SkillsMultiSelect({
         </div>
       ) : catalog.length === 0 && selected.length === 0 ? (
         <div className="rounded-md border border-dashed border-border/70 bg-muted/20 px-3 py-2.5 text-[11px] text-muted-foreground">
-          No skills detected.{" "}
-          <a href="/skills" className="underline hover:text-foreground">
-            Add one from the library
-          </a>{" "}
-          or drop a <code className="rounded bg-muted px-1 py-0.5">SKILL.md</code> into{" "}
+          No skills detected. Add one from{" "}
+          <span className="font-medium text-foreground">Settings &rarr; Skills</span>, or drop a{" "}
+          <code className="rounded bg-muted px-1 py-0.5">SKILL.md</code> into{" "}
           <code className="rounded bg-muted px-1 py-0.5">.agents/skills/&lt;name&gt;/</code>.
         </div>
       ) : (
@@ -1646,7 +1743,7 @@ function SkillsMultiSelect({
                 onClick={() => toggle(entry.slug)}
                 title={entry.description || entry.name}
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
+                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[12.5px] font-medium transition-colors",
                   isOn
                     ? "border-violet-500/40 bg-violet-500/15 text-violet-700 dark:text-violet-300 hover:bg-violet-500/20"
                     : "border-border bg-background text-muted-foreground hover:border-border/70 hover:text-foreground"
@@ -1658,7 +1755,7 @@ function SkillsMultiSelect({
                   <Sparkles className="size-3 text-muted-foreground/60" />
                 )}
                 {entry.name}
-                <span className="ml-0.5 font-mono text-[9px] opacity-60">
+                <span className="ml-0.5 font-mono text-[10.5px] opacity-60">
                   {entry.slug}
                 </span>
               </button>
@@ -1670,23 +1767,68 @@ function SkillsMultiSelect({
               type="button"
               onClick={() => toggle(slug)}
               title="Not found in catalog — click to remove"
-              className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-500/20"
+              className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-[12.5px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-500/20"
             >
               <CircleAlert className="size-3" />
               {slug}
-              <span className="ml-0.5 font-mono text-[9px] opacity-60">orphan</span>
+              <span className="ml-0.5 font-mono text-[10.5px] opacity-60">orphan</span>
             </button>
           ))}
         </div>
       )}
-      <p className="mt-1.5 text-[10.5px] text-muted-foreground/70">
-        Skills are symlinked into every run (<code className="rounded bg-muted px-1 py-0.5">--add-dir</code>{" "}
-        on Claude; adapter-specific on others). Catalog:{" "}
-        <a href="#settings/skills" className="text-foreground underline-offset-2 hover:underline">
-          Settings → Skills
-        </a>
-        .
-      </p>
+      {suggestions.length > 0 && (
+        <div className="mt-3">
+          <div className="mb-1.5 text-[12px] font-medium uppercase tracking-wide text-muted-foreground">
+            Suggested for this role
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {suggestions.map((rec) => {
+              const installed = catalogKeys.has(rec.key);
+              if (installed) {
+                return (
+                  <button
+                    key={rec.key}
+                    type="button"
+                    onClick={() => toggle(rec.key)}
+                    title="Recommended for this role — click to attach"
+                    className="inline-flex items-center gap-1 rounded-full border border-dashed border-violet-500/40 bg-violet-500/5 px-2.5 py-1 text-[12.5px] font-medium text-violet-700 dark:text-violet-300 hover:bg-violet-500/15"
+                  >
+                    <Sparkles className="size-3" />
+                    {rec.key}
+                    <span className="ml-0.5 text-[10.5px] opacity-70">attach</span>
+                  </button>
+                );
+              }
+              return (
+                <button
+                  key={rec.key}
+                  type="button"
+                  onClick={() => rec.source && setInstallSource(rec.source)}
+                  title={`Recommended but not installed — click to preview & install from ${rec.source}`}
+                  className="inline-flex items-center gap-1 rounded-full border border-dashed border-muted-foreground/30 bg-muted/40 px-2.5 py-1 text-[12.5px] font-medium text-muted-foreground hover:bg-muted/70"
+                >
+                  <Download className="size-3" />
+                  {rec.key}
+                  <span className="ml-0.5 text-[10.5px] opacity-70">
+                    not installed
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {installSource !== null && (
+        <SkillAddDialog
+          open
+          onOpenChange={(o) => {
+            if (!o) setInstallSource(null);
+          }}
+          initialSource={installSource}
+          attachToAgents={[agentSlug]}
+          onImported={handleInstalled}
+        />
+      )}
     </div>
   );
 }
@@ -2033,7 +2175,11 @@ export function AgentDetailV2({
     async (
       message: string,
       runtime: TaskRuntimeSelection,
-      extras: { attachmentPaths: string[]; stagingClientUuid?: string }
+      extras: {
+        attachmentPaths: string[];
+        mentionedSkills?: string[];
+        stagingClientUuid?: string;
+      }
     ) => {
       if (!persona) return;
       setSubmitting(true);
@@ -2051,6 +2197,7 @@ export function AgentDetailV2({
             model: runtime.model,
             effort: runtime.effort,
             attachmentPaths: extras.attachmentPaths,
+            mentionedSkills: extras.mentionedSkills,
             stagingClientUuid: extras.stagingClientUuid,
           }),
         });

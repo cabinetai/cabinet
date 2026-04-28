@@ -133,12 +133,14 @@ export async function POST(req: NextRequest) {
             pagePath,
             userMessage,
             mentionedPaths,
+            mentionedSkills,
             cabinetPath: editorCabinetPath,
           })
         : await buildManualConversationPrompt({
             agentSlug,
             userMessage,
             mentionedPaths,
+            mentionedSkills,
             cabinetPath,
           });
 

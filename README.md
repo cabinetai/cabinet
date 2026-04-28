@@ -130,6 +130,8 @@ Cabinet is built around a few principles that we think matter deeply for the fut
 |---|---|
 | **WYSIWYG + Markdown** | Rich text editing with Tiptap. Tables, code blocks, slash commands. |
 | **AI Agents** | Each has goals, skills, scheduled jobs. Watch them work like a real team. |
+| **Skills** | Browse and install from skills.sh or any GitHub repo. Attach per agent, or `@`-mention in the composer to scope to a single task. |
+| **API Keys** | Local `.cabinet.env` editor in Settings, owner-only and gitignored. Keys reach skills and CLIs at spawn time. |
 | **Scheduled Jobs** | Cron-based agent automation. Reddit scout every 6 hours. Weekly reports on Monday. |
 | **Embedded HTML Apps** | Drop an `index.html` in any folder — it renders as an iframe. Full-screen mode. |
 | **Web Terminal** | Interactive local AI CLI terminal in the browser. Kept for direct sessions, debugging, and future terminal-native features such as tmux-style Cabinet workflows. |
@@ -166,7 +168,7 @@ This is the biggest difference between Cabinet and tools like Obsidian or Notion
 
 ## Hire your AI team in 5 questions
 
-Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs, and a workspace in the knowledge base.
+Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs, recommended skills, and a workspace in the knowledge base.
 
 | Department | Agents |
 |---|---|

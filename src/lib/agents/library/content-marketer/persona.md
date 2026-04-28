@@ -12,7 +12,10 @@ active: true
 workdir: /data
 workspace: /marketing
 recommendedSkills:
-  - kb-page-author
+  - key: content-strategy
+    source: github:coreyhaines31/marketingskills/content-strategy
+  - key: social-content
+    source: github:coreyhaines31/marketingskills/social-content
 channels:
   - general
   - marketing

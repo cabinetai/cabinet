@@ -12,7 +12,8 @@ active: true
 workdir: /data
 workspace: /cabinet-example
 recommendedSkills:
-  - kb-page-author
+  - key: ai-image-generation
+    source: github:infsh-skills/skills/ai-image-generation
 channels:
   - general
   - content

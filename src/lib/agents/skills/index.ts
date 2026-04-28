@@ -6,7 +6,6 @@ export type {
   SkillFileKind,
   SkillOrigin,
   TrustLevel,
-  TrustPolicy,
 } from "./types";
 
 export {

@@ -3,6 +3,8 @@ import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import { readSkill } from "@/lib/agents/skills/loader";
+import { readSkillsLock } from "@/lib/agents/skills/lock";
+import { fetchAuditsForLockEntry } from "@/lib/agents/skills/upstream";
 
 interface RouteContext {
   params: Promise<{ key: string }>;
@@ -16,7 +18,10 @@ export async function GET(request: Request, context: RouteContext): Promise<Next
   if (!bundle) {
     return NextResponse.json({ error: "skill not found" }, { status: 404 });
   }
-  return NextResponse.json({ skill: bundle });
+  const lock = await readSkillsLock();
+  const lockEntry = lock.skills[key];
+  const audits = lockEntry ? await fetchAuditsForLockEntry(key, lockEntry) : null;
+  return NextResponse.json({ skill: bundle, audits });
 }
 
 export async function PATCH(request: Request, context: RouteContext): Promise<NextResponse> {

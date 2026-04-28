@@ -27,8 +27,11 @@ export interface SkillStatsFile {
 }
 
 function statsFilePath(cabinetPath?: string | null): string {
+  // `.cabinet` (no extension) at the cabinet root is the cabinet manifest
+  // FILE — not a directory. Stats live alongside personas under `.agents/`,
+  // which is an existing directory the runner already writes to.
   const cabinetRoot = cabinetPath ? path.join(DATA_DIR, cabinetPath) : PROJECT_ROOT;
-  return path.join(cabinetRoot, ".cabinet", "skills-stats.json");
+  return path.join(cabinetRoot, ".agents", "skills-stats.json");
 }
 
 export async function readSkillStats(
