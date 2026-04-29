@@ -308,7 +308,7 @@ export function ComposerInput({
       {showKeyHint && (
         <div className="flex items-center justify-end px-2 pt-2">
           <span className="text-[11px] text-muted-foreground/50">
-            use <kbd className="rounded border border-border/50 bg-muted/50 px-1 py-0.5 font-mono text-[10px]">@</kbd> to mention agents &amp; pages
+            use <kbd className="rounded border border-border/50 bg-muted/50 px-1 py-0.5 font-mono text-[10px]">@</kbd> to mention agents, skills &amp; pages
           </span>
         </div>
       )}
