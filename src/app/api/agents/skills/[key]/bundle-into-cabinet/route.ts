@@ -47,7 +47,10 @@ export async function POST(request: Request, context: RouteContext): Promise<Nex
   await fs.mkdir(destRoot, { recursive: true });
   const dest = path.join(destRoot, key);
   await fs.rm(dest, { recursive: true, force: true });
-  await fs.cp(source.path, dest, { recursive: true });
+  // Preserve symlinks rather than following them — keeps any deliberate
+  // intra-bundle links intact and avoids exfiltrating link targets if the
+  // host-installed bundle ever contains one pointing outside its own dir.
+  await fs.cp(source.path, dest, { recursive: true, verbatimSymlinks: true });
 
   await updateSkillsLock(key, {
     source: source.path,

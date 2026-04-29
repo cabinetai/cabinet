@@ -1343,9 +1343,14 @@ function RecentWorkSection({
       }
     >
       {top.length === 0 ? (
-        <p className="text-[12px] text-muted-foreground py-6 text-center">
-          No edits yet — run a task to see files written here.
-        </p>
+        <div className="py-6 text-center space-y-1">
+          <p className="text-[12px] text-muted-foreground">
+            No edits yet — an edit is any file write this agent performs.
+          </p>
+          <p className="text-[11px] text-muted-foreground/60">
+            Run a task to see entries here. Past runs appear in Conversations below.
+          </p>
+        </div>
       ) : (
         <ul className="space-y-0">
           {top.map((a) => {
@@ -1389,6 +1394,7 @@ function ScheduleSection({
   onAddRoutine,
   onEditRoutine,
   onRunHeartbeat,
+  onToggleActive,
   onManage,
 }: {
   persona: AgentPersona;
@@ -1398,6 +1404,7 @@ function ScheduleSection({
   onAddRoutine: () => void;
   onEditRoutine: (job: AgentJob) => void;
   onRunHeartbeat: () => void;
+  onToggleActive: () => void;
   onManage: () => void;
 }) {
 
@@ -1416,17 +1423,30 @@ function ScheduleSection({
       <ul className="space-y-0">
         {/* Heartbeat */}
         <li className="flex items-center gap-3 px-2 py-2.5 -mx-2 rounded-md hover:bg-accent/30 transition-colors">
-          <Zap className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-          <span className="flex-1 text-[13px]">Heartbeat</span>
+          <Zap className={cn("h-3.5 w-3.5 shrink-0", persona.active ? "text-amber-500" : "text-muted-foreground/40")} />
+          <span className={cn("flex-1 text-[13px]", !persona.active && "text-muted-foreground/60")}>Heartbeat</span>
           <span className="text-[11px] text-muted-foreground tabular-nums">
             {cronToHuman(persona.heartbeat)}
           </span>
+          <button
+            onClick={onToggleActive}
+            className={cn(
+              "text-[10px] uppercase tracking-wider font-medium px-1.5 py-0.5 rounded transition-colors",
+              persona.active
+                ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                : "bg-muted text-muted-foreground"
+            )}
+            title={persona.active ? "Pause heartbeat (stops all scheduled jobs)" : "Resume heartbeat"}
+          >
+            {persona.active ? "on" : "off"}
+          </button>
           <Button
             variant="ghost"
             size="icon-sm"
             className="h-7 w-7"
             onClick={onRunHeartbeat}
             title="Run now"
+            disabled={!persona.active}
           >
             <Play className="h-3 w-3" />
           </Button>
@@ -2569,6 +2589,7 @@ export function AgentDetailV2({
                   setRoutineDialogOpen(true);
                 }}
                 onRunHeartbeat={runHeartbeat}
+                onToggleActive={togglingActive ? () => {} : toggleActive}
                 onManage={() => setScheduleOpen(true)}
               />
               <DetailsSection

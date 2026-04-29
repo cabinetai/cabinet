@@ -2,27 +2,21 @@
 
 import { useMemo, useState } from "react";
 import {
-  Calendar,
   ChevronLeft,
   ChevronRight,
-  LayoutList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ScheduleCalendar,
   type CalendarMode,
 } from "@/components/cabinets/schedule-calendar";
-import { ScheduleList } from "@/components/cabinets/schedule-list";
 import type { CabinetAgentSummary, CabinetJobSummary } from "@/types/cabinets";
 import type { ConversationMeta } from "@/types/conversations";
 import type { ScheduleEvent } from "@/lib/agents/cron-compute";
 
-type ScheduleSubView = "calendar" | "list";
-
 /**
- * Thin v2 wrapper around the existing ScheduleCalendar + ScheduleList primitives
- * (reused from tasks-board.tsx). Phase 1 keeps controls minimal — no density
- * slider, no visible-hours dropdown, no fullscreen, no filter dropdowns.
+ * Thin v2 wrapper around the existing ScheduleCalendar primitive.
+ * Calendar-only view — no list subview toggle.
  */
 export function ScheduleView({
   agents,
@@ -39,7 +33,6 @@ export function ScheduleView({
   onJobClick?: (job: CabinetJobSummary, agent: CabinetAgentSummary) => void;
   onHeartbeatClick?: (agent: CabinetAgentSummary) => void;
 }) {
-  const [sub, setSub] = useState<ScheduleSubView>("calendar");
   const [mode, setMode] = useState<CalendarMode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
 
@@ -96,138 +89,78 @@ export function ScheduleView({
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex flex-wrap items-center gap-2 border-b border-border/60 px-4 py-2">
         <div className="flex items-center rounded-lg border border-border/60 p-0.5">
-          <SubButton
-            active={sub === "calendar"}
-            onClick={() => setSub("calendar")}
-            icon={Calendar}
-            label="Calendar"
-          />
-          <SubButton
-            active={sub === "list"}
-            onClick={() => setSub("list")}
-            icon={LayoutList}
-            label="List"
-          />
+          {(["day", "week", "month"] as CalendarMode[]).map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => setMode(m)}
+              className={cn(
+                "rounded-md px-2.5 py-1 text-[11px] font-medium capitalize transition-colors",
+                mode === m
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {m}
+            </button>
+          ))}
         </div>
 
-        {sub === "calendar" && (
-          <>
-            <div className="flex items-center rounded-lg border border-border/60 p-0.5">
-              {(["day", "week", "month"] as CalendarMode[]).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => setMode(m)}
-                  className={cn(
-                    "rounded-md px-2.5 py-1 text-[11px] font-medium capitalize transition-colors",
-                    mode === m
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(0)}
+            className="rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(1)}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
 
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-              >
-                <ChevronLeft className="size-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate(0)}
-                className="rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-              >
-                Today
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate(1)}
-                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-
-            <span className="text-[13px] font-medium text-foreground">{label}</span>
-          </>
-        )}
+        <span className="text-[13px] font-medium text-foreground">{label}</span>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-auto">
-        {sub === "calendar" ? (
-          <ScheduleCalendar
-            mode={mode}
-            anchor={anchor}
-            agents={agents}
-            jobs={jobs}
-            manualConversations={conversations}
-            scheduledConversations={scheduledConversationsMap}
-            onEventClick={(ev: ScheduleEvent) => {
-              if (ev.sourceType === "manual" && ev.conversationId) {
-                onConversationClick(ev.conversationId);
-                return;
-              }
-              if (ev.sourceType === "job" && ev.jobRef && ev.agentRef && onJobClick) {
-                onJobClick(ev.jobRef, ev.agentRef);
-                return;
-              }
-              if (ev.sourceType === "heartbeat" && ev.agentRef && onHeartbeatClick) {
-                onHeartbeatClick(ev.agentRef);
-                return;
-              }
-            }}
-            onDayClick={(date) => {
-              setMode("day");
-              setAnchor(date);
-            }}
-          />
-        ) : (
-          <div className="mx-auto w-full max-w-3xl p-4">
-            <ScheduleList
-              agents={agents}
-              jobs={jobs}
-              manualConversations={conversations}
-              onManualClick={(c) => onConversationClick(c.id)}
-              onJobClick={onJobClick}
-              onHeartbeatClick={onHeartbeatClick}
-            />
-          </div>
-        )}
+        <ScheduleCalendar
+          mode={mode}
+          anchor={anchor}
+          agents={agents}
+          jobs={jobs}
+          manualConversations={conversations}
+          scheduledConversations={scheduledConversationsMap}
+          onEventClick={(ev: ScheduleEvent) => {
+            if (ev.sourceType === "manual" && ev.conversationId) {
+              onConversationClick(ev.conversationId);
+              return;
+            }
+            if (ev.sourceType === "job" && ev.jobRef && ev.agentRef && onJobClick) {
+              onJobClick(ev.jobRef, ev.agentRef);
+              return;
+            }
+            if (ev.sourceType === "heartbeat" && ev.agentRef && onHeartbeatClick) {
+              onHeartbeatClick(ev.agentRef);
+              return;
+            }
+          }}
+          onDayClick={(date) => {
+            setMode("day");
+            setAnchor(date);
+          }}
+        />
       </div>
     </div>
-  );
-}
-
-function SubButton({
-  active,
-  onClick,
-  icon: Icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: typeof Calendar;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
-        active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:text-foreground"
-      )}
-    >
-      <Icon className="size-3.5" />
-      {label}
-    </button>
   );
 }

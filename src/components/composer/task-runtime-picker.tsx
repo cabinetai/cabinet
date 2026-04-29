@@ -1180,7 +1180,9 @@ export function TaskRuntimePicker({
 
   const triggerTitle = currentProvider
     ? `Task model: ${selectionSummary}`
-    : "Task model";
+    : loading
+      ? "Loading available providers…"
+      : "Task model — using system default (click to pick)";
 
   function applySelection(
     providerId: string,
@@ -1261,8 +1263,13 @@ export function TaskRuntimePicker({
               </span>
             </>
           )
+        ) : loading ? (
+          <BrainCircuit className="h-4 w-4 opacity-50" />
         ) : (
-          <BrainCircuit className="h-4 w-4" />
+          <>
+            <BrainCircuit className="h-4 w-4" />
+            <span className="text-[11px] font-medium">Auto</span>
+          </>
         )}
       </DropdownMenuTrigger>
 

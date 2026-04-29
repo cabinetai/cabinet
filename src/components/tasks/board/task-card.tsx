@@ -1,6 +1,6 @@
 "use client";
 
-import { HeartPulse, Terminal } from "lucide-react";
+import { HeartPulse, MessageCircleQuestion, ShieldCheck, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isLegacyAdapterType } from "@/lib/agents/adapters/legacy-ids";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
@@ -111,9 +111,17 @@ export function TaskCard({
           size={compact ? "sm" : "md"}
         />
         {lane === "needs" && task.status === "awaiting-input" && (
-          <span className="inline-flex items-center rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
-            Input needed
-          </span>
+          task.pendingActions && task.pendingActions.length > 0 ? (
+            <span className="inline-flex items-center gap-0.5 rounded bg-violet-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-violet-600 dark:text-violet-400">
+              <ShieldCheck className="size-2.5" />
+              Approval
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-0.5 rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
+              <MessageCircleQuestion className="size-2.5" />
+              Question
+            </span>
+          )
         )}
         {lane === "needs" && task.status === "failed" && (
           <span className="inline-flex items-center rounded bg-destructive/15 px-1.5 py-0.5 text-[9px] font-semibold text-destructive">

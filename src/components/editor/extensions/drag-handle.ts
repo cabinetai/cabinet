@@ -234,8 +234,10 @@ export const DragHandle = Extension.create({
             // Split the block to create a new paragraph, then trigger slash menu
             const splitTr = view.state.tr.split(view.state.selection.from);
             view.dispatch(splitTr);
-            // Notify SlashCommands component (listens on window for "/" keydown)
-            window.dispatchEvent(new KeyboardEvent("keydown", { key: "/", bubbles: true, cancelable: true }));
+            // Dispatch on view.dom so event.target is the ProseMirror element;
+            // this lets the global "/" hotkey guard (isEditableTarget) skip it
+            // while the slash-commands capture listener on window still fires.
+            view.dom.dispatchEvent(new KeyboardEvent("keydown", { key: "/", bubbles: true, cancelable: true }));
           };
 
           const onDragStart = (event: DragEvent) => {

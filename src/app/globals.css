@@ -149,6 +149,11 @@
   html {
     @apply font-sans;
   }
+  /* Audit #101: focus rings were barely visible in light theme at ring/50.
+     Use full-opacity ring on :focus-visible for consistent keyboard nav. */
+  :focus-visible {
+    outline-color: var(--ring);
+  }
 }
 
 /* Custom theme font overrides — outside @layer so they beat Tailwind utilities */
@@ -264,6 +269,25 @@ html[data-custom-theme] .font-logo,
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background-color: color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+}
+
+.editor-toolbar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 10%, transparent) transparent;
+}
+.editor-toolbar-scroll::-webkit-scrollbar {
+  height: 1px;
+  width: 1px;
+}
+.editor-toolbar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.editor-toolbar-scroll::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklch, var(--muted-foreground) 10%, transparent);
+  border-radius: 999px;
+}
+.editor-toolbar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklch, var(--muted-foreground) 25%, transparent);
 }
 
 /* Tiptap Editor Styles */
@@ -409,6 +433,10 @@ html[data-custom-theme] .font-logo,
 .tiptap .wiki-link:hover {
   background: color-mix(in oklch, var(--primary) 20%, transparent);
   text-decoration: underline;
+}
+
+.editor-mention {
+  @apply inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0 text-[0.85em] font-medium text-primary ring-1 ring-primary/20 select-none cursor-default;
 }
 
 /* Table styles */

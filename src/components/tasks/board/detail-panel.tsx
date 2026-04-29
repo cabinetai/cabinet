@@ -68,7 +68,7 @@ export function DetailPanel({
   return (
     <aside
       className={cn(
-        "flex flex-col bg-background",
+        "flex flex-col bg-background transition-all duration-150 ease-out",
         fullscreen
           ? "fixed inset-0 z-50"
           : "absolute inset-y-0 right-0 z-20 w-[460px] border-l border-border/70 shadow-xl"

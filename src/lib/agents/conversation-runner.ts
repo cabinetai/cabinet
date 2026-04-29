@@ -585,13 +585,14 @@ export async function startConversationRun(
     }
   }
 
-  // Trust-gated mount: prepareSkillMount evaluates each desired skill against
-  // its declared trust-policy + the cabinet's prior decisions, only mounts
-  // skills that resolve to "allow", and surfaces "needs-prompt"/"blocked"
-  // entries on the mount snapshot so a UI hook can prompt the operator.
-  // Falls back to the legacy slug-only mount when prepareSkillMount returns
-  // nothing (e.g. on first run before trust file exists) — preserves the
-  // original behavior so this is a safe-by-default upgrade.
+  // Mount the persona's selected skills (plus this run's @-mentions) into a
+  // per-session plugin tmpdir so the adapter can register them via
+  // --plugin-dir. There is NO runtime trust gate here — every skill the
+  // operator attached is mounted. The trust signals (origin, audit pills,
+  // file inventory) live in the install/picker UI; once installed and
+  // attached, a skill is treated as authorized by the operator's prior act.
+  // Returns null when nothing resolves, so the spawn isn't polluted with an
+  // empty skillsDir flag.
   const skillMount = requestedSkillSlugs
     ? await prepareSkillMount({
         sessionId: meta.id,

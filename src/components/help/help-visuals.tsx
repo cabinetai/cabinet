@@ -501,3 +501,53 @@ export function SkillsVisual() {
 export function IntegrationsVisual() {
   return <ComingSoonVisual icon={Plug} />;
 }
+
+/* ─── Keyboard shortcuts preview ───────────────────────────────────── */
+function KbdChip({ children, delay }: { children: React.ReactNode; delay: number }) {
+  return (
+    <kbd
+      className="inline-flex items-center rounded px-2 py-1 font-mono text-[11px] font-semibold leading-none opacity-0"
+      style={{
+        background: P.bgCard,
+        border: `1px solid ${P.borderDark}`,
+        color: P.text,
+        boxShadow: `0 1px 0 ${P.borderDark}`,
+        animation: "cabinet-tour-fade-up 0.35s ease-out forwards",
+        animationDelay: `${delay}ms`,
+      }}
+    >
+      {children}
+    </kbd>
+  );
+}
+
+export function ShortcutsVisual() {
+  return (
+    <Stage>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <KbdChip delay={100}>⌘⌥T</KbdChip>
+          <span className="text-[10px]" style={{ color: P.textTertiary }}>Add to Inbox</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <KbdChip delay={200}>⌘⌥R</KbdChip>
+          <span className="text-[10px]" style={{ color: P.textTertiary }}>Run task now</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <KbdChip delay={300}>⌘K</KbdChip>
+          <span className="text-[10px]" style={{ color: P.textTertiary }}>Search</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <KbdChip delay={400}>⌘⌥A</KbdChip>
+          <span className="text-[10px]" style={{ color: P.textTertiary }}>AI panel</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <KbdChip delay={500}>⌘1</KbdChip>
+          <KbdChip delay={580}>⌘2</KbdChip>
+          <KbdChip delay={660}>⌘3</KbdChip>
+          <span className="text-[10px]" style={{ color: P.textTertiary }}>Drawers</span>
+        </div>
+      </div>
+    </Stage>
+  );
+}

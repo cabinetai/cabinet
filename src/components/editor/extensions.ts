@@ -31,6 +31,7 @@ import { DragHandle } from "./extensions/drag-handle";
 import { CabinetMath } from "./extensions/math-extension";
 import { IconExtension } from "./extensions/icon-extension";
 import { HeadingAnchors } from "./extensions/heading-anchors";
+import { EditorMentionExtension } from "./mention-extension";
 
 // Curated language set: covers ~95% of real-world snippets. The full `common`
 // import bundles 35+ language parsers (~70 kB gzipped) that Cabinet users
@@ -141,4 +142,5 @@ export const editorExtensions = [
   WikiLink,
   CalloutExtension,
   HeadingAnchors,
+  EditorMentionExtension,
 ];

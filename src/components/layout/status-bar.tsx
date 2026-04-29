@@ -664,15 +664,17 @@ export function StatusBar() {
             >
               Save failed — retry
             </button>
-          ) : (
-            <span title="Force save: ⌘S">
-              {saveStatus === "saving"
-                ? "Saving..."
-                : saveStatus === "saved"
-                ? "Saved"
-                : "Ready"}
+          ) : saveStatus === "saving" ? (
+            <span className="flex items-center gap-1 text-muted-foreground/70" title="Auto-saving…">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Saving…
             </span>
-          )
+          ) : saveStatus === "saved" ? (
+            <span className="flex items-center gap-1 text-emerald-500/80" title="Force save: ⌘S">
+              <Check className="h-3 w-3" />
+              Saved
+            </span>
+          ) : null
         )}
         {pullStatus === "pulling" && (
           <span className="flex items-center gap-1 text-blue-400">

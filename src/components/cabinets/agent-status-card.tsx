@@ -17,7 +17,7 @@ function timeAgo(dateStr?: string): string {
 
 export interface AgentConversationInfo {
   title: string;
-  status: "running" | "completed" | "failed" | "cancelled";
+  status: "idle" | "running" | "completed" | "failed" | "cancelled";
   startedAt: string;
 }
 

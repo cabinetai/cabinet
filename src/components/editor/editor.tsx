@@ -6,11 +6,14 @@ import { Sparkles, Code2, Loader2, FilePlus } from "lucide-react";
 import { editorExtensions } from "./extensions";
 import { EditorToolbar } from "./editor-toolbar";
 import { SlashCommands } from "./slash-commands";
+import { EditorMentionPicker } from "./mention-picker";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { TableMenu } from "./table-menu";
+import { FolderIndex } from "./folder-index";
 import { useEditorStore } from "@/stores/editor-store";
 import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { useTreeStore } from "@/stores/tree-store";
+import { findNodeByPath } from "@/lib/cabinets/tree";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
 import { detectEmbed } from "@/lib/embeds/detect";
@@ -113,11 +116,22 @@ function resolveInternalLink(
 
 export function KBEditor() {
   const { currentPath, content, saveStatus, frontmatter, isLoading, loadStatus, createMissingPage } = useEditorStore();
+  const nodes = useTreeStore((s) => s.nodes);
   const isRtl = frontmatter?.dir === "rtl";
   const { open: openAI, clearMessages } = useAIPanelStore();
   const isLoadingRef = useRef(false);
   const [sourceMode, setSourceMode] = useState(false);
   const [sourceText, setSourceText] = useState("");
+  // Reset the tab to "page" whenever the path changes — opening a new folder
+  // shouldn't skip its index.md if the previous folder was on Files. Has to
+  // be an effect (not state-during-render) because Tiptap's EditorContent
+  // calls flushSync internally; setState during the parent render explodes
+  // when EditorContent renders in the same pass.
+  const [folderTab, setFolderTab] = useState<"page" | "files">("page");
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFolderTab("page");
+  }, [currentPath]);
 
   const handleUpdate = useCallback(
     ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
@@ -369,22 +383,38 @@ export function KBEditor() {
     const inferredTitle = slug
       .replace(/[-_]+/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
+    const folderNode = findNodeByPath(nodes, currentPath);
+    const folderChildren = folderNode?.children ?? [];
+    const hasChildren = folderChildren.length > 0;
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        <div className="max-w-md text-center space-y-4 px-6">
-          <p className="text-lg font-medium tracking-[-0.02em] text-foreground">
-            This folder doesn&apos;t have an <code className="px-1 py-0.5 rounded bg-muted text-[12px]">index.md</code>
-          </p>
-          <p className="text-sm text-muted-foreground/80">
-            <code className="px-1 py-0.5 rounded bg-muted text-[12px]">{currentPath}</code> exists, but there&apos;s no page to show. Create one to start writing — sub-pages will be listed automatically.
-          </p>
-          <button
-            onClick={() => void createMissingPage(inferredTitle)}
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[13px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            <FilePlus className="h-3.5 w-3.5" />
-            Create page
-          </button>
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
+          <div className="space-y-3">
+            <p className="text-lg font-medium tracking-[-0.02em] text-foreground">
+              {inferredTitle}
+            </p>
+            <p className="text-sm text-muted-foreground/80">
+              This folder doesn&apos;t have an{" "}
+              <code className="px-1 py-0.5 rounded bg-muted text-[12px]">index.md</code>
+              {hasChildren
+                ? " yet — its contents are listed below."
+                : " yet."}
+            </p>
+            <button
+              onClick={() => void createMissingPage(inferredTitle)}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[13px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              <FilePlus className="h-3.5 w-3.5" />
+              Create page
+            </button>
+          </div>
+          {hasChildren && (
+            <FolderIndex
+              key={currentPath}
+              folderPath={currentPath}
+              entries={folderChildren}
+            />
+          )}
         </div>
       </div>
     );
@@ -408,10 +438,62 @@ export function KBEditor() {
     }
   };
 
+  // Folder pages with both an index.md (loadStatus === "ok") AND children
+  // get a Page / Files tab strip so users can switch between the page body
+  // and the directory listing without leaving the route.
+  const renderedFolderNode = findNodeByPath(nodes, currentPath);
+  const renderedFolderChildren =
+    renderedFolderNode?.type === "directory" || renderedFolderNode?.type === "cabinet"
+      ? renderedFolderNode.children ?? []
+      : [];
+  const showFolderTabs = renderedFolderChildren.length > 0;
+  const onFilesTab = showFolderTabs && folderTab === "files";
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex items-center">
-        <div className="flex-1">
+      {showFolderTabs && (
+        <div className="flex items-center gap-1 px-3 pt-2 border-b border-border">
+          <button
+            onClick={() => setFolderTab("page")}
+            className={`px-3 py-1.5 text-[12px] rounded-t-md border-b-2 -mb-px transition-colors ${
+              folderTab === "page"
+                ? "border-primary text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+            aria-pressed={folderTab === "page"}
+          >
+            Page
+          </button>
+          <button
+            onClick={() => setFolderTab("files")}
+            className={`px-3 py-1.5 text-[12px] rounded-t-md border-b-2 -mb-px transition-colors ${
+              folderTab === "files"
+                ? "border-primary text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+            aria-pressed={folderTab === "files"}
+          >
+            Files
+            <span className="ml-1.5 text-muted-foreground/60">
+              {renderedFolderChildren.length}
+            </span>
+          </button>
+        </div>
+      )}
+      {onFilesTab ? (
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-3xl mx-auto px-6 py-6">
+            <FolderIndex
+              key={currentPath}
+              folderPath={currentPath}
+              entries={renderedFolderChildren}
+            />
+          </div>
+        </div>
+      ) : (
+      <>
+      <div className="flex items-center min-w-0">
+        <div className="flex-1 min-w-0">
           {!sourceMode && <EditorToolbar editor={editor} />}
         </div>
         <button
@@ -443,16 +525,21 @@ export function KBEditor() {
             <EditorBubbleMenu editor={editor} />
             <TableMenu editor={editor} />
             <SlashCommands editor={editor} />
+            <EditorMentionPicker editor={editor} />
 
-            {/* AI Edit Prompt */}
-            <div className="max-w-3xl mx-auto px-8 pb-8">
+            {/* AI Edit Prompt + slash hint */}
+            <div className="max-w-3xl mx-auto px-8 pb-8 flex items-center gap-4">
               <button
                 onClick={handleOpenAI}
                 className="group flex items-center gap-2 text-[13px] text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5 group-hover:text-primary transition-colors" />
-                <span>How would you like to edit this page?</span>
+                <span>Edit with AI</span>
               </button>
+              <span className="text-[11px] text-muted-foreground/30 select-none">
+                <kbd className="rounded px-1 py-0.5 font-mono text-[10px] ring-1 ring-foreground/10">/</kbd>
+                {" "}for commands
+              </span>
             </div>
           </div>
 
@@ -468,11 +555,22 @@ export function KBEditor() {
       )}
 
       {/* Status bar */}
-      <div className="flex items-center justify-end px-4 py-1 border-t border-border text-xs text-muted-foreground/60">
-        {saveStatus === "saving" && "Saving..."}
-        {saveStatus === "saved" && "Saved"}
-        {saveStatus === "error" && "Save failed"}
+      <div className="flex items-center justify-between px-4 py-1 border-t border-border text-xs text-muted-foreground/60">
+        <span className="text-[10.5px] text-muted-foreground/30 select-none hidden sm:block">
+          <kbd className="rounded px-1 font-mono text-[9.5px] ring-1 ring-foreground/10">⌘S</kbd>
+          {" "}save
+          <span className="mx-1.5 opacity-40">·</span>
+          <kbd className="rounded px-1 font-mono text-[9.5px] ring-1 ring-foreground/10">/</kbd>
+          {" "}commands
+        </span>
+        <span>
+          {saveStatus === "saving" && "Saving..."}
+          {saveStatus === "saved" && "Saved"}
+          {saveStatus === "error" && "Save failed"}
+        </span>
       </div>
+      </>
+      )}
 
     </div>
   );

@@ -222,7 +222,7 @@ export function TasksBoard({
     return sorted;
   }, [filteredTasks]);
 
-  const handleAddTask = () => openComposer("now");
+  const handleAddTask = () => openComposer("inbox");
 
   const selected = selectedId ? tasks.find((t) => t.id === selectedId) ?? null : null;
   const selectedLane = selected ? deriveLane(selected, now) : null;

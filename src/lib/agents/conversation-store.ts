@@ -123,6 +123,7 @@ interface CreateConversationInput {
   jobName?: string;
   scheduledAt?: string;
   startedAt?: string;
+  initialStatus?: ConversationStatus;
 }
 
 interface ListConversationFilters {
@@ -486,7 +487,7 @@ export async function createConversation(
     cabinetPath: cp,
     title: input.title,
     trigger: input.trigger,
-    status: "running",
+    status: input.initialStatus ?? "running",
     startedAt,
     jobId: input.jobId,
     jobName: input.jobName,

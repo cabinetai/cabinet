@@ -275,23 +275,17 @@ export function KanbanView({
           .map((s) => s.trim())
           .filter(Boolean) as LaneKey[]
       );
-    if (prev === null) {
-      if (runningCount > 0) {
-        const next = parse();
-        if (next.has("running")) {
-          next.delete("running");
-          setCollapsedCsv([...next].join(","));
-        }
-      }
-      return;
-    }
-    if (prev === 0 && runningCount > 0) {
+    // Always force RUNNING open while tasks are present — users shouldn't be
+    // able to hide live work. Auto-collapse only when the lane empties.
+    if (runningCount > 0) {
       const next = parse();
       if (next.has("running")) {
         next.delete("running");
         setCollapsedCsv([...next].join(","));
       }
-    } else if (prev > 0 && runningCount === 0) {
+      return;
+    }
+    if (prev !== null && prev > 0 && runningCount === 0) {
       const next = parse();
       if (!next.has("running")) {
         next.add("running");
@@ -391,7 +385,7 @@ export function KanbanView({
                 <LaneHeader
                   lane={lane}
                   count={items.length}
-                  onCollapse={() => toggleLane(lane.key)}
+                  onCollapse={isRunning && items.length > 0 ? undefined : () => toggleLane(lane.key)}
                   onAddTask={isInbox && onAddTask ? onAddTask : undefined}
                   onKillAll={
                     isRunning && items.length > 0 && onRefresh
@@ -414,9 +408,24 @@ export function KanbanView({
                     strategy={verticalListSortingStrategy}
                   >
                     {items.length === 0 ? (
-                      <div className="rounded-md border border-dashed border-border/50 px-3 py-4 text-center text-[11px] text-muted-foreground">
+                      isInbox ? (
+                        <button
+                          type="button"
+                          onClick={onAddTask}
+                          className="group w-full rounded-md border border-dashed border-border/50 px-3 py-8 text-center space-y-2 transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <p className="text-[11px] text-muted-foreground group-hover:text-foreground/70 transition-colors">{lane.hint}</p>
+                          <p className="text-[10.5px] text-muted-foreground/50">
+                            Click or press{" "}
+                            <kbd className="rounded px-1 py-0.5 text-[9.5px] ring-1 ring-foreground/10">⌘⌥T</kbd>
+                            {" "}to add a task
+                          </p>
+                        </button>
+                      ) : (
+                        <div className="rounded-md border border-dashed border-border/50 px-3 py-4 text-center text-[11px] text-muted-foreground">
                           {lane.hint}
                         </div>
+                      )
                     ) : (
                       items.map((task) => (
                         <SortableTaskCard
@@ -442,6 +451,15 @@ export function KanbanView({
                       ))
                     )}
                   </SortableContext>
+                  {isInbox && items.length > 0 && onAddTask && (
+                    <button
+                      type="button"
+                      onClick={onAddTask}
+                      className="mt-1 w-full rounded-md px-3 py-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/30 transition-colors text-left"
+                    >
+                      + Add task
+                    </button>
+                  )}
                 </div>
               </>
             )}

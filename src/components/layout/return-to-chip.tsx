@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useAppStore } from "@/stores/app-store";
 
 /**
@@ -14,24 +14,24 @@ export function ReturnToChip() {
   const popReturnTo = useAppStore((s) => s.popReturnTo);
   if (!returnTo) return null;
 
-  const label = (() => {
+  const parentLabel = (() => {
     switch (returnTo.type) {
       case "task":
-        return "Back to task";
+        return "Task";
       case "tasks":
-        return "Back to tasks";
+        return "Tasks";
       case "agent":
-        return "Back to agent";
+        return "Agent";
       case "agents":
-        return "Back to agents";
+        return "Agents";
       case "cabinet":
-        return "Back to cabinet";
+        return "Cabinet";
       case "home":
-        return "Back to home";
+        return "Home";
       case "settings":
-        return "Back to settings";
+        return "Settings";
       case "registry":
-        return "Back to registry";
+        return "Registry";
       default:
         return "Back";
     }
@@ -41,11 +41,11 @@ export function ReturnToChip() {
     <button
       type="button"
       onClick={popReturnTo}
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border/60 bg-background px-2.5 py-1 text-[11.5px] font-medium text-foreground/80 shadow-sm transition-colors hover:border-foreground/30 hover:text-foreground"
-      title={label}
+      className="inline-flex shrink-0 items-center gap-0.5 text-[11.5px] text-muted-foreground hover:text-foreground transition-colors"
+      title={`Back to ${parentLabel}`}
     >
-      <ArrowLeft className="size-3.5" />
-      {label}
+      <span className="hover:underline underline-offset-2">{parentLabel}</span>
+      <ChevronRight className="size-3.5 opacity-40" />
     </button>
   );
 }

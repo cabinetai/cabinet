@@ -121,7 +121,7 @@ function EventPill({
     <button
       type="button"
       onClick={(e) => { e.stopPropagation(); onClick(); }}
-      title={`${event.label} · ${event.agentName} · ${formatTime(event.time)}${missed ? " · did not run" : ""}`}
+      title={`${event.label} · ${event.agentName} · ${formatTime(event.time)}${missed ? " · did not run — click to run now" : ""}`}
       className={cn(
         "flex items-center gap-1 rounded-md px-1.5 text-left transition-all",
         "hover:ring-1 hover:ring-foreground/20 hover:shadow-sm",
@@ -204,6 +204,11 @@ function EventDot({
           {!event.enabled && " · disabled"}
           {missed && " · did not run"}
         </div>
+        {missed && (
+          <div className="text-[10px] text-amber-300 mt-0.5">
+            Click to run now →
+          </div>
+        )}
       </TooltipContent>
     </Tooltip>
   );

@@ -330,6 +330,7 @@ export function AgentsWorkspace({
   cabinetPath?: string;
 }) {
   const [agents, setAgents] = useState<AgentListItem[]>([]);
+  const [agentsLoaded, setAgentsLoaded] = useState(false);
   const [conversations, setConversations] = useState<ConversationMeta[]>([]);
   const [mode, setMode] = useState<MainPanelMode>("composer");
   const [activeAgentSlug, setActiveAgentSlug] = useState<string | null>(
@@ -591,6 +592,7 @@ export function AgentsWorkspace({
           avatarExt: a.avatarExt,
         })) as AgentListItem[];
         setAgents(cabinetAgents);
+        setAgentsLoaded(true);
         setCabinetJobs((data.jobs || []) as CabinetJobSummary[]);
         setCabinetChildren((data.children || []) as CabinetOverview["children"]);
         return;
@@ -607,6 +609,7 @@ export function AgentsWorkspace({
         return a.name.localeCompare(b.name);
       });
       setAgents(sorted);
+      setAgentsLoaded(true);
     } catch {
       // Ignore transient startup/network failures.
     }
@@ -1815,7 +1818,7 @@ export function AgentsWorkspace({
           />
           <Button size="sm" className="h-8 gap-1 text-xs" onClick={openAddAgentDialog}>
             <Plus className="h-3.5 w-3.5" />
-            Add agent
+            New Agent
           </Button>
         </div>
       </div>
@@ -2746,7 +2749,7 @@ export function AgentsWorkspace({
                   onClick={openAddAgentDialog}
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  Add agent
+                  New Agent
                 </Button>
                 <Button
                   variant="ghost"
@@ -2816,9 +2819,30 @@ export function AgentsWorkspace({
                     </p>
                   </div>
 
-                  {agents.length === 0 ? (
+                  {!agentsLoaded ? (
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex flex-col gap-3 rounded-xl border border-border/40 bg-card/50 p-4 animate-pulse"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="size-10 shrink-0 rounded-full bg-muted/60" />
+                            <div className="flex-1 space-y-2 pt-1">
+                              <div className="h-3 w-24 rounded bg-muted/60" />
+                              <div className="h-2.5 w-36 rounded bg-muted/40" />
+                            </div>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <div className="h-4 w-14 rounded-full bg-muted/40" />
+                            <div className="h-4 w-10 rounded-full bg-muted/40" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : agents.length === 0 ? (
                     <p className="rounded-lg border border-dashed border-border/60 px-3 py-8 text-center text-[12px] text-muted-foreground">
-                      No agents yet. Use <span className="font-medium text-foreground">Add agent</span> above to bring one in.
+                      No agents yet. Use <span className="font-medium text-foreground">New Agent</span> above to bring one in.
                     </p>
                   ) : (
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -3077,6 +3101,40 @@ export function AgentsWorkspace({
                           change its rhythm or pause it.
                         </p>
                       </div>
+                      {(() => {
+                        const heartbeatAgents = agents.filter((a) => !!a.heartbeat);
+                        const anyActive = heartbeatAgents.some((a) => a.active);
+                        const [toggling, setToggling] = useState(false);
+                        const toggleAll = async () => {
+                          if (toggling || heartbeatAgents.length === 0) return;
+                          setToggling(true);
+                          try {
+                            await fetch("/api/agents/scheduler", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                action: anyActive ? "stop-all" : "start-all",
+                                cabinetPath: effectiveCabinetPath,
+                              }),
+                            });
+                            await refreshAgents();
+                          } finally {
+                            setToggling(false);
+                          }
+                        };
+                        return heartbeatAgents.length > 0 ? (
+                          <button
+                            type="button"
+                            onClick={() => void toggleAll()}
+                            disabled={toggling}
+                            className="inline-flex h-9 items-center gap-2 rounded-lg border border-border/70 bg-background px-3 text-[12px] font-medium text-foreground transition-colors hover:bg-muted/50 disabled:pointer-events-none disabled:opacity-50"
+                            title={anyActive ? "Pause all heartbeats in this cabinet" : "Resume all heartbeats in this cabinet"}
+                          >
+                            {anyActive ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
+                            {anyActive ? "Pause all" : "Resume all"}
+                          </button>
+                        ) : null;
+                      })()}
                       <DropdownMenu>
                         <DropdownMenuTrigger
                           className={cn(

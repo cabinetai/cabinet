@@ -169,9 +169,9 @@ export function SlideAgents() {
             animationDelay: "320ms",
           }}
         >
-          Each agent has a <span className="font-medium" style={{ color: P.text }}>persona</span>, a{" "}
-          <span className="font-medium" style={{ color: P.text }}>heartbeat</span>, and{" "}
-          <span className="font-medium" style={{ color: P.text }}>scheduled jobs</span>. Your AI agents get the work done, 24/7. Go be human — they&apos;ll handle the rest.
+          Each agent has a <span className="font-medium" style={{ color: P.text }}>persona</span>, its own{" "}
+          <span className="font-medium" style={{ color: P.text }}>schedule</span>, and a{" "}
+          <span className="font-medium" style={{ color: P.text }}>memory</span>. Your AI agents get the work done, 24/7. Go be human — they&apos;ll handle the rest.
         </p>
       </div>
     </div>

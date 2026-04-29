@@ -383,6 +383,22 @@ export function SearchPalette() {
                   </div>
                 )}
 
+                {showRecents && recentQueries.length === 0 && recentPageIds.length === 0 && (
+                  <div className="px-4 py-5 space-y-2">
+                    <p className="text-[12px] text-muted-foreground/70">
+                      Search pages, agents, and tasks. Start typing to find anything.
+                    </p>
+                    <div className="space-y-1">
+                      {(["a page title or keyword", "an agent name", "a task"] as const).map((hint) => (
+                        <p key={hint} className="flex items-center gap-2 text-[11px] text-muted-foreground/40">
+                          <SearchIcon className="h-3 w-3 shrink-0" />
+                          {hint}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {showRecents && recentQueries.length > 0 && (
                   <div className="px-2 py-1">
                     <div className="px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">

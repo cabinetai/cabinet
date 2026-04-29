@@ -273,19 +273,24 @@ export function ComposerInput({
                 {secondaryAction.label}
               </Button>
             )}
-            <Button
-              className="h-8 gap-2 text-xs"
-              onClick={() => void composer.submit()}
-              disabled={sendDisabled}
-              title={isUploading ? "Uploading attachments…" : !composer.input.trim() ? "Type a prompt to send" : undefined}
+            <span
+              onClick={!isDisabled && !composer.input.trim() ? () => composer.textareaRef.current?.focus() : undefined}
+              className={!isDisabled && !composer.input.trim() ? "cursor-text" : undefined}
             >
-              {composer.submitting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-              {submitLabel}
-            </Button>
+              <Button
+                className="h-8 gap-2 text-xs"
+                onClick={() => void composer.submit()}
+                disabled={sendDisabled}
+                title={isUploading ? "Uploading attachments…" : !composer.input.trim() ? "Type a prompt to send" : undefined}
+              >
+                {composer.submitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+                {submitLabel}
+              </Button>
+            </span>
           </div>
         </div>
 

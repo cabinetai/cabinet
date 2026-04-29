@@ -70,6 +70,7 @@ import {
 import { ICON_PICKER_KEYS, getIconByKey } from "@/lib/agents/icon-catalog";
 import { AGENT_PALETTE } from "@/lib/themes";
 import { version as pkgVersion } from "../../../package.json";
+import releaseJson from "../../../cabinet-release.json";
 import {
   AVATAR_PRESETS,
   AVATAR_CATEGORY_LABEL,
@@ -1316,24 +1317,75 @@ export function SettingsPage() {
             <div className="space-y-8">
               <ApiKeysSection />
 
-              <section className="border-t border-border pt-6">
-                <h3 className="text-[14px] font-semibold mb-1 flex items-center gap-1.5">
-                  <Plug className="h-3.5 w-3.5 text-muted-foreground" />
-                  Connected integrations
-                </h3>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Prebuilt OAuth flows for services like Gmail, Slack, and Google
-                  Calendar. Connect once and Cabinet handles tokens, scopes, and
-                  refresh.
-                </p>
-                <div className="bg-card border border-dashed border-border rounded-lg px-4 py-6 text-center">
-                  <span className="text-[12px] font-semibold">Coming soon</span>
-                  <p className="text-[11px] text-muted-foreground mt-1">
-                    For now, set service-specific API tokens above and add MCP
-                    servers in your CLI config.
-                  </p>
+              {/* MCP servers + scheduling defaults — blurred Coming Soon
+                  preview. Self-contained `relative` block so the absolute
+                  overlay scopes to just this section, not the API Keys
+                  controls above it. */}
+              <div className="relative border-t border-border pt-6">
+                <div className="pointer-events-none select-none blur-[2px] opacity-70" aria-hidden="true">
+                  <div>
+                    <h3 className="text-[14px] font-semibold mb-1">MCP Servers</h3>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Configure tool servers that agents can use. Enable a server and provide API credentials for agents to access external services.
+                    </p>
+                    <div className="space-y-3">
+                      {["Brave Search", "GitHub", "Slack"].map((name) => (
+                        <div key={name} className="bg-card border border-border rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-4 w-8 rounded-full bg-muted-foreground/30 relative">
+                                <span className="absolute top-0.5 left-0.5 h-3 w-3 rounded-full bg-white" />
+                              </div>
+                              <span className="text-[13px] font-medium">{name}</span>
+                            </div>
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Disabled</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div>
+                              <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide">Command</label>
+                              <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide">API Key</label>
+                              <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-border pt-6 mt-6">
+                    <h3 className="text-[14px] font-semibold mb-1">Scheduling Defaults</h3>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Configure default scheduling behavior for agents and jobs.
+                    </p>
+                    <div className="bg-card border border-border rounded-lg p-3 space-y-3">
+                      <div>
+                        <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide">Max Concurrent Agents</label>
+                        <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-muted-foreground/70 uppercase tracking-wide flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          Active Hours
+                        </label>
+                        <div className="w-full mt-0.5 h-7 bg-muted/30 border border-border/50 rounded" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </section>
+
+                <div className="absolute inset-0 flex items-center justify-center pt-6">
+                  <div className="flex flex-col items-center gap-2 bg-background/80 backdrop-blur-sm rounded-xl px-8 py-6 border border-border shadow-lg">
+                    <Plug className="h-6 w-6 text-muted-foreground/50" />
+                    <span className="text-[13px] font-semibold">Coming Soon</span>
+                    <p className="text-[12px] text-muted-foreground text-center max-w-[220px]">
+                      MCP servers, scheduling, and third-party integrations.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1423,6 +1475,15 @@ export function SettingsPage() {
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Version</span>
                   <span className="font-mono">{pkgVersion}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border">
+                  <span className="text-muted-foreground">Release</span>
+                  <span className="font-mono text-[12px] text-muted-foreground">
+                    {releaseJson.version}
+                    {releaseJson.channel !== "stable" && (
+                      <span className="ml-1 rounded bg-muted px-1 py-0.5 text-[10px]">{releaseJson.channel}</span>
+                    )}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Framework</span>

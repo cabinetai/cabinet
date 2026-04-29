@@ -13,6 +13,7 @@ import {
   Plus,
   Settings,
   UserPlus,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -125,10 +126,12 @@ export function Sidebar() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSection({ type: "home" })}
-              className="font-logo text-[22px] italic tracking-[-0.01em] text-foreground hover:text-foreground/80 transition-colors cursor-pointer"
-              title="Home"
+              className="group flex items-center gap-1.5 rounded px-1 -ml-1 font-logo text-[22px] italic tracking-[-0.01em] text-foreground hover:text-foreground/80 hover:bg-accent/60 transition-colors cursor-pointer"
+              title="Go to home"
+              aria-label="Go to home"
             >
               cabinet
+              <Home className="size-3.5 not-italic opacity-0 group-hover:opacity-50 transition-opacity shrink-0" />
             </button>
           </div>
           <Button

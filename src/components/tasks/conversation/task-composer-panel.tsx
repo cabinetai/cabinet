@@ -245,6 +245,24 @@ export function TaskComposerPanel({
         </div>
       ) : null}
 
+      {/* PTY/terminal-mode mid-conversation caveat: structured adapters
+          re-mount skills per turn via --plugin-dir, but a live PTY session
+          can't dynamically register new skills. The model still sees the
+          @-mentioned skill described in the prompt, so it knows what to do,
+          but the skill isn't discoverable as a slash command for this turn. */}
+      {effectiveRuntime.runtimeMode === "terminal" &&
+      composer.mentions.skills.length > 0 ? (
+        <div className="mb-2 flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700 dark:text-amber-400">
+          <Terminal className="size-3 mt-[2px] shrink-0" />
+          <span>
+            <strong>Heads up:</strong> mid-session skill mentions in terminal
+            mode reach the model via prompt text only — not as live{" "}
+            <code className="text-[10px]">/skill</code> commands. New tasks
+            (non-terminal) get the full mount.
+          </span>
+        </div>
+      ) : null}
+
       <ComposerInput
         composer={composer}
         items={items}

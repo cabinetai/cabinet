@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, HeartPulse, Repeat, X, Zap } from "lucide-react";
+import { ChevronDown, HeartPulse, Inbox, Repeat, X, Zap } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -51,7 +51,7 @@ const PLACEHOLDERS = [
 
 const DEFAULT_HEARTBEAT = "0 9 * * 1-5";
 
-export type StartWorkMode = "now" | "recurring" | "heartbeat";
+export type StartWorkMode = "now" | "inbox" | "recurring" | "heartbeat";
 
 export function StartWorkDialog({
   open,
@@ -204,6 +204,28 @@ export function StartWorkDialog({
     [selectedAgent, cabinetPath, taskRuntime, onStarted]
   );
 
+  const addToInbox = useCallback(
+    async (
+      message: string,
+      mentionedPaths: string[],
+      mentionedSkills: string[],
+    ) => {
+      const resolvedAgent = selectedAgent;
+      if (!resolvedAgent) throw new Error("No agent available.");
+      const result = await createConversation({
+        agentSlug: resolvedAgent.slug,
+        userMessage: message,
+        mentionedPaths,
+        mentionedSkills,
+        cabinetPath: resolvedAgent.cabinetPath || cabinetPath,
+        draftOnly: true,
+        ...taskRuntime,
+      });
+      onStarted?.(result.conversation.id, result.conversation.cabinetPath);
+    },
+    [selectedAgent, cabinetPath, taskRuntime, onStarted]
+  );
+
   const saveRoutine = useCallback(
     async (message: string) => {
       const resolvedAgent = selectedAgent;
@@ -271,6 +293,8 @@ export function StartWorkDialog({
       try {
         if (mode === "now") {
           await runNow(message, mentionedPaths, mentionedSkills);
+        } else if (mode === "inbox") {
+          await addToInbox(message, mentionedPaths, mentionedSkills);
         } else if (mode === "recurring") {
           await saveRoutine(message);
         } else {
@@ -339,7 +363,7 @@ export function StartWorkDialog({
       : "sm:max-w-xl";
 
   const title =
-    mode === "now"
+    mode === "now" || mode === "inbox"
       ? "What needs to get done?"
       : mode === "recurring"
         ? "Set up a recurring routine"
@@ -348,9 +372,11 @@ export function StartWorkDialog({
   const submitLabel =
     mode === "now"
       ? "Start"
-      : mode === "recurring"
-        ? "Create routine"
-        : "Save heartbeat";
+      : mode === "inbox"
+        ? "Add to Inbox"
+        : mode === "recurring"
+          ? "Create routine"
+          : "Save heartbeat";
 
   const canSubmitRecurring = routineDraft.name.trim().length > 0;
 
@@ -418,7 +444,7 @@ export function StartWorkDialog({
                       <span className="text-destructive">{error}</span>
                     ) : (
                       <span className="text-muted-foreground/60">
-                        {mode === "recurring" ? "Creating routine…" : "Starting…"}
+                        {mode === "recurring" ? "Creating routine…" : mode === "inbox" ? "Saving to Inbox…" : "Starting…"}
                       </span>
                     )}
                   </div>
@@ -474,6 +500,12 @@ export function WhenChip({
         <ChevronDown className="h-3 w-3 opacity-60" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[220px]">
+        <ModeItem
+          mode="inbox"
+          active={mode === "inbox"}
+          onSelect={() => onChange("inbox")}
+          hint="Save to Inbox — start it when you're ready"
+        />
         <ModeItem
           mode="now"
           active={mode === "now"}
@@ -532,6 +564,13 @@ function modeMeta(mode: StartWorkMode): {
   label: string;
   tone: string;
 } {
+  if (mode === "inbox") {
+    return {
+      icon: Inbox,
+      label: "→ Inbox",
+      tone: "border-border/70 bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+    };
+  }
   if (mode === "recurring") {
     return {
       icon: Repeat,

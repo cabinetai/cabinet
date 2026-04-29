@@ -34,11 +34,28 @@ interface ImportRequest {
 // `parseSource` and `ResolvedSource` extracted to
 // `src/lib/agents/skills/import-source.ts` so they can be unit-tested.
 
+// Refs flow into `git clone --branch <ref>` as a positional value. Reject any
+// ref that could be interpreted as a flag or that contains shell-meaningful
+// characters; git's own ref-name rules are stricter, but this is the
+// minimum we need to be safe with the spawn.
+const SAFE_REF_PATTERN = /^[A-Za-z0-9._/-]+$/;
+
+function isSafeRef(ref: string): boolean {
+  if (!ref || ref.length > 256) return false;
+  if (ref.startsWith("-")) return false;
+  if (ref.includes("..")) return false;
+  return SAFE_REF_PATTERN.test(ref);
+}
+
 function gitClone(url: string, dest: string, ref?: string): Promise<void> {
   return new Promise((resolve, reject) => {
+    if (ref && !isSafeRef(ref)) {
+      reject(new Error(`unsafe ref: "${ref}"`));
+      return;
+    }
     const args = ["clone", "--depth", "1"];
     if (ref) args.push("--branch", ref);
-    args.push(url, dest);
+    args.push("--", url, dest);
     const child = spawn("git", args, { stdio: ["ignore", "pipe", "pipe"] });
     let stderr = "";
     child.stderr.on("data", (chunk) => {
@@ -75,16 +92,22 @@ async function resolveFromPluginManifest(
     const raw = await fs.readFile(manifestPath, "utf-8");
     const parsed = JSON.parse(raw) as { skills?: unknown };
     const skills = Array.isArray(parsed.skills) ? parsed.skills : [];
+    const repoRootResolved = path.resolve(repoRoot) + path.sep;
     for (const entry of skills) {
       if (typeof entry !== "string") continue;
       // Normalize: drop leading "./" and trailing /SKILL.md
       const normalized = entry.replace(/^\.\//, "");
       const dir = normalized.replace(/\/SKILL\.md$/i, "");
-      if (path.basename(dir) === skillName) {
-        const abs = path.join(repoRoot, dir);
-        if (await fs.stat(abs).then(() => true).catch(() => false)) {
-          return abs;
-        }
+      if (path.basename(dir) !== skillName) continue;
+      const abs = path.resolve(repoRoot, dir);
+      // Boundary check: a malicious manifest declaring `../../../etc/<skill>`
+      // would let the import copy from outside the cloned repo. Refuse any
+      // entry whose resolved path escapes repoRoot.
+      if (abs !== path.resolve(repoRoot) && !abs.startsWith(repoRootResolved)) {
+        continue;
+      }
+      if (await fs.stat(abs).then(() => true).catch(() => false)) {
+        return abs;
       }
     }
     return null;
@@ -186,7 +209,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
     const dest = path.join(destRoot, importedKey);
-    await fs.cp(parsed.localPath, dest, { recursive: true });
+    // verbatimSymlinks: copy symlinks as-is rather than following them, so a
+    // hostile bundle that contains `evil -> /home/user/.ssh` doesn't siphon
+    // the target's contents into the skills dir.
+    await fs.cp(parsed.localPath, dest, { recursive: true, verbatimSymlinks: true });
     sourceLocator = parsed.localPath;
     sourceType = "local_path";
   } else {
@@ -250,7 +276,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
       const dest = path.join(destRoot, importedKey);
       await fs.rm(dest, { recursive: true, force: true });
-      await fs.cp(sourceDir, dest, { recursive: true });
+      // verbatimSymlinks prevents a hostile repo from exfiltrating files via
+      // symlinks pointing outside the clone (e.g. `evil -> /home/user/.ssh`).
+      await fs.cp(sourceDir, dest, { recursive: true, verbatimSymlinks: true });
       sourceLocator = parsed.skillName
         ? `github:${owner}/${repo}/${parsed.skillName}`
         : `github:${owner}/${repo}`;

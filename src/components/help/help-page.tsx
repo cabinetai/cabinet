@@ -16,6 +16,7 @@ import {
   KnowledgeVisual,
   ProvidersVisual,
   RoutinesVisual,
+  ShortcutsVisual,
   SkillsVisual,
   TasksVisual,
   ThemesVisual,
@@ -29,6 +30,7 @@ import { buildKnowledgeDemo } from "./demos/knowledge-demo";
 import { buildRoutinesDemo } from "./demos/routines-demo";
 import { buildTaskBoardDemo } from "./demos/task-board-demo";
 import { buildThemesDemo } from "./demos/themes-demo";
+import { buildShortcutsDemo } from "./demos/shortcuts-demo";
 
 type DemoId =
   | "ai-team"
@@ -38,7 +40,8 @@ type DemoId =
   | "routines"
   | "conversations"
   | "themes"
-  | "byoai";
+  | "byoai"
+  | "shortcuts";
 
 const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
 
@@ -173,6 +176,19 @@ const HELP_ITEMS: HelpItem[] = [
     cta: "Watch the demo",
     visual: <ProvidersVisual />,
     action: { kind: "demo", demoId: "byoai" },
+  },
+  {
+    id: "shortcuts",
+    title: (
+      <>
+        <span style={{ color: P.accent }}>Keyboard</span> shortcuts.
+      </>
+    ),
+    description:
+      "Ten global shortcuts work from any surface. The editor adds slash commands, block reordering, and link editing — all without leaving the keyboard.",
+    cta: "Browse shortcuts",
+    visual: <ShortcutsVisual />,
+    action: { kind: "demo", demoId: "shortcuts" },
   },
   {
     id: "skills",
@@ -331,6 +347,10 @@ export function HelpPage() {
     }
     if (demoId === "byoai") {
       setActiveDemo(buildByoaiDemo());
+      return;
+    }
+    if (demoId === "shortcuts") {
+      setActiveDemo(buildShortcutsDemo());
       return;
     }
   };

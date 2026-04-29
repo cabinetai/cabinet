@@ -39,7 +39,7 @@ export function ViewerBreadcrumb({
   };
 
   return (
-    <div className={cn("flex min-w-0 items-center gap-1 text-[11.5px] text-muted-foreground", className)}>
+    <div className={cn("flex min-w-0 items-center gap-1 text-[11px] text-muted-foreground", className)}>
       <button
         type="button"
         onClick={goHome}
@@ -58,7 +58,7 @@ export function ViewerBreadcrumb({
             <ChevronRight className="h-3 w-3 shrink-0 opacity-40" />
             {isLast ? (
               <span
-                className="truncate text-[13px] font-semibold text-foreground"
+                className="truncate text-[15px] font-semibold text-foreground"
                 title={leafTitle}
               >
                 {leafTitle}

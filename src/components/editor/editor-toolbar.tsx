@@ -87,7 +87,7 @@ function ToolButton({ label, icon: Icon, active, disabled, style, onAction }: To
       }}
       className={cn(
         "h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-md text-foreground/80 hover:bg-accent transition-colors disabled:opacity-40",
-        active && "bg-accent text-foreground"
+        active && "bg-accent text-foreground ring-1 ring-inset ring-foreground/15"
       )}
     >
       <Icon className="h-4 w-4" />
@@ -129,17 +129,23 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
   }, []);
 
   useEffect(() => {
-    updateScrollState();
+    if (!editor) return;
     const el = scrollRef.current;
     if (!el) return;
+    const raf = requestAnimationFrame(updateScrollState);
     const onResize = () => updateScrollState();
     window.addEventListener("resize", onResize);
     el.addEventListener("scroll", updateScrollState);
+    const ro = new ResizeObserver(() => updateScrollState());
+    ro.observe(el);
+    for (const child of Array.from(el.children)) ro.observe(child);
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
       el.removeEventListener("scroll", updateScrollState);
+      ro.disconnect();
     };
-  }, [updateScrollState]);
+  }, [editor, updateScrollState]);
 
   // Translate vertical wheel to horizontal scroll
   const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -262,7 +268,8 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
         style?: React.CSSProperties;
       };
 
-  const items: ButtonSpec[] = [
+  // Primary items — always visible in the toolbar
+  const primaryItems: ButtonSpec[] = [
     { icon: Heading1, action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(), isActive: editor.isActive("heading", { level: 1 }), label: "Heading 1" },
     { icon: Heading2, action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), isActive: editor.isActive("heading", { level: 2 }), label: "Heading 2" },
     { icon: Heading3, action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(), isActive: editor.isActive("heading", { level: 3 }), label: "Heading 3" },
@@ -290,32 +297,33 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
       style: currentHighlight ? { backgroundColor: currentHighlight } : undefined,
     },
     { separator: true },
-    { icon: SuperIcon, action: () => editor.chain().focus().toggleSuperscript().run(), isActive: editor.isActive("superscript"), label: "Superscript" },
-    { icon: SubIcon, action: () => editor.chain().focus().toggleSubscript().run(), isActive: editor.isActive("subscript"), label: "Subscript" },
-    { separator: true },
     { icon: List, action: () => editor.chain().focus().toggleBulletList().run(), isActive: editor.isActive("bulletList"), label: "Bullet list" },
     { icon: ListOrdered, action: () => editor.chain().focus().toggleOrderedList().run(), isActive: editor.isActive("orderedList"), label: "Ordered list" },
     { icon: Quote, action: () => editor.chain().focus().toggleBlockquote().run(), isActive: editor.isActive("blockquote"), label: "Blockquote" },
     { icon: CheckSquare, action: () => editor.chain().focus().toggleTaskList().run(), isActive: editor.isActive("taskList"), label: "Checklist" },
     { icon: FileCode, action: () => editor.chain().focus().toggleCodeBlock().run(), isActive: editor.isActive("codeBlock"), label: "Code block" },
     { icon: Minus, action: () => editor.chain().focus().setHorizontalRule().run(), isActive: false, label: "Divider" },
-    { separator: true },
+  ];
+
+  // Secondary items — appended to the scrollable row after the primary set
+  const secondaryItems: ButtonSpec[] = [
     { icon: AlignLeft, action: () => editor.chain().focus().setTextAlign("left").run(), isActive: editor.isActive({ textAlign: "left" }), label: "Align left" },
     { icon: AlignCenter, action: () => editor.chain().focus().setTextAlign("center").run(), isActive: editor.isActive({ textAlign: "center" }), label: "Align center" },
     { icon: AlignRight, action: () => editor.chain().focus().setTextAlign("right").run(), isActive: editor.isActive({ textAlign: "right" }), label: "Align right" },
     { icon: AlignJustify, action: () => editor.chain().focus().setTextAlign("justify").run(), isActive: editor.isActive({ textAlign: "justify" }), label: "Justify" },
     { separator: true },
+    { icon: SuperIcon, action: () => editor.chain().focus().toggleSuperscript().run(), isActive: editor.isActive("superscript"), label: "Superscript" },
+    { icon: SubIcon, action: () => editor.chain().focus().toggleSubscript().run(), isActive: editor.isActive("subscript"), label: "Subscript" },
+    { separator: true },
     {
       icon: ImageIcon,
-      action: (e) =>
-        openPopoverFromButton(e, (anchor) => ({ type: "media", kind: "image", anchor })),
+      action: (e) => openPopoverFromButton(e, (anchor) => ({ type: "media", kind: "image", anchor })),
       isActive: false,
-      label: "Insert image (upload, URL, or paste/drop)",
+      label: "Insert image",
     },
     {
       icon: VideoIcon,
-      action: (e) =>
-        openPopoverFromButton(e, (anchor) => ({ type: "media", kind: "video", anchor })),
+      action: (e) => openPopoverFromButton(e, (anchor) => ({ type: "media", kind: "video", anchor })),
       isActive: false,
       label: "Insert video",
     },
@@ -323,7 +331,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
       icon: Sparkles,
       action: (e) => openPopoverFromButton(e, (anchor) => ({ type: "embed", anchor })),
       isActive: false,
-      label: "Embed — YouTube, X, Vimeo, Loom, TikTok, Spotify…",
+      label: "Embed",
     },
     { separator: true },
     { icon: Undo, action: () => editor.chain().focus().undo().run(), isActive: false, label: "Undo" },
@@ -366,9 +374,9 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
         <div
           ref={scrollRef}
           onWheel={onWheel}
-          className="flex items-center gap-0.5 px-2 py-1 overflow-x-auto overflow-y-hidden scrollbar-none"
+          className="flex items-center gap-0.5 px-2 pt-1 pb-1.5 overflow-x-scroll overflow-y-hidden editor-toolbar-scroll"
         >
-          {items.map((item, i) => {
+          {[...primaryItems, { separator: true } as ButtonSpec, ...secondaryItems].map((item, i) => {
             if ("separator" in item) {
               return (
                 <Separator key={i} orientation="vertical" className="mx-1 h-6 shrink-0" />

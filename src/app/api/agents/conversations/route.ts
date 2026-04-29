@@ -5,7 +5,7 @@ import {
   startConversationRun,
 } from "@/lib/agents/conversation-runner";
 import { buildConversationInstanceKey } from "@/lib/agents/conversation-identity";
-import { listConversationMetas } from "@/lib/agents/conversation-store";
+import { createConversation, listConversationMetas } from "@/lib/agents/conversation-store";
 import { normalizeAgentSlug, readMemory, writeMemory } from "@/lib/agents/persona-manager";
 import { normalizeRuntimeOverride } from "@/lib/agents/runtime-overrides";
 import { readCabinetOverview } from "@/lib/cabinets/overview";
@@ -120,6 +120,33 @@ export async function POST(req: NextRequest) {
         { error: "pagePath is required for editor conversations" },
         { status: 400 }
       );
+    }
+
+    // draftOnly: create idle conversation without starting the runner.
+    if (body.draftOnly === true) {
+      const draftInput = await buildManualConversationPrompt({
+        agentSlug,
+        userMessage,
+        mentionedPaths,
+        cabinetPath,
+      });
+      const runtime = normalizeRuntimeOverride(
+        { providerId: body.providerId, adapterType: body.adapterType, model: body.model, effort: body.effort, runtimeMode: body.runtimeMode },
+        { providerId: draftInput.providerId, adapterType: draftInput.adapterType, adapterConfig: draftInput.adapterConfig }
+      );
+      const conversation = await createConversation({
+        agentSlug,
+        title: draftInput.title,
+        trigger: "manual",
+        prompt: draftInput.prompt,
+        cabinetPath: draftInput.cabinetPath ?? cabinetPath,
+        mentionedPaths,
+        providerId: runtime.providerId,
+        adapterType: runtime.adapterType,
+        adapterConfig: runtime.adapterConfig,
+        initialStatus: "idle",
+      });
+      return NextResponse.json({ ok: true, conversation }, { status: 201 });
     }
 
     const editorCabinetPath =

@@ -128,7 +128,7 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
           onClick={() => setShowSource((v) => !v)}
         >
           {showSource ? <Eye className="h-3.5 w-3.5" /> : <Code2 className="h-3.5 w-3.5" />}
-          {showSource ? "Diagram" : "Source"}
+          {showSource ? "Diagram" : "Code"}
         </Button>
         <Button
           variant="ghost"
