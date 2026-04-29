@@ -18,6 +18,7 @@ import {
 import { useComposer, type MentionableItem } from "@/hooks/use-composer";
 import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
+import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
 import { cn } from "@/lib/utils";
 import type { ConversationRuntimeOverride } from "@/types/conversations";
 
@@ -131,7 +132,9 @@ export function TaskComposerPanel({
     setUserPickedRuntime(value);
   }, []);
 
-  // Lazy-load mentions from the tree when the caller doesn't pre-supply them.
+  // Lazy-load page mentions from the tree when the caller doesn't pre-supply
+  // them. /api/tree returns the tree as a bare array — earlier code expected
+  // `{ tree }` and silently dropped pages.
   useEffect(() => {
     if (mentionableItems || !autoLoadMentions || loadedMentions) return;
     let cancelled = false;
@@ -139,9 +142,10 @@ export function TaskComposerPanel({
       try {
         const res = await fetch("/api/tree", { cache: "no-store" });
         if (!res.ok) return;
-        const data = (await res.json()) as { tree?: PageTreeNode[] };
+        const raw = (await res.json()) as PageTreeNode[] | { tree?: PageTreeNode[] };
+        const tree = Array.isArray(raw) ? raw : raw?.tree;
         if (!cancelled) {
-          setLoadedMentions(flattenTreeToMentions(data.tree));
+          setLoadedMentions(flattenTreeToMentions(tree));
         }
       } catch {
         if (!cancelled) setLoadedMentions([]);
@@ -152,14 +156,49 @@ export function TaskComposerPanel({
     };
   }, [mentionableItems, autoLoadMentions, loadedMentions]);
 
+  // Lazy-load agent mentions from the cabinet overview. Continuation
+  // composers locked to one agent benefit from being able to @-reference
+  // OTHER agents (delegation context, handoff notes, etc.) — not from
+  // changing this conversation's agent (that's locked by the meta).
+  const [agentMentions, setAgentMentions] = useState<MentionableItem[] | null>(
+    null,
+  );
+  useEffect(() => {
+    if (mentionableItems || !autoLoadMentions || agentMentions) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await fetchCabinetOverviewClient(cabinetPath ?? ".", "all");
+        const list = (data.agents || []).map<MentionableItem>((a) => ({
+          type: "agent",
+          id: a.slug,
+          label: a.name,
+          sublabel: a.role || "",
+          icon: a.emoji,
+        }));
+        if (!cancelled) setAgentMentions(list);
+      } catch {
+        if (!cancelled) setAgentMentions([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [mentionableItems, autoLoadMentions, agentMentions, cabinetPath]);
+
   const skillItems = useSkillMentionItems({
     cabinetPath,
     enabled: !mentionableItems && autoLoadMentions,
   });
 
   const items = useMemo(
-    () => mentionableItems ?? [...(loadedMentions ?? []), ...skillItems],
-    [mentionableItems, loadedMentions, skillItems]
+    () =>
+      mentionableItems ?? [
+        ...(agentMentions ?? []),
+        ...skillItems,
+        ...(loadedMentions ?? []),
+      ],
+    [mentionableItems, agentMentions, skillItems, loadedMentions]
   );
 
   const handleSubmit = useCallback(
