@@ -365,6 +365,12 @@ export function HomeScreen() {
   const [importing, setImporting] = useState(false);
   const [taskRuntime, setTaskRuntime] = useState<TaskRuntimeSelection>({});
   const [quickRunning, setQuickRunning] = useState(false);
+  // Hold the chip row until the agents fetch has settled — only then do we
+  // know which delegation chips to show. Animating before that point causes
+  // the second wave of chips to pop in at scrambled positions and reflow the
+  // layout. The 2.5s timeout is a safety net for a hung request; in practice
+  // the local overview fetch settles in under 200ms.
+  const [chipsReady, setChipsReady] = useState(false);
 
   useEffect(() => {
     fetch("/api/user/profile")
@@ -382,7 +388,8 @@ export function HomeScreen() {
       .then((data) => {
         setAgents((data.agents || []) as CabinetAgentSummary[]);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setChipsReady(true));
 
     fetch("/api/registry")
       .then((r) => r.json())
@@ -390,6 +397,9 @@ export function HomeScreen() {
         if (data.templates) setRegistryTemplates(data.templates);
       })
       .catch(() => {});
+
+    const safetyTimer = setTimeout(() => setChipsReady(true), 2500);
+    return () => clearTimeout(safetyTimer);
   }, []);
 
   const skillItems = useSkillMentionItems();
@@ -560,27 +570,35 @@ export function HomeScreen() {
           }
         />
 
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {visibleActions.map((action) => {
-            const disabled = composer.submitting || quickRunning || daemonDown;
-            return (
-              <button
-                key={action.label}
-                onClick={() => void runQuickAction(action)}
-                disabled={disabled}
-                title={action.prompt}
-                className={cn(
-                  "rounded-full border border-border px-4 py-1.5",
-                  "text-sm text-foreground/80",
-                  "hover:bg-accent hover:text-accent-foreground",
-                  "transition-colors",
-                  disabled && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                {action.label}
-              </button>
-            );
-          })}
+        <div className="flex flex-wrap items-start justify-center content-start gap-1.5 min-h-[8rem]">
+          {chipsReady &&
+            visibleActions.map((action, index) => {
+              const disabled = composer.submitting || quickRunning || daemonDown;
+              return (
+                <button
+                  key={action.label}
+                  onClick={() => void runQuickAction(action)}
+                  disabled={disabled}
+                  title={action.prompt}
+                  style={{
+                    fontFamily:
+                      "var(--font-heading-theme, var(--font-theme, var(--font-sans)))",
+                    animationDelay: `${Math.min(index, 12) * 50}ms`,
+                    animationFillMode: "backwards",
+                  }}
+                  className={cn(
+                    "rounded-full border border-border/70 bg-card/80 px-3 py-1",
+                    "text-xs text-foreground/85",
+                    "hover:bg-secondary hover:border-border hover:text-foreground",
+                    "transition-colors",
+                    "animate-in fade-in slide-in-from-top-1 duration-200 ease-out",
+                    disabled && "opacity-50 cursor-not-allowed"
+                  )}
+                >
+                  {action.label}
+                </button>
+              );
+            })}
         </div>
       </div>
 
