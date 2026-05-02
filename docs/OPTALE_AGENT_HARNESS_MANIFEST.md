@@ -95,3 +95,16 @@ PM2-runtime no-tools smoke verified on 2026-05-02:
 - MCP/tool markers: none
 - inspect URL path: `/agents/conversations/2026-05-02T22-39-13-044Z-dbe0cc16-optale-research-context-manual`
 - runtime conversation artifacts are stored under the PM2 runtime data dir and are not committed
+
+PM2-runtime forced qmd smoke verified on 2026-05-02:
+
+- commit dependencies: `d4fa435` OpenRouter hardening, `2219eaf` downstream MCP timeout
+- persona: `optale-research-context`
+- runtime data dir: `/home/thor/cabinet-optale-data`
+- provider / adapter / model: `openrouter` / `openrouter_api` / `anthropic/claude-sonnet-4`
+- governed MCP: `allowedServerIds: ["qmd"]`, `allowedTools: ["qmd__query"]`
+- required tool: `requiredToolName: "qmd__query"`
+- result: `completed`, `qmdToolCallCount: 1`, `nonQmdToolCalls: 0`, audit outcome `ok`
+- active before / after: `false` / `false`
+- inspect URL path: `/agents/conversations/2026-05-02T23-47-55-149Z-3a52ce78-optale-research-context-manual`
+- runtime conversation artifacts are stored under the PM2 runtime data dir and are intentionally not committed
