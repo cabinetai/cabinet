@@ -17,6 +17,10 @@ import { readStringConfig, readEffortConfig } from "./_shared/cli-args";
 import type { AdapterSessionCodec, AgentExecutionAdapter } from "./types";
 import type { ConversationErrorClassification } from "@/types/conversations";
 import { ADAPTER_RUNTIME_PATH, runChildProcess } from "./utils";
+import {
+  buildGovernedMcpCommandNote,
+  readGovernedMcpConfig,
+} from "./_shared/governed-mcp";
 
 /**
  * Match codex's backend-rejection events for "this model isn't available on
@@ -96,6 +100,11 @@ function buildCodexArgs(config: Record<string, unknown>): string[] {
     "--dangerously-bypass-approvals-and-sandbox",
   ];
 
+  const governedMcp = readGovernedMcpConfig(config);
+  if (governedMcp && governedMcp.codexConfigArgs.length > 0) {
+    args.push(...governedMcp.codexConfigArgs);
+  }
+
   const model = readStringConfig(config, "model");
   if (model) {
     args.push("--model", model);
@@ -158,6 +167,8 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
     const command =
       readStringConfig(ctx.config, "command") || resolveCliCommand(codexCliProvider);
     const args = buildCodexArgs(ctx.config);
+    const governedMcp = readGovernedMcpConfig(ctx.config);
+    const commandNote = buildGovernedMcpCommandNote(governedMcp);
     const stdoutAccumulator = createCodexStreamAccumulator();
     const stderrAccumulator = createCodexStderrAccumulator();
 
@@ -165,6 +176,7 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
       adapterType: ctx.adapterType,
       command,
       commandArgs: args,
+      commandNotes: commandNote ? [commandNote] : undefined,
       cwd: ctx.cwd,
       env: {
         PATH: ADAPTER_RUNTIME_PATH,

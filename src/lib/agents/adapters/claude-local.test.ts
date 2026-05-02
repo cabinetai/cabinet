@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { claudeLocalAdapter } from "./claude-local";
+import type { AdapterInvocationMeta } from "./types";
 
 async function createExecutableScript(source: string): Promise<string> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-claude-local-test-"));
@@ -50,4 +51,41 @@ printf '%s\n' \
     cachedInputTokens: 5,
   });
   assert.deepEqual(chunks, [{ stream: "stdout", chunk: "Hello world" }]);
+});
+
+test("claudeLocalAdapter passes governed MCP config in strict mode", async () => {
+  const scriptPath = await createExecutableScript(`#!/bin/sh
+cat >/dev/null
+printf '%s\n' '{"type":"result","result":"OK","session_id":"session-mcp"}'
+`);
+
+  let invocation: AdapterInvocationMeta | undefined;
+  const result = await claudeLocalAdapter.execute?.({
+    runId: "run-mcp",
+    adapterType: "claude_local",
+    config: {
+      command: scriptPath,
+      governedMcp: {
+        enabled: true,
+        claudeConfigPath: "/tmp/optale-claude-mcp.json",
+        codexConfigArgs: [],
+        allowedServerIds: ["qmd"],
+      },
+    },
+    prompt: "Say hello",
+    cwd: process.cwd(),
+    onLog: async () => {},
+    onMeta: async (meta) => {
+      invocation = meta;
+    },
+  });
+
+  assert.ok(result);
+  assert.equal(result.exitCode, 0);
+  assert.deepEqual(
+    invocation?.commandArgs?.slice(-2),
+    ["/tmp/optale-claude-mcp.json", "--strict-mcp-config"]
+  );
+  assert.ok(invocation?.commandArgs?.includes("--mcp-config"));
+  assert.match(invocation?.commandNotes?.join("\n") || "", /strict per-run config/);
 });

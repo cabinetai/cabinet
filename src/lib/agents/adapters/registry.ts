@@ -6,6 +6,7 @@ import { cursorCliProvider } from "../providers/cursor-cli";
 import { geminiCliProvider } from "../providers/gemini-cli";
 import { grokCliProvider } from "../providers/grok-cli";
 import { openCodeProvider } from "../providers/opencode";
+import { openRouterProvider } from "../providers/openrouter";
 import { piProvider } from "../providers/pi";
 import type {
   AdapterEnvironmentTestContext,
@@ -19,6 +20,7 @@ import { providerStatusToEnvironmentTest } from "./environment";
 import { geminiLocalAdapter } from "./gemini-local";
 import { grokLocalAdapter } from "./grok-local";
 import { openCodeLocalAdapter } from "./opencode-local";
+import { openRouterApiAdapter } from "./openrouter-api";
 import { piLocalAdapter } from "./pi-local";
 
 export const LEGACY_ADAPTER_BY_PROVIDER_ID: Record<string, string> = {
@@ -38,6 +40,7 @@ export const DEFAULT_ADAPTER_BY_PROVIDER_ID: Record<string, string> = {
   "gemini-cli": geminiLocalAdapter.type,
   "cursor-cli": cursorLocalAdapter.type,
   "opencode": openCodeLocalAdapter.type,
+  "openrouter": openRouterApiAdapter.type,
   "pi": piLocalAdapter.type,
   "grok-cli": grokLocalAdapter.type,
   "copilot-cli": copilotLocalAdapter.type,
@@ -187,6 +190,7 @@ agentAdapterRegistry.register(codexLocalAdapter);
 agentAdapterRegistry.register(geminiLocalAdapter);
 agentAdapterRegistry.register(cursorLocalAdapter);
 agentAdapterRegistry.register(openCodeLocalAdapter);
+agentAdapterRegistry.register(openRouterApiAdapter);
 agentAdapterRegistry.register(piLocalAdapter);
 agentAdapterRegistry.register(grokLocalAdapter);
 agentAdapterRegistry.register(copilotLocalAdapter);

@@ -17,6 +17,10 @@ import { getGoalState } from "./goal-manager";
 import type { GoalMetric, AgentType } from "@/types/agents";
 import { getDefaultProviderId } from "./provider-runtime";
 import { resolveEnabledProviderId } from "./provider-settings";
+import {
+  resolveAgentOptaleScope,
+  type OptaleAgentScopeMetadata,
+} from "@/lib/optale/scope-registry";
 
 const AGENTS_DIR = path.join(DATA_DIR, ".agents");
 const MEMORY_DIR = path.join(AGENTS_DIR, ".memory");
@@ -220,6 +224,7 @@ export interface AgentPersona {
   heartbeatsUsed?: number;
   lastHeartbeat?: string;
   nextHeartbeat?: string;
+  optaleScope?: OptaleAgentScopeMetadata;
 }
 
 export interface HeartbeatRecord {
@@ -352,6 +357,13 @@ export async function readPersona(slug: string, cabinetPath?: string): Promise<A
   const raw = await readFileContent(filePath);
   const { data, content } = matter(raw);
 
+  const resolvedCabinetPath = normalizeCabinetPath(resolved, true);
+  const optaleScope = await resolveAgentOptaleScope({
+    agentSlug: slug,
+    cabinetPath: resolvedCabinetPath,
+    frontmatter: data,
+  });
+
   const persona: AgentPersona = {
     scope,
     name: (data.name as string) || slug,
@@ -388,7 +400,7 @@ export async function readPersona(slug: string, cabinetPath?: string): Promise<A
     channels: (data.channels as string[]) || ["general"],
     workspace: (data.workspace as string) || `workspace`,
     setupComplete: data.setupComplete === true,
-    cabinetPath: normalizeCabinetPath(resolved, true),
+    cabinetPath: resolvedCabinetPath,
     displayName:
       typeof data.displayName === "string" && data.displayName.trim()
         ? data.displayName.trim()
@@ -411,6 +423,7 @@ export async function readPersona(slug: string, cabinetPath?: string): Promise<A
         : undefined,
     canDispatch:
       typeof data.canDispatch === "boolean" ? data.canDispatch : undefined,
+    optaleScope,
     slug,
     body: content.trim(),
   };
@@ -522,6 +535,21 @@ export async function writePersona(slug: string, persona: Partial<AgentPersona> 
       : {}),
     ...(typeof merged.canDispatch === "boolean"
       ? { canDispatch: merged.canDispatch }
+      : {}),
+    ...(merged.optaleScope?.source === "explicit"
+      ? {
+          optaleScope: merged.optaleScope.scope,
+          ...(merged.optaleScope.ownerId ? { optaleOwnerId: merged.optaleScope.ownerId } : {}),
+          ...(merged.optaleScope.companyId ? { optaleCompanyId: merged.optaleScope.companyId } : {}),
+          ...(merged.optaleScope.userId ? { optaleUserId: merged.optaleScope.userId } : {}),
+          ...(merged.optaleScope.policyId ? { optalePolicyId: merged.optaleScope.policyId } : {}),
+          ...(merged.optaleScope.memoryNamespace
+            ? { optaleMemoryNamespace: merged.optaleScope.memoryNamespace }
+            : {}),
+          ...(merged.optaleScope.labels && merged.optaleScope.labels.length > 0
+            ? { optaleLabels: merged.optaleScope.labels }
+            : {}),
+        }
       : {}),
   };
 

@@ -45,6 +45,9 @@ import { listPersonas, readPersona, type AgentPersona } from "./persona-manager"
 import { getDefaultProviderId } from "./provider-runtime";
 import { looksLikeAwaitingInput } from "./task-heuristics";
 import { emit as emitTelemetry } from "@/lib/telemetry";
+import { buildOptaleMcpPolicyInstructions } from "@/lib/optale/mcp-policy";
+import { prepareGovernedMcpRuntime } from "@/lib/optale/mcp-runtime";
+import type { OptaleAgentScope } from "@/lib/optale/product";
 
 export interface ConversationCompletion {
   meta: ConversationMeta;
@@ -105,6 +108,50 @@ function buildCabinetRequirementHeader(): string {
     "ARTIFACT: line per file you created or modified. For read-only turns emit",
     "`ARTIFACT: none`. Replies without the block are treated as incomplete.",
   ].join("\n");
+}
+
+function readStringArrayConfig(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const strings = Array.from(
+    new Set(
+      value
+        .filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "")
+        .map((entry) => entry.trim())
+    )
+  );
+  return strings;
+}
+
+function readGovernedMcpRunOverrides(
+  adapterConfig?: Record<string, unknown>
+): { allowedServerIds?: string[]; allowedTools?: string[] } {
+  const raw = adapterConfig?.governedMcp;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const record = raw as Record<string, unknown>;
+  return {
+    allowedServerIds: readStringArrayConfig(record.allowedServerIds),
+    allowedTools: readStringArrayConfig(record.allowedTools),
+  };
+}
+
+async function withGovernedMcpRuntime(input: {
+  sessionId: string;
+  cabinetPath?: string | null;
+  agentScope?: OptaleAgentScope;
+  adapterConfig?: Record<string, unknown>;
+}): Promise<Record<string, unknown>> {
+  const overrides = readGovernedMcpRunOverrides(input.adapterConfig);
+  const runtime = await prepareGovernedMcpRuntime({
+    sessionId: input.sessionId,
+    cabinetPath: input.cabinetPath,
+    agentScope: input.agentScope,
+    allowedServerIds: overrides.allowedServerIds,
+    allowedTools: overrides.allowedTools,
+  });
+  return {
+    ...(input.adapterConfig || {}),
+    ...runtime.adapterConfigPatch,
+  };
 }
 
 async function buildCabinetEpilogueInstructions(options: {
@@ -358,6 +405,10 @@ export async function buildManualConversationPrompt(input: {
   );
   const skillBundles = await resolveDesiredSkills(mergedSkillKeys, input.cabinetPath);
   const skillIndex = buildSkillIndex(skillBundles);
+  const mcpPolicyInstructions = await buildOptaleMcpPolicyInstructions({
+    cabinetPath: input.cabinetPath,
+    agentScope: persona?.optaleScope?.scope,
+  });
 
   const prompt = [
     buildCabinetRequirementHeader(),
@@ -366,6 +417,7 @@ export async function buildManualConversationPrompt(input: {
     ...(skillIndex ? ["", skillIndex] : []),
     "",
     ...buildKnowledgeBaseScopeInstructions(baseCwd, input.cabinetPath),
+    ...mcpPolicyInstructions,
     "Reflect useful outputs in KB files, not only in terminal text.",
     ...buildDiagramOutputInstructions(),
     await buildCabinetEpilogueInstructions({
@@ -438,6 +490,10 @@ export async function buildEditorConversationPrompt(input: {
   );
   const skillBundles = await resolveDesiredSkills(mergedSkillKeys, input.cabinetPath);
   const skillIndex = buildSkillIndex(skillBundles);
+  const mcpPolicyInstructions = await buildOptaleMcpPolicyInstructions({
+    cabinetPath: input.cabinetPath,
+    agentScope: persona?.optaleScope?.scope,
+  });
 
   const prompt = [
     buildCabinetRequirementHeader(),
@@ -449,6 +505,7 @@ export async function buildEditorConversationPrompt(input: {
     `Prefer making the requested changes directly in ${input.pagePath} unless the task clearly belongs in another KB file.`,
     "Do not assume the target is markdown. Follow the actual file type and Cabinet structure when choosing what to edit.",
     ...buildKnowledgeBaseScopeInstructions(baseCwd, input.cabinetPath),
+    ...mcpPolicyInstructions,
     "Edit KB files directly and reflect useful outputs in the KB, not only in terminal text.",
     ...buildDiagramOutputInstructions(),
     await buildCabinetEpilogueInstructions({
@@ -607,6 +664,12 @@ export async function startConversationRun(
         skills: skillMount.mounted.map((entry) => entry.key),
       }
     : baseAdapterConfig;
+  const governedSpawnAdapterConfig = await withGovernedMcpRuntime({
+    sessionId: meta.id,
+    cabinetPath: meta.cabinetPath || input.cabinetPath,
+    agentScope: skillsPersona?.optaleScope?.scope,
+    adapterConfig: spawnAdapterConfig,
+  });
 
   try {
     await createDaemonSession({
@@ -614,7 +677,7 @@ export async function startConversationRun(
       prompt: finalPrompt,
       providerId: resolvedProviderId,
       adapterType: resolvedAdapterType,
-      adapterConfig: spawnAdapterConfig,
+      adapterConfig: governedSpawnAdapterConfig,
       cwd: input.cwd,
       timeoutSeconds: input.timeoutSeconds,
     });
@@ -893,6 +956,10 @@ export async function startJobConversation(
       : persona?.workdir && persona.workdir !== "/data" && persona.workdir !== "/"
         ? path.join(baseCwd, persona.workdir.replace(/^\/+/, ""))
         : baseCwd;
+  const mcpPolicyInstructions = await buildOptaleMcpPolicyInstructions({
+    cabinetPath: job.cabinetPath,
+    agentScope: persona?.optaleScope?.scope,
+  });
 
   const prompt = [
     buildCabinetRequirementHeader(),
@@ -901,6 +968,7 @@ export async function startJobConversation(
     "",
     "This is a scheduled or manual Cabinet job.",
     ...buildKnowledgeBaseScopeInstructions(baseCwd, job.cabinetPath),
+    ...mcpPolicyInstructions,
     "Reflect the results in KB files whenever useful.",
     ...buildDiagramOutputInstructions(),
     await buildCabinetEpilogueInstructions({
@@ -1299,6 +1367,10 @@ async function buildContinuationPrompt(options: {
     options.meta.cabinetPath,
   );
   const skillIndex = buildSkillIndex(fullSkillBundles);
+  const mcpPolicyInstructions = await buildOptaleMcpPolicyInstructions({
+    cabinetPath: options.meta.cabinetPath,
+    agentScope: options.persona?.optaleScope?.scope,
+  });
 
   if (options.mode === "resume") {
     // Live session: persona + scope already live in the adapter's context.
@@ -1317,6 +1389,7 @@ async function buildContinuationPrompt(options: {
         cabinetPath: options.meta.cabinetPath,
         selfSlug: options.meta.agentSlug,
       }),
+      mcpPolicyInstructions.join("\n"),
       newSkillNote,
       mentionContext.trim(),
       "",
@@ -1334,6 +1407,7 @@ async function buildContinuationPrompt(options: {
     ...(skillIndex ? ["", skillIndex] : []),
     "",
     ...buildKnowledgeBaseScopeInstructions(options.baseCwd, options.meta.cabinetPath),
+    ...mcpPolicyInstructions,
     "Reflect useful outputs in KB files, not only in terminal text.",
     ...buildDiagramOutputInstructions(),
     await buildCabinetEpilogueInstructions({
@@ -1577,6 +1651,12 @@ export async function continueConversationRun(
       }
     }
   }
+  const governedTurnAdapterConfig = await withGovernedMcpRuntime({
+    sessionId: conversationId,
+    cabinetPath: cp,
+    agentScope: persona?.optaleScope?.scope,
+    adapterConfig: turnAdapterConfig,
+  });
 
   // 5. Build prompts for both modes — resume uses the lightweight shape,
   //    but we keep the replay prompt ready as a fallback in case the
@@ -1646,7 +1726,7 @@ export async function continueConversationRun(
       canResume,
       sessionResumeId: session?.resumeId ?? null,
       sessionParams: rehydratedSessionParams,
-      adapterConfig: turnAdapterConfig,
+      adapterConfig: governedTurnAdapterConfig,
       prompt,
       replayPrompt,
       timeoutMs: input.timeoutMs ?? 10 * 60 * 1000,
@@ -1685,7 +1765,7 @@ export async function continueConversationRun(
         prompt: effectivePrompt,
         providerId: adapter.providerId ?? meta.providerId,
         adapterType: adapter.type,
-        adapterConfig: turnAdapterConfig,
+        adapterConfig: governedTurnAdapterConfig,
         cwd,
         timeoutSeconds: Math.max(
           60,
@@ -1871,7 +1951,7 @@ export async function continueConversationRun(
         ...metaNow,
         adapterType: adapter.type,
         providerId: adapter.providerId ?? metaNow.providerId,
-        adapterConfig: turnAdapterConfig,
+        adapterConfig: governedTurnAdapterConfig,
         lastResumeAttempt: {
           at: new Date().toISOString(),
           result: resumeOutcome,
@@ -1949,6 +2029,13 @@ export async function compactConversation(
   ].join("\n");
 
   const baseCwd = cp ? path.join(DATA_DIR, cp) : DATA_DIR;
+  const persona = meta.agentSlug ? await readPersona(meta.agentSlug, cp) : null;
+  const compactAdapterConfig = await withGovernedMcpRuntime({
+    sessionId: `${conversationId}-compact`,
+    cabinetPath: cp,
+    agentScope: persona?.optaleScope?.scope,
+    adapterConfig: meta.adapterConfig || {},
+  });
 
   // Append a pending compaction turn so the UI shows progress.
   const pending = await appendAgentTurn(
@@ -1962,7 +2049,7 @@ export async function compactConversation(
   const ctx: AdapterExecutionContext = {
     runId: randomUUID(),
     adapterType: adapter.type,
-    config: meta.adapterConfig || {},
+    config: compactAdapterConfig,
     prompt: compactPrompt,
     cwd: baseCwd,
     timeoutMs: input.timeoutMs ?? 3 * 60 * 1000,

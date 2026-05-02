@@ -25,6 +25,7 @@ test("legacy adapter registry exposes the current compatibility adapters", () =>
     "grok_local",
     "opencode_legacy",
     "opencode_local",
+    "openrouter_api",
     "pi_legacy",
     "pi_local",
   ]);
@@ -87,6 +88,11 @@ test("legacy adapter registry exposes the current compatibility adapters", () =>
   assert.equal(piLocal.providerId, "pi");
   assert.equal(piLocal.supportsSessionResume, true);
   assert.ok(piLocal.sessionCodec);
+
+  const openRouterApi = agentAdapterRegistry.get("openrouter_api");
+  assert.ok(openRouterApi);
+  assert.equal(openRouterApi.executionEngine, "api");
+  assert.equal(openRouterApi.providerId, "openrouter");
 });
 
 test("provider-to-adapter defaults map current providers onto structured adapters when available", () => {
@@ -95,6 +101,7 @@ test("provider-to-adapter defaults map current providers onto structured adapter
   assert.equal(defaultAdapterTypeForProvider("gemini-cli"), "gemini_local");
   assert.equal(defaultAdapterTypeForProvider("cursor-cli"), "cursor_local");
   assert.equal(defaultAdapterTypeForProvider("opencode"), "opencode_local");
+  assert.equal(defaultAdapterTypeForProvider("openrouter"), "openrouter_api");
   assert.equal(defaultAdapterTypeForProvider("pi"), "pi_local");
   assert.equal(defaultAdapterTypeForProvider("grok-cli"), "grok_local");
   assert.equal(defaultAdapterTypeForProvider("copilot-cli"), "copilot_local");

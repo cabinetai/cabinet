@@ -6,6 +6,7 @@ import { cursorCliProvider } from "./providers/cursor-cli";
 import { geminiCliProvider } from "./providers/gemini-cli";
 import { grokCliProvider } from "./providers/grok-cli";
 import { openCodeProvider } from "./providers/opencode";
+import { openRouterProvider } from "./providers/openrouter";
 import { piProvider } from "./providers/pi";
 
 class ProviderRegistryImpl implements ProviderRegistry {
@@ -48,6 +49,7 @@ providerRegistry.register(codexCliProvider);
 providerRegistry.register(geminiCliProvider);
 providerRegistry.register(cursorCliProvider);
 providerRegistry.register(openCodeProvider);
+providerRegistry.register(openRouterProvider);
 providerRegistry.register(piProvider);
 providerRegistry.register(grokCliProvider);
 providerRegistry.register(copilotCliProvider);

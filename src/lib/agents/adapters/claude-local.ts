@@ -13,6 +13,10 @@ import {
 import type { AdapterSessionCodec, AgentExecutionAdapter } from "./types";
 import { ADAPTER_RUNTIME_PATH, runChildProcess } from "./utils";
 import { readStringConfig, readEffortConfig } from "./_shared/cli-args";
+import {
+  buildGovernedMcpCommandNote,
+  readGovernedMcpConfig,
+} from "./_shared/governed-mcp";
 
 const claudeSessionCodec: AdapterSessionCodec = {
   deserialize(raw) {
@@ -65,6 +69,12 @@ function buildClaudeArgs(
   const effort = readEffortConfig(config);
   if (effort) {
     args.push("--effort", effort);
+  }
+
+  const governedMcp = readGovernedMcpConfig(config);
+  if (governedMcp?.claudeConfigPath) {
+    args.push("--mcp-config", governedMcp.claudeConfigPath);
+    args.push("--strict-mcp-config");
   }
 
   const systemPrompt = readStringConfig(config, "systemPrompt");
@@ -136,12 +146,15 @@ export const claudeLocalAdapter: AgentExecutionAdapter = {
     const command =
       readStringConfig(ctx.config, "command") || resolveCliCommand(claudeCodeProvider);
     const args = buildClaudeArgs(ctx.config, ctx.sessionId ?? null);
+    const governedMcp = readGovernedMcpConfig(ctx.config);
+    const commandNote = buildGovernedMcpCommandNote(governedMcp);
     const accumulator = createClaudeStreamAccumulator();
 
     await ctx.onMeta?.({
       adapterType: ctx.adapterType,
       command,
       commandArgs: args,
+      commandNotes: commandNote ? [commandNote] : undefined,
       cwd: ctx.cwd,
       env: {
         PATH: ADAPTER_RUNTIME_PATH,

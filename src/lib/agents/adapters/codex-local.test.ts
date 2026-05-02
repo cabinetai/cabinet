@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { codexLocalAdapter } from "./codex-local";
+import type { AdapterInvocationMeta } from "./types";
 
 async function createExecutableScript(source: string): Promise<string> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-codex-local-test-"));
@@ -109,4 +110,46 @@ exit 1
   const classified = codexLocalAdapter.classifyError?.(result.errorMessage ?? "", result.exitCode);
   assert.equal(classified?.kind, "model_unavailable");
   assert.match(classified?.hint ?? "", /available on this account's plan/i);
+});
+
+test("codexLocalAdapter isolates user config and passes governed MCP servers", async () => {
+  const scriptPath = await createExecutableScript(`#!/bin/sh
+cat >/dev/null
+printf '%s\n' \
+  '{"type":"thread.started","thread_id":"thread-mcp"}' \
+  '{"type":"turn.completed","usage":{"input_tokens":1,"output_tokens":1}}'
+`);
+
+  let invocation: AdapterInvocationMeta | undefined;
+  const result = await codexLocalAdapter.execute?.({
+    runId: "run-mcp",
+    adapterType: "codex_local",
+    config: {
+      command: scriptPath,
+      governedMcp: {
+        enabled: true,
+        claudeConfigPath: "/tmp/optale-claude-mcp.json",
+        codexConfigArgs: [
+          "--ignore-user-config",
+          "-c",
+          'mcp_servers.qmd.url="http://127.0.0.1:7333/mcp"',
+        ],
+        allowedServerIds: ["qmd"],
+      },
+    },
+    prompt: "Say hello",
+    cwd: process.cwd(),
+    onLog: async () => {},
+    onMeta: async (meta) => {
+      invocation = meta;
+    },
+  });
+
+  assert.ok(result);
+  assert.equal(result.exitCode, 0);
+  assert.ok(invocation?.commandArgs?.includes("--ignore-user-config"));
+  assert.ok(
+    invocation?.commandArgs?.includes('mcp_servers.qmd.url="http://127.0.0.1:7333/mcp"')
+  );
+  assert.match(invocation?.commandNotes?.join("\n") || "", /strict per-run config/);
 });

@@ -13,6 +13,13 @@ export type SectionType =
   | "agent"
   | "tasks"
   | "task"
+  | "brain"
+  | "vault"
+  | "memory"
+  | "graph"
+  | "entities"
+  | "dreams"
+  | "company-brain"
   | "settings"
   | "registry"
   | "help";
