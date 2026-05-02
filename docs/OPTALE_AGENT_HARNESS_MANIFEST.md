@@ -82,3 +82,16 @@ Overwrite existing generated or hand-edited personas only when explicitly approv
 ```bash
 npx tsx scripts/optale-agent-harness-personas.ts --write --overwrite
 ```
+
+## Live Runtime Smoke
+
+PM2-runtime no-tools smoke verified on 2026-05-02:
+
+- persona: `optale-research-context`
+- runtime data dir: `/home/thor/cabinet-optale-data`
+- provider / adapter / model: `openrouter` / `openrouter_api` / `anthropic/claude-sonnet-4`
+- status: `completed`
+- active before / after: `false` / `false`
+- MCP/tool markers: none
+- inspect URL path: `/agents/conversations/2026-05-02T22-39-13-044Z-dbe0cc16-optale-research-context-manual`
+- runtime conversation artifacts are stored under the PM2 runtime data dir and are not committed
