@@ -2,12 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs/promises";
 import matter from "gray-matter";
-import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
 import { ensureAgentScaffold } from "@/lib/agents/scaffold";
+import { resolveAgentTemplateDir } from "@/lib/agents/library-manager";
 import { normalizeCabinetPath } from "@/lib/cabinets/paths";
 import { resolveCabinetDir } from "@/lib/cabinets/server-paths";
-
-const LIBRARY_DIR = path.join(PROJECT_ROOT, "src", "lib", "agents", "library");
 
 export async function POST(
   req: NextRequest,
@@ -21,14 +19,15 @@ export async function POST(
       typeof body.cabinetPath === "string" ? body.cabinetPath : undefined,
       true
     );
-    const templateDir = path.join(LIBRARY_DIR, slug);
     const targetDir = path.join(resolveCabinetDir(cabinetPath), ".agents", slug);
 
-    // Verify template exists
-    const personaPath = path.join(templateDir, "persona.md");
-    try {
-      await fs.access(personaPath);
-    } catch {
+    // Resolve the template via the shared library resolver so we hit the
+    // seeded copy under DATA_DIR in Electron builds (where `src/` is pruned
+    // by scripts/prepare-electron-package.mjs) and fall back to the source
+    // tree in dev. Without this, `Add Agent` returns 404 in every Electron
+    // release.
+    const templateDir = await resolveAgentTemplateDir(slug);
+    if (!templateDir) {
       return NextResponse.json(
         { error: `Template "${slug}" not found` },
         { status: 404 }
