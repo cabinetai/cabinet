@@ -50,6 +50,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
+import { AgentHarnessPanel } from "@/components/agents/agent-harness-panel";
 import { HeartbeatRow, RoutineRow } from "@/components/agents/schedule-row";
 import {
   appendConversationCabinetPath,
@@ -2858,6 +2859,8 @@ export function AgentsWorkspace({
                     everything live.
                   </p>
                 </div>
+
+                <AgentHarnessPanel />
 
                 {/* Agents grid */}
                 <section className="space-y-4">
