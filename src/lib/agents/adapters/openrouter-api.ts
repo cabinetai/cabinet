@@ -1,9 +1,6 @@
 import { openRouterProvider } from "../providers/openrouter";
 import { providerStatusToEnvironmentTest } from "./environment";
-import {
-  classifyChain,
-  classifyCommonError,
-} from "./error-classification";
+import { classifyChain, classifyCommonError } from "./error-classification";
 import type {
   AdapterBillingType,
   AdapterExecutionContext,
@@ -46,6 +43,17 @@ type OpenRouterToolCall = {
   };
 };
 
+type OpenRouterToolChoice =
+  | "auto"
+  | "none"
+  | "required"
+  | {
+      type: "function";
+      function: {
+        name: string;
+      };
+    };
+
 type OpenRouterResponse = {
   id?: string;
   model?: string;
@@ -74,6 +82,11 @@ type OptaleMcpToolCallResult = {
 
 const DEFAULT_MODEL = "openrouter/auto";
 const DEFAULT_MAX_TOOL_ITERATIONS = 4;
+const TOOL_MODE_SYSTEM_MESSAGE = [
+  "OpenRouter tools are available only through native tool_calls.",
+  "When using a tool, emit a tool_calls entry for the exact function name.",
+  "Never print XML or pseudo-tool syntax such as <invoke>, <tool_call>, or <function>.",
+].join(" ");
 
 function firstNonEmptyLine(text: string): string | null {
   return (
@@ -102,15 +115,17 @@ function openRouterBaseUrl(config: Record<string, unknown>): string {
 
 function numberConfig(
   config: Record<string, unknown>,
-  key: string
+  key: string,
 ): number | undefined {
   const value = config[key];
-  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+  return typeof value === "number" && Number.isFinite(value)
+    ? value
+    : undefined;
 }
 
 function booleanConfig(
   config: Record<string, unknown>,
-  key: string
+  key: string,
 ): boolean | undefined {
   return typeof config[key] === "boolean" ? config[key] : undefined;
 }
@@ -119,19 +134,23 @@ function shouldExposeOptaleMcpTools(config: Record<string, unknown>): boolean {
   if (booleanConfig(config, "enableMcpTools") === false) return false;
   const governedMcp = readGovernedMcpConfig(config);
   if (!governedMcp) return true;
-  return governedMcp.allowedServerIds.some((id) =>
-    id === "optale-agents" || id === "qmd" || id === "graphiti"
+  return governedMcp.allowedServerIds.some(
+    (id) => id === "optale-agents" || id === "qmd" || id === "graphiti",
   );
 }
 
-function shouldExposeDownstreamMcpTools(config: Record<string, unknown>): boolean {
+function shouldExposeDownstreamMcpTools(
+  config: Record<string, unknown>,
+): boolean {
   const governedMcp = readGovernedMcpConfig(config);
   if (!governedMcp) return false;
-  return governedMcp.allowedServerIds.some((id) => id === "qmd" || id === "graphiti");
+  return governedMcp.allowedServerIds.some(
+    (id) => id === "qmd" || id === "graphiti",
+  );
 }
 
 function buildOpenRouterMcpGatewayContext(
-  ctx: AdapterExecutionContext
+  ctx: AdapterExecutionContext,
 ): OptaleMcpGatewayContext {
   const governedMcp = readGovernedMcpConfig(ctx.config);
   return buildInternalOptaleMcpGatewayContext({
@@ -198,7 +217,9 @@ function normalizeContent(content: unknown): string {
   return "";
 }
 
-function usageFromResponse(response: OpenRouterResponse): AdapterUsageSummary | undefined {
+function usageFromResponse(
+  response: OpenRouterResponse,
+): AdapterUsageSummary | undefined {
   const usage = response.usage;
   if (!usage) return undefined;
   const inputTokens = usage.prompt_tokens ?? usage.input_tokens;
@@ -217,9 +238,98 @@ function usageFromResponse(response: OpenRouterResponse): AdapterUsageSummary | 
 }
 
 function toolResultText(result: OptaleMcpToolCallResult): string {
-  const text = result.content.map((entry) => entry.text).join("\n").trim();
+  const text = result.content
+    .map((entry) => entry.text)
+    .join("\n")
+    .trim();
   if (!result.isError) return text || "{}";
   return JSON.stringify({ error: text || "Tool failed." });
+}
+
+function toolNames(tools: OpenRouterTool[]): string[] {
+  return tools.map((tool) => tool.function.name);
+}
+
+function hasToolNamed(tools: OpenRouterTool[], name: string): boolean {
+  return toolNames(tools).includes(name);
+}
+
+function hasRequestedToolCall(input: {
+  messages: OpenRouterMessage[];
+  name: string;
+}): boolean {
+  return input.messages.some((message) =>
+    message.tool_calls?.some(
+      (toolCall) => toolCall.function?.name === input.name,
+    ),
+  );
+}
+
+function readForcedToolChoice(input: {
+  config: Record<string, unknown>;
+  messages: OpenRouterMessage[];
+  tools: OpenRouterTool[];
+}): OpenRouterToolChoice {
+  const requiredToolName = readStringConfig(input.config, "requiredToolName");
+  if (requiredToolName && hasToolNamed(input.tools, requiredToolName)) {
+    return hasRequestedToolCall({
+      messages: input.messages,
+      name: requiredToolName,
+    })
+      ? "auto"
+      : { type: "function", function: { name: requiredToolName } };
+  }
+
+  const rawToolChoice = input.config.toolChoice;
+  if (
+    rawToolChoice === "auto" ||
+    rawToolChoice === "none" ||
+    rawToolChoice === "required"
+  ) {
+    return rawToolChoice;
+  }
+
+  if (
+    rawToolChoice &&
+    typeof rawToolChoice === "object" &&
+    !Array.isArray(rawToolChoice)
+  ) {
+    const record = rawToolChoice as Record<string, unknown>;
+    const fn = record.function;
+    const name =
+      fn && typeof fn === "object" && !Array.isArray(fn)
+        ? (fn as Record<string, unknown>).name
+        : undefined;
+    if (
+      record.type === "function" &&
+      typeof name === "string" &&
+      hasToolNamed(input.tools, name)
+    ) {
+      return { type: "function", function: { name } };
+    }
+  }
+
+  return "auto";
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function findPseudoToolText(input: {
+  content: string;
+  tools: OpenRouterTool[];
+}): string | null {
+  if (!input.content || input.tools.length === 0) return null;
+  for (const name of toolNames(input.tools)) {
+    const escaped = escapeRegex(name);
+    const pattern = new RegExp(
+      `<\\s*(?:invoke|tool_call|tool|function)\\b[^>]*(?:name|function)\\s*=\\s*["']${escaped}["'][^>]*>`,
+      "i",
+    );
+    if (pattern.test(input.content)) return name;
+  }
+  return null;
 }
 
 function buildRequestBody(input: {
@@ -242,7 +352,11 @@ function buildRequestBody(input: {
 
   if (tools.length > 0) {
     body.tools = tools;
-    body.tool_choice = "auto";
+    body.tool_choice = readForcedToolChoice({
+      config: ctx.config,
+      messages,
+      tools,
+    });
     body.parallel_tool_calls = false;
   }
 
@@ -281,7 +395,7 @@ async function postOpenRouterChat(input: {
         ctx: input.ctx,
         messages: input.messages,
         tools: input.tools,
-      })
+      }),
     ),
   });
 
@@ -305,7 +419,9 @@ async function postOpenRouterChat(input: {
           ? ((error as Record<string, unknown>).message as string)
           : raw
         : raw;
-    throw new Error(message || `OpenRouter request failed (${response.status})`);
+    throw new Error(
+      message || `OpenRouter request failed (${response.status})`,
+    );
   }
 
   return (parsed || {}) as OpenRouterResponse;
@@ -361,7 +477,7 @@ export const openRouterApiAdapter: AgentExecutionAdapter = {
     return providerStatusToEnvironmentTest(
       "openrouter_api",
       await openRouterProvider.healthCheck(),
-      openRouterProvider.installMessage
+      openRouterProvider.installMessage,
     );
   },
   async execute(ctx): Promise<AdapterExecutionResult> {
@@ -398,10 +514,17 @@ export const openRouterApiAdapter: AgentExecutionAdapter = {
       };
     }
 
-    const messages: OpenRouterMessage[] = [{ role: "user", content: ctx.prompt }];
+    const messages: OpenRouterMessage[] =
+      tools.length > 0
+        ? [
+            { role: "system", content: TOOL_MODE_SYSTEM_MESSAGE },
+            { role: "user", content: ctx.prompt },
+          ]
+        : [{ role: "user", content: ctx.prompt }];
     const outputs: string[] = [];
     const maxToolIterations =
-      numberConfig(ctx.config, "maxToolIterations") || DEFAULT_MAX_TOOL_ITERATIONS;
+      numberConfig(ctx.config, "maxToolIterations") ||
+      DEFAULT_MAX_TOOL_ITERATIONS;
     let finalResponse: OpenRouterResponse | null = null;
 
     try {
@@ -416,7 +539,9 @@ export const openRouterApiAdapter: AgentExecutionAdapter = {
         const choice = response.choices?.[0];
         const message = choice?.message || {};
         const content = normalizeContent(message.content);
-        const toolCalls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
+        const toolCalls = Array.isArray(message.tool_calls)
+          ? message.tool_calls
+          : [];
 
         messages.push({
           role: "assistant",
@@ -430,6 +555,15 @@ export const openRouterApiAdapter: AgentExecutionAdapter = {
         }
 
         if (toolCalls.length === 0) {
+          const pseudoToolName = findPseudoToolText({ content, tools });
+          if (pseudoToolName) {
+            throw new Error(
+              `OpenRouter returned pseudo-tool text for ${pseudoToolName} instead of native tool_calls.`,
+            );
+          }
+        }
+
+        if (toolCalls.length === 0) {
           const output = outputs.join("\n\n").trim();
           return {
             exitCode: 0,
@@ -440,13 +574,16 @@ export const openRouterApiAdapter: AgentExecutionAdapter = {
             provider: openRouterProvider.id,
             model: response.model || model,
             billingType: "metered_api",
-            summary: firstNonEmptyLine(output || content || "")?.slice(0, 300) || null,
+            summary:
+              firstNonEmptyLine(output || content || "")?.slice(0, 300) || null,
             output,
           };
         }
 
         if (iteration === maxToolIterations) {
-          throw new Error(`OpenRouter exceeded ${maxToolIterations} tool-call iterations.`);
+          throw new Error(
+            `OpenRouter exceeded ${maxToolIterations} tool-call iterations.`,
+          );
         }
 
         await executeToolCalls({ ctx, messages, toolCalls, gatewayContext });
