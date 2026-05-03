@@ -46,6 +46,35 @@ export interface OptaleBrainAdapterMcpCallInput {
   cabinetPath: string;
 }
 
+const BRAIN_DOWNSTREAM_PRODUCT_NAMES: Record<string, string> = {
+  qmd__status: "sense_knowledge_status",
+  qmd__query: "sense_search_knowledge",
+  graphiti__get_status: "sense_graph_status",
+  graphiti__search_nodes: "sense_search_graph_nodes",
+  graphiti__search_memory_facts: "sense_search_graph_facts",
+  graphiti__get_episodes: "sense_graph_episodes",
+  honcho__peer_card: "sense_memory_profile",
+  honcho__peer_context: "sense_memory_context",
+  honcho__peer_sessions: "sense_memory_sessions",
+  honcho__conclusions_list: "sense_memory_conclusions",
+  honcho__peers_list: "sense_memory_peers",
+  honcho__queue_status: "sense_memory_queue",
+  oag__status: "ontology_status",
+  oag__graph: "ontology_entity_graph",
+  dreams__stats: "sense_dream_stats",
+  dreams__proposals: "sense_dream_proposals",
+  dreams__rejections: "sense_dream_rejections",
+  dreams__rules: "sense_dream_rules",
+  dreams__proposal_action: "sense_dream_proposal_action",
+  dreams__ask: "sense_dream_ask",
+};
+
+export function productBrainDownstreamName(name: string): string {
+  const mapped = BRAIN_DOWNSTREAM_PRODUCT_NAMES[name];
+  if (mapped) return mapped;
+  return /^[a-z0-9-]+__/.test(name) ? "sense_downstream_call" : name;
+}
+
 export function trimBrainAdapterString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -149,7 +178,7 @@ export async function callBrainAdapterMcpTool(
   const error = result.isError ? normalizeBrainDownstreamError(text) : undefined;
 
   return {
-    name: input.toolName,
+    name: productBrainDownstreamName(input.toolName),
     ok: result.isError !== true,
     status: result.isError ? "error" : "ok",
     text,

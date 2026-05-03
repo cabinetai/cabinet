@@ -18,12 +18,13 @@ import {
   resolveOptaleBrainContext,
   type OptaleBrainContext,
 } from "@/lib/optale/brain-context";
+import { productBrainDownstreamName } from "@/lib/optale/brain-adapters";
 import { resolveOptaleBrainMemoryConfig } from "@/lib/optale/brain-memory-config";
 import { resolveOptaleBrainDreamsConfig } from "@/lib/optale/brain-dreams-config";
 
 export type OptaleBrainSourceStatus = "enabled" | "blocked" | "unconfigured";
 
-export interface OptaleBrainSourceSummary extends OptaleBrainSource {
+export interface OptaleBrainSourceSummary extends Omit<OptaleBrainSource, "mcpServerId"> {
   serverName: string;
   status: OptaleBrainSourceStatus;
   permissions: string[];
@@ -151,18 +152,28 @@ function summarizeBrainSources(
   const dreamsConfig = resolveOptaleBrainDreamsConfig(context);
 
   return readOptaleBrainSources().map((source) => {
+    const publicSource = {
+      id: source.id,
+      name: source.name,
+      kind: source.kind,
+      scopes: source.scopes,
+      description: source.description
+        .replace(/\bHoncho\b/g, "Sense Memory")
+        .replace(/\bQMD\b/g, "Knowledge Search"),
+    };
+
     if (!source.mcpServerId) {
       const enabled =
         (source.kind === "memory" && memoryConfig.enabled) ||
         (source.kind === "dreams" && dreamsConfig.enabled);
       const serverName =
         source.kind === "memory"
-          ? "Honcho Memory"
+          ? "Sense Memory"
           : source.kind === "dreams"
-            ? "Honcho Dreams"
+            ? "Sense Dreams"
             : "Native adapter";
       return {
-        ...source,
+        ...publicSource,
         serverName,
         status: enabled ? "enabled" : "unconfigured",
         permissions:
@@ -192,13 +203,13 @@ function summarizeBrainSources(
     const configured = registryServer?.status === "configured";
 
     return {
-      ...source,
-      serverName: policyServer?.name || registryServer?.name || source.mcpServerId,
+      ...publicSource,
+      serverName: source.name,
       status: enabled ? "enabled" : configured ? "blocked" : "unconfigured",
       permissions: policyServer?.permissions || [],
       toolGroups: policyServer?.toolGroups || [],
-      allowedTools: policyServer?.allowedTools || [],
-      deniedTools: policyServer?.deniedTools || [],
+      allowedTools: (policyServer?.allowedTools || []).map(productBrainDownstreamName),
+      deniedTools: (policyServer?.deniedTools || []).map(productBrainDownstreamName),
     };
   });
 }

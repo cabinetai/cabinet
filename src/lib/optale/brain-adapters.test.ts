@@ -4,6 +4,7 @@ import {
   clampBrainAdapterLimit,
   isBrainAdapterReadEnabled,
   normalizeBrainDownstreamError,
+  productBrainDownstreamName,
   redactBrainTextForClient,
   redactBrainValueForClient,
   trimBrainAdapterString,
@@ -60,4 +61,13 @@ test("isBrainAdapterReadEnabled requires healthy source and read permission", ()
     isBrainAdapterReadEnabled({ status: "healthy", permissions: [] }),
     false
   );
+});
+
+test("productBrainDownstreamName hides internal MCP and legacy memory names", () => {
+  assert.equal(productBrainDownstreamName("qmd__query"), "sense_search_knowledge");
+  assert.equal(productBrainDownstreamName("graphiti__search_nodes"), "sense_search_graph_nodes");
+  assert.equal(productBrainDownstreamName("honcho__peer_card"), "sense_memory_profile");
+  assert.equal(productBrainDownstreamName("oag__graph"), "ontology_entity_graph");
+  assert.equal(productBrainDownstreamName("dreams__stats"), "sense_dream_stats");
+  assert.equal(productBrainDownstreamName("unknown__private_tool"), "sense_downstream_call");
 });

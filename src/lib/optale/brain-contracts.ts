@@ -336,5 +336,6 @@ export function redactBrainCoreStatusForClient(
       dataRoot: "[server-side]",
       secretsRef: status.provisioning.secretsRef ? "[configured]" : "",
     },
+    sources: status.sources.map(({ mcpServerId, ...source }) => source),
   };
 }

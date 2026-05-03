@@ -76,4 +76,10 @@ test("readOptaleBrainSummary returns vault, memory, policy, and source status", 
     summary.sources.find((source) => source.id === "vault")?.status,
     "enabled"
   );
+  assert.equal(
+    summary.sources.some((source) => "mcpServerId" in source),
+    false
+  );
+  assert.equal(JSON.stringify(summary).includes("qmd__"), false);
+  assert.equal(JSON.stringify(summary).includes("graphiti__"), false);
 });

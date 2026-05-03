@@ -95,6 +95,12 @@ test("redactBrainCoreStatusForClient removes server paths and secret refs", asyn
   assert.equal(redacted.provisioning.dataRoot, "[server-side]");
   assert.equal(redacted.request.brain.secretsRef, "[configured]");
   assert.equal(redacted.provisioning.secretsRef, "[configured]");
+  assert.equal(
+    redacted.sources.some((source) => "mcpServerId" in source),
+    false
+  );
+  assert.equal(JSON.stringify(redacted).includes("qmd__"), false);
+  assert.equal(JSON.stringify(redacted).includes("graphiti__"), false);
 });
 
 test("readOptaleBrainCoreStatus marks Command bridge healthy only for configured user-jwt bridge", async () => {
