@@ -28,6 +28,8 @@ export function ReturnToChip() {
         return "Space";
       case "home":
         return "Home";
+      case "resources":
+        return "Resources";
       case "brain":
         return "Brain";
       case "vault":

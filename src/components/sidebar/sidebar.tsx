@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import {
+  Boxes,
   Brain,
   CircleDot,
   Database,
@@ -192,6 +193,17 @@ export function Sidebar() {
             icon={<Home className="size-3.5 shrink-0" />}
             label="Home"
             onClick={() => setSection({ type: "home" })}
+          />
+          <SidebarNavButton
+            active={section.type === "resources"}
+            icon={<Boxes className="size-3.5 shrink-0" />}
+            label="Resources"
+            onClick={() =>
+              setSection({
+                type: "resources",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
           />
           <SidebarNavButton
             active={section.type === "brain"}

@@ -385,6 +385,7 @@ export function HomeScreen() {
           </div>
           <div className="flex flex-wrap gap-2">
             {[
+              { label: "Resources", type: "resources" as const },
               { label: "Brain", type: "brain" as const },
               { label: "Vault", type: "vault" as const },
               { label: "Graph", type: "graph" as const },

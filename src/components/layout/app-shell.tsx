@@ -91,6 +91,13 @@ const OptaleBrainWorkspace = dynamic(
     ),
   { ssr: false }
 );
+const OptaleResourceRegistryWorkspace = dynamic(
+  () =>
+    import("@/components/optale/resource-registry-workspace").then(
+      (m) => m.OptaleResourceRegistryWorkspace
+    ),
+  { ssr: false }
+);
 const OnboardingWizard = dynamic(
   () =>
     import("@/components/onboarding/onboarding-wizard").then(
@@ -185,6 +192,9 @@ export function AppShell() {
     switch (section.type) {
       case "home":
         title = base;
+        break;
+      case "resources":
+        title = `Resources — ${base}`;
         break;
       case "cabinet":
         title = selectedPath
@@ -502,6 +512,13 @@ export function AppShell() {
     // System sections (non-page views)
     if (section.type === "home") return <HomeScreen />;
     if (section.type === "registry") return <HomeScreen />;
+    if (section.type === "resources") {
+      return (
+        <OptaleResourceRegistryWorkspace
+          cabinetPath={section.cabinetPath || ROOT_CABINET_PATH}
+        />
+      );
+    }
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "help") return <HelpPage />;
     if (section.type === "brain") {

@@ -7,6 +7,7 @@ import { dedupFetch } from "@/lib/api/dedup-fetch";
 
 export type SectionType =
   | "home"
+  | "resources"
   | "cabinet"
   | "page"
   | "agents"

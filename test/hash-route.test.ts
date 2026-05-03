@@ -14,6 +14,16 @@ test("parseHash handles canonical tasks route under root cabinet", () => {
   assert.equal(route.section.cabinetPath, ".");
 });
 
+test("parseHash handles Resource Registry routes", () => {
+  const root = parseHash("#/resources");
+  assert.equal(root.section.type, "resources");
+  assert.equal(root.section.cabinetPath, ".");
+
+  const cabinet = parseHash("#/cabinet/clients%2Facme/resources");
+  assert.equal(cabinet.section.type, "resources");
+  assert.equal(cabinet.section.cabinetPath, "clients/acme");
+});
+
 test("parseHash handles Brain, Vault, and Graph as native Brain routes", () => {
   for (const type of ["brain", "vault", "graph"] as const) {
     const root = parseHash(`#/${type}`);
