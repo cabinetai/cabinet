@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Optale — Solar Eclipse">
+  <defs>
+    <linearGradient id="solar" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff4f81"/>
+      <stop offset="50%" stop-color="#ff5c5c"/>
+      <stop offset="100%" stop-color="#ff6b2c"/>
+    </linearGradient>
+    <mask id="eclipse-bite">
+      <rect width="32" height="32" fill="#fff"/>
+      <circle cx="22" cy="10" r="10" fill="#000"/>
+    </mask>
+  </defs>
+  <circle cx="16" cy="16" r="13" fill="url(#solar)" mask="url(#eclipse-bite)"/>
+</svg>

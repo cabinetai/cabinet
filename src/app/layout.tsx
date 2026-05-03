@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Instrument_Serif } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeInitializer } from "@/components/layout/theme-initializer";
+import { OPTALE_PRODUCT } from "@/lib/optale/product";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,8 +26,18 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Cabinet",
-  description: "AI-first knowledge base and startup OS",
+  title: OPTALE_PRODUCT.name,
+  description: OPTALE_PRODUCT.description,
+  icons: {
+    icon: [
+      {
+        url: "/optale-favicon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/optale-favicon.svg",
+    apple: "/optale-favicon.svg",
+  },
 };
 
 export default function RootLayout({
