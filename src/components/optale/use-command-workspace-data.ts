@@ -5,6 +5,7 @@ import type {
   OptaleCommandActionFilter,
   OptaleCommandView,
 } from "@/components/optale/command-workspace-types";
+import { selectRecordById } from "@/components/optale/command-workspace-state";
 import type {
   OptaleActionDefinition,
   OptaleActionQueueRecord,
@@ -296,36 +297,22 @@ export function useOptaleCommandWorkspaceData({
   }, [auditLog?.events, search]);
 
   const selectedRun = useMemo(
-    () =>
-      filteredRuns.find((run) => run.id === selectedRunId) ||
-      filteredRuns[0] ||
-      null,
+    () => selectRecordById(filteredRuns, selectedRunId),
     [filteredRuns, selectedRunId],
   );
 
   const selectedPolicyDecision = useMemo(
-    () =>
-      filteredPolicyDecisions.find(
-        (decision) => decision.id === selectedPolicyDecisionId,
-      ) ||
-      filteredPolicyDecisions[0] ||
-      null,
+    () => selectRecordById(filteredPolicyDecisions, selectedPolicyDecisionId),
     [filteredPolicyDecisions, selectedPolicyDecisionId],
   );
 
   const selectedLineageEdge = useMemo(
-    () =>
-      filteredLineageEdges.find((edge) => edge.id === selectedLineageEdgeId) ||
-      filteredLineageEdges[0] ||
-      null,
+    () => selectRecordById(filteredLineageEdges, selectedLineageEdgeId),
     [filteredLineageEdges, selectedLineageEdgeId],
   );
 
   const selectedAuditEvent = useMemo(
-    () =>
-      filteredAuditEvents.find((event) => event.id === selectedAuditEventId) ||
-      filteredAuditEvents[0] ||
-      null,
+    () => selectRecordById(filteredAuditEvents, selectedAuditEventId),
     [filteredAuditEvents, selectedAuditEventId],
   );
 

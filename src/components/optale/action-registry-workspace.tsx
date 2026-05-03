@@ -11,20 +11,9 @@ import { OptaleCommandRunsView } from "@/components/optale/command-runs-view";
 import { OptaleCommandSpineSummary } from "@/components/optale/command-spine-summary";
 import { OptaleCommandToolbar } from "@/components/optale/command-toolbar";
 import { OptaleCommandViewTabs } from "@/components/optale/command-view-tabs";
+import { commandViewFromSlug } from "@/components/optale/command-workspace-state";
 import { useOptaleCommandWorkspaceData } from "@/components/optale/use-command-workspace-data";
 import type { OptaleCommandView } from "@/components/optale/command-workspace-types";
-
-function commandViewFromSlug(slug?: string): OptaleCommandView {
-  if (
-    slug === "runs" ||
-    slug === "policy" ||
-    slug === "lineage" ||
-    slug === "audit"
-  ) {
-    return slug;
-  }
-  return "actions";
-}
 
 export function OptaleActionRegistryWorkspace({
   cabinetPath,
