@@ -6,6 +6,7 @@ import { CABINET_MANIFEST_FILE } from "@/lib/cabinets/files";
 import {
   buildCabinetScopedId,
   normalizeCabinetPath,
+  ROOT_CABINET_PATH,
 } from "@/lib/cabinets/paths";
 import {
   cabinetPathFromFs,
@@ -102,6 +103,16 @@ function normalizeManifest(
           mode: trimString(access.mode),
         }
       : undefined,
+  };
+}
+
+function defaultRootCabinetManifest(): CabinetManifest {
+  return {
+    schemaVersion: 1,
+    id: "root",
+    name: "Home",
+    kind: "workspace",
+    description: "Root workspace",
   };
 }
 
@@ -468,9 +479,31 @@ async function readCabinetOverviewUncached(
   const manifest = await readCabinetManifestAtDir(cabinetDir);
 
   if (!manifest) {
+    if (cabinetPath === ROOT_CABINET_PATH) {
+      return readCabinetOverviewUncachedWithManifest(
+        cabinetPath,
+        cabinetDir,
+        defaultRootCabinetManifest(),
+        visibilityMode
+      );
+    }
     throw new Error(`Cabinet not found: ${cabinetPath}`);
   }
 
+  return readCabinetOverviewUncachedWithManifest(
+    cabinetPath,
+    cabinetDir,
+    manifest,
+    visibilityMode
+  );
+}
+
+async function readCabinetOverviewUncachedWithManifest(
+  cabinetPath: string,
+  cabinetDir: string,
+  manifest: CabinetManifest,
+  visibilityMode: CabinetVisibilityMode
+): Promise<CabinetOverview> {
   const descendantDepth = cabinetVisibilityModeToDepth(visibilityMode);
   const currentCabinet: CabinetDiscoveryEntry = {
     path: cabinetPath,

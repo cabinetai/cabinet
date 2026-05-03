@@ -1,18 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+
+const subscribeToHydration = () => () => {};
+const getHydratedSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const hydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getHydratedSnapshot,
+    getServerHydrationSnapshot,
+  );
   const router = useRouter();
-
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
