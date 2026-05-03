@@ -1,19 +1,27 @@
 "use client";
 
+import Image from "next/image";
 import {
   useEffect,
   useState,
   useSyncExternalStore,
   useRef,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
 } from "react";
 import {
+  Brain,
+  CircleDot,
+  Database,
+  Home,
+  Network,
   PanelLeftClose,
   PanelLeft,
   Plus,
   Settings,
+  Sparkles,
   UserPlus,
-  Home,
+  Workflow,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,6 +50,34 @@ const SIDEBAR_DEFAULT_WIDTH = 280;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+function SidebarNavButton({
+  active,
+  icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-[12px] font-medium transition-colors",
+        active
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground"
+      )}
+    >
+      {icon}
+      <span className="min-w-0 truncate">{label}</span>
+    </button>
+  );
 }
 
 export function Sidebar() {
@@ -126,12 +162,17 @@ export function Sidebar() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSection({ type: "home" })}
-              className="group flex items-center gap-1.5 rounded px-1 -ml-1 font-logo text-[22px] italic tracking-[-0.01em] text-foreground hover:text-foreground/80 hover:bg-accent/60 transition-colors cursor-pointer"
+              className="group -ml-1 flex items-center rounded px-1 py-0.5 text-sidebar-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-foreground/80"
               title="Go to home"
               aria-label="Go to home"
             >
-              cabinet
-              <Home className="size-3.5 not-italic opacity-0 group-hover:opacity-50 transition-opacity shrink-0" />
+              <Image
+                src="/optale-lockup-horizontal.svg"
+                alt="Optale"
+                width={136}
+                height={36}
+                className="h-9 w-[136px] object-contain object-left dark:invert"
+              />
             </button>
           </div>
           <Button
@@ -145,6 +186,80 @@ export function Sidebar() {
             <PanelLeftClose className="h-4 w-4" />
           </Button>
         </div>
+        <nav className="space-y-1 border-b border-sidebar-border/70 px-2 pb-2">
+          <SidebarNavButton
+            active={section.type === "home"}
+            icon={<Home className="size-3.5 shrink-0" />}
+            label="Home"
+            onClick={() => setSection({ type: "home" })}
+          />
+          <SidebarNavButton
+            active={section.type === "brain"}
+            icon={<Brain className="size-3.5 shrink-0" />}
+            label="Brain"
+            onClick={() =>
+              setSection({
+                type: "brain",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
+          />
+          <SidebarNavButton
+            active={section.type === "vault"}
+            icon={<Database className="size-3.5 shrink-0" />}
+            label="Vault"
+            onClick={() =>
+              setSection({
+                type: "vault",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
+          />
+          <SidebarNavButton
+            active={section.type === "memory"}
+            icon={<CircleDot className="size-3.5 shrink-0" />}
+            label="Memory"
+            onClick={() =>
+              setSection({
+                type: "memory",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
+          />
+          <SidebarNavButton
+            active={section.type === "graph"}
+            icon={<Network className="size-3.5 shrink-0" />}
+            label="Graph"
+            onClick={() =>
+              setSection({
+                type: "graph",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
+          />
+          <SidebarNavButton
+            active={section.type === "entities"}
+            icon={<Workflow className="size-3.5 shrink-0" />}
+            label="Entities"
+            onClick={() =>
+              setSection({
+                type: "entities",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
+          />
+          <SidebarNavButton
+            active={section.type === "dreams"}
+            icon={<Sparkles className="size-3.5 shrink-0" />}
+            label="Dreams"
+            onClick={() =>
+              setSection({
+                type: "dreams",
+                cabinetPath: section.cabinetPath || ROOT_CABINET_PATH,
+              })
+            }
+          />
+        </nav>
         <TreeView />
 
         <div className="p-2 flex items-center gap-1">
