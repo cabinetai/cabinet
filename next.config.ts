@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
     "localhost",
     "*.loca.lt",
     "*.trycloudflare.com",
+    "observatory.optale.com",
+    "cabinet.optale.com",
   ],
   compiler: {
     removeConsole: {
