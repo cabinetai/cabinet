@@ -113,14 +113,10 @@ function formFromClient(client: McpClient): ClientForm {
 }
 
 function splitList(value: string): string[] {
-  return Array.from(
-    new Set(
-      value
-        .split(",")
-        .map((entry) => entry.trim())
-        .filter(Boolean)
-    )
-  );
+  return value
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
 }
 
 function payloadFromForm(form: ClientForm) {
@@ -418,7 +414,8 @@ function ClientRow({
   onRotate: () => void;
   onDisable: () => void;
 }) {
-  const manageable = client.source === "registry" && client.enabled;
+  const manageable = client.source === "registry";
+  const activeRegistryClient = manageable && client.enabled;
   return (
     <div
       className={cn(
@@ -482,7 +479,7 @@ function ClientRow({
           variant="ghost"
           size="icon-xs"
           onClick={onRotate}
-          disabled={disabled || !manageable}
+          disabled={disabled || !activeRegistryClient}
           title="Rotate token"
           aria-label="Rotate token"
         >
@@ -492,7 +489,7 @@ function ClientRow({
           variant="ghost"
           size="icon-xs"
           onClick={onDisable}
-          disabled={disabled || !manageable || !client.enabled}
+          disabled={disabled || !activeRegistryClient}
           title="Disable MCP client"
           aria-label="Disable MCP client"
           className="text-destructive hover:text-destructive"

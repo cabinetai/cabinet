@@ -209,6 +209,132 @@ test("file-backed MCP client updates and sanitized listing do not expose tokens"
   );
 });
 
+test("public MCP client tool aliases round-trip to internal registry names", async (t) => {
+  const tempRoot = await fs.mkdtemp(
+    path.join(os.tmpdir(), "optale-mcp-clients-public-tools-"),
+  );
+  const originalPath = process.env.OPTALE_MCP_CLIENTS_PATH;
+  const originalJson = process.env.OPTALE_MCP_CLIENTS_JSON;
+  const originalLegacy = process.env.OPTALE_MCP_TOKEN;
+  process.env.OPTALE_MCP_CLIENTS_PATH = path.join(tempRoot, "clients.json");
+  delete process.env.OPTALE_MCP_CLIENTS_JSON;
+  delete process.env.OPTALE_MCP_TOKEN;
+  t.after(async () => {
+    if (originalPath === undefined) {
+      delete process.env.OPTALE_MCP_CLIENTS_PATH;
+    } else {
+      process.env.OPTALE_MCP_CLIENTS_PATH = originalPath;
+    }
+    if (originalJson === undefined) {
+      delete process.env.OPTALE_MCP_CLIENTS_JSON;
+    } else {
+      process.env.OPTALE_MCP_CLIENTS_JSON = originalJson;
+    }
+    if (originalLegacy === undefined) {
+      delete process.env.OPTALE_MCP_TOKEN;
+    } else {
+      process.env.OPTALE_MCP_TOKEN = originalLegacy;
+    }
+    await fs.rm(tempRoot, { recursive: true, force: true });
+  });
+
+  const created = await createOptaleMcpClient({
+    id: "client-public-aliases",
+    permissions: ["read", "write"],
+    allowedTools: ["observatory_brain_summary", "sense_search_knowledge"],
+    deniedTools: ["observatory_command_center_action"],
+  });
+  const publicClient = (await listPublicOptaleMcpClients()).find(
+    (client) => client.id === created.client.id,
+  );
+
+  assert.deepEqual(created.client.allowedTools, [
+    "optale_brain_summary",
+    "qmd__query",
+  ]);
+  assert.deepEqual(created.client.deniedTools, [
+    "optale_command_center_action",
+  ]);
+  assert.deepEqual(publicClient?.allowedTools, [
+    "observatory_brain_summary",
+    "sense_search_knowledge",
+  ]);
+  assert.deepEqual(publicClient?.deniedTools, [
+    "observatory_command_center_action",
+  ]);
+
+  const updated = await updateOptaleMcpClient({
+    id: created.client.id,
+    name: "Round-tripped",
+    permissions: publicClient?.permissions,
+    allowedTools: publicClient?.allowedTools,
+    deniedTools: publicClient?.deniedTools,
+  });
+
+  assert.deepEqual(updated.client.allowedTools, [
+    "optale_brain_summary",
+    "qmd__query",
+  ]);
+  assert.deepEqual(updated.client.deniedTools, [
+    "optale_command_center_action",
+  ]);
+});
+
+test("public MCP client updates preserve collapsed downstream tool aliases", async (t) => {
+  const tempRoot = await fs.mkdtemp(
+    path.join(os.tmpdir(), "optale-mcp-clients-collapsed-tools-"),
+  );
+  const originalPath = process.env.OPTALE_MCP_CLIENTS_PATH;
+  const originalJson = process.env.OPTALE_MCP_CLIENTS_JSON;
+  const originalLegacy = process.env.OPTALE_MCP_TOKEN;
+  process.env.OPTALE_MCP_CLIENTS_PATH = path.join(tempRoot, "clients.json");
+  delete process.env.OPTALE_MCP_CLIENTS_JSON;
+  delete process.env.OPTALE_MCP_TOKEN;
+  t.after(async () => {
+    if (originalPath === undefined) {
+      delete process.env.OPTALE_MCP_CLIENTS_PATH;
+    } else {
+      process.env.OPTALE_MCP_CLIENTS_PATH = originalPath;
+    }
+    if (originalJson === undefined) {
+      delete process.env.OPTALE_MCP_CLIENTS_JSON;
+    } else {
+      process.env.OPTALE_MCP_CLIENTS_JSON = originalJson;
+    }
+    if (originalLegacy === undefined) {
+      delete process.env.OPTALE_MCP_TOKEN;
+    } else {
+      process.env.OPTALE_MCP_TOKEN = originalLegacy;
+    }
+    await fs.rm(tempRoot, { recursive: true, force: true });
+  });
+
+  const created = await createOptaleMcpClient({
+    id: "client-collapsed-tools",
+    permissions: ["read"],
+    allowedTools: ["private__first", "private__second"],
+  });
+  const publicClient = (await listPublicOptaleMcpClients()).find(
+    (client) => client.id === created.client.id,
+  );
+
+  assert.deepEqual(publicClient?.allowedTools, [
+    "sense_downstream_call",
+    "sense_downstream_call",
+  ]);
+
+  const updated = await updateOptaleMcpClient({
+    id: created.client.id,
+    permissions: publicClient?.permissions,
+    allowedTools: publicClient?.allowedTools,
+  });
+
+  assert.deepEqual(updated.client.allowedTools, [
+    "private__first",
+    "private__second",
+  ]);
+});
+
 test("redactOptaleMcpClientForClient productizes tool names and hides fingerprints", () => {
   const client = redactOptaleMcpClientForClient({
     id: "client-public",

@@ -4,7 +4,10 @@ import path from "path";
 import { normalizeCabinetPath } from "@/lib/cabinets/paths";
 import type { OptaleAgentScope } from "@/lib/optale/product";
 import { normalizeOptaleScope } from "@/lib/optale/scope-registry";
-import { productMcpClientToolName } from "@/lib/optale/context-registry";
+import {
+  internalMcpClientToolNameForProduct,
+  productMcpClientToolName,
+} from "@/lib/optale/context-registry";
 import { CABINET_INTERNAL_DIR } from "@/lib/storage/path-utils";
 import { ensureDirectory } from "@/lib/storage/fs-operations";
 
@@ -129,6 +132,38 @@ function stringArray(value: unknown): string[] {
             typeof entry === "string" && entry.trim() !== "",
         )
         .map((entry) => entry.trim()),
+    ),
+  );
+}
+
+function stringList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(
+      (entry): entry is string =>
+        typeof entry === "string" && entry.trim() !== "",
+    )
+    .map((entry) => entry.trim());
+}
+
+function toolNameArrayForWrite(value: unknown, existing?: unknown): string[] {
+  const existingTools = stringArray(existing);
+  const existingByPublicName = new Map<string, string[]>();
+  for (const toolName of existingTools) {
+    const publicToolName = productMcpClientToolName(toolName);
+    existingByPublicName.set(publicToolName, [
+      ...(existingByPublicName.get(publicToolName) || []),
+      toolName,
+    ]);
+  }
+  return Array.from(
+    new Set(
+      stringList(value).map((toolName) => {
+        if (toolName === "sense_downstream_call") {
+          return existingByPublicName.get(toolName)?.shift() || toolName;
+        }
+        return internalMcpClientToolNameForProduct(toolName);
+      }),
     ),
   );
 }
@@ -289,8 +324,8 @@ function normalizeClient(
       ),
     agentScope,
     permissions,
-    allowedTools: stringArray(raw.allowedTools),
-    deniedTools: stringArray(raw.deniedTools),
+    allowedTools: toolNameArrayForWrite(raw.allowedTools),
+    deniedTools: toolNameArrayForWrite(raw.deniedTools),
     budget: normalizeBudget(raw),
     auditEnabled: booleanValue(raw.auditEnabled ?? raw.audit, true),
     remoteActionsEnabled: booleanValue(raw.remoteActionsEnabled, false),
@@ -375,12 +410,12 @@ function compactWritableClient(
           : permissionArray(existing?.permissions),
       allowedTools:
         input.allowedTools !== undefined
-          ? stringArray(input.allowedTools)
-          : stringArray(existing?.allowedTools),
+          ? toolNameArrayForWrite(input.allowedTools, existing?.allowedTools)
+          : toolNameArrayForWrite(existing?.allowedTools),
       deniedTools:
         input.deniedTools !== undefined
-          ? stringArray(input.deniedTools)
-          : stringArray(existing?.deniedTools),
+          ? toolNameArrayForWrite(input.deniedTools, existing?.deniedTools)
+          : toolNameArrayForWrite(existing?.deniedTools),
       budget,
       auditEnabled: booleanValue(
         input.auditEnabled ?? existing?.auditEnabled ?? existing?.audit,
@@ -547,6 +582,7 @@ export function redactOptaleMcpClientForClient(
   client: SanitizedOptaleMcpClient,
 ): PublicSanitizedOptaleMcpClient {
   const { tokenHashPrefix: _tokenHashPrefix, ...rest } = client;
+  void _tokenHashPrefix;
   return {
     ...rest,
     allowedTools: client.allowedTools.map(productMcpClientToolName),

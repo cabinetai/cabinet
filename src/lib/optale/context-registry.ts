@@ -134,6 +134,18 @@ const PRODUCT_OBSERVATORY_TOOL_NAMES: Record<string, string> = {
 const PRODUCT_DOWNSTREAM_TOOL_NAME_SET = new Set(
   Object.values(PRODUCT_DOWNSTREAM_TOOL_NAMES),
 );
+const INTERNAL_DOWNSTREAM_TOOL_NAMES_BY_PRODUCT = new Map(
+  Object.entries(PRODUCT_DOWNSTREAM_TOOL_NAMES).map(([internal, product]) => [
+    product,
+    internal,
+  ]),
+);
+const INTERNAL_OBSERVATORY_TOOL_NAMES_BY_PRODUCT = new Map(
+  Object.entries(PRODUCT_OBSERVATORY_TOOL_NAMES).map(([internal, product]) => [
+    product,
+    internal,
+  ]),
+);
 
 export function productizeOptaleMcpText(text: string): string {
   return text
@@ -166,6 +178,7 @@ export function productMcpServerName(
   serverId: string,
   fallback: string,
 ): string {
+  void fallback;
   return PRODUCT_MCP_SERVERS[serverId]?.name || "Managed Source";
 }
 
@@ -216,6 +229,22 @@ export function productMcpClientToolName(toolName: string): string {
     return productMcpToolName(normalized.slice(0, separator), normalized);
   }
   return "sense_downstream_call";
+}
+
+export function internalMcpClientToolNameForProduct(toolName: string): string {
+  const normalized = toolName.trim();
+  if (!normalized) return normalized;
+  if (
+    PRODUCT_OBSERVATORY_TOOL_NAMES[normalized] ||
+    PRODUCT_DOWNSTREAM_TOOL_NAMES[normalized]
+  ) {
+    return normalized;
+  }
+  return (
+    INTERNAL_OBSERVATORY_TOOL_NAMES_BY_PRODUCT.get(normalized) ||
+    INTERNAL_DOWNSTREAM_TOOL_NAMES_BY_PRODUCT.get(normalized) ||
+    normalized
+  );
 }
 
 export function toPublicOptaleMcpServer(
