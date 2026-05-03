@@ -34,6 +34,22 @@ test("parseHash handles Action Registry routes", () => {
   assert.equal(cabinet.section.cabinetPath, "clients/acme");
 });
 
+test("parseHash handles Optale Command view routes", () => {
+  const root = parseHash("#/actions/audit");
+  assert.equal(root.section.type, "actions");
+  assert.equal(root.section.cabinetPath, ".");
+  assert.equal(root.section.slug, "audit");
+
+  const cabinet = parseHash("#/cabinet/clients%2Facme/actions/lineage");
+  assert.equal(cabinet.section.type, "actions");
+  assert.equal(cabinet.section.cabinetPath, "clients/acme");
+  assert.equal(cabinet.section.slug, "lineage");
+
+  const invalid = parseHash("#/actions/unknown");
+  assert.equal(invalid.section.type, "actions");
+  assert.equal(invalid.section.slug, undefined);
+});
+
 test("parseHash handles Brain, Vault, and Graph as native Brain routes", () => {
   for (const type of ["brain", "vault", "graph"] as const) {
     const root = parseHash(`#/${type}`);

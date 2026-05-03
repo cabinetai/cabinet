@@ -16,6 +16,7 @@ import { useEditorStore } from "@/stores/editor-store";
  *   #/home
  *   #/resources             ← Optale Resource Registry
  *   #/actions               ← Optale Action Registry
+ *   #/actions/{view}         ← Optale Command view: runs, policy, lineage, audit
  *   #/p/{pagePath}           ← page in root cabinet
  *   #/agents                 ← agents list (root cabinet)
  *   #/a/{slug}               ← agent detail (root cabinet)
@@ -36,6 +37,7 @@ import { useEditorStore } from "@/stores/editor-store";
  *   #/cabinet/{cabinetPath}
  *   #/cabinet/{cabinetPath}/resources
  *   #/cabinet/{cabinetPath}/actions
+ *   #/cabinet/{cabinetPath}/actions/{view}
  *   #/cabinet/{cabinetPath}/data/{pagePath}
  *   #/cabinet/{cabinetPath}/agents
  *   #/cabinet/{cabinetPath}/agents/{slug}
@@ -55,6 +57,7 @@ import { useEditorStore } from "@/stores/editor-store";
 
 const LS_KEY = "cabinet.last-route";
 const SESSION_KEY = "cabinet.tab-visited";
+const ACTION_VIEW_SLUGS = new Set(["runs", "policy", "lineage", "audit"]);
 
 type SectionState = ReturnType<typeof useAppStore.getState>["section"];
 
@@ -74,6 +77,11 @@ function decodePathSegment(value?: string): string {
   } catch {
     return value || ROOT_CABINET_PATH;
   }
+}
+
+function actionViewSlug(value?: string): string | undefined {
+  const slug = value ? decodePathSegment(value) : undefined;
+  return slug && ACTION_VIEW_SLUGS.has(slug) ? slug : undefined;
 }
 
 function buildHash(section: SectionState, pagePath: string | null): string {
@@ -96,8 +104,11 @@ function buildHash(section: SectionState, pagePath: string | null): string {
     return `#/cabinet/${encodePathSegment(cabinetPath)}/resources`;
   }
   if (section.type === "actions") {
-    if (isRoot) return "#/actions";
-    return `#/cabinet/${encodePathSegment(cabinetPath)}/actions`;
+    const suffix = actionViewSlug(section.slug)
+      ? `/${encodePathSegment(section.slug || "")}`
+      : "";
+    if (isRoot) return `#/actions${suffix}`;
+    return `#/cabinet/${encodePathSegment(cabinetPath)}/actions${suffix}`;
   }
   if (section.type === "agent" && section.slug) {
     if (isRoot) {
@@ -246,9 +257,19 @@ function parseHash(hash: string): RouteState {
       };
     }
 
+    if (leaf === "actions") {
+      return {
+        section: {
+          type: "actions",
+          cabinetPath,
+          slug: actionViewSlug(parts[3]),
+        },
+        pagePath: null,
+      };
+    }
+
     if (
       leaf === "resources" ||
-      leaf === "actions" ||
       leaf === "brain" ||
       leaf === "vault" ||
       leaf === "memory" ||
@@ -337,7 +358,6 @@ function parseHash(hash: string): RouteState {
 
   if (
     parts[0] === "resources" ||
-    parts[0] === "actions" ||
     parts[0] === "brain" ||
     parts[0] === "vault" ||
     parts[0] === "memory" ||
@@ -348,6 +368,17 @@ function parseHash(hash: string): RouteState {
   ) {
     return {
       section: { type: parts[0], cabinetPath: ROOT_CABINET_PATH },
+      pagePath: null,
+    };
+  }
+
+  if (parts[0] === "actions") {
+    return {
+      section: {
+        type: "actions",
+        cabinetPath: ROOT_CABINET_PATH,
+        slug: actionViewSlug(parts[1]),
+      },
       pagePath: null,
     };
   }

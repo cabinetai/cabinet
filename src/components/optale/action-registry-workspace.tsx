@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/stores/app-store";
 import type {
   OptaleActionCategory,
   OptaleActionDefinition,
@@ -90,6 +91,18 @@ const COMMAND_VIEW_SEARCH_PLACEHOLDERS: Record<OptaleCommandView, string> = {
   lineage: "Search lineage edges",
   audit: "Search audit events",
 };
+
+function commandViewFromSlug(slug?: string): OptaleCommandView {
+  if (
+    slug === "runs" ||
+    slug === "policy" ||
+    slug === "lineage" ||
+    slug === "audit"
+  ) {
+    return slug;
+  }
+  return "actions";
+}
 
 const LINEAGE_EDGE_KIND_LABELS: Record<OptaleLineageEdgeKind, string> = {
   produces_run: "Produces Run",
@@ -337,10 +350,14 @@ export function OptaleActionRegistryWorkspace({
   const [activeFilter, setActiveFilter] = useState<
     "all" | OptaleActionKind | OptaleActionCategory
   >("all");
-  const [activeView, setActiveView] = useState<OptaleCommandView>("actions");
+  const section = useAppStore((state) => state.section);
+  const setSection = useAppStore((state) => state.setSection);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const activeView = commandViewFromSlug(
+    section.type === "actions" ? section.slug : undefined,
+  );
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -489,6 +506,17 @@ export function OptaleActionRegistryWorkspace({
       registry?.counts.actions,
       registry?.counts.pendingQueues,
     ],
+  );
+
+  const setCommandView = useCallback(
+    (view: OptaleCommandView) => {
+      setSection({
+        type: "actions",
+        cabinetPath,
+        slug: view === "actions" ? undefined : view,
+      });
+    },
+    [cabinetPath, setSection],
   );
 
   return (
@@ -694,7 +722,7 @@ export function OptaleActionRegistryWorkspace({
             <button
               key={view.id}
               type="button"
-              onClick={() => setActiveView(view.id)}
+              onClick={() => setCommandView(view.id)}
               className={cn(
                 "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
                 activeView === view.id
