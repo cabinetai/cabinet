@@ -86,18 +86,33 @@ export function ComposerInput({
   topRightOverlay,
   attachments,
 }: ComposerInputProps) {
+  const {
+    input,
+    mentions,
+    showDropdown,
+    filteredItems,
+    dropdownIndex,
+    submitting,
+    textareaRef,
+    handleChange,
+    handleKeyDown,
+    insertMention,
+    removeMention,
+    submit,
+  } = composer;
+
   useEffect(() => {
     if (autoFocus) {
-      setTimeout(() => composer.textareaRef.current?.focus(), 100);
+      setTimeout(() => textareaRef.current?.focus(), 100);
     }
-  }, [autoFocus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [autoFocus, textareaRef]);
 
   const [cardFocused, setCardFocused] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const isUploading = attachments?.isUploading ?? false;
-  const isDisabled = disabled || composer.submitting;
-  const sendDisabled =
-    isDisabled || !composer.input.trim() || isUploading;
+  const isDisabled = disabled || submitting;
+  const inputIsEmpty = !input.trim();
+  const sendDisabled = isDisabled || inputIsEmpty || isUploading;
   const attachmentsEnabled = !!attachments && attachments.enabled;
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -134,9 +149,9 @@ export function ComposerInput({
   };
 
   const hasChips =
-    composer.mentions.paths.length > 0 ||
-    composer.mentions.agents.length > 0 ||
-    composer.mentions.skills.length > 0 ||
+    mentions.paths.length > 0 ||
+    mentions.agents.length > 0 ||
+    mentions.skills.length > 0 ||
     (attachments?.attachments.length ?? 0) > 0;
 
   return (
@@ -178,16 +193,16 @@ export function ComposerInput({
         ) : null}
         {header}
         <div className="relative flex flex-col">
-          {composer.showDropdown && composer.filteredItems.length > 0 && (
+          {showDropdown && filteredItems.length > 0 && (
             <MentionDropdown
-              items={composer.filteredItems}
-              activeIndex={composer.dropdownIndex}
-              onSelect={composer.insertMention}
+              items={filteredItems}
+              activeIndex={dropdownIndex}
+              onSelect={insertMention}
               placement={mentionDropdownPlacement}
             />
           )}
           <textarea
-            ref={composer.textareaRef}
+            ref={textareaRef}
             // Audit #098 / browser issue: a textarea with neither id nor
             // name nor aria-label trips a "form field needs id/name" alert
             // and is invisible to assistive tech. The placeholder is
@@ -195,15 +210,15 @@ export function ComposerInput({
             // on agent pages, etc.) so it doubles as the accessible label.
             aria-label={typeof placeholder === "string" ? placeholder : "Compose"}
             name="composer-input"
-            value={composer.input}
-            onChange={composer.handleChange}
+            value={input}
+            onChange={handleChange}
             onPaste={attachmentsEnabled ? handlePaste : undefined}
             onKeyDown={(e) => {
               if (onKeyDown) {
                 onKeyDown(e);
                 if (e.defaultPrevented) return;
               }
-              composer.handleKeyDown(e);
+              handleKeyDown(e);
             }}
             placeholder={placeholder}
             disabled={isDisabled}
@@ -219,11 +234,11 @@ export function ComposerInput({
         {hasChips ? (
           <div className="flex flex-wrap gap-2 px-4 pb-2">
             <MentionChips
-              mentionedPaths={composer.mentions.paths}
-              mentionedAgents={composer.mentions.agents}
-              mentionedSkills={composer.mentions.skills}
+              mentionedPaths={mentions.paths}
+              mentionedAgents={mentions.agents}
+              mentionedSkills={mentions.skills}
               items={items}
-              onRemove={composer.removeMention}
+              onRemove={removeMention}
               inline
             />
             {attachments ? (
@@ -263,7 +278,7 @@ export function ComposerInput({
                 variant="outline"
                 className="h-8 gap-2 text-xs"
                 onClick={secondaryAction.onClick}
-                disabled={isDisabled || !composer.input.trim() || secondaryAction.disabled || isUploading}
+                disabled={isDisabled || inputIsEmpty || secondaryAction.disabled || isUploading}
               >
                 {secondaryAction.loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -274,16 +289,16 @@ export function ComposerInput({
               </Button>
             )}
             <span
-              onClick={!isDisabled && !composer.input.trim() ? () => composer.textareaRef.current?.focus() : undefined}
-              className={!isDisabled && !composer.input.trim() ? "cursor-text" : undefined}
+              onClick={!isDisabled && inputIsEmpty ? () => textareaRef.current?.focus() : undefined}
+              className={!isDisabled && inputIsEmpty ? "cursor-text" : undefined}
             >
               <Button
                 className="h-8 gap-2 text-xs"
-                onClick={() => void composer.submit()}
+                onClick={() => void submit()}
                 disabled={sendDisabled}
-                title={isUploading ? "Uploading attachments…" : !composer.input.trim() ? "Type a prompt to send" : undefined}
+                title={isUploading ? "Uploading attachments…" : inputIsEmpty ? "Type a prompt to send" : undefined}
               >
-                {composer.submitting ? (
+                {submitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Send className="h-4 w-4" />
