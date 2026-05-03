@@ -14,6 +14,30 @@ The first slice lives in:
 
 Each `AgentDefinition` is schema-versioned and includes identity, role, instructions, provider/model defaults, scope, memory namespace, MCP/tool policy, handoff edges, schedules, approval policy, and runtime projection metadata.
 
+## AGENTS-FW Alignment
+
+The current Agent Harness manifest and native persona projection are Phase 1: a tactical projection layer that keeps canonical agent definitions in one place while Optale Command migrates off bridge-first runtime paths.
+
+The broader product-facing Optale Agent runtime is the canonical ORM project:
+
+- project id: `9713d044-ae60-419c-8382-29079dc2767a`
+- identifier: `AGENTS-FW`
+- name: Optale Agents Framework
+- status: `ACTIVE`
+
+AGENTS-FW owns the long-term Optale Agent runtime direction. The Phase 1 Harness manifest should feed that runtime, native Optale Command agents/personas/routines, and temporary bridge projections without becoming a second product source of truth.
+
+Sense Memory stack direction:
+
+- Cognee for ingestion and document-to-KG
+- Open Foundry for ontology, runtime, and digital twin
+- Graphiti for temporal facts
+- proprietary personal memory replacing Honcho for customer-facing use
+
+Honcho remains internal-only. The private-to-company promotion boundary must remain enforced in code, with personal memory promotion explicitly gated before company/system memory receives it.
+
+Optale Command remains the control plane and runtime surface. LibreChat remains the bridge/runtime during migration only.
+
 ## LibreChat Bridge
 
 The existing LibreChat Mongo scripts remain temporary reference and bridge material during migration:
