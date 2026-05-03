@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { OptaleCommandActionsView } from "@/components/optale/command-actions-view";
@@ -11,10 +9,13 @@ import { OptaleCommandHeader } from "@/components/optale/command-header";
 import { OptaleCommandLineageView } from "@/components/optale/command-lineage-view";
 import { OptaleCommandPolicyView } from "@/components/optale/command-policy-view";
 import { OptaleCommandRunsView } from "@/components/optale/command-runs-view";
+import { OptaleCommandToolbar } from "@/components/optale/command-toolbar";
 import type {
-  OptaleActionCategory,
+  OptaleCommandActionFilter,
+  OptaleCommandView,
+} from "@/components/optale/command-workspace-types";
+import type {
   OptaleActionDefinition,
-  OptaleActionKind,
   OptaleActionQueueRecord,
   OptaleActionRegistry,
 } from "@/lib/optale/action-registry";
@@ -35,34 +36,12 @@ import type {
   OptaleAuditEventRecord,
 } from "@/lib/optale/audit-event-log";
 
-const FILTERS: Array<{
-  id: "all" | OptaleActionKind | OptaleActionCategory;
-  label: string;
-}> = [
-  { id: "all", label: "All" },
-  { id: "command", label: "Command" },
-  { id: "agent_proposal", label: "Proposals" },
-  { id: "review", label: "Review" },
-  { id: "scheduling", label: "Scheduling" },
-  { id: "governance", label: "Governance" },
-];
-
-type OptaleCommandView = "actions" | "runs" | "policy" | "lineage" | "audit";
-
 const COMMAND_VIEW_LABELS: Record<OptaleCommandView, string> = {
   actions: "Actions",
   runs: "Runs",
   policy: "Policy",
   lineage: "Lineage",
   audit: "Audit",
-};
-
-const COMMAND_VIEW_SEARCH_PLACEHOLDERS: Record<OptaleCommandView, string> = {
-  actions: "Search actions and queues",
-  runs: "Search runs",
-  policy: "Search policy decisions",
-  lineage: "Search lineage edges",
-  audit: "Search audit events",
 };
 
 function commandViewFromSlug(slug?: string): OptaleCommandView {
@@ -221,9 +200,8 @@ export function OptaleActionRegistryWorkspace({
     useState<OptalePolicyDecisionLog | null>(null);
   const [lineage, setLineage] = useState<OptaleLineageEdgeTable | null>(null);
   const [auditLog, setAuditLog] = useState<OptaleAuditEventLog | null>(null);
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | OptaleActionKind | OptaleActionCategory
-  >("all");
+  const [activeFilter, setActiveFilter] =
+    useState<OptaleCommandActionFilter>("all");
   const section = useAppStore((state) => state.section);
   const setSection = useAppStore((state) => state.setSection);
   const [search, setSearch] = useState("");
@@ -445,76 +423,21 @@ export function OptaleActionRegistryWorkspace({
         onRefresh={() => void refresh()}
       />
 
-      <section className="border-b border-border/70 px-6 py-4">
-        <div className="grid gap-3 lg:grid-cols-[1fr_320px]">
-          <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Actions</div>
-              <div className="text-lg font-semibold text-foreground">
-                {registry?.counts.actions ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Queues</div>
-              <div className="text-lg font-semibold text-foreground">
-                {registry?.counts.pendingQueues ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Runs</div>
-              <div className="text-lg font-semibold text-foreground">
-                {ledger?.counts.runs ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Policy</div>
-              <div className="text-lg font-semibold text-foreground">
-                {policyLog?.counts.decisions ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Lineage</div>
-              <div className="text-lg font-semibold text-foreground">
-                {lineage?.counts.edges ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Audit</div>
-              <div className="text-lg font-semibold text-foreground">
-                {auditLog?.counts.events ?? 0}
-              </div>
-            </div>
-          </div>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder={COMMAND_VIEW_SEARCH_PLACEHOLDERS[activeView]}
-              className="h-9 pl-8"
-            />
-          </div>
-        </div>
-        {activeView === "actions" && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {FILTERS.map((filter) => (
-              <button
-                key={filter.id}
-                type="button"
-                onClick={() => setActiveFilter(filter.id)}
-                className={cn(
-                  "rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
-                  activeFilter === filter.id
-                    ? "border-primary/30 bg-primary/10 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </section>
+      <OptaleCommandToolbar
+        activeView={activeView}
+        activeFilter={activeFilter}
+        counts={{
+          actions: registry?.counts.actions ?? 0,
+          queues: registry?.counts.pendingQueues ?? 0,
+          runs: ledger?.counts.runs ?? 0,
+          policy: policyLog?.counts.decisions ?? 0,
+          lineage: lineage?.counts.edges ?? 0,
+          audit: auditLog?.counts.events ?? 0,
+        }}
+        search={search}
+        onActiveFilterChange={setActiveFilter}
+        onSearchChange={setSearch}
+      />
 
       {error && (
         <div className="mx-6 mt-4 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
