@@ -33,6 +33,9 @@ import type { ScheduleEvent } from "@/lib/agents/cron-compute";
 import { NextUpRuns } from "./next-up-runs";
 import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { OrgChartModal } from "./org-chart-modal";
+import { OptaleBrainPanel } from "@/components/optale/brain-panel";
+import { OptaleMcpOversightPanel } from "@/components/optale/mcp-oversight-panel";
+import { OptaleMcpClientsPanel } from "@/components/optale/mcp-clients-panel";
 
 export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
   const [overview, setOverview] = useState<CabinetOverview | null>(null);
@@ -160,7 +163,7 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
   const cabinetName =
     overview?.cabinet.name ||
     cabinetPath.split("/").filter(Boolean).pop()?.replace(/-/g, " ") ||
-    "Cabinet";
+    "Space";
   const ownAgents = useMemo(
     () => (overview?.agents || []).filter((a) => a.cabinetDepth === 0),
     [overview?.agents]
@@ -289,6 +292,13 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
                 />
               </div>
               <div>
+                <OptaleBrainPanel cabinetPath={cabinetPath} className="mb-8" />
+                <OptaleMcpOversightPanel
+                  cabinetPath={cabinetPath}
+                  visibilityMode={cabinetVisibilityMode}
+                  className="mb-8"
+                />
+                <OptaleMcpClientsPanel cabinetPath={cabinetPath} className="mb-8" />
                 <NextUpRuns
                   agents={overview?.agents || []}
                   jobs={overview?.jobs || []}
@@ -298,7 +308,7 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
                 {(overview?.children?.length ?? 0) > 0 && (
                   <div className="mt-8 space-y-2">
                     <h2 className="text-[14px] font-semibold tracking-tight text-foreground">
-                      Child cabinets
+                      Nested spaces
                     </h2>
                     <div className="flex flex-wrap gap-1.5">
                       {overview!.children.map((child) => (
@@ -389,4 +399,3 @@ function CountPill({ label, value }: { label: string; value: number }) {
     </span>
   );
 }
-
