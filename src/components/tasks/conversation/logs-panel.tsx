@@ -178,7 +178,11 @@ export function LogsPanel({
                             ? "bg-violet-500/15 text-violet-700 dark:text-violet-400"
                             : event.type === "task.updated"
                               ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                              : "bg-muted text-muted-foreground"
+                              : event.type === "agent.action.dispatched"
+                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                                : event.type === "agent.action.spawned"
+                                  ? "bg-cyan-500/15 text-cyan-700 dark:text-cyan-400"
+                                  : "bg-muted text-muted-foreground"
                       )}
                     >
                       {event.type ?? "—"}

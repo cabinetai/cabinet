@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { resolveDispatchRuntime } from "./action-dispatcher";
+import {
+  buildScopedDispatchConversationInput,
+  resolveDispatchRuntime,
+} from "./action-dispatcher";
 import type { ConversationMeta } from "@/types/conversations";
 import type { AgentPersona } from "./persona-manager";
 
@@ -139,4 +142,51 @@ test("resolveDispatchRuntime — falls back to target persona when parent has no
   assert.equal(runtime.providerId, "codex-cli");
   assert.equal(runtime.adapterType, "codex_local");
   assert.deepEqual(runtime.adapterConfig, { model: "default-model" });
+});
+
+test("buildScopedDispatchConversationInput — wraps delegated tasks in the cabinet-scoped agent envelope", async () => {
+  const target = makePersona({
+    slug: "__dispatch_scope_target__",
+    cabinetPath: "client-alpha",
+  });
+  const runtime = {
+    providerId: "claude-code",
+    adapterType: "claude_local",
+    adapterConfig: { model: "opus", effort: "medium" },
+  };
+
+  const input = await buildScopedDispatchConversationInput({
+    target,
+    title: "x".repeat(140),
+    prompt: "Review the client memory and summarize the open actions.",
+    runtime,
+  });
+
+  assert.equal(input.agentSlug, target.slug);
+  assert.equal(input.trigger, "agent");
+  assert.equal(input.title.length, 120);
+  assert.equal(input.providerId, runtime.providerId);
+  assert.equal(input.adapterType, runtime.adapterType);
+  assert.deepEqual(input.adapterConfig, runtime.adapterConfig);
+  assert.equal(input.cabinetPath, "client-alpha");
+  assert.ok(input.cwd?.endsWith("/client-alpha"));
+  assert.notEqual(
+    input.prompt,
+    "Review the client memory and summarize the open actions."
+  );
+  assert.ok(
+    input.prompt.includes(
+      "Work only inside the cabinet-scoped knowledge base rooted at /data/client-alpha."
+    )
+  );
+  assert.ok(
+    input.prompt.includes(
+      "REQUIRED: every reply must end with a ```cabinet``` fenced block"
+    )
+  );
+  assert.ok(
+    input.prompt.includes(
+      "User request:\nReview the client memory and summarize the open actions."
+    )
+  );
 });

@@ -8,10 +8,17 @@ import type {
 import type { ConversationMeta } from "@/types/conversations";
 import type { JobConfig } from "@/types/jobs";
 import { readPersona, type AgentPersona } from "./persona-manager";
-import { startConversationRun } from "./conversation-runner";
+import {
+  buildManualConversationPrompt,
+  startConversationRun,
+} from "./conversation-runner";
 import { saveAgentJob } from "@/lib/jobs/job-manager";
 import { reloadDaemonSchedules } from "./daemon-client";
-import { readConversationMeta, writeConversationMeta } from "./conversation-store";
+import {
+  appendEventLog,
+  readConversationMeta,
+  writeConversationMeta,
+} from "./conversation-store";
 import { normalizeRuntimeOverride } from "./runtime-overrides";
 import { providerSupportsEffort } from "./provider-registry";
 
@@ -122,8 +129,42 @@ async function tagLineage(spawnedId: string, parent: ConversationMeta): Promise<
     fresh.triggeringAgent = parent.agentSlug;
     fresh.spawnDepth = (parent.spawnDepth ?? 0) + 1;
     await writeConversationMeta(fresh);
+    await appendEventLog(
+      fresh.id,
+      {
+        type: "agent.action.spawned",
+        parentTaskId: parent.id,
+        triggeringAgent: parent.agentSlug,
+        spawnDepth: fresh.spawnDepth,
+      },
+      fresh.cabinetPath ?? parent.cabinetPath
+    );
   } catch {
     // lineage is best-effort; never fail a dispatch over metadata.
+  }
+}
+
+async function logActionDispatched(
+  parent: ConversationMeta,
+  item: DispatchInput,
+  targetAgent: string,
+  conversationId?: string
+): Promise<void> {
+  try {
+    await appendEventLog(
+      parent.id,
+      {
+        type: "agent.action.dispatched",
+        actionId: item.id,
+        actionType: item.action.type,
+        targetAgent,
+        conversationId,
+        spawnDepth: parent.spawnDepth ?? 0,
+      },
+      parent.cabinetPath
+    );
+  } catch {
+    // Event logging is observational; dispatch success should not depend on it.
   }
 }
 
@@ -131,6 +172,24 @@ export interface DispatchInput {
   id: string;
   action: AgentAction;
   warningsOverride?: boolean; // allow dispatch even with soft warnings (default true)
+}
+
+interface DispatchRuntime {
+  providerId: string;
+  adapterType?: string;
+  adapterConfig?: Record<string, unknown>;
+}
+
+interface ScopedDispatchConversationInput {
+  agentSlug: string;
+  title: string;
+  trigger: "agent";
+  prompt: string;
+  providerId: string;
+  adapterType?: string;
+  adapterConfig?: Record<string, unknown>;
+  cabinetPath?: string;
+  cwd?: string;
 }
 
 function makeDispatched(
@@ -179,6 +238,31 @@ export async function dispatchApprovedActions(
   return results;
 }
 
+export async function buildScopedDispatchConversationInput(input: {
+  target: AgentPersona;
+  title: string;
+  prompt: string;
+  runtime: DispatchRuntime;
+}): Promise<ScopedDispatchConversationInput> {
+  const conversationInput = await buildManualConversationPrompt({
+    agentSlug: input.target.slug,
+    userMessage: input.prompt,
+    cabinetPath: input.target.cabinetPath,
+  });
+
+  return {
+    agentSlug: input.target.slug,
+    title: input.title.slice(0, 120),
+    trigger: "agent",
+    prompt: conversationInput.prompt,
+    providerId: input.runtime.providerId,
+    adapterType: input.runtime.adapterType,
+    adapterConfig: input.runtime.adapterConfig,
+    cabinetPath: conversationInput.cabinetPath ?? input.target.cabinetPath,
+    cwd: conversationInput.cwd,
+  };
+}
+
 async function dispatchLaunchTask(
   meta: ConversationMeta,
   item: DispatchInput
@@ -195,18 +279,17 @@ async function dispatchLaunchTask(
   }
 
   const runtime = resolveDispatchRuntime(meta, target, action);
-  const spawned = await startConversationRun({
-    agentSlug: target.slug,
-    title: action.title.slice(0, 120),
-    trigger: "agent",
-    prompt: action.prompt,
-    providerId: runtime.providerId,
-    adapterType: runtime.adapterType,
-    adapterConfig: runtime.adapterConfig,
-    cabinetPath: target.cabinetPath,
-  });
+  const spawned = await startConversationRun(
+    await buildScopedDispatchConversationInput({
+      target,
+      title: action.title,
+      prompt: action.prompt,
+      runtime,
+    })
+  );
 
   await tagLineage(spawned.id, meta);
+  await logActionDispatched(meta, item, target.slug, spawned.id);
 
   return makeDispatched({
     id: item.id,
@@ -290,17 +373,16 @@ async function dispatchScheduleTask(
   // Fire immediately when the scheduled time is past or within 60 s — no point
   // routing through cron for that.
   if (msFromNow <= 60_000) {
-    const spawned = await startConversationRun({
-      agentSlug: target.slug,
-      title: action.title.slice(0, 120),
-      trigger: "agent",
-      prompt: action.prompt,
-      providerId: runtime.providerId,
-      adapterType: runtime.adapterType,
-      adapterConfig: runtime.adapterConfig,
-      cabinetPath: target.cabinetPath,
-    });
+    const spawned = await startConversationRun(
+      await buildScopedDispatchConversationInput({
+        target,
+        title: action.title,
+        prompt: action.prompt,
+        runtime,
+      })
+    );
     await tagLineage(spawned.id, meta);
+    await logActionDispatched(meta, item, target.slug, spawned.id);
     return makeDispatched({
       id: item.id,
       action,

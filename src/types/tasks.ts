@@ -151,6 +151,12 @@ export interface TaskMeta {
   groupSize?: number;
   /** Mirrors ConversationMeta.muted. Muted tasks bypass Just Finished. */
   muted?: boolean;
+  /** Conversation that dispatched this task via an agent action. */
+  parentTaskId?: string;
+  /** Agent slug of the dispatcher that spawned this task. */
+  triggeringAgent?: string;
+  /** Depth of the dispatch chain; 0 for user-triggered tasks. */
+  spawnDepth?: number;
   /** Agent-proposed actions awaiting human approval. Mirrors ConversationMeta. */
   pendingActions?: import("./actions").PendingAction[];
   /** Already dispatched or rejected actions. Mirrors ConversationMeta. */

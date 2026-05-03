@@ -57,6 +57,7 @@ import { ConversationApprovalPanel } from "@/components/agents/conversation-appr
 import { ArtifactsList } from "./artifacts-list";
 import { DiffPanel } from "./diff-panel";
 import { LogsPanel } from "./logs-panel";
+import { RunLineagePanel } from "./run-lineage-panel";
 import { TaskComposerPanel } from "./task-composer-panel";
 import { MOCK_TASK } from "./mock-data";
 import {
@@ -1631,6 +1632,7 @@ export function TaskConversationPage({
                 />
               ))}
             </div>
+            <RunLineagePanel meta={task.meta} />
             {/* Proposed agent actions — sibling views: conversation-result-view.tsx, conversation-live-view.tsx */}
             <div className="mx-auto max-w-3xl px-1 pt-2">
               <ConversationApprovalPanel

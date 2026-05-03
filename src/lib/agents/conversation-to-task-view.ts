@@ -59,6 +59,9 @@ export function conversationMetaToTaskMeta(meta: ConversationMeta): TaskMeta {
     archivedAt: meta.archivedAt,
     boardOrder: meta.boardOrder,
     muted: meta.muted,
+    parentTaskId: meta.parentTaskId,
+    triggeringAgent: meta.triggeringAgent,
+    spawnDepth: meta.spawnDepth,
     pendingActions: meta.pendingActions,
     dispatchedActions: meta.dispatchedActions,
   };
