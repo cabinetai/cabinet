@@ -1,5 +1,9 @@
 import fs from "node:fs/promises";
 import path from "path";
+import {
+  productMcpClientToolName,
+  productizeOptaleMcpText,
+} from "@/lib/optale/context-registry";
 import { ensureDirectory } from "@/lib/storage/fs-operations";
 import { CABINET_INTERNAL_DIR } from "@/lib/storage/path-utils";
 
@@ -41,6 +45,21 @@ export interface OptaleMcpAuditSummary {
   outcomes: Record<OptaleMcpAuditOutcome, number>;
   clients: OptaleMcpAuditClientSummary[];
   recentEvents: OptaleMcpAuditEvent[];
+}
+
+export type OptalePublicMcpAuditEvent = Omit<
+  OptaleMcpAuditEvent,
+  "toolName" | "internalToolName" | "error"
+> & {
+  productToolName?: string;
+  error?: string;
+};
+
+export interface OptalePublicMcpAuditSummary extends Omit<
+  OptaleMcpAuditSummary,
+  "recentEvents"
+> {
+  recentEvents: OptalePublicMcpAuditEvent[];
 }
 
 function compactEvent(event: OptaleMcpAuditEvent): Record<string, unknown> {
@@ -283,6 +302,34 @@ export async function readOptaleMcpAuditSummary(
     if (code === "ENOENT") return emptyAuditSummary(date);
     throw error;
   }
+}
+
+export function redactOptaleMcpAuditEventForClient(
+  event: OptaleMcpAuditEvent,
+): OptalePublicMcpAuditEvent {
+  const {
+    toolName: _toolName,
+    internalToolName: _internalToolName,
+    error,
+    ...rest
+  } = event;
+  const productToolName =
+    event.productToolName ||
+    (event.toolName ? productMcpClientToolName(event.toolName) : undefined);
+  return {
+    ...rest,
+    ...(productToolName ? { productToolName } : {}),
+    ...(error ? { error: productizeOptaleMcpText(error).slice(0, 500) } : {}),
+  };
+}
+
+export function redactOptaleMcpAuditSummaryForClient(
+  summary: OptaleMcpAuditSummary,
+): OptalePublicMcpAuditSummary {
+  return {
+    ...summary,
+    recentEvents: summary.recentEvents.map(redactOptaleMcpAuditEventForClient),
+  };
 }
 
 export async function readOptaleMcpAuditEvents(

@@ -3,8 +3,12 @@ import assert from "node:assert/strict";
 import { NextRequest } from "next/server";
 import { proxy } from "@/proxy";
 
-function makeReq(pathname: string, cookies: Record<string, string> = {}) {
-  const url = new URL(pathname, "http://localhost:4000");
+function makeReq(
+  pathname: string,
+  cookies: Record<string, string> = {},
+  origin = "http://localhost:4000",
+) {
+  const url = new URL(pathname, origin);
   const cookieHeader = Object.entries(cookies)
     .map(([k, v]) => `${k}=${v}`)
     .join("; ");
@@ -31,6 +35,59 @@ test("proxy passes through every path when KB_PASSWORD is unset", async () => {
       // NextResponse.next() emits a 200 response with the rsc-rewritten header.
       assert.equal(res.status, 200);
     }
+  } finally {
+    if (prev !== undefined) process.env.KB_PASSWORD = prev;
+  }
+});
+
+test("proxy blocks public Brain APIs when password auth is disabled", async () => {
+  const prev = process.env.KB_PASSWORD;
+  delete process.env.KB_PASSWORD;
+  try {
+    const res = await proxy(
+      makeReq("/api/optale/brain/memory", {}, "https://observatory.optale.com"),
+    );
+    assert.equal(res.status, 403);
+    assert.deepEqual(await res.json(), {
+      error: "BrainAuthRequired",
+      message:
+        "Optale Brain APIs require authentication before exposing scoped Brain data on public hosts.",
+    });
+  } finally {
+    if (prev !== undefined) process.env.KB_PASSWORD = prev;
+  }
+});
+
+test("proxy blocks public Optale control-plane APIs when password auth is disabled", async () => {
+  const prev = process.env.KB_PASSWORD;
+  delete process.env.KB_PASSWORD;
+  try {
+    for (const path of [
+      "/api/optale/command-center",
+      "/api/optale/context-registry",
+      "/api/optale/mcp-clients",
+      "/api/optale/mcp-policy",
+      "/api/optale/scopes",
+    ]) {
+      const res = await proxy(
+        makeReq(path, {}, "https://observatory.optale.com"),
+      );
+      assert.equal(res.status, 403, path);
+      assert.equal((await res.json()).error, "OptaleControlPlaneAuthRequired");
+    }
+  } finally {
+    if (prev !== undefined) process.env.KB_PASSWORD = prev;
+  }
+});
+
+test("proxy rejects malformed Command Brain bridge paths before route resolution", async () => {
+  const prev = process.env.KB_PASSWORD;
+  delete process.env.KB_PASSWORD;
+  try {
+    const res = await proxy(
+      makeReq("/api/optale/brain/command/brain/%E0%A4%A/promotions"),
+    );
+    assert.equal(res.status, 403);
   } finally {
     if (prev !== undefined) process.env.KB_PASSWORD = prev;
   }

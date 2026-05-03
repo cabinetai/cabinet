@@ -1,6 +1,11 @@
 import path from "path";
 import type { OptaleAgentScope } from "./product";
 import {
+  internalMcpServerIdForProduct,
+  productMcpServerDescription,
+  productMcpServerId,
+  productMcpServerName,
+  productMcpToolName,
   readOptaleBrainSources,
   readOptaleMcpServers,
   type OptaleMcpServerConfig,
@@ -53,6 +58,22 @@ export interface OptaleMcpPolicy {
   servers: OptaleMcpPolicyServer[];
 }
 
+export interface OptalePublicMcpPolicyServer extends Omit<
+  OptaleMcpPolicyServer,
+  "serverId" | "allowedTools" | "deniedTools"
+> {
+  id: string;
+  allowedTools: string[];
+  deniedTools: string[];
+}
+
+export interface OptalePublicMcpPolicy extends Omit<
+  OptaleMcpPolicy,
+  "servers"
+> {
+  servers: OptalePublicMcpPolicyServer[];
+}
+
 export interface OptaleMcpPolicyWriteInput {
   enforcementMode?: OptaleMcpEnforcementMode;
   commandCenterManaged?: boolean;
@@ -81,19 +102,25 @@ function stringArray(value: unknown): string[] {
   return Array.from(
     new Set(
       value
-        .filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "")
-        .map((entry) => entry.trim())
-    )
+        .filter(
+          (entry): entry is string =>
+            typeof entry === "string" && entry.trim() !== "",
+        )
+        .map((entry) => entry.trim()),
+    ),
   );
 }
 
 function permissionArray(value: unknown): OptaleMcpPermission[] {
   return stringArray(value).filter((entry): entry is OptaleMcpPermission =>
-    VALID_PERMISSIONS.has(entry as OptaleMcpPermission)
+    VALID_PERMISSIONS.has(entry as OptaleMcpPermission),
   );
 }
 
-function scopeArray(value: unknown, fallback: OptaleAgentScope[]): OptaleAgentScope[] {
+function scopeArray(
+  value: unknown,
+  fallback: OptaleAgentScope[],
+): OptaleAgentScope[] {
   const scopes = stringArray(value)
     .map(normalizeOptaleScope)
     .filter((entry): entry is OptaleAgentScope => Boolean(entry));
@@ -125,7 +152,9 @@ function defaultToolGroups(serverId: string): string[] {
   }
 }
 
-function defaultPermissions(server: OptaleMcpServerConfig): OptaleMcpPermission[] {
+function defaultPermissions(
+  server: OptaleMcpServerConfig,
+): OptaleMcpPermission[] {
   if (server.status !== "configured") return [];
   return ["read"];
 }
@@ -138,7 +167,7 @@ function brainSourcesForServer(serverId: string): string[] {
 
 function derivedRule(
   server: OptaleMcpServerConfig,
-  scope: OptaleAgentScope
+  scope: OptaleAgentScope,
 ): OptaleMcpPolicyServer {
   const scopeAllowed = server.scopes.includes(scope);
   return {
@@ -158,16 +187,17 @@ function derivedRule(
 function normalizePolicyServer(
   raw: unknown,
   fallback: OptaleMcpPolicyServer | undefined,
-  scope: OptaleAgentScope
+  scope: OptaleAgentScope,
 ): OptaleMcpPolicyServer | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const record = raw as Record<string, unknown>;
-  const serverId = trimString(record.serverId) || trimString(record.id) || fallback?.serverId;
+  const serverId =
+    trimString(record.serverId) || trimString(record.id) || fallback?.serverId;
   if (!serverId) return null;
   const enabled =
     typeof record.enabled === "boolean"
       ? record.enabled
-      : fallback?.enabled ?? true;
+      : (fallback?.enabled ?? true);
   const permissions = permissionArray(record.permissions);
   const toolGroups = stringArray(record.toolGroups);
 
@@ -190,9 +220,10 @@ function normalizePolicyServer(
     allowedTools: stringArray(record.allowedTools),
     deniedTools: stringArray(record.deniedTools),
     scopes: scopeArray(record.scopes, fallback?.scopes || [scope]),
-    brainSourceIds: stringArray(record.brainSourceIds || record.brainSources).length > 0
-      ? stringArray(record.brainSourceIds || record.brainSources)
-      : fallback?.brainSourceIds || [],
+    brainSourceIds:
+      stringArray(record.brainSourceIds || record.brainSources).length > 0
+        ? stringArray(record.brainSourceIds || record.brainSources)
+        : fallback?.brainSourceIds || [],
     description: trimString(record.description) || fallback?.description,
     notes: trimString(record.notes),
   };
@@ -211,20 +242,85 @@ function compactServer(rule: OptaleMcpPolicyServer): Record<string, unknown> {
       brainSourceIds: rule.brainSourceIds,
       notes: rule.notes,
     }).filter(([, value]) =>
-      Array.isArray(value) ? value.length > 0 : value !== undefined && value !== ""
-    )
+      Array.isArray(value)
+        ? value.length > 0
+        : value !== undefined && value !== "",
+    ),
   );
+}
+
+export function redactOptaleMcpPolicyServerForClient(
+  server: OptaleMcpPolicyServer,
+): OptalePublicMcpPolicyServer {
+  return {
+    id: productMcpServerId(server.serverId),
+    name: productMcpServerName(server.serverId, server.name),
+    enabled: server.enabled,
+    permissions: [...server.permissions],
+    toolGroups: [...server.toolGroups],
+    allowedTools: server.allowedTools.map((toolName) =>
+      productMcpToolName(server.serverId, toolName),
+    ),
+    deniedTools: server.deniedTools.map((toolName) =>
+      productMcpToolName(server.serverId, toolName),
+    ),
+    scopes: [...server.scopes],
+    brainSourceIds: [...server.brainSourceIds],
+    description: productMcpServerDescription(
+      server.serverId,
+      server.description,
+    ),
+    notes: productMcpServerDescription(server.serverId, server.notes),
+  };
+}
+
+export function redactOptaleMcpPolicyServersForClient(
+  servers: OptaleMcpPolicyServer[],
+): OptalePublicMcpPolicyServer[] {
+  return servers.map(redactOptaleMcpPolicyServerForClient);
+}
+
+export function redactOptaleMcpPolicyForClient(
+  policy: OptaleMcpPolicy,
+): OptalePublicMcpPolicy {
+  return {
+    ...policy,
+    servers: redactOptaleMcpPolicyServersForClient(policy.servers),
+  };
+}
+
+export function normalizeOptaleMcpPolicyWriteInputFromClient(
+  input: OptaleMcpPolicyWriteInput,
+): OptaleMcpPolicyWriteInput {
+  return {
+    ...input,
+    servers: input.servers?.map((server) => {
+      if (!server || typeof server !== "object" || Array.isArray(server)) {
+        return server;
+      }
+      const record = server as Record<string, unknown>;
+      const publicOrInternalId =
+        trimString(record.serverId) || trimString(record.id);
+      if (!publicOrInternalId) return record;
+      return {
+        ...record,
+        serverId: internalMcpServerIdForProduct(publicOrInternalId),
+      };
+    }),
+  };
 }
 
 function parsePolicyDocument(
   raw: unknown,
-  base: OptaleMcpPolicy
+  base: OptaleMcpPolicy,
 ): OptaleMcpPolicy {
   const record =
     raw && typeof raw === "object" && !Array.isArray(raw)
       ? (raw as Record<string, unknown>)
       : {};
-  const baseById = new Map(base.servers.map((server) => [server.serverId, server]));
+  const baseById = new Map(
+    base.servers.map((server) => [server.serverId, server]),
+  );
   const overrides = Array.isArray(record.servers) ? record.servers : [];
   const mergedById = new Map(baseById);
 
@@ -260,10 +356,11 @@ function parsePolicyDocument(
 }
 
 async function buildDerivedMcpPolicy(
-  cabinetPath?: string | null
+  cabinetPath?: string | null,
 ): Promise<OptaleMcpPolicy> {
   const cabinet = await readCabinetOptaleScope(cabinetPath);
-  const normalized = normalizeCabinetPath(cabinetPath, true) || ROOT_CABINET_PATH;
+  const normalized =
+    normalizeCabinetPath(cabinetPath, true) || ROOT_CABINET_PATH;
   return {
     version: 1,
     cabinetPath: normalized,
@@ -277,20 +374,23 @@ async function buildDerivedMcpPolicy(
     companyId: cabinet.companyId,
     userId: cabinet.userId,
     servers: readOptaleMcpServers().map((server) =>
-      derivedRule(server, cabinet.scope)
+      derivedRule(server, cabinet.scope),
     ),
   };
 }
 
 export async function readOptaleMcpPolicy(
-  cabinetPath?: string | null
+  cabinetPath?: string | null,
 ): Promise<OptaleMcpPolicy> {
   const base = await buildDerivedMcpPolicy(cabinetPath);
   const filePath = policyPath(base.cabinetPath);
   if (!(await fileExists(filePath))) return base;
 
   try {
-    return parsePolicyDocument(JSON.parse(await readFileContent(filePath)), base);
+    return parsePolicyDocument(
+      JSON.parse(await readFileContent(filePath)),
+      base,
+    );
   } catch {
     return base;
   }
@@ -298,11 +398,14 @@ export async function readOptaleMcpPolicy(
 
 export async function writeOptaleMcpPolicy(
   cabinetPath: string | undefined,
-  policy: OptaleMcpPolicyWriteInput
+  policy: OptaleMcpPolicyWriteInput,
 ): Promise<OptaleMcpPolicy> {
-  const normalized = normalizeCabinetPath(cabinetPath, true) || ROOT_CABINET_PATH;
+  const normalized =
+    normalizeCabinetPath(cabinetPath, true) || ROOT_CABINET_PATH;
   const base = await buildDerivedMcpPolicy(normalized);
-  const baseById = new Map(base.servers.map((server) => [server.serverId, server]));
+  const baseById = new Map(
+    base.servers.map((server) => [server.serverId, server]),
+  );
   const servers = Array.isArray(policy.servers)
     ? policy.servers
         .map((server) => {
@@ -314,7 +417,7 @@ export async function writeOptaleMcpPolicy(
           const normalizedServer = normalizePolicyServer(
             server,
             id ? baseById.get(id) : undefined,
-            base.scope
+            base.scope,
           );
           return normalizedServer ? compactServer(normalizedServer) : null;
         })
@@ -324,8 +427,7 @@ export async function writeOptaleMcpPolicy(
   const body = Object.fromEntries(
     Object.entries({
       version: 1,
-      enforcementMode:
-        policy.enforcementMode === "proxy" ? "proxy" : "prompt",
+      enforcementMode: policy.enforcementMode === "proxy" ? "proxy" : "prompt",
       defaultDecision: "deny",
       commandCenterManaged:
         typeof policy.commandCenterManaged === "boolean"
@@ -338,8 +440,10 @@ export async function writeOptaleMcpPolicy(
       updatedAt: policy.updatedAt || new Date().toISOString(),
       servers,
     }).filter(([, value]) =>
-      Array.isArray(value) ? value.length > 0 : value !== undefined && value !== ""
-    )
+      Array.isArray(value)
+        ? value.length > 0
+        : value !== undefined && value !== "",
+    ),
   );
 
   await ensureDirectory(path.dirname(filePath));
@@ -349,11 +453,11 @@ export async function writeOptaleMcpPolicy(
 
 export function resolveMcpPolicyServersForScope(
   policy: OptaleMcpPolicy,
-  agentScope?: OptaleAgentScope
+  agentScope?: OptaleAgentScope,
 ): OptaleMcpPolicyServer[] {
   const scope = agentScope || policy.scope;
   return policy.servers.filter(
-    (server) => server.enabled && server.scopes.includes(scope)
+    (server) => server.enabled && server.scopes.includes(scope),
   );
 }
 

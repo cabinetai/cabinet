@@ -19,7 +19,9 @@ function setIsolatedEnv(name: string, value?: string): void {
 }
 
 before(async () => {
-  tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "optale-command-center-test-"));
+  tempRoot = await fs.mkdtemp(
+    path.join(os.tmpdir(), "optale-command-center-test-"),
+  );
   setIsolatedEnv("CABINET_DATA_DIR", tempRoot);
   setIsolatedEnv("OPTALE_MCP_CLIENTS_JSON");
   setIsolatedEnv("OPTALE_MCP_CLIENTS_PATH");
@@ -36,7 +38,7 @@ before(async () => {
       "description: Command Center test cabinet",
       "",
     ].join("\n"),
-    "utf8"
+    "utf8",
   );
   await fs.mkdir(path.join(tempRoot, ".agents", "editor"), { recursive: true });
   await fs.writeFile(
@@ -61,7 +63,7 @@ before(async () => {
       "Editor persona.",
       "",
     ].join("\n"),
-    "utf8"
+    "utf8",
   );
   await fs.mkdir(path.join(tempRoot, ".cabinet-state", "optale-mcp", "audit"), {
     recursive: true,
@@ -94,9 +96,9 @@ before(async () => {
         ],
       },
       null,
-      2
+      2,
     )}\n`,
-    "utf8"
+    "utf8",
   );
   const auditDate = new Date().toISOString().slice(0, 10);
   const auditEvents = [
@@ -106,11 +108,13 @@ before(async () => {
       clientId: "command-center-client",
       authType: "bearer",
       method: "tools/call",
-      toolName: "optale_brain_summary",
+      toolName: "qmd__query",
+      internalToolName: "qmd__query",
       cabinetPath: ".",
       outcome: "ok",
       durationMs: 12,
       argumentKeys: ["cabinetPath"],
+      error: "QMD URL http://127.0.0.1:7333/mcp token=secret",
     },
     {
       timestamp: new Date().toISOString(),
@@ -127,9 +131,15 @@ before(async () => {
     },
   ];
   await fs.writeFile(
-    path.join(tempRoot, ".cabinet-state", "optale-mcp", "audit", `${auditDate}.jsonl`),
+    path.join(
+      tempRoot,
+      ".cabinet-state",
+      "optale-mcp",
+      "audit",
+      `${auditDate}.jsonl`,
+    ),
     `${auditEvents.map((event) => JSON.stringify(event)).join("\n")}\n`,
-    "utf8"
+    "utf8",
   );
 
   commandCenter = await import("./command-center-control");
@@ -159,18 +169,53 @@ test("readOptaleCommandCenterSnapshot returns cabinet operational state and cont
   assert.equal(snapshot.counts.activeMcpClients, 1);
   assert.equal(snapshot.counts.mcpToolCallsToday, 2);
   assert.equal(snapshot.mcpPolicy.scope, "system");
+  assert.equal(JSON.stringify(snapshot.mcpPolicy).includes("serverId"), false);
+  assert.equal(
+    JSON.stringify(snapshot.mcpPolicy).toLowerCase().includes("qmd"),
+    false,
+  );
   assert.equal(snapshot.mcp.counts.registryClients, 2);
   assert.equal(snapshot.mcp.counts.clientsWithBudgets, 1);
   assert.equal(snapshot.mcp.audit.enabled, true);
   assert.equal(snapshot.mcp.audit.toolCalls, 2);
   assert.equal(snapshot.mcp.audit.outcomes.ok, 1);
   assert.equal(snapshot.mcp.audit.outcomes.denied, 1);
-  assert.equal(snapshot.mcp.audit.clients[0]?.clientId, "command-center-client");
+  assert.equal(
+    snapshot.mcp.audit.clients[0]?.clientId,
+    "command-center-client",
+  );
   assert.equal(snapshot.mcp.audit.recentEvents[0]?.requestId, "audit-denied");
-  const client = snapshot.mcp.clients.find((entry) => entry.id === "command-center-client");
+  assert.equal(
+    snapshot.mcp.audit.recentEvents[0]?.productToolName,
+    "observatory_command_center_action",
+  );
+  assert.equal(
+    JSON.stringify(snapshot.mcp.audit).includes("internalToolName"),
+    false,
+  );
+  assert.equal(JSON.stringify(snapshot.mcp.audit).includes("toolName"), false);
+  assert.equal(JSON.stringify(snapshot.mcp.audit).includes("optale_"), false);
+  assert.equal(JSON.stringify(snapshot.mcp.clients).includes("optale_"), false);
+  assert.equal(
+    snapshot.mcp.audit.recentEvents[1]?.productToolName,
+    "sense_search_knowledge",
+  );
+  assert.equal(
+    snapshot.mcp.audit.recentEvents[1]?.error,
+    "Knowledge Search URL [configured-url] [secret]",
+  );
+  const client = snapshot.mcp.clients.find(
+    (entry) => entry.id === "command-center-client",
+  );
   assert.equal(client?.tokenConfigured, true);
-  assert.equal(client?.tokenHashPrefix, "a".repeat(12));
-  assert.equal(Object.prototype.hasOwnProperty.call(client || {}, "tokenSha256"), false);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(client || {}, "tokenHashPrefix"),
+    false,
+  );
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(client || {}, "tokenSha256"),
+    false,
+  );
   assert.ok(snapshot.controls.includes("launch_conversation"));
   assert.ok(snapshot.controls.includes("review_actions"));
 });
@@ -200,7 +245,7 @@ test("executeOptaleCommandCenterAction can create/update tasks and toggle agent 
   assert.equal(updated.ok, true);
   assert.equal(
     (updated as unknown as { task: { status: string } }).task.status,
-    "completed"
+    "completed",
   );
 
   const active = await commandCenter.executeOptaleCommandCenterAction({
@@ -212,7 +257,7 @@ test("executeOptaleCommandCenterAction can create/update tasks and toggle agent 
   assert.equal(active.ok, true);
   assert.equal(
     (active as unknown as { agent: { active: boolean } }).agent.active,
-    true
+    true,
   );
 
   const snapshot = await commandCenter.readOptaleCommandCenterSnapshot({

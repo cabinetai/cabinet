@@ -21,7 +21,12 @@ import {
   writeMemory,
   writePersona,
 } from "@/lib/agents/persona-manager";
-import { createTask, getAllTasks, updateTask, type AgentTask } from "@/lib/agents/task-inbox";
+import {
+  createTask,
+  getAllTasks,
+  updateTask,
+  type AgentTask,
+} from "@/lib/agents/task-inbox";
 import { normalizeRuntimeOverride } from "@/lib/agents/runtime-overrides";
 import { reloadDaemonSchedules } from "@/lib/agents/daemon-client";
 import {
@@ -30,15 +35,28 @@ import {
 } from "@/lib/cabinets/overview";
 import { normalizeCabinetPath } from "@/lib/cabinets/paths";
 import { getJob, executeJob, toggleJob } from "@/lib/jobs/job-manager";
-import { readOptaleMcpAuditSummary } from "@/lib/optale/mcp-audit-log";
 import {
-  listSanitizedOptaleMcpClients,
-  type SanitizedOptaleMcpClient,
+  readOptaleMcpAuditSummary,
+  redactOptaleMcpAuditSummaryForClient,
+} from "@/lib/optale/mcp-audit-log";
+import {
+  listPublicOptaleMcpClients,
+  type PublicSanitizedOptaleMcpClient,
 } from "@/lib/optale/mcp-client-registry";
-import { readOptaleMcpPolicy } from "@/lib/optale/mcp-policy";
-import type { AgentAction, DispatchedAction, PendingAction } from "@/types/actions";
+import {
+  readOptaleMcpPolicy,
+  redactOptaleMcpPolicyForClient,
+} from "@/lib/optale/mcp-policy";
+import type {
+  AgentAction,
+  DispatchedAction,
+  PendingAction,
+} from "@/types/actions";
 import type { CabinetVisibilityMode } from "@/types/cabinets";
-import type { ConversationMeta, ConversationStatus } from "@/types/conversations";
+import type {
+  ConversationMeta,
+  ConversationStatus,
+} from "@/types/conversations";
 
 export type OptaleCommandCenterAction =
   | "launch_conversation"
@@ -66,7 +84,10 @@ function trimString(value: unknown): string | undefined {
 
 function stringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((entry): entry is string => typeof entry === "string" && entry.trim() !== "");
+  return value.filter(
+    (entry): entry is string =>
+      typeof entry === "string" && entry.trim() !== "",
+  );
 }
 
 function numberOrFallback(value: unknown, fallback: number): number {
@@ -82,15 +103,19 @@ function taskStatus(value: unknown): AgentTask["status"] {
   ) {
     return value;
   }
-  throw new OptaleCommandCenterError("status must be pending, in_progress, completed, or failed");
+  throw new OptaleCommandCenterError(
+    "status must be pending, in_progress, completed, or failed",
+  );
 }
 
 function countBy<T extends string>(
   items: Array<Record<string, unknown>>,
   key: string,
-  values: T[]
+  values: T[],
 ): Record<T, number> {
-  const counts = Object.fromEntries(values.map((value) => [value, 0])) as Record<T, number>;
+  const counts = Object.fromEntries(
+    values.map((value) => [value, 0]),
+  ) as Record<T, number>;
   for (const item of items) {
     const value = item[key];
     if (typeof value === "string" && value in counts) {
@@ -103,59 +128,77 @@ function countBy<T extends string>(
 function sortTasks(tasks: AgentTask[]): AgentTask[] {
   return [...tasks].sort((left, right) => {
     if (left.priority !== right.priority) return left.priority - right.priority;
-    return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
+    return (
+      new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()
+    );
   });
 }
 
-function sortConversations(conversations: ConversationMeta[]): ConversationMeta[] {
+function sortConversations(
+  conversations: ConversationMeta[],
+): ConversationMeta[] {
   return [...conversations].sort(
     (left, right) =>
-      new Date(right.startedAt).getTime() - new Date(left.startedAt).getTime()
+      new Date(right.startedAt).getTime() - new Date(left.startedAt).getTime(),
   );
 }
 
-function mcpClientCounts(clients: SanitizedOptaleMcpClient[]) {
+function mcpClientCounts(clients: PublicSanitizedOptaleMcpClient[]) {
   return {
     clients: clients.length,
     enabledClients: clients.filter((client) => client.enabled).length,
     disabledClients: clients.filter((client) => !client.enabled).length,
-    registryClients: clients.filter((client) => client.source === "registry").length,
-    legacyEnvClients: clients.filter((client) => client.source === "legacy-env").length,
-    clientsWithBudgets: clients.filter((client) => client.budget?.dailyToolCalls).length,
+    registryClients: clients.filter((client) => client.source === "registry")
+      .length,
+    legacyEnvClients: clients.filter((client) => client.source === "legacy-env")
+      .length,
+    clientsWithBudgets: clients.filter(
+      (client) => client.budget?.dailyToolCalls,
+    ).length,
     auditEnabledClients: clients.filter((client) => client.auditEnabled).length,
-    remoteActionClients: clients.filter((client) => client.remoteActionsEnabled).length,
+    remoteActionClients: clients.filter((client) => client.remoteActionsEnabled)
+      .length,
   };
 }
 
-export async function readOptaleCommandCenterSnapshot(input: {
-  cabinetPath?: string;
-  visibilityMode?: CabinetVisibilityMode;
-  limit?: number;
-} = {}) {
+export async function readOptaleCommandCenterSnapshot(
+  input: {
+    cabinetPath?: string;
+    visibilityMode?: CabinetVisibilityMode;
+    limit?: number;
+  } = {},
+) {
   const cabinetPath = normalizeCabinetPath(input.cabinetPath, true) || ".";
   const visibilityMode = input.visibilityMode || "own";
   const limit = Math.max(1, Math.min(input.limit || 100, 500));
   const overview = await readCabinetOverview(cabinetPath, { visibilityMode });
   const visiblePaths = overview.visibleCabinets.map((cabinet) => cabinet.path);
 
-  const [conversationGroups, taskGroups, mcpPolicy, mcpClients, mcpAudit] = await Promise.all([
-    Promise.all(
-      visiblePaths.map((path) =>
-        listConversationMetas({ cabinetPath: path, limit: Math.max(limit, 200) })
-      )
-    ),
-    Promise.all(visiblePaths.map((path) => getAllTasks(undefined, path))),
-    readOptaleMcpPolicy(cabinetPath),
-    listSanitizedOptaleMcpClients(),
-    readOptaleMcpAuditSummary({ limit: 25 }),
-  ]);
+  const [conversationGroups, taskGroups, mcpPolicy, mcpClients, mcpAudit] =
+    await Promise.all([
+      Promise.all(
+        visiblePaths.map((path) =>
+          listConversationMetas({
+            cabinetPath: path,
+            limit: Math.max(limit, 200),
+          }),
+        ),
+      ),
+      Promise.all(visiblePaths.map((path) => getAllTasks(undefined, path))),
+      readOptaleMcpPolicy(cabinetPath),
+      listPublicOptaleMcpClients(),
+      readOptaleMcpAuditSummary({ limit: 25 }),
+    ]);
 
-  const conversations = sortConversations(conversationGroups.flat()).slice(0, limit);
+  const conversations = sortConversations(conversationGroups.flat()).slice(
+    0,
+    limit,
+  );
   const tasks = sortTasks(taskGroups.flat()).slice(0, limit);
   const mcpCounts = mcpClientCounts(mcpClients);
   const pendingActions = conversations.reduce(
     (total, conversation) => total + (conversation.pendingActions?.length || 0),
-    0
+    0,
   );
 
   return {
@@ -164,10 +207,10 @@ export async function readOptaleCommandCenterSnapshot(input: {
     children: overview.children,
     visibleCabinets: overview.visibleCabinets,
     visibilityMode,
-    mcpPolicy,
+    mcpPolicy: redactOptaleMcpPolicyForClient(mcpPolicy),
     mcp: {
       clients: mcpClients,
-      audit: mcpAudit,
+      audit: redactOptaleMcpAuditSummaryForClient(mcpAudit),
       counts: mcpCounts,
     },
     controls: [
@@ -194,13 +237,19 @@ export async function readOptaleCommandCenterSnapshot(input: {
       taskStatus: countBy(
         taskGroups.flat() as unknown as Array<Record<string, unknown>>,
         "status",
-        ["pending", "in_progress", "completed", "failed"]
+        ["pending", "in_progress", "completed", "failed"],
       ),
       conversations: conversationGroups.flat().length,
       conversationStatus: countBy(
         conversationGroups.flat() as unknown as Array<Record<string, unknown>>,
         "status",
-        ["idle", "running", "completed", "failed", "cancelled"] satisfies ConversationStatus[]
+        [
+          "idle",
+          "running",
+          "completed",
+          "failed",
+          "cancelled",
+        ] satisfies ConversationStatus[],
       ),
       pendingActions,
     },
@@ -243,7 +292,7 @@ async function launchConversation(body: Record<string, unknown>) {
       providerId: conversationInput.providerId,
       adapterType: conversationInput.adapterType,
       adapterConfig: conversationInput.adapterConfig,
-    }
+    },
   );
   const conversationCabinetPath = conversationInput.cabinetPath ?? cabinetPath;
   const conversation = await startConversationRun({
@@ -263,13 +312,13 @@ async function launchConversation(body: Record<string, unknown>) {
       const existingContext = await readMemory(
         agentSlug,
         "context.md",
-        completion.meta.cabinetPath || conversationCabinetPath
+        completion.meta.cabinetPath || conversationCabinetPath,
       );
       await writeMemory(
         agentSlug,
         "context.md",
         `${existingContext}\n\n## ${new Date().toISOString()}\n${completion.meta.contextSummary}`,
-        completion.meta.cabinetPath || conversationCabinetPath
+        completion.meta.cabinetPath || conversationCabinetPath,
       );
     },
   });
@@ -314,10 +363,12 @@ async function updateCommandCenterTask(body: Record<string, unknown>) {
       status: taskStatus(body.status),
       result: trimString(body.result),
       linkedConversationId: trimString(body.linkedConversationId),
-      linkedConversationCabinetPath: trimString(body.linkedConversationCabinetPath),
+      linkedConversationCabinetPath: trimString(
+        body.linkedConversationCabinetPath,
+      ),
       startedAt: trimString(body.startedAt),
     },
-    normalizeCabinetPath(trimString(body.cabinetPath), true)
+    normalizeCabinetPath(trimString(body.cabinetPath), true),
   );
   if (!task) throw new OptaleCommandCenterError("Task not found", 404);
   return { task };
@@ -332,7 +383,11 @@ async function setAgentActive(body: Record<string, unknown>) {
   const persona = await readPersona(slug, cabinetPath);
   if (!persona) throw new OptaleCommandCenterError("Agent not found", 404);
 
-  await writePersona(persona.slug, { active: body.active }, persona.cabinetPath);
+  await writePersona(
+    persona.slug,
+    { active: body.active },
+    persona.cabinetPath,
+  );
   invalidatePersonasCache();
   invalidateCabinetOverviewCache(persona.cabinetPath || ".");
   await reloadDaemonSchedules().catch(() => {});
@@ -362,13 +417,18 @@ async function toggleCommandCenterJob(body: Record<string, unknown>) {
 
 async function stopConversation(body: Record<string, unknown>) {
   const conversationId = trimString(body.conversationId);
-  if (!conversationId) throw new OptaleCommandCenterError("conversationId is required");
+  if (!conversationId)
+    throw new OptaleCommandCenterError("conversationId is required");
   const cabinetPath = normalizeCabinetPath(trimString(body.cabinetPath), false);
   const meta = await readConversationMeta(conversationId, cabinetPath);
   if (!meta) throw new OptaleCommandCenterError("Conversation not found", 404);
 
   await stopDaemonSession(conversationId);
-  await finalizeConversation(conversationId, { status: "failed", exitCode: 1 }, cabinetPath);
+  await finalizeConversation(
+    conversationId,
+    { status: "failed", exitCode: 1 },
+    cabinetPath,
+  );
   publishConversationEvent({
     type: "task.updated",
     taskId: conversationId,
@@ -379,13 +439,19 @@ async function stopConversation(body: Record<string, unknown>) {
   return { conversationId, stopped: true };
 }
 
-function mergeActionEdit(item: PendingAction, edit: Partial<AgentAction> | undefined): PendingAction {
-  return edit ? { ...item, action: { ...item.action, ...edit } as AgentAction } : item;
+function mergeActionEdit(
+  item: PendingAction,
+  edit: Partial<AgentAction> | undefined,
+): PendingAction {
+  return edit
+    ? { ...item, action: { ...item.action, ...edit } as AgentAction }
+    : item;
 }
 
 async function reviewActions(body: Record<string, unknown>) {
   const conversationId = trimString(body.conversationId);
-  if (!conversationId) throw new OptaleCommandCenterError("conversationId is required");
+  if (!conversationId)
+    throw new OptaleCommandCenterError("conversationId is required");
   const cabinetPath = normalizeCabinetPath(trimString(body.cabinetPath), false);
   const meta = await readConversationMeta(conversationId, cabinetPath);
   if (!meta) throw new OptaleCommandCenterError("Conversation not found", 404);
@@ -417,7 +483,8 @@ async function reviewActions(body: Record<string, unknown>) {
           id: item.id,
           action: item.action,
           status: "rejected",
-          reason: item.warnings.find((warning) => warning.severity === "hard")?.code,
+          reason: item.warnings.find((warning) => warning.severity === "hard")
+            ?.code,
           dispatchedAt: new Date().toISOString(),
         });
         continue;
@@ -430,9 +497,13 @@ async function reviewActions(body: Record<string, unknown>) {
 
   const results = await dispatchApprovedActions(
     meta,
-    toDispatch.map((item) => ({ id: item.id, action: item.action }))
+    toDispatch.map((item) => ({ id: item.id, action: item.action })),
   );
-  const allDispatched = [...(meta.dispatchedActions || []), ...rejected, ...results];
+  const allDispatched = [
+    ...(meta.dispatchedActions || []),
+    ...rejected,
+    ...results,
+  ];
   await writeConversationMeta({
     ...meta,
     pendingActions: remaining,
@@ -446,7 +517,7 @@ async function reviewActions(body: Record<string, unknown>) {
       pendingActions: remaining.length,
       dispatchedActions: allDispatched.length,
     },
-    meta.cabinetPath
+    meta.cabinetPath,
   );
   publishConversationEvent({
     type: "task.updated",
@@ -468,7 +539,9 @@ export async function executeOptaleCommandCenterAction(body: unknown) {
     throw new OptaleCommandCenterError("JSON body is required");
   }
   const record = body as Record<string, unknown>;
-  const action = trimString(record.action) as OptaleCommandCenterAction | undefined;
+  const action = trimString(record.action) as
+    | OptaleCommandCenterAction
+    | undefined;
   if (!action) throw new OptaleCommandCenterError("action is required");
 
   let result: Record<string, unknown>;

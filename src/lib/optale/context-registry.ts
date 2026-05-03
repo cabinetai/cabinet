@@ -66,6 +66,171 @@ export type OptaleContextRegistry = {
   };
 };
 
+export type OptalePublicMcpServerConfig = Pick<
+  OptaleMcpServerConfig,
+  "name" | "scopes" | "description" | "status"
+> & {
+  id: string;
+};
+
+export type OptalePublicBrainSource = Omit<OptaleBrainSource, "mcpServerId"> & {
+  mcpServer?: string;
+};
+
+export type OptalePublicContextRegistry = Omit<
+  OptaleContextRegistry,
+  "commandCenter" | "mcp" | "brainSources"
+> & {
+  commandCenter: Omit<OptaleContextRegistry["commandCenter"], "origin"> & {
+    origin: string | null;
+  };
+  mcp: Omit<OptaleContextRegistry["mcp"], "servers"> & {
+    servers: OptalePublicMcpServerConfig[];
+  };
+  brainSources: OptalePublicBrainSource[];
+};
+
+const PRODUCT_MCP_SERVERS: Record<string, { id: string; name: string }> = {
+  qmd: { id: "knowledge-search", name: "Knowledge Search" },
+  graphiti: { id: "sense-graph", name: "Sense Graph" },
+  oag: { id: "action-graph", name: "Action Graph" },
+  gitnexus: { id: "code-intelligence", name: "Code Intelligence" },
+  twenty: { id: "crm", name: "CRM" },
+  plane: { id: "delivery", name: "Delivery" },
+  matrix: { id: "communications", name: "Communications" },
+  "optale-agents": { id: "agent-workspace", name: "Agent Workspace" },
+};
+
+const PRODUCT_DOWNSTREAM_TOOL_NAMES: Record<string, string> = {
+  qmd__status: "sense_knowledge_status",
+  qmd__query: "sense_search_knowledge",
+  graphiti__get_status: "sense_graph_status",
+  graphiti__search_nodes: "sense_search_graph_nodes",
+  graphiti__search_memory_facts: "sense_search_graph_facts",
+  graphiti__get_episodes: "sense_graph_episodes",
+  honcho__peer_card: "sense_memory_profile",
+  honcho__peer_context: "sense_memory_context",
+  honcho__peer_sessions: "sense_memory_sessions",
+  honcho__conclusions_list: "sense_memory_conclusions",
+  honcho__peers_list: "sense_memory_peers",
+  honcho__queue_status: "sense_memory_queue",
+  oag__status: "ontology_status",
+  oag__graph: "ontology_entity_graph",
+  dreams__stats: "sense_dream_stats",
+  dreams__proposals: "sense_dream_proposals",
+  dreams__rejections: "sense_dream_rejections",
+  dreams__rules: "sense_dream_rules",
+  dreams__proposal_action: "sense_dream_proposal_action",
+  dreams__ask: "sense_dream_ask",
+};
+const PRODUCT_OBSERVATORY_TOOL_NAMES: Record<string, string> = {
+  optale_context_registry: "observatory_context",
+  optale_list_cabinets: "observatory_list_spaces",
+  optale_brain_summary: "observatory_brain_summary",
+  optale_mcp_policy: "observatory_mcp_policy",
+  optale_command_center_snapshot: "observatory_command_center_snapshot",
+  optale_command_center_action: "observatory_command_center_action",
+};
+const PRODUCT_DOWNSTREAM_TOOL_NAME_SET = new Set(
+  Object.values(PRODUCT_DOWNSTREAM_TOOL_NAMES),
+);
+
+export function productizeOptaleMcpText(text: string): string {
+  return text
+    .replace(/https?:\/\/[^\s"'<>]+/gi, "[configured-url]")
+    .replace(
+      /\/(?:home|usr|bin|mnt|tmp|var|srv|opt|etc)\/[^\s"')\]}<>]*/g,
+      "[server-path]",
+    )
+    .replace(
+      /\b[A-Z0-9_]*(?:TOKEN|SECRET|PASSWORD|API_KEY|KEY)[A-Z0-9_]*\s*[:=]\s*[^\s"'<>]+/gi,
+      "[secret]",
+    )
+    .replace(/\bBearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [secret]")
+    .replace(/\boa_mcp_[A-Za-z0-9._~+/=-]+/g, "[secret]")
+    .replace(/\bQMD\b/gi, "Knowledge Search")
+    .replace(/\bGraphiti\b/gi, "Sense Graph")
+    .replace(/\bOAG\b/gi, "Action Graph")
+    .replace(/\bHoncho\b/gi, "Sense Memory")
+    .replace(/\bGitNexus\b/gi, "Code Intelligence")
+    .replace(/\bTwenty\b/gi, "CRM")
+    .replace(/\bPlane\b/gi, "Delivery")
+    .replace(/\bMatrix\b/gi, "Communications");
+}
+
+export function productMcpServerId(serverId: string): string {
+  return PRODUCT_MCP_SERVERS[serverId]?.id || "managed-source";
+}
+
+export function productMcpServerName(
+  serverId: string,
+  fallback: string,
+): string {
+  return PRODUCT_MCP_SERVERS[serverId]?.name || "Managed Source";
+}
+
+export function productMcpServerDescription(
+  serverId: string,
+  fallback: string | undefined,
+): string | undefined {
+  if (!fallback) return undefined;
+  if (!PRODUCT_MCP_SERVERS[serverId]) {
+    return "Managed source governed by Optale policy.";
+  }
+  return productizeOptaleMcpText(fallback);
+}
+
+export function internalMcpServerIdForProduct(id: string): string {
+  const normalized = id.trim();
+  if (!normalized) return normalized;
+  if (PRODUCT_MCP_SERVERS[normalized]) return normalized;
+  const match = Object.entries(PRODUCT_MCP_SERVERS).find(
+    ([, product]) => product.id === normalized,
+  );
+  return match?.[0] || normalized;
+}
+
+export function productMcpToolName(serverId: string, toolName: string): string {
+  const normalized = toolName.trim();
+  if (!normalized) return normalized;
+  if (PRODUCT_DOWNSTREAM_TOOL_NAME_SET.has(normalized)) return normalized;
+  const prefixed = normalized.includes("__")
+    ? normalized
+    : `${serverId}__${normalized}`;
+  const mapped = PRODUCT_DOWNSTREAM_TOOL_NAMES[prefixed];
+  if (mapped) return mapped;
+  if (serverId !== "optale-agents" || /^[a-z0-9-]+__/.test(normalized)) {
+    return "sense_downstream_call";
+  }
+  return normalized;
+}
+
+export function productMcpClientToolName(toolName: string): string {
+  const normalized = toolName.trim();
+  if (!normalized) return normalized;
+  const observatoryTool = PRODUCT_OBSERVATORY_TOOL_NAMES[normalized];
+  if (observatoryTool) return observatoryTool;
+  if (PRODUCT_DOWNSTREAM_TOOL_NAME_SET.has(normalized)) return normalized;
+  const separator = normalized.indexOf("__");
+  if (separator > 0) {
+    return productMcpToolName(normalized.slice(0, separator), normalized);
+  }
+  return "sense_downstream_call";
+}
+
+export function toPublicOptaleMcpServer(
+  server: OptaleMcpServerConfig,
+): OptalePublicMcpServerConfig {
+  return {
+    id: productMcpServerId(server.id),
+    name: productMcpServerName(server.id, server.name),
+    scopes: [...server.scopes],
+    description:
+      productMcpServerDescription(server.id, server.description) || "",
+    status: server.status,
+  };
+}
+
 function envUrl(name: string, fallback: string): string {
   return process.env[name]?.trim() || fallback;
 }
@@ -302,5 +467,25 @@ export function readOptaleContextRegistry(): OptaleContextRegistry {
       crossScopeRule:
         "Company and personal brain access must cross scopes only through explicit membership, sharing, or Command Center policy.",
     },
+  };
+}
+
+export function readPublicOptaleContextRegistry(): OptalePublicContextRegistry {
+  const registry = readOptaleContextRegistry();
+  return {
+    ...registry,
+    commandCenter: {
+      ...registry.commandCenter,
+      origin: registry.commandCenter.origin ? "[configured]" : null,
+    },
+    mcp: {
+      ...registry.mcp,
+      servers: registry.mcp.servers.map(toPublicOptaleMcpServer),
+    },
+    brainSources: registry.brainSources.map(({ mcpServerId, ...source }) => ({
+      ...source,
+      description: productizeOptaleMcpText(source.description),
+      ...(mcpServerId ? { mcpServer: productMcpServerId(mcpServerId) } : {}),
+    })),
   };
 }
