@@ -48,6 +48,7 @@ import type {
   OptaleAuditEventSeverity,
   OptaleAuditEventSource,
 } from "@/lib/optale/audit-event-log";
+import type { OptaleOperationalSpineBinding } from "@/lib/optale/operational-spine";
 
 const KIND_LABELS: Record<OptaleActionKind, string> = {
   command: "Command",
@@ -75,6 +76,17 @@ const FILTERS: Array<{
 ];
 
 type OptaleCommandView = "actions" | "runs" | "policy" | "lineage" | "audit";
+type InspectorValue = string | number | boolean | null | undefined;
+
+interface InspectorField {
+  label: string;
+  value: InspectorValue;
+}
+
+interface InspectorEvidence {
+  label: string;
+  value: string | number | boolean;
+}
 
 const COMMAND_VIEW_LABELS: Record<OptaleCommandView, string> = {
   actions: "Actions",
@@ -189,6 +201,142 @@ function auditSeverityTone(severity: OptaleAuditEventSeverity): string {
     return "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300";
   }
   return "border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
+}
+
+function inspectorValue(value: InspectorValue): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "boolean") return value ? "true" : "false";
+  return String(value);
+}
+
+function InspectorPanel({
+  title,
+  subtitle,
+  badge,
+  href,
+  fields,
+  evidence,
+  spine,
+}: {
+  title: string;
+  subtitle?: string;
+  badge?: { label: string; tone: string };
+  href?: string;
+  fields: InspectorField[];
+  evidence: InspectorEvidence[];
+  spine?: OptaleOperationalSpineBinding;
+}) {
+  const visibleFields = fields.filter((field) => inspectorValue(field.value));
+  const spineRefs = spine ? Object.values(spine.refs) : [];
+
+  return (
+    <aside className="rounded-lg border border-border bg-card p-4 shadow-sm xl:sticky xl:top-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="truncate text-sm font-semibold text-foreground">
+            {title}
+          </h3>
+          {subtitle ? (
+            <p className="mt-1 truncate text-xs text-muted-foreground">
+              {subtitle}
+            </p>
+          ) : null}
+        </div>
+        {badge ? (
+          <span
+            className={cn(
+              "shrink-0 rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
+              badge.tone,
+            )}
+          >
+            {badge.label}
+          </span>
+        ) : null}
+      </div>
+
+      {href && href !== "#" ? (
+        <a
+          href={href}
+          className="mt-3 inline-flex rounded-md border border-border bg-background px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Open source
+        </a>
+      ) : null}
+
+      {visibleFields.length > 0 ? (
+        <div className="mt-4 grid gap-2">
+          {visibleFields.map((field) => (
+            <div
+              key={field.label}
+              className="rounded-md border border-border/70 bg-background px-2 py-1.5"
+            >
+              <div className="text-[10px] font-medium text-muted-foreground">
+                {field.label}
+              </div>
+              <div className="mt-0.5 break-words text-xs text-foreground">
+                {inspectorValue(field.value)}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="mt-4">
+        <div className="mb-2 text-[11px] font-medium text-muted-foreground">
+          Evidence
+        </div>
+        {evidence.length === 0 ? (
+          <div className="rounded-md border border-border/70 bg-background px-2 py-2 text-xs text-muted-foreground">
+            No evidence attached.
+          </div>
+        ) : (
+          <div className="grid gap-1.5">
+            {evidence.map((item, index) => (
+              <div
+                key={`${item.label}:${index}`}
+                className="rounded-md border border-border/70 bg-background px-2 py-1.5"
+              >
+                <div className="text-[10px] font-medium text-muted-foreground">
+                  {item.label}
+                </div>
+                <div className="mt-0.5 break-words text-xs text-foreground">
+                  {inspectorValue(item.value)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {spineRefs.length > 0 ? (
+        <div className="mt-4">
+          <div className="mb-2 text-[11px] font-medium text-muted-foreground">
+            Spine Refs
+          </div>
+          <div className="grid gap-1.5">
+            {spineRefs.map((ref) => (
+              <div
+                key={ref.capability}
+                className="rounded-md border border-border/70 bg-background px-2 py-1.5"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {ref.capability.replaceAll("_", " ")}
+                  </span>
+                  <span className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                    {ref.status}
+                  </span>
+                </div>
+                <div className="mt-0.5 break-all text-[11px] text-foreground">
+                  {ref.ref}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </aside>
+  );
 }
 
 function matchesAction(
@@ -353,6 +501,16 @@ export function OptaleActionRegistryWorkspace({
   const section = useAppStore((state) => state.section);
   const setSection = useAppStore((state) => state.setSection);
   const [search, setSearch] = useState("");
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+  const [selectedPolicyDecisionId, setSelectedPolicyDecisionId] = useState<
+    string | null
+  >(null);
+  const [selectedLineageEdgeId, setSelectedLineageEdgeId] = useState<
+    string | null
+  >(null);
+  const [selectedAuditEventId, setSelectedAuditEventId] = useState<
+    string | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const activeView = commandViewFromSlug(
@@ -467,6 +625,40 @@ export function OptaleActionRegistryWorkspace({
       matchesAuditEvent(event, trimmedSearch),
     );
   }, [auditLog?.events, search]);
+
+  const selectedRun = useMemo(
+    () =>
+      filteredRuns.find((run) => run.id === selectedRunId) ||
+      filteredRuns[0] ||
+      null,
+    [filteredRuns, selectedRunId],
+  );
+
+  const selectedPolicyDecision = useMemo(
+    () =>
+      filteredPolicyDecisions.find(
+        (decision) => decision.id === selectedPolicyDecisionId,
+      ) ||
+      filteredPolicyDecisions[0] ||
+      null,
+    [filteredPolicyDecisions, selectedPolicyDecisionId],
+  );
+
+  const selectedLineageEdge = useMemo(
+    () =>
+      filteredLineageEdges.find((edge) => edge.id === selectedLineageEdgeId) ||
+      filteredLineageEdges[0] ||
+      null,
+    [filteredLineageEdges, selectedLineageEdgeId],
+  );
+
+  const selectedAuditEvent = useMemo(
+    () =>
+      filteredAuditEvents.find((event) => event.id === selectedAuditEventId) ||
+      filteredAuditEvents[0] ||
+      null,
+    [filteredAuditEvents, selectedAuditEventId],
+  );
 
   const futureSurfaceCount = useMemo(() => {
     const summary =
@@ -957,54 +1149,87 @@ export function OptaleActionRegistryWorkspace({
             No action runs match the current search.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-border bg-card">
-            <div className="grid min-w-[760px] grid-cols-[minmax(180px,1.3fr)_120px_120px_minmax(160px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
-              <div>Action</div>
-              <div>Status</div>
-              <div>Kind</div>
-              <div>Evidence</div>
-              <div>Updated</div>
-            </div>
-            <div className="divide-y divide-border">
-              {filteredRuns.slice(0, 25).map((run) => (
-                <a
-                  key={run.id}
-                  href={run.href || "#"}
-                  className="grid min-w-[760px] grid-cols-[minmax(180px,1.3fr)_120px_120px_minmax(160px,1fr)_120px] gap-3 px-3 py-3 text-xs transition-colors hover:bg-muted/30"
-                >
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-foreground">
-                      {run.label}
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <div className="grid min-w-[760px] grid-cols-[minmax(180px,1.3fr)_120px_120px_minmax(160px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
+                <div>Action</div>
+                <div>Status</div>
+                <div>Kind</div>
+                <div>Evidence</div>
+                <div>Updated</div>
+              </div>
+              <div className="divide-y divide-border">
+                {filteredRuns.slice(0, 25).map((run) => (
+                  <button
+                    key={run.id}
+                    type="button"
+                    onClick={() => setSelectedRunId(run.id)}
+                    className={cn(
+                      "grid w-full min-w-[760px] grid-cols-[minmax(180px,1.3fr)_120px_120px_minmax(160px,1fr)_120px] gap-3 px-3 py-3 text-left text-xs transition-colors",
+                      selectedRun?.id === run.id
+                        ? "bg-primary/5"
+                        : "hover:bg-muted/30",
+                    )}
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-foreground">
+                        {run.label}
+                      </div>
+                      <div className="mt-0.5 truncate text-muted-foreground">
+                        {run.agentSlug || "command"} · {run.cabinetPath}
+                      </div>
                     </div>
-                    <div className="mt-0.5 truncate text-muted-foreground">
-                      {run.agentSlug || "command"} · {run.cabinetPath}
+                    <div>
+                      <span
+                        className={cn(
+                          "inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
+                          runStatusTone(run.status),
+                        )}
+                      >
+                        {run.status.replace("_", " ")}
+                      </span>
                     </div>
-                  </div>
-                  <div>
-                    <span
-                      className={cn(
-                        "inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
-                        runStatusTone(run.status),
-                      )}
-                    >
-                      {run.status.replace("_", " ")}
-                    </span>
-                  </div>
-                  <div className="text-muted-foreground">
-                    {run.kind === "command" ? "Command" : "Proposal"}
-                  </div>
-                  <div className="min-w-0 truncate text-muted-foreground">
-                    {run.evidence
-                      .slice(0, 2)
-                      .map((item) => `${item.label}: ${item.value}`)
-                      .join(" · ")}
-                  </div>
-                  <div className="text-muted-foreground">
-                    {formatGeneratedAt(run.updatedAt || run.createdAt)}
-                  </div>
-                </a>
-              ))}
+                    <div className="text-muted-foreground">
+                      {run.kind === "command" ? "Command" : "Proposal"}
+                    </div>
+                    <div className="min-w-0 truncate text-muted-foreground">
+                      {run.evidence
+                        .slice(0, 2)
+                        .map((item) => `${item.label}: ${item.value}`)
+                        .join(" · ")}
+                    </div>
+                    <div className="text-muted-foreground">
+                      {formatGeneratedAt(run.updatedAt || run.createdAt)}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
+            {selectedRun ? (
+              <InspectorPanel
+                title={selectedRun.label}
+                subtitle={`${selectedRun.agentSlug || "command-center"} · ${selectedRun.cabinetPath}`}
+                badge={{
+                  label: selectedRun.status.replace("_", " "),
+                  tone: runStatusTone(selectedRun.status),
+                }}
+                href={selectedRun.href}
+                fields={[
+                  { label: "Run ID", value: selectedRun.id },
+                  { label: "Action", value: String(selectedRun.action) },
+                  { label: "Action ID", value: selectedRun.actionId },
+                  { label: "Kind", value: selectedRun.kind },
+                  { label: "Source", value: selectedRun.source },
+                  { label: "Conversation", value: selectedRun.conversationId },
+                  { label: "Created", value: selectedRun.createdAt },
+                  { label: "Updated", value: selectedRun.updatedAt },
+                  { label: "Warnings", value: selectedRun.warningCount },
+                  { label: "Hard Blocked", value: selectedRun.hardBlocked },
+                ]}
+                evidence={selectedRun.evidence}
+                spine={selectedRun.operationalSpine}
+              />
+            ) : null}
           </div>
         )}
         </section>
@@ -1054,51 +1279,81 @@ export function OptaleActionRegistryWorkspace({
             No policy decisions match the current search.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-border bg-card">
-            <div className="grid min-w-[760px] grid-cols-[120px_minmax(180px,1fr)_180px_minmax(220px,1.2fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
-              <div>Outcome</div>
-              <div>Action</div>
-              <div>Reason</div>
-              <div>Explanation</div>
-              <div>Evaluated</div>
-            </div>
-            <div className="divide-y divide-border">
-              {filteredPolicyDecisions.slice(0, 25).map((decision) => (
-                <a
-                  key={decision.id}
-                  href={decision.href || "#"}
-                  className="grid min-w-[760px] grid-cols-[120px_minmax(180px,1fr)_180px_minmax(220px,1.2fr)_120px] gap-3 px-3 py-3 text-xs transition-colors hover:bg-muted/30"
-                >
-                  <div>
-                    <span
-                      className={cn(
-                        "inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
-                        policyOutcomeTone(decision.outcome),
-                      )}
-                    >
-                      {decision.outcome.replace("_", " ")}
-                    </span>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-foreground">
-                      {decision.action}
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <div className="grid min-w-[760px] grid-cols-[120px_minmax(180px,1fr)_180px_minmax(220px,1.2fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
+                <div>Outcome</div>
+                <div>Action</div>
+                <div>Reason</div>
+                <div>Explanation</div>
+                <div>Evaluated</div>
+              </div>
+              <div className="divide-y divide-border">
+                {filteredPolicyDecisions.slice(0, 25).map((decision) => (
+                  <button
+                    key={decision.id}
+                    type="button"
+                    onClick={() => setSelectedPolicyDecisionId(decision.id)}
+                    className={cn(
+                      "grid w-full min-w-[760px] grid-cols-[120px_minmax(180px,1fr)_180px_minmax(220px,1.2fr)_120px] gap-3 px-3 py-3 text-left text-xs transition-colors",
+                      selectedPolicyDecision?.id === decision.id
+                        ? "bg-primary/5"
+                        : "hover:bg-muted/30",
+                    )}
+                  >
+                    <div>
+                      <span
+                        className={cn(
+                          "inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
+                          policyOutcomeTone(decision.outcome),
+                        )}
+                      >
+                        {decision.outcome.replace("_", " ")}
+                      </span>
                     </div>
-                    <div className="mt-0.5 truncate text-muted-foreground">
-                      {decision.actor} · {decision.cabinetPath}
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-foreground">
+                        {decision.action}
+                      </div>
+                      <div className="mt-0.5 truncate text-muted-foreground">
+                        {decision.actor} · {decision.cabinetPath}
+                      </div>
                     </div>
-                  </div>
-                  <div className="truncate text-muted-foreground">
-                    {decision.reasonCode.replaceAll("_", " ")}
-                  </div>
-                  <div className="line-clamp-2 text-muted-foreground">
-                    {decision.explanation}
-                  </div>
-                  <div className="text-muted-foreground">
-                    {formatGeneratedAt(decision.evaluatedAt)}
-                  </div>
-                </a>
-              ))}
+                    <div className="truncate text-muted-foreground">
+                      {decision.reasonCode.replaceAll("_", " ")}
+                    </div>
+                    <div className="line-clamp-2 text-muted-foreground">
+                      {decision.explanation}
+                    </div>
+                    <div className="text-muted-foreground">
+                      {formatGeneratedAt(decision.evaluatedAt)}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
+            {selectedPolicyDecision ? (
+              <InspectorPanel
+                title={String(selectedPolicyDecision.action)}
+                subtitle={`${selectedPolicyDecision.actor} · ${selectedPolicyDecision.cabinetPath}`}
+                badge={{
+                  label: selectedPolicyDecision.outcome.replace("_", " "),
+                  tone: policyOutcomeTone(selectedPolicyDecision.outcome),
+                }}
+                href={selectedPolicyDecision.href}
+                fields={[
+                  { label: "Decision ID", value: selectedPolicyDecision.id },
+                  { label: "Subject Run", value: selectedPolicyDecision.subjectId },
+                  { label: "Action ID", value: selectedPolicyDecision.actionId },
+                  { label: "Reason", value: selectedPolicyDecision.reasonCode },
+                  { label: "Conversation", value: selectedPolicyDecision.conversationId },
+                  { label: "Evaluated", value: selectedPolicyDecision.evaluatedAt },
+                  { label: "Explanation", value: selectedPolicyDecision.explanation },
+                ]}
+                evidence={selectedPolicyDecision.evidence}
+                spine={selectedPolicyDecision.operationalSpine}
+              />
+            ) : null}
           </div>
         )}
         </section>
@@ -1153,56 +1408,93 @@ export function OptaleActionRegistryWorkspace({
             No lineage edges match the current search.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-border bg-card">
-            <div className="grid min-w-[840px] grid-cols-[140px_minmax(190px,1fr)_minmax(190px,1fr)_minmax(180px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
-              <div>Kind</div>
-              <div>Source</div>
-              <div>Target</div>
-              <div>Evidence</div>
-              <div>Created</div>
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <div className="grid min-w-[840px] grid-cols-[140px_minmax(190px,1fr)_minmax(190px,1fr)_minmax(180px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
+                <div>Kind</div>
+                <div>Source</div>
+                <div>Target</div>
+                <div>Evidence</div>
+                <div>Created</div>
+              </div>
+              <div className="divide-y divide-border">
+                {filteredLineageEdges.slice(0, 25).map((edge) => (
+                  <button
+                    key={edge.id}
+                    type="button"
+                    onClick={() => setSelectedLineageEdgeId(edge.id)}
+                    className={cn(
+                      "grid w-full min-w-[840px] grid-cols-[140px_minmax(190px,1fr)_minmax(190px,1fr)_minmax(180px,1fr)_120px] gap-3 px-3 py-3 text-left text-xs transition-colors",
+                      selectedLineageEdge?.id === edge.id
+                        ? "bg-primary/5"
+                        : "hover:bg-muted/30",
+                    )}
+                  >
+                    <div>
+                      <span className="inline-flex rounded-md border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
+                        {LINEAGE_EDGE_KIND_LABELS[edge.kind]}
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-foreground">
+                        {edge.source.label}
+                      </div>
+                      <div className="mt-0.5 truncate text-muted-foreground">
+                        {edge.source.kind.replaceAll("_", " ")} ·{" "}
+                        {edge.cabinetPath}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-foreground">
+                        {edge.target.label}
+                      </div>
+                      <div className="mt-0.5 truncate text-muted-foreground">
+                        {edge.target.kind.replaceAll("_", " ")} ·{" "}
+                        {edge.target.cabinetPath || edge.cabinetPath}
+                      </div>
+                    </div>
+                    <div className="min-w-0 truncate text-muted-foreground">
+                      {edge.evidence
+                        .slice(0, 2)
+                        .map((item) => `${item.label}: ${item.value}`)
+                        .join(" · ")}
+                    </div>
+                    <div className="text-muted-foreground">
+                      {formatGeneratedAt(edge.createdAt)}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="divide-y divide-border">
-              {filteredLineageEdges.slice(0, 25).map((edge) => (
-                <a
-                  key={edge.id}
-                  href={edge.target.href || edge.source.href || "#"}
-                  className="grid min-w-[840px] grid-cols-[140px_minmax(190px,1fr)_minmax(190px,1fr)_minmax(180px,1fr)_120px] gap-3 px-3 py-3 text-xs transition-colors hover:bg-muted/30"
-                >
-                  <div>
-                    <span className="inline-flex rounded-md border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
-                      {LINEAGE_EDGE_KIND_LABELS[edge.kind]}
-                    </span>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-foreground">
-                      {edge.source.label}
-                    </div>
-                    <div className="mt-0.5 truncate text-muted-foreground">
-                      {edge.source.kind.replaceAll("_", " ")} ·{" "}
-                      {edge.cabinetPath}
-                    </div>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-foreground">
-                      {edge.target.label}
-                    </div>
-                    <div className="mt-0.5 truncate text-muted-foreground">
-                      {edge.target.kind.replaceAll("_", " ")} ·{" "}
-                      {edge.target.cabinetPath || edge.cabinetPath}
-                    </div>
-                  </div>
-                  <div className="min-w-0 truncate text-muted-foreground">
-                    {edge.evidence
-                      .slice(0, 2)
-                      .map((item) => `${item.label}: ${item.value}`)
-                      .join(" · ")}
-                  </div>
-                  <div className="text-muted-foreground">
-                    {formatGeneratedAt(edge.createdAt)}
-                  </div>
-                </a>
-              ))}
-            </div>
+            {selectedLineageEdge ? (
+              <InspectorPanel
+                title={`${selectedLineageEdge.source.label} -> ${selectedLineageEdge.target.label}`}
+                subtitle={`${selectedLineageEdge.source.kind.replaceAll("_", " ")} to ${selectedLineageEdge.target.kind.replaceAll("_", " ")}`}
+                badge={{
+                  label: LINEAGE_EDGE_KIND_LABELS[selectedLineageEdge.kind],
+                  tone: "border-primary/25 bg-primary/10 text-primary",
+                }}
+                href={
+                  selectedLineageEdge.target.href ||
+                  selectedLineageEdge.source.href
+                }
+                fields={[
+                  { label: "Edge ID", value: selectedLineageEdge.id },
+                  { label: "Kind", value: selectedLineageEdge.kind },
+                  { label: "Source ID", value: selectedLineageEdge.source.id },
+                  { label: "Target ID", value: selectedLineageEdge.target.id },
+                  { label: "Cabinet", value: selectedLineageEdge.cabinetPath },
+                  { label: "Run ID", value: selectedLineageEdge.runId },
+                  {
+                    label: "Policy Decision",
+                    value: selectedLineageEdge.policyDecisionId,
+                  },
+                  { label: "Created", value: selectedLineageEdge.createdAt },
+                ]}
+                evidence={selectedLineageEdge.evidence}
+                spine={selectedLineageEdge.operationalSpine}
+              />
+            ) : null}
           </div>
         )}
         </section>
@@ -1255,63 +1547,101 @@ export function OptaleActionRegistryWorkspace({
             No audit events match the current search.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-border bg-card">
-            <div className="grid min-w-[920px] grid-cols-[110px_140px_minmax(190px,1fr)_minmax(220px,1.3fr)_minmax(180px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
-              <div>Severity</div>
-              <div>Source</div>
-              <div>Subject</div>
-              <div>Summary</div>
-              <div>Evidence</div>
-              <div>Occurred</div>
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <div className="grid min-w-[920px] grid-cols-[110px_140px_minmax(190px,1fr)_minmax(220px,1.3fr)_minmax(180px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
+                <div>Severity</div>
+                <div>Source</div>
+                <div>Subject</div>
+                <div>Summary</div>
+                <div>Evidence</div>
+                <div>Occurred</div>
+              </div>
+              <div className="divide-y divide-border">
+                {filteredAuditEvents.slice(0, 25).map((event) => (
+                  <button
+                    key={event.id}
+                    type="button"
+                    onClick={() => setSelectedAuditEventId(event.id)}
+                    className={cn(
+                      "grid w-full min-w-[920px] grid-cols-[110px_140px_minmax(190px,1fr)_minmax(220px,1.3fr)_minmax(180px,1fr)_120px] gap-3 px-3 py-3 text-left text-xs transition-colors",
+                      selectedAuditEvent?.id === event.id
+                        ? "bg-primary/5"
+                        : "hover:bg-muted/30",
+                    )}
+                  >
+                    <div>
+                      <span
+                        className={cn(
+                          "inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
+                          auditSeverityTone(event.severity),
+                        )}
+                      >
+                        {event.severity}
+                      </span>
+                    </div>
+                    <div className="text-muted-foreground">
+                      {AUDIT_SOURCE_LABELS[event.source]}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-foreground">
+                        {event.subjectType.replaceAll("_", " ")}
+                      </div>
+                      <div className="mt-0.5 truncate text-muted-foreground">
+                        {event.subjectId}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-foreground">
+                        {event.summary}
+                      </div>
+                      <div className="mt-0.5 truncate text-muted-foreground">
+                        {event.actor} · {event.cabinetPath}
+                      </div>
+                    </div>
+                    <div className="min-w-0 truncate text-muted-foreground">
+                      {event.evidence
+                        .slice(0, 2)
+                        .map((item) => `${item.label}: ${item.value}`)
+                        .join(" · ")}
+                    </div>
+                    <div className="text-muted-foreground">
+                      {formatGeneratedAt(event.occurredAt)}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="divide-y divide-border">
-              {filteredAuditEvents.slice(0, 25).map((event) => (
-                <a
-                  key={event.id}
-                  href={event.href || "#"}
-                  className="grid min-w-[920px] grid-cols-[110px_140px_minmax(190px,1fr)_minmax(220px,1.3fr)_minmax(180px,1fr)_120px] gap-3 px-3 py-3 text-xs transition-colors hover:bg-muted/30"
-                >
-                  <div>
-                    <span
-                      className={cn(
-                        "inline-flex rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
-                        auditSeverityTone(event.severity),
-                      )}
-                    >
-                      {event.severity}
-                    </span>
-                  </div>
-                  <div className="text-muted-foreground">
-                    {AUDIT_SOURCE_LABELS[event.source]}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-foreground">
-                      {event.subjectType.replaceAll("_", " ")}
-                    </div>
-                    <div className="mt-0.5 truncate text-muted-foreground">
-                      {event.subjectId}
-                    </div>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-foreground">
-                      {event.summary}
-                    </div>
-                    <div className="mt-0.5 truncate text-muted-foreground">
-                      {event.actor} · {event.cabinetPath}
-                    </div>
-                  </div>
-                  <div className="min-w-0 truncate text-muted-foreground">
-                    {event.evidence
-                      .slice(0, 2)
-                      .map((item) => `${item.label}: ${item.value}`)
-                      .join(" · ")}
-                  </div>
-                  <div className="text-muted-foreground">
-                    {formatGeneratedAt(event.occurredAt)}
-                  </div>
-                </a>
-              ))}
-            </div>
+            {selectedAuditEvent ? (
+              <InspectorPanel
+                title={selectedAuditEvent.summary}
+                subtitle={`${AUDIT_SOURCE_LABELS[selectedAuditEvent.source]} · ${selectedAuditEvent.actor}`}
+                badge={{
+                  label: selectedAuditEvent.severity,
+                  tone: auditSeverityTone(selectedAuditEvent.severity),
+                }}
+                href={selectedAuditEvent.href}
+                fields={[
+                  { label: "Event ID", value: selectedAuditEvent.id },
+                  { label: "Kind", value: selectedAuditEvent.kind },
+                  { label: "Source", value: selectedAuditEvent.source },
+                  {
+                    label: "Subject",
+                    value: selectedAuditEvent.subjectType,
+                  },
+                  { label: "Subject ID", value: selectedAuditEvent.subjectId },
+                  { label: "Action", value: selectedAuditEvent.action },
+                  { label: "Cabinet", value: selectedAuditEvent.cabinetPath },
+                  {
+                    label: "Conversation",
+                    value: selectedAuditEvent.conversationId,
+                  },
+                  { label: "Occurred", value: selectedAuditEvent.occurredAt },
+                ]}
+                evidence={selectedAuditEvent.evidence}
+                spine={selectedAuditEvent.operationalSpine}
+              />
+            ) : null}
           </div>
         )}
         </section>
