@@ -705,19 +705,22 @@ export function RuntimeMatrixPicker({
   );
 
   useEffect(() => {
-    const requested = resolveSelectedProvider(
-      selectableProviders,
-      value.providerId ?? undefined,
-      undefined
-    );
-    if (requested && readyProviderIds.has(requested.id)) {
-      setActiveProviderId(requested.id);
-      return;
-    }
-    const firstReady = selectableProviders.find((provider) =>
-      readyProviderIds.has(provider.id)
-    );
-    setActiveProviderId(firstReady?.id ?? requested?.id ?? null);
+    const timer = window.setTimeout(() => {
+      const requested = resolveSelectedProvider(
+        selectableProviders,
+        value.providerId ?? undefined,
+        undefined
+      );
+      if (requested && readyProviderIds.has(requested.id)) {
+        setActiveProviderId(requested.id);
+        return;
+      }
+      const firstReady = selectableProviders.find((provider) =>
+        readyProviderIds.has(provider.id)
+      );
+      setActiveProviderId(firstReady?.id ?? requested?.id ?? null);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [readyProviderIds, selectableProviders, value.providerId]);
 
   const activeProviderIdValue = useMemo(() => {
@@ -1023,11 +1026,11 @@ function TerminalProviderPanel({
             Hacker mode
           </span>
           <span className="text-zinc-300">
-            Cabinet still writes to your KB — the agent uses its own tools.
+            Optale Observatory still writes to your KB — the agent uses its own tools.
             What you lose is the structured UI layer: no artifact extraction
             from the stream, no live summaries, no &quot;what happened&quot;
             panels. You&apos;re watching the raw CLI. Think of it as running
-            your own tmux inside Cabinet — for hackers who want to drive the
+            your own tmux inside Optale Observatory — for hackers who want to drive the
             CLI directly.
           </span>
         </p>
@@ -1037,16 +1040,14 @@ function TerminalProviderPanel({
           is wired for Claude, Cursor, and OpenCode.
         </p>
         <p className="text-zinc-400">
-          Want tighter Cabinet integration for your CLI?{" "}
+          Want tighter Optale Observatory integration for your CLI? Contact{" "}
           <a
-            href="https://discord.gg/hJa5TRTbTH"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="mailto:hello@optale.com"
             className="font-medium text-emerald-400 underline-offset-2 hover:underline"
           >
-            Join our Discord
+            hello@optale.com
           </a>{" "}
-          — happy to help wire up stream-parsing + session resume for it.
+          for stream parsing and session resume support.
         </p>
       </div>
     </div>

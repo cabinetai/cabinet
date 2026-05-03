@@ -17,11 +17,11 @@ declare global {
 }
 
 /**
- * Settings → About → Uninstall Cabinet (macOS Electron only).
+ * Settings → About → Uninstall Optale Observatory (macOS Electron only).
  *
  * Removes the .app bundle, caches, prefs, saved state, web storage, and
- * logs. Does NOT touch user data at `~/Library/Application Support/Cabinet/
- * cabinet-data` — your cabinet content is preserved and the path is shown
+ * logs. Does NOT touch user data at `~/Library/Application Support/Optale
+ * Observatory/data` — your space content is preserved and the path is shown
  * in the confirmation so you know where to find it.
  */
 export function UninstallSection() {
@@ -33,22 +33,23 @@ export function UninstallSection() {
     if (typeof window === "undefined") return;
     const b = window.CabinetDesktop;
     if (b && b.runtime === "electron" && b.platform === "darwin") {
-      setBridge(b);
+      const timer = window.setTimeout(() => setBridge(b), 0);
+      return () => window.clearTimeout(timer);
     }
   }, []);
 
   if (!bridge) return null;
 
-  const dataPath = "~/Library/Application Support/Cabinet/cabinet-data";
+  const dataPath = "~/Library/Application Support/Optale Observatory/data";
 
   const handleUninstall = async () => {
     const ok = window.confirm(
-      `Uninstall Cabinet?\n\n` +
+      `Uninstall Optale Observatory?\n\n` +
         `This removes the app from /Applications and clears caches, ` +
         `preferences, saved state, web storage, and logs.\n\n` +
-        `Your cabinet content at\n  ${dataPath}\nwill be preserved. ` +
+        `Your space content at\n  ${dataPath}\nwill be preserved. ` +
         `Open that folder in Finder if you want to back it up before reinstalling later.\n\n` +
-        `Cabinet will quit immediately after you confirm.`
+        `Optale Observatory will quit immediately after you confirm.`
     );
     if (!ok) return;
     setSubmitting(true);
@@ -69,10 +70,10 @@ export function UninstallSection() {
 
   return (
     <div className="border-t border-border pt-6">
-      <h3 className="text-[14px] font-semibold mb-1">Uninstall Cabinet</h3>
+      <h3 className="text-[14px] font-semibold mb-1">Uninstall Optale Observatory</h3>
       <p className="text-[12px] text-muted-foreground mb-3">
-        Remove Cabinet.app and Library caches/preferences/state/logs from your
-        Mac. Your cabinet content at{" "}
+        Remove the Optale Observatory app and Library caches/preferences/state/logs from your
+        Mac. Your space content at{" "}
         <span className="font-mono text-[11px] rounded bg-muted px-1 py-0.5">
           {dataPath}
         </span>{" "}
@@ -87,7 +88,7 @@ export function UninstallSection() {
         onClick={handleUninstall}
       >
         <Trash2 className="h-3.5 w-3.5" />
-        {submitting ? "Uninstalling…" : "Uninstall Cabinet"}
+        {submitting ? "Uninstalling…" : "Uninstall Optale Observatory"}
       </Button>
       {error && (
         <p className="mt-2 text-[11px] text-destructive">{error}</p>

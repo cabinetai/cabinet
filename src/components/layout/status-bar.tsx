@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, ArrowRight, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal } from "lucide-react";
+import { GitBranch, RefreshCw, Check, CloudDownload, X, ArrowRight, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal } from "lucide-react";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -12,44 +12,12 @@ import {
   selectDaemonLevel,
   useHealthStore,
 } from "@/stores/health-store";
-import { useGithubStatsStore } from "@/stores/github-stats-store";
 import { createConversation } from "@/lib/agents/conversation-client";
 import {
   TaskRuntimePicker,
   type TaskRuntimeSelection,
 } from "@/components/composer/task-runtime-picker";
 import { dedupFetch } from "@/lib/api/dedup-fetch";
-
-const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
-const GITHUB_REPO_URL = "https://github.com/hilash/cabinet";
-
-// Audit #094: each "Not installed" provider row needs a one-click path to
-// the canonical install instructions. Mapped by the provider id used by
-// /api/agents/providers — falls back to a generic search if the id is new.
-const PROVIDER_INSTALL_URLS: Record<string, string> = {
-  "claude-code": "https://docs.claude.com/en/docs/claude-code/quickstart",
-  "codex-cli": "https://github.com/openai/codex#installation",
-  codex: "https://github.com/openai/codex#installation",
-  "openai-codex": "https://github.com/openai/codex#installation",
-  "cursor-cli": "https://cursor.com/cli",
-  cursor: "https://cursor.com/cli",
-  "gemini-cli": "https://github.com/google-gemini/gemini-cli#installation",
-  gemini: "https://github.com/google-gemini/gemini-cli#installation",
-  opencode: "https://opencode.ai/docs/install",
-  pi: "https://github.com/PiAPI-CLI/pi#install",
-  "grok-cli": "https://docs.x.ai/docs/quickstart",
-  grok: "https://docs.x.ai/docs/quickstart",
-  "copilot-cli": "https://docs.github.com/copilot/github-copilot-in-the-cli/configuring-github-copilot-in-the-cli",
-  copilot: "https://docs.github.com/copilot/github-copilot-in-the-cli/configuring-github-copilot-in-the-cli",
-  "github-copilot": "https://docs.github.com/copilot/github-copilot-in-the-cli/configuring-github-copilot-in-the-cli",
-};
-
-function installUrlForProvider(id: string): string {
-  return (
-    PROVIDER_INSTALL_URLS[id] ||
-    `https://www.google.com/search?q=${encodeURIComponent(`${id} CLI install`)}`
-  );
-}
 
 function describeUncommittedStatus(s: "M" | "?" | "A" | "D" | "R"): string {
   switch (s) {
@@ -66,37 +34,6 @@ function describeUncommittedStatus(s: "M" | "?" | "A" | "D" | "R"): string {
   }
 }
 
-function DiscordIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M20.32 4.37a16.4 16.4 0 0 0-4.1-1.28.06.06 0 0 0-.07.03c-.18.32-.38.73-.52 1.06a15.16 15.16 0 0 0-4.56 0c-.15-.34-.35-.74-.53-1.06a.06.06 0 0 0-.07-.03c-1.43.24-2.8.68-4.1 1.28a.05.05 0 0 0-.02.02C3.77 8.17 3.12 11.87 3.44 15.53a.06.06 0 0 0 .02.04 16.52 16.52 0 0 0 5.03 2.54.06.06 0 0 0 .07-.02c.39-.54.74-1.12 1.04-1.73a.06.06 0 0 0-.03-.08 10.73 10.73 0 0 1-1.6-.77.06.06 0 0 1-.01-.1l.32-.24a.06.06 0 0 1 .06-.01c3.35 1.53 6.98 1.53 10.29 0a.06.06 0 0 1 .06 0c.1.08.21.16.32.24a.06.06 0 0 1-.01.1c-.51.3-1.05.56-1.6.77a.06.06 0 0 0-.03.08c.3.61.65 1.19 1.04 1.73a.06.06 0 0 0 .07.02 16.42 16.42 0 0 0 5.03-2.54.06.06 0 0 0 .02-.04c.38-4.23-.64-7.9-2.89-11.14a.04.04 0 0 0-.02-.02ZM9.68 13.3c-.98 0-1.78-.9-1.78-2s.79-2 1.78-2c.99 0 1.79.9 1.78 2 0 1.1-.8 2-1.78 2Zm4.64 0c-.98 0-1.78-.9-1.78-2s.79-2 1.78-2c.99 0 1.79.9 1.78 2 0 1.1-.79 2-1.78 2Z" />
-    </svg>
-  );
-}
-
-function GitHubIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M12 .5a12 12 0 0 0-3.8 23.38c.6.11.82-.26.82-.58v-2.24c-3.34.73-4.04-1.42-4.04-1.42-.55-1.37-1.33-1.73-1.33-1.73-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.22 1.83 1.22 1.06 1.8 2.8 1.28 3.48.98.11-.77.42-1.28.76-1.58-2.67-.3-5.47-1.32-5.47-5.86 0-1.3.47-2.36 1.23-3.2-.12-.3-.53-1.52.12-3.16 0 0 1-.32 3.3 1.22a11.67 11.67 0 0 1 6.02 0c2.3-1.54 3.3-1.22 3.3-1.22.65 1.64.24 2.86.12 3.16.77.84 1.23 1.9 1.23 3.2 0 4.55-2.8 5.56-5.48 5.86.43.37.81 1.08.81 2.19v3.25c0 .32.22.7.83.58A12 12 0 0 0 12 .5Z" />
-    </svg>
-  );
-}
-
-function formatGithubStars(stars: number) {
-  if (stars >= 10_000) return `${(stars / 1000).toFixed(1)}k`;
-  return new Intl.NumberFormat("en-US").format(stars);
-}
-
 // Audit #092: surface the last successful health check in the popover so
 // users can see how stale "Running"/"Down" actually is. "5s ago" is fine,
 // "11m ago" should make a green pill suspect.
@@ -109,36 +46,6 @@ function formatRelativeAgo(ts: number | null, now: number): string {
   if (min < 60) return `${min}m ago`;
   const hr = Math.round(min / 60);
   return `${hr}h ago`;
-}
-
-/* ── Star burst explosion particles ── */
-const BURST_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
-
-function StarExplosion() {
-  return (
-    <span className="pointer-events-none absolute inset-0" aria-hidden="true">
-      {BURST_ANGLES.map((angle, i) => {
-        const rad = (angle * Math.PI) / 180;
-        const dist = i % 2 === 0 ? 18 : 14;
-        const tx = Math.round(Math.cos(rad) * dist);
-        const ty = Math.round(Math.sin(rad) * dist);
-        return (
-          <span
-            key={angle}
-            className="absolute left-1/2 top-1/2 text-[7px] leading-none text-amber-400"
-            style={{
-              "--sb-x": `${tx}px`,
-              "--sb-y": `${ty}px`,
-              animation: "cabinet-star-burst 0.65s ease-out forwards",
-              animationDelay: `${i * 25}ms`,
-            } as React.CSSProperties}
-          >
-            ✦
-          </span>
-        );
-      })}
-    </span>
-  );
 }
 
 export function StatusBar() {
@@ -200,18 +107,6 @@ export function StatusBar() {
   const [showCommunityPopup, setShowCommunityPopup] = useState(false);
   const [pullStatus, setPullStatus] = useState<"idle" | "pulling" | "pulled" | "up-to-date" | "error">("idle");
   const [pulling, setPulling] = useState(false);
-  // Stars: shared store so cross-navigation re-mounts don't restart the
-  // load-and-animate sequence (which is what produced the visible flicker
-  // between fallback / mid-animation / final values). Component-local
-  // animation state is intentionally seeded from the store so re-mounts
-  // after the initial load skip the animation.
-  const githubStars = useGithubStatsStore((s) => s.stars);
-  const fetchStars = useGithubStatsStore((s) => s.fetchStars);
-  const hasFetchedStarsOnce = useGithubStatsStore((s) => s.hasFetchedOnce);
-  const [displayStars, setDisplayStars] = useState<number | null>(githubStars);
-  const [starsExploding, setStarsExploding] = useState(false);
-  const starsAnimRef = useRef<number | null>(null);
-  const starsAnimated = useRef(hasFetchedStarsOnce);
   const didAutoPullRef = useRef(false);
   const appLevel = useHealthStore(selectAppLevel);
   const daemonLevel = useHealthStore(selectDaemonLevel);
@@ -335,47 +230,6 @@ export function StatusBar() {
       clearInterval(interval);
     };
   }, []);
-
-  useEffect(() => {
-    void fetchStars();
-    const handleFocus = () => {
-      void fetchStars();
-    };
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, [fetchStars]);
-
-  // Animate the count exactly once per session — on the transition from
-  // "loading" (no value) to "loaded". Re-mounts after the value lands skip
-  // the animation entirely because the store already has the value and
-  // starsAnimated.current was seeded with hasFetchedStarsOnce on mount.
-  useEffect(() => {
-    if (githubStars === null) return;
-    if (starsAnimated.current) {
-      setDisplayStars(githubStars);
-      return;
-    }
-    starsAnimated.current = true;
-    const target = githubStars;
-    const duration = 2000;
-    const startTime = performance.now();
-    const tick = (now: number) => {
-      const progress = Math.min((now - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayStars(Math.round(target * eased));
-      if (progress < 1) {
-        starsAnimRef.current = requestAnimationFrame(tick);
-      } else {
-        setDisplayStars(target);
-        setStarsExploding(true);
-        setTimeout(() => setStarsExploding(false), 900);
-      }
-    };
-    starsAnimRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (starsAnimRef.current !== null) cancelAnimationFrame(starsAnimRef.current);
-    };
-  }, [githubStars]);
 
   return (
     <div className="relative flex items-center justify-between px-3 py-1 border-t border-border text-[11px] text-muted-foreground/60 bg-background">
@@ -556,17 +410,12 @@ export function StatusBar() {
                             : p.available ? "Not logged in"
                             : "Not installed"}
                           </span>
-                          {/* Audit #094: every "Not installed" row gets a link
-                              to the provider's canonical install docs. */}
                           {!p.available && (
-                            <a
-                              href={installUrlForProvider(p.id)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded bg-foreground px-1.5 py-0.5 text-[9px] font-medium text-background hover:bg-foreground/85"
+                            <span
+                              className="rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground"
                             >
-                              Install
-                            </a>
+                              Install in Settings
+                            </span>
                           )}
                         </span>
                       </div>
@@ -581,10 +430,10 @@ export function StatusBar() {
                         installKind === "electron-macos" ? (
                           <p className="text-[10px] text-muted-foreground">
                             {!appAlive && !daemonAlive
-                              ? "Both servers are down. Try quitting and reopening the Cabinet app."
+                              ? "Both servers are down. Try quitting and reopening Optale Observatory."
                               : !appAlive
-                              ? "The app server is not responding. Try quitting and reopening the Cabinet app."
-                              : "The background daemon is not running. Try quitting and reopening the Cabinet app. If the issue persists, check Activity Monitor for stuck Cabinet processes."}
+                              ? "The app server is not responding. Try quitting and reopening Optale Observatory."
+                              : "The background daemon is not running. Try quitting and reopening Optale Observatory. If the issue persists, check Activity Monitor for stuck Optale Observatory processes."}
                           </p>
                         ) : installKind === "source-managed" ? (
                           <p className="text-[10px] text-muted-foreground">
@@ -635,7 +484,7 @@ export function StatusBar() {
                   {/* All good state */}
                   {appAlive && daemonAlive && anyProviderReady && (
                     <p className="text-[10px] text-muted-foreground/60 pt-1 border-t border-border">
-                      Cabinet is fully operational. All features are available.
+                      Optale Observatory is fully operational. All features are available.
                     </p>
                   )}
                 </div>
@@ -713,7 +562,7 @@ export function StatusBar() {
           <button
             onClick={() => setSection({ type: "settings" })}
             className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-blue-500 hover:bg-muted hover:text-foreground transition-colors"
-            title={`Cabinet ${update.latest.version} is available`}
+            title={`Optale Observatory ${update.latest.version} is available`}
           >
             <CloudDownload className="h-3 w-3" />
             Update {update.latest.version} available
@@ -789,9 +638,9 @@ export function StatusBar() {
           <button
             onClick={pullAndRefresh}
             disabled={pulling}
-            aria-label="Pull latest changes from GitHub and refresh"
+            aria-label="Pull latest changes and refresh"
             className="flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
-            title="Pull latest from GitHub & refresh"
+            title="Pull latest changes & refresh"
           >
             <RefreshCw className={`h-3 w-3 ${pulling ? "animate-spin" : ""}`} />
             Sync
@@ -807,30 +656,20 @@ export function StatusBar() {
           Terminal
         </button>
       </div>
-      {/* Audit #018: status-bar carries live state on the left (status pill,
-          uncommitted, save state, sync). Help / Discord / Contribute /
-          Stars used to live as four separate pills competing visually with
-          the live state. They're now collapsed into a single Help & community
-          popover so the status bar stays readable at a glance. */}
+      {/* Status-bar help menu. */}
       <div className="relative flex items-center">
         <button
           type="button"
           onClick={() => setShowCommunityPopup((v) => !v)}
-          aria-label="Open Help & community menu"
+          aria-label="Open Help menu"
           aria-expanded={showCommunityPopup}
-          title="Help & community"
+          title="Help"
           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/55 px-2.5 py-1 text-muted-foreground transition-all hover:-translate-y-px hover:border-foreground/15 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
         >
           <HelpCircle className="h-3.5 w-3.5" />
           <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
             Help
           </span>
-          {displayStars !== null && (
-            <span className="-mr-0.5 inline-flex items-center gap-0.5 rounded-full bg-amber-500/15 px-1.5 py-px text-[9px] font-semibold text-amber-700 dark:text-amber-300">
-              <Star className="h-2.5 w-2.5 fill-current" />
-              {formatGithubStars(displayStars)}
-            </span>
-          )}
         </button>
         {showCommunityPopup && (
           <div className="absolute bottom-full right-0 mb-2 z-50 w-64 rounded-lg border border-border bg-background p-1.5 shadow-lg">
@@ -849,45 +688,16 @@ export function StatusBar() {
               </span>
             </button>
             <a
-              href={DISCORD_SUPPORT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:hello@optale.com"
               onClick={() => setShowCommunityPopup(false)}
               className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
             >
-              <DiscordIcon className="h-3.5 w-3.5 text-[#5865F2]" />
-              <span className="flex flex-col">
-                <span className="font-medium text-foreground">Chat on Discord</span>
-                <span className="text-[10px] text-muted-foreground">Support and feedback</span>
+              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
+                @
               </span>
-            </a>
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setShowCommunityPopup(false)}
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
-            >
-              <GitHubIcon className="h-3.5 w-3.5 text-foreground" />
               <span className="flex flex-col">
-                <span className="font-medium text-foreground">Contribute on GitHub</span>
-                <span className="text-[10px] text-muted-foreground">Source, issues, PRs</span>
-              </span>
-            </a>
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setShowCommunityPopup(false)}
-              className="relative flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
-            >
-              {starsExploding && <StarExplosion />}
-              <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-              <span className="flex flex-col">
-                <span className="font-medium text-foreground">
-                  {displayStars === null ? "Star Cabinet" : `${formatGithubStars(displayStars)} stars`}
-                </span>
-                <span className="text-[10px] text-muted-foreground">If you find it useful</span>
+                <span className="font-medium text-foreground">Contact Optale</span>
+                <span className="text-[10px] text-muted-foreground">hello@optale.com</span>
               </span>
             </a>
           </div>

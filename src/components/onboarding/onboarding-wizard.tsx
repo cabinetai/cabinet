@@ -1,24 +1,18 @@
 "use client";
 
-import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  ArrowUpRight,
   CheckCircle2,
-  Cloud,
   Check,
   ClipboardCheck,
   Copy,
-  ExternalLink,
-  House,
   Loader2,
   Rocket,
   ChevronDown,
-  ChevronRight,
   RefreshCw,
   Sparkles,
-  Star,
   Terminal,
   Users,
   XCircle,
@@ -28,10 +22,8 @@ import { HomeBlueprintBackground } from "@/components/onboarding/home-blueprint-
 import { isAgentProviderSelectable } from "@/lib/agents/provider-filters";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
 import type { ProviderInfo } from "@/types/agents";
-import type { RegistryTemplate } from "@/lib/registry/registry-manifest";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { showError } from "@/lib/ui/toast";
-import { RegistryBrowser } from "@/components/registry/registry-browser";
 import {
   ROOMS,
   ROOM_TYPES,
@@ -39,19 +31,8 @@ import {
   type RoomType,
   type StarterTeam,
 } from "@/lib/onboarding/rooms";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { getSuggestedProviderEffort } from "@/lib/agents/runtime-options";
 import { sendTelemetry } from "@/lib/telemetry/browser";
-import {
-  recordWaitlistView,
-  recordWaitlistStart,
-  submitWaitlistEmail,
-} from "@/lib/telemetry/waitlist-client";
 import { acknowledgeDisclaimer } from "@/components/layout/breaking-changes-warning";
 
 type OnboardingVerifyStatus =
@@ -108,141 +89,36 @@ interface SuggestedAgent {
   checked: boolean;
 }
 
-interface CommunityCard {
-  title: string;
-  description: string;
-  cta: string;
-  href?: string;
-  icon: ReactNode;
-  iconClassName: string;
-}
-
-interface CommunityStepConfig {
-  eyebrow: string;
-  title: string;
-  description: string;
-  aside?: string;
-  cards: CommunityCard[];
-  nextLabel?: string;
-}
-
-const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
-const GITHUB_REPO_URL = "https://github.com/hilash/cabinet";
-const GITHUB_STATS_URL = "/api/github/repo";
-const GITHUB_STARS_FALLBACK = 393;
 // Typewritten on the Welcome home step after the blueprint finishes drawing.
 const WELCOME_PARAGRAPH =
-  "Your Home is yours. Inside it, you'll set up rooms for different parts of your life: work, second brain, research, family. And every room has cabinets: your notes, your files, and an AI team quietly getting things done in the background.";
+  "Your Observatory is where spaces, agents, memory, governance, MCP access, traces, and evals come together. Set up one space now; the observability surfaces are already wired into the Optale brain.";
 const WELCOME_TYPE_START_MS = 4800; // begin typing shortly after heading fades in
 const WELCOME_TYPE_CHAR_MS = 32;
 
 // Step indices after the compress pass:
-// 0 intro · 1 welcome-home · 2 room-setup (pick + name + describe) ·
-// 3 team · 4 provider · 5 github · 6 discord · 7 cloud · 8 launch
-const COMMUNITY_START_STEP = 5;
-const COMMUNITY_END_STEP = 7;
-const STEP_COUNT = 9;
+// 0 intro · 1 welcome · 2 space-setup · 3 team · 4 provider · 5 launch
+const STEP_COUNT = 6;
 const STEP_WELCOME_HOME = 1;
 const STEP_ROOM_SETUP = 2;
 const STEP_TEAM = 3;
 const STEP_PROVIDER = 4;
+const STEP_LAUNCH = 5;
 
-/* ─── Colors from runcabinet.com ─── */
+/* ─── Optale Observatory onboarding palette ─── */
 const WEB = {
-  bg: "#FAF6F1",
-  bgWarm: "#F3EDE4",
+  bg: "#F8FAFC",
+  bgWarm: "#EEF6F7",
   bgCard: "#FFFFFF",
-  text: "#3B2F2F",
-  textSecondary: "#6B5B4F",
-  textTertiary: "#A89888",
-  accent: "#8B5E3C",
-  accentWarm: "#7A4F30",
-  accentBg: "#F5E6D3",
-  border: "#E8DDD0",
-  borderLight: "#F0E8DD",
-  borderDark: "#D4C4B0",
+  text: "#101820",
+  textSecondary: "#475569",
+  textTertiary: "#64748B",
+  accent: "#0F766E",
+  accentWarm: "#115E59",
+  accentBg: "#DDF7F3",
+  border: "#D7E3E7",
+  borderLight: "#E6EEF1",
+  borderDark: "#9FB6BE",
 } as const;
-
-function DiscordIcon({ className, style }: { className?: string; style?: CSSProperties }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-      style={style}
-    >
-      <path d="M20.32 4.37a16.4 16.4 0 0 0-4.1-1.28.06.06 0 0 0-.07.03c-.18.32-.38.73-.52 1.06a15.16 15.16 0 0 0-4.56 0c-.15-.34-.35-.74-.53-1.06a.06.06 0 0 0-.07-.03c-1.43.24-2.8.68-4.1 1.28a.05.05 0 0 0-.02.02C3.77 8.17 3.12 11.87 3.44 15.53a.06.06 0 0 0 .02.04 16.52 16.52 0 0 0 5.03 2.54.06.06 0 0 0 .07-.02c.39-.54.74-1.12 1.04-1.73a.06.06 0 0 0-.03-.08 10.73 10.73 0 0 1-1.6-.77.06.06 0 0 1-.01-.1l.32-.24a.06.06 0 0 1 .06-.01c3.35 1.53 6.98 1.53 10.29 0a.06.06 0 0 1 .06 0c.1.08.21.16.32.24a.06.06 0 0 1-.01.1c-.51.3-1.05.56-1.6.77a.06.06 0 0 0-.03.08c.3.61.65 1.19 1.04 1.73a.06.06 0 0 0 .07.02 16.42 16.42 0 0 0 5.03-2.54.06.06 0 0 0 .02-.04c.38-4.23-.64-7.9-2.89-11.14a.04.04 0 0 0-.02-.02ZM9.68 13.3c-.98 0-1.78-.9-1.78-2s.79-2 1.78-2c.99 0 1.79.9 1.78 2 0 1.1-.8 2-1.78 2Zm4.64 0c-.98 0-1.78-.9-1.78-2s.79-2 1.78-2c.99 0 1.79.9 1.78 2 0 1.1-.79 2-1.78 2Z" />
-    </svg>
-  );
-}
-
-function formatGithubStars(stars: number) {
-  if (stars >= 10_000) return `${(stars / 1000).toFixed(1)}k`;
-  return new Intl.NumberFormat("en-US").format(stars);
-}
-
-function CommunityCardTile({ card }: { card: CommunityCard }) {
-  const content = (
-    <>
-      <div
-        className="flex size-10 items-center justify-center rounded-xl border"
-        style={{
-          borderColor: WEB.borderLight,
-          background: WEB.accentBg,
-          color: WEB.accent,
-        }}
-      >
-        {card.icon}
-      </div>
-
-      <div className="mt-4 flex flex-col gap-1">
-        <p className="text-sm font-semibold" style={{ color: WEB.text }}>
-          {card.title}
-        </p>
-        <p className="text-sm leading-relaxed" style={{ color: WEB.textSecondary }}>
-          {card.description}
-        </p>
-      </div>
-    </>
-  );
-
-  if (!card.href) {
-    return (
-      <div
-        className="rounded-xl p-4"
-        style={{
-          border: `1px solid ${WEB.border}`,
-          background: WEB.bgCard,
-        }}
-      >
-        {content}
-      </div>
-    );
-  }
-
-  return (
-    <a
-      href={card.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group rounded-xl p-4 transition-all hover:-translate-y-0.5"
-      style={{
-        border: `1px solid ${WEB.border}`,
-        background: WEB.bgCard,
-      }}
-    >
-      {content}
-      <div
-        className="mt-4 inline-flex items-center gap-1 text-sm font-medium"
-        style={{ color: WEB.accent }}
-      >
-        <span>{card.cta}</span>
-        <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </div>
-    </a>
-  );
-}
 
 // Agent pre-check + mandatory-lock logic is now room-aware — see getKeywordChecks
 // and getAlwaysChecked below. The old KEYWORD_CHECKS / ALWAYS_CHECKED constants
@@ -292,22 +168,14 @@ function TerminalCommand({ command }: { command: string }) {
 }
 
 function TeamCarousel({
-  templates,
   roomType,
-  onSelect,
 }: {
-  templates: RegistryTemplate[];
   roomType: RoomType;
-  onSelect: (t: RegistryTemplate) => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Use real templates if loaded, otherwise fall back to room-filtered starter teams.
-  const fallbackTeams = STARTER_TEAMS.filter((t) => t.rooms.includes(roomType));
-  const items: (RegistryTemplate | PreMadeTeam)[] =
-    templates.length > 0 ? templates : fallbackTeams;
-  const isReal = templates.length > 0;
+  const items: PreMadeTeam[] = STARTER_TEAMS.filter((t) => t.rooms.includes(roomType));
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -340,8 +208,8 @@ function TeamCarousel({
     >
       <div ref={scrollRef} className="flex gap-2 will-change-transform">
         {doubled.map((item, i) => {
-          const agentCount = "agentCount" in item ? item.agentCount : ("agents" in item ? (item as PreMadeTeam).agents : 0);
-          const coverUrl = "coverUrl" in item ? item.coverUrl : null;
+          const agentCount = item.agents;
+          const coverUrl = null;
           return (
             <TiltCard
               key={`${item.name}-${i}`}
@@ -352,11 +220,9 @@ function TeamCarousel({
               style={{
                 border: `1px solid ${WEB.border}`,
                 background: WEB.bgCard,
-                cursor: isReal ? "pointer" : "default",
+                cursor: "default",
               }}
-              onClick={() => {
-                if (isReal) onSelect(item as RegistryTemplate);
-              }}
+              type="button"
             >
               <div
                 className="relative h-20 w-full"
@@ -398,7 +264,7 @@ function TeamCarousel({
 
 function IntroStep({ onNext }: { onNext: () => void }) {
   const [phase, setPhase] = useState(0);
-  // 0: nothing  1: card border + "cabinet" title  2: pronunciation + noun
+  // 0: nothing  1: card border + title  2: context
   // 3: def 1  4: def 2  5: def 3  6: tagline line 1  7: tagline line 2  8: button
 
   useEffect(() => {
@@ -418,7 +284,7 @@ function IntroStep({ onNext }: { onNext: () => void }) {
   return (
     <div className="mx-auto flex max-w-4xl flex-col items-center gap-8">
       <div className="flex flex-col lg:flex-row lg:items-center lg:gap-10 w-full">
-        {/* Dictionary Definition Card */}
+        {/* Product frame */}
         <div
           className="text-left rounded-2xl px-8 py-8 md:px-10 md:py-10 flex-1"
           style={{
@@ -432,68 +298,68 @@ function IntroStep({ onNext }: { onNext: () => void }) {
         >
           <div className="flex items-baseline gap-3 mb-1" style={fade(1)}>
             <h1
-              className="font-logo text-4xl sm:text-5xl tracking-tight italic"
+              className="font-sans text-4xl sm:text-5xl font-semibold tracking-normal"
               style={{ color: WEB.text }}
             >
-              cabinet
+              Optale Observatory
             </h1>
             <span
               className="font-mono text-xs"
               style={{ ...fade(2), color: WEB.textTertiary }}
             >
-              /&#x2C8;kab.&#x26A;.n&#x259;t/
+              spaces · brain · evals
             </span>
           </div>
           <p
-            className="font-mono text-xs italic mb-6"
+            className="font-mono text-xs mb-6"
             style={{ ...fade(2), color: WEB.textTertiary }}
           >
-            noun
+            operational control plane
           </p>
 
           <ol className="space-y-5 text-[15px] leading-relaxed">
             <li className="flex gap-3" style={fade(3)}>
-              <span className="font-logo italic text-lg mt-[-2px] shrink-0" style={{ color: WEB.accent }}>1.</span>
+              <span className="font-sans text-lg font-semibold mt-[-2px] shrink-0" style={{ color: WEB.accent }}>1.</span>
               <div>
                 <p style={{ color: WEB.textSecondary }}>
-                  A cupboard with shelves or drawers for storing or displaying items.
+                  A governed workspace for agents, jobs, files, MCP clients, and shared memory.
                 </p>
-                <p className="font-mono text-xs italic mt-1.5" style={{ color: WEB.textTertiary }}>
-                  &ldquo;a filing cabinet&rdquo;
+                <p className="font-mono text-xs mt-1.5" style={{ color: WEB.textTertiary }}>
+                  &ldquo;open the product space and review the active agents&rdquo;
                 </p>
               </div>
             </li>
             <li className="flex gap-3" style={fade(4)}>
-              <span className="font-logo italic text-lg mt-[-2px] shrink-0" style={{ color: WEB.accent }}>2.</span>
+              <span className="font-sans text-lg font-semibold mt-[-2px] shrink-0" style={{ color: WEB.accent }}>2.</span>
               <div>
                 <p style={{ color: WEB.textSecondary }}>
                   <span
                     className="font-mono text-[11px] uppercase tracking-wider mr-1.5 px-1.5 py-0.5 rounded"
-                    style={{ color: WEB.textTertiary, background: "#F5F0EB" }}
+                    style={{ color: WEB.textTertiary, background: WEB.bgWarm }}
                   >
-                    politics
+                    observability
                   </span>
-                  The committee of senior ministers responsible for controlling government policy.
+                  Trace what agents touched, which tools they used, and where policy stopped them.
                 </p>
-                <p className="font-mono text-xs italic mt-1.5" style={{ color: WEB.textTertiary }}>
-                  &ldquo;a cabinet meeting&rdquo;
+                <p className="font-mono text-xs mt-1.5" style={{ color: WEB.textTertiary }}>
+                  &ldquo;inspect MCP activity and eval drift before the next rollout&rdquo;
                 </p>
               </div>
             </li>
             <li className="flex gap-3" style={fade(5)}>
-              <span className="font-logo italic text-lg mt-[-2px] shrink-0" style={{ color: WEB.accent }}>3.</span>
+              <span className="font-sans text-lg font-semibold mt-[-2px] shrink-0" style={{ color: WEB.accent }}>3.</span>
               <div>
                 <p style={{ color: WEB.text }}>
                   <span
                     className="font-mono text-[11px] uppercase tracking-wider mr-1.5 px-1.5 py-0.5 rounded"
                     style={{ color: WEB.accent, background: WEB.accentBg }}
                   >
-                    software
+                    optale
                   </span>
-                  An AI-first knowledge base where a team of AI agents work for you 24/7 (no salary needed).
+                  The administrative app for Optale spaces, brain sources, governance, traces, and evals.
                 </p>
-                <p className="font-mono text-xs italic mt-1.5" style={{ color: WEB.textTertiary }}>
-                  &ldquo;I asked my cabinet to research the market and draft the blog post&rdquo;
+                <p className="font-mono text-xs mt-1.5" style={{ color: WEB.textTertiary }}>
+                  &ldquo;turn the brain on, connect the client, then run the check&rdquo;
                 </p>
               </div>
             </li>
@@ -502,23 +368,23 @@ function IntroStep({ onNext }: { onNext: () => void }) {
 
         {/* Tagline + CTA */}
         <div className="flex flex-col items-center lg:items-start gap-6 py-6 lg:py-0 lg:max-w-xs shrink-0">
-          <h2 className="text-center lg:text-left text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.1]">
-            <span className="font-logo italic" style={{ ...fade(6), color: WEB.text, display: "inline-block" }}>
-              Your knowledge base.
+          <h2 className="text-center lg:text-left text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-normal leading-[1.1]">
+            <span className="font-sans" style={{ ...fade(6), color: WEB.text, display: "inline-block" }}>
+              Your spaces.
             </span>
             <br />
             <span
-              className="font-logo italic"
+              className="font-sans"
               style={{
                 ...fade(7),
                 display: "inline-block",
-                background: "linear-gradient(135deg, #3B2F2F 0%, #8B5E3C 50%, #A0714D 100%)",
+                background: `linear-gradient(135deg, ${WEB.text} 0%, ${WEB.accent} 60%, #0891B2 100%)`,
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}
             >
-              Your AI team.
+              Your operating view.
             </span>
           </h2>
 
@@ -538,157 +404,7 @@ function IntroStep({ onNext }: { onNext: () => void }) {
   );
 }
 
-/* ─── Cabinet Created — animated tree after import ─── */
-
-function CabinetCreatedScreen({
-  cabinetName,
-  template,
-  homeName,
-  roomType,
-  onContinue,
-}: {
-  cabinetName: string;
-  template: RegistryTemplate;
-  homeName: string;
-  roomType: RoomType;
-  onContinue: () => void;
-}) {
-  const roomConfig = ROOMS[roomType];
-  const RoomIcon = roomConfig.icon;
-  const [visibleLines, setVisibleLines] = useState(0);
-  const [showButton, setShowButton] = useState(false);
-
-  const treeLines = useMemo(() => {
-    const lines: { text: string; indent: number; icon?: string }[] = [];
-    lines.push({ text: cabinetName, indent: 0, icon: "📦" });
-    lines.push({ text: ".cabinet", indent: 1 });
-    lines.push({ text: ".agents/", indent: 1 });
-    if (template.agentCount > 0) {
-      const count = template.agentCount;
-      lines.push({ text: `${count} agent${count > 1 ? "s" : ""} ready to work`, indent: 2, icon: "🤖" });
-    }
-    lines.push({ text: ".jobs/", indent: 1 });
-    if (template.jobCount > 0) {
-      const count = template.jobCount;
-      lines.push({ text: `${count} scheduled job${count > 1 ? "s" : ""}`, indent: 2, icon: "⏱" });
-    }
-    if (template.childCount > 0) {
-      lines.push({ text: `${template.childCount} sub-cabinet${template.childCount > 1 ? "s" : ""}`, indent: 2, icon: "📂" });
-    }
-    lines.push({ text: ".cabinet-state/", indent: 1 });
-    lines.push({ text: "index.md", indent: 1 });
-    return lines;
-  }, [cabinetName, template]);
-
-  useEffect(() => {
-    if (visibleLines >= treeLines.length) {
-      const t = setTimeout(() => setShowButton(true), 600);
-      return () => clearTimeout(t);
-    }
-    const t = setTimeout(
-      () => setVisibleLines((c) => c + 1),
-      visibleLines === 0 ? 500 : 250 + Math.random() * 150
-    );
-    return () => clearTimeout(t);
-  }, [visibleLines, treeLines.length]);
-
-  return (
-    <div className="mx-auto flex max-w-md flex-col items-center gap-8 animate-in fade-in duration-500">
-      <div className="text-center space-y-2">
-        <CheckCircle2 className="size-10 mx-auto" style={{ color: WEB.accent }} />
-        <h1 className="font-logo text-2xl tracking-tight italic" style={{ color: WEB.text }}>
-          Your cabinet has been created
-        </h1>
-        <p className="text-sm" style={{ color: WEB.textSecondary }}>
-          Everything is set up and ready to go.
-        </p>
-      </div>
-
-      {/* Home › Room breadcrumb */}
-      <div
-        className="flex items-center gap-2 text-[13px] animate-in fade-in slide-in-from-bottom-1 duration-500"
-        style={{ color: WEB.textSecondary }}
-      >
-        <span className="inline-flex items-center gap-1.5">
-          <House className="size-3.5" style={{ color: WEB.accent }} />
-          <span style={{ color: WEB.text, fontWeight: 500 }}>{homeName}</span>
-        </span>
-        <ChevronRight className="size-3.5" style={{ color: WEB.textTertiary }} />
-        <span className="inline-flex items-center gap-1.5">
-          <RoomIcon className="size-3.5" style={{ color: WEB.accent }} />
-          <span style={{ color: WEB.text, fontWeight: 500 }}>{roomConfig.label}</span>
-        </span>
-      </div>
-
-      {/* Animated tree */}
-      <div
-        className="w-full rounded-xl px-6 py-5 font-mono text-[13px]"
-        style={{
-          background: WEB.bgCard,
-          border: `1px solid ${WEB.border}`,
-          lineHeight: 1.25,
-        }}
-      >
-        {treeLines.map((line, i) => {
-          const isVisible = i < visibleLines;
-          const isRoot = i === 0;
-          // Build the tree connector prefix
-          let prefix = "";
-          if (!isRoot && line.indent === 1) {
-            // Check if this is the last indent-1 line
-            const hasMoreAtSameLevel = treeLines.slice(i + 1).some((l) => l.indent === 1);
-            prefix = hasMoreAtSameLevel ? "├── " : "└── ";
-          } else if (line.indent === 2) {
-            // Sub-item under a parent
-            const hasMoreSiblings = treeLines.slice(i + 1).some(
-              (l) => l.indent === 2 && treeLines.slice(i + 1).indexOf(l) < treeLines.slice(i + 1).findIndex((x) => x.indent <= 1)
-            );
-            prefix = "│   " + (hasMoreSiblings ? "├── " : "└── ");
-          }
-
-          return (
-            <div
-              key={i}
-              className="transition-all duration-300"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? "translateX(0)" : "translateX(-8px)",
-              }}
-            >
-              {isRoot ? (
-                <span style={{ color: WEB.accent, fontWeight: 600 }}>
-                  {line.icon} {line.text}
-                </span>
-              ) : (
-                <span style={{ color: WEB.textSecondary }}>
-                  <span style={{ color: WEB.borderDark }}>{prefix}</span>
-                  {line.icon ? `${line.icon} ` : ""}
-                  {line.text}
-                </span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Continue button */}
-      <button
-        onClick={onContinue}
-        className="inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-medium text-white transition-all hover:-translate-y-0.5 duration-300"
-        style={{
-          background: WEB.accent,
-          opacity: showButton ? 1 : 0,
-          transform: showButton ? "translateY(0)" : "translateY(8px)",
-        }}
-      >
-        Continue setup
-        <ArrowRight className="w-3.5 h-3.5" />
-      </button>
-    </div>
-  );
-}
-
-/* ─── Welcome Back — shown when .cabinet already exists ─── */
+/* ─── Welcome Back — shown when an existing local space is detected ─── */
 
 function WelcomeBackStep({
   cabinetName,
@@ -711,11 +427,11 @@ function WelcomeBackStep({
         style={{ opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(12px)" }}
       >
         <CheckCircle2 className="size-10 mx-auto" style={{ color: WEB.accent }} />
-        <h1 className="font-logo text-2xl tracking-tight italic" style={{ color: WEB.text }}>
+        <h1 className="font-sans font-semibold text-2xl tracking-normal" style={{ color: WEB.text }}>
           Welcome back{cabinetName ? ` to ${cabinetName}` : ""}
         </h1>
         <p className="text-sm leading-relaxed" style={{ color: WEB.textSecondary }}>
-          We found an existing cabinet here. Let&apos;s finish setting it up.
+          We found an existing space here. Let&apos;s finish setting it up.
         </p>
       </div>
 
@@ -744,7 +460,6 @@ function TeamBuildStep({
   maxAgents,
   toggleAgent,
   roomType,
-  homeName,
   mandatoryAgents,
   onBack,
   onNext,
@@ -757,7 +472,6 @@ function TeamBuildStep({
   maxAgents: number;
   toggleAgent: (slug: string) => void;
   roomType: RoomType;
-  homeName: string;
   mandatoryAgents: Set<string>;
   onBack: () => void;
   onNext: () => void;
@@ -840,25 +554,6 @@ function TeamBuildStep({
     }
   }, []);
 
-  const [registryTemplates, setRegistryTemplates] = useState<RegistryTemplate[]>([]);
-  const [importTemplate, setImportTemplate] = useState<RegistryTemplate | null>(null);
-  const [importOpen, setImportOpen] = useState(false);
-  const [importName, setImportName] = useState("");
-  const [importBusy, setImportBusy] = useState(false);
-  const [importError, setImportError] = useState<string | null>(null);
-  const [importedSlugs, setImportedSlugs] = useState<Set<string>>(new Set());
-  const [registryOpen, setRegistryOpen] = useState(false);
-  const [importedCabinet, setImportedCabinet] = useState<{ name: string; template: RegistryTemplate } | null>(null);
-
-  useEffect(() => {
-    fetch("/api/registry")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.templates) setRegistryTemplates(data.templates);
-      })
-      .catch(() => {});
-  }, []);
-
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase(1), 600),
@@ -868,49 +563,6 @@ function TeamBuildStep({
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  const handleImport = async () => {
-    if (!importTemplate) return;
-    setImportBusy(true);
-    setImportError(null);
-    try {
-      const res = await fetch("/api/registry/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slug: importTemplate.slug,
-          name: importName.trim() !== importTemplate.name ? importName.trim() : undefined,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        setImportError(data?.error || "Import failed");
-        setImportBusy(false);
-        return;
-      }
-      setImportedSlugs((prev) => new Set(prev).add(importTemplate.slug));
-      setImportOpen(false);
-      setImportedCabinet({ name: importName.trim() || importTemplate.name, template: importTemplate });
-      setImportTemplate(null);
-    } catch {
-      setImportError("Import failed. Check your connection.");
-    } finally {
-      setImportBusy(false);
-    }
-  };
-
-  // ── Success screen after import ──
-  if (importedCabinet) {
-    return (
-      <CabinetCreatedScreen
-        cabinetName={importedCabinet.name}
-        template={importedCabinet.template}
-        homeName={homeName}
-        roomType={roomType}
-        onContinue={onNext}
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col gap-5">
       {/* Title */}
@@ -918,11 +570,11 @@ function TeamBuildStep({
         className="text-center space-y-2 transition-all duration-500"
         style={{ opacity: 1 }}
       >
-        <h1 className="font-logo text-2xl tracking-tight italic">
+        <h1 className="font-sans font-semibold text-2xl tracking-normal">
           Build <span style={{ color: WEB.accent }}>your</span> team
         </h1>
         <p className="text-sm" style={{ color: WEB.textSecondary }}>
-          Each cabinet is an AI team — agents, tasks, and a shared knowledge base, working together as one.
+          Each space is an AI team: agents, tasks, and a shared knowledge base working together.
         </p>
       </div>
 
@@ -941,134 +593,18 @@ function TeamBuildStep({
             className="text-[11px] font-semibold uppercase tracking-wider"
             style={{ color: WEB.textTertiary }}
           >
-            Import a pre-made zero-human team
+            Local starter patterns
           </p>
-          <button
-            onClick={() => setRegistryOpen(true)}
-            className="text-[11px] font-semibold transition-colors"
-            style={{ color: WEB.accent }}
-          >
-            Browse all &rarr;
-          </button>
         </div>
         <div
           className="transition-opacity duration-500"
           style={{ opacity: phase >= 2 ? 1 : 0 }}
         >
           <TeamCarousel
-            templates={registryTemplates}
             roomType={roomType}
-            onSelect={(t) => {
-              setImportTemplate(t);
-              setImportName(t.name);
-              setImportError(null);
-              setImportOpen(true);
-            }}
           />
         </div>
-        {importedSlugs.size > 0 && (
-          <p
-            className="text-[10px] font-medium text-center mt-1"
-            style={{ color: WEB.accent }}
-          >
-            <CheckCircle2 className="inline size-3 mr-1 -mt-px" />
-            {importedSlugs.size} cabinet{importedSlugs.size > 1 ? "s" : ""} imported
-          </p>
-        )}
       </div>
-
-      {/* Import dialog */}
-      <Dialog open={importOpen} onOpenChange={(v) => { if (!importBusy) setImportOpen(v); }}>
-        <DialogContent
-          className="sm:max-w-md"
-          style={{ background: WEB.bg, border: `1px solid ${WEB.border}`, color: WEB.text }}
-        >
-          <DialogHeader>
-            <DialogTitle style={{ color: WEB.text }}>
-              Import {importTemplate?.name}
-            </DialogTitle>
-          </DialogHeader>
-          {importTemplate && (
-            <div className="space-y-4">
-              <p className="text-sm" style={{ color: WEB.textSecondary }}>
-                {importTemplate.description}
-              </p>
-              <div className="flex gap-4 text-xs" style={{ color: WEB.textTertiary }}>
-                <span>{importTemplate.agentCount} agents</span>
-                <span>{importTemplate.jobCount} jobs</span>
-                {importTemplate.childCount > 0 && (
-                  <span>{importTemplate.childCount} sub-cabinets</span>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium" style={{ color: WEB.textSecondary }}>
-                  Cabinet name
-                </label>
-                <input
-                  value={importName}
-                  onChange={(e) => setImportName(e.target.value)}
-                  className="w-full rounded-lg px-3 py-2 text-sm"
-                  style={{
-                    border: `1px solid ${WEB.border}`,
-                    background: WEB.bgCard,
-                    color: WEB.text,
-                    outline: "none",
-                  }}
-                />
-              </div>
-              {importError && (
-                <p className="text-xs" style={{ color: "#c0392b" }}>{importError}</p>
-              )}
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => setImportOpen(false)}
-                  disabled={importBusy}
-                  className="rounded-full px-4 py-2 text-sm font-medium transition-colors"
-                  style={{ color: WEB.textSecondary }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleImport}
-                  disabled={importBusy || !importName.trim()}
-                  className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-white transition-all disabled:opacity-40"
-                  style={{ background: WEB.accent }}
-                >
-                  {importBusy ? <Loader2 className="size-3.5 animate-spin" /> : <ArrowRight className="size-3.5" />}
-                  Import
-                </button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Registry browser — full-screen overlay */}
-      {registryOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col" style={{ background: WEB.bg }}>
-          <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${WEB.border}` }}>
-            <h2 className="font-logo text-xl italic" style={{ color: WEB.text }}>
-              Browse cabinets
-            </h2>
-            <button
-              onClick={() => setRegistryOpen(false)}
-              className="flex items-center justify-center size-8 rounded-full transition-colors"
-              style={{ color: WEB.textSecondary, background: WEB.bgWarm }}
-            >
-              <XCircle className="size-5" />
-            </button>
-          </div>
-          <div className="flex-1 overflow-auto">
-            <RegistryBrowser
-              onImported={(template, importedName) => {
-                setImportedSlugs((prev) => new Set(prev).add(template.slug));
-                setRegistryOpen(false);
-                setImportedCabinet({ name: importedName, template });
-              }}
-            />
-          </div>
-        </div>
-      )}
 
       {/* Agent selection */}
       <div
@@ -1538,7 +1074,7 @@ function AgentChatPreview({
   );
 }
 
-/* ─── Dot-grid background (from runcabinet.com) ─── */
+/* ─── Optale Observatory dot-grid background ─── */
 const dotGridStyle: React.CSSProperties = {
   backgroundImage: `radial-gradient(circle, ${WEB.borderDark} 0.5px, transparent 0.5px)`,
   backgroundSize: "32px 32px",
@@ -1550,10 +1086,7 @@ const STEP_NAMES: Record<number, string> = {
   [STEP_ROOM_SETUP]: "room-setup",
   [STEP_TEAM]: "team",
   [STEP_PROVIDER]: "provider",
-  5: "github",
-  6: "discord",
-  7: "cloud",
-  8: "launch",
+  [STEP_LAUNCH]: "launch",
 };
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
@@ -1563,43 +1096,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
     const stepName = STEP_NAMES[step] ?? `step-${step}`;
     sendTelemetry("onboarding.step", { step: stepName });
   }, [step]);
-
-  // Cabinet Cloud waitlist (replaces Tally form). View event fires when the
-  // cloud step is reached; start fires on first input; submit fires on success.
-  const [cloudEmail, setCloudEmail] = useState("");
-  const [cloudStatus, setCloudStatus] = useState<
-    "idle" | "submitting" | "success" | "already" | "error"
-  >("idle");
-  const cloudStartedRef = useRef(false);
-  const cloudViewedRef = useRef(false);
-  useEffect(() => {
-    if (step === 7 && !cloudViewedRef.current) {
-      cloudViewedRef.current = true;
-      recordWaitlistView("cabinet-onboarding");
-    }
-  }, [step]);
-  const handleCloudInput = useCallback((value: string) => {
-    setCloudEmail(value);
-    if (cloudStatus === "error" || cloudStatus === "already") setCloudStatus("idle");
-    if (!cloudStartedRef.current && value.length > 0) {
-      cloudStartedRef.current = true;
-      recordWaitlistStart("cabinet-onboarding");
-    }
-  }, [cloudStatus]);
-  const handleCloudSubmit = useCallback(async () => {
-    const trimmed = cloudEmail.trim();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setCloudStatus("error");
-      return;
-    }
-    setCloudStatus("submitting");
-    const result = await submitWaitlistEmail(trimmed, "cabinet-onboarding");
-    if (!result.ok) {
-      setCloudStatus("error");
-      return;
-    }
-    setCloudStatus(result.alreadyOnList ? "already" : "success");
-  }, [cloudEmail]);
 
   const [answers, setAnswers] = useState<OnboardingAnswers>({
     name: "",
@@ -1648,7 +1144,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const [agentsLoading, setAgentsLoading] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
-  const [githubStars, setGithubStars] = useState(GITHUB_STARS_FALLBACK);
   const [providersLoading, setProvidersLoading] = useState(true);
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
   const [expandedProvider, setExpandedProvider] = useState<string | null>(null);
@@ -1706,30 +1201,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
     () => (expandedProvider ? providers.find((p) => p.id === expandedProvider) || null : null),
     [expandedProvider, providers]
   );
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchGitHubStats = async () => {
-      try {
-        const res = await fetch(GITHUB_STATS_URL, {
-          signal: controller.signal,
-          cache: "no-store",
-        });
-        if (!res.ok) return;
-
-        const data = await res.json();
-        if (typeof data.stars === "number") {
-          setGithubStars(data.stars);
-        }
-      } catch {
-        // ignore
-      }
-    };
-
-    void fetchGitHubStats();
-    return () => controller.abort();
-  }, []);
 
   useEffect(() => {
     fetch("/api/system/cabinet-manifest")
@@ -1894,80 +1365,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const selectedAgentCount = suggestedAgents.filter(
     (agent) => agent.checked
   ).length;
-  const communitySteps: CommunityStepConfig[] = [
-    {
-      eyebrow: "GitHub",
-      title: "Help the Cabinet community grow",
-      description:
-        "A GitHub star helps more people discover Cabinet and join the community.",
-      aside:
-        "Cabinet is open source. If you like the vision, help us spread the word.",
-      nextLabel: "Next",
-      cards: [],
-    },
-    {
-      eyebrow: "Discord",
-      title: "Discord is where the good weirdness happens.",
-      description:
-        "This is where feedback turns into features, screenshots turn into debates, and somebody usually finds the edge case before it finds you.",
-      aside:
-        "If you want new features first and prefer 'come chat' over 'please submit a ticket,' this is your room.",
-      nextLabel: "Next",
-      cards: [
-        {
-          title: "Join the Discord",
-          description:
-            "Meet the people building Cabinet, see what's shipping, and toss ideas into the fire while they are still hot.",
-          cta: "Join the chat",
-          href: DISCORD_SUPPORT_URL,
-          icon: <DiscordIcon className="size-4" />,
-          iconClassName: "",
-        },
-        {
-          title: "Why people stay",
-          description:
-            "Early features, fast answers, behind-the-scenes progress, and the occasional delightful chaos of building in public.",
-          cta: "",
-          icon: <Sparkles className="size-4" />,
-          iconClassName: "",
-        },
-      ],
-    },
-    {
-      eyebrow: "Cabinet Cloud",
-      title: "Your Cabinet, anywhere. Your AI team, always on.",
-      description:
-        "Open your Cabinet from any device while your AI agents keep working — drafting, researching, organizing — even when your laptop is closed.",
-      aside:
-        "Cabinet Cloud is coming soon. Same product, none of the self-hosting plumbing.",
-      cards: [
-        {
-          title: "Connect from anywhere",
-          description:
-            "One Cabinet across phone, laptop, and browser. Pick up exactly where you left off, no setup required.",
-          cta: "",
-          icon: <Cloud className="size-4" />,
-          iconClassName: "",
-        },
-        {
-          title: "Agents that don't sleep",
-          description:
-            "Your AI team keeps running 24/7 in the background. Wake up to drafts written, inboxes triaged, and research done.",
-          cta: "",
-          icon: <Rocket className="size-4" />,
-          iconClassName: "",
-        },
-      ],
-    },
-  ];
-  const communityStep =
-    step >= COMMUNITY_START_STEP && step <= COMMUNITY_END_STEP
-      ? communitySteps[step - COMMUNITY_START_STEP]
-      : null;
-  const isGitHubCommunityStep = communityStep?.eyebrow === "GitHub";
   const launchDisabled = launching || selectedAgentCount === 0;
   const finalLaunchDisabled = launchDisabled || !disclaimerAccepted;
-  const starsLabel = `${formatGithubStars(githubStars)} GitHub stars`;
 
   /* ─── Shared inline styles (website tokens) ─── */
   const inputStyle: React.CSSProperties = {
@@ -2075,7 +1474,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
               >
                 <div className="text-center space-y-2.5">
                   <h1
-                    className="wh-item font-logo text-2xl tracking-tight italic"
+                    className="wh-item font-sans font-semibold text-2xl tracking-normal"
                     style={{ ["--wh-d" as string]: "4.6s" } as React.CSSProperties}
                   >
                     Welcome <span style={{ color: WEB.accent }}>home</span>
@@ -2151,15 +1550,15 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             </div>
           )}
 
-          {/* Step 2: Pick a room + name + describe the cabinet (merged) */}
+          {/* Step 2: Pick a room + name + describe the space (merged) */}
           {step === STEP_ROOM_SETUP && (
             <div className="mx-auto flex max-w-4xl flex-col gap-7 animate-in fade-in duration-300">
               <div className="text-center space-y-2">
-                <h1 className="font-logo text-2xl tracking-tight italic">
+                <h1 className="font-sans font-semibold text-2xl tracking-normal">
                   Pick a <span style={{ color: WEB.accent }}>room</span>
                 </h1>
                 <p className="text-sm leading-relaxed" style={{ color: WEB.textSecondary }}>
-                  What&apos;s this cabinet for? Each room comes with its own AI team.
+                  What&apos;s this space for? Each room comes with its own AI team.
                 </p>
               </div>
 
@@ -2227,7 +1626,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 })}
               </div>
 
-              {/* Cabinet name + description inputs, adaptive to the active room */}
+              {/* Space name + description inputs, adaptive to the active room */}
               <div
                 className="space-y-5 rounded-2xl p-5"
                 style={{ background: WEB.bgCard, border: `1px solid ${WEB.border}` }}
@@ -2308,7 +1707,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
               maxAgents={MAX_AGENTS}
               toggleAgent={toggleAgent}
               roomType={answers.roomType}
-              homeName={answers.homeName || (answers.name ? `${answers.name}'s Home` : "Home")}
               mandatoryAgents={mandatoryAgents}
               onBack={() => setStep(STEP_ROOM_SETUP)}
               onNext={() => setStep(STEP_PROVIDER)}
@@ -2319,11 +1717,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           {step === STEP_PROVIDER && (
             <div className="mx-auto flex max-w-xl flex-col gap-6 animate-in fade-in duration-300">
               <div className="text-center space-y-2">
-                <h1 className="font-logo text-2xl tracking-tight italic">
+                <h1 className="font-sans font-semibold text-2xl tracking-normal">
                   Agent Provider
                 </h1>
                 <p className="text-sm leading-relaxed" style={{ color: WEB.textSecondary }}>
-                  Cabinet needs an AI CLI to power your agents.
+                  Optale Observatory needs an AI CLI to power your agents.
                 </p>
               </div>
 
@@ -2591,18 +1989,6 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                                     Open terminal
                                   </button>
                                 )}
-                                {setupStep.link && (
-                                  <a
-                                    href={setupStep.link.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 text-[11px] font-medium mt-1.5"
-                                    style={{ color: WEB.accent }}
-                                  >
-                                    {setupStep.link.label}
-                                    <ExternalLink className="size-3" />
-                                  </a>
-                                )}
                               </div>
                             </div>
                           );
@@ -2660,7 +2046,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                         )}
 
                         <p className="text-[11px]" style={{ color: WEB.textTertiary }}>
-                          Verify runs the provider's headless prompt end-to-end and classifies any failure so you know which step to revisit.
+                          Verify runs the provider&apos;s headless prompt end-to-end and classifies any failure so you know which step to revisit.
                         </p>
                       </div>
                     );
@@ -2725,7 +2111,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   Back
                 </button>
                 <button
-                  onClick={() => setStep(COMMUNITY_START_STEP)}
+                  onClick={() => setStep(STEP_LAUNCH)}
                   className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-white transition-all hover:-translate-y-0.5"
                   style={{ background: WEB.accent }}
                 >
@@ -2736,254 +2122,12 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             </div>
           )}
 
-          {/* Steps 6-8: Community */}
-          {communityStep && (
-            <div className="relative mx-auto flex max-w-2xl flex-col gap-8 animate-in fade-in duration-300">
-              {/* Floating emoji backdrop per community step */}
-              {(() => {
-                const emojiMap: Record<string, string> = {
-                  "Cabinet Cloud": "☁️",
-                };
-                const emoji = emojiMap[communityStep.eyebrow];
-                if (!emoji) return null;
-                return (
-                  <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-                    {[
-                      { top: "-5%", left: "-8%", duration: "34s", delay: "-8s", opacity: 0.45, reverse: false },
-                      { top: "5%", left: "55%", duration: "42s", delay: "-17s", opacity: 0.4, reverse: true },
-                      { top: "40%", left: "-5%", duration: "38s", delay: "-12s", opacity: 0.38, reverse: true },
-                      { top: "50%", left: "60%", duration: "46s", delay: "-22s", opacity: 0.4, reverse: false },
-                      { top: "75%", left: "20%", duration: "40s", delay: "-5s", opacity: 0.35, reverse: false },
-                    ].map((cloud, i) => (
-                      <div
-                        key={i}
-                        className={`waitlist-cloud-row absolute ${cloud.reverse ? "waitlist-cloud-row-reverse" : ""}`}
-                        style={{
-                          top: cloud.top,
-                          left: cloud.left,
-                          opacity: cloud.opacity,
-                          ["--cloud-row-duration" as string]: cloud.duration,
-                          animationDelay: cloud.delay,
-                        }}
-                      >
-                        <span
-                          className={`select-none leading-none ${
-                            communityStep.eyebrow === "Cabinet Cloud"
-                              ? "text-[280px] sm:text-[400px]"
-                              : "text-[180px] sm:text-[260px]"
-                          }`}
-                          style={{ filter: "drop-shadow(0 18px 26px rgba(214,194,160,0.22))" }}
-                        >
-                          {emoji}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })()}
-              <div
-                className="relative z-10 rounded-2xl p-5 sm:p-6"
-                style={{
-                  border: `1px solid ${WEB.border}`,
-                  background: communityStep.eyebrow === "Cabinet Cloud"
-                    ? `linear-gradient(180deg, rgba(252,249,244,0.96), rgba(247,241,232,0.94))`
-                    : WEB.bgCard,
-                  boxShadow: "0 1px 3px rgba(59, 47, 47, 0.04), 0 8px 30px rgba(59, 47, 47, 0.04)",
-                }}
-              >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <h2
-                        className="font-logo text-xl tracking-tight italic"
-                        style={{ color: WEB.text }}
-                      >
-                        {communityStep.title}
-                      </h2>
-                      <p className="text-sm leading-relaxed" style={{ color: WEB.textSecondary }}>
-                        {communityStep.description}
-                      </p>
-                      {communityStep.aside && (
-                        <p className="text-sm leading-relaxed" style={{ color: WEB.textSecondary }}>
-                          {communityStep.aside}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Big CTA buttons — same style across all community steps */}
-                {isGitHubCommunityStep && (
-                  <div className="pt-6">
-                    <a
-                      href={GITHUB_REPO_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center justify-between gap-4 rounded-full px-5 py-5 sm:px-6 sm:py-6 transition-all hover:-translate-y-0.5"
-                      style={{ background: WEB.accentBg, border: `1px solid ${WEB.border}` }}
-                    >
-                      <span className="flex min-w-0 items-center gap-4">
-                        <span className="flex size-11 shrink-0 items-center justify-center rounded-full shadow-sm" style={{ background: WEB.bgCard }}>
-                          <Star className="size-5 fill-current" style={{ color: WEB.accent }} />
-                        </span>
-                        <span className="flex min-w-0 flex-col items-start gap-0.5 text-left">
-                          <span className="truncate text-base font-semibold sm:text-lg" style={{ color: WEB.text }}>Star Cabinet on GitHub</span>
-                          <span className="text-sm" style={{ color: WEB.textSecondary }}>Help more people find the community</span>
-                        </span>
-                      </span>
-                      <span className="hidden shrink-0 rounded-full px-3 py-1 text-sm font-semibold sm:inline-flex" style={{ background: WEB.bgWarm, color: WEB.accent }}>
-                        {starsLabel}
-                      </span>
-                    </a>
-                  </div>
-                )}
-
-                {communityStep.eyebrow === "Discord" && (
-                  <div className="pt-6">
-                    <a
-                      href={DISCORD_SUPPORT_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center justify-between gap-4 rounded-full px-5 py-5 sm:px-6 sm:py-6 transition-all hover:-translate-y-0.5"
-                      style={{ background: "#ECEAFD", border: "1px solid #D8D4F7" }}
-                    >
-                      <span className="flex min-w-0 items-center gap-4">
-                        <span className="flex size-11 shrink-0 items-center justify-center rounded-full shadow-sm" style={{ background: WEB.bgCard }}>
-                          <DiscordIcon className="size-5" style={{ color: "#5865F2" }} />
-                        </span>
-                        <span className="flex min-w-0 flex-col items-start gap-0.5 text-left">
-                          <span className="truncate text-base font-semibold sm:text-lg" style={{ color: WEB.text }}>Join the Discord</span>
-                          <span className="text-sm" style={{ color: WEB.textSecondary }}>Chat with the people building Cabinet</span>
-                        </span>
-                      </span>
-                      <span className="hidden shrink-0 rounded-full px-3 py-1 text-sm font-semibold sm:inline-flex" style={{ background: "#D8D4F7", color: "#5865F2" }}>
-                        Join
-                      </span>
-                    </a>
-                  </div>
-                )}
-
-                {communityStep.eyebrow === "Cabinet Cloud" && (
-                  <div className="pt-6">
-                    <div
-                      className="flex w-full flex-col gap-3 rounded-3xl px-5 py-5 sm:px-6 sm:py-6"
-                      style={{ background: WEB.accentBg, border: `1px solid ${WEB.border}` }}
-                    >
-                      <div className="flex min-w-0 items-center gap-4">
-                        <span className="flex size-11 shrink-0 items-center justify-center rounded-full shadow-sm" style={{ background: WEB.bgCard }}>
-                          <Cloud className="size-5" style={{ color: WEB.accent }} />
-                        </span>
-                        <div className="flex min-w-0 flex-col items-start gap-0.5 text-left">
-                          <span className="truncate text-base font-semibold sm:text-lg" style={{ color: WEB.text }}>Join the Cabinet Cloud waitlist</span>
-                          <span className="text-sm" style={{ color: WEB.textSecondary }}>Connect from anywhere. Your AI team works 24/7.</span>
-                        </div>
-                      </div>
-                      {cloudStatus === "success" || cloudStatus === "already" ? (
-                        <div
-                          className="flex items-center gap-2 rounded-2xl px-4 py-3 text-sm"
-                          style={{ background: WEB.bgCard, border: `1px solid ${WEB.border}`, color: WEB.text }}
-                        >
-                          <CheckCircle2 className="size-4 shrink-0" style={{ color: WEB.accent }} />
-                          <span>
-                            {cloudStatus === "already"
-                              ? "You're already on the list — we'll be in touch."
-                              : "You're on the list. We'll email you when Cabinet Cloud opens up."}
-                          </span>
-                        </div>
-                      ) : (
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            void handleCloudSubmit();
-                          }}
-                          className="flex flex-col gap-2 sm:flex-row"
-                        >
-                          <input
-                            type="email"
-                            inputMode="email"
-                            autoComplete="email"
-                            placeholder="you@company.com"
-                            value={cloudEmail}
-                            onChange={(e) => handleCloudInput(e.target.value)}
-                            disabled={cloudStatus === "submitting"}
-                            className="flex-1 rounded-full px-4 text-sm outline-none"
-                            style={{
-                              background: WEB.bgCard,
-                              border: `1px solid ${cloudStatus === "error" ? "#dc2626" : WEB.border}`,
-                              color: WEB.text,
-                              height: 44,
-                              fontFamily: "inherit",
-                            }}
-                          />
-                          <button
-                            type="submit"
-                            disabled={cloudStatus === "submitting" || cloudEmail.trim().length === 0}
-                            className="inline-flex items-center justify-center gap-2 rounded-full px-6 text-sm font-medium text-white transition-all disabled:opacity-60"
-                            style={{ background: WEB.accent, height: 44, minWidth: 130 }}
-                          >
-                            {cloudStatus === "submitting" ? (
-                              <>
-                                <Loader2 className="size-4 animate-spin" />
-                                Sending…
-                              </>
-                            ) : (
-                              <>
-                                Join waitlist
-                                <ArrowRight className="size-3.5" />
-                              </>
-                            )}
-                          </button>
-                        </form>
-                      )}
-                      {cloudStatus === "error" && (
-                        <div className="text-xs" style={{ color: "#dc2626" }}>
-                          Something went wrong. Check the email and try again.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  onClick={() => setStep(step - 1)}
-                  className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium transition-colors"
-                  style={{ color: WEB.textSecondary }}
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  Back
-                </button>
-                {step < COMMUNITY_END_STEP ? (
-                  <button
-                    onClick={() => setStep(step + 1)}
-                    disabled={launching}
-                    className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-white transition-all hover:-translate-y-0.5"
-                    style={{ background: WEB.accent }}
-                  >
-                    {communityStep.nextLabel}
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setStep(COMMUNITY_END_STEP + 1)}
-                    className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-white transition-all hover:-translate-y-0.5"
-                    style={{ background: WEB.accent }}
-                  >
-                    Next
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Step 7: Launch — Summary + data directory */}
-          {step === COMMUNITY_END_STEP + 1 && (
+          {/* Step 5: Launch — Summary */}
+          {step === STEP_LAUNCH && (
             <div className="mx-auto flex max-w-4xl flex-col gap-6 animate-in fade-in duration-300">
               <div className="text-center space-y-2">
-                <h1 className="font-logo text-2xl tracking-tight italic">
-                  Start your <span style={{ color: WEB.accent }}>Cabinet</span>
+                <h1 className="font-sans font-semibold text-2xl tracking-normal">
+                  Start your <span style={{ color: WEB.accent }}>Observatory</span>
                 </h1>
               </div>
 
@@ -2998,8 +2142,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 {/* Left half — Company + agents */}
                 <div className="p-5 space-y-4 flex-1 overflow-y-auto scrollbar-thin">
                   <div className="space-y-1">
-                    <h2 className="font-logo text-xl tracking-tight italic" style={{ color: WEB.text }}>
-                      {answers.workspaceName || "Your Cabinet"}
+                    <h2 className="font-sans font-semibold text-xl tracking-normal" style={{ color: WEB.text }}>
+                      {answers.workspaceName || "Your Space"}
                     </h2>
                     <p
                       className="text-[11px] font-semibold uppercase tracking-wider"
@@ -3086,7 +2230,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                       <strong className="font-medium" style={{ color: WEB.text }}>
                         Agents run with full access.
                       </strong>{" "}
-                      Cabinet uses{" "}
+                      Optale Observatory uses{" "}
                       <code
                         className="rounded px-1 py-0.5 text-[11px]"
                         style={{ background: WEB.bgWarm, color: WEB.text }}
@@ -3109,7 +2253,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                         Back up your data regularly.
                       </strong>{" "}
                       Agents can read, write, and delete files across your KB and linked repos.
-                      Cabinet is not responsible for data loss. You are responsible for the AI
+                      Optale Observatory is not responsible for data loss. You are responsible for the AI
                       providers you choose and their terms of service.
                     </span>
                   </li>
@@ -3148,7 +2292,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 >
                   By continuing you agree to our{" "}
                   <a
-                    href="https://runcabinet.com/terms"
+                    href="https://optale.com/terms"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline underline-offset-2"
@@ -3158,7 +2302,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   </a>{" "}
                   and{" "}
                   <a
-                    href="https://runcabinet.com/privacy"
+                    href="https://optale.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline underline-offset-2"
@@ -3166,23 +2310,13 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   >
                     Privacy
                   </a>
-                  . Cabinet is an{" "}
-                  <a
-                    href="https://github.com/hilash/cabinet"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline underline-offset-2"
-                    style={{ color: WEB.textSecondary }}
-                  >
-                    open-source project
-                  </a>
                   .
                 </p>
               </div>
 
               <div className="flex items-center justify-between pt-2">
                 <button
-                  onClick={() => setStep(COMMUNITY_END_STEP)}
+                  onClick={() => setStep(STEP_PROVIDER)}
                   className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium transition-colors"
                   style={{ color: WEB.textSecondary }}
                 >
@@ -3203,7 +2337,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                   ) : (
                     <>
                       <Rocket className="w-4 h-4" />
-                      Launch Cabinet
+                      Launch Observatory
                     </>
                   )}
                 </button>

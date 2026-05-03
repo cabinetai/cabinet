@@ -32,9 +32,6 @@ import {
   CircleUser,
   Upload,
   Trash2,
-  Cloud,
-  ArrowRight,
-  CheckCircle2,
   ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -85,11 +82,7 @@ import {
 } from "@/lib/agents/avatar-catalog";
 import Image from "next/image";
 import { sendTelemetry } from "@/lib/telemetry/browser";
-import {
-  recordWaitlistView,
-  recordWaitlistStart,
-  submitWaitlistEmail,
-} from "@/lib/telemetry/waitlist-client";
+import { OPTALE_PRODUCT } from "@/lib/optale/product";
 
 interface McpServer {
   name: string;
@@ -320,7 +313,7 @@ export function SettingsPage() {
 
   // Sync active theme name on mount
   useEffect(() => {
-    setActiveThemeName(getStoredThemeName() || "paper");
+    setActiveThemeName(getStoredThemeName() || "white");
   }, []);
 
   useEffect(() => {
@@ -339,43 +332,6 @@ export function SettingsPage() {
       cancelled = true;
     };
   }, []);
-
-  // Cabinet Cloud waitlist (About tab) — same client as the onboarding form,
-  // posts to reports.runcabinet.com with source: "cabinet-settings".
-  const [cloudEmail, setCloudEmail] = useState("");
-  const [cloudStatus, setCloudStatus] = useState<
-    "idle" | "submitting" | "success" | "already" | "error"
-  >("idle");
-  const cloudViewedRef = useRef(false);
-  const cloudStartedRef = useRef(false);
-  useEffect(() => {
-    if (tab === "about" && !cloudViewedRef.current) {
-      cloudViewedRef.current = true;
-      recordWaitlistView("cabinet-settings");
-    }
-  }, [tab]);
-  const handleCloudInput = useCallback((value: string) => {
-    setCloudEmail(value);
-    if (cloudStatus === "error" || cloudStatus === "already") setCloudStatus("idle");
-    if (!cloudStartedRef.current && value.length > 0) {
-      cloudStartedRef.current = true;
-      recordWaitlistStart("cabinet-settings");
-    }
-  }, [cloudStatus]);
-  const handleCloudSubmit = useCallback(async () => {
-    const trimmed = cloudEmail.trim();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setCloudStatus("error");
-      return;
-    }
-    setCloudStatus("submitting");
-    const result = await submitWaitlistEmail(trimmed, "cabinet-settings");
-    if (!result.ok) {
-      setCloudStatus("error");
-      return;
-    }
-    setCloudStatus(result.alreadyOnList ? "already" : "success");
-  }, [cloudEmail]);
 
   const toggleTelemetry = useCallback(async (next: boolean) => {
     setTelemetrySaving(true);
@@ -753,7 +709,7 @@ export function SettingsPage() {
                   <div className="flex-1">
                     <p className="text-[13px] font-medium text-yellow-500">Restart required</p>
                     <p className="text-[12px] text-muted-foreground">
-                      The data directory will change after you restart Cabinet.
+                      The data directory will change after you restart Optale Observatory.
                     </p>
                   </div>
                 </div>
@@ -904,7 +860,7 @@ export function SettingsPage() {
           )}
 
           {tab === "updates" && !update && updateLoading && (
-            <p className="text-[13px] text-muted-foreground">Checking for Cabinet updates...</p>
+            <p className="text-[13px] text-muted-foreground">Checking for Optale Observatory updates...</p>
           )}
 
           {/* Providers Tab */}
@@ -1153,17 +1109,6 @@ export function SettingsPage() {
                                                     Open terminal
                                                   </button>
                                                 )}
-                                                {step.link && (
-                                                  <a
-                                                    href={step.link.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1 text-[11px] font-medium mt-1.5 text-primary hover:underline"
-                                                  >
-                                                    {step.link.label}
-                                                    <ExternalLink className="size-3" />
-                                                  </a>
-                                                )}
                                               </div>
                                             </div>
                                           );
@@ -1314,7 +1259,7 @@ export function SettingsPage() {
                   </p>
                   <div className="space-y-3">
                     {[
-                      { icon: "🔔", name: "Browser Push", desc: "Instant alerts when Cabinet tab is open or PWA installed" },
+                      { icon: "🔔", name: "Browser Push", desc: "Instant alerts when an Optale tab is open or PWA installed" },
                       { icon: "✈️", name: "Telegram", desc: "Instant mobile notifications via Telegram bot" },
                       { icon: "💬", name: "Slack Webhook", desc: "Forward alerts to your team's Slack channel" },
                       { icon: "📧", name: "Email Digest", desc: "Batched summary of alerts and agent activity" },
@@ -1378,9 +1323,9 @@ export function SettingsPage() {
           {tab === "about" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-[14px] font-semibold mb-1">Cabinet</h3>
+                <h3 className="text-[14px] font-semibold mb-1">{OPTALE_PRODUCT.name}</h3>
                 <p className="text-[12px] text-muted-foreground">
-                  AI-first self-hosted knowledge base and startup OS.
+                  Observability, governance, traces, and evals for Optale&apos;s agent system.
                 </p>
               </div>
 
@@ -1417,23 +1362,16 @@ export function SettingsPage() {
 
               <div className="pt-2">
                 <p className="text-[12px] text-muted-foreground">
-                  All content lives as markdown files on disk. Humans define intent. Agents do the work. The knowledge base is the shared memory between both.
+                  Spaces keep knowledge, agents, jobs, and approvals organized while the observatory ties them into Optale memory, MCP policy, and evaluation workflows.
                 </p>
               </div>
 
               <div className="border-t border-border pt-6">
                 <h3 className="text-[14px] font-semibold mb-1">Privacy</h3>
                 <p className="text-[12px] text-muted-foreground mb-3">
-                  Cabinet sends anonymous usage telemetry to help us improve the
+                  Optale Observatory sends anonymous usage telemetry to help us improve the
                   product. No file contents, paths, prompts, or secrets are collected.
-                  <a
-                    href="https://github.com/hilash/cabinet/blob/main/TELEMETRY.md"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-1 underline hover:text-foreground"
-                  >
-                    What&apos;s collected?
-                  </a>
+                  See Optale privacy policy details at optale.com/privacy.
                 </p>
                 <label className="flex items-center justify-between gap-3 rounded-lg border border-border p-3 cursor-pointer hover:border-primary/30 transition-colors">
                   <div className="flex items-center gap-3">
@@ -1454,98 +1392,6 @@ export function SettingsPage() {
                     </div>
                   </div>
                 </label>
-              </div>
-
-              <div className="border-t border-border pt-6">
-                <h3 className="text-[14px] font-semibold mb-1 flex items-center gap-2">
-                  <Cloud className="h-3.5 w-3.5" />
-                  Cabinet Cloud
-                </h3>
-                <p className="text-[12px] text-muted-foreground mb-3">
-                  Connect to your Cabinet from anywhere, while your AI team works 24/7
-                  for you. Drop your email below and we&apos;ll let you know when
-                  Cabinet Cloud opens up.
-                </p>
-                {cloudStatus === "success" || cloudStatus === "already" ? (
-                  <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-4 py-3 text-[13px]">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
-                    <span>
-                      {cloudStatus === "already"
-                        ? "You're already on the list — we'll be in touch."
-                        : "You're on the list. We'll email you when Cabinet Cloud opens up."}
-                    </span>
-                  </div>
-                ) : (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      void handleCloudSubmit();
-                    }}
-                    className="flex flex-col gap-2 sm:flex-row"
-                  >
-                    <Input
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      placeholder="you@company.com"
-                      value={cloudEmail}
-                      onChange={(e) => handleCloudInput(e.target.value)}
-                      disabled={cloudStatus === "submitting"}
-                      className={cn(
-                        "flex-1 h-10 text-[13px]",
-                        cloudStatus === "error" && "border-destructive focus-visible:ring-destructive/30"
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      disabled={cloudStatus === "submitting" || cloudEmail.trim().length === 0}
-                      className="h-10 gap-2 px-4 text-[13px]"
-                    >
-                      {cloudStatus === "submitting" ? (
-                        <>
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          Sending…
-                        </>
-                      ) : (
-                        <>
-                          Join waitlist
-                          <ArrowRight className="h-3 w-3" />
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                )}
-                {cloudStatus === "error" && (
-                  <p className="mt-2 text-[11px] text-destructive">
-                    Something went wrong. Check the email and try again.
-                  </p>
-                )}
-              </div>
-
-              <div className="border-t border-border pt-6">
-                <h3 className="text-[14px] font-semibold mb-1">Connect</h3>
-                <p className="text-[12px] text-muted-foreground mb-3">
-                  Get help, share feedback, or just say hi.
-                </p>
-                <div className="space-y-2">
-                  <a
-                    href="https://discord.gg/hJa5TRTbTH"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-[13px] font-medium hover:bg-primary/10 transition-colors"
-                  >
-                    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-                    Join the Discord
-                    <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">Recommended</span>
-                  </a>
-                  <a
-                    href="mailto:hi@runcabinet.com"
-                    className="flex items-center gap-3 rounded-lg border border-border px-4 py-3 text-[13px] text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors"
-                  >
-                    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                    hi@runcabinet.com
-                  </a>
-                </div>
               </div>
 
               <UninstallSection />
@@ -1574,7 +1420,7 @@ function SkillsSettings() {
           </h3>
         </div>
         <p>
-          Cabinet&apos;s philosophy is to connect you to the world — safely. A
+          Optale&apos;s philosophy is to connect you to the world — safely. A
           skill runs real code on your computer, so treat each one like you
           would any app you install: read what it does before you trust it.
         </p>
@@ -1586,16 +1432,7 @@ function SkillsSettings() {
           skim the skill&apos;s instructions before running it.
         </p>
         <p className="border-t border-border pt-3">
-          Questions? Join us on{" "}
-          <a
-            href="https://discord.gg/hJa5TRTbTH"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-foreground underline underline-offset-2 hover:text-primary"
-          >
-            Discord
-          </a>
-          .
+          Questions? Contact hello@optale.com.
         </p>
       </aside>
     </div>
@@ -1957,7 +1794,7 @@ function ProfileTab() {
             <Input
               value={profile.name}
               onChange={(e) => update({ profile: { name: e.target.value } })}
-              placeholder="Hila"
+              placeholder="Thor"
               maxLength={60}
             />
           </Field>
@@ -1998,7 +1835,7 @@ function ProfileTab() {
               onChange={(e) =>
                 update({ workspace: { workspaceName: e.target.value } })
               }
-              placeholder="My Cabinet"
+              placeholder="My Space"
             />
           </Field>
           <Field label="Description">

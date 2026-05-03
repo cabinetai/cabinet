@@ -530,8 +530,11 @@ function DetailView({
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      setLoading(true);
+      setError(null);
+    }, 0);
 
     fetch(`/api/registry/${slug}`)
       .then((r) => { if (!r.ok) throw new Error("Failed to load"); return r.json(); })
@@ -544,7 +547,10 @@ function DetailView({
       .catch((e: Error) => { if (!cancelled) setError(e.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, [slug]);
 
   const handleImport = async () => {
@@ -643,7 +649,7 @@ function DetailView({
               onClick={() => { setImportName(detail.meta.name); setImportOpen(true); }}
             >
               <Download className="h-4 w-4" />
-              Import Cabinet
+              Import Space
             </button>
           )}
         </div>
@@ -724,7 +730,7 @@ function DetailView({
                   <div className="flex flex-wrap items-center gap-4 mt-5 text-sm" style={{ color: P.textTertiary }}>
                     <span className="flex items-center gap-1.5"><Bot className="h-4 w-4" />{detail.stats.totalAgents} agents</span>
                     <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{detail.stats.totalJobs} jobs</span>
-                    <span className="flex items-center gap-1.5"><FolderTree className="h-4 w-4" />{detail.stats.totalCabinets} cabinet{detail.stats.totalCabinets !== 1 ? "s" : ""}</span>
+                    <span className="flex items-center gap-1.5"><FolderTree className="h-4 w-4" />{detail.stats.totalCabinets} space{detail.stats.totalCabinets !== 1 ? "s" : ""}</span>
                   </div>
                 </div>
               </div>
@@ -738,7 +744,7 @@ function DetailView({
                   style={{ borderColor: `${P.accent}55`, backgroundColor: P.accentBgSubtle }}
                 >
                   <div>
-                    <p className="font-semibold" style={{ color: P.textPrimary }}>Ready to import this cabinet?</p>
+                    <p className="font-semibold" style={{ color: P.textPrimary }}>Ready to import this space?</p>
                     <p className="text-sm mt-1" style={{ color: P.textSecondary }}>
                       All {detail.stats.totalAgents} agents and {detail.stats.totalJobs} jobs will be set up automatically.
                     </p>
@@ -749,7 +755,7 @@ function DetailView({
                     onClick={() => { setImportName(detail.meta.name); setImportOpen(true); }}
                   >
                     <Download className="h-4 w-4" />
-                    Import Cabinet
+                    Import Space
                   </button>
                 </div>
 
@@ -828,18 +834,18 @@ function DetailView({
               <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                 <span>{detail.stats.totalAgents} agents</span>
                 <span>{detail.stats.totalJobs} jobs</span>
-                {detail.stats.totalCabinets > 1 && <span>{detail.stats.totalCabinets} cabinets</span>}
+                {detail.stats.totalCabinets > 1 && <span>{detail.stats.totalCabinets} spaces</span>}
               </div>
             )}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Cabinet name</label>
+              <label className="text-xs font-medium text-muted-foreground">Space name</label>
               <Input
                 value={importName}
                 onChange={(e) => setImportName(e.target.value)}
-                placeholder="Cabinet name..."
+                placeholder="Space name..."
               />
               <p className="text-[11px] text-muted-foreground/70">
-                Cabinet names can&apos;t be renamed later (for now). Choose wisely.
+                Space names can&apos;t be renamed later (for now). Choose wisely.
               </p>
             </div>
             {importError && <p className="text-xs text-destructive">{importError}</p>}
@@ -935,7 +941,7 @@ export function RegistryBrowser({
                 className="font-logo italic tracking-[-0.01em] text-2xl"
                 style={{ color: P.accent }}
               >
-                Cabinets
+                Spaces
               </span>
               <span
                 className="text-sm font-normal"
@@ -946,9 +952,9 @@ export function RegistryBrowser({
             </h1>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {/* cabinets.sh */}
+            {/* Optale */}
             <a
-              href="https://cabinets.sh"
+              href="https://optale.com"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
@@ -967,14 +973,12 @@ export function RegistryBrowser({
               }}
             >
               <Globe className="h-3.5 w-3.5" />
-              cabinets.sh
+              optale.com
             </a>
 
-            {/* GitHub star — filled accent */}
+            {/* Contact */}
             <a
-              href="https://github.com/hilash/cabinets"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:hello@optale.com"
               className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
               style={{
                 borderColor: P.accent,
@@ -991,7 +995,7 @@ export function RegistryBrowser({
               }}
             >
               <Star className="h-3.5 w-3.5" />
-              Star us
+              Contact
             </a>
           </div>
         </div>

@@ -49,8 +49,8 @@ export function BreakingChangesWarning() {
 
     // Dev shortcut: ?disclaimer=1 forces the popup open regardless of ack state
     if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("disclaimer") === "1") {
-      setOpen(true);
-      return;
+      const timer = window.setTimeout(() => setOpen(true), 0);
+      return () => window.clearTimeout(timer);
     }
 
     let local: string | null = null;
@@ -104,7 +104,7 @@ export function BreakingChangesWarning() {
 
         <div className="space-y-4 text-sm">
           <p className="text-muted-foreground">
-            Cabinet is in active development. Here&apos;s what you&apos;re signing up for.
+            Optale Observatory is in active development. Here&apos;s what you&apos;re signing up for.
           </p>
 
           <ul className="space-y-3">
@@ -112,7 +112,7 @@ export function BreakingChangesWarning() {
               <span className="mt-2 size-1 shrink-0 rounded-full bg-foreground/30" aria-hidden />
               <span className="text-muted-foreground">
                 <strong className="font-medium text-foreground">Agents run with full access.</strong>{" "}
-                Cabinet uses{" "}
+                Optale Observatory uses{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-[11px]">--dangerously-skip-permissions</code>{" "}
                 (Claude Code) and equivalent flags in other providers. This is identical to running these CLI
                 tools from your own terminal. Any MCP servers or tools you&apos;ve configured may be
@@ -123,7 +123,7 @@ export function BreakingChangesWarning() {
               <span className="mt-2 size-1 shrink-0 rounded-full bg-foreground/30" aria-hidden />
               <span className="text-muted-foreground">
                 <strong className="font-medium text-foreground">Back up your data regularly.</strong>{" "}
-                Agents can read, write, and delete files across your KB and linked repos. Cabinet is
+                Agents can read, write, and delete files across your KB and linked repos. Optale Observatory is
                 not responsible for data loss. You are responsible for the AI providers you choose
                 and their terms of service.
               </span>
@@ -153,12 +153,9 @@ export function BreakingChangesWarning() {
         <div className="flex items-center justify-between gap-3 pt-1">
           <p className="text-[11px] text-muted-foreground/70">
             By continuing you agree to our{" "}
-            <a href="https://runcabinet.com/terms" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">Terms</a>
+            <a href="https://optale.com/terms" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">Terms</a>
             {" "}and{" "}
-            <a href="https://runcabinet.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">Privacy</a>.
-            {" "}Cabinet is an{" "}
-            <a href="https://github.com/hilash/cabinet" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">open-source project</a>
-            .
+            <a href="https://optale.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">Privacy</a>.
           </p>
           <Button onClick={acknowledge} disabled={!accepted}>
             Continue

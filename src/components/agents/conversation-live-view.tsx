@@ -65,8 +65,8 @@ export function ConversationLiveView({
 
   useEffect(() => {
     if (!promptText) {
-      setPromptHtml("");
-      return;
+      const timer = window.setTimeout(() => setPromptHtml(""), 0);
+      return () => window.clearTimeout(timer);
     }
 
     let cancelled = false;
@@ -139,7 +139,7 @@ export function ConversationLiveView({
               <div>
                 <h4 className="text-[13px] font-semibold">Live Output</h4>
                 <p className="text-[11px] text-muted-foreground">
-                  Cabinet is rendering the saved transcript instead of the web terminal.
+                  Optale Observatory is rendering the saved transcript instead of the web terminal.
                 </p>
               </div>
             </div>

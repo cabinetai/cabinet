@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -916,7 +917,7 @@ function Hero({
                 <span className="opacity-40">·</span>
                 <span
                   className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[11px] text-violet-300"
-                  title="Shared across all cabinets — edits apply everywhere"
+                  title="Shared across all spaces — edits apply everywhere"
                 >
                   Global
                 </span>
@@ -984,13 +985,7 @@ function Composer({
 
   const name = getAgentDisplayName(persona) || persona.name;
 
-  const stagingClientUuid = useMemo(
-    () =>
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : `c-${Date.now()}`,
-    []
-  );
+  const stagingClientUuid = useId();
   const attachments = useComposerAttachments({
     cabinetPath: persona.cabinetPath,
     clientAttachmentId: stagingClientUuid,

@@ -71,9 +71,12 @@ export function AgentStatusGrid({
   }, [cabinetPath, visibilityMode]);
 
   useEffect(() => {
-    void fetchConversations();
+    const timer = window.setTimeout(() => void fetchConversations(), 0);
     const iv = setInterval(() => void fetchConversations(), 8000);
-    return () => clearInterval(iv);
+    return () => {
+      window.clearTimeout(timer);
+      clearInterval(iv);
+    };
   }, [fetchConversations]);
 
   const sorted = useMemo(() => [...agents].sort(sortOrgAgents), [agents]);
@@ -124,7 +127,7 @@ export function AgentStatusGrid({
       {/* Agent cards grid */}
       {sorted.length === 0 ? (
         <p className="py-6 text-sm text-muted-foreground">
-          No agents configured for this cabinet yet.
+          No agents configured for this space yet.
         </p>
       ) : hasDepartments ? (
         <div className="space-y-6">

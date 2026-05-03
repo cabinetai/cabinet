@@ -25,15 +25,16 @@ export function ThemeInitializer() {
       document.documentElement.classList.add("electron-desktop");
     }
 
-    // Restore or default to Paper/Cabinet theme. applyTheme() loads only the
-    // Google Font families that theme actually uses — see themes.ts.
+    // Restore or default to the simple White profile. Older demo sessions
+    // stored "paper" or "optale" as implicit defaults, so migrate those.
     const stored = getStoredThemeName();
-    const themeName = stored || "paper";
+    const themeName =
+      stored && stored !== "paper" && stored !== "optale" ? stored : "white";
     const themeDef = THEMES.find((t) => t.name === themeName);
     if (themeDef) {
       applyTheme(themeDef);
       setTheme(themeDef.type);
-      if (!stored) {
+      if (!stored || stored === "paper" || stored === "optale") {
         storeThemeName(themeName);
       }
     }
