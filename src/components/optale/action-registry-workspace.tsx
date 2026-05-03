@@ -73,6 +73,24 @@ const FILTERS: Array<{
   { id: "governance", label: "Governance" },
 ];
 
+type OptaleCommandView = "actions" | "runs" | "policy" | "lineage" | "audit";
+
+const COMMAND_VIEW_LABELS: Record<OptaleCommandView, string> = {
+  actions: "Actions",
+  runs: "Runs",
+  policy: "Policy",
+  lineage: "Lineage",
+  audit: "Audit",
+};
+
+const COMMAND_VIEW_SEARCH_PLACEHOLDERS: Record<OptaleCommandView, string> = {
+  actions: "Search actions and queues",
+  runs: "Search runs",
+  policy: "Search policy decisions",
+  lineage: "Search lineage edges",
+  audit: "Search audit events",
+};
+
 const LINEAGE_EDGE_KIND_LABELS: Record<OptaleLineageEdgeKind, string> = {
   produces_run: "Produces Run",
   invokes: "Invokes",
@@ -319,6 +337,7 @@ export function OptaleActionRegistryWorkspace({
   const [activeFilter, setActiveFilter] = useState<
     "all" | OptaleActionKind | OptaleActionCategory
   >("all");
+  const [activeView, setActiveView] = useState<OptaleCommandView>("actions");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -448,6 +467,30 @@ export function OptaleActionRegistryWorkspace({
     registry?.operationalSpine,
   ]);
 
+  const commandViews = useMemo(
+    () =>
+      [
+        {
+          id: "actions",
+          count:
+            (registry?.counts.actions ?? 0) +
+            (registry?.counts.pendingQueues ?? 0),
+        },
+        { id: "runs", count: ledger?.counts.runs ?? 0 },
+        { id: "policy", count: policyLog?.counts.decisions ?? 0 },
+        { id: "lineage", count: lineage?.counts.edges ?? 0 },
+        { id: "audit", count: auditLog?.counts.events ?? 0 },
+      ] satisfies Array<{ id: OptaleCommandView; count: number }>,
+    [
+      auditLog?.counts.events,
+      ledger?.counts.runs,
+      lineage?.counts.edges,
+      policyLog?.counts.decisions,
+      registry?.counts.actions,
+      registry?.counts.pendingQueues,
+    ],
+  );
+
   return (
     <main className="flex min-h-full flex-col bg-background">
       <section className="border-b border-border/70 px-6 py-5">
@@ -498,33 +541,33 @@ export function OptaleActionRegistryWorkspace({
               </div>
             </div>
             <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Command</div>
-              <div className="text-lg font-semibold text-foreground">
-                {registry?.counts.commandActions ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Proposal</div>
-              <div className="text-lg font-semibold text-foreground">
-                {registry?.counts.agentProposalTypes ?? 0}
-              </div>
-            </div>
-            <div className="rounded-md border border-border bg-card px-3 py-2">
               <div className="text-[11px] text-muted-foreground">Queues</div>
               <div className="text-lg font-semibold text-foreground">
                 {registry?.counts.pendingQueues ?? 0}
               </div>
             </div>
             <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Pending</div>
+              <div className="text-[11px] text-muted-foreground">Runs</div>
               <div className="text-lg font-semibold text-foreground">
-                {registry?.counts.pendingActions ?? 0}
+                {ledger?.counts.runs ?? 0}
               </div>
             </div>
             <div className="rounded-md border border-border bg-card px-3 py-2">
-              <div className="text-[11px] text-muted-foreground">Blocked</div>
+              <div className="text-[11px] text-muted-foreground">Policy</div>
               <div className="text-lg font-semibold text-foreground">
-                {registry?.counts.hardBlockedActions ?? 0}
+                {policyLog?.counts.decisions ?? 0}
+              </div>
+            </div>
+            <div className="rounded-md border border-border bg-card px-3 py-2">
+              <div className="text-[11px] text-muted-foreground">Lineage</div>
+              <div className="text-lg font-semibold text-foreground">
+                {lineage?.counts.edges ?? 0}
+              </div>
+            </div>
+            <div className="rounded-md border border-border bg-card px-3 py-2">
+              <div className="text-[11px] text-muted-foreground">Audit</div>
+              <div className="text-lg font-semibold text-foreground">
+                {auditLog?.counts.events ?? 0}
               </div>
             </div>
           </div>
@@ -533,28 +576,30 @@ export function OptaleActionRegistryWorkspace({
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search actions"
+              placeholder={COMMAND_VIEW_SEARCH_PLACEHOLDERS[activeView]}
               className="h-9 pl-8"
             />
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {FILTERS.map((filter) => (
-            <button
-              key={filter.id}
-              type="button"
-              onClick={() => setActiveFilter(filter.id)}
-              className={cn(
-                "rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
-                activeFilter === filter.id
-                  ? "border-primary/30 bg-primary/10 text-primary"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
+        {activeView === "actions" && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {FILTERS.map((filter) => (
+              <button
+                key={filter.id}
+                type="button"
+                onClick={() => setActiveFilter(filter.id)}
+                className={cn(
+                  "rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors",
+                  activeFilter === filter.id
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       {error && (
@@ -643,7 +688,39 @@ export function OptaleActionRegistryWorkspace({
         </div>
       </section>
 
-      <section className="grid gap-3 px-6 py-5 xl:grid-cols-2">
+      <section className="border-b border-border/70 px-6 py-3">
+        <div className="flex flex-wrap gap-2">
+          {commandViews.map((view) => (
+            <button
+              key={view.id}
+              type="button"
+              onClick={() => setActiveView(view.id)}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+                activeView === view.id
+                  ? "border-primary/30 bg-primary/10 text-primary"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <span>{COMMAND_VIEW_LABELS[view.id]}</span>
+              <span
+                className={cn(
+                  "rounded-md px-1.5 py-0.5 text-[10px]",
+                  activeView === view.id
+                    ? "bg-primary/15 text-primary"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                {view.count}
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {activeView === "actions" && (
+        <>
+          <section className="grid gap-3 px-6 py-5 xl:grid-cols-2">
         {loading && !registry ? (
           <div className="col-span-full flex min-h-[220px] items-center justify-center text-sm text-muted-foreground">
             <Loader2 className="mr-2 size-4 animate-spin" />
@@ -722,9 +799,9 @@ export function OptaleActionRegistryWorkspace({
             </article>
           ))
         )}
-      </section>
+          </section>
 
-      <section className="border-t border-border/70 px-6 py-5">
+          <section className="border-t border-border/70 px-6 py-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
             <h2 className="text-base font-semibold tracking-normal text-foreground">
@@ -802,9 +879,12 @@ export function OptaleActionRegistryWorkspace({
             ))}
           </div>
         )}
-      </section>
+          </section>
+        </>
+      )}
 
-      <section className="border-t border-border/70 px-6 py-5">
+      {activeView === "runs" && (
+        <section className="px-6 py-5">
         <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-base font-semibold tracking-normal text-foreground">
@@ -899,9 +979,11 @@ export function OptaleActionRegistryWorkspace({
             </div>
           </div>
         )}
-      </section>
+        </section>
+      )}
 
-      <section className="border-t border-border/70 px-6 py-5">
+      {activeView === "policy" && (
+        <section className="px-6 py-5">
         <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-base font-semibold tracking-normal text-foreground">
@@ -991,9 +1073,11 @@ export function OptaleActionRegistryWorkspace({
             </div>
           </div>
         )}
-      </section>
+        </section>
+      )}
 
-      <section className="border-t border-border/70 px-6 py-5">
+      {activeView === "lineage" && (
+        <section className="px-6 py-5">
         <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-base font-semibold tracking-normal text-foreground">
@@ -1093,9 +1177,11 @@ export function OptaleActionRegistryWorkspace({
             </div>
           </div>
         )}
-      </section>
+        </section>
+      )}
 
-      <section className="border-t border-border/70 px-6 py-5">
+      {activeView === "audit" && (
+        <section className="px-6 py-5">
         <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-base font-semibold tracking-normal text-foreground">
@@ -1200,7 +1286,8 @@ export function OptaleActionRegistryWorkspace({
             </div>
           </div>
         )}
-      </section>
+        </section>
+      )}
     </main>
   );
 }
