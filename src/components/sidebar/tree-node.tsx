@@ -20,7 +20,7 @@ import {
   Link2,
   Link2Off,
   Code,
-  Image,
+  Image as ImageIcon,
   Video,
   Music,
   Workflow,
@@ -320,7 +320,6 @@ export function TreeNode({
       // Don't drop onto own children
       if (fromPath.startsWith(node.path + "/")) return;
 
-      const fromName = fromPath.split("/").pop() || "";
       const nodeParent = node.path.split("/").slice(0, -1).join("/");
 
       if (zone === "into") {
@@ -450,7 +449,7 @@ export function TreeNode({
             ) : node.type === "code" ? (
               <Code className="h-3.5 w-3.5 shrink-0 text-violet-400" />
             ) : node.type === "image" ? (
-              <Image className="h-3.5 w-3.5 shrink-0 text-pink-400" />
+              <ImageIcon className="h-3.5 w-3.5 shrink-0 text-pink-400" />
             ) : node.type === "video" ? (
               <Video className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
             ) : node.type === "audio" ? (
@@ -496,8 +495,8 @@ export function TreeNode({
               <span
                 role="button"
                 tabIndex={0}
-                aria-label={`Open cabinet ${title}`}
-                title="Open cabinet view"
+                aria-label={`Open space ${title}`}
+                title="Open space view"
                 onClick={handleOpenCabinet}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -544,7 +543,7 @@ export function TreeNode({
           </ContextMenuItem>
           <ContextMenuItem onClick={() => setCreateCabinetOpen(true)}>
             <Archive className="h-4 w-4 mr-2" />
-            Create Cabinet Here
+            Create Space Here
           </ContextMenuItem>
           <ContextMenuItem onClick={() => { setRenameTitle(title); setRenameOpen(true); }}>
             <Pencil className="h-4 w-4 mr-2" />
@@ -691,7 +690,7 @@ export function TreeNode({
                   {node.isLinked
                     ? `Unlink "${title}"`
                     : node.type === "cabinet"
-                      ? `Delete Cabinet "${title}"`
+                      ? `Delete Space "${title}"`
                       : `Delete "${title}"`
                   }
                 </DialogTitle>
@@ -699,7 +698,7 @@ export function TreeNode({
                   {node.isLinked
                     ? `This will remove the link from your knowledge base. The original folder on disk will not be affected.`
                     : node.type === "cabinet"
-                      ? `This will permanently delete the cabinet and everything inside it — all pages, agents, jobs, and tasks. This cannot be undone.`
+                      ? `This will permanently delete the space and everything inside it — all pages, agents, jobs, and tasks. This cannot be undone.`
                       : `This will permanently delete this ${node.type === "directory" ? "page and all its sub-pages" : "file"}. This cannot be undone.`
                   }
                 </DialogDescription>

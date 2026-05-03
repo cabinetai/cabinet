@@ -101,7 +101,7 @@ export function TreeView() {
   const activeDrawer = useAppStore((s) => s.sidebarDrawer);
   const setActiveDrawer = useAppStore((s) => s.setSidebarDrawer);
 
-  const [cabinetExpanded, setCabinetExpanded] = useState(true);
+  const cabinetExpanded = true;
 
   // Cabinet-drawer UI: the sidebar exposes three "drawers" — Agents, Tasks, and
   // Data — as a horizontal tab row. Only one is open at a time. The previous
@@ -128,7 +128,7 @@ export function TreeView() {
   const [agents, setAgents] = useState<AgentSummary[]>([]);
   const [cabinetAgentScopeName, setCabinetAgentScopeName] = useState<string | null>(() => {
     // Audit #027: seed from localStorage on first paint so we don't flash
-    // the bare "Cabinet" placeholder before the cabinet-overview API
+    // the bare "Space" placeholder before the cabinet-overview API
     // responds. The active cabinet path isn't known here yet (depends on
     // section state), so we read root's name as the initial fallback.
     if (typeof window === "undefined") return null;
@@ -182,10 +182,10 @@ export function TreeView() {
         return;
       }
       // Audit #027: cache the resolved name so the next cold paint can
-      // skip the "Cabinet" flicker before the API responds.
-      const resolved = data.cabinet.name || "Cabinet";
+      // skip the generic placeholder before the API responds.
+      const resolved = data.cabinet.name || "Space";
       try {
-        if (resolved && resolved !== "Cabinet") {
+        if (resolved && resolved !== "Space") {
           localStorage.setItem(`cabinet.name.${activeCabinet?.path || ROOT_CABINET_PATH}`, resolved);
         }
       } catch { /* ignore storage failures */ }
@@ -416,7 +416,7 @@ export function TreeView() {
           >
             <Archive className="h-[18px] w-[18px] shrink-0 text-amber-400" />
             <span className="min-w-0 flex-1 truncate text-sm font-medium text-muted-foreground">
-              {cabinetAgentScopeName || activeCabinet?.frontmatter?.title || activeCabinet?.name || "Cabinet"}
+              {cabinetAgentScopeName || activeCabinet?.frontmatter?.title || activeCabinet?.name || "Space"}
             </span>
           </button>
           </ContextMenuTrigger>
@@ -488,7 +488,7 @@ export function TreeView() {
              header above, inset by mx-[9px] so the header reads as a crown. */
           <div
             role="tablist"
-            aria-label="Cabinet drawers"
+            aria-label="Space drawers"
             className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-1 pt-2 border border-border/60"
           >
                 {([
@@ -717,7 +717,7 @@ export function TreeView() {
                     style={pad(1)}
                   >
                     <Plus className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    {activeCabinet ? "Add cabinet data" : "Add your first page"}
+                    {activeCabinet ? "Add space data" : "Add your first page"}
                   </button>
                 ) : (
                   visibleTreeNodes.map((node, index) => (
@@ -855,10 +855,10 @@ export function TreeView() {
             </div>
             <div className="flex flex-col gap-1">
               <DialogTitle>
-                Delete Cabinet &ldquo;{activeCabinet?.frontmatter?.title || activeCabinet?.name || cabinetPath}&rdquo;
+                Delete Space &ldquo;{activeCabinet?.frontmatter?.title || activeCabinet?.name || cabinetPath}&rdquo;
               </DialogTitle>
               <DialogDescription>
-                This will permanently delete the cabinet and everything inside it — all pages, agents, jobs, and tasks. This cannot be undone.
+                This will permanently delete the space and everything inside it — all pages, agents, jobs, and tasks. This cannot be undone.
               </DialogDescription>
             </div>
           </div>

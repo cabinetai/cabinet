@@ -156,7 +156,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
           className="flex flex-col gap-3"
         >
           <p className="text-xs text-muted-foreground">
-            Point Cabinet to any folder on your machine. Its contents will appear
+            Point Optale Observatory to any folder on your machine. Its contents will appear
             in the Knowledge Base and be available to AI agents as context.
           </p>
 
@@ -226,7 +226,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
             {devExpanded && (
               <div className="flex flex-col gap-3 px-3 pb-3">
                 <p className="text-xs text-muted-foreground">
-                  If the folder is a git repo, Cabinet auto-detects the branch
+                  If the folder is a git repo, Optale Observatory auto-detects the branch
                   and remote. A <code>.repo.yaml</code> is written into the
                   folder so agents can read the source code in context.
                 </p>

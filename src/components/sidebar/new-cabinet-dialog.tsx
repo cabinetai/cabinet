@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Archive, X, LayoutTemplate } from "lucide-react";
+import { Archive, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTreeStore } from "@/stores/tree-store";
@@ -34,15 +34,6 @@ function NewCabinetOverlay({
   const setSection = useAppStore((s) => s.setSection);
   const picker = useAgentPicker();
 
-  // Reset state when opening
-  useEffect(() => {
-    if (open) {
-      setName(defaultName);
-      setCreating(false);
-      setError(null);
-    }
-  }, [open, defaultName]);
-
   // Close on Escape
   useEffect(() => {
     if (!open) return;
@@ -72,7 +63,7 @@ function NewCabinetOverlay({
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Failed to create cabinet");
+        setError(data.error || "Failed to create space");
         setCreating(false);
         return;
       }
@@ -86,7 +77,7 @@ function NewCabinetOverlay({
       });
       onOpenChange(false);
     } catch {
-      setError("Failed to create cabinet");
+      setError("Failed to create space");
       setCreating(false);
     }
   };
@@ -104,24 +95,12 @@ function NewCabinetOverlay({
         {/* Header */}
         <div className="flex items-start justify-between px-8 pt-8 pb-4">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Create New Cabinet</h2>
+            <h2 className="text-xl font-semibold text-foreground">Create New Space</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              A cabinet is a workspace with its own agents, jobs, and knowledge.
+              A space is a governed workspace with its own agents, jobs, and knowledge.
             </p>
           </div>
           <div className="flex items-center gap-2 ml-4 shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                onOpenChange(false);
-                setSection({ type: "registry" });
-              }}
-              disabled={creating}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
-            >
-              <LayoutTemplate className="h-3.5 w-3.5" />
-              Import from Registry
-            </button>
             <button
               onClick={() => !creating && onOpenChange(false)}
               disabled={creating}
@@ -133,9 +112,9 @@ function NewCabinetOverlay({
         </div>
 
         <form onSubmit={handleCreate} className="px-8 pb-8 space-y-6">
-          {/* Cabinet name */}
+          {/* Space name */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Cabinet name</label>
+            <label className="text-sm font-medium text-foreground">Space name</label>
             <Input
               placeholder="e.g. My Startup, Marketing Team, Research Lab..."
               value={name}
@@ -178,7 +157,7 @@ function NewCabinetOverlay({
               Cancel
             </Button>
             <Button type="submit" disabled={!name.trim() || creating}>
-              {creating ? "Creating..." : "Create Cabinet"}
+              {creating ? "Creating..." : "Create Space"}
             </Button>
           </div>
         </form>
@@ -205,11 +184,11 @@ export function NewCabinetDialog({
       <>
         <button
           onClick={() => setInternalOpen(true)}
-          title="New Cabinet"
+          title="New Space"
           className="flex min-w-0 items-center gap-1.5 w-full text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
         >
           <Archive className="h-4 w-4 shrink-0" />
-          <span className="min-w-0 truncate">New Cabinet</span>
+          <span className="min-w-0 truncate">New Space</span>
         </button>
         {open && (
           <NewCabinetOverlay
