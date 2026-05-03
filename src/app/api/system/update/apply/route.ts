@@ -13,7 +13,7 @@ export async function POST() {
 
   if (!update.updateAvailable || !update.latest) {
     return NextResponse.json(
-      { error: "No newer Cabinet release is available right now." },
+      { error: "No newer Optale Observatory release is available right now." },
       { status: 409 }
     );
   }
@@ -36,8 +36,8 @@ export async function POST() {
     currentVersion: update.current.version,
     targetVersion: update.latest.version,
     installKind: update.installKind,
-    message: "Preparing Cabinet update...",
-    log: [`Queueing Cabinet ${update.latest.version} upgrade`],
+    message: "Preparing Optale Observatory update...",
+    log: [`Queueing Optale Observatory ${update.latest.version} upgrade`],
   });
 
   const child = spawn(

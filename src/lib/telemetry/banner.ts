@@ -9,9 +9,9 @@ export function printStartupBannerIfNeeded(): void {
   if (state.bannerShownCount >= MAX_SHOWS) return;
 
   console.log(
-    "\nCabinet sends anonymous usage telemetry to improve the product." +
+    "\nOptale Observatory can send anonymous usage telemetry to improve the product." +
       "\n  Disable: CABINET_TELEMETRY_DISABLED=1  |  Settings toggle in the web UI" +
-      "\n  Details: https://github.com/hilash/cabinet/blob/main/TELEMETRY.md\n"
+      "\n  Details: https://optale.com/privacy\n"
   );
 
   updateState({ bannerShownCount: state.bannerShownCount + 1 });

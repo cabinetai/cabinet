@@ -38,7 +38,7 @@ function classify(
     if (/ENOENT|command not found|no such file/i.test(spawnError)) {
       return {
         status: "not_installed",
-        hint: "Cabinet couldn't find the CLI binary on your PATH. Rerun the Install step.",
+        hint: "Optale Observatory couldn't find the CLI binary on your PATH. Rerun the Install step.",
       };
     }
     return {

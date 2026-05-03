@@ -6,7 +6,7 @@ import path from "node:path";
 /**
  * `/api/agents/config/cli-mcp-servers` — read-only aggregator that surfaces
  * MCP servers the user has already configured in their Claude Code, Codex CLI,
- * and Gemini CLI configs. Cabinet only displays them; editing happens via the
+ * and Gemini CLI configs. Optale Observatory only displays them; editing happens via the
  * CLIs themselves. Never writes to any of these files.
  */
 

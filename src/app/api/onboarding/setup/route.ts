@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const roomType: RoomType = body.roomType || "office";
     const roomConfig = getRoomConfig(roomType);
     const workspaceName =
-      answers.workspaceName?.trim() || answers.companyName?.trim() || "My Cabinet";
+      answers.workspaceName?.trim() || answers.companyName?.trim() || "My Space";
     const homeName =
       body.homeName?.trim() || (answers.name ? `${answers.name}'s Home` : "Home");
 

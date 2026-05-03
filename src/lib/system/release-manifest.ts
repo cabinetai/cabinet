@@ -24,8 +24,7 @@ function buildReleaseUrls(repositoryUrl: string, gitTag: string): Pick<
 function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
   const version = pkg.version || "0.0.0";
   const gitTag = `v${version}`;
-  const repositoryUrl = pkg.repository?.url?.replace(/^git\+/, "").replace(/\.git$/, "") ||
-    "https://github.com/hilash/cabinet";
+  const repositoryUrl = "https://optale.com";
 
   return {
     manifestVersion: 1,
@@ -108,6 +107,13 @@ export async function fetchLatestReleaseManifest(): Promise<{
 }> {
   const bundled = await readBundledReleaseManifest();
   const manifestUrl = getReleaseManifestUrl();
+  if (!manifestUrl) {
+    return {
+      manifest: bundled,
+      manifestUrl,
+      source: "bundled",
+    };
+  }
 
   try {
     const response = await fetch(manifestUrl, {

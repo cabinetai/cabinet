@@ -34,7 +34,7 @@ export async function GET() {
       home: { name: "Home" },
       room: { id: "office-01", type: "office", name: "The Office" },
       cabinet: {
-        name: companyData.name || "My Cabinet",
+        name: companyData.name || "My Space",
         description: companyData.description || "",
         size: companyData.teamSize || "",
       },

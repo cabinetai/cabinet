@@ -45,7 +45,7 @@ export async function POST() {
       taskInfo = "No task data available.";
     }
 
-    const prompt = `Generate a brief daily digest for the Cabinet knowledge base.
+    const prompt = `Generate a brief daily digest for the Optale Observatory knowledge base.
 
 Yesterday's git activity:
 ${gitLog || "No changes recorded."}

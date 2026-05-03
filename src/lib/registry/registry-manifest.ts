@@ -1,23 +1,10 @@
 /**
  * Registry manifest client.
  *
- * The cabinets registry (https://github.com/hilash/cabinets) auto-generates
- * a `manifest.json` at its repo root on every push (via the
- * `build-manifest.yml` GitHub Action). This module fetches that manifest,
- * caches it in-process, and exposes a typed `RegistryTemplate[]` to the
- * Cabinet app's home carousel and registry browser.
- *
- * If the live fetch fails (offline, rate-limited, registry unreachable),
- * we fall back to a small, hand-curated set bundled into the app so the
- * UI stays usable.
+ * Optale Observatory disables the upstream Cabinet template registry. This
+ * module keeps the legacy type shape for old imports while returning no
+ * templates and performing no external fetches.
  */
-
-const REPO_OWNER = "hilash";
-const REPO_NAME = "cabinets";
-const MANIFEST_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/HEAD/manifest.json`;
-const RAW_BASE = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/HEAD`;
-
-const MANIFEST_TTL_MS = 10 * 60 * 1000;
 
 export interface RegistryTemplate {
   slug: string;
@@ -33,52 +20,6 @@ export interface RegistryTemplate {
   tags: string[];
 }
 
-interface ManifestEntry {
-  slug: string;
-  name: string;
-  description: string;
-  domain?: string;
-  version?: string;
-  cover?: string | null;
-  agentCount?: number;
-  jobCount?: number;
-  childCount?: number;
-  tags?: string[];
-}
-
-interface ManifestPayload {
-  schemaVersion?: number;
-  generatedAt?: string;
-  cabinetCount?: number;
-  cabinets?: ManifestEntry[];
-}
-
-let cached: { templates: RegistryTemplate[]; expires: number } | null = null;
-let inflight: Promise<RegistryTemplate[]> | null = null;
-
-function buildCoverUrl(slug: string, cover: string | null | undefined): string | null {
-  if (!cover) return null;
-  return `${RAW_BASE}/${encodeURIComponent(slug)}/${cover
-    .split("/")
-    .map(encodeURIComponent)
-    .join("/")}`;
-}
-
-function normalize(entry: ManifestEntry): RegistryTemplate {
-  return {
-    slug: entry.slug,
-    name: entry.name || entry.slug,
-    description: entry.description || "",
-    domain: entry.domain || "Other",
-    version: entry.version || "0.1.0",
-    cover: entry.cover || null,
-    coverUrl: buildCoverUrl(entry.slug, entry.cover),
-    agentCount: entry.agentCount || 0,
-    jobCount: entry.jobCount || 0,
-    childCount: entry.childCount || 0,
-    tags: Array.isArray(entry.tags) ? entry.tags : [],
-  };
-}
 
 /**
  * Bundled fallback. Used when the live fetch fails. Kept short — the UI
@@ -201,39 +142,12 @@ export const FALLBACK_TEMPLATES: RegistryTemplate[] = [
   },
 ];
 
-async function fetchManifest(): Promise<RegistryTemplate[]> {
-  const res = await fetch(MANIFEST_URL, {
-    next: { revalidate: 600 },
-    headers: { Accept: "application/json" },
-  });
-  if (!res.ok) throw new Error(`Manifest fetch failed: HTTP ${res.status}`);
-  const data = (await res.json()) as ManifestPayload;
-  const entries = Array.isArray(data.cabinets) ? data.cabinets : [];
-  return entries.map(normalize);
-}
-
 export async function getRegistryTemplates(): Promise<RegistryTemplate[]> {
-  if (cached && cached.expires > Date.now()) return cached.templates;
-  if (inflight) return inflight;
-
-  inflight = (async () => {
-    try {
-      const templates = await fetchManifest();
-      cached = { templates, expires: Date.now() + MANIFEST_TTL_MS };
-      return templates;
-    } catch {
-      if (cached) return cached.templates;
-      return FALLBACK_TEMPLATES;
-    } finally {
-      inflight = null;
-    }
-  })();
-
-  return inflight;
+  return [];
 }
 
 export function getRegistryRawBase(): string {
-  return RAW_BASE;
+  return "";
 }
 
 /**

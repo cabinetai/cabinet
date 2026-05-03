@@ -4,9 +4,9 @@ import { sendNotification } from "@/lib/agents/notification-service";
 export async function POST() {
   try {
     const result = await sendNotification({
-      title: "Cabinet Test Notification",
+      title: "Optale Observatory Test Notification",
       message: "If you see this, your notification setup is working correctly!",
-      agentName: "Cabinet System",
+      agentName: "Optale Observatory System",
       agentEmoji: "\u{2705}",
       channel: "test",
       severity: "info",

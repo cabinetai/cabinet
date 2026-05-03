@@ -11,7 +11,7 @@ import { getOrCreateSessionId } from "./session";
 import { readState } from "./state";
 import { version as pkgVersion } from "../../../package.json";
 
-const DEFAULT_ENDPOINT = "https://reports.runcabinet.com/telemetry";
+const DEFAULT_ENDPOINT = "";
 const BATCH_SIZE = 25;
 const POST_TIMEOUT_MS = 2500;
 
@@ -32,6 +32,8 @@ function getSessionId(): string {
 
 async function postBatch(events: QueuedEvent[]): Promise<boolean> {
   if (events.length === 0) return true;
+  const endpoint = getEndpoint();
+  if (!endpoint) return true;
 
   const state = readState();
   const body = {
@@ -51,7 +53,7 @@ async function postBatch(events: QueuedEvent[]): Promise<boolean> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), POST_TIMEOUT_MS);
   try {
-    const res = await fetch(getEndpoint(), {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),

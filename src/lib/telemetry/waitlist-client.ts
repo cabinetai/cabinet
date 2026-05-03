@@ -1,5 +1,5 @@
 const WAITLIST_ENDPOINT =
-  process.env.NEXT_PUBLIC_CABINET_WAITLIST_ENDPOINT ?? "https://reports.runcabinet.com/waitlist";
+  process.env.NEXT_PUBLIC_CABINET_WAITLIST_ENDPOINT ?? "";
 const VISIT_ID_KEY = "cabinet-waitlist-visit-id";
 
 function uuid(): string {
@@ -27,6 +27,7 @@ export function getVisitId(): string {
 
 async function postJson(path: string, body: unknown): Promise<Response | null> {
   if (typeof fetch === "undefined") return null;
+  if (!WAITLIST_ENDPOINT) return null;
   try {
     return await fetch(WAITLIST_ENDPOINT.replace(/\/waitlist$/, "") + path, {
       method: "POST",

@@ -1717,7 +1717,7 @@ scheduleWatcher.on("all", () => {
   queueScheduleReload();
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "127.0.0.1", () => {
   console.log(`Cabinet Daemon running on port ${PORT}`);
   console.log(`  Terminal WebSocket: ws://localhost:${PORT}/api/daemon/pty`);
   console.log(`  Events WebSocket: ws://localhost:${PORT}/api/daemon/events`);
