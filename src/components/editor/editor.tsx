@@ -90,7 +90,7 @@ function resolveInternalLink(
   const allPages = flattenTree(nodes);
 
   // Clean up the href: strip .md extension, leading ./ or /
-  let linkPath = href
+  const linkPath = href
     .replace(/\.md$/, "")
     .replace(/^\.\//, "")
     .replace(/^\//, "");
@@ -332,7 +332,10 @@ export function KBEditor() {
     // by a fresh fetch that returned the same markdown.
     const key = `${currentPath} ${content}`;
     if (renderedKeyRef.current === key) {
-      if (renderedPath !== currentPath) setRenderedPath(currentPath);
+      if (renderedPath !== currentPath) {
+        const timeout = window.setTimeout(() => setRenderedPath(currentPath), 0);
+        return () => window.clearTimeout(timeout);
+      }
       return;
     }
     prevPathRef.current = currentPath;

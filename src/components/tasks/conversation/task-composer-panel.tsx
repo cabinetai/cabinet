@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { Terminal } from "lucide-react";
 import { ComposerInput } from "@/components/composer/composer-input";
 import {
@@ -239,15 +239,10 @@ export function TaskComposerPanel({
 
   // Continuation turns upload directly into the existing conversation's
   // attachments dir — no staging needed. When conversationId is missing
-  // (shouldn't happen for this surface), fall back to a stable random id
+  // (shouldn't happen for this surface), fall back to a stable client id
   // so the hook's staging path is well-formed.
-  const clientAttachmentId = useMemo(
-    () =>
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : `c-${Date.now()}`,
-    []
-  );
+  const fallbackAttachmentId = useId();
+  const clientAttachmentId = `c-${fallbackAttachmentId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const attachments = useComposerAttachments({
     cabinetPath,
     conversationId,

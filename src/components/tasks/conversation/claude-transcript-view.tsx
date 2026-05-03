@@ -74,8 +74,12 @@ export function ClaudeTranscriptView({
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(null);
+    const loadingTask = window.setTimeout(() => {
+      if (!cancelled) {
+        setLoading(true);
+        setError(null);
+      }
+    }, 0);
     const qs = new URLSearchParams();
     if (cabinetPath) qs.set("cabinetPath", cabinetPath);
     const query = qs.toString();
@@ -96,10 +100,12 @@ export function ClaudeTranscriptView({
         if (!cancelled) setError(err.message);
       })
       .finally(() => {
+        window.clearTimeout(loadingTask);
         if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
+      window.clearTimeout(loadingTask);
     };
   }, [taskId, cabinetPath, statusKey]);
 

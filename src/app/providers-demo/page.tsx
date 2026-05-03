@@ -192,7 +192,10 @@ export default function ProvidersDemoPage() {
   }, [callApi]);
 
   useEffect(() => {
-    void loadProviders();
+    const timeout = window.setTimeout(() => {
+      void loadProviders();
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [loadProviders]);
 
   const runVerify = useCallback(
@@ -249,7 +252,7 @@ export default function ProvidersDemoPage() {
         setRunState((prev) => ({ ...prev, [p.id]: { phase: "error", message: msg, ms } }));
       }
     },
-    [callApi, prompt]
+    [callApi, effortByProvider, modelByProvider, prompt]
   );
 
   const readyCount = useMemo(

@@ -158,8 +158,11 @@ export function RecentTasks({
   // contexts and probably want to see the fresh top-of-list, not their
   // "Show older" expansion from the previous cabinet.
   useEffect(() => {
-    setVisibleCount(INITIAL_VISIBLE);
-    setFetchLimit(INITIAL_VISIBLE + PAGE_STEP);
+    const timeout = window.setTimeout(() => {
+      setVisibleCount(INITIAL_VISIBLE);
+      setFetchLimit(INITIAL_VISIBLE + PAGE_STEP);
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [cabinetPath]);
 
   const agentColorMap = useMemo(() => {

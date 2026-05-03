@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { ComposerInput } from "@/components/composer/composer-input";
 import {
@@ -62,12 +62,14 @@ export function CabinetTaskComposer({
       agents.find((agent) => agent.cabinetDepth === 0 && agent.active) ||
       agents.find((agent) => agent.active) ||
       agents[0];
-    setSelectedAgent(firstAgent);
+    const timeout = window.setTimeout(() => setSelectedAgent(firstAgent), 0);
+    return () => window.clearTimeout(timeout);
   }, [agents, selectedAgent]);
 
   useEffect(() => {
     if (!requestedAgent) return;
-    setSelectedAgent(requestedAgent);
+    const timeout = window.setTimeout(() => setSelectedAgent(requestedAgent), 0);
+    return () => window.clearTimeout(timeout);
   }, [requestedAgent]);
 
   const greeting = getGreeting();
@@ -96,13 +98,8 @@ export function CabinetTaskComposer({
     [assignableAgents, skillItems, pages]
   );
 
-  const stagingClientUuid = useMemo(
-    () =>
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : `c-${Date.now()}`,
-    []
-  );
+  const stagingId = useId();
+  const stagingClientUuid = `c-${stagingId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const attachmentsCabinetPath =
     selectedAgent?.cabinetPath || cabinetPath;
   const attachments = useComposerAttachments({
@@ -299,4 +296,3 @@ function AgentPickerCompact({
     </DropdownMenu>
   );
 }
-

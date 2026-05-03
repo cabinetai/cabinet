@@ -280,7 +280,10 @@ export function AIPanel() {
 
   // Load past sessions when page changes
   useEffect(() => {
-    void loadPastSessions();
+    const timeout = window.setTimeout(() => {
+      void loadPastSessions();
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [loadPastSessions]);
 
   useEffect(() => {
@@ -290,7 +293,11 @@ export function AIPanel() {
 
     const fallbackSession =
       liveSessions.find((session) => session.pagePath === currentPath) || liveSessions[0] || null;
-    setSelectedLiveSessionId(fallbackSession?.id || null);
+    const nextSelectedId = fallbackSession?.id || null;
+    const timeout = window.setTimeout(() => {
+      setSelectedLiveSessionId(nextSelectedId);
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [currentPath, liveSessions, selectedLiveSessionId]);
 
   useEffect(() => {
@@ -298,7 +305,10 @@ export function AIPanel() {
     previousCurrentPathRef.current = currentPath;
     const currentPageLive = liveSessions.find((session) => session.pagePath === currentPath);
     if (currentPageLive) {
-      setSelectedLiveSessionId(currentPageLive.id);
+      const timeout = window.setTimeout(() => {
+        setSelectedLiveSessionId(currentPageLive.id);
+      }, 0);
+      return () => window.clearTimeout(timeout);
     }
   }, [currentPath, liveSessions]);
 

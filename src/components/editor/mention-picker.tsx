@@ -24,7 +24,7 @@ export function EditorMentionPicker({ editor: _editor }: EditorMentionPickerProp
 
   // Read current state on every render.
   const state = getMentionPickerState();
-  const { open, items, selectedIndex, clientRect, command } = state;
+  const { open, items, selectedIndex, clientRect } = state;
 
   const handleClose = useCallback(() => {
     setMentionPickerState({
@@ -38,11 +38,12 @@ export function EditorMentionPicker({ editor: _editor }: EditorMentionPickerProp
 
   const handleSelect = useCallback(
     (item: MentionItem) => {
-      if (!command) return;
-      command({ id: item.id, label: item.label });
+      const currentCommand = getMentionPickerState().command;
+      if (!currentCommand) return;
+      currentCommand({ id: item.id, label: item.label });
       handleClose();
     },
-    [command, handleClose]
+    [handleClose]
   );
 
   // Keyboard navigation forwarded from the suggestion plugin via window event.

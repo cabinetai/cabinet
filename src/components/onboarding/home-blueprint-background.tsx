@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId } from "react";
 
 interface HomeBlueprintBackgroundProps {
   accent: string;
@@ -232,10 +232,8 @@ export function HomeBlueprintBackground({
   accentSoft,
   paper,
 }: HomeBlueprintBackgroundProps) {
-  const gridId = useMemo(
-    () => `bp-grid-${Math.random().toString(36).slice(2, 8)}`,
-    []
-  );
+  const rawGridId = useId();
+  const gridId = `bp-grid-${rawGridId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
 
   return (
     <div className="bp-root pointer-events-none absolute inset-0 overflow-hidden">

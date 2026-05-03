@@ -24,12 +24,15 @@ export function ThemePicker() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Sync local state with whatever ThemeInitializer already applied
-    const stored = getStoredThemeName();
-    if (stored) {
-      setActiveCustomTheme(stored);
-    }
+    const timeout = window.setTimeout(() => {
+      setMounted(true);
+      // Sync local state with whatever ThemeInitializer already applied
+      const stored = getStoredThemeName();
+      if (stored) {
+        setActiveCustomTheme(stored);
+      }
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   // Close menu on click outside

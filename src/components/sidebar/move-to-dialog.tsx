@@ -72,14 +72,13 @@ export function MoveToDialog({ open, onOpenChange, source }: MoveToDialogProps) 
 
   useEffect(() => {
     if (open) {
-      setQuery("");
-      setSelectedIndex(0);
+      const timeout = window.setTimeout(() => {
+        setQuery("");
+        setSelectedIndex(0);
+      }, 0);
+      return () => window.clearTimeout(timeout);
     }
   }, [open]);
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
 
   const handleSelect = async (target: Target) => {
     if (!source) return;
@@ -117,7 +116,10 @@ export function MoveToDialog({ open, onOpenChange, source }: MoveToDialogProps) 
                 : "Move to…"
             }
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedIndex(0);
+            }}
             onKeyDown={handleKeyDown}
             className="border-0 shadow-none focus-visible:ring-0 px-0"
           />

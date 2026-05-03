@@ -221,11 +221,18 @@ export function SlackPanel({ height: initialHeight = 200, onOpenFile }: SlackPan
   }, [channels, activeChannel]);
 
   useEffect(() => {
-    if (channels.length > 0) loadCounts();
+    if (channels.length === 0) return;
+    const timeout = window.setTimeout(() => {
+      void loadCounts();
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [channels, loadCounts]);
 
   useEffect(() => {
-    loadChannels();
+    const timeout = window.setTimeout(() => {
+      void loadChannels();
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, [loadChannels]);
 
   // Load agents for @mention autocomplete
@@ -245,14 +252,20 @@ export function SlackPanel({ height: initialHeight = 200, onOpenFile }: SlackPan
   }, []);
 
   useEffect(() => {
-    loadMessages();
+    const load = () => {
+      void loadMessages();
+    };
+    const timeout = window.setTimeout(load, 0);
     // Listen for SSE slack refresh events
-    const handleRefresh = () => loadMessages();
+    const handleRefresh = () => {
+      void loadMessages();
+    };
     window.addEventListener("cabinet:slack-refresh", handleRefresh);
     // Fallback poll every 10s (was 5s, now SSE handles real-time)
-    const interval = setInterval(loadMessages, 10000);
+    const interval = window.setInterval(load, 10000);
     return () => {
-      clearInterval(interval);
+      window.clearTimeout(timeout);
+      window.clearInterval(interval);
       window.removeEventListener("cabinet:slack-refresh", handleRefresh);
     };
   }, [loadMessages]);

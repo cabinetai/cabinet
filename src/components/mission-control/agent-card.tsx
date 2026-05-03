@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Pause, Play, Loader2, Inbox } from "lucide-react";
 import { GoalBar } from "./goal-bar";
@@ -24,9 +24,9 @@ interface AgentCardProps {
   onRun?: () => Promise<void>;
 }
 
-function timeAgo(dateStr?: string): string {
+function timeAgo(dateStr: string | undefined, now: number): string {
   if (!dateStr) return "never";
-  const diff = Date.now() - new Date(dateStr).getTime();
+  const diff = now - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "just now";
   if (mins < 60) return `${mins}m ago`;
@@ -35,8 +35,8 @@ function timeAgo(dateStr?: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-function formatCountdown(dateStr: string): string {
-  const diff = new Date(dateStr).getTime() - Date.now();
+function formatCountdown(dateStr: string, now: number): string {
+  const diff = new Date(dateStr).getTime() - now;
   if (diff <= 0) return "soon";
   const mins = Math.floor(diff / 60000);
   if (mins < 60) return `${mins}m`;
@@ -44,7 +44,7 @@ function formatCountdown(dateStr: string): string {
   return `${hours}h ${mins % 60}m`;
 }
 
-function StatusIndicator({ active, running, lastHeartbeat, nextHeartbeat, onToggle }: { active: boolean; running?: boolean; lastHeartbeat?: string; nextHeartbeat?: string; onToggle?: () => void }) {
+function StatusIndicator({ active, running, lastHeartbeat, nextHeartbeat, now, onToggle }: { active: boolean; running?: boolean; lastHeartbeat?: string; nextHeartbeat?: string; now: number; onToggle?: () => void }) {
   if (running) {
     return (
       <span className="flex items-center gap-1 text-[10px] text-emerald-500">
@@ -74,7 +74,7 @@ function StatusIndicator({ active, running, lastHeartbeat, nextHeartbeat, onTogg
 
   // Active: check if recently ran (within last 30 min)
   if (lastHeartbeat) {
-    const diff = Date.now() - new Date(lastHeartbeat).getTime();
+    const diff = now - new Date(lastHeartbeat).getTime();
     if (diff < 30 * 60 * 1000) {
       return (
         <span
@@ -92,7 +92,7 @@ function StatusIndicator({ active, running, lastHeartbeat, nextHeartbeat, onTogg
   // Show next heartbeat countdown if available
   if (nextHeartbeat) {
     const nextTime = new Date(nextHeartbeat).getTime();
-    if (nextTime > Date.now()) {
+    if (nextTime > now) {
       return (
         <span
           className={cn("flex items-center gap-1 text-[10px] text-muted-foreground/60", onToggle && "hover:text-amber-500 cursor-pointer transition-colors")}
@@ -100,7 +100,7 @@ function StatusIndicator({ active, running, lastHeartbeat, nextHeartbeat, onTogg
           title={onToggle ? "Click to pause" : undefined}
         >
           <span className="h-2 w-2 rounded-full bg-emerald-500/60 shrink-0" />
-          Next: {formatCountdown(nextHeartbeat)}
+          Next: {formatCountdown(nextHeartbeat, now)}
         </span>
       );
     }
@@ -136,6 +136,12 @@ export function AgentCard({
   onRun,
 }: AgentCardProps) {
   const [runLoading, setRunLoading] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const handleRun = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -163,7 +169,7 @@ export function AgentCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="text-[12px] font-medium truncate">{name}</span>
-            <StatusIndicator active={active} running={running} lastHeartbeat={lastHeartbeat} nextHeartbeat={nextHeartbeat} onToggle={onToggle} />
+            <StatusIndicator active={active} running={running} lastHeartbeat={lastHeartbeat} nextHeartbeat={nextHeartbeat} now={now} onToggle={onToggle} />
             {pendingTasks && pendingTasks > 0 ? (
               <span className="flex items-center gap-0.5 text-[9px] text-blue-400/80 bg-blue-500/10 px-1 py-0 rounded">
                 <Inbox className="h-2.5 w-2.5" />
@@ -192,7 +198,7 @@ export function AgentCard({
           </span>
         )}
         <span className="text-[10px] text-muted-foreground/50 shrink-0">
-          {timeAgo(lastHeartbeat)}
+          {timeAgo(lastHeartbeat, now)}
         </span>
       </div>
 
