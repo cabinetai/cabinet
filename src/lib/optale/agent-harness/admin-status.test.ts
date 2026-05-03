@@ -87,6 +87,20 @@ test("Harness admin snapshot marks stable generated personas in sync", async () 
     assert.equal(row.persona.provider, "openrouter");
     assert.equal(row.persona.model, "anthropic/claude-sonnet-4");
     assert.equal(row.mcp.allowedServerCount, manifest.agents[0].mcp.servers.length);
+    assert.equal(row.framework.schemaVersion, 2);
+    assert.equal(row.framework.scopeProfile.scope, "system");
+    assert.equal(row.framework.scopeProfile.privacyBoundary, "system");
+    assert.equal(
+      row.framework.scopeProfile.promotionBoundary,
+      "private-to-company gated"
+    );
+    assert.equal(row.framework.senseMemory.cognee, "planned");
+    assert.equal(row.framework.senseMemory.openFoundryOag, "bridge-only");
+    assert.equal(row.framework.senseMemory.graphiti, "bridge-only");
+    assert.equal(row.framework.senseMemory.proprietaryPersonalMemory, "planned");
+    assert.equal(row.framework.senseMemory.honchoInternalOnly, true);
+    assert.equal(row.framework.bridgeOnly, true);
+    assert.equal(row.framework.runtimeStatus, "planned");
     assert.equal(
       row.legacyLibreChatBridge?.agentId,
       "agent_optale_meta_research"

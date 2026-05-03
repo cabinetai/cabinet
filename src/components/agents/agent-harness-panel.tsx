@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 type HarnessStatus = "missing" | "present" | "in_sync" | "drift_unknown";
+type HarnessMemoryStatus =
+  | "planned"
+  | "active"
+  | "bridge-only"
+  | "internal-only"
+  | "disabled";
 
 interface HarnessRow {
   definitionId: string;
@@ -50,6 +56,26 @@ interface HarnessRow {
     manifestId?: string;
     definitionId?: string;
     projectedAt?: string;
+  };
+  framework: {
+    schemaVersion: 2;
+    scopeProfile: {
+      scope: "personal" | "company" | "system";
+      subjectType: "personal" | "company" | "system";
+      privacyBoundary: "private" | "company" | "system";
+      memoryNamespace: string;
+      promotionBoundary: string;
+    };
+    senseMemory: {
+      cognee: HarnessMemoryStatus;
+      openFoundryOag: HarnessMemoryStatus;
+      graphiti: HarnessMemoryStatus;
+      proprietaryPersonalMemory: HarnessMemoryStatus;
+      honchoInternalOnly: boolean;
+    };
+    bridgeOnly: boolean;
+    runtimeStatus: string;
+    projectionStatus: string;
   };
   status: HarnessStatus;
   issues: string[];
@@ -136,6 +162,23 @@ function stateBadge(row: HarnessRow) {
       {paused ? "Paused" : "Active"}
     </span>
   );
+}
+
+function senseMemoryItems(row: HarnessRow) {
+  return [
+    ["Cognee", row.framework.senseMemory.cognee],
+    ["OAG", row.framework.senseMemory.openFoundryOag],
+    ["Graphiti", row.framework.senseMemory.graphiti],
+    ["Personal", row.framework.senseMemory.proprietaryPersonalMemory],
+  ] as const;
+}
+
+function memoryStatusClassName(status: HarnessMemoryStatus): string {
+  if (status === "active") return "bg-emerald-500/10 text-emerald-300";
+  if (status === "bridge-only") return "bg-amber-500/10 text-amber-300";
+  if (status === "internal-only") return "bg-sky-500/10 text-sky-300";
+  if (status === "disabled") return "bg-muted/40 text-muted-foreground";
+  return "bg-muted/30 text-muted-foreground";
 }
 
 function HarnessLoadingRows() {
@@ -232,13 +275,15 @@ export function AgentHarnessPanel() {
       ) : snapshot ? (
         <div className="overflow-hidden rounded-xl border border-border/70 bg-card">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1040px] border-collapse text-left text-[12px]">
+            <table className="w-full min-w-[1280px] border-collapse text-left text-[12px]">
               <thead className="border-b border-border/70 bg-muted/25 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2 font-medium">Agent</th>
                   <th className="px-3 py-2 font-medium">Projection</th>
                   <th className="px-3 py-2 font-medium">Provider</th>
                   <th className="px-3 py-2 font-medium">State</th>
+                  <th className="px-3 py-2 font-medium">Scope Profile</th>
+                  <th className="px-3 py-2 font-medium">Sense Memory</th>
                   <th className="px-3 py-2 font-medium">MCP</th>
                   <th className="px-3 py-2 font-medium">Native Target</th>
                   <th className="px-3 py-2 font-medium">Legacy Bridge</th>
@@ -283,6 +328,41 @@ export function AgentHarnessPanel() {
                         </div>
                       ) : null}
                     </td>
+                    <td className="max-w-[190px] px-3 py-3">
+                      <div className="inline-flex rounded-full bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground">
+                        {row.framework.scopeProfile.privacyBoundary}
+                      </div>
+                      <span className="ml-1 inline-flex rounded-full bg-muted/30 px-2 py-0.5 text-[10px] text-muted-foreground">
+                        {row.framework.scopeProfile.subjectType}
+                      </span>
+                      <div className="mt-2 break-all font-mono text-[10px] text-muted-foreground">
+                        {row.framework.scopeProfile.memoryNamespace}
+                      </div>
+                      <div className="mt-1 text-[10px] text-muted-foreground">
+                        {row.framework.scopeProfile.promotionBoundary}
+                      </div>
+                    </td>
+                    <td className="max-w-[230px] px-3 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {senseMemoryItems(row).map(([label, status]) => (
+                          <span
+                            key={label}
+                            className={cn(
+                              "rounded-full px-1.5 py-0.5 text-[10px]",
+                              memoryStatusClassName(status)
+                            )}
+                            title={status}
+                          >
+                            {label}
+                          </span>
+                        ))}
+                        {row.framework.senseMemory.honchoInternalOnly ? (
+                          <span className="rounded-full bg-sky-500/10 px-1.5 py-0.5 text-[10px] text-sky-300">
+                            Honcho internal
+                          </span>
+                        ) : null}
+                      </div>
+                    </td>
                     <td className="max-w-[230px] px-3 py-3">
                       <div className="text-[11px] text-foreground">
                         {row.mcp.allowedServerCount} allowed
@@ -303,6 +383,14 @@ export function AgentHarnessPanel() {
                       <div className="font-mono text-[11px] text-foreground">
                         {row.projection.nativePersonaSlug}
                       </div>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <span className="rounded-full bg-muted/40 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                          {row.framework.runtimeStatus}
+                        </span>
+                        <span className="rounded-full bg-muted/40 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                          {row.framework.projectionStatus}
+                        </span>
+                      </div>
                       <div className="mt-1 break-all font-mono text-[10px] text-muted-foreground">
                         {row.projection.targetPath}
                       </div>
@@ -316,6 +404,11 @@ export function AgentHarnessPanel() {
                           <div className="mt-1 text-[10px] text-muted-foreground">
                             {row.legacyLibreChatBridge.status}
                           </div>
+                          {row.framework.bridgeOnly ? (
+                            <div className="mt-1 inline-flex rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] text-amber-300">
+                              bridge-only
+                            </div>
+                          ) : null}
                         </>
                       ) : (
                         <span className="text-[11px] text-muted-foreground">None</span>

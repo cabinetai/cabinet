@@ -38,6 +38,21 @@ Honcho remains internal-only. The private-to-company promotion boundary must rem
 
 Optale Command remains the control plane and runtime surface. LibreChat remains the bridge/runtime during migration only.
 
+## AGENTS-FW V2 Preview Metadata
+
+AgentDefinition v1 remains the working tactical manifest for the current Harness slice. It is still the source used for validation, native Observatory persona projection, and temporary LibreChat bridge metadata.
+
+The v2 layer is read-only AGENTS-FW alignment metadata derived from v1. It previews the broader Optale Agents Framework shape without changing runtime behavior:
+
+- `src/lib/optale/agent-harness/agent-definition-v2.ts`
+- `src/lib/optale/agent-harness/agent-definition-v2-preview.ts`
+
+The v2 preview includes scope profile, private/company/system boundary metadata, Sense Memory bindings, identity, runtime, tool policy, action policy, observability, orchestration, and projection metadata. Generated personas remain projection artifacts and should not be hand-edited as canonical agent definitions.
+
+Sense Memory in v2 points toward Cognee for ingestion/document-to-KG, Open Foundry/OAG for ontology/runtime/digital twin patterns, Graphiti for temporal facts, and proprietary personal memory for customer-facing memory. Honcho is represented only as an internal-only legacy memory bridge when present.
+
+LibreChat remains bridge/runtime during migration. Legacy LibreChat agent ids, source scripts, model metadata, and tool ids are retained only as bridge projection data.
+
 ## LibreChat Bridge
 
 The existing LibreChat Mongo scripts remain temporary reference and bridge material during migration:

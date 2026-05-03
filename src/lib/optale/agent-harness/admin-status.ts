@@ -1,6 +1,8 @@
 import path from "path";
 import matter from "gray-matter";
 import type { AgentDefinition, AgentDefinitionManifest } from "./agent-definition";
+import type { AgentDefinitionV2MemoryBindingStatus } from "./agent-definition-v2";
+import { mapAgentDefinitionToV2Preview } from "./agent-definition-v2-preview";
 import { OPTALE_META_AGENT_MANIFEST } from "./optale-meta-manifest";
 import {
   defaultAgentHarnessPersonaTargetDir,
@@ -34,6 +36,27 @@ export interface AgentHarnessPersonaSummary {
   projectedAt?: string;
 }
 
+export interface AgentHarnessFrameworkSummary {
+  schemaVersion: 2;
+  scopeProfile: {
+    scope: AgentDefinition["scope"];
+    subjectType: AgentDefinition["scope"];
+    privacyBoundary: "private" | "company" | "system";
+    memoryNamespace: string;
+    promotionBoundary: "private-to-company gated";
+  };
+  senseMemory: {
+    cognee: AgentDefinitionV2MemoryBindingStatus;
+    openFoundryOag: AgentDefinitionV2MemoryBindingStatus;
+    graphiti: AgentDefinitionV2MemoryBindingStatus;
+    proprietaryPersonalMemory: AgentDefinitionV2MemoryBindingStatus;
+    honchoInternalOnly: boolean;
+  };
+  bridgeOnly: boolean;
+  runtimeStatus: AgentDefinition["runtimeProjections"]["nativeOptaleCommand"]["status"];
+  projectionStatus: AgentDefinition["runtimeProjections"]["nativeOptaleCommand"]["projectionStrategy"];
+}
+
 export interface AgentHarnessAdminRow {
   definitionId: string;
   name: string;
@@ -62,6 +85,7 @@ export interface AgentHarnessAdminRow {
     allowedServers: AgentHarnessMcpServerSummary[];
   };
   persona: AgentHarnessPersonaSummary;
+  framework: AgentHarnessFrameworkSummary;
   status: AgentHarnessPersonaStatus;
   issues: string[];
 }
@@ -120,6 +144,34 @@ function summarizeMcpServers(agent: AgentDefinition): AgentHarnessMcpServerSumma
   }));
 }
 
+function summarizeFrameworkPreview(input: {
+  manifest: AgentDefinitionManifest;
+  agent: AgentDefinition;
+}): AgentHarnessFrameworkSummary {
+  const preview = mapAgentDefinitionToV2Preview(input.manifest, input.agent);
+  return {
+    schemaVersion: preview.schemaVersion,
+    scopeProfile: {
+      scope: preview.scopeProfile.scope,
+      subjectType: preview.scopeProfile.subjectType,
+      privacyBoundary: preview.scopeProfile.privacyBoundary,
+      memoryNamespace: preview.scopeProfile.memoryNamespace,
+      promotionBoundary: "private-to-company gated",
+    },
+    senseMemory: {
+      cognee: preview.senseMemory.ingestion.status,
+      openFoundryOag: preview.senseMemory.ontology.status,
+      graphiti: preview.senseMemory.temporalFacts.status,
+      proprietaryPersonalMemory: preview.senseMemory.personalMemory.status,
+      honchoInternalOnly:
+        preview.senseMemory.internalLegacyMemory?.internalOnly === true,
+    },
+    bridgeOnly: preview.projection.legacyLibreChatBridge?.bridgeOnly === true,
+    runtimeStatus: preview.projection.nativeOptaleCommand.status,
+    projectionStatus: preview.projection.nativeOptaleCommand.projectionStrategy,
+  };
+}
+
 function actualModel(data: Record<string, unknown>): string | undefined {
   const adapterConfig = readRecord(data.adapterConfig);
   return readString(adapterConfig?.model);
@@ -142,6 +194,7 @@ async function buildRow(input: {
   const targetPath = path.join(input.targetAgentsDir, expected.slug, "persona.md");
   const exists = await fileExists(targetPath);
   const mcpServers = summarizeMcpServers(input.agent);
+  const framework = summarizeFrameworkPreview(input);
 
   const baseRow: Omit<AgentHarnessAdminRow, "persona" | "status" | "issues"> = {
     definitionId: input.agent.id,
@@ -173,6 +226,7 @@ async function buildRow(input: {
       allowedServerCount: mcpServers.length,
       allowedServers: mcpServers,
     },
+    framework,
   };
 
   if (!exists) {
