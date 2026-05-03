@@ -36,6 +36,11 @@ import type {
   OptalePolicyDecisionOutcome,
   OptalePolicyDecisionRecord,
 } from "@/lib/optale/policy-decision-log";
+import type {
+  OptaleLineageEdgeKind,
+  OptaleLineageEdgeRecord,
+  OptaleLineageEdgeTable,
+} from "@/lib/optale/lineage-edge-table";
 
 const KIND_LABELS: Record<OptaleActionKind, string> = {
   command: "Command",
@@ -61,6 +66,15 @@ const FILTERS: Array<{
   { id: "scheduling", label: "Scheduling" },
   { id: "governance", label: "Governance" },
 ];
+
+const LINEAGE_EDGE_KIND_LABELS: Record<OptaleLineageEdgeKind, string> = {
+  produces_run: "Produces Run",
+  invokes: "Invokes",
+  produces_decision: "Decision",
+  targets_agent: "Targets Agent",
+  created_child_run: "Child Run",
+  created_job: "Created Job",
+};
 
 function ActionIcon({
   action,
@@ -207,6 +221,31 @@ function matchesPolicyDecision(
   return haystack.includes(search.toLowerCase());
 }
 
+function matchesLineageEdge(
+  edge: OptaleLineageEdgeRecord,
+  search: string,
+): boolean {
+  if (!search) return true;
+  const haystack = [
+    edge.id,
+    edge.kind,
+    edge.cabinetPath,
+    edge.runId,
+    edge.policyDecisionId,
+    edge.source.kind,
+    edge.source.id,
+    edge.source.label,
+    edge.target.kind,
+    edge.target.id,
+    edge.target.label,
+    ...edge.evidence.flatMap((item) => [item.label, String(item.value)]),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(search.toLowerCase());
+}
+
 function formatGeneratedAt(value?: string): string {
   if (!value) return "";
   const date = new Date(value);
@@ -228,6 +267,7 @@ export function OptaleActionRegistryWorkspace({
   const [ledger, setLedger] = useState<OptaleActionRunLedger | null>(null);
   const [policyLog, setPolicyLog] =
     useState<OptalePolicyDecisionLog | null>(null);
+  const [lineage, setLineage] = useState<OptaleLineageEdgeTable | null>(null);
   const [activeFilter, setActiveFilter] = useState<
     "all" | OptaleActionKind | OptaleActionCategory
   >("all");
@@ -243,11 +283,17 @@ export function OptaleActionRegistryWorkspace({
         visibilityMode: "all",
         limit: "300",
       });
-      const [registryResponse, ledgerResponse, policyResponse] =
+      const [
+        registryResponse,
+        ledgerResponse,
+        policyResponse,
+        lineageResponse,
+      ] =
         await Promise.all([
           fetch(`/api/optale/actions?${params.toString()}`),
           fetch(`/api/optale/action-runs?${params.toString()}`),
           fetch(`/api/optale/policy-decisions?${params.toString()}`),
+          fetch(`/api/optale/lineage-edges?${params.toString()}`),
         ]);
       if (!registryResponse.ok) {
         throw new Error(
@@ -264,9 +310,15 @@ export function OptaleActionRegistryWorkspace({
           `Policy decision log fetch failed: ${policyResponse.status}`,
         );
       }
+      if (!lineageResponse.ok) {
+        throw new Error(
+          `Lineage edge table fetch failed: ${lineageResponse.status}`,
+        );
+      }
       setRegistry((await registryResponse.json()) as OptaleActionRegistry);
       setLedger((await ledgerResponse.json()) as OptaleActionRunLedger);
       setPolicyLog((await policyResponse.json()) as OptalePolicyDecisionLog);
+      setLineage((await lineageResponse.json()) as OptaleLineageEdgeTable);
       setError(null);
     } catch (err) {
       setError(
@@ -311,6 +363,13 @@ export function OptaleActionRegistryWorkspace({
       matchesPolicyDecision(decision, trimmedSearch),
     );
   }, [policyLog?.decisions, search]);
+
+  const filteredLineageEdges = useMemo(() => {
+    const trimmedSearch = search.trim();
+    return (lineage?.edges || []).filter((edge) =>
+      matchesLineageEdge(edge, trimmedSearch),
+    );
+  }, [lineage?.edges, search]);
 
   return (
     <main className="flex min-h-full flex-col bg-background">
@@ -769,6 +828,108 @@ export function OptaleActionRegistryWorkspace({
                   </div>
                   <div className="text-muted-foreground">
                     {formatGeneratedAt(decision.evaluatedAt)}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="border-t border-border/70 px-6 py-5">
+        <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h2 className="text-base font-semibold tracking-normal text-foreground">
+              Lineage Edges
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Read-only graph edges linking conversations, actions, decisions,
+              agents, and produced work.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+            {[
+              ["Edges", lineage?.counts.edges ?? 0],
+              ["Invokes", lineage?.counts.byKind.invokes ?? 0],
+              ["Decisions", lineage?.counts.byKind.produces_decision ?? 0],
+              ["Targets", lineage?.counts.byKind.targets_agent ?? 0],
+              [
+                "Outputs",
+                (lineage?.counts.byKind.created_child_run ?? 0) +
+                  (lineage?.counts.byKind.created_job ?? 0),
+              ],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="rounded-md border border-border bg-card px-2.5 py-1.5"
+              >
+                <div className="text-[10px] text-muted-foreground">
+                  {label}
+                </div>
+                <div className="text-sm font-semibold text-foreground">
+                  {value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {loading && !lineage ? (
+          <div className="flex min-h-[120px] items-center justify-center text-sm text-muted-foreground">
+            <Loader2 className="mr-2 size-4 animate-spin" />
+            Loading lineage edges
+          </div>
+        ) : filteredLineageEdges.length === 0 ? (
+          <div className="flex min-h-[120px] items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
+            No lineage edges match the current search.
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-border bg-card">
+            <div className="grid min-w-[840px] grid-cols-[140px_minmax(190px,1fr)_minmax(190px,1fr)_minmax(180px,1fr)_120px] border-b border-border bg-muted/40 px-3 py-2 text-[11px] font-medium uppercase tracking-normal text-muted-foreground">
+              <div>Kind</div>
+              <div>Source</div>
+              <div>Target</div>
+              <div>Evidence</div>
+              <div>Created</div>
+            </div>
+            <div className="divide-y divide-border">
+              {filteredLineageEdges.slice(0, 25).map((edge) => (
+                <a
+                  key={edge.id}
+                  href={edge.target.href || edge.source.href || "#"}
+                  className="grid min-w-[840px] grid-cols-[140px_minmax(190px,1fr)_minmax(190px,1fr)_minmax(180px,1fr)_120px] gap-3 px-3 py-3 text-xs transition-colors hover:bg-muted/30"
+                >
+                  <div>
+                    <span className="inline-flex rounded-md border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">
+                      {LINEAGE_EDGE_KIND_LABELS[edge.kind]}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate font-medium text-foreground">
+                      {edge.source.label}
+                    </div>
+                    <div className="mt-0.5 truncate text-muted-foreground">
+                      {edge.source.kind.replaceAll("_", " ")} ·{" "}
+                      {edge.cabinetPath}
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate font-medium text-foreground">
+                      {edge.target.label}
+                    </div>
+                    <div className="mt-0.5 truncate text-muted-foreground">
+                      {edge.target.kind.replaceAll("_", " ")} ·{" "}
+                      {edge.target.cabinetPath || edge.cabinetPath}
+                    </div>
+                  </div>
+                  <div className="min-w-0 truncate text-muted-foreground">
+                    {edge.evidence
+                      .slice(0, 2)
+                      .map((item) => `${item.label}: ${item.value}`)
+                      .join(" · ")}
+                  </div>
+                  <div className="text-muted-foreground">
+                    {formatGeneratedAt(edge.createdAt)}
                   </div>
                 </a>
               ))}
