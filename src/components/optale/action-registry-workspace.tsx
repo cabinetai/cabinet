@@ -13,6 +13,7 @@ import { OptaleCommandToolbar } from "@/components/optale/command-toolbar";
 import { OptaleCommandViewTabs } from "@/components/optale/command-view-tabs";
 import { commandViewFromSlug } from "@/components/optale/command-workspace-state";
 import { useOptaleCommandWorkspaceData } from "@/components/optale/use-command-workspace-data";
+import { hasOptaleCapability } from "@/lib/optale/capabilities";
 import type { OptaleCommandView } from "@/components/optale/command-workspace-types";
 
 export function OptaleActionRegistryWorkspace({
@@ -25,6 +26,8 @@ export function OptaleActionRegistryWorkspace({
   const activeView = commandViewFromSlug(
     section.type === "actions" ? section.slug : undefined,
   );
+  const canViewDiagnostics = hasOptaleCapability("diagnostics.raw");
+  const safeActiveView = canViewDiagnostics ? activeView : "actions";
   const {
     activeFilter,
     auditLog,
@@ -75,15 +78,16 @@ export function OptaleActionRegistryWorkspace({
       />
 
       <OptaleCommandToolbar
-        activeView={activeView}
+        activeView={safeActiveView}
         activeFilter={activeFilter}
+        showDiagnostics={canViewDiagnostics}
         counts={{
-          actions: registry?.counts.actions ?? 0,
+          actions: canViewDiagnostics ? registry?.counts.actions ?? 0 : 0,
           queues: registry?.counts.pendingQueues ?? 0,
-          runs: ledger?.counts.runs ?? 0,
-          policy: policyLog?.counts.decisions ?? 0,
-          lineage: lineage?.counts.edges ?? 0,
-          audit: auditLog?.counts.events ?? 0,
+          runs: canViewDiagnostics ? ledger?.counts.runs ?? 0 : 0,
+          policy: canViewDiagnostics ? policyLog?.counts.decisions ?? 0 : 0,
+          lineage: canViewDiagnostics ? lineage?.counts.edges ?? 0 : 0,
+          audit: canViewDiagnostics ? auditLog?.counts.events ?? 0 : 0,
         }}
         search={search}
         onActiveFilterChange={setActiveFilter}
@@ -96,30 +100,42 @@ export function OptaleActionRegistryWorkspace({
         </div>
       )}
 
-      <OptaleCommandSpineSummary
-        auditLog={auditLog}
-        ledger={ledger}
-        lineage={lineage}
-        policyLog={policyLog}
-        registry={registry}
-      />
+      {canViewDiagnostics && (
+        <OptaleCommandSpineSummary
+          auditLog={auditLog}
+          ledger={ledger}
+          lineage={lineage}
+          policyLog={policyLog}
+          registry={registry}
+        />
+      )}
 
       <OptaleCommandViewTabs
-        activeView={activeView}
-        views={commandViews}
+        activeView={safeActiveView}
+        views={
+          canViewDiagnostics
+            ? commandViews
+            : [
+                {
+                  id: "actions",
+                  count: registry?.counts.pendingQueues ?? 0,
+                },
+              ]
+        }
         onSelectView={setCommandView}
       />
 
-      {activeView === "actions" && (
+      {safeActiveView === "actions" && (
         <OptaleCommandActionsView
           loading={loading}
           registry={registry}
           filteredActions={filteredActions}
           filteredQueues={filteredQueues}
+          showActionInventory={canViewDiagnostics}
         />
       )}
 
-      {activeView === "runs" && (
+      {safeActiveView === "runs" && canViewDiagnostics && (
         <OptaleCommandRunsView
           loading={loading}
           ledger={ledger}
@@ -129,7 +145,7 @@ export function OptaleActionRegistryWorkspace({
         />
       )}
 
-      {activeView === "policy" && (
+      {safeActiveView === "policy" && canViewDiagnostics && (
         <OptaleCommandPolicyView
           loading={loading}
           policyLog={policyLog}
@@ -139,7 +155,7 @@ export function OptaleActionRegistryWorkspace({
         />
       )}
 
-      {activeView === "lineage" && (
+      {safeActiveView === "lineage" && canViewDiagnostics && (
         <OptaleCommandLineageView
           loading={loading}
           lineage={lineage}
@@ -149,7 +165,7 @@ export function OptaleActionRegistryWorkspace({
         />
       )}
 
-      {activeView === "audit" && (
+      {safeActiveView === "audit" && canViewDiagnostics && (
         <OptaleCommandAuditView
           loading={loading}
           auditLog={auditLog}

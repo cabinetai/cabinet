@@ -1275,7 +1275,10 @@ export function OptaleBrainWorkspace({
   const normalizedInitialView =
     initialView === "company-brain" && !canViewCompanyBrain
       ? "overview"
-      : initialView === "admin" && !canViewRawDiagnostics
+      : (initialView === "admin" ||
+            initialView === "dreams" ||
+            initialView === "observatory") &&
+          !canViewRawDiagnostics
         ? "overview"
         : initialView;
   const [view, setView] = useState<BrainView>(normalizedInitialView);
@@ -1303,7 +1306,7 @@ export function OptaleBrainWorkspace({
     offset: entitiesOffset,
   });
   const dreamsState = useDreams({
-    active: view === "dreams",
+    active: canViewRawDiagnostics && view === "dreams",
     cabinetPath,
     query,
   });
@@ -1323,15 +1326,8 @@ export function OptaleBrainWorkspace({
     targetId: companyBrainSource?.namespace,
   });
   const navigationViews = useMemo<BrainView[]>(() => {
-    const views: BrainView[] = [
-      "overview",
-      "vault",
-      "memory",
-      "graph",
-      "entities",
-      "dreams",
-      "observatory",
-    ];
+    const views: BrainView[] = ["overview", "vault", "memory", "graph", "entities"];
+    if (canViewRawDiagnostics) views.push("dreams", "observatory");
     if (companyBrainVisible) views.push("company-brain");
     if (canViewRawDiagnostics) views.push("admin");
     return views;
@@ -1352,18 +1348,26 @@ export function OptaleBrainWorkspace({
 
   const navigate = useCallback(
     (next: BrainView) => {
-      setView(next);
-      if (next === "overview") setSection({ type: "brain", cabinetPath });
-      if (next === "vault") setSection({ type: "vault", cabinetPath });
-      if (next === "memory") setSection({ type: "memory", cabinetPath });
-      if (next === "graph") setSection({ type: "graph", cabinetPath });
-      if (next === "entities") setSection({ type: "entities", cabinetPath });
-      if (next === "dreams") setSection({ type: "dreams", cabinetPath });
-      if (next === "company-brain" && canViewCompanyBrain) {
+      const target =
+        (next === "dreams" || next === "observatory" || next === "admin") &&
+        !canViewRawDiagnostics
+          ? "overview"
+          : next === "company-brain" && !canViewCompanyBrain
+            ? "overview"
+            : next;
+
+      setView(target);
+      if (target === "overview") setSection({ type: "brain", cabinetPath });
+      if (target === "vault") setSection({ type: "vault", cabinetPath });
+      if (target === "memory") setSection({ type: "memory", cabinetPath });
+      if (target === "graph") setSection({ type: "graph", cabinetPath });
+      if (target === "entities") setSection({ type: "entities", cabinetPath });
+      if (target === "dreams") setSection({ type: "dreams", cabinetPath });
+      if (target === "company-brain" && canViewCompanyBrain) {
         setSection({ type: "company-brain", cabinetPath });
       }
     },
-    [cabinetPath, canViewCompanyBrain, setSection]
+    [cabinetPath, canViewCompanyBrain, canViewRawDiagnostics, setSection]
   );
 
   const openVaultItem = useCallback(
@@ -1466,6 +1470,8 @@ export function OptaleBrainWorkspace({
             onOpenGraph={() => navigate("graph")}
             onOpenEntities={() => navigate("entities")}
             onOpenDreams={() => navigate("dreams")}
+            canOpenDreams={canViewRawDiagnostics}
+            showDiagnostics={canViewRawDiagnostics}
             companyBrainAvailable={companyBrainVisible}
             onOpenCompanyBrain={() => navigate("company-brain")}
           />
@@ -1495,7 +1501,7 @@ export function OptaleBrainWorkspace({
             onRefresh={entitiesState.refresh}
             onOffsetChange={setEntitiesOffset}
           />
-        ) : view === "dreams" ? (
+        ) : view === "dreams" && canViewRawDiagnostics ? (
           <DreamsView
             query={query}
             setQuery={setQuery}
@@ -1507,9 +1513,9 @@ export function OptaleBrainWorkspace({
             onSubmitAction={dreamsState.submitAction}
             onAsk={dreamsState.ask}
           />
-        ) : view === "observatory" ? (
+        ) : view === "observatory" && canViewRawDiagnostics ? (
           <AgentHarnessObservatoryPanel />
-        ) : view === "company-brain" ? (
+        ) : view === "company-brain" && canViewCompanyBrain ? (
           <CompanyBrainView
             data={companyBrainState.data}
             loading={companyBrainState.loading}
@@ -1521,13 +1527,13 @@ export function OptaleBrainWorkspace({
             onSubmitAction={companyBrainState.submitAction}
             onCreatePromotion={companyBrainState.createPromotion}
           />
-        ) : view === "admin" ? (
+        ) : view === "admin" && canViewRawDiagnostics ? (
           <Admin
             summary={summaryState.summary}
             loading={summaryState.loading}
             cabinetPath={cabinetPath}
           />
-        ) : (
+        ) : view === "vault" || view === "graph" ? (
           <Explore
             view={view}
             query={query}
@@ -1538,6 +1544,20 @@ export function OptaleBrainWorkspace({
             source={view === "vault" ? vaultSource : graphSource}
             onRefresh={exploreState.refresh}
             onOpenVaultItem={openVaultItem}
+          />
+        ) : (
+          <Overview
+            summary={summaryState.summary}
+            loading={summaryState.loading}
+            onOpenVault={() => navigate("vault")}
+            onOpenMemory={() => navigate("memory")}
+            onOpenGraph={() => navigate("graph")}
+            onOpenEntities={() => navigate("entities")}
+            onOpenDreams={() => navigate("dreams")}
+            canOpenDreams={canViewRawDiagnostics}
+            showDiagnostics={canViewRawDiagnostics}
+            companyBrainAvailable={companyBrainVisible}
+            onOpenCompanyBrain={() => navigate("company-brain")}
           />
         )}
       </main>
@@ -1553,6 +1573,8 @@ function Overview({
   onOpenGraph,
   onOpenEntities,
   onOpenDreams,
+  canOpenDreams,
+  showDiagnostics,
   companyBrainAvailable,
   onOpenCompanyBrain,
 }: {
@@ -1563,11 +1585,15 @@ function Overview({
   onOpenGraph: () => void;
   onOpenEntities: () => void;
   onOpenDreams: () => void;
+  canOpenDreams: boolean;
+  showDiagnostics: boolean;
   companyBrainAvailable: boolean;
   onOpenCompanyBrain: () => void;
 }) {
-  const enabledSources = summary?.sources.filter((source) => source.status === "enabled") ?? [];
-  const sourceTotal = (summary?.sources.length ?? 0) + (companyBrainAvailable ? 1 : 0);
+  const visibleSources =
+    summary?.sources.filter((source) => canOpenDreams || source.id !== "dreams") ?? [];
+  const enabledSources = visibleSources.filter((source) => source.status === "enabled");
+  const sourceTotal = visibleSources.length + (companyBrainAvailable ? 1 : 0);
   const enabledTotal = enabledSources.length + (companyBrainAvailable ? 1 : 0);
   return (
     <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
@@ -1614,7 +1640,7 @@ function Overview({
             </span>
           </div>
           <div className="divide-y divide-border/60">
-            {(summary?.sources ?? []).map((source) => (
+            {visibleSources.map((source) => (
               <div key={source.id} className="flex items-center gap-3 px-4 py-3">
                 <SourceIcon kind={source.kind} className="size-4 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
@@ -1625,7 +1651,13 @@ function Overview({
                     </span>
                   </div>
                   <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
-                    {source.mcpServerId ?? "native"} · {source.permissions.join(", ") || "policy pending"}
+                    {showDiagnostics
+                      ? `${source.mcpServerId ?? "native"} · ${
+                          source.permissions.join(", ") || "policy pending"
+                        }`
+                      : source.status === "enabled"
+                        ? "Available"
+                        : "Unavailable"}
                   </p>
                 </div>
                 {source.id === "vault" ? (
@@ -1648,7 +1680,7 @@ function Overview({
                     Open
                   </Button>
                 ) : null}
-                {source.id === "dreams" ? (
+                {source.id === "dreams" && canOpenDreams ? (
                   <Button variant="ghost" size="sm" onClick={onOpenDreams}>
                     Open
                   </Button>

@@ -32,12 +32,14 @@ export function OptaleCommandToolbar({
   activeView,
   activeFilter,
   counts,
+  showDiagnostics = true,
   search,
   onActiveFilterChange,
   onSearchChange,
 }: {
   activeView: OptaleCommandView;
   activeFilter: OptaleCommandActionFilter;
+  showDiagnostics?: boolean;
   counts: {
     actions: number;
     queues: number;
@@ -50,18 +52,25 @@ export function OptaleCommandToolbar({
   onActiveFilterChange: (filter: OptaleCommandActionFilter) => void;
   onSearchChange: (value: string) => void;
 }) {
+  const countItems = showDiagnostics
+    ? [
+        ["Actions", counts.actions],
+        ["Queues", counts.queues],
+        ["Runs", counts.runs],
+        ["Policy", counts.policy],
+        ["Lineage", counts.lineage],
+        ["Audit", counts.audit],
+      ]
+    : [["Review Queues", counts.queues]];
+  const placeholder = showDiagnostics
+    ? COMMAND_VIEW_SEARCH_PLACEHOLDERS[activeView]
+    : "Search review queues";
+
   return (
     <section className="border-b border-border/70 px-6 py-4">
       <div className="grid gap-3 lg:grid-cols-[1fr_320px]">
         <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
-          {[
-            ["Actions", counts.actions],
-            ["Queues", counts.queues],
-            ["Runs", counts.runs],
-            ["Policy", counts.policy],
-            ["Lineage", counts.lineage],
-            ["Audit", counts.audit],
-          ].map(([label, value]) => (
+          {countItems.map(([label, value]) => (
             <div
               key={label}
               className="rounded-md border border-border bg-card px-3 py-2"
@@ -78,12 +87,12 @@ export function OptaleCommandToolbar({
           <Input
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder={COMMAND_VIEW_SEARCH_PLACEHOLDERS[activeView]}
+            placeholder={placeholder}
             className="h-9 pl-8"
           />
         </div>
       </div>
-      {activeView === "actions" ? (
+      {activeView === "actions" && showDiagnostics ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {FILTERS.map((filter) => (
             <button
