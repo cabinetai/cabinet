@@ -14,7 +14,7 @@ import fs from "fs";
  */
 function resolveCabinetHome(): string {
   const override = process.env.CABINET_HOME?.trim();
-  if (override) return path.resolve(override);
+  if (override && path.isAbsolute(override)) return override;
   const home = os.homedir();
   if (process.platform === "win32") {
     const appDataEnv = process.env.APPDATA?.trim();
@@ -54,7 +54,7 @@ export function globalConfigPath(): string {
  */
 export function telemetryDir(): string {
   const override = process.env.CABINET_TELEMETRY_DIR?.trim();
-  if (override) return path.resolve(override);
+  if (override && path.isAbsolute(override)) return override;
   const home = os.homedir();
   if (process.platform === "darwin") {
     return path.join(home, "Library", "Application Support", "cabinet-telemetry");
