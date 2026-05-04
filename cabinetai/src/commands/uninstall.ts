@@ -10,7 +10,7 @@ export function registerUninstall(program: Command): void {
   program
     .command("uninstall")
     .alias("remove")
-    .description("Remove cached app versions from ~/.cabinet")
+    .description(`Remove cached app versions from ${CABINET_HOME}`)
     .option("--all", "Also remove global state, config, and telemetry data")
     .option("-y, --yes", "Skip the confirmation prompt")
     .action(async (opts: { all?: boolean; yes?: boolean }) => {
@@ -30,7 +30,7 @@ async function uninstall(opts: { all?: boolean; yes?: boolean }): Promise<void> 
     }
   } else {
     if (!cabinetExists) {
-      success("Nothing to remove — ~/.cabinet does not exist.");
+      success(`Nothing to remove — ${CABINET_HOME} does not exist.`);
       return;
     }
   }

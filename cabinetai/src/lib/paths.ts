@@ -17,10 +17,16 @@ function resolveCabinetHome(): string {
   if (override) return path.resolve(override);
   const home = os.homedir();
   if (process.platform === "win32") {
-    const appData = process.env.APPDATA || path.join(home, "AppData", "Roaming");
+    const appDataEnv = process.env.APPDATA?.trim();
+    const appData = appDataEnv && path.isAbsolute(appDataEnv)
+      ? appDataEnv
+      : path.join(home, "AppData", "Roaming");
     return path.join(appData, "cabinetai");
   }
-  const xdgData = process.env.XDG_DATA_HOME || path.join(home, ".local", "share");
+  const xdgDataEnv = process.env.XDG_DATA_HOME?.trim();
+  const xdgData = xdgDataEnv && path.isAbsolute(xdgDataEnv)
+    ? xdgDataEnv
+    : path.join(home, ".local", "share");
   return path.join(xdgData, "cabinetai");
 }
 
