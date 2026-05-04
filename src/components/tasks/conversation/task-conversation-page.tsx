@@ -1939,6 +1939,7 @@ export function TaskConversationPage({
                         cabinetPath={task.meta.cabinetPath}
                         conversationId={task.meta.id}
                         onSend={handleSend}
+                        disabled={busy}
                         onScheduleHandoff={openScheduleHandoff}
                         agent={
                           turnAgent
@@ -2079,9 +2080,11 @@ export function TaskConversationPage({
               <div className="mx-auto w-full max-w-3xl">
                 <TaskComposerPanel
                   awaitingInput={task.meta.status === "awaiting-input"}
+                  status={task.meta.status}
                   cabinetPath={task.meta.cabinetPath}
                   conversationId={task.meta.id}
                   onSend={handleSend}
+                  disabled={busy}
                   onSendDraftSeed={draftSeed ? handleSendDraftSeed : undefined}
                   onCancelDraftSeed={draftSeed ? handleCancelDraftSeed : undefined}
                   onScheduleHandoff={openScheduleHandoff}

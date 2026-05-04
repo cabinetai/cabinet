@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { GitBranch, Terminal, X } from "lucide-react";
+import { GitBranch, Loader2, Terminal, X } from "lucide-react";
 import { ComposerInput } from "@/components/composer/composer-input";
 import {
   TaskRuntimePicker,
@@ -21,6 +21,7 @@ import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
 import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
 import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
 import { cn } from "@/lib/utils";
+import type { TaskStatus } from "@/types/tasks";
 import type { ConversationRuntimeOverride } from "@/types/conversations";
 
 interface PageTreeNode {
@@ -112,6 +113,7 @@ export interface TaskComposerPanelProps {
    */
   agent?: AgentPickerOption | null;
   draftSeed?: TaskComposerDraftSeed | null;
+  status?: TaskStatus;
 }
 
 export function TaskComposerPanel({
@@ -129,6 +131,7 @@ export function TaskComposerPanel({
   draftSeed,
   onSendDraftSeed,
   onCancelDraftSeed,
+  status = "idle",
 }: TaskComposerPanelProps) {
   // We don't seed with initialRuntime directly — that way, when the parent
   // re-renders with fresh meta (SSE → fetchTask), the displayed runtime
@@ -145,6 +148,19 @@ export function TaskComposerPanel({
     () => userPickedRuntime ?? initialRuntime ?? {},
     [userPickedRuntime, initialRuntime]
   );
+  const composerDisabled = disabled || status === "running";
+  const runtimeStateLabel =
+    effectiveRuntime.runtimeMode === "terminal"
+      ? "Terminal runtime"
+      : effectiveRuntime.model
+        ? `Runtime: ${effectiveRuntime.model}`
+        : "Runtime: app default";
+  const toolStateLabel =
+    productToolNames.length === 0
+      ? "No extra governed tools"
+      : `${productToolNames.length} governed ${
+          productToolNames.length === 1 ? "tool" : "tools"
+        } selected`;
 
   const handleRuntimeChange = useCallback((value: TaskRuntimeSelection) => {
     setUserPickedRuntime(value);
@@ -277,7 +293,7 @@ export function TaskComposerPanel({
   const composer = useComposer({
     items,
     onSubmit: handleSubmit,
-    disabled,
+    disabled: composerDisabled,
     attachments,
   });
   const lastDraftSeedIdRef = useRef<string | null>(null);
@@ -313,6 +329,13 @@ export function TaskComposerPanel({
             <span className="relative inline-flex size-1.5 rounded-full bg-amber-500" />
           </span>
           Agent is waiting for your reply
+        </div>
+      ) : null}
+
+      {status === "running" ? (
+        <div className="mb-2 flex items-center gap-2 rounded-md border border-primary/20 bg-primary/[0.06] px-2 py-1.5 text-[11px] font-medium text-primary">
+          <Loader2 className="size-3.5 animate-spin" />
+          <span>Agent is working. Continue when the current turn finishes.</span>
         </div>
       ) : null}
 
@@ -401,19 +424,23 @@ export function TaskComposerPanel({
               value={effectiveRuntime}
               onChange={handleRuntimeChange}
               align="start"
+              compact
+              disabled={composerDisabled}
             />
             <TaskProductToolPicker
               value={productToolNames}
               onChange={setProductToolNames}
-              disabled={disabled}
+              disabled={composerDisabled}
+              compact
             />
           </>
         }
       />
 
-      <p className="mt-1.5 hidden px-1 text-[10px] text-muted-foreground sm:block">
-        ⌘↵ to send · @ to mention · this turn&rsquo;s runtime:{" "}
-        {effectiveRuntime.model || effectiveRuntime.providerId || "default"}
+      <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 px-1 text-[10px] text-muted-foreground">
+        <span>{runtimeStateLabel}</span>
+        <span className="text-muted-foreground/35">·</span>
+        <span>{toolStateLabel}</span>
       </p>
     </div>
   );

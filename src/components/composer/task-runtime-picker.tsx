@@ -1073,11 +1073,15 @@ export function TaskRuntimePicker({
   onChange,
   align = "start",
   className,
+  compact = false,
+  disabled = false,
 }: {
   value: TaskRuntimeSelection;
   onChange: (value: TaskRuntimeSelection) => void;
   align?: "start" | "center" | "end";
   className?: string;
+  compact?: boolean;
+  disabled?: boolean;
 }) {
   const providers = useAppStore((s) => s.providers);
   const defaultProviderId = useAppStore((s) => s.defaultProviderId);
@@ -1248,7 +1252,8 @@ export function TaskRuntimePicker({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex h-8 items-center gap-1 rounded-md border px-2 transition-colors disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex h-8 min-w-0 items-center gap-1 rounded-md border px-2 transition-colors disabled:pointer-events-none disabled:opacity-50",
+          compact && "max-w-[11.5rem] sm:max-w-[17rem]",
           isTerminalTrigger
             ? "border-emerald-500/40 bg-zinc-950 text-zinc-100 hover:bg-zinc-900"
             : "border-border/70 bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -1256,7 +1261,7 @@ export function TaskRuntimePicker({
         )}
         aria-label={isTerminalTrigger ? `${triggerTitle} (Terminal)` : triggerTitle}
         title={isTerminalTrigger ? `${triggerTitle} · Terminal (PTY)` : triggerTitle}
-        disabled={loading && providers.length === 0}
+        disabled={disabled || (loading && providers.length === 0)}
       >
         {currentProvider ? (
           isTerminalTrigger ? (
@@ -1264,11 +1269,11 @@ export function TaskRuntimePicker({
               <div className="flex size-4 shrink-0 items-center justify-center rounded border border-emerald-500/40 bg-zinc-900 text-emerald-400">
                 <Terminal className="h-2.5 w-2.5" />
               </div>
-              <span className="text-[11px] font-medium text-zinc-100">
+              <span className="min-w-0 truncate text-[11px] font-medium text-zinc-100">
                 {currentProvider.name}
               </span>
-              <span className="text-[9px] text-zinc-500">·</span>
-              <span className="text-[9px] font-semibold uppercase tracking-wide text-emerald-400">
+              <span className={cn("shrink-0 text-[9px] text-zinc-500", compact && "hidden sm:inline")}>·</span>
+              <span className={cn("shrink-0 text-[9px] font-semibold uppercase tracking-wide text-emerald-400", compact && "hidden sm:inline")}>
                 Terminal
               </span>
             </>
@@ -1277,11 +1282,11 @@ export function TaskRuntimePicker({
               <div className="flex size-4 shrink-0 items-center justify-center rounded border border-border/60 bg-muted/30">
                 <ProviderGlyph icon={currentProvider.icon} className="h-2.5 w-2.5" />
               </div>
-              <span className={cn("text-[11px] font-medium", getEffortTone(normalizedValue.effort ?? AUTO_EFFORT_ID).header)}>
+              <span className={cn("min-w-0 truncate text-[11px] font-medium", getEffortTone(normalizedValue.effort ?? AUTO_EFFORT_ID).header)}>
                 {currentModel?.name || currentProvider.name}
               </span>
-              <span className="text-[9px] text-muted-foreground/40">·</span>
-              <span className={cn("text-[9px] font-medium", getEffortTone(normalizedValue.effort ?? AUTO_EFFORT_ID).header)}>
+              <span className={cn("shrink-0 text-[9px] text-muted-foreground/40", compact && "hidden sm:inline")}>·</span>
+              <span className={cn("shrink-0 text-[9px] font-medium", getEffortTone(normalizedValue.effort ?? AUTO_EFFORT_ID).header, compact && "hidden sm:inline")}>
                 {currentEffort?.name || (normalizedValue.effort ? formatEffortName(normalizedValue.effort) : "Auto")}
               </span>
             </>

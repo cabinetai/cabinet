@@ -29,10 +29,12 @@ export function TaskProductToolPicker({
   value,
   onChange,
   disabled,
+  compact = false,
 }: {
   value: string[];
   onChange: (value: string[]) => void;
   disabled?: boolean;
+  compact?: boolean;
 }) {
   const [tools, setTools] = useState<ProductTool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,10 @@ export function TaskProductToolPicker({
             type="button"
             variant="outline"
             size="sm"
-            className="h-8 max-w-[220px] gap-1.5 px-2 text-[11px]"
+            className={cn(
+              "h-8 min-w-0 gap-1.5 px-2 text-[11px]",
+              compact ? "max-w-[9.5rem] sm:max-w-[13rem]" : "max-w-[220px]"
+            )}
             disabled={disabled || loading || (tools.length === 0 && !error)}
             title="Choose governed product tools for this turn"
           >
@@ -96,7 +101,12 @@ export function TaskProductToolPicker({
             ) : (
               <Wrench className="size-3.5" />
             )}
-            <span className="truncate">{label}</span>
+            <span className="min-w-0 truncate">{label}</span>
+            {selectedTools.length > 0 ? (
+              <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-px text-[9px] font-semibold tabular-nums text-primary">
+                {selectedTools.length}
+              </span>
+            ) : null}
           </Button>
         }
       />
