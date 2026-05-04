@@ -67,9 +67,10 @@ done
 
 # Mounted DMG volumes (e.g. /Volumes/Optale Command 0.4.1-arm64)
 mounted_volumes=()
-while IFS= read -r vol; do
-  [ -n "$vol" ] && mounted_volumes+=("$vol")
-done < <(ls -d /Volumes/${APP_NAME}* 2>/dev/null || true)
+for vol in /Volumes/"${APP_NAME}"*; do
+  [ -e "$vol" ] || continue
+  mounted_volumes+=("$vol")
+done
 
 if [ ${#mounted_volumes[@]} -gt 0 ]; then
   echo "Mounted DMG volumes (will be unmounted):"

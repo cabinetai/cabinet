@@ -52,6 +52,21 @@ export function restrictedCustomerModeResponse(
   });
 }
 
+export function restrictedCapabilityDenial(
+  capability: string,
+  message?: string,
+  env: NodeJS.ProcessEnv = process.env,
+): RestrictedModeDenial | null {
+  if (!isOptaleRestrictedCustomerMode(env)) return null;
+  return {
+    code: `restricted_customer_${capability.replaceAll(".", "_")}`,
+    capability,
+    message:
+      message ||
+      `${capability} is operator-only in restricted customer mode.`,
+  };
+}
+
 export function isCommandCenterActionAllowedInRestrictedCustomerMode(
   action: string | undefined,
   env: NodeJS.ProcessEnv = process.env,

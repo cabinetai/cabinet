@@ -7,6 +7,12 @@ import {
   updateHumanInboxDraft,
 } from "@/lib/agents/human-inbox-drafts";
 import { readCabinetOverview } from "@/lib/cabinets/overview";
+import { parseCabinetVisibilityMode } from "@/lib/cabinets/visibility";
+import {
+  restrictedCapabilityDenial,
+  restrictedCustomerVisibilityMode,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 import type { CabinetVisibilityMode } from "@/types/cabinets";
 
 function sortDrafts<T extends { priority: number; updatedAt: string; createdAt: string }>(
@@ -22,7 +28,9 @@ function sortDrafts<T extends { priority: number; updatedAt: string; createdAt: 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const cabinetPath = searchParams.get("cabinetPath") || undefined;
-  const visibilityMode = (searchParams.get("visibilityMode") || "own") as CabinetVisibilityMode;
+  const visibilityMode = restrictedCustomerVisibilityMode(
+    parseCabinetVisibilityMode(searchParams.get("visibilityMode")),
+  ) as CabinetVisibilityMode;
 
   if (cabinetPath && visibilityMode !== "own") {
     try {
@@ -45,6 +53,11 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const body = await req.json();
 
   if (body.action === "update") {
@@ -98,6 +111,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const body = await req.json().catch(() => null);
   const draftId = body?.draftId;
   const cabinetPath = body?.cabinetPath;

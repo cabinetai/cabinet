@@ -8,6 +8,10 @@ import { readSkillStats } from "@/lib/agents/skills/stats";
 import { readSkillsLock } from "@/lib/agents/skills/lock";
 import { fetchUpstreamForLock } from "@/lib/agents/skills/upstream";
 import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
+import {
   cabinetPathFromScope,
   isValidSkillKey,
   resolveSkillsScopeRoot,
@@ -23,6 +27,11 @@ interface CreateRequest {
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const body = (await request.json().catch(() => ({}))) as CreateRequest;
   if (!body.key || !isValidSkillKey(body.key)) {
     return NextResponse.json(

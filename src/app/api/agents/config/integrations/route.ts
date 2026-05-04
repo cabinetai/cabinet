@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs/promises";
 import { DATA_DIR } from "@/lib/storage/path-utils";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 const CONFIG_DIR = path.join(DATA_DIR, ".agents", ".config");
 const INTEGRATIONS_FILE = path.join(CONFIG_DIR, "integrations.json");
@@ -101,6 +105,11 @@ const DEFAULT_CONFIG: IntegrationConfig = {
 };
 
 export async function GET() {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("mcp.manage"),
+  );
+  if (restricted) return restricted;
+
   try {
     const raw = await fs.readFile(INTEGRATIONS_FILE, "utf-8");
     const config = JSON.parse(raw);
@@ -117,6 +126,11 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("mcp.manage"),
+  );
+  if (restricted) return restricted;
+
   try {
     const body = await req.json();
     await fs.mkdir(CONFIG_DIR, { recursive: true });

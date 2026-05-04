@@ -17,27 +17,131 @@ if (!gotSingleInstanceLock) {
 }
 
 const isDev = !app.isPackaged;
+const PACKAGED_RUNTIME_CONFIG_PATH = path.join(
+  process.resourcesPath || "",
+  "app.asar.unpacked",
+  ".next",
+  "standalone",
+  "optale-desktop-runtime.json"
+);
+
+function readPackagedRuntimeConfig() {
+  if (isDev) return {};
+  try {
+    const parsed = JSON.parse(
+      fs.readFileSync(PACKAGED_RUNTIME_CONFIG_PATH, "utf8")
+    );
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function normalizedDesktopProfile(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (
+    normalized === "partner" ||
+    normalized === "customer" ||
+    normalized === "restricted" ||
+    normalized === "restricted_customer" ||
+    normalized === "restricted-customer"
+  ) {
+    return normalized === "restricted" ? "restricted_customer" : normalized;
+  }
+  return "operator";
+}
+
+function runtimeModeForProfile(profile) {
+  return normalizedDesktopProfile(profile) === "operator"
+    ? "operator"
+    : "restricted_customer";
+}
+
+function normalizedRuntimeMode(value, desktopProfile) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (
+    normalized === "restricted_customer" ||
+    normalized === "restricted-customer" ||
+    normalized === "customer_restricted" ||
+    normalized === "customer-restricted"
+  ) {
+    return "restricted_customer";
+  }
+  if (normalized === "operator") return "operator";
+  return runtimeModeForProfile(desktopProfile);
+}
+
+const packagedRuntimeConfig = readPackagedRuntimeConfig();
 const PRODUCT_NAME = process.env.OPTALE_DESKTOP_APP_NAME || app.getName() || "Optale Command";
 const APP_BUNDLE_ID = process.env.OPTALE_DESKTOP_BUNDLE_ID || "com.optale.command";
 const UPDATE_REPO = process.env.OPTALE_RELEASE_REPO || "hilash/cabinet";
 const DATA_DIR_BASENAME = process.env.OPTALE_DESKTOP_DATA_DIR_NAME || "cabinet-data";
-const DESKTOP_PROFILE =
+const DESKTOP_PROFILE = normalizedDesktopProfile(
   process.env.OPTALE_DESKTOP_PROFILE ||
   process.env.NEXT_PUBLIC_OPTALE_DESKTOP_PROFILE ||
-  "operator";
-const RUNTIME_MODE =
+  packagedRuntimeConfig.desktopProfile ||
+  "operator"
+);
+const RUNTIME_MODE = normalizedRuntimeMode(
   process.env.OPTALE_RUNTIME_MODE ||
   process.env.NEXT_PUBLIC_OPTALE_RUNTIME_MODE ||
-  (["partner", "customer", "restricted", "restricted_customer", "restricted-customer"].includes(
-    DESKTOP_PROFILE.trim().toLowerCase()
-  )
-    ? "restricted_customer"
-    : "operator");
+  packagedRuntimeConfig.runtimeMode,
+  DESKTOP_PROFILE
+);
 const managedDataDir = path.join(app.getPath("userData"), DATA_DIR_BASENAME);
 const updateStatusPath = path.join(managedDataDir, ".cabinet-state", "update-status.json");
 let mainWindow = null;
 let backendChildren = [];
 const DEV_APP_DISCOVERY_TIMEOUT_MS = 45_000;
+
+function copyRecursiveNoOverwrite(src, dest) {
+  const stat = fs.statSync(src);
+  if (stat.isDirectory()) {
+    fs.mkdirSync(dest, { recursive: true });
+    for (const entry of fs.readdirSync(src)) {
+      copyRecursiveNoOverwrite(path.join(src, entry), path.join(dest, entry));
+    }
+  } else if (!fs.existsSync(dest)) {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+  }
+}
+
+function hasUserContent(dir) {
+  if (!fs.existsSync(dir)) return false;
+  return fs.readdirSync(dir).some((entry) => entry !== ".cabinet-state");
+}
+
+function legacyCabinetDataDir() {
+  return path.join(app.getPath("appData"), "Cabinet", DATA_DIR_BASENAME);
+}
+
+function maybeMigrateLegacyCabinetData() {
+  if (RUNTIME_MODE !== "operator") return;
+  if (process.env.OPTALE_DESKTOP_MIGRATE_LEGACY_DATA === "0") return;
+
+  const legacyDataDir = legacyCabinetDataDir();
+  if (legacyDataDir === managedDataDir) return;
+  if (!hasUserContent(legacyDataDir) || hasUserContent(managedDataDir)) return;
+
+  copyRecursiveNoOverwrite(legacyDataDir, managedDataDir);
+  fs.mkdirSync(path.join(managedDataDir, ".cabinet-state"), {
+    recursive: true,
+  });
+  fs.writeFileSync(
+    path.join(managedDataDir, ".cabinet-state", "legacy-data-migration.json"),
+    JSON.stringify(
+      {
+        migratedAt: new Date().toISOString(),
+        from: legacyDataDir,
+        to: managedDataDir,
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+}
 
 function writeUpdateStatus(status) {
   fs.mkdirSync(path.dirname(updateStatusPath), { recursive: true });
@@ -184,26 +288,12 @@ function seedDefaultContent() {
   if (!fs.existsSync(seedDir)) {
     return;
   }
-
-  const copyRecursive = (src, dest) => {
-    const stat = fs.statSync(src);
-    if (stat.isDirectory()) {
-      fs.mkdirSync(dest, { recursive: true });
-      for (const entry of fs.readdirSync(src)) {
-        copyRecursive(path.join(src, entry), path.join(dest, entry));
-      }
-    } else if (!fs.existsSync(dest)) {
-      // Only copy if the destination file doesn't already exist
-      fs.mkdirSync(path.dirname(dest), { recursive: true });
-      fs.copyFileSync(src, dest);
-    }
-  };
-
-  copyRecursive(seedDir, managedDataDir);
+  copyRecursiveNoOverwrite(seedDir, managedDataDir);
 }
 
 function ensureManagedData() {
   fs.mkdirSync(managedDataDir, { recursive: true });
+  maybeMigrateLegacyCabinetData();
   // Seed default content (pages, agent library, playbooks).
   // Non-destructive: never overwrites existing files, so user edits survive
   // and new templates from app updates are added automatically.

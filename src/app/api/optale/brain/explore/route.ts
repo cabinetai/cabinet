@@ -18,6 +18,7 @@ import {
   textFromBrainMcpToolResult,
 } from "@/lib/optale/brain-adapters";
 import { readOptaleCommandCenterSnapshot } from "@/lib/optale/command-center-control";
+import { restrictedCustomerVisibilityMode } from "@/lib/optale/restricted-customer-mode";
 import {
   resolveOptaleBrainContext,
   type OptaleBrainContext,
@@ -397,7 +398,7 @@ async function readDerivedGraph(input: {
 }): Promise<DerivedGraph> {
   const snapshot = await readOptaleCommandCenterSnapshot({
     cabinetPath: input.cabinetPath,
-    visibilityMode: "all",
+    visibilityMode: restrictedCustomerVisibilityMode("all"),
     limit: Math.max(25, input.limit * 4),
   });
   const documents = await readLocalVault({

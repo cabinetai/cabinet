@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createOptaleCompanyBrainPromotion } from "@/lib/optale/brain-company-brain-adapter";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -9,6 +13,11 @@ function trimString(value: unknown): string | undefined {
 }
 
 export async function POST(request: NextRequest) {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("memory.cross_tenant"),
+  );
+  if (restricted) return restricted;
+
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
   const response = await createOptaleCompanyBrainPromotion({
     cabinetPath:

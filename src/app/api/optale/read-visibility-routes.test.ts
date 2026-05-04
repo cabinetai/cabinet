@@ -25,6 +25,18 @@ function requestFor(route: string): NextRequest {
   );
 }
 
+function jsonRequest(
+  route: string,
+  method: string,
+  body: Record<string, unknown> = {},
+): NextRequest {
+  return new NextRequest(`http://localhost${route}`, {
+    method,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
 async function seedCabinetRoot(root: string): Promise<void> {
   await fs.writeFile(
     path.join(root, ".cabinet"),
@@ -150,4 +162,94 @@ test("restricted customer Optale read routes clamp broad visibility server-side"
     Array.isArray(snapshot.operatorOnlyControls) &&
       snapshot.operatorOnlyControls.includes("launch_conversation"),
   );
+});
+
+test("restricted customer mode blocks direct legacy mutation routes", async () => {
+  process.env.OPTALE_DESKTOP_PROFILE = "partner";
+  const [
+    tasks,
+    drafts,
+    cabinetEnv,
+    integrations,
+    scopes,
+    companyBrainAction,
+    companyBrainPromotion,
+    skills,
+    skill,
+    bundleSkill,
+    importSkill,
+  ] = await Promise.all([
+    import("../agents/tasks/route"),
+    import("../agents/inbox-drafts/route"),
+    import("../agents/config/cabinet-env/route"),
+    import("../agents/config/integrations/route"),
+    import("./scopes/route"),
+    import("./brain/company-brain/action/route"),
+    import("./brain/company-brain/promotion/route"),
+    import("../agents/skills/route"),
+    import("../agents/skills/[key]/route"),
+    import("../agents/skills/[key]/bundle-into-cabinet/route"),
+    import("../agents/skills/import/route"),
+  ]);
+
+  const routeContext = { params: Promise.resolve({ key: "demo-skill" }) };
+  const checks: Array<Promise<Response>> = [
+    tasks.POST(jsonRequest("/api/agents/tasks", "POST", { title: "x" })),
+    drafts.POST(jsonRequest("/api/agents/inbox-drafts", "POST", { title: "x" })),
+    drafts.DELETE(
+      jsonRequest("/api/agents/inbox-drafts", "DELETE", { draftId: "x" }),
+    ),
+    cabinetEnv.GET(),
+    cabinetEnv.PUT(
+      jsonRequest("/api/agents/config/cabinet-env", "PUT", {
+        key: "OPENAI_API_KEY",
+        value: "secret",
+      }),
+    ),
+    integrations.GET(),
+    integrations.PUT(
+      jsonRequest("/api/agents/config/integrations", "PUT", {
+        mcp_servers: {},
+      }),
+    ),
+    scopes.PUT(
+      jsonRequest("/api/optale/scopes", "PUT", {
+        scope: "company",
+      }),
+    ),
+    companyBrainAction.POST(
+      jsonRequest("/api/optale/brain/company-brain/action", "POST", {
+        action: "approve",
+      }),
+    ),
+    companyBrainPromotion.POST(
+      jsonRequest("/api/optale/brain/company-brain/promotion", "POST", {
+        title: "x",
+      }),
+    ),
+    skills.POST(jsonRequest("/api/agents/skills", "POST", { key: "demo" })),
+    skill.PATCH(
+      jsonRequest("/api/agents/skills/demo-skill", "PATCH", { body: "x" }),
+      routeContext,
+    ),
+    skill.DELETE(
+      jsonRequest("/api/agents/skills/demo-skill", "DELETE"),
+      routeContext,
+    ),
+    bundleSkill.POST(
+      jsonRequest("/api/agents/skills/demo-skill/bundle-into-cabinet", "POST"),
+      routeContext,
+    ),
+    importSkill.POST(
+      jsonRequest("/api/agents/skills/import", "POST", {
+        source: "github:owner/repo/demo",
+      }),
+    ),
+  ];
+
+  for (const response of await Promise.all(checks)) {
+    assert.equal(response.status, 403);
+    const body = (await response.json()) as Record<string, unknown>;
+    assert.equal(body.error, "OptaleRestrictedCustomerMode");
+  }
 });

@@ -190,6 +190,7 @@ export function SettingsPage() {
   const canConfigureProviders = hasOptaleCapability("providers.configure");
   const canManageSecrets = hasOptaleCapability("secrets.manage");
   const canManageUpdates = hasOptaleCapability("updates.manage");
+  const canManageAgents = hasOptaleCapability("agents.mutate");
   const canOpenTerminal = hasOptaleCapability("terminal.open");
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
   const [defaultProvider, setDefaultProvider] = useState("");
@@ -469,13 +470,14 @@ export function SettingsPage() {
     () =>
       allTabs.filter((entry) => {
         if (entry.id === "providers") return canConfigureProviders;
+        if (entry.id === "skills") return canManageAgents;
         if (entry.id === "storage" || entry.id === "integrations") {
           return canManageSecrets;
         }
         if (entry.id === "updates") return canManageUpdates;
         return true;
       }),
-    [allTabs, canConfigureProviders, canManageSecrets, canManageUpdates],
+    [allTabs, canConfigureProviders, canManageAgents, canManageSecrets, canManageUpdates],
   );
 
   useEffect(() => {

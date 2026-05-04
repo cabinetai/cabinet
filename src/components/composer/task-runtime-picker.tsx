@@ -680,6 +680,7 @@ export function RuntimeMatrixPicker({
   emptyText = "No providers available.",
 }: RuntimeMatrixPickerProps) {
   const canUseTerminalRuntime = hasOptaleCapability("terminal.runtime");
+  const canConfigureProviders = hasOptaleCapability("providers.configure");
   const runtimeMode: RuntimeMode =
     value.runtimeMode === "terminal" && canUseTerminalRuntime
       ? "terminal"
@@ -688,14 +689,21 @@ export function RuntimeMatrixPicker({
     const base = includeUnavailable
       ? providers.filter((provider) => provider.enabled ?? true)
       : getSelectableProviders(providers);
+    const capabilityFiltered = canConfigureProviders
+      ? base
+      : base.filter(
+          (provider) =>
+            getDefaultAdapterTypeForProviderInfo([provider], provider.id) ===
+            "openrouter_api",
+        );
     const ready: ProviderInfo[] = [];
     const unready: ProviderInfo[] = [];
-    for (const provider of base) {
+    for (const provider of capabilityFiltered) {
       if (isProviderReady(provider)) ready.push(provider);
       else unready.push(provider);
     }
     return [...ready, ...unready];
-  }, [providers, includeUnavailable]);
+  }, [providers, includeUnavailable, canConfigureProviders]);
 
   const [activeProviderId, setActiveProviderId] = useState<string | null>(null);
 

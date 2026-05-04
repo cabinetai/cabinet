@@ -8,6 +8,10 @@ import {
   fetchAuditsForLockEntry,
   parseLockSource,
 } from "@/lib/agents/skills/upstream";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 interface RouteContext {
   params: Promise<{ key: string }>;
@@ -35,6 +39,11 @@ export async function GET(request: Request, context: RouteContext): Promise<Next
 }
 
 export async function PATCH(request: Request, context: RouteContext): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const { key } = await context.params;
   const url = new URL(request.url);
   const cabinetPath = url.searchParams.get("cabinet") || undefined;
@@ -69,6 +78,11 @@ export async function PATCH(request: Request, context: RouteContext): Promise<Ne
 }
 
 export async function DELETE(request: Request, context: RouteContext): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const { key } = await context.params;
   const url = new URL(request.url);
   const cabinetPath = url.searchParams.get("cabinet") || undefined;

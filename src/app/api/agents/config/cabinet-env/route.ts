@@ -5,6 +5,10 @@ import {
   removeCabinetEnv,
   upsertCabinetEnv,
 } from "@/lib/runtime/cabinet-env";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 /**
  * `/api/agents/config/cabinet-env` — read/write API for the `.cabinet.env`
@@ -13,10 +17,20 @@ import {
  */
 
 export async function GET(): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("secrets.manage"),
+  );
+  if (restricted) return restricted;
+
   return NextResponse.json({ entries: getCabinetEnvSnapshot() });
 }
 
 export async function PUT(request: NextRequest): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("secrets.manage"),
+  );
+  if (restricted) return restricted;
+
   let body: unknown;
   try {
     body = await request.json();
@@ -57,6 +71,11 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 }
 
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("secrets.manage"),
+  );
+  if (restricted) return restricted;
+
   const url = new URL(request.url);
   const key = url.searchParams.get("key");
   if (!key || !isValidKey(key)) {

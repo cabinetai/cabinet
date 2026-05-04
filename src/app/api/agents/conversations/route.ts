@@ -9,9 +9,11 @@ import { createConversation, listConversationMetas } from "@/lib/agents/conversa
 import { normalizeAgentSlug, readMemory, writeMemory } from "@/lib/agents/persona-manager";
 import { normalizeRuntimeOverride } from "@/lib/agents/runtime-overrides";
 import { readCabinetOverview } from "@/lib/cabinets/overview";
+import { parseCabinetVisibilityMode } from "@/lib/cabinets/visibility";
 import { findOwningCabinetPathForPage } from "@/lib/cabinets/server-paths";
 import {
   restrictedAgentRuntimeDenial,
+  restrictedCustomerVisibilityMode,
   restrictedModeDenialResponse,
 } from "@/lib/optale/restricted-customer-mode";
 import type { CabinetVisibilityMode } from "@/types/cabinets";
@@ -32,7 +34,9 @@ export async function GET(req: NextRequest) {
     | "cancelled"
     | null;
   const cabinetPath = searchParams.get("cabinetPath") || undefined;
-  const visibilityMode = (searchParams.get("visibilityMode") || "own") as CabinetVisibilityMode;
+  const visibilityMode = restrictedCustomerVisibilityMode(
+    parseCabinetVisibilityMode(searchParams.get("visibilityMode")),
+  ) as CabinetVisibilityMode;
   const limit = parseInt(searchParams.get("limit") || "200", 10);
 
   const filters = {

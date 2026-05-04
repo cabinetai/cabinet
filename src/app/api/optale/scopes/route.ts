@@ -6,6 +6,10 @@ import {
   writeCabinetOptaleScope,
 } from "@/lib/optale/scope-registry";
 import { requireOptaleControlPlaneRequest } from "@/lib/optale/control-plane-auth";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +63,10 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   const unauthorized = await requireOptaleControlPlaneRequest(request);
   if (unauthorized) return unauthorized;
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("memory.cross_tenant"),
+  );
+  if (restricted) return restricted;
 
   const body = (await request.json().catch(() => null)) as Record<
     string,

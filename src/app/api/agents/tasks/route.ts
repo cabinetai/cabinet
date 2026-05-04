@@ -6,6 +6,12 @@ import {
   updateTask,
 } from "@/lib/agents/task-inbox";
 import { readCabinetOverview } from "@/lib/cabinets/overview";
+import { parseCabinetVisibilityMode } from "@/lib/cabinets/visibility";
+import {
+  restrictedCapabilityDenial,
+  restrictedCustomerVisibilityMode,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 import type { CabinetVisibilityMode } from "@/types/cabinets";
 
 // GET /api/agents/tasks?agent=slug&status=pending
@@ -21,7 +27,9 @@ export async function GET(req: NextRequest) {
     | null;
   const all = searchParams.get("all");
   const cabinetPath = searchParams.get("cabinetPath") || undefined;
-  const visibilityMode = (searchParams.get("visibilityMode") || "own") as CabinetVisibilityMode;
+  const visibilityMode = restrictedCustomerVisibilityMode(
+    parseCabinetVisibilityMode(searchParams.get("visibilityMode")),
+  ) as CabinetVisibilityMode;
 
   if (all === "true") {
     if (cabinetPath && visibilityMode !== "own") {
@@ -62,6 +70,11 @@ export async function GET(req: NextRequest) {
 // Body: { fromAgent, toAgent, title, description, kbRefs?, priority?, channel? }
 // or { action: "update", agent, taskId, status, result? }
 export async function POST(req: NextRequest) {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const body = await req.json();
 
   if (body.action === "update") {

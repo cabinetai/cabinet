@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readCabinetOverview } from "@/lib/cabinets/overview";
 import { parseCabinetVisibilityMode } from "@/lib/cabinets/visibility";
+import { restrictedCustomerVisibilityMode } from "@/lib/optale/restricted-customer-mode";
 
 export async function GET(request: NextRequest) {
   const cabinetPath = request.nextUrl.searchParams.get("path");
-  const visibilityMode = parseCabinetVisibilityMode(
-    request.nextUrl.searchParams.get("visibility")
+  const visibilityMode = restrictedCustomerVisibilityMode(
+    parseCabinetVisibilityMode(request.nextUrl.searchParams.get("visibility"))
   );
 
   if (!cabinetPath) {

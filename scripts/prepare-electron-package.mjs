@@ -14,6 +14,10 @@ const daemonMigrationsDir = path.join(standaloneServerDir, "migrations");
 const stagedNativeDir = path.join(standaloneDir, ".native");
 const stagedNodePtyDir = path.join(stagedNativeDir, "node-pty");
 const stagedSeedDir = path.join(standaloneDir, ".seed");
+const stagedOptaleRuntimeConfigPath = path.join(
+  standaloneDir,
+  "optale-desktop-runtime.json"
+);
 const bundledNodeBinaryPath = path.join(standaloneBinDir, "node");
 const rootNodePtyDir = path.join(projectRoot, "node_modules", "node-pty");
 const resourcesDir = path.join(projectRoot, "resources");
@@ -63,6 +67,38 @@ const SERVER_PRUNE_PATHS = [
   path.join("server", "cabinet-daemon.cjs"),
   path.join("server", "migrations"),
 ];
+
+function normalizeDesktopProfile(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (
+    normalized === "partner" ||
+    normalized === "customer" ||
+    normalized === "restricted" ||
+    normalized === "restricted_customer" ||
+    normalized === "restricted-customer"
+  ) {
+    return normalized === "restricted" ? "restricted_customer" : normalized;
+  }
+  return "operator";
+}
+
+function runtimeModeForProfile(profile) {
+  return profile === "operator" ? "operator" : "restricted_customer";
+}
+
+function normalizeRuntimeMode(value, desktopProfile) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (
+    normalized === "restricted_customer" ||
+    normalized === "restricted-customer" ||
+    normalized === "customer_restricted" ||
+    normalized === "customer-restricted"
+  ) {
+    return "restricted_customer";
+  }
+  if (normalized === "operator") return "operator";
+  return runtimeModeForProfile(desktopProfile);
+}
 
 async function pathExists(targetPath) {
   try {
@@ -197,6 +233,32 @@ async function stageSeedContent() {
   await walk(stagedSeedDir);
 }
 
+async function stageOptaleRuntimeConfig() {
+  const desktopProfile = normalizeDesktopProfile(
+    process.env.OPTALE_DESKTOP_PROFILE ||
+      process.env.NEXT_PUBLIC_OPTALE_DESKTOP_PROFILE
+  );
+  const runtimeMode = normalizeRuntimeMode(
+    process.env.OPTALE_RUNTIME_MODE ||
+      process.env.NEXT_PUBLIC_OPTALE_RUNTIME_MODE,
+    desktopProfile
+  );
+
+  await fs.writeFile(
+    stagedOptaleRuntimeConfigPath,
+    JSON.stringify(
+      {
+        desktopProfile,
+        runtimeMode,
+        generatedAt: new Date().toISOString(),
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+}
+
 async function main() {
   if (!(await pathExists(standaloneDir))) {
     throw new Error("Expected .next/standalone to exist. Run `npm run build` first.");
@@ -220,6 +282,7 @@ async function main() {
   await stageDaemonRuntime();
   await stageBundledNodeRuntime();
   await stageSeedContent();
+  await stageOptaleRuntimeConfig();
 }
 
 await main();

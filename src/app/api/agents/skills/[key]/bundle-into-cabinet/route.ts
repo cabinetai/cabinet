@@ -7,6 +7,10 @@ import {
   isValidSkillKey,
   resolveSkillsScopeRoot,
 } from "@/lib/agents/skills/scope";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 interface RouteContext {
   params: Promise<{ key: string }>;
@@ -17,6 +21,11 @@ interface BundleRequest {
 }
 
 export async function POST(request: Request, context: RouteContext): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const { key } = await context.params;
   if (!isValidSkillKey(key)) {
     return NextResponse.json({ error: "invalid skill key" }, { status: 400 });

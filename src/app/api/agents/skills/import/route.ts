@@ -9,6 +9,10 @@ import {
   isValidSkillKey,
   resolveSkillsScopeRoot,
 } from "@/lib/agents/skills/scope";
+import {
+  restrictedCapabilityDenial,
+  restrictedModeDenialResponse,
+} from "@/lib/optale/restricted-customer-mode";
 
 /**
  * POST /api/agents/skills/import
@@ -169,6 +173,11 @@ async function attachToAgents(slugs: string[] | undefined, skillKey: string): Pr
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const restricted = restrictedModeDenialResponse(
+    restrictedCapabilityDenial("agents.mutate"),
+  );
+  if (restricted) return restricted;
+
   const body = (await request.json().catch(() => ({}))) as ImportRequest;
   if (!body.source) {
     return NextResponse.json({ error: "source is required" }, { status: 400 });
