@@ -8,6 +8,7 @@ test("buildOptaleActionRegistry exposes command and agent proposal actions", () 
       cabinet: { path: ".", name: "Root" },
       visibilityMode: "all",
       controls: ["launch_conversation", "review_actions"],
+      operatorOnlyControls: ["create_task"],
       conversations: [
         {
           id: "run-1",
@@ -75,20 +76,29 @@ test("buildOptaleActionRegistry exposes command and agent proposal actions", () 
       (action) =>
         action.id === "command:launch_conversation" &&
         action.status === "available" &&
+        action.oagContract?.targetObjectTypes.includes("Agent") &&
+        action.oagContract?.resultObjectTypes.includes("Run") &&
         action.operationalSpine?.subjectType === "action_type",
     ),
   );
   assert.ok(
     registry.actions.some(
       (action) =>
-        action.id === "command:create_task" && action.status === "unavailable",
+        action.id === "command:create_task" &&
+        action.status === "unavailable" &&
+        action.facts.some(
+          (fact) =>
+            fact.label === "Availability" && fact.value === "operator-only",
+        ),
     ),
   );
   assert.ok(
     registry.actions.some(
       (action) =>
         action.id === "agent-proposal:LAUNCH_TASK" &&
-        action.status === "enabled",
+        action.status === "enabled" &&
+        action.oagContract?.approval === "human_review" &&
+        action.oagContract?.targetObjectTypes.includes("Agent"),
     ),
   );
   assert.equal(registry.queues[0]?.href, "#/tasks/run-1");

@@ -13,6 +13,14 @@ import {
   type OptaleOperationalSpineBinding,
   type OptaleOperationalSpineSummary,
 } from "@/lib/optale/operational-spine";
+import {
+  buildOptaleOagObjectIdentity,
+  type OptaleOagObjectIdentity,
+} from "@/lib/optale/oag-object-identity";
+import {
+  optaleOagObjectSchemaProjectionForType,
+  type OptaleOagObjectSchemaProjection,
+} from "@/lib/optale/oag-schema";
 
 export type OptaleResourceKind =
   | "space"
@@ -50,6 +58,8 @@ export interface OptaleResourceRecord {
   href?: string;
   facts: OptaleResourceFact[];
   operationalSpine?: OptaleOperationalSpineBinding;
+  oag?: OptaleOagObjectIdentity;
+  oagSchema?: OptaleOagObjectSchemaProjection;
 }
 
 export interface OptaleResourceRegistry {
@@ -105,6 +115,15 @@ function resourceKindCounts(
     counts[resource.kind] += 1;
   }
   return counts;
+}
+
+function factValue(
+  facts: OptaleResourceFact[],
+  label: string,
+): string | undefined {
+  const match = facts.find((fact) => fact.label === label);
+  if (!match) return undefined;
+  return String(match.value).trim() || undefined;
 }
 
 export function sortOptaleResources(
@@ -334,14 +353,25 @@ export function buildOptaleResourceRegistry(input: {
   }
 
   const generatedAt = new Date().toISOString();
-  const sorted = sortOptaleResources(resources).map((resource) => ({
-    ...resource,
-    operationalSpine: buildOptaleOperationalSpineBinding({
-      subjectType: "resource",
-      subjectId: resource.id,
+  const sorted = sortOptaleResources(resources).map((resource) => {
+    const oag = buildOptaleOagObjectIdentity({
+      resourceId: resource.id,
+      resourceKind: resource.kind,
+      resourceSource: resource.source,
       cabinetPath: resource.cabinetPath || commandCenter.cabinet.path,
-    }),
-  }));
+      scope: factValue(resource.facts, "Scope"),
+    });
+    return {
+      ...resource,
+      operationalSpine: buildOptaleOperationalSpineBinding({
+        subjectType: "resource",
+        subjectId: resource.id,
+        cabinetPath: resource.cabinetPath || commandCenter.cabinet.path,
+      }),
+      oag,
+      oagSchema: optaleOagObjectSchemaProjectionForType(oag.objectType),
+    };
+  });
   return {
     generatedAt,
     cabinetPath: commandCenter.cabinet.path,

@@ -92,12 +92,131 @@ const ACTION_LABELS: Record<OptaleCommandCenterAction | AgentActionType, string>
     SCHEDULE_TASK: "Schedule Task",
   };
 
+const PATH_EVIDENCE_LIMIT = 5;
+
 function compactEvidence(
   evidence: Array<OptaleActionRunEvidence | false | null | undefined>,
 ): OptaleActionRunEvidence[] {
   return evidence.filter((item): item is OptaleActionRunEvidence =>
     Boolean(item),
   );
+}
+
+function uniqueStringValues(values: Array<string | undefined>): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of values) {
+    const normalized = value?.trim();
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    result.push(normalized);
+  }
+  return result;
+}
+
+function pathEvidence(input: {
+  paths: Array<string | undefined>;
+  pathLabel: string;
+  countLabel: string;
+  omittedLabel: string;
+}): OptaleActionRunEvidence[] {
+  const paths = uniqueStringValues(input.paths);
+  if (paths.length === 0) return [];
+  const visiblePaths = paths.slice(0, PATH_EVIDENCE_LIMIT);
+  return compactEvidence([
+    { label: input.countLabel, value: paths.length },
+    ...visiblePaths.map((path) => ({ label: input.pathLabel, value: path })),
+    paths.length > visiblePaths.length
+      ? { label: input.omittedLabel, value: paths.length - visiblePaths.length }
+      : null,
+  ]);
+}
+
+function valueEvidence(
+  label: string,
+  values: Array<string | undefined>,
+): OptaleActionRunEvidence[] {
+  return uniqueStringValues(values)
+    .slice(0, PATH_EVIDENCE_LIMIT)
+    .map((value) => ({ label, value }));
+}
+
+function conversationSourceEvidence(
+  conversation: CommandCenterSnapshot["conversations"][number],
+): OptaleActionRunEvidence[] {
+  const sourcePaths = uniqueStringValues(conversation.mentionedPaths || []);
+  if (sourcePaths.length === 0) return [];
+  return [
+    { label: "Source", value: "brain-source:vault" },
+    ...pathEvidence({
+      paths: sourcePaths,
+      pathLabel: "Source Path",
+      countLabel: "Source Path Count",
+      omittedLabel: "Source Paths Omitted",
+    }),
+  ];
+}
+
+function conversationArtifactEvidence(
+  conversation: CommandCenterSnapshot["conversations"][number],
+): OptaleActionRunEvidence[] {
+  return pathEvidence({
+    paths: conversation.artifactPaths || [],
+    pathLabel: "Artifact Path",
+    countLabel: "Artifact Count",
+    omittedLabel: "Artifact Paths Omitted",
+  });
+}
+
+function conversationMcpEvidence(
+  conversation: CommandCenterSnapshot["conversations"][number],
+): OptaleActionRunEvidence[] {
+  const artifacts = conversation.mcpEvidenceArtifacts || [];
+  if (artifacts.length === 0) return [];
+
+  const sourcePaths = uniqueStringValues(
+    artifacts.flatMap((artifact) => [
+      ...(artifact.sourcePaths || []),
+      ...(artifact.sources || []).map((source) => source.path),
+    ]),
+  );
+  const sourceTitles = uniqueStringValues(
+    artifacts.flatMap((artifact) =>
+      (artifact.sources || []).map((source) => source.title),
+    ),
+  );
+  const sourceTypes = uniqueStringValues(
+    artifacts.flatMap((artifact) =>
+      (artifact.sources || []).map((source) => source.sourceType),
+    ),
+  );
+
+  return compactEvidence([
+    { label: "MCP Tool Calls", value: artifacts.length },
+    ...valueEvidence(
+      "MCP Source",
+      artifacts.flatMap((artifact) => [artifact.source, artifact.serverId]),
+    ),
+    ...valueEvidence(
+      "MCP Server",
+      artifacts.map((artifact) => artifact.serverId),
+    ),
+    ...valueEvidence(
+      "MCP Tool",
+      artifacts.flatMap((artifact) => [
+        artifact.productToolLabel,
+        artifact.productToolName,
+      ]),
+    ),
+    ...pathEvidence({
+      paths: sourcePaths,
+      pathLabel: "MCP Source Path",
+      countLabel: "MCP Source Path Count",
+      omittedLabel: "MCP Source Paths Omitted",
+    }),
+    ...valueEvidence("MCP Source Title", sourceTitles),
+    ...valueEvidence("MCP Source Type", sourceTypes),
+  ]);
 }
 
 function taskHref(cabinetPath: string, conversationId: string): string {
@@ -169,6 +288,9 @@ export function buildOptaleActionRunLedger(input: {
   for (const conversation of commandCenter.conversations) {
     const cabinetPath = conversation.cabinetPath || commandCenter.cabinet.path;
     const conversationRunId = `command:${cabinetPath}:${conversation.id}:launch_conversation`;
+    const sourceEvidence = conversationSourceEvidence(conversation);
+    const artifactEvidence = conversationArtifactEvidence(conversation);
+    const mcpEvidence = conversationMcpEvidence(conversation);
     runs.push({
       id: conversationRunId,
       kind: "command",
@@ -192,6 +314,9 @@ export function buildOptaleActionRunLedger(input: {
         conversation.providerId
           ? { label: "Provider", value: conversation.providerId }
           : null,
+        ...sourceEvidence,
+        ...artifactEvidence,
+        ...mcpEvidence,
       ]),
       operationalSpine: actionRunSpine({
         id: conversationRunId,
@@ -302,6 +427,8 @@ export async function readOptaleActionRunLedger(
     cabinetPath: input.cabinetPath,
     visibilityMode: input.visibilityMode,
     limit: Math.max(input.limit || 100, 100),
+    hydrateMcpEvidence: true,
+    hydrateMcpEvidenceLimit: Math.min(input.limit || 25, 25),
   });
   return buildOptaleActionRunLedger({
     commandCenter,

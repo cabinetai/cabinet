@@ -191,8 +191,23 @@ test("buildOptaleResourceRegistry projects command center and context records", 
   assert.ok(
     registry.resources.some(
       (resource) =>
+        resource.id === "space:." &&
+        resource.oag?.canonicalId === "oag:Space:space:." &&
+        resource.oag.scope === "system" &&
+        resource.oag.visibility === "operator_only" &&
+        resource.oagSchema?.objectType === "Space" &&
+        resource.oagSchema.fieldCount > 0 &&
+        resource.oagSchema.relationshipCount > 0,
+    ),
+  );
+  assert.ok(
+    registry.resources.some(
+      (resource) =>
         resource.id === "action-type:launch_conversation" &&
         resource.label === "Launch Conversation" &&
+        resource.oag?.objectType === "ActionType" &&
+        resource.oag.schemaRef === "oag.schema.ActionType.v0" &&
+        resource.oagSchema?.category === "action" &&
         resource.operationalSpine?.subjectType === "resource",
     ),
   );

@@ -21,6 +21,16 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { OagObjectInspector } from "@/components/optale/oag-object-inspector";
+import {
+  buildOagObjectReferenceIndex,
+  selectRelatedOagRecords,
+  selectOagObjectActions,
+  selectOagObjectRelationshipInstances,
+  type OagObjectRelationshipInstance,
+  type OagObjectRelatedRecords,
+} from "@/components/optale/oag-object-explorer-state";
+import { useOptaleCommandWorkspaceData } from "@/components/optale/use-command-workspace-data";
 import { cn } from "@/lib/utils";
 import type {
   OptaleResourceKind,
@@ -112,6 +122,15 @@ function matchesSearch(
     resource.status,
     resource.cabinetPath,
     resource.source,
+    resource.oag?.canonicalId,
+    resource.oag?.objectType,
+    resource.oag?.scope,
+    resource.oag?.visibility,
+    resource.oag?.memoryLane,
+    resource.oagSchema?.label,
+    resource.oagSchema?.category,
+    resource.oagSchema?.description,
+    resource.oagSchema?.sourceSystems.join(" "),
     ...resource.facts.flatMap((fact) => [fact.label, String(fact.value)]),
   ]
     .filter(Boolean)
@@ -142,8 +161,12 @@ export function OptaleResourceRegistryWorkspace({
     "all",
   );
   const [search, setSearch] = useState("");
+  const [selectedResourceId, setSelectedResourceId] = useState<string | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const commandData = useOptaleCommandWorkspaceData({ cabinetPath });
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -183,6 +206,93 @@ export function OptaleResourceRegistryWorkspace({
     );
   }, [activeKind, registry?.resources, search]);
 
+  const selectedResource = useMemo(() => {
+    if (filteredResources.length === 0) return null;
+    return (
+      filteredResources.find((resource) => resource.id === selectedResourceId) ||
+      filteredResources[0] ||
+      null
+    );
+  }, [filteredResources, selectedResourceId]);
+
+  const relatedRecords = useMemo<OagObjectRelatedRecords | null>(() => {
+    if (!selectedResource) return null;
+    return selectRelatedOagRecords(selectedResource, {
+      runs: commandData.ledger?.runs || [],
+      policyDecisions: commandData.policyLog?.decisions || [],
+      lineageEdges: commandData.lineage?.edges || [],
+      auditEvents: commandData.auditLog?.events || [],
+    });
+  }, [
+    commandData.auditLog?.events,
+    commandData.ledger?.runs,
+    commandData.lineage?.edges,
+    commandData.policyLog?.decisions,
+    selectedResource,
+  ]);
+
+  const referenceIndex = useMemo(
+    () =>
+      buildOagObjectReferenceIndex(registry?.resources || [], {
+        runs: commandData.ledger?.runs || [],
+        policyDecisions: commandData.policyLog?.decisions || [],
+        lineageEdges: commandData.lineage?.edges || [],
+        auditEvents: commandData.auditLog?.events || [],
+      }),
+    [
+      commandData.auditLog?.events,
+      commandData.ledger?.runs,
+      commandData.lineage?.edges,
+      commandData.policyLog?.decisions,
+      registry?.resources,
+    ],
+  );
+
+  const selectedObjectActions = useMemo(() => {
+    if (!selectedResource) return [];
+    return selectOagObjectActions(
+      selectedResource,
+      commandData.registry?.actions || [],
+    );
+  }, [commandData.registry?.actions, selectedResource]);
+
+  const selectedObjectRelationships =
+    useMemo<OagObjectRelationshipInstance[]>(() => {
+      if (!selectedResource) return [];
+      return selectOagObjectRelationshipInstances(
+        selectedResource,
+        registry?.resources || [],
+        {
+          runs: commandData.ledger?.runs || [],
+          policyDecisions: commandData.policyLog?.decisions || [],
+          lineageEdges: commandData.lineage?.edges || [],
+          auditEvents: commandData.auditLog?.events || [],
+        },
+      );
+    }, [
+      commandData.auditLog?.events,
+      commandData.ledger?.runs,
+      commandData.lineage?.edges,
+      commandData.policyLog?.decisions,
+      registry?.resources,
+      selectedResource,
+    ]);
+
+  const selectResource = useCallback((resourceId: string) => {
+    setSelectedResourceId(resourceId);
+  }, []);
+
+  const jumpToResource = useCallback((resourceId: string) => {
+    setActiveKind("all");
+    setSearch("");
+    setSelectedResourceId(resourceId);
+  }, []);
+
+  const refreshAfterObjectAction = useCallback(() => {
+    void refresh();
+    void commandData.refresh();
+  }, [commandData, refresh]);
+
   return (
     <main className="flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden bg-background pb-12">
       <section className="border-b border-border/70 px-6 py-5">
@@ -193,11 +303,12 @@ export function OptaleResourceRegistryWorkspace({
               Optale Command
             </div>
             <h1 className="text-2xl font-semibold tracking-normal text-foreground">
-              Resource Registry
+              Object Registry
             </h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              Spaces, agents, runs, Brain sources, MCP clients, policies, and
-              actions.
+              Spaces, agents, tasks, runs, Brain sources, clients, policies,
+              actions, and the relationships that will become the OAG object
+              layer.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -260,7 +371,7 @@ export function OptaleResourceRegistryWorkspace({
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search resources"
+              placeholder="Search objects"
               className="h-9 pl-8"
             />
           </div>
@@ -273,92 +384,129 @@ export function OptaleResourceRegistryWorkspace({
         </div>
       )}
 
-      <section className="grid gap-3 px-6 py-5 xl:grid-cols-2">
-        {loading && !registry ? (
-          <div className="col-span-full flex min-h-[220px] items-center justify-center text-sm text-muted-foreground">
-            <Loader2 className="mr-2 size-4 animate-spin" />
-            Loading resources
-          </div>
-        ) : filteredResources.length === 0 ? (
-          <div className="col-span-full flex min-h-[220px] items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
-            No matching resources.
-          </div>
-        ) : (
-          filteredResources.map((resource) => (
-            <article
-              key={resource.id}
-              className="rounded-lg border border-border bg-card p-4 shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 gap-3">
-                  <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground">
-                    <ResourceIcon kind={resource.kind} className="size-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex min-w-0 flex-wrap items-center gap-2">
-                      <h2 className="truncate text-sm font-semibold tracking-normal text-foreground">
-                        {resource.href ? (
-                          <a href={resource.href} className="hover:underline">
-                            {resource.label}
-                          </a>
-                        ) : (
-                          resource.label
+      <section className="grid min-h-0 gap-4 px-6 py-5 xl:grid-cols-[minmax(0,1fr)_390px]">
+        <div className="grid content-start gap-3 lg:grid-cols-2">
+          {loading && !registry ? (
+            <div className="col-span-full flex min-h-[220px] items-center justify-center text-sm text-muted-foreground">
+              <Loader2 className="mr-2 size-4 animate-spin" />
+              Loading objects
+            </div>
+          ) : filteredResources.length === 0 ? (
+            <div className="col-span-full flex min-h-[220px] items-center justify-center rounded-lg border border-dashed border-border text-sm text-muted-foreground">
+              No matching objects.
+            </div>
+          ) : (
+            filteredResources.map((resource) => {
+              const selected = selectedResource?.id === resource.id;
+              return (
+                <article
+                  key={resource.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={selected}
+                  onClick={() => selectResource(resource.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      selectResource(resource.id);
+                    }
+                  }}
+                  className={cn(
+                    "rounded-lg border bg-card p-4 text-left shadow-sm outline-none transition-colors",
+                    selected
+                      ? "border-primary/40 ring-2 ring-primary/10"
+                      : "border-border hover:border-foreground/20",
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 gap-3">
+                      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground">
+                        <ResourceIcon kind={resource.kind} className="size-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex min-w-0 flex-wrap items-center gap-2">
+                          <h2 className="truncate text-sm font-semibold tracking-normal text-foreground">
+                            {resource.href ? (
+                              <a
+                                href={resource.href}
+                                className="hover:underline"
+                                onClick={(event) => event.stopPropagation()}
+                              >
+                                {resource.label}
+                              </a>
+                            ) : (
+                              resource.label
+                            )}
+                          </h2>
+                          <span className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                            {KIND_LABELS[resource.kind]}
+                          </span>
+                        </div>
+                        {resource.description && (
+                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">
+                            {resource.description}
+                          </p>
                         )}
-                      </h2>
-                      <span className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
-                        {KIND_LABELS[resource.kind]}
-                      </span>
+                      </div>
                     </div>
-                    {resource.description && (
-                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">
-                        {resource.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {resource.status && (
-                  <span
-                    className={cn(
-                      "inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
-                      statusTone(resource.status),
-                    )}
-                  >
-                    <CircleDot className="size-2.5" />
-                    {resource.status}
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                  <CheckCircle2 className="size-3" />
-                  {resource.source}
-                </div>
-                {resource.cabinetPath && (
-                  <div className="truncate text-[11px] text-muted-foreground">
-                    {resource.cabinetPath}
-                  </div>
-                )}
-              </div>
-
-              {resource.facts.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {resource.facts.slice(0, 6).map((fact) => (
-                    <span
-                      key={`${resource.id}:${fact.label}`}
-                      className="rounded-md border border-border/70 bg-background px-2 py-1 text-[11px] text-muted-foreground"
-                    >
-                      {fact.label}:{" "}
-                      <span className="text-foreground/80">
-                        {String(fact.value)}
+                    {resource.status && (
+                      <span
+                        className={cn(
+                          "inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
+                          statusTone(resource.status),
+                        )}
+                      >
+                        <CircleDot className="size-2.5" />
+                        {resource.status}
                       </span>
-                    </span>
-                  ))}
-                </div>
-              )}
-            </article>
-          ))
-        )}
+                    )}
+                  </div>
+
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                      <CheckCircle2 className="size-3" />
+                      {resource.source}
+                    </div>
+                    {resource.cabinetPath && (
+                      <div className="truncate text-[11px] text-muted-foreground">
+                        {resource.cabinetPath}
+                      </div>
+                    )}
+                  </div>
+
+                  {resource.facts.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {resource.facts.slice(0, 6).map((fact) => (
+                        <span
+                          key={`${resource.id}:${fact.label}`}
+                          className="rounded-md border border-border/70 bg-background px-2 py-1 text-[11px] text-muted-foreground"
+                        >
+                          {fact.label}:{" "}
+                          <span className="text-foreground/80">
+                            {String(fact.value)}
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              );
+            })
+          )}
+        </div>
+        <div className="min-w-0 xl:sticky xl:top-4 xl:self-start">
+          <OagObjectInspector
+            resource={selectedResource}
+            related={relatedRecords}
+            relationships={selectedObjectRelationships}
+            actions={selectedObjectActions}
+            referenceIndex={referenceIndex}
+            onSelectResource={jumpToResource}
+            onActionExecuted={refreshAfterObjectAction}
+            loading={commandData.loading}
+            error={commandData.error}
+          />
+        </div>
       </section>
     </main>
   );

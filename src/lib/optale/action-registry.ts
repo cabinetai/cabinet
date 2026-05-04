@@ -9,6 +9,10 @@ import {
   type OptaleOperationalSpineBinding,
   type OptaleOperationalSpineSummary,
 } from "@/lib/optale/operational-spine";
+import {
+  optaleOagActionContractForAction,
+  type OptaleOagActionContract,
+} from "@/lib/optale/oag-schema";
 import { HARD_WARNINGS, type AgentActionType } from "@/types/actions";
 
 export type OptaleActionKind = "command" | "agent_proposal";
@@ -42,6 +46,7 @@ export interface OptaleActionDefinition {
   inputs: OptaleActionInput[];
   facts: Array<{ label: string; value: string | number | boolean }>;
   operationalSpine?: OptaleOperationalSpineBinding;
+  oagContract?: OptaleOagActionContract;
 }
 
 export interface OptaleActionQueueRecord {
@@ -287,22 +292,28 @@ export function buildOptaleActionRegistry(input: {
 }): OptaleActionRegistry {
   const { commandCenter } = input;
   const availableCommands = new Set(commandCenter.controls);
+  const operatorOnlyCommands = new Set(commandCenter.operatorOnlyControls || []);
   const commandActions: OptaleActionDefinition[] = COMMAND_ACTION_ORDER.map(
     (action) => {
       const definition = COMMAND_ACTION_DEFINITIONS[action];
+      const facts: OptaleActionDefinition["facts"] = [
+        { label: "Action", value: action },
+        { label: "Inputs", value: definition.inputs.length },
+        {
+          label: "Required",
+          value: definition.inputs.filter((input) => input.required).length,
+        },
+      ];
+      if (operatorOnlyCommands.has(action)) {
+        facts.push({ label: "Availability", value: "operator-only" });
+      }
       return {
         id: `command:${action}`,
         kind: "command",
         action,
         status: availableCommands.has(action) ? "available" : "unavailable",
-        facts: [
-          { label: "Action", value: action },
-          { label: "Inputs", value: definition.inputs.length },
-          {
-            label: "Required",
-            value: definition.inputs.filter((input) => input.required).length,
-          },
-        ],
+        facts,
+        oagContract: optaleOagActionContractForAction(action),
         ...definition,
       };
     },
@@ -318,6 +329,7 @@ export function buildOptaleActionRegistry(input: {
         { label: "Inputs", value: definition.inputs.length },
         { label: "Approval", value: "human review" },
       ],
+      oagContract: optaleOagActionContractForAction(String(definition.action)),
       ...definition,
     }));
 

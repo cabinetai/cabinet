@@ -18,8 +18,30 @@ test("buildOptaleActionRunLedger projects conversations and agent actions", () =
           startedAt: "2026-05-03T00:00:00.000Z",
           promptPath: ".agents/.conversations/run-1/prompt.md",
           transcriptPath: ".agents/.conversations/run-1/transcript.md",
-          mentionedPaths: [],
-          artifactPaths: [],
+          mentionedPaths: [
+            "docs/source-a.md",
+            "docs/source-a.md",
+            "docs/source-b.md",
+          ],
+          artifactPaths: [".agents/.conversations/run-1/artifacts/brief.md"],
+          mcpEvidenceArtifacts: [
+            {
+              id: "mcp-artifact-1",
+              source: "knowledge-search",
+              serverId: "knowledge-search",
+              productToolName: "sense_search_knowledge",
+              productToolLabel: "Docs / Knowledge Search",
+              outcome: "ok",
+              sourcePaths: ["docs/tool-source.md"],
+              sources: [
+                {
+                  title: "Tool Source",
+                  path: "docs/tool-source.md",
+                  sourceType: "Docs / Knowledge Search",
+                },
+              ],
+            },
+          ],
           pendingActions: [
             {
               id: "action-1",
@@ -88,5 +110,51 @@ test("buildOptaleActionRunLedger projects conversations and agent actions", () =
         run.operationalSpine.subjectType === "action_run" &&
         run.operationalSpine.refs.policy_decision.status === "active",
     ),
+  );
+  const commandRun = ledger.runs.find(
+    (run) => run.id === "command:.:run-1:launch_conversation",
+  );
+  assert.ok(commandRun);
+  assert.deepEqual(
+    commandRun.evidence.filter((item) =>
+      ["Source", "Source Path Count", "Source Path", "Artifact Path"].includes(
+        item.label,
+      ),
+    ),
+    [
+      { label: "Source", value: "brain-source:vault" },
+      { label: "Source Path Count", value: 2 },
+      { label: "Source Path", value: "docs/source-a.md" },
+      { label: "Source Path", value: "docs/source-b.md" },
+      {
+        label: "Artifact Path",
+        value: ".agents/.conversations/run-1/artifacts/brief.md",
+      },
+    ],
+  );
+  assert.deepEqual(
+    commandRun.evidence.filter((item) =>
+      [
+        "MCP Tool Calls",
+        "MCP Source",
+        "MCP Server",
+        "MCP Tool",
+        "MCP Source Path Count",
+        "MCP Source Path",
+        "MCP Source Title",
+        "MCP Source Type",
+      ].includes(item.label),
+    ),
+    [
+      { label: "MCP Tool Calls", value: 1 },
+      { label: "MCP Source", value: "knowledge-search" },
+      { label: "MCP Server", value: "knowledge-search" },
+      { label: "MCP Tool", value: "Docs / Knowledge Search" },
+      { label: "MCP Tool", value: "sense_search_knowledge" },
+      { label: "MCP Source Path Count", value: 1 },
+      { label: "MCP Source Path", value: "docs/tool-source.md" },
+      { label: "MCP Source Title", value: "Tool Source" },
+      { label: "MCP Source Type", value: "Docs / Knowledge Search" },
+    ],
   );
 });
