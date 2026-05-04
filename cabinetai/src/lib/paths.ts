@@ -2,8 +2,29 @@ import path from "path";
 import os from "os";
 import fs from "fs";
 
-/** Global Cabinet home directory: ~/.cabinet/ */
-export const CABINET_HOME = path.join(os.homedir(), ".cabinet");
+/**
+ * Global Cabinet home directory for app installs and state.
+ *
+ * Defaults to `~/.local/share/cabinetai` (XDG_DATA_HOME) on Linux/macOS and
+ * `%APPDATA%\cabinetai` on Windows. Override with the CABINET_HOME env var.
+ *
+ * NOTE: intentionally distinct from the per-workspace `.cabinet` manifest file
+ * so that running `cabinetai run` from the home directory (~) does not cause an
+ * ENOTDIR collision between the manifest file and this directory.
+ */
+function resolveCabinetHome(): string {
+  const override = process.env.CABINET_HOME?.trim();
+  if (override) return path.resolve(override);
+  const home = os.homedir();
+  if (process.platform === "win32") {
+    const appData = process.env.APPDATA || path.join(home, "AppData", "Roaming");
+    return path.join(appData, "cabinetai");
+  }
+  const xdgData = process.env.XDG_DATA_HOME || path.join(home, ".local", "share");
+  return path.join(xdgData, "cabinetai");
+}
+
+export const CABINET_HOME = resolveCabinetHome();
 
 /** Directory where version-pinned app installs live */
 export function appVersionDir(version: string): string {
