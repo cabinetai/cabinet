@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { Terminal, X } from "lucide-react";
+import { GitBranch, Terminal, X } from "lucide-react";
 import { ComposerInput } from "@/components/composer/composer-input";
 import {
   TaskRuntimePicker,
@@ -326,8 +326,10 @@ export function TaskComposerPanel({
       ) : null}
 
       {draftSeed?.mode === "fork" ? (
-        <div className="mb-2 flex items-center gap-2 rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-[11px] font-medium text-primary">
-          <span className="min-w-0 flex-1 truncate">
+        <div className="mb-2 flex items-center gap-2 rounded-md border border-primary/20 bg-primary/10 px-2 py-1.5 text-[11px] text-primary">
+          <GitBranch className="size-3.5 shrink-0" />
+          <span className="shrink-0 font-semibold">Branch draft</span>
+          <span className="min-w-0 flex-1 truncate text-primary/85">
             {draftSeed.label || "Editing as a new branch"}
           </span>
           {onCancelDraftSeed ? (

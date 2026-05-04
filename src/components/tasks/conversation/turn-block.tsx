@@ -336,7 +336,7 @@ export function TurnBlock({
             {canCopy ? (
               <div
                 className={cn(
-                  "mt-1.5 flex h-7 items-center gap-1 opacity-0 transition-opacity group-hover/turn:opacity-100 focus-within:opacity-100",
+                  "mt-1.5 flex min-h-7 flex-wrap items-center gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover/turn:opacity-100 focus-within:opacity-100",
                   isUser ? "justify-end" : "justify-start"
                 )}
               >
@@ -344,43 +344,46 @@ export function TurnBlock({
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon-xs"
-                    className="text-muted-foreground hover:text-foreground"
+                    size="sm"
+                    className="h-6 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground"
                     title="Edit as new draft"
                     onClick={() => onUseAsDraft(turn)}
                   >
                     <Pencil className="size-3" />
+                    Edit
                   </Button>
                 ) : null}
                 {isUser && onForkTurn ? (
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon-xs"
-                    className="text-muted-foreground hover:text-foreground"
+                    size="sm"
+                    className="h-6 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground"
                     title="Fork from this turn"
                     onClick={() => onForkTurn(turn)}
                   >
                     <GitBranch className="size-3" />
+                    Fork
                   </Button>
                 ) : null}
                 {!isUser && canRetryRun && onRetryRun ? (
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon-xs"
-                    className="text-muted-foreground hover:text-foreground"
+                    size="sm"
+                    className="h-6 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground"
                     title={retryTitle}
                     onClick={onRetryRun}
                   >
                     <RotateCcw className="size-3" />
+                    Retry
                   </Button>
                 ) : null}
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon-xs"
-                  className="text-muted-foreground hover:text-foreground"
+                  size="sm"
+                  className="h-6 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground"
                   title={copied ? "Copied" : "Copy message"}
                   onClick={() => void handleCopy()}
                 >
@@ -389,6 +392,7 @@ export function TurnBlock({
                   ) : (
                     <Copy className="size-3" />
                   )}
+                  {copied ? "Copied" : "Copy"}
                 </Button>
               </div>
             ) : null}
