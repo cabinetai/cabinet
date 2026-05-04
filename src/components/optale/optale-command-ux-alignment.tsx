@@ -15,15 +15,12 @@ import {
   Code2,
   Command,
   Database,
-  FileCheck2,
   FileText,
   Filter,
   GitBranch,
-  Handshake,
   ListChecks,
   LockKeyhole,
   MessageSquare,
-  MessagesSquare,
   Network,
   PanelRight,
   RefreshCcw,
@@ -33,7 +30,6 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   SquareKanban,
-  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -102,66 +98,6 @@ const MOCKUPS: MockupNavItem[] = [
     label: "Observatory",
     detail: "visibility",
     icon: BrainCircuit,
-  },
-];
-
-const PLAYBOOKS = [
-  {
-    label: "Customer Onboarding",
-    detail: "rollout, owners, evidence",
-    icon: Handshake,
-  },
-  {
-    label: "Compliance Review",
-    detail: "policy, audit, decisions",
-    icon: ShieldCheck,
-  },
-  {
-    label: "Revenue Operations",
-    detail: "pipeline, risks, next actions",
-    icon: BarChart3,
-  },
-  {
-    label: "Source Evidence Desk",
-    detail: "citations, files, lineage",
-    icon: FileCheck2,
-  },
-  {
-    label: "Action Approval Queue",
-    detail: "review, satisfy, execute",
-    icon: ClipboardCheck,
-  },
-  {
-    label: "Implementation Control",
-    detail: "scope, blockers, readiness",
-    icon: Network,
-  },
-];
-
-const ROLE_GROUPS = [
-  {
-    label: "Operations",
-    roles: [
-      { label: "Command Lead", icon: Command, active: true, required: true },
-      { label: "Delivery Owner", icon: BriefcaseBusiness, active: true },
-      { label: "Policy Reviewer", icon: ShieldCheck, active: true, required: true },
-    ],
-  },
-  {
-    label: "Context",
-    roles: [
-      { label: "Research Analyst", icon: Search, active: true },
-      { label: "Source Curator", icon: FileText, active: true },
-      { label: "Memory Steward", icon: Database, active: false },
-    ],
-  },
-  {
-    label: "Execution",
-    roles: [
-      { label: "Workflow Builder", icon: Wrench, active: false },
-      { label: "Code Specialist", icon: Code2, active: true },
-      { label: "Partner Comms", icon: MessagesSquare, active: false },
-    ],
   },
 ];
 
@@ -286,16 +222,16 @@ export function OptaleCommandUxAlignment() {
   );
 
   return (
-    <main className="min-h-screen bg-[#07090c] text-[#f7f4ee]">
+    <main className="min-h-screen bg-[#1a1c1d] text-[#ebe9df]">
       <div className="flex min-h-screen">
         <aside className="hidden w-[300px] shrink-0 border-r border-white/10 bg-[#0b0e13] p-4 lg:flex lg:flex-col">
           <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-            <div className="grid size-9 place-items-center rounded-md border border-[#d7b56d]/45 bg-[#d7b56d]/10 text-[#d7b56d]">
+            <div className="grid size-9 place-items-center rounded-md border border-[#abc275]/45 bg-[#abc275]/10 text-[#abc275]">
               <Command className="size-4" />
             </div>
             <div className="min-w-0">
               <div className="text-sm font-semibold">Optale Command</div>
-              <div className="text-xs text-[#b5aea2]">UX alignment route</div>
+              <div className="text-xs text-[#b1b3b5]">UX alignment route</div>
             </div>
           </div>
 
@@ -311,8 +247,8 @@ export function OptaleCommandUxAlignment() {
                   className={cn(
                     "flex min-h-14 w-full items-center gap-3 rounded-md px-3 text-left transition-colors",
                     selected
-                      ? "bg-[#f7f4ee] text-[#0b0e13]"
-                      : "text-[#d7d2ca] hover:bg-white/[0.06] hover:text-white"
+                      ? "bg-[#ebe9df] text-[#0b0e13]"
+                      : "text-[#b1b3b5] hover:bg-white/[0.06] hover:text-white"
                   )}
                 >
                   <Icon className="size-4 shrink-0" />
@@ -321,7 +257,7 @@ export function OptaleCommandUxAlignment() {
                     <span
                       className={cn(
                         "block text-xs",
-                        selected ? "text-[#45413b]" : "text-[#8e887f]"
+                        selected ? "text-[#45413b]" : "text-[#8a8c8e]"
                       )}
                     >
                       {item.detail}
@@ -332,7 +268,7 @@ export function OptaleCommandUxAlignment() {
             })}
           </nav>
 
-          <div className="mt-auto rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[#b5aea2]">
+          <div className="mt-auto rounded-md border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-[#b1b3b5]">
             Design target only. Production data wiring and Agent Harness files stay out of this slice.
           </div>
         </aside>
@@ -340,15 +276,15 @@ export function OptaleCommandUxAlignment() {
         <section className="flex min-w-0 flex-1 flex-col">
           <header className="flex min-h-16 items-center justify-between border-b border-white/10 px-4 md:px-6">
             <div className="min-w-0">
-              <div className="text-xs font-semibold text-[#d7b56d]">
+              <div className="text-xs font-semibold text-[#abc275]">
                 {active.detail}
               </div>
               <h1 className="truncate text-xl font-semibold md:text-2xl">
                 {active.label}
               </h1>
             </div>
-            <div className="hidden items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-[#d7d2ca] md:flex">
-              <Circle className="size-2 fill-[#d7b56d] text-[#d7b56d]" />
+            <div className="hidden items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-[#b1b3b5] md:flex">
+              <Circle className="size-2 fill-[#abc275] text-[#abc275]" />
               mockup only
             </div>
           </header>
@@ -365,8 +301,8 @@ export function OptaleCommandUxAlignment() {
                     className={cn(
                       "h-9 shrink-0 rounded-md border px-3 text-xs font-semibold",
                       selected
-                        ? "border-[#d7b56d] bg-[#d7b56d] text-[#11100d]"
-                        : "border-white/10 bg-white/[0.035] text-[#d7d2ca]"
+                        ? "border-[#abc275] bg-[#abc275] text-[#070808]"
+                        : "border-white/10 bg-white/[0.035] text-[#b1b3b5]"
                     )}
                   >
                     {item.label}
@@ -394,72 +330,109 @@ export function OptaleCommandUxAlignment() {
 function OnboardingMockup() {
   return (
     <MockupFrame>
-      <div className="grid min-h-[760px] grid-rows-[auto_1fr_auto] bg-[#0b0e13]">
-        <div className="border-b border-white/10 px-5 py-4">
+      <div className="min-h-[760px] bg-[#1a1c1d] px-5 py-6 text-[#ebe9df] md:px-8 md:py-8">
+        <div className="mx-auto flex max-w-5xl flex-col gap-8">
           <div className="flex items-center justify-between gap-4">
             <BrandMark />
-            <StepRail active={2} total={5} />
+            <StepRail active={1} total={6} />
           </div>
-        </div>
 
-        <div className="grid gap-6 p-5 xl:grid-cols-[380px_1fr]">
-          <section className="flex flex-col justify-center">
-            <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-md border border-[#d7b56d]/35 bg-[#d7b56d]/10 px-3 py-1 text-xs font-semibold text-[#d7b56d]">
-              <BriefcaseBusiness className="size-3.5" />
-              business workspace
-            </div>
-            <h2 className="max-w-sm text-4xl font-semibold leading-tight">
-              Configure operating roles.
-            </h2>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-[#b5aea2]">
-              Start with a controlled business roster. Required roles are included in
-              the launch count and every role maps to a reviewable capability set.
-            </p>
-            <div className="mt-6 grid grid-cols-3 gap-2">
-              <MetricTile label="roles" value="6" />
-              <MetricTile label="required" value="2" tone="warn" />
-              <MetricTile label="playbooks" value="12" tone="info" />
-            </div>
-          </section>
+          <div className="grid min-h-[610px] items-center gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <section className="border border-[#ebe9df]/14 bg-[#232527] p-7 shadow-[0_20px_70px_rgba(0,0,0,0.28)] md:p-9">
+              <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_140px]">
+                <div>
+                  <h2 className="max-w-[520px] text-5xl font-semibold leading-[0.98] md:text-6xl">
+                    Optale
+                    <br />
+                    Command
+                  </h2>
+                  <p className="mt-5 font-mono text-xs uppercase text-[#8a8c8e]">
+                    operational control plane
+                  </p>
+                </div>
+                <div className="pt-2 font-mono text-xs leading-6 text-[#b1b3b5] md:text-right">
+                  spaces
+                  <br />
+                  brain
+                  <br />
+                  evals
+                </div>
+              </div>
 
-          <section className="min-w-0">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {PLAYBOOKS.map((playbook, index) => (
-                <PlaybookTile
-                  key={playbook.label}
-                  active={index === 0}
-                  icon={playbook.icon}
-                  label={playbook.label}
-                  detail={playbook.detail}
+              <ol className="mt-10 divide-y divide-[#ebe9df]/10 text-[15px] leading-7">
+                <IntroLine
+                  index="1."
+                  body="A governed workspace for agents, jobs, files, MCP clients, and shared memory."
+                  quote="open the product space and review the active agents"
                 />
-              ))}
-            </div>
+                <IntroLine
+                  index="2."
+                  label="observability"
+                  body="Trace what agents touched, which tools they used, and where policy stopped them."
+                  quote="inspect MCP activity and eval drift before the next rollout"
+                />
+                <IntroLine
+                  index="3."
+                  label="optale"
+                  body="The administrative app for Optale spaces, brain sources, governance, traces, and evals."
+                  quote="turn the brain on, connect the client, then run the check"
+                />
+              </ol>
+            </section>
 
-            <div className="mt-6 grid gap-3 xl:grid-cols-3">
-              {ROLE_GROUPS.map((group) => (
-                <RoleGroup key={group.label} label={group.label} roles={group.roles} />
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className="flex items-center justify-between border-t border-white/10 px-5 py-4">
-          <button
-            type="button"
-            className="h-10 rounded-md border border-white/10 px-4 text-sm text-[#d7d2ca]"
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            className="inline-flex h-10 items-center gap-2 rounded-md bg-[#d7b56d] px-5 text-sm font-semibold text-[#11100d]"
-          >
-            Continue
-            <ArrowRight className="size-4" />
-          </button>
+            <section className="flex flex-col items-start gap-6 lg:pl-2">
+              <h3 className="text-4xl font-semibold leading-[1.05] md:text-5xl">
+                Your spaces.
+                <br />
+                <span className="text-[#abc275]">Your operating view.</span>
+              </h3>
+              <p className="max-w-xs text-sm leading-6 text-[#b1b3b5]">
+                Set up the operating workspace, then configure roles, runtime
+                access, and launch checks.
+              </p>
+              <button
+                type="button"
+                className="inline-flex h-11 items-center gap-2 bg-[#abc275] px-5 text-sm font-semibold text-[#070808] transition-colors hover:bg-[#b8cd87]"
+              >
+                Get started
+                <ArrowRight className="size-4" />
+              </button>
+            </section>
+          </div>
         </div>
       </div>
     </MockupFrame>
+  );
+}
+
+function IntroLine({
+  index,
+  label,
+  body,
+  quote,
+}: {
+  index: string;
+  label?: string;
+  body: string;
+  quote: string;
+}) {
+  return (
+    <li className="grid gap-3 py-5 md:grid-cols-[42px_1fr]">
+      <span className="font-mono text-sm text-[#abc275]">{index}</span>
+      <div>
+        <p className="text-[#b1b3b5]">
+          {label ? (
+            <span className="mr-2 font-mono text-[11px] uppercase text-[#abc275]">
+              {label}
+            </span>
+          ) : null}
+          {body}
+        </p>
+        <p className="mt-2 font-mono text-xs text-[#8a8c8e]">
+          &quot;{quote}&quot;
+        </p>
+      </div>
+    </li>
   );
 }
 
@@ -483,8 +456,8 @@ function TourMockup() {
                   className={cn(
                     "flex h-11 items-center gap-2 rounded-md px-3 text-sm",
                     index === 0
-                      ? "bg-[#f7f4ee] text-[#11100d]"
-                      : "text-[#b5aea2]"
+                      ? "bg-[#ebe9df] text-[#070808]"
+                      : "text-[#b1b3b5]"
                   )}
                 >
                   <ItemIcon className="size-4" />
@@ -499,7 +472,7 @@ function TourMockup() {
           <div className="grid h-full grid-rows-[auto_1fr] rounded-md border border-white/10 bg-[#0e1218]">
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
               <div>
-                <div className="text-xs font-semibold text-[#d7b56d]">guided tour</div>
+                <div className="text-xs font-semibold text-[#abc275]">guided tour</div>
                 <h2 className="text-2xl font-semibold">Command operating view</h2>
               </div>
               <StepRail active={1} total={4} />
@@ -520,7 +493,7 @@ function TourMockup() {
                       {[62, 74, 48, 82].map((height, index) => (
                         <div key={index} className="flex h-24 items-end rounded-md bg-white/[0.04] p-2">
                           <div
-                            className="w-full rounded-sm bg-[#d7b56d]"
+                            className="w-full rounded-sm bg-[#abc275]"
                             style={{ height: `${height}%` }}
                           />
                         </div>
@@ -555,13 +528,13 @@ function CommandMockup() {
       <div className="flex min-h-[760px] flex-col bg-[#0b0e13]">
         <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-5 py-10">
           <div className="mb-5 text-center">
-            <div className="text-xs font-semibold text-[#d7b56d]">Optale Command</div>
+            <div className="text-xs font-semibold text-[#abc275]">Optale Command</div>
             <h2 className="mt-2 text-3xl font-semibold">What should Command inspect?</h2>
           </div>
 
           <div className="rounded-md border border-white/10 bg-[#11161d] p-3 shadow-2xl shadow-black/35">
             <textarea
-              className="h-28 w-full resize-none bg-transparent p-2 text-base text-[#f7f4ee] outline-none placeholder:text-[#746e66]"
+              className="h-28 w-full resize-none bg-transparent p-2 text-base text-[#ebe9df] outline-none placeholder:text-[#746e66]"
               placeholder="Ask Command to review, draft, inspect, or prepare an action..."
               readOnly
             />
@@ -571,7 +544,7 @@ function CommandMockup() {
               <ContextChip icon={LockKeyhole} label="Scope" value="Company Brain" />
               <button
                 type="button"
-                className="ml-auto inline-flex h-10 items-center gap-2 rounded-md bg-[#f7f4ee] px-4 text-sm font-semibold text-[#11100d]"
+                className="ml-auto inline-flex h-10 items-center gap-2 rounded-md bg-[#ebe9df] px-4 text-sm font-semibold text-[#070808]"
               >
                 <Send className="size-4" />
                 Send
@@ -582,7 +555,7 @@ function CommandMockup() {
           <div className="mt-4 flex justify-center">
             <button
               type="button"
-              className="inline-flex h-9 items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 text-sm text-[#d7d2ca]"
+              className="inline-flex h-9 items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 text-sm text-[#b1b3b5]"
             >
               <ListChecks className="size-4" />
               Open prompt library
@@ -623,7 +596,7 @@ function ObjectsMockup() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="border-b border-white/10 text-xs text-[#8e887f]">
+              <thead className="border-b border-white/10 text-xs text-[#8a8c8e]">
                 <tr>
                   <th className="px-5 py-3 font-semibold">Name</th>
                   <th className="px-3 py-3 font-semibold">Type</th>
@@ -639,17 +612,17 @@ function ObjectsMockup() {
                     key={row.name}
                     className={cn(
                       "border-b border-white/10",
-                      index === 0 ? "bg-[#d7b56d]/10" : "hover:bg-white/[0.03]"
+                      index === 0 ? "bg-[#abc275]/10" : "hover:bg-white/[0.03]"
                     )}
                   >
                     <td className="px-5 py-4 font-semibold">{row.name}</td>
-                    <td className="px-3 py-4 text-[#d7d2ca]">{row.type}</td>
-                    <td className="px-3 py-4 text-[#d7d2ca]">{row.owner}</td>
+                    <td className="px-3 py-4 text-[#b1b3b5]">{row.type}</td>
+                    <td className="px-3 py-4 text-[#b1b3b5]">{row.owner}</td>
                     <td className="px-3 py-4">
                       <StatusPill value={row.status} />
                     </td>
-                    <td className="px-3 py-4 text-[#d7d2ca]">{row.evidence}</td>
-                    <td className="px-5 py-4 text-[#8e887f]">{row.updated}</td>
+                    <td className="px-3 py-4 text-[#b1b3b5]">{row.evidence}</td>
+                    <td className="px-5 py-4 text-[#8a8c8e]">{row.updated}</td>
                   </tr>
                 ))}
               </tbody>
@@ -686,8 +659,8 @@ function ActionsMockup() {
               className={cn(
                 "h-9 rounded-md border px-3 text-sm font-semibold",
                 index === 0
-                  ? "border-[#d7b56d] bg-[#d7b56d] text-[#11100d]"
-                  : "border-white/10 bg-white/[0.035] text-[#d7d2ca]"
+                  ? "border-[#abc275] bg-[#abc275] text-[#070808]"
+                  : "border-white/10 bg-white/[0.035] text-[#b1b3b5]"
               )}
             >
               {tab}
@@ -735,10 +708,10 @@ function AgentsMockup() {
           </div>
           <div className="mt-6 rounded-md border border-white/10 bg-white/[0.035] p-4">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <Settings2 className="size-4 text-[#d7b56d]" />
+              <Settings2 className="size-4 text-[#abc275]" />
               Operator diagnostics
             </div>
-            <p className="mt-2 text-sm leading-5 text-[#b5aea2]">
+            <p className="mt-2 text-sm leading-5 text-[#b1b3b5]">
               Harness projection tables live behind admin detail views, not the roster overview.
             </p>
           </div>
@@ -765,8 +738,8 @@ function ObservatoryMockup() {
               className={cn(
                 "h-9 rounded-md border px-3 text-sm font-semibold",
                 index === 1
-                  ? "border-[#d7b56d] bg-[#d7b56d] text-[#11100d]"
-                  : "border-white/10 bg-white/[0.035] text-[#d7d2ca]"
+                  ? "border-[#abc275] bg-[#abc275] text-[#070808]"
+                  : "border-white/10 bg-white/[0.035] text-[#b1b3b5]"
               )}
             >
               {tab}
@@ -778,7 +751,7 @@ function ObservatoryMockup() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-lg font-semibold">Knowledge graph</h3>
-                <p className="text-sm text-[#b5aea2]">
+                <p className="text-sm text-[#b1b3b5]">
                   Entity and object relationships from Sources and OAG.
                 </p>
               </div>
@@ -829,8 +802,8 @@ function CommandShell({
                 className={cn(
                   "min-h-14 rounded-md border px-3 text-left",
                   active === label
-                    ? "border-[#d7b56d]/55 bg-[#d7b56d]/12 text-white"
-                    : "border-white/10 bg-white/[0.025] text-[#b5aea2]"
+                    ? "border-[#abc275]/55 bg-[#abc275]/12 text-white"
+                    : "border-white/10 bg-white/[0.025] text-[#b1b3b5]"
                 )}
               >
                 <Icon className="mb-1 size-4" />
@@ -840,10 +813,10 @@ function CommandShell({
           </div>
           <div className="mt-5 rounded-md border border-white/10 bg-white/[0.035] p-3">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <Archive className="size-4 text-[#d7b56d]" />
+              <Archive className="size-4 text-[#abc275]" />
               Sources
             </div>
-            <div className="mt-3 space-y-2 text-sm text-[#b5aea2]">
+            <div className="mt-3 space-y-2 text-sm text-[#b1b3b5]">
               <div>Vault sources</div>
               <div>Agent roster</div>
               <div>Task lanes</div>
@@ -858,7 +831,7 @@ function CommandShell({
 
 function MockupFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto max-w-[1440px] overflow-hidden rounded-md border border-white/10 bg-[#0b0e13] shadow-2xl shadow-black/40">
+    <div className="mx-auto max-w-[1440px] overflow-hidden rounded-[2px] border border-white/10 bg-[#0b0e13] shadow-2xl shadow-black/40">
       {children}
     </div>
   );
@@ -867,12 +840,12 @@ function MockupFrame({ children }: { children: ReactNode }) {
 function BrandMark() {
   return (
     <div className="flex items-center gap-3">
-      <div className="grid size-9 place-items-center rounded-md border border-[#d7b56d]/45 bg-[#d7b56d]/10 text-[#d7b56d]">
+      <div className="grid size-9 place-items-center rounded-md border border-[#abc275]/45 bg-[#abc275]/10 text-[#abc275]">
         <Command className="size-4" />
       </div>
       <div>
         <div className="text-sm font-semibold text-white">Optale</div>
-        <div className="text-xs text-[#8e887f]">Command</div>
+        <div className="text-xs text-[#8a8c8e]">Command</div>
       </div>
     </div>
   );
@@ -885,99 +858,11 @@ function StepRail({ active, total }: { active: number; total: number }) {
         <span
           key={index}
           className={cn(
-            "h-1.5 w-8 rounded-full",
-            index < active ? "bg-[#d7b56d]" : "bg-white/12"
+            "h-1.5 w-8 rounded-[1px]",
+            index < active ? "bg-[#abc275]" : "bg-white/12"
           )}
         />
       ))}
-    </div>
-  );
-}
-
-function MetricTile({ label, value, tone }: Metric) {
-  return (
-    <div className="rounded-md border border-white/10 bg-white/[0.035] p-3">
-      <div className="text-2xl font-semibold">{value}</div>
-      <div
-        className={cn(
-          "text-xs",
-          tone === "warn" ? "text-[#f2c16b]" : tone === "info" ? "text-[#9ab8ff]" : "text-[#b5aea2]"
-        )}
-      >
-        {label}
-      </div>
-    </div>
-  );
-}
-
-function PlaybookTile({
-  active,
-  icon: Icon,
-  label,
-  detail,
-}: {
-  active?: boolean;
-  icon: LucideIcon;
-  label: string;
-  detail: string;
-}) {
-  return (
-    <button
-      type="button"
-      className={cn(
-        "min-h-[118px] rounded-md border p-4 text-left transition-colors",
-        active
-          ? "border-[#d7b56d]/65 bg-[#d7b56d]/12"
-          : "border-white/10 bg-white/[0.035] hover:bg-white/[0.06]"
-      )}
-    >
-      <Icon className="size-5 text-[#d7b56d]" />
-      <div className="mt-4 text-sm font-semibold">{label}</div>
-      <div className="mt-1 text-xs leading-5 text-[#b5aea2]">{detail}</div>
-    </button>
-  );
-}
-
-function RoleGroup({
-  label,
-  roles,
-}: {
-  label: string;
-  roles: Array<{
-    label: string;
-    icon: LucideIcon;
-    active: boolean;
-    required?: boolean;
-  }>;
-}) {
-  return (
-    <div className="rounded-md border border-white/10 bg-white/[0.035] p-3">
-      <div className="mb-3 text-xs font-semibold text-[#d7b56d]">{label}</div>
-      <div className="space-y-2">
-        {roles.map((role) => {
-          const Icon = role.icon;
-          return (
-            <button
-              key={role.label}
-              type="button"
-              className={cn(
-                "flex min-h-10 w-full items-center gap-2 rounded-md border px-3 text-left text-sm",
-                role.active
-                  ? "border-[#d7b56d]/55 bg-[#d7b56d]/10 text-white"
-                  : "border-white/10 bg-[#0b0e13] text-[#b5aea2]"
-              )}
-            >
-              <Icon className="size-4 shrink-0 text-[#d7b56d]" />
-              <span className="min-w-0 flex-1 truncate">{role.label}</span>
-              {role.required ? (
-                <span className="text-[10px] font-semibold text-[#d7b56d]">
-                  required
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }
@@ -994,7 +879,7 @@ function TourPanel({
   return (
     <section className="rounded-md border border-white/10 bg-white/[0.035] p-4">
       <div className="flex items-center gap-2 text-sm font-semibold">
-        <Icon className="size-4 text-[#d7b56d]" />
+        <Icon className="size-4 text-[#abc275]" />
         {title}
       </div>
       <div className="mt-4">{children}</div>
@@ -1013,7 +898,7 @@ function SignalRow({
 }) {
   return (
     <div className="flex items-center justify-between rounded-md bg-[#0b0e13] px-3 py-2 text-sm">
-      <span className="text-[#b5aea2]">{label}</span>
+      <span className="text-[#b1b3b5]">{label}</span>
       <span
         className={cn(
           "font-semibold",
@@ -1029,7 +914,7 @@ function SignalRow({
 function ControlLine({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-white/10 bg-[#0b0e13] p-3">
-      <div className="text-xs text-[#8e887f]">{label}</div>
+      <div className="text-xs text-[#8a8c8e]">{label}</div>
       <div className="mt-1 text-sm font-semibold">{value}</div>
     </div>
   );
@@ -1075,7 +960,7 @@ function GraphNode({
   return (
     <div
       className={cn(
-        "absolute z-10 grid place-items-center rounded-md border border-[#d7b56d]/55 bg-[#11161d] px-3 py-2 text-xs font-semibold shadow-lg shadow-black/30",
+        "absolute z-10 grid place-items-center rounded-md border border-[#abc275]/55 bg-[#11161d] px-3 py-2 text-xs font-semibold shadow-lg shadow-black/30",
         large ? "min-h-16 min-w-28" : "min-h-11 min-w-24",
         className
       )}
@@ -1089,7 +974,7 @@ function GraphLine({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "absolute h-px origin-left bg-[#d7b56d]/45",
+        "absolute h-px origin-left bg-[#abc275]/45",
         className
       )}
     />
@@ -1110,12 +995,12 @@ function ContextChip({
       type="button"
       className="inline-flex h-10 items-center gap-2 rounded-md border border-white/10 bg-[#0b0e13] px-3 text-left"
     >
-      <Icon className="size-4 text-[#d7b56d]" />
+      <Icon className="size-4 text-[#abc275]" />
       <span>
-        <span className="block text-[10px] text-[#8e887f]">{label}</span>
-        <span className="block text-xs font-semibold text-[#f7f4ee]">{value}</span>
+        <span className="block text-[10px] text-[#8a8c8e]">{label}</span>
+        <span className="block text-xs font-semibold text-[#ebe9df]">{value}</span>
       </span>
-      <ChevronDown className="size-3.5 text-[#8e887f]" />
+      <ChevronDown className="size-3.5 text-[#8a8c8e]" />
     </button>
   );
 }
@@ -1131,9 +1016,9 @@ function VisibilityTile({
 }) {
   return (
     <div className="rounded-md border border-white/10 bg-white/[0.035] p-4">
-      <Icon className="size-4 text-[#d7b56d]" />
+      <Icon className="size-4 text-[#abc275]" />
       <div className="mt-3 text-sm font-semibold">{label}</div>
-      <div className="mt-1 text-xs text-[#b5aea2]">{value}</div>
+      <div className="mt-1 text-xs text-[#b1b3b5]">{value}</div>
     </div>
   );
 }
@@ -1150,16 +1035,16 @@ function SurfaceHeader({
   return (
     <header className="flex min-h-24 items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
       <div className="min-w-0">
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#d7b56d]">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#abc275]">
           <Icon className="size-3.5" />
           Optale Command
         </div>
         <h2 className="mt-2 text-2xl font-semibold">{label}</h2>
-        <p className="mt-1 max-w-2xl text-sm text-[#b5aea2]">{detail}</p>
+        <p className="mt-1 max-w-2xl text-sm text-[#b1b3b5]">{detail}</p>
       </div>
       <button
         type="button"
-        className="hidden h-10 items-center gap-2 rounded-md border border-white/10 px-3 text-sm text-[#d7d2ca] md:inline-flex"
+        className="hidden h-10 items-center gap-2 rounded-md border border-white/10 px-3 text-sm text-[#b1b3b5] md:inline-flex"
       >
         <RefreshCcw className="size-4" />
         Refresh
@@ -1170,7 +1055,7 @@ function SurfaceHeader({
 
 function SearchBox({ placeholder }: { placeholder: string }) {
   return (
-    <div className="flex h-10 min-w-[260px] flex-1 items-center gap-2 rounded-md border border-white/10 bg-[#11161d] px-3 text-sm text-[#8e887f]">
+    <div className="flex h-10 min-w-[260px] flex-1 items-center gap-2 rounded-md border border-white/10 bg-[#11161d] px-3 text-sm text-[#8a8c8e]">
       <Search className="size-4" />
       {placeholder}
     </div>
@@ -1181,7 +1066,7 @@ function FilterButton({ label }: { label: string }) {
   return (
     <button
       type="button"
-      className="inline-flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 text-sm text-[#d7d2ca]"
+      className="inline-flex h-10 items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-3 text-sm text-[#b1b3b5]"
     >
       <Filter className="size-4" />
       {label}
@@ -1209,7 +1094,7 @@ function StatusPill({ value }: { value: string }) {
             ? "border-[#9bd9b1]/35 bg-[#9bd9b1]/10 text-[#9bd9b1]"
             : tone === "info"
               ? "border-[#9ab8ff]/35 bg-[#9ab8ff]/10 text-[#9ab8ff]"
-              : "border-white/10 bg-white/[0.04] text-[#d7d2ca]"
+              : "border-white/10 bg-white/[0.04] text-[#b1b3b5]"
       )}
     >
       {value}
@@ -1222,9 +1107,9 @@ function InspectorPanel() {
     <aside className="p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-xs font-semibold text-[#d7b56d]">Inspector</div>
+          <div className="text-xs font-semibold text-[#abc275]">Inspector</div>
           <h3 className="mt-2 text-xl font-semibold">Acme rollout</h3>
-          <p className="mt-1 text-sm text-[#b5aea2]">Project object</p>
+          <p className="mt-1 text-sm text-[#b1b3b5]">Project object</p>
         </div>
         <StatusPill value="At risk" />
       </div>
@@ -1241,7 +1126,7 @@ function InspectorPanel() {
             type="button"
             className={cn(
               "h-8 rounded-md px-2 text-xs font-semibold",
-              index === 1 ? "bg-[#d7b56d] text-[#11100d]" : "bg-white/[0.05] text-[#d7d2ca]"
+              index === 1 ? "bg-[#abc275] text-[#070808]" : "bg-white/[0.05] text-[#b1b3b5]"
             )}
           >
             {tab}
@@ -1269,7 +1154,7 @@ function MetricCard({ label, value, tone }: Metric) {
       >
         {value}
       </div>
-      <div className="text-xs text-[#b5aea2]">{label}</div>
+      <div className="text-xs text-[#b1b3b5]">{label}</div>
     </div>
   );
 }
@@ -1278,7 +1163,7 @@ function RelationRow({ label, meta }: { label: string; meta: string }) {
   return (
     <div className="rounded-md border border-white/10 bg-white/[0.035] p-3">
       <div className="text-sm font-semibold">{label}</div>
-      <div className="mt-1 text-xs text-[#b5aea2]">{meta}</div>
+      <div className="mt-1 text-xs text-[#b1b3b5]">{meta}</div>
     </div>
   );
 }
@@ -1302,19 +1187,19 @@ function ActionReviewRow({
           <StatusPill value={item.state} />
           <StatusPill value={item.risk} />
         </div>
-        <p className="mt-2 text-sm text-[#b5aea2]">{item.detail}</p>
-        <div className="mt-3 text-xs text-[#8e887f]">Owner: {item.owner}</div>
+        <p className="mt-2 text-sm text-[#b1b3b5]">{item.detail}</p>
+        <div className="mt-3 text-xs text-[#8a8c8e]">Owner: {item.owner}</div>
       </div>
       <div className="flex items-center gap-2 md:justify-end">
         <button
           type="button"
-          className="h-9 rounded-md border border-white/10 px-3 text-sm text-[#d7d2ca]"
+          className="h-9 rounded-md border border-white/10 px-3 text-sm text-[#b1b3b5]"
         >
           Deny
         </button>
         <button
           type="button"
-          className="h-9 rounded-md bg-[#d7b56d] px-3 text-sm font-semibold text-[#11100d]"
+          className="h-9 rounded-md bg-[#abc275] px-3 text-sm font-semibold text-[#070808]"
         >
           Approve
         </button>
@@ -1337,19 +1222,19 @@ function AgentRosterRow({
   return (
     <div className="grid gap-3 rounded-md border border-white/10 bg-white/[0.035] p-4 md:grid-cols-[1fr_auto]">
       <div className="flex min-w-0 gap-3">
-        <div className="grid size-10 shrink-0 place-items-center rounded-md border border-[#d7b56d]/35 bg-[#d7b56d]/10 text-[#d7b56d]">
+        <div className="grid size-10 shrink-0 place-items-center rounded-md border border-[#abc275]/35 bg-[#abc275]/10 text-[#abc275]">
           <Icon className="size-4" />
         </div>
         <div className="min-w-0">
           <div className="font-semibold">{agent.name}</div>
-          <div className="mt-1 text-sm text-[#b5aea2]">{agent.role}</div>
+          <div className="mt-1 text-sm text-[#b1b3b5]">{agent.role}</div>
         </div>
       </div>
       <div className="flex items-center gap-2 md:justify-end">
         <StatusPill value={agent.state} />
         <button
           type="button"
-          className="h-9 rounded-md border border-white/10 px-3 text-sm text-[#d7d2ca]"
+          className="h-9 rounded-md border border-white/10 px-3 text-sm text-[#b1b3b5]"
         >
           Details
         </button>
@@ -1369,9 +1254,9 @@ function ScheduleBlock({
 }) {
   return (
     <div className="rounded-md border border-white/10 bg-white/[0.035] p-3">
-      <div className="text-xs text-[#d7b56d]">{time}</div>
+      <div className="text-xs text-[#abc275]">{time}</div>
       <div className="mt-1 text-sm font-semibold">{label}</div>
-      <div className="mt-1 text-xs text-[#b5aea2]">{owner}</div>
+      <div className="mt-1 text-xs text-[#b1b3b5]">{owner}</div>
     </div>
   );
 }
@@ -1391,13 +1276,13 @@ function SourceTile({
     <div className="rounded-md border border-white/10 bg-white/[0.035] p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
-          <Icon className="mt-0.5 size-4 shrink-0 text-[#d7b56d]" />
+          <Icon className="mt-0.5 size-4 shrink-0 text-[#abc275]" />
           <div className="min-w-0">
             <div className="font-semibold">{source.label}</div>
-            <div className="mt-1 text-sm text-[#b5aea2]">{source.detail}</div>
+            <div className="mt-1 text-sm text-[#b1b3b5]">{source.detail}</div>
           </div>
         </div>
-        <span className="shrink-0 text-xs text-[#d7b56d]">{source.state}</span>
+        <span className="shrink-0 text-xs text-[#abc275]">{source.state}</span>
       </div>
     </div>
   );
