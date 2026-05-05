@@ -412,6 +412,8 @@ export function TreeNode({
             className={cn(
               "group relative flex items-center gap-2 w-full text-left py-1 px-2 text-[12px] text-foreground/75 rounded-md transition-colors",
               "hover:bg-foreground/[0.03] hover:text-foreground !cursor-grab active:!cursor-grabbing",
+              // Override the ContextMenuTrigger wrapper's user-select:none so HTML5 dragstart fires on first mousedown (Chromium quirk: draggable rows inheriting user-select:none need a focus pass before drag initiates).
+              "select-text",
               // Audit #015: active row needs two cues, not just background.
               // Adds a 2px primary-color accent bar on the left edge via a
               // before:: pseudo (does not fight the row's existing padding)
