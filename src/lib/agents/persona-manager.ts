@@ -8,9 +8,11 @@ import { normalizeCabinetPath, ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import {
   readFileContent,
   writeFileContent,
+  appendFileContent,
   fileExists,
   ensureDirectory,
   listDirectory,
+  deleteFileOrDir,
 } from "@/lib/storage/fs-operations";
 import { runHeartbeat } from "./heartbeat";
 import { getGoalState } from "./goal-manager";
@@ -540,9 +542,8 @@ export async function deletePersona(slug: string, cabinetPath?: string): Promise
         "Open the agent's settings without a cabinet context to remove it."
     );
   }
-  const fs = await import("fs/promises");
   const agentDir = path.join(source.agentsDir, slug);
-  await fs.rm(agentDir, { recursive: true, force: true });
+  await deleteFileOrDir(agentDir);
   unregisterHeartbeat(slug);
 }
 
@@ -608,11 +609,10 @@ export async function readInbox(slug: string, cabinetPath?: string): Promise<Arr
 
 export async function clearInbox(slug: string, cabinetPath?: string): Promise<void> {
   const inboxDir = path.join(await resolveMessagesDirForSlug(slug, cabinetPath), slug);
-  const fs = await import("fs/promises");
   const entries = await listDirectory(inboxDir).catch(() => []);
   for (const entry of entries) {
     if (entry.name.endsWith(".md")) {
-      await fs.unlink(path.join(inboxDir, entry.name)).catch(() => {});
+      await deleteFileOrDir(path.join(inboxDir, entry.name)).catch(() => {});
     }
   }
 }
@@ -626,11 +626,8 @@ export async function recordHeartbeat(record: HeartbeatRecord & { cabinetPath?: 
   // Append to history log
   const historyFile = path.join(histDir, `${slug}.jsonl`);
   const line = JSON.stringify(record) + "\n";
-  const fs = await import("fs/promises");
-  await fs.appendFile(historyFile, line).catch(async () => {
-    await ensureDirectory(histDir);
-    await fs.writeFile(historyFile, line);
-  });
+  await ensureDirectory(histDir);
+  await appendFileContent(historyFile, line);
 
   // Update stats
   const memDir = path.join(await resolveMemoryDirForSlug(slug, record.cabinetPath), slug);

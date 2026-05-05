@@ -1,4 +1,3 @@
-import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import yaml from "js-yaml";
@@ -8,6 +7,7 @@ import {
   writeFileContent,
   fileExists,
   listDirectory,
+  deleteFileOrDir,
 } from "./fs-operations";
 
 export const ORDER_SIDECAR = ".cabinet-order.yaml";
@@ -41,11 +41,7 @@ async function writeSidecar(
   const sidecarPath = path.join(parentDir, ORDER_SIDECAR);
   const keys = Object.keys(data).sort();
   if (keys.length === 0) {
-    try {
-      await fs.unlink(sidecarPath);
-    } catch {
-      // already gone
-    }
+    await deleteFileOrDir(sidecarPath).catch(() => {});
     return;
   }
   const sorted: Record<string, number> = {};

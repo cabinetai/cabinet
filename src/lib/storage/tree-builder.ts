@@ -1,4 +1,3 @@
-import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import yaml from "js-yaml";
@@ -7,7 +6,7 @@ import { CABINET_LINK_META_CANDIDATES, CABINET_MANIFEST_FILE } from "@/lib/cabin
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import type { TreeNode, GoogleFrontmatter } from "@/types";
 import { DATA_DIR, virtualPathFromFs, isHiddenEntry } from "./path-utils";
-import { listDirectory, readFileContent, fileExists } from "./fs-operations";
+import { listDirectory, readFileContent, fileExists, realpath } from "./fs-operations";
 import { ORDER_SIDECAR } from "./order-store";
 
 const CODE_EXTENSIONS = new Set([
@@ -128,11 +127,7 @@ async function buildTreeRecursive(
   showHidden = false
 ): Promise<TreeNode[]> {
   let realDirPath = dirPath;
-  try {
-    realDirPath = await fs.realpath(dirPath);
-  } catch {
-    // Fall back to the incoming path if realpath fails.
-  }
+  realDirPath = await realpath(dirPath);
 
   if (ancestorRealPaths.has(realDirPath)) {
     return [];
