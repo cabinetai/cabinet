@@ -154,8 +154,26 @@ export async function deletePage(virtualPath: string): Promise<void> {
   }
 }
 
+// Hidden dirs scaffolded next to every cabinet (cabinet-scaffold.ts:95-97).
+// A "hollow orphan" is a destination that contains only these dirs and they
+// in turn hold zero files — the daemon's leftovers from a prior cabinet move,
+// not real user content. An empty user-created folder with the same slug as
+// the moving item must NOT match (no scaffolding present).
+const CABINET_SCAFFOLD_NAMES = new Set([".agents", ".jobs", ".cabinet-state"]);
+
 async function isHollowOrphanDir(dir: string): Promise<boolean> {
-  const stack = [dir];
+  let topEntries;
+  try {
+    topEntries = await fs.readdir(dir, { withFileTypes: true });
+  } catch {
+    return false;
+  }
+  if (topEntries.length === 0) return false;
+  for (const e of topEntries) {
+    if (!e.isDirectory()) return false;
+    if (!CABINET_SCAFFOLD_NAMES.has(e.name)) return false;
+  }
+  const stack = topEntries.map((e) => path.join(dir, e.name));
   while (stack.length > 0) {
     const current = stack.pop()!;
     let entries;
@@ -217,6 +235,15 @@ export async function movePage(
         // Fall back to recursive copy + delete.
         await fsp.cp(fromResolved, toResolved, { recursive: true });
         await fsp.rm(fromResolved, { recursive: true, force: true });
+      } else if (code === "ENOTEMPTY" || code === "EEXIST") {
+        // Daemon recreated scaffolding between our hollow-orphan sweep and
+        // this rename. Surface the same friendly message rather than the raw
+        // errno — the user's options are the same either way.
+        throw new Error(
+          `An item named "${name}" already exists in ${
+            toParentPath ? `"${toParentPath}"` : "the root"
+          }. Rename or remove it first.`
+        );
       } else {
         throw err;
       }
