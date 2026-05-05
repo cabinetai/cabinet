@@ -1,10 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { pipeline } from "node:stream/promises";
+import { createHash } from "node:crypto";
+import { Transform } from "node:stream";
 import { spawnSync } from "node:child_process";
 import { CABINET_HOME, appVersionDir, ensureCabinetHome } from "./paths.js";
 import { log, success } from "./log.js";
-import { fetchReleaseManifest, resolveAppBundle } from "./release-manifest.js";
+import { fetchReleaseManifest, resolveAppBundle, type ReleaseAppBundle } from "./release-manifest.js";
 
 function hasProductionRuntime(appDir: string): boolean {
   return (
@@ -24,13 +27,30 @@ export function getAppDir(version: string): string | null {
   return appVersionDir(version);
 }
 
-async function downloadAndExtractBundle(appDir: string, bundleUrl: string): Promise<void> {
+async function resolveExpectedSha256(bundle: ReleaseAppBundle): Promise<string | null> {
+  if (bundle.sha256) return bundle.sha256;
+  try {
+    const r = await fetch(`${bundle.url}.sha256`, {
+      headers: { "user-agent": "cabinetai" },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (r.ok) {
+      const text = (await r.text()).trim().split(/\s+/)[0];
+      if (text && /^[0-9a-f]{64}$/i.test(text)) return text;
+    }
+  } catch {
+    // sidecar not available, skip verification
+  }
+  return null;
+}
+
+async function downloadAndExtractBundle(appDir: string, bundle: ReleaseAppBundle): Promise<void> {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "cabinet-app-"));
   const archivePath = path.join(tempDir, "cabinet-app.tgz");
 
   try {
-    log(`Downloading app bundle from ${bundleUrl}...`);
-    const response = await fetch(bundleUrl, {
+    log(`Downloading app bundle from ${bundle.url}...`);
+    const response = await fetch(bundle.url, {
       headers: { "user-agent": "cabinetai" },
       signal: AbortSignal.timeout(120_000),
     });
@@ -38,9 +58,26 @@ async function downloadAndExtractBundle(appDir: string, bundleUrl: string): Prom
     if (!response.ok) {
       throw new Error(`App bundle request failed (${response.status})`);
     }
+    if (!response.body) {
+      throw new Error("App bundle response has no body");
+    }
 
-    const bytes = Buffer.from(await response.arrayBuffer());
-    fs.writeFileSync(archivePath, bytes);
+    // Stream to disk, hashing in-flight to avoid buffering the whole bundle in memory.
+    const hash = createHash("sha256");
+    const hashTransform = new Transform({
+      transform(chunk, _enc, cb) { hash.update(chunk); cb(null, chunk); },
+    });
+    await pipeline(
+      response.body as unknown as NodeJS.ReadableStream,
+      hashTransform,
+      fs.createWriteStream(archivePath),
+    );
+
+    const actualHash = hash.digest("hex");
+    const expectedHash = await resolveExpectedSha256(bundle);
+    if (expectedHash && actualHash !== expectedHash) {
+      throw new Error(`Bundle SHA-256 mismatch (expected ${expectedHash}, got ${actualHash})`);
+    }
 
     fs.rmSync(appDir, { recursive: true, force: true });
     fs.mkdirSync(appDir, { recursive: true });
@@ -52,8 +89,15 @@ async function downloadAndExtractBundle(appDir: string, bundleUrl: string): Prom
       throw new Error("Failed to extract app bundle");
     }
 
-    if (!hasProductionRuntime(appDir)) {
-      throw new Error("App bundle did not include server.js");
+    const missing = [
+      "server.js",
+      path.join("server", "cabinet-daemon.cjs"),
+      path.join(".next", "static"),
+      path.join(".native", "node-pty", "package.json"),
+    ].filter((f) => !fs.existsSync(path.join(appDir, f)));
+
+    if (missing.length > 0) {
+      throw new Error(`App bundle missing runtime files in ${appDir}: ${missing.join(", ")}`);
     }
   } catch (err) {
     fs.rmSync(appDir, { recursive: true, force: true });
@@ -82,7 +126,7 @@ export async function ensureApp(version: string): Promise<string> {
     throw new Error(`No prebuilt app bundle available for ${process.platform}/${process.arch}`);
   }
 
-  await downloadAndExtractBundle(appDir, bundle.url);
+  await downloadAndExtractBundle(appDir, bundle);
   success(`Cabinet v${version} installed.`);
   return appDir;
 }

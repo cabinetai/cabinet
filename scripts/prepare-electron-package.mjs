@@ -172,9 +172,11 @@ async function stageDaemonRuntime() {
     await copyDirectory(stagedArtifactPath, stagedArtifactDest);
   }
 
-  const spawnHelper = path.join(stagedNodePtyDir, "prebuilds", "darwin-arm64", "spawn-helper");
-  if (await pathExists(spawnHelper)) {
-    await fs.chmod(spawnHelper, 0o755);
+  if (process.platform === "darwin") {
+    const spawnHelper = path.join(stagedArtifactDest, "spawn-helper");
+    if (await pathExists(spawnHelper)) {
+      await fs.chmod(spawnHelper, 0o755);
+    }
   }
 }
 

@@ -58,7 +58,7 @@ jobs:
             bundleKey: linux-x64
           - runner: ubuntu-24.04-arm
             bundleKey: linux-arm64
-          - runner: macos-13
+          - runner: macos-15-intel
             bundleKey: darwin-x64
           - runner: macos-14
             bundleKey: darwin-arm64
@@ -85,13 +85,19 @@ jobs:
           TAG_VERSION="${GITHUB_REF_NAME#v}"
           BUNDLE_NAME="cabinet-app-${{ matrix.bundleKey }}-v${TAG_VERSION}.tgz"
           tar -czf "$BUNDLE_NAME" -C .next/standalone .
+          node -e "
+            const{createHash}=require('crypto'),{readFileSync}=require('fs');
+            process.stdout.write(createHash('sha256').update(readFileSync('$BUNDLE_NAME')).digest('hex')+'\n')
+          " > "$BUNDLE_NAME.sha256"
           echo "bundle_name=$BUNDLE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Upload app bundle to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          files: ${{ steps.package.outputs.bundle_name }}
+          files: |
+            ${{ steps.package.outputs.bundle_name }}
+            ${{ steps.package.outputs.bundle_name }}.sha256
 
   publish-cabinetai:
     runs-on: ubuntu-latest
