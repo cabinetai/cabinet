@@ -154,6 +154,24 @@ export async function deletePage(virtualPath: string): Promise<void> {
   }
 }
 
+async function isHollowOrphanDir(dir: string): Promise<boolean> {
+  const stack = [dir];
+  while (stack.length > 0) {
+    const current = stack.pop()!;
+    let entries;
+    try {
+      entries = await fs.readdir(current, { withFileTypes: true });
+    } catch {
+      return false;
+    }
+    for (const e of entries) {
+      if (e.isDirectory()) stack.push(path.join(current, e.name));
+      else return false;
+    }
+  }
+  return true;
+}
+
 export async function movePage(
   fromPath: string,
   toParentPath: string,
@@ -175,11 +193,18 @@ export async function movePage(
 
   if (!isReorder) {
     if (await fileExists(toResolved)) {
-      throw new Error(
-        `An item named "${name}" already exists in ${
-          toParentPath ? `"${toParentPath}"` : "the root"
-        }. Rename or remove it first.`
-      );
+      // Destination may be empty .agents/ scaffolding the daemon recreated at
+      // the old path after a prior cabinet move — sweep it so rename succeeds.
+      if (await isHollowOrphanDir(toResolved)) {
+        const fsp = await import("fs/promises");
+        await fsp.rm(toResolved, { recursive: true, force: true });
+      } else {
+        throw new Error(
+          `An item named "${name}" already exists in ${
+            toParentPath ? `"${toParentPath}"` : "the root"
+          }. Rename or remove it first.`
+        );
+      }
     }
     await ensureDirectory(toDir);
     const fsp = await import("fs/promises");
