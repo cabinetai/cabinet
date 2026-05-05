@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-restricted-imports -- discoverCabinetPathsSync is used by the OSS daemon only; cloud doesn't run it.
+import fs from "fs";
 import path from "path";
 import { createTtlCache } from "@/lib/cache/ttl-cache";
 import { CABINET_MANIFEST_FILE } from "@/lib/cabinets/files";
@@ -38,4 +40,31 @@ export async function discoverCabinetPaths(): Promise<string[]> {
     await walkCabinets(DATA_DIR, results);
     return results;
   });
+}
+
+// Sync variant for the OSS daemon's startup path. Not used in cloud.
+function walkCabinetsSync(dir: string, results: string[]): void {
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+
+  for (const entry of entries) {
+    if (!entry.isDirectory() || isHiddenEntry(entry.name)) continue;
+
+    const childDir = path.join(dir, entry.name);
+    if (fs.existsSync(path.join(childDir, CABINET_MANIFEST_FILE))) {
+      results.push(cabinetPathFromFs(childDir));
+    }
+
+    walkCabinetsSync(childDir, results);
+  }
+}
+
+export function discoverCabinetPathsSync(): string[] {
+  const results = [ROOT_CABINET_PATH];
+  walkCabinetsSync(DATA_DIR, results);
+  return results;
 }
