@@ -388,7 +388,7 @@ export function TreeView() {
   return (
     <>
     <ScrollArea className="flex-1 min-h-0 [&_[data-slot=scroll-area-scrollbar]]:w-1.5 [&_[data-slot=scroll-area-scrollbar]]:py-0 [&_[data-slot=scroll-area-scrollbar]]:pr-0 [&_[data-slot=scroll-area-scrollbar]]:pl-0.5 [&_[data-slot=scroll-area-scrollbar]]:border-l-0">
-      <div className="py-1">
+      <div className="flex min-h-full flex-col py-1">
         {/* ── Back to parent cabinet ────────────────────── */}
         {activeCabinet && parentCabinet ? (
           <button
@@ -639,12 +639,14 @@ export function TreeView() {
         </div>
 
         {cabinetExpanded && (
-          <>
+          <div className="flex flex-1 min-h-0 flex-col">
             {agentsExpanded && (
-              <div
-                key="drawer-agents"
-                className="pt-1 animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
-              >
+              <ContextMenu>
+                <ContextMenuTrigger className="flex flex-1 flex-col">
+                  <div
+                    key="drawer-agents"
+                    className="flex flex-1 flex-col pt-1 animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
+                  >
                 {[
                   ...agents.filter((a) => a.slug === "editor"),
                   ...agents.filter((a) => a.slug !== "editor"),
@@ -687,30 +689,72 @@ export function TreeView() {
                     </div>
                   );
                 })}
-              </div>
+                  </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem
+                    onClick={() => {
+                      setSection({
+                        type: "agents",
+                        cabinetPath: activeCabinet?.path || ROOT_CABINET_PATH,
+                      });
+                      setTimeout(() => {
+                        window.dispatchEvent(
+                          new CustomEvent("cabinet:open-add-agent")
+                        );
+                      }, 100);
+                    }}
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    New Agent
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             )}
 
             {tasksExpanded && (
-              <div
-                key="drawer-tasks"
-                className="pt-1 animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
-              >
-                <RecentTasks
-                  active
-                  padStyle={pad(1)}
-                  itemClass={itemClass}
-                  cabinetPath={activeCabinet?.path}
-                  agents={agents}
-                />
-              </div>
+              <ContextMenu>
+                <ContextMenuTrigger className="flex flex-1 flex-col">
+                  <div
+                    key="drawer-tasks"
+                    className="flex flex-1 flex-col pt-1 animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
+                  >
+                    <RecentTasks
+                      active
+                      padStyle={pad(1)}
+                      itemClass={itemClass}
+                      cabinetPath={activeCabinet?.path}
+                      agents={agents}
+                    />
+                  </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem
+                    onClick={() => {
+                      setSection({
+                        type: "tasks",
+                        cabinetPath: activeCabinet?.path || ROOT_CABINET_PATH,
+                      });
+                      setTimeout(() => {
+                        window.dispatchEvent(
+                          new CustomEvent("cabinet:open-create-task")
+                        );
+                      }, 100);
+                    }}
+                  >
+                    <ListPlus className="h-4 w-4 mr-2" />
+                    New Task
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             )}
 
             {kbExpanded && (
               <ContextMenu>
-                <ContextMenuTrigger>
+                <ContextMenuTrigger className="flex flex-1 flex-col">
                   <div
                     key="drawer-data"
-                    className="pt-1 animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
+                    className="flex flex-1 flex-col pt-1 animate-in fade-in slide-in-from-top-1 duration-200 ease-out"
                   >
               <>
                 {visibleTreeNodes.length === 0 ? (
@@ -782,7 +826,7 @@ export function TreeView() {
                 </ContextMenuContent>
               </ContextMenu>
             )}
-          </>
+          </div>
         )}
       </div>
     </ScrollArea>
