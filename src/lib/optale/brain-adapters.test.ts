@@ -86,7 +86,11 @@ test("productBrainDownstreamName hides internal MCP and legacy memory names", ()
   );
   assert.equal(
     productBrainDownstreamName("oag__graph"),
-    "ontology_entity_graph",
+    "objects_entity_graph",
+  );
+  assert.equal(
+    productBrainDownstreamName("oag__context_assemble"),
+    "objects_context_assemble",
   );
   assert.equal(
     productBrainDownstreamName("dreams__stats"),

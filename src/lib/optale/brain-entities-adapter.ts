@@ -17,6 +17,7 @@ import {
   type OptaleBrainAdapterReadOptions,
   type OptaleBrainDownstreamCall,
 } from "@/lib/optale/brain-adapters";
+import { resolveOptaleOagScope } from "@/lib/optale/oag-scope";
 
 export interface OptaleBrainEntityNode {
   id: string;
@@ -61,6 +62,8 @@ export interface OptaleBrainEntityGraph {
   clusters: OptaleBrainEntityCluster[];
   meta: {
     graphName?: string;
+    workspaceId?: string;
+    ontologyId?: string;
     edgeCount: number;
     nodeCount: number;
     clusterCount: number;
@@ -235,9 +238,13 @@ function searchParams(input: {
   offset: number;
   relationship: string;
   asOf: string;
+  workspaceId: string;
+  ontologyId: string;
 }): string {
   const params = new URLSearchParams();
   params.set("limit", String(input.limit));
+  params.set("workspaceId", input.workspaceId);
+  params.set("ontologyId", input.ontologyId);
   if (input.offset > 0) params.set("offset", String(input.offset));
   if (input.query) params.set("q", input.query);
   if (input.relationship) params.set("relationship", input.relationship);
@@ -411,6 +418,10 @@ function normalizeMeta(
     : [];
   return {
     graphName: clientStringValue(meta.graph_name),
+    workspaceId:
+      clientStringValue(meta.workspace_id) || clientStringValue(meta.workspaceId),
+    ontologyId:
+      clientStringValue(meta.ontology_id) || clientStringValue(meta.ontologyId),
     edgeCount: numberValue(meta.edge_count),
     nodeCount: numberValue(meta.node_count),
     clusterCount: numberValue(meta.cluster_count),
@@ -492,6 +503,7 @@ export async function readOptaleBrainEntities(
     context.entityProfile,
     options.apiBaseUrl,
   );
+  const { workspaceId, ontologyId } = resolveOptaleOagScope(context);
   const apiConfigured = Boolean(baseUrl);
   const downstream =
     includeDownstream && entitiesEnabled && apiConfigured
@@ -510,6 +522,8 @@ export async function readOptaleBrainEntities(
               offset,
               relationship,
               asOf,
+              workspaceId,
+              ontologyId,
             })}`,
             name: "oag__graph",
             fetchImpl,

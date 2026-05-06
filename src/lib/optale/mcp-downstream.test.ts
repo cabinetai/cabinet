@@ -1,14 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import {
   readOptaleMcpServers,
   type OptaleMcpServerConfig,
 } from "./context-registry";
 import {
+  callDownstreamOptaleMcpTool,
   parseEventStream,
   postDownstreamJsonRpc,
   resolveDownstreamHttpTimeoutMs,
 } from "./mcp-downstream";
+import { buildInternalOptaleMcpGatewayContext } from "./mcp-gateway";
+import { writeCabinetOptaleScope } from "./scope-registry";
 
 function testServer(
   overrides: Partial<OptaleMcpServerConfig> = {},
@@ -153,4 +159,114 @@ test("non-qmd downstream servers remain bounded by the default timeout", () => {
     ),
     4_000,
   );
+});
+
+test("oag downstream calls inherit the cabinet workspace ontology scope", async (t) => {
+  const originalFetch = globalThis.fetch;
+  const env = process.env as Record<string, string | undefined>;
+  const envKeys = [
+    "CABINET_DATA_DIR",
+    "NODE_ENV",
+    "OPTALE_MCP_LOCAL_DEFAULTS",
+    "OPTALE_MCP_OAG_URL",
+    "OPTALE_OAG_WORKSPACE_ID",
+    "OPTALE_OAG_ONTOLOGY_ID",
+    "OAG_WORKSPACE_ID",
+    "OAG_ONTOLOGY_ID",
+  ] as const;
+  const originalEnv = new Map(envKeys.map((key) => [key, process.env[key]]));
+  const tempRoot = await fs.mkdtemp(
+    path.join(os.tmpdir(), "optale-oag-downstream-test-"),
+  );
+  t.after(async () => {
+    globalThis.fetch = originalFetch;
+    await fs.rm(tempRoot, { recursive: true, force: true });
+    for (const [key, value] of originalEnv) {
+      if (value === undefined) delete env[key];
+      else env[key] = value;
+    }
+  });
+
+  env.CABINET_DATA_DIR = tempRoot;
+  env.NODE_ENV = "production";
+  env.OPTALE_MCP_LOCAL_DEFAULTS = "false";
+  env.OPTALE_MCP_OAG_URL = "http://oag.test/mcp";
+  delete env.OPTALE_OAG_WORKSPACE_ID;
+  delete env.OPTALE_OAG_ONTOLOGY_ID;
+  delete env.OAG_WORKSPACE_ID;
+  delete env.OAG_ONTOLOGY_ID;
+  await writeCabinetOptaleScope(".", {
+    scope: "personal",
+    ownerId: "thor",
+    userId: "thor",
+  });
+
+  const calls: Record<string, unknown>[] = [];
+  globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+    const body = JSON.parse(String(init?.body || "{}")) as Record<
+      string,
+      unknown
+    >;
+    calls.push(body);
+    if (body.method === "tools/list") {
+      return jsonRpcResponse({
+        jsonrpc: "2.0",
+        id: body.id,
+        result: {
+          tools: [
+            {
+              name: "graph",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  limit: { type: "number" },
+                  workspaceId: { type: "string" },
+                  ontologyId: { type: "string" },
+                },
+              },
+            },
+          ],
+        },
+      });
+    }
+    if (body.method === "tools/call") {
+      return jsonRpcResponse({
+        jsonrpc: "2.0",
+        id: body.id,
+        result: { content: [{ type: "text", text: "ok" }] },
+      });
+    }
+    return jsonRpcResponse({
+      jsonrpc: "2.0",
+      id: body.id,
+      result: {},
+    });
+  }) as typeof fetch;
+
+  const result = await callDownstreamOptaleMcpTool(
+    "oag__graph",
+    { cabinetPath: ".", limit: 9 },
+    {
+      includeDownstream: true,
+      allowedServerIds: ["oag"],
+      gatewayContext: buildInternalOptaleMcpGatewayContext({
+        clientId: "test-oag-scope",
+        defaultCabinetPath: ".",
+        permissions: ["read"],
+        auditEnabled: false,
+      }),
+    },
+  );
+
+  assert.equal(result?.isError, undefined);
+  const toolCall = calls.find((call) => call.method === "tools/call");
+  const params = toolCall?.params as
+    | { name?: string; arguments?: Record<string, unknown> }
+    | undefined;
+  assert.equal(params?.name, "graph");
+  assert.deepEqual(params?.arguments, {
+    limit: 9,
+    workspaceId: "personal:thor",
+    ontologyId: "thor-personal-ontology-canary",
+  });
 });

@@ -133,7 +133,11 @@ export async function readOptaleBrainCoreStatus(input: {
   ]);
   const generatedAt = new Date().toISOString();
   const sources = readOptaleBrainSources();
-  const registryServerIds = new Set(readOptaleMcpServers().map((server) => server.id));
+  const registryServerIds = new Set(
+    readOptaleMcpServers()
+      .filter((server) => server.status === "configured")
+      .map((server) => server.id)
+  );
   const sourceBindings = buildSourceBindings({
     sources,
     policyServers: policy.servers,

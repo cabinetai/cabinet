@@ -13,6 +13,7 @@ import type {
 } from "@/lib/optale/mcp-server";
 import type { OptaleMcpGatewayContext } from "@/lib/optale/mcp-gateway";
 import { optaleToolNameMatches } from "@/lib/optale/tool-registry";
+import { resolveOptaleOagScopeForCabinet } from "@/lib/optale/oag-scope";
 
 type JsonObject = Record<string, unknown>;
 
@@ -26,13 +27,20 @@ interface DownstreamRpcResult {
   sessionId?: string;
 }
 
-const DOWNSTREAM_SERVER_IDS = new Set(["qmd", "graphiti"]);
+const DOWNSTREAM_SERVER_IDS = new Set(["qmd", "graphiti", "oag"]);
 const GRAPHITI_READ_TOOLS = new Set([
   "search_nodes",
   "search_memory_facts",
   "get_entity_edge",
   "get_episodes",
   "get_status",
+]);
+const OAG_READ_TOOLS = new Set([
+  "status",
+  "graph",
+  "context_assemble",
+  "entity_context",
+  "task_bridge_status",
 ]);
 const QMD_READ_TOOLS = new Set(["query", "get", "multi_get", "status"]);
 const DEFAULT_HTTP_TIMEOUT_MS = 4_000;
@@ -73,6 +81,14 @@ function asObject(value: unknown): JsonObject {
     : {};
 }
 
+function stringValue(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function hasSchemaProperty(properties: JsonObject, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(properties, key);
+}
+
 export function resolveDownstreamHttpTimeoutMs(
   server: Pick<OptaleMcpServerConfig, "timeoutMs">,
 ): number {
@@ -96,6 +112,7 @@ function isReadOnlyTool(serverId: string, tool: JsonObject): boolean {
 
   if (serverId === "qmd") return QMD_READ_TOOLS.has(name);
   if (serverId === "graphiti") return GRAPHITI_READ_TOOLS.has(name);
+  if (serverId === "oag") return OAG_READ_TOOLS.has(name);
   return false;
 }
 
@@ -314,9 +331,40 @@ function toDownstreamTool(
   };
 }
 
-function downstreamArguments(args: unknown, tool: DownstreamTool): JsonObject {
+async function downstreamArguments(
+  args: unknown,
+  tool: DownstreamTool,
+  context?: OptaleMcpGatewayContext,
+): Promise<JsonObject> {
   const input = { ...asObject(args) };
   const properties = asObject(asObject(tool.inputSchema).properties);
+  if (tool.downstreamServerId === "oag") {
+    if (!input.workspaceId && input.workspace_id) {
+      input.workspaceId = input.workspace_id;
+    }
+    if (!input.ontologyId && input.ontology_id) {
+      input.ontologyId = input.ontology_id;
+    }
+    delete input.workspace_id;
+    delete input.ontology_id;
+
+    const acceptsWorkspaceId = hasSchemaProperty(properties, "workspaceId");
+    const acceptsOntologyId = hasSchemaProperty(properties, "ontologyId");
+    if (
+      (acceptsWorkspaceId && !stringValue(input.workspaceId)) ||
+      (acceptsOntologyId && !stringValue(input.ontologyId))
+    ) {
+      const scope = await resolveOptaleOagScopeForCabinet(
+        stringValue(input.cabinetPath) || context?.defaultCabinetPath,
+      );
+      if (acceptsWorkspaceId && !stringValue(input.workspaceId)) {
+        input.workspaceId = scope.workspaceId;
+      }
+      if (acceptsOntologyId && !stringValue(input.ontologyId)) {
+        input.ontologyId = scope.ontologyId;
+      }
+    }
+  }
   for (const key of ["cabinetPath", "agentScope"]) {
     if (!(key in properties)) delete input[key];
   }
@@ -407,7 +455,7 @@ export async function callDownstreamOptaleMcpTool(
 
   const response = await downstreamRequest(entry.server, "tools/call", {
     name: parsed.downstreamName,
-    arguments: downstreamArguments(args, tool),
+    arguments: await downstreamArguments(args, tool, options.gatewayContext),
   });
   const result = asObject(response.result);
   if (Array.isArray(result.content)) {

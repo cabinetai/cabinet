@@ -30,6 +30,7 @@ test("read/write cabinet Optale scope metadata is file-backed", async () => {
     companyId: "acme",
     policyId: "policy-acme",
     memoryNamespace: "company:acme",
+    companyBrainTargetId: "optale-acme",
     labels: ["client", "client"],
   });
 
@@ -37,11 +38,13 @@ test("read/write cabinet Optale scope metadata is file-backed", async () => {
   assert.equal(saved.scope, "company");
   assert.equal(saved.source, "explicit");
   assert.equal(saved.companyId, "acme");
+  assert.equal(saved.companyBrainTargetId, "optale-acme");
   assert.deepEqual(saved.labels, ["client"]);
 
   const reread = await registry.readCabinetOptaleScope("clients/acme");
   assert.equal(reread.scope, "company");
   assert.equal(reread.memoryNamespace, "company:acme");
+  assert.equal(reread.companyBrainTargetId, "optale-acme");
 });
 
 test("agent Optale scope inherits cabinet scope unless persona frontmatter overrides it", async () => {

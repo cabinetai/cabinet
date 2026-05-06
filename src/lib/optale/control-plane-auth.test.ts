@@ -7,12 +7,16 @@ function makeRequest(
   pathname: string,
   cookies: Record<string, string> = {},
   origin = "http://localhost:4000",
+  headers: Record<string, string> = {},
 ) {
   const cookieHeader = Object.entries(cookies)
     .map(([key, value]) => `${key}=${value}`)
     .join("; ");
   return new NextRequest(new URL(pathname, origin), {
-    headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+    headers: {
+      ...headers,
+      ...(cookieHeader ? { cookie: cookieHeader } : {}),
+    },
   });
 }
 
@@ -78,5 +82,45 @@ test("requireOptaleControlPlaneRequest requires auth cookie when locked", async 
   } finally {
     if (previous === undefined) delete process.env.KB_PASSWORD;
     else process.env.KB_PASSWORD = previous;
+  }
+});
+
+test("requireOptaleControlPlaneRequest accepts trusted admin identity headers", async () => {
+  const previousTrust = process.env.OPTALE_TRUST_PROXY_IDENTITY;
+  const previousPassword = process.env.KB_PASSWORD;
+  process.env.OPTALE_TRUST_PROXY_IDENTITY = "1";
+  delete process.env.KB_PASSWORD;
+  try {
+    const allowed = await requireOptaleControlPlaneRequest(
+      makeRequest(
+        "/api/optale/mcp-policy",
+        {},
+        "https://console.optale.com",
+        {
+          "Remote-User": "thor",
+          "Remote-Groups": "optale,admin",
+        },
+      ),
+    );
+    assert.equal(allowed, null);
+
+    const denied = await requireOptaleControlPlaneRequest(
+      makeRequest(
+        "/api/optale/mcp-policy",
+        {},
+        "https://console.optale.com",
+        {
+          "Remote-User": "viewer",
+          "Remote-Groups": "viewer",
+        },
+      ),
+    );
+    assert.equal(denied?.status, 403);
+    assert.equal((await denied?.json())?.error, "OptaleControlPlaneForbidden");
+  } finally {
+    if (previousTrust === undefined) delete process.env.OPTALE_TRUST_PROXY_IDENTITY;
+    else process.env.OPTALE_TRUST_PROXY_IDENTITY = previousTrust;
+    if (previousPassword === undefined) delete process.env.KB_PASSWORD;
+    else process.env.KB_PASSWORD = previousPassword;
   }
 });

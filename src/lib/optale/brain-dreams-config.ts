@@ -107,6 +107,6 @@ export function buildOptaleBrainDreamsSourceBinding(
     namespace: context.memoryNamespace,
     profile: config.profile,
     description:
-      "Private Dream proposal review over the scoped Sense Memory pipeline. Company Brain writes still require promotion.",
+      "Private proposal review over the scoped Brain Memory pipeline. Company Brain writes still require promotion.",
   };
 }

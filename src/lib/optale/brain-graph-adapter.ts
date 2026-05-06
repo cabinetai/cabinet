@@ -536,11 +536,11 @@ function buildSemanticGraph(
 function fallbackGraphSource(): OptaleBrainAdapterBinding {
   return {
     id: "memory-graph",
-    name: "Memory Graph",
+    name: "Relationship Graph",
     kind: "graph",
     source: "native",
     status: "unconfigured",
-    statusReason: "Graphiti is not configured for this Brain context.",
+    statusReason: "Relationship Graph is not configured for this Brain context.",
     readOnly: true,
     scopes: ["company", "personal", "system"],
     permissions: [],
@@ -554,7 +554,7 @@ async function defaultGraphToolCall(
 ): Promise<OptaleBrainDownstreamCall> {
   return callBrainAdapterMcpTool({
     adapterId: "graph",
-    adapterName: "Optale Observatory Brain Graph",
+    adapterName: "Optale Brain Relationship Graph",
     toolName: input.name,
     args: input.args,
     cabinetPath: input.cabinetPath,
@@ -653,7 +653,9 @@ export async function readOptaleBrainGraph(
           ...source,
           status: "error" as const,
           statusReason:
-            statusCall.error?.message || statusCall.text || "Graphiti status check failed.",
+            statusCall.error?.message ||
+            statusCall.text ||
+            "Relationship Graph status check failed.",
         }
       : source;
   const { semantic, graph } = buildSemanticGraph(downstream, limit);

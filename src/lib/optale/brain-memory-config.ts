@@ -149,6 +149,6 @@ export function buildOptaleBrainMemorySourceBinding(
     capabilities: config.enabled ? ["read", "search", "draft-promotion"] : [],
     namespace: config.namespace,
     profile: config.profile,
-    description: "Private and scoped Sense Memory for this Brain context.",
+    description: "Private and scoped Brain Memory for this Brain context.",
   };
 }

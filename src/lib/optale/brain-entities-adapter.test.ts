@@ -15,8 +15,12 @@ const envKeys = [
   "CABINET_DATA_DIR",
   "OPTALE_ENTITY_API_URL",
   "OPTALE_OAG_API_URL",
+  "OPTALE_OAG_WORKSPACE_ID",
+  "OPTALE_OAG_ONTOLOGY_ID",
   "ENTITY_API_URL",
   "OAG_API_BASE_URL",
+  "OAG_WORKSPACE_ID",
+  "OAG_ONTOLOGY_ID",
   "OPTALE_COMMAND_BRAIN_ORIGIN",
   "OPTALE_COMMAND_BRAIN_AUTH_MODE",
 ] as const;
@@ -93,6 +97,8 @@ test("normalizeOagEntityGraph supports OAG graph payloads and redacts raw fields
       },
       meta: {
         graph_name: "/home/thor/optale_vault",
+        workspace_id: "company:optale",
+        ontology_id: "optale-company-ontology-canary",
         edge_count: 1,
         node_count: 1,
         cluster_count: 1,
@@ -124,6 +130,8 @@ test("normalizeOagEntityGraph supports OAG graph payloads and redacts raw fields
   assert.equal(graph.nodes[0]?.title, "Optale");
   assert.equal(graph.edges.length, 1);
   assert.equal(graph.clusters[0]?.label, "Company from [server-path]");
+  assert.equal(graph.meta.workspaceId, "company:optale");
+  assert.equal(graph.meta.ontologyId, "optale-company-ontology-canary");
   assert.equal(graph.meta.hasNext, true);
   const rendered = JSON.stringify(graph);
   assert.equal(rendered.includes("/home/thor"), false);
@@ -204,7 +212,8 @@ test("readOptaleBrainEntities reads OAG through scoped server adapter", async ()
   assert.ok(
     calls.some(
       (call) =>
-        call === "http://entity.local/api/oag/graph?limit=5&q=Observatory",
+        call ===
+        "http://entity.local/api/oag/graph?limit=5&workspaceId=personal%3Athor&ontologyId=thor-personal-ontology-canary&q=Observatory",
     ),
   );
 });

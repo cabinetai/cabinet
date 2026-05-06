@@ -22,6 +22,81 @@ function hasMcpBearer(req: NextRequest): boolean {
   return /^Bearer\s+.+$/i.test(header);
 }
 
+function truthyEnv(value: string | undefined): boolean {
+  const normalized = (value || "").trim().toLowerCase();
+  return (
+    normalized === "1" ||
+    normalized === "true" ||
+    normalized === "yes" ||
+    normalized === "on" ||
+    normalized === "authelia" ||
+    normalized === "trusted-proxy"
+  );
+}
+
+function csv(value: string | undefined): string[] {
+  return (value || "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function configuredHeaderNames(key: string, fallback: string[]): string[] {
+  const configured = csv(process.env[key]);
+  return configured.length > 0 ? configured : fallback;
+}
+
+function firstHeader(headers: Headers, names: string[]): string | null {
+  for (const name of names) {
+    const value = headers.get(name);
+    if (value && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function shouldTrustProxyIdentity(): boolean {
+  return (
+    truthyEnv(process.env.OPTALE_TRUST_PROXY_IDENTITY) ||
+    truthyEnv(process.env.OPTALE_AUTH_TRUST_HEADERS) ||
+    (process.env.OPTALE_AUTH_PROVIDER || "").trim().toLowerCase() === "authelia"
+  );
+}
+
+function proxySecretHeaderName(): string {
+  return (
+    (process.env.OPTALE_AUTH_PROXY_SECRET_HEADER || "").trim() ||
+    "X-Optale-Auth-Proxy-Secret"
+  );
+}
+
+function hasTrustedProxySecret(req: NextRequest): boolean {
+  const expected = (process.env.OPTALE_AUTH_PROXY_SHARED_SECRET || "").trim();
+  if (!expected) return true;
+  return req.headers.get(proxySecretHeaderName()) === expected;
+}
+
+function hasTrustedProxyIdentity(req: NextRequest): boolean {
+  if (!shouldTrustProxyIdentity()) return false;
+  if (!hasTrustedProxySecret(req)) return false;
+  const user = firstHeader(
+    req.headers,
+    configuredHeaderNames("OPTALE_AUTH_USER_HEADERS", [
+      "Remote-User",
+      "X-Forwarded-User",
+      "X-Auth-Request-User",
+    ]),
+  );
+  const email = firstHeader(
+    req.headers,
+    configuredHeaderNames("OPTALE_AUTH_EMAIL_HEADERS", [
+      "Remote-Email",
+      "X-Forwarded-Email",
+      "X-Auth-Request-Email",
+    ]),
+  );
+  return Boolean(user || email);
+}
+
 function hasMalformedPercentEncoding(url: string): boolean {
   try {
     decodeURI(url);
@@ -33,6 +108,7 @@ function hasMalformedPercentEncoding(url: string): boolean {
 
 function isOptaleControlPlanePath(pathname: string): boolean {
   return (
+    pathname.startsWith("/api/optale/admin") ||
     pathname.startsWith("/api/optale/brain") ||
     pathname.startsWith("/api/optale/command-center") ||
     pathname.startsWith("/api/optale/context-registry") ||
@@ -67,6 +143,10 @@ export async function proxy(req: NextRequest) {
 
   const password = process.env.KB_PASSWORD || "";
   const { pathname } = req.nextUrl;
+
+  if (hasTrustedProxyIdentity(req)) {
+    return NextResponse.next();
+  }
 
   if (
     !password &&
@@ -122,6 +202,13 @@ export async function proxy(req: NextRequest) {
   // client registry; proxy only lets bearer-shaped MCP traffic reach it.
   if (
     pathname === "/api/optale/mcp" &&
+    (isLoopbackHost(req.nextUrl.hostname) || hasMcpBearer(req))
+  ) {
+    return NextResponse.next();
+  }
+
+  if (
+    pathname === "/api/optale/slack-agent-policy" &&
     (isLoopbackHost(req.nextUrl.hostname) || hasMcpBearer(req))
   ) {
     return NextResponse.next();

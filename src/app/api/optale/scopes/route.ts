@@ -95,6 +95,7 @@ export async function PUT(request: NextRequest) {
     userId: trimString(body.userId),
     policyId: trimString(body.policyId),
     memoryNamespace: trimString(body.memoryNamespace),
+    companyBrainTargetId: trimString(body.companyBrainTargetId),
     labels: normalizeLabels(body.labels),
   });
 

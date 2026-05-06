@@ -105,13 +105,13 @@ export type OptalePublicContextRegistry = Omit<
 
 const PRODUCT_MCP_SERVERS: Record<string, { id: string; name: string }> = {
   qmd: { id: "knowledge-search", name: "Knowledge Search" },
-  graphiti: { id: "sense-graph", name: "Sense Graph" },
+  graphiti: { id: "relationship-graph", name: "Relationship Graph" },
   oag: { id: "action-graph", name: "Action Graph" },
   gitnexus: { id: "code-intelligence", name: "Code Intelligence" },
   twenty: { id: "crm", name: "CRM" },
-  plane: { id: "delivery", name: "Delivery" },
-  matrix: { id: "communications", name: "Communications" },
-  "optale-agents": { id: "agent-workspace", name: "Agent Workspace" },
+  plane: { id: "projects-tasks", name: "Projects & Tasks" },
+  matrix: { id: "conversations", name: "Conversations" },
+  "optale-agents": { id: "agents-runs", name: "Agents & Runs" },
 };
 
 const PRODUCT_DOWNSTREAM_TOOL_NAMES: Record<string, string> = {
@@ -127,8 +127,11 @@ const PRODUCT_DOWNSTREAM_TOOL_NAMES: Record<string, string> = {
   honcho__conclusions_list: "sense_memory_conclusions",
   honcho__peers_list: "sense_memory_peers",
   honcho__queue_status: "sense_memory_queue",
-  oag__status: "ontology_status",
-  oag__graph: "ontology_entity_graph",
+  oag__status: "objects_action_graph_status",
+  oag__graph: "objects_entity_graph",
+  oag__context_assemble: "objects_context_assemble",
+  oag__entity_context: "objects_entity_context",
+  oag__task_bridge_status: "objects_task_bridge_status",
   dreams__stats: "sense_dream_stats",
   dreams__proposals: "sense_dream_proposals",
   dreams__rejections: "sense_dream_rejections",
@@ -174,13 +177,13 @@ export function productizeOptaleMcpText(text: string): string {
     .replace(/\bBearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [secret]")
     .replace(/\boa_mcp_[A-Za-z0-9._~+/=-]+/g, "[secret]")
     .replace(/\bQMD\b/gi, "Knowledge Search")
-    .replace(/\bGraphiti\b/gi, "Sense Graph")
+    .replace(/\bGraphiti\b/gi, "Relationship Graph")
     .replace(/\bOAG\b/gi, "Action Graph")
-    .replace(/\bHoncho\b/gi, "Sense Memory")
+    .replace(/\bHoncho\b/gi, "Brain Memory")
     .replace(/\bGitNexus\b/gi, "Code Intelligence")
     .replace(/\bTwenty\b/gi, "CRM")
-    .replace(/\bPlane\b/gi, "Delivery")
-    .replace(/\bMatrix\b/gi, "Communications");
+    .replace(/\bPlane\b/gi, "Projects & Tasks")
+    .replace(/\bMatrix\b/gi, "Conversations");
 }
 
 export function productMcpServerId(serverId: string): string {
@@ -273,13 +276,16 @@ export function toPublicOptaleMcpServer(
   };
 }
 
-function envUrl(name: string, fallback: string): string {
-  return process.env[name]?.trim() || fallback;
-}
-
 function envPositiveInt(name: string, fallback: number): number {
   const parsed = Number.parseInt(process.env[name]?.trim() || "", 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function envBool(name: string, fallback: boolean): boolean {
+  const value = process.env[name]?.trim().toLowerCase();
+  if (value === "true" || value === "1" || value === "yes") return true;
+  if (value === "false" || value === "0" || value === "no") return false;
+  return fallback;
 }
 
 function maybeEnvUrl(name: string): string | null {
@@ -287,75 +293,119 @@ function maybeEnvUrl(name: string): string | null {
   return value || null;
 }
 
+function localMcpDefaultsEnabled(): boolean {
+  return envBool(
+    "OPTALE_MCP_LOCAL_DEFAULTS",
+    process.env.NODE_ENV !== "production",
+  );
+}
+
+function mcpHttpEndpoint(
+  name: string,
+  localFallback: string,
+): Pick<OptaleMcpServerConfig, "url" | "status"> {
+  const configuredUrl = maybeEnvUrl(name);
+  if (configuredUrl) return { url: configuredUrl, status: "configured" };
+  if (localMcpDefaultsEnabled()) {
+    return { url: localFallback, status: "configured" };
+  }
+  return { status: "planned" };
+}
+
 export function readOptaleMcpServers(): OptaleMcpServerConfig[] {
+  const qmd = mcpHttpEndpoint("OPTALE_MCP_QMD_URL", "http://[::1]:7333/mcp");
+  const graphiti = mcpHttpEndpoint(
+    "OPTALE_MCP_GRAPHITI_URL",
+    "http://127.0.0.1:8102/mcp",
+  );
+  const oag = mcpHttpEndpoint(
+    "OPTALE_MCP_OAG_URL",
+    "http://127.0.0.1:3750/mcp",
+  );
+  const twenty = mcpHttpEndpoint(
+    "OPTALE_MCP_TWENTY_URL",
+    "http://127.0.0.1:3720/mcp",
+  );
+  const plane = mcpHttpEndpoint(
+    "OPTALE_MCP_PLANE_URL",
+    "http://127.0.0.1:3740/mcp",
+  );
+  const matrix = mcpHttpEndpoint(
+    "OPTALE_MCP_MATRIX_URL",
+    "http://127.0.0.1:3730/mcp",
+  );
+  const gitnexusCommand = process.env.OPTALE_MCP_GITNEXUS_COMMAND?.trim();
+  const gitnexusStatus =
+    gitnexusCommand || localMcpDefaultsEnabled() ? "configured" : "planned";
+
   return [
     {
       id: "qmd",
-      name: "QMD Vault Search",
+      name: "Knowledge Search",
       transport: "http",
-      url: envUrl("OPTALE_MCP_QMD_URL", "http://[::1]:7333/mcp"),
+      url: qmd.url,
       timeoutMs: envPositiveInt("OPTALE_MCP_QMD_TIMEOUT_MS", 120_000),
       scopes: ["company", "personal", "system"],
       description: "Markdown/vault search and retrieval.",
-      status: "configured",
+      status: qmd.status,
     },
     {
       id: "graphiti",
-      name: "Graphiti Memory Graph",
+      name: "Relationship Graph",
       transport: "http",
-      url: envUrl("OPTALE_MCP_GRAPHITI_URL", "http://127.0.0.1:8102/mcp"),
+      url: graphiti.url,
       timeoutMs: envPositiveInt("OPTALE_MCP_GRAPHITI_TIMEOUT_MS", 4_000),
       scopes: ["company", "personal", "system"],
       description: "Temporal/entity memory graph.",
-      status: "configured",
+      status: graphiti.status,
     },
     {
       id: "oag",
       name: "Optale Action Graph",
       transport: "http",
-      url: envUrl("OPTALE_MCP_OAG_URL", "http://127.0.0.1:3750/mcp"),
+      url: oag.url,
+      timeoutMs: envPositiveInt("OPTALE_MCP_OAG_TIMEOUT_MS", 30_000),
       scopes: ["company", "personal", "system"],
       description:
         "Context assembly, entity context, and action graph operations.",
-      status: "configured",
+      status: oag.status,
     },
     {
       id: "gitnexus",
       name: "GitNexus",
       transport: "stdio",
-      command:
-        process.env.OPTALE_MCP_GITNEXUS_COMMAND?.trim() || "/usr/bin/gitnexus",
+      command: gitnexusCommand || "/usr/bin/gitnexus",
       args: ["mcp"],
       scopes: ["company", "system"],
       description: "Repository intelligence and codebase analysis.",
-      status: "configured",
+      status: gitnexusStatus,
     },
     {
       id: "twenty",
       name: "Twenty CRM",
       transport: "http",
-      url: envUrl("OPTALE_MCP_TWENTY_URL", "http://127.0.0.1:3720/mcp"),
+      url: twenty.url,
       scopes: ["company", "system"],
       description: "Company, people, notes, projects, and tasks from CRM.",
-      status: "configured",
+      status: twenty.status,
     },
     {
       id: "plane",
       name: "Plane",
       transport: "http",
-      url: envUrl("OPTALE_MCP_PLANE_URL", "http://127.0.0.1:3740/mcp"),
+      url: plane.url,
       scopes: ["company", "system"],
       description: "Issues, projects, states, comments, and delivery workflow.",
-      status: "configured",
+      status: plane.status,
     },
     {
       id: "matrix",
       name: "Matrix",
       transport: "http",
-      url: envUrl("OPTALE_MCP_MATRIX_URL", "http://127.0.0.1:3730/mcp"),
+      url: matrix.url,
       scopes: ["company", "personal", "system"],
       description: "Internal communication and user lookup.",
-      status: "configured",
+      status: matrix.status,
     },
     {
       id: "optale-agents",
@@ -376,7 +426,7 @@ export function readOptaleBrainSources(): OptaleBrainSource[] {
   return [
     {
       id: "vault",
-      name: "Vault",
+      name: "Knowledge Base",
       kind: "vault",
       mcpServerId: "qmd",
       scopes: ["company", "personal", "system"],
@@ -384,15 +434,15 @@ export function readOptaleBrainSources(): OptaleBrainSource[] {
     },
     {
       id: "memory",
-      name: "Memory",
+      name: "Brain Memory",
       kind: "memory",
       scopes: ["company", "personal", "system"],
       description:
-        "Private and scoped agent memory from the configured Honcho workspace.",
+        "Private and scoped memory for the active Brain context.",
     },
     {
       id: "memory-graph",
-      name: "Memory Graph",
+      name: "Relationship Graph",
       kind: "graph",
       mcpServerId: "graphiti",
       scopes: ["company", "personal", "system"],
@@ -400,11 +450,11 @@ export function readOptaleBrainSources(): OptaleBrainSource[] {
     },
     {
       id: "dreams",
-      name: "Dreams",
+      name: "Review Queue",
       kind: "dreams",
       scopes: ["company", "personal", "system"],
       description:
-        "Private Honcho Dream proposals, review queue, and memory consolidation controls.",
+        "Private proposal review queue and memory consolidation controls.",
     },
     {
       id: "action-graph",
@@ -424,7 +474,7 @@ export function readOptaleBrainSources(): OptaleBrainSource[] {
     },
     {
       id: "delivery",
-      name: "Delivery",
+      name: "Projects & Tasks",
       kind: "project",
       mcpServerId: "plane",
       scopes: ["company", "system"],
@@ -432,7 +482,7 @@ export function readOptaleBrainSources(): OptaleBrainSource[] {
     },
     {
       id: "communications",
-      name: "Communications",
+      name: "Conversations",
       kind: "communications",
       mcpServerId: "matrix",
       scopes: ["company", "personal", "system"],
@@ -448,12 +498,12 @@ export function readOptaleBrainSources(): OptaleBrainSource[] {
     },
     {
       id: "agent-workspace",
-      name: "Agent Workspace",
+      name: "Agents & Runs",
       kind: "action_graph",
       mcpServerId: "optale-agents",
       scopes: ["company", "personal", "system"],
       description:
-        "Optale Command spaces, tasks, agents, jobs, and Observatory brain summaries.",
+        "Optale Console spaces, tasks, agents, jobs, and Observatory brain summaries.",
     },
   ];
 }

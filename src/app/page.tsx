@@ -1,7 +1,7 @@
 "use client";
 
-import { AppShell } from "@/components/layout/app-shell";
+import { OptaleConsole } from "@/components/optale/console/optale-console";
 
 export default function Home() {
-  return <AppShell />;
+  return <OptaleConsole />;
 }

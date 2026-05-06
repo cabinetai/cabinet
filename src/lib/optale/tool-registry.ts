@@ -45,6 +45,166 @@ const PRODUCT_TOOL_DEFINITIONS: OptaleProductToolDefinition[] = [
     tags: ["sense-memory", "knowledge", "docs", "read-only"],
     status: "active",
   },
+  {
+    id: "sense_search_graph_nodes",
+    productName: "sense_search_graph_nodes",
+    productLabel: "Relationship Graph / Node Search",
+    description:
+      "Search Optale relationship graph entities by name, topic, and attributes.",
+    category: "search",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "graphiti",
+      mcpTool: "search_nodes",
+      internalTarget: "graphiti__search_nodes",
+    },
+    tags: ["sense-graph", "relationships", "entities", "read-only"],
+    status: "active",
+  },
+  {
+    id: "sense_search_graph_facts",
+    productName: "sense_search_graph_facts",
+    productLabel: "Relationship Graph / Fact Search",
+    description:
+      "Search Optale relationship graph facts, edges, and temporal memory.",
+    category: "search",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "graphiti",
+      mcpTool: "search_memory_facts",
+      internalTarget: "graphiti__search_memory_facts",
+    },
+    tags: ["sense-graph", "relationships", "facts", "read-only"],
+    status: "active",
+  },
+  {
+    id: "sense_graph_entity_edge",
+    productName: "sense_graph_entity_edge",
+    productLabel: "Relationship Graph / Entity Edge",
+    description:
+      "Read a specific relationship graph edge between known entities.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "graphiti",
+      mcpTool: "get_entity_edge",
+      internalTarget: "graphiti__get_entity_edge",
+    },
+    tags: ["sense-graph", "relationships", "edges", "read-only"],
+    status: "active",
+  },
+  {
+    id: "sense_graph_episodes",
+    productName: "sense_graph_episodes",
+    productLabel: "Relationship Graph / Episodes",
+    description:
+      "Read source episodes that contributed to the relationship graph.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "graphiti",
+      mcpTool: "get_episodes",
+      internalTarget: "graphiti__get_episodes",
+    },
+    tags: ["sense-graph", "relationships", "episodes", "read-only"],
+    status: "active",
+  },
+  {
+    id: "sense_graph_status",
+    productName: "sense_graph_status",
+    productLabel: "Relationship Graph / Status",
+    description:
+      "Read Relationship Graph service status and configured memory scope.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "graphiti",
+      mcpTool: "get_status",
+      internalTarget: "graphiti__get_status",
+    },
+    tags: ["sense-graph", "relationships", "status", "read-only"],
+    status: "active",
+  },
+  {
+    id: "objects_action_graph_status",
+    productName: "objects_action_graph_status",
+    productLabel: "Objects / Action Graph Status",
+    description:
+      "Read Action Graph service status, graph counts, and viewer readiness.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "oag",
+      mcpTool: "status",
+      internalTarget: "oag__status",
+    },
+    tags: ["objects", "action-graph", "status", "read-only"],
+    status: "active",
+  },
+  {
+    id: "objects_entity_graph",
+    productName: "objects_entity_graph",
+    productLabel: "Objects / Entity Graph",
+    description:
+      "Read the Action Graph entity graph with Cytoscape-ready elements.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "oag",
+      mcpTool: "graph",
+      internalTarget: "oag__graph",
+    },
+    tags: ["objects", "action-graph", "entities", "cytoscape", "read-only"],
+    status: "active",
+  },
+  {
+    id: "objects_context_assemble",
+    productName: "objects_context_assemble",
+    productLabel: "Objects / Context Assembly",
+    description:
+      "Assemble read-only Action Graph context for an object or ontology question.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "oag",
+      mcpTool: "context_assemble",
+      internalTarget: "oag__context_assemble",
+    },
+    tags: ["objects", "action-graph", "context", "read-only"],
+    status: "active",
+  },
+  {
+    id: "objects_entity_context",
+    productName: "objects_entity_context",
+    productLabel: "Objects / Entity Context",
+    description:
+      "Read Action Graph relationships around one known object or entity.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "oag",
+      mcpTool: "entity_context",
+      internalTarget: "oag__entity_context",
+    },
+    tags: ["objects", "action-graph", "relationships", "read-only"],
+    status: "active",
+  },
+  {
+    id: "objects_task_bridge_status",
+    productName: "objects_task_bridge_status",
+    productLabel: "Objects / Task Bridge Status",
+    description:
+      "Read task bridge status from the Action Graph lane without dispatching writes.",
+    category: "analysis",
+    executionMode: "mcp",
+    executionConfig: {
+      mcpServer: "oag",
+      mcpTool: "task_bridge_status",
+      internalTarget: "oag__task_bridge_status",
+    },
+    tags: ["objects", "action-graph", "tasks", "read-only"],
+    status: "active",
+  },
 ];
 
 function trimToolName(value: unknown): string {

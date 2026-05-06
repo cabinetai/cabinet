@@ -165,7 +165,8 @@ function summarizeBrainSources(
       kind: source.kind,
       scopes: source.scopes,
       description: source.description
-        .replace(/\bHoncho\b/g, "Sense Memory")
+        .replace(/\bHoncho\b/g, "Brain Memory")
+        .replace(/\bGraphiti\b/g, "Relationship Graph")
         .replace(/\bQMD\b/g, "Knowledge Search"),
     };
 
@@ -175,9 +176,9 @@ function summarizeBrainSources(
         (source.kind === "dreams" && dreamsConfig.enabled);
       const serverName =
         source.kind === "memory"
-          ? "Sense Memory"
+          ? "Brain Memory"
           : source.kind === "dreams"
-            ? "Sense Dreams"
+            ? "Review Queue"
             : "Native adapter";
       return {
         ...publicSource,
