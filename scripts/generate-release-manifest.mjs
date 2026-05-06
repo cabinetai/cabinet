@@ -19,7 +19,7 @@ const tag = readArg("tag", `v${version}`);
 const outputPath = readArg("output", path.join(process.cwd(), "cabinet-release.json"));
 const gitCommit = readArg("git-commit", process.env.GITHUB_SHA || undefined);
 const releaseDate = readArg("release-date", new Date().toISOString());
-const productName = process.env.OPTALE_DESKTOP_APP_NAME || "Optale Command";
+const productName = process.env.OPTALE_DESKTOP_APP_NAME || "Optale Console";
 const repositoryUrl =
   process.env.OPTALE_RELEASE_REPOSITORY_URL || "https://github.com/hilash/cabinet";
 

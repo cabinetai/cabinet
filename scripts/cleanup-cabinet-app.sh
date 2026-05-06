@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Remove every trace of the packaged Optale Command desktop app on macOS:
+# Remove every trace of the packaged Optale Console desktop app on macOS:
 # the .app bundle, user data (notes, agents, sqlite), caches, preferences,
 # saved state, web storage, logs, and the auto-updater's ShipIt cache.
 #
-# This is destructive. By default Optale Command stores your workspace under
-#   ~/Library/Application Support/Optale Command/cabinet-data
+# This is destructive. By default Optale Console stores your workspace under
+#   ~/Library/Application Support/Optale Console/cabinet-data
 # and this script deletes it. Back up first if you want to keep anything.
 #
 # Usage:
@@ -36,8 +36,8 @@ for arg in "$@"; do
   esac
 done
 
-APP_NAME="${OPTALE_DESKTOP_APP_NAME:-Optale Command}"
-BUNDLE_ID="${OPTALE_DESKTOP_BUNDLE_ID:-com.optale.command}"
+APP_NAME="${OPTALE_DESKTOP_APP_NAME:-Optale Console}"
+BUNDLE_ID="${OPTALE_DESKTOP_BUNDLE_ID:-com.optale.console}"
 HOME_LIB="$HOME/Library"
 
 TARGETS=(
@@ -65,7 +65,7 @@ for t in "${TARGETS[@]}"; do
   fi
 done
 
-# Mounted DMG volumes (e.g. /Volumes/Optale Command 0.4.1-arm64)
+# Mounted DMG volumes (e.g. /Volumes/Optale Console 0.4.1-arm64)
 mounted_volumes=()
 for vol in /Volumes/"${APP_NAME}"*; do
   [ -e "$vol" ] || continue

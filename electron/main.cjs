@@ -72,10 +72,11 @@ function normalizedRuntimeMode(value, desktopProfile) {
 }
 
 const packagedRuntimeConfig = readPackagedRuntimeConfig();
-const PRODUCT_NAME = process.env.OPTALE_DESKTOP_APP_NAME || app.getName() || "Optale Command";
-const APP_BUNDLE_ID = process.env.OPTALE_DESKTOP_BUNDLE_ID || "com.optale.command";
+const PRODUCT_NAME = process.env.OPTALE_DESKTOP_APP_NAME || app.getName() || "Optale Console";
+const APP_BUNDLE_ID = process.env.OPTALE_DESKTOP_BUNDLE_ID || "com.optale.console";
 const UPDATE_REPO = process.env.OPTALE_RELEASE_REPO || "hilash/cabinet";
 const DATA_DIR_BASENAME = process.env.OPTALE_DESKTOP_DATA_DIR_NAME || "cabinet-data";
+const DEFAULT_CLOUD_ORIGIN = "https://console.optale.com";
 const DESKTOP_PROFILE = normalizedDesktopProfile(
   process.env.OPTALE_DESKTOP_PROFILE ||
   process.env.NEXT_PUBLIC_OPTALE_DESKTOP_PROFILE ||
@@ -88,6 +89,62 @@ const RUNTIME_MODE = normalizedRuntimeMode(
   packagedRuntimeConfig.runtimeMode,
   DESKTOP_PROFILE
 );
+function normalizeHttpOrigin(value, fallback) {
+  const raw = String(value || "").trim();
+  if (!raw) return fallback;
+  try {
+    const parsed = new URL(raw);
+    const isHttps = parsed.protocol === "https:";
+    const isLoopbackHttp =
+      parsed.protocol === "http:" &&
+      (parsed.hostname === "localhost" ||
+        parsed.hostname === "127.0.0.1" ||
+        parsed.hostname === "::1" ||
+        parsed.hostname === "[::1]");
+    if (!isHttps && !isLoopbackHttp) return fallback;
+    parsed.pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.search = "";
+    parsed.hash = "";
+    return parsed.toString().replace(/\/+$/, "");
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizedDesktopStartMode(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (
+    normalized === "cloud" ||
+    normalized === "hosted" ||
+    normalized === "remote" ||
+    normalized === "azure"
+  ) {
+    return "cloud";
+  }
+  return "local";
+}
+
+const DESKTOP_CLOUD_ORIGIN = normalizeHttpOrigin(
+  process.env.OPTALE_DESKTOP_CLOUD_ORIGIN ||
+    process.env.NEXT_PUBLIC_OPTALE_DESKTOP_CLOUD_ORIGIN ||
+    packagedRuntimeConfig.cloudOrigin,
+  DEFAULT_CLOUD_ORIGIN
+);
+const DESKTOP_START_MODE = normalizedDesktopStartMode(
+  process.env.OPTALE_DESKTOP_START_MODE ||
+    process.env.NEXT_PUBLIC_OPTALE_DESKTOP_START_MODE ||
+    packagedRuntimeConfig.startMode
+);
+
+process.env.OPTALE_DESKTOP_CLOUD_ORIGIN =
+  process.env.OPTALE_DESKTOP_CLOUD_ORIGIN || DESKTOP_CLOUD_ORIGIN;
+process.env.NEXT_PUBLIC_OPTALE_DESKTOP_CLOUD_ORIGIN =
+  process.env.NEXT_PUBLIC_OPTALE_DESKTOP_CLOUD_ORIGIN || DESKTOP_CLOUD_ORIGIN;
+process.env.OPTALE_DESKTOP_START_MODE =
+  process.env.OPTALE_DESKTOP_START_MODE || DESKTOP_START_MODE;
+process.env.NEXT_PUBLIC_OPTALE_DESKTOP_START_MODE =
+  process.env.NEXT_PUBLIC_OPTALE_DESKTOP_START_MODE || DESKTOP_START_MODE;
+
 const managedDataDir = path.join(app.getPath("userData"), DATA_DIR_BASENAME);
 const updateStatusPath = path.join(managedDataDir, ".cabinet-state", "update-status.json");
 let mainWindow = null;
@@ -353,9 +410,17 @@ async function resolveDevAppUrl(timeoutMs = DEV_APP_DISCOVERY_TIMEOUT_MS) {
 }
 
 async function startEmbeddedCabinet() {
+  if (DESKTOP_START_MODE === "cloud") {
+    return {
+      appUrl: DESKTOP_CLOUD_ORIGIN,
+      startMode: "cloud",
+    };
+  }
+
   if (isDev) {
     return {
       appUrl: await resolveDevAppUrl(),
+      startMode: "local",
     };
   }
 
@@ -382,13 +447,17 @@ async function startEmbeddedCabinet() {
     NEXT_PUBLIC_OPTALE_PRODUCT_NAME:
       process.env.NEXT_PUBLIC_OPTALE_PRODUCT_NAME || PRODUCT_NAME,
     NEXT_PUBLIC_OPTALE_PRODUCT_SHORT_NAME:
-      process.env.NEXT_PUBLIC_OPTALE_PRODUCT_SHORT_NAME || "Command",
+      process.env.NEXT_PUBLIC_OPTALE_PRODUCT_SHORT_NAME || "Console",
     OPTALE_DESKTOP_PROFILE: DESKTOP_PROFILE,
     OPTALE_RUNTIME_MODE: RUNTIME_MODE,
     NEXT_PUBLIC_OPTALE_DESKTOP_PROFILE:
       process.env.NEXT_PUBLIC_OPTALE_DESKTOP_PROFILE || DESKTOP_PROFILE,
     NEXT_PUBLIC_OPTALE_RUNTIME_MODE:
       process.env.NEXT_PUBLIC_OPTALE_RUNTIME_MODE || RUNTIME_MODE,
+    OPTALE_DESKTOP_CLOUD_ORIGIN: DESKTOP_CLOUD_ORIGIN,
+    NEXT_PUBLIC_OPTALE_DESKTOP_CLOUD_ORIGIN: DESKTOP_CLOUD_ORIGIN,
+    OPTALE_DESKTOP_START_MODE: DESKTOP_START_MODE,
+    NEXT_PUBLIC_OPTALE_DESKTOP_START_MODE: DESKTOP_START_MODE,
   };
 
   const serverEntry = packagedStandalonePath("server.js");
@@ -404,7 +473,7 @@ async function startEmbeddedCabinet() {
   spawnNodeBackend([daemonEntry], daemonEnv);
 
   await waitForHealth(`${appOrigin}/api/health`);
-  return { appUrl: appOrigin };
+  return { appUrl: appOrigin, startMode: "local" };
 }
 
 function configureAutoUpdates() {
@@ -546,6 +615,17 @@ ipcMain.handle("cabinet:uninstall-app", () => {
   return macosUninstallApp();
 });
 
+ipcMain.handle("cabinet:desktop-runtime", () => {
+  return {
+    runtime: "electron",
+    platform: process.platform,
+    startMode: DESKTOP_START_MODE,
+    cloudOrigin: DESKTOP_CLOUD_ORIGIN,
+    profile: DESKTOP_PROFILE,
+    mode: RUNTIME_MODE,
+  };
+});
+
 async function createWindow() {
   const runtime = await startEmbeddedCabinet();
 
@@ -564,7 +644,7 @@ async function createWindow() {
     },
   });
 
-  if (isDev) {
+  if (isDev && runtime.startMode === "local") {
     mainWindow.webContents.on("did-fail-load", async (_event, errorCode, errorDescription) => {
       if (!mainWindow || mainWindow.isDestroyed()) {
         return;

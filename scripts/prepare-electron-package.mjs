@@ -18,6 +18,7 @@ const stagedOptaleRuntimeConfigPath = path.join(
   standaloneDir,
   "optale-desktop-runtime.json"
 );
+const DEFAULT_CLOUD_ORIGIN = "https://console.optale.com";
 const bundledNodeBinaryPath = path.join(standaloneBinDir, "node");
 const rootNodePtyDir = path.join(projectRoot, "node_modules", "node-pty");
 const resourcesDir = path.join(projectRoot, "resources");
@@ -98,6 +99,41 @@ function normalizeRuntimeMode(value, desktopProfile) {
   }
   if (normalized === "operator") return "operator";
   return runtimeModeForProfile(desktopProfile);
+}
+
+function normalizeHttpOrigin(value, fallback) {
+  const raw = String(value || "").trim();
+  if (!raw) return fallback;
+  try {
+    const parsed = new URL(raw);
+    const isHttps = parsed.protocol === "https:";
+    const isLoopbackHttp =
+      parsed.protocol === "http:" &&
+      (parsed.hostname === "localhost" ||
+        parsed.hostname === "127.0.0.1" ||
+        parsed.hostname === "::1" ||
+        parsed.hostname === "[::1]");
+    if (!isHttps && !isLoopbackHttp) return fallback;
+    parsed.pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.search = "";
+    parsed.hash = "";
+    return parsed.toString().replace(/\/+$/, "");
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizeDesktopStartMode(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (
+    normalized === "cloud" ||
+    normalized === "hosted" ||
+    normalized === "remote" ||
+    normalized === "azure"
+  ) {
+    return "cloud";
+  }
+  return "local";
 }
 
 async function pathExists(targetPath) {
@@ -243,6 +279,15 @@ async function stageOptaleRuntimeConfig() {
       process.env.NEXT_PUBLIC_OPTALE_RUNTIME_MODE,
     desktopProfile
   );
+  const cloudOrigin = normalizeHttpOrigin(
+    process.env.OPTALE_DESKTOP_CLOUD_ORIGIN ||
+      process.env.NEXT_PUBLIC_OPTALE_DESKTOP_CLOUD_ORIGIN,
+    DEFAULT_CLOUD_ORIGIN
+  );
+  const startMode = normalizeDesktopStartMode(
+    process.env.OPTALE_DESKTOP_START_MODE ||
+      process.env.NEXT_PUBLIC_OPTALE_DESKTOP_START_MODE
+  );
 
   await fs.writeFile(
     stagedOptaleRuntimeConfigPath,
@@ -250,6 +295,8 @@ async function stageOptaleRuntimeConfig() {
       {
         desktopProfile,
         runtimeMode,
+        cloudOrigin,
+        startMode,
         generatedAt: new Date().toISOString(),
       },
       null,
