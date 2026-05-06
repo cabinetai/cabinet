@@ -130,11 +130,12 @@ function refuseBootstrap(label: string, resolved: string): never {
   // before scaffolding anything.
   process.stderr.write(
     `\x1b[31m✗\x1b[0m Refusing to create a cabinet in ${label} (${resolved}).\n` +
-      `  Cabinet would scaffold .agents/, .jobs/, .cabinet-state/, .cabinet, and index.md here.\n\n` +
-      `  Start in an empty directory instead:\n` +
-      `    mkdir my-cabinet && cd my-cabinet && npx cabinetai run\n\n` +
-      `  Or point at a specific empty directory with --data-dir:\n` +
-      `    npx cabinetai run --data-dir <empty-dir>\n`
+      `  Cabinet indexes every supported file under the cabinet directory and\n` +
+      `  would scaffold .agents/, .jobs/, .cabinet-state/, .cabinet, and index.md here.\n\n` +
+      `  Recommended: pick a fresh empty folder, e.g. ~/Documents/Cabinet:\n` +
+      `    mkdir -p ~/Documents/Cabinet && cd ~/Documents/Cabinet && npx cabinetai run\n\n` +
+      `  Or point at a specific directory with --data-dir:\n` +
+      `    npx cabinetai run --data-dir ~/Documents/Cabinet\n`
   );
   process.exit(1);
 }

@@ -1,5 +1,4 @@
 import type { Command } from "commander";
-import os from "os";
 import path from "path";
 import fs from "fs";
 import { log, success, error, warning } from "../lib/log.js";
@@ -38,10 +37,13 @@ interface ResolveOptions {
 /**
  * Reasons a directory looks like a poor choice to bootstrap as a cabinet.
  * Returns null for directories that look fine.
+ *
+ * NOTE: HOME and the filesystem root are not handled here — they're hard-
+ * refused by the guard in `bootstrapCabinetAt`. Anything we return from this
+ * function is a *soft* warning where the user can still proceed.
  */
 function looksRiskyForBootstrap(dir: string): string | null {
   const resolved = path.resolve(dir);
-  if (resolved === os.homedir()) return "this is your home directory";
   const base = path.basename(resolved).toLowerCase();
   const devNames = new Set([
     "developer",
