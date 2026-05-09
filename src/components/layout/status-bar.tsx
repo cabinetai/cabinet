@@ -52,6 +52,23 @@ function installUrlForProvider(id: string): string {
   );
 }
 
+// Word counter for the open page. The editor stores the page body as
+// markdown, so we strip markdown syntax that shouldn't count as prose
+// (code fences, inline code, link/image URLs, emphasis markers, raw HTML)
+// before splitting on whitespace. Frontmatter lives on a separate field,
+// so it isn't in `content`.
+function countWords(content: string): number {
+  if (!content) return 0;
+  let text = content.replace(/```[\s\S]*?```/g, " ");
+  text = text.replace(/`[^`]*`/g, " ");
+  text = text.replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1");
+  text = text.replace(/<[^>]+>/g, " ");
+  text = text.replace(/[#*_~>`]/g, " ");
+  const trimmed = text.trim();
+  if (!trimmed) return 0;
+  return trimmed.split(/\s+/).length;
+}
+
 function describeUncommittedStatus(s: "M" | "?" | "A" | "D" | "R"): string {
   switch (s) {
     case "M":
@@ -128,6 +145,8 @@ function formatRelativeSavedAgo(ts: number, now: number): string {
 export function StatusBar() {
   const { saveStatus, currentPath, isDirty, lastSavedAt } = useEditorStore();
   const retrySave = useEditorStore((s) => s.save);
+  const editorContent = useEditorStore((s) => s.content);
+  const wordCount = useMemo(() => countWords(editorContent), [editorContent]);
 
   // Audit #018: rerender every 10s so the relative timestamp ticks. The
   // indicator only mounts when a page is open, so this isn't a global cost.
@@ -742,6 +761,15 @@ export function StatusBar() {
               Saved · {savedAgoLabel}
             </span>
           ) : null
+        )}
+        {currentPath && (
+          <span
+            className="text-muted-foreground/60 tabular-nums"
+            title="Word count for this page (markdown syntax excluded)"
+            aria-label={`${wordCount} ${wordCount === 1 ? "word" : "words"}`}
+          >
+            {wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}
+          </span>
         )}
         {pullStatus === "pulling" && (
           <span className="flex items-center gap-1 text-blue-400">
