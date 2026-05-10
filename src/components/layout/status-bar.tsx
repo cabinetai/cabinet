@@ -146,7 +146,13 @@ export function StatusBar() {
   const { saveStatus, currentPath, isDirty, lastSavedAt } = useEditorStore();
   const retrySave = useEditorStore((s) => s.save);
   const editorContent = useEditorStore((s) => s.content);
+  const editorLoadStatus = useEditorStore((s) => s.loadStatus);
   const wordCount = useMemo(() => countWords(editorContent), [editorContent]);
+  // Only meaningful for the markdown editor surface — viewers (PDF, CSV,
+  // image, media, office) never populate the editor store's content, so
+  // the count would always read 0 there. loadStatus === "ok" means a
+  // markdown page actually loaded.
+  const showWordCount = !!currentPath && editorLoadStatus === "ok";
 
   // Audit #018: rerender every 10s so the relative timestamp ticks. The
   // indicator only mounts when a page is open, so this isn't a global cost.
@@ -762,7 +768,7 @@ export function StatusBar() {
             </span>
           ) : null
         )}
-        {currentPath && (
+        {showWordCount && (
           <span
             className="text-muted-foreground/60 tabular-nums"
             title="Word count for this page (markdown syntax excluded)"
