@@ -1,5 +1,7 @@
 # Progress
 
+[2026-05-07] Expanded `docs/PROVIDER-CLI.md` §13 "Adding a new provider" from a 5-step bullet to a complete touch-list — added the previously undocumented edits (`legacy-ids.ts`, `status-bar.tsx` PROVIDER_INSTALL_URLS, test files) and an explicit "do not enumerate providers in components" note. Surfaces that read `/api/agents/providers` (Settings, composer picker, onboarding grid, providers-demo) are called out as automatic.
+
 [2026-04-28] **Skills**: browse skills.sh, attach per agent, or `@`-mention per task. Bundles are mounted into Claude via `--plugin-dir` so they register as proper plugin skills (not just `--add-dir` files); continuation turns re-merge the mount so mid-conversation `@`-mentions take effect on the next reply. **API Keys**: a `.cabinet.env` file at the project root, edited from a preset-driven UI (OpenAI, Anthropic, GitHub, Google AI, plus Custom). Values masked as `••••<last4>`, file written `0600`, gitignored. Spawn-time merge into `withAdapterRuntimeEnv` and the PTY manager forwards keys to every CLI, so skills like `imagegen` read `OPENAI_API_KEY` without a restart. Cabinet backups gained two opt-in toggles for the same files, both defaulting off.
 
 [2026-04-25] Pinned Node 22 as the dev runtime via `.nvmrc`. Silences the `EBADENGINE` warning from transitive `chevrotain@12` (pulled in by `mermaid → langium`) which declares `engines: ">=22"`. README "Requirements" updated to recommend Node 22 LTS with `nvm use`.

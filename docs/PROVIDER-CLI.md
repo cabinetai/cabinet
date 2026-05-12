@@ -373,7 +373,31 @@ Current UX: users edit `skills: [slug, slug]` directly in the agent's markdown f
 
 ## 13. Operational Notes
 
-- **Adding a new provider**: (1) drop metadata in `providers/<id>.ts`, (2) add an adapter in `adapters/<type>-local.ts`, (3) register both, (4) drop an SVG in `public/providers/`, (5) ensure the final install step is a `Verify setup` command that exits 0 on success. UI surfaces (composer picker, Settings, onboarding, glyph, demo) pick the provider up automatically.
+### Adding a new provider
+
+The full file map is in §10. Minimum touch-list:
+
+**New files**
+- `src/lib/agents/providers/<id>.ts` — provider metadata. Must declare `iconAsset: "/providers/<id>.svg"` (§8) so the glyph picks it up without further wiring.
+- `src/lib/agents/adapters/<id>-local.ts` — adapter implementation.
+- `src/lib/agents/adapters/<id>-stream.ts` — only if the CLI emits structured streaming output (NDJSON / stream-json).
+- `public/providers/<id>.svg` — logo asset.
+- `src/lib/agents/adapters/<id>-local.test.ts` (+ `<id>-stream.test.ts` and `test/fixtures/<id>-stream/*.ndjson` for streaming providers).
+
+**Edits**
+- `src/lib/agents/provider-registry.ts` — import + `providerRegistry.register(...)`.
+- `src/lib/agents/adapters/registry.ts` — four spots: `LEGACY_ADAPTER_BY_PROVIDER_ID`, `DEFAULT_ADAPTER_BY_PROVIDER_ID`, legacy adapter factory, `register()` call.
+- `src/lib/agents/adapters/legacy-ids.ts` — add `<id>_legacy` to `LEGACY_ADAPTER_TYPES`. Plus add the provider id to `PROVIDERS_WITH_TERMINAL_RESUME` if the CLI supports `--resume` / `--session` (gates the "new session" advisory in the task viewer).
+- `src/components/layout/status-bar.tsx` — `PROVIDER_INSTALL_URLS` (powers the "Install" button in the System Status popover).
+- `test/provider-launch-mode.test.ts` — launch-mode case.
+- `src/lib/agents/adapters/registry.test.ts` — adapter presence assertion.
+
+**Install-step contract:** the final entry of `installSteps` must be a `Verify setup` command that exits 0 on success. The in-UI verifier (§6) runs it as the canonical health check.
+
+**Do NOT add the new id to component-level lists.** The Settings page, composer picker (Native + Terminal tabs), onboarding grid, providers-demo, and troubleshooter all read `/api/agents/providers` and discover the provider via `iconAsset`, `runtimeModes`, and `supportsTerminalResume` flags on its metadata. If you find yourself editing `task-runtime-picker.tsx`, `settings-page.tsx`, or `onboarding-wizard.tsx` to enumerate providers, that's a smell.
+
+### Other notes
+
 - **Unready providers** stay visible in Settings (`includeUnavailable`) but are hidden in the composer picker by default. Users can always see what's available vs. installable from Settings.
 - **Verify failures** surface the failing step title + hint inline — users know whether to install, authenticate, pay, or wait out a quota without reading raw stderr.
 - **Debugging a provider**: open `/providers-demo` from Settings → Providers → **Troubleshoot AI providers**. Runs every provider API end-to-end with live logs.
