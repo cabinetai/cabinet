@@ -64,7 +64,7 @@ export function ListShell({
         ) : null}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto rounded-xl border border-border/70 bg-card">
+      <div className="min-h-0 max-h-full overflow-y-auto rounded-xl border border-border/70 bg-card">
         {loading ? (
           <div className="divide-y divide-border/60">
             {Array.from({ length: 8 }).map((_, i) => (

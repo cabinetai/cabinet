@@ -54,18 +54,6 @@ export function AgentRow({
       onKeyDown={handleKey}
       className="group flex h-10 items-center gap-3 px-3 text-left outline-none transition-colors hover:bg-muted/40 focus-visible:bg-muted/40"
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        <Switch
-          checked={agent.active}
-          onCheckedChange={() => void handleToggle()}
-          disabled={toggling}
-          aria-label={agent.active ? `Stop ${agent.name}` : `Start ${agent.name}`}
-        />
-      </div>
-
       <AgentAvatar
         agent={agent}
         shape="circle"
@@ -144,6 +132,18 @@ export function AgentRow({
       {toggling ? (
         <Loader2 className="size-3.5 animate-spin text-muted-foreground/60" />
       ) : null}
+
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Switch
+          checked={agent.active}
+          onCheckedChange={() => void handleToggle()}
+          disabled={toggling}
+          aria-label={agent.active ? `Stop ${agent.name}` : `Start ${agent.name}`}
+        />
+      </div>
     </div>
   );
 }
