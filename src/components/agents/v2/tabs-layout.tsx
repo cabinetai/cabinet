@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Users,
 } from "lucide-react";
+import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 import { cn } from "@/lib/utils";
 import { DepthDropdown } from "@/components/cabinets/depth-dropdown";
 import {
@@ -17,7 +18,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import { useAgentsContext } from "./agents-context";
@@ -43,15 +49,17 @@ export function TabsLayout({
   onTabChange: (next: AgentsTabKey) => void;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <TopBar tab={tab} onTabChange={onTabChange} />
-      <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-hidden px-6 pb-8 pt-4">
-        {tab === "agents" && <AgentsTab />}
-        {tab === "routines" && <RoutinesTab />}
-        {tab === "heartbeats" && <HeartbeatsTab />}
-        {tab === "schedule" && <ScheduleTab />}
+    <TooltipProvider>
+      <div className="flex h-full min-h-0 flex-col">
+        <TopBar tab={tab} onTabChange={onTabChange} />
+        <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-hidden px-6 pb-8 pt-4">
+          {tab === "agents" && <AgentsTab />}
+          {tab === "routines" && <RoutinesTab />}
+          {tab === "heartbeats" && <HeartbeatsTab />}
+          {tab === "schedule" && <ScheduleTab />}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
 
@@ -102,25 +110,72 @@ function Divider() {
  * flips every agent on/off (which also gates their heartbeats and routines
  * via the V2 data model). Always visible on the Team section so users can
  * pause everything regardless of which tab they're on.
+ *
+ * Renders a larger-than-default switch inline (not the shared `<Switch>`
+ * primitive) so the prominent on/off control reads at a glance from
+ * across the room. Wrapped in a Tooltip for the long-form explanation.
  */
 function MasterToggle() {
   const { agents, toggleAllAgentsActive } = useAgentsContext();
   const anyActive = agents.some((a) => a.active);
-  const label = anyActive
-    ? "Stop every agent (and pause their heartbeats and routines)"
-    : "Start every agent";
+  const activeCount = agents.filter((a) => a.active).length;
+  const totalCount = agents.length;
+  const summaryLine = anyActive
+    ? `${activeCount} of ${totalCount} ${totalCount === 1 ? "agent" : "agents"} running`
+    : totalCount === 0
+      ? "No agents in this team"
+      : "Every agent is stopped";
+  const actionLine = anyActive
+    ? "Click to stop the whole team — all heartbeats and routines pause."
+    : "Click to start the whole team — heartbeats and routines fire on their schedule.";
   return (
-    <label
-      title={label}
-      className="inline-flex h-7 cursor-pointer select-none items-center gap-1.5 rounded-md px-2 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-    >
-      <Switch
-        checked={anyActive}
-        onCheckedChange={() => void toggleAllAgentsActive()}
-        aria-label={label}
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <label
+            className={cn(
+              "inline-flex cursor-pointer select-none items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-muted/40",
+              totalCount === 0 && "pointer-events-none opacity-50"
+            )}
+          >
+            <SwitchPrimitive.Root
+              checked={anyActive}
+              onCheckedChange={() => void toggleAllAgentsActive()}
+              disabled={totalCount === 0}
+              aria-label={anyActive ? "Stop every agent" : "Start every agent"}
+              className={cn(
+                "peer relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors outline-none",
+                "focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "data-[checked]:bg-emerald-500 data-[unchecked]:bg-muted-foreground/30"
+              )}
+            >
+              <SwitchPrimitive.Thumb
+                className={cn(
+                  "pointer-events-none block size-5 rounded-full bg-background shadow-sm ring-0 transition-transform",
+                  "data-[checked]:translate-x-6 data-[unchecked]:translate-x-1"
+                )}
+              />
+            </SwitchPrimitive.Root>
+            <span
+              className={cn(
+                "text-[12px] font-semibold tabular-nums",
+                anyActive ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              {anyActive ? "Team on" : "Team off"}
+            </span>
+          </label>
+        }
       />
-      <span>{anyActive ? "Team on" : "Team off"}</span>
-    </label>
+      <TooltipContent side="bottom" className="max-w-[260px] text-left">
+        <p className="font-medium">
+          {anyActive ? "Team is running" : "Team is stopped"}
+        </p>
+        <p className="mt-1 text-[11px] opacity-80">{summaryLine}.</p>
+        <p className="mt-2 text-[11px] opacity-80">{actionLine}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
