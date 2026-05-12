@@ -1563,7 +1563,7 @@ const STEP_NAMES: Record<number, string> = {
 };
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const welcomeParagraph = t("onboarding:welcome.paragraph");
   const [step, setStep] = useState(0);
 
@@ -1879,6 +1879,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             priority: answers.priority,
           },
           selectedAgents: selected,
+          locale,
         }),
       });
 

@@ -27,7 +27,7 @@ function NewCabinetOverlay({
   parentPath = "",
   defaultName = "",
 }: NewCabinetDialogProps & { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [name, setName] = useState(defaultName);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +69,7 @@ function NewCabinetOverlay({
           name: name.trim(),
           parentPath,
           selectedAgents: picker.selectedSlugs,
+          locale,
         }),
       });
 

@@ -30,6 +30,7 @@ interface OnboardingRequest {
     priority?: string;
   };
   selectedAgents: string[];
+  locale?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -108,6 +109,7 @@ export async function POST(req: NextRequest) {
       body: answers.description,
       tags: [roomType],
       skipExisting: true,
+      locale: body.locale,
     });
 
     // 3. Mark onboarding as complete

@@ -374,8 +374,8 @@ html[dir="rtl"] .font-logo {
 }
 
 .tiptap blockquote {
-  border-left: 2px solid var(--border);
-  padding-left: 1rem;
+  border-inline-start: 2px solid var(--border);
+  padding-inline-start: 1rem;
   margin: 1rem 0;
   color: var(--muted-foreground);
 }
@@ -573,7 +573,7 @@ html[dir="rtl"] .font-logo {
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   margin: 1rem 0;
-  border-left: 3px solid;
+  border-inline-start: 3px solid;
 }
 
 .tiptap .callout-info {
@@ -899,9 +899,9 @@ em-emoji-picker {
   margin: 1.5em 0;
 }
 .registry-prose blockquote {
-  border-left: 3px solid var(--prose-border, #e8ddd0);
-  padding-left: 1em;
-  margin-left: 0;
+  border-inline-start: 3px solid var(--prose-border, #e8ddd0);
+  padding-inline-start: 1em;
+  margin-inline-start: 0;
   color: var(--prose-body, #6b5b4e);
   opacity: 0.8;
 }

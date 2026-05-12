@@ -15,6 +15,12 @@ export interface ScaffoldCabinetOptions {
    * Useful for re-running onboarding on an already-initialized directory.
    */
   skipExisting?: boolean;
+  /**
+   * User's locale ("en" | "he"). Determines which getting-started seed
+   * directory is copied into the cabinet. Falls back to the English seed
+   * when no locale-specific directory exists.
+   */
+  locale?: string;
 }
 
 const GETTING_STARTED_DIRNAME = "getting-started";
@@ -50,23 +56,35 @@ async function copyDirectoryMerge(src: string, dest: string): Promise<void> {
   }
 }
 
-async function resolveGettingStartedSeedDir(targetDir: string): Promise<string | null> {
+async function resolveGettingStartedSeedDir(
+  targetDir: string,
+  locale: string | undefined,
+): Promise<string | null> {
   const destinationDir = path.resolve(targetDir, GETTING_STARTED_DIRNAME);
-  const sourceDir = path.join(PROJECT_ROOT, "resources", GETTING_STARTED_DIRNAME);
 
-  if (path.resolve(sourceDir) === destinationDir) {
-    return null;
+  // Try locale-specific seed first (e.g. getting-started-he) then fall
+  // back to the canonical English seed. The English seed always exists;
+  // additional locales are opt-in directories shipped with the app.
+  const candidates: string[] = [];
+  if (locale && locale !== "en") {
+    candidates.push(
+      path.join(PROJECT_ROOT, "resources", `${GETTING_STARTED_DIRNAME}-${locale}`),
+    );
   }
+  candidates.push(path.join(PROJECT_ROOT, "resources", GETTING_STARTED_DIRNAME));
 
-  if (!(await pathExists(sourceDir))) {
-    return null;
+  for (const sourceDir of candidates) {
+    if (path.resolve(sourceDir) === destinationDir) continue;
+    if (await pathExists(sourceDir)) return sourceDir;
   }
-
-  return sourceDir;
+  return null;
 }
 
-export async function seedGettingStartedDir(targetDir: string): Promise<void> {
-  const sourceDir = await resolveGettingStartedSeedDir(targetDir);
+export async function seedGettingStartedDir(
+  targetDir: string,
+  locale?: string,
+): Promise<void> {
+  const sourceDir = await resolveGettingStartedSeedDir(targetDir, locale);
   if (!sourceDir) {
     return;
   }
@@ -89,7 +107,7 @@ export async function scaffoldCabinet(
   targetDir: string,
   options: ScaffoldCabinetOptions
 ): Promise<void> {
-  const { name, kind, description = "", body = "", tags = [], skipExisting = false } = options;
+  const { name, kind, description = "", body = "", tags = [], skipExisting = false, locale } = options;
 
   // Directories — always idempotent
   await fs.mkdir(path.join(targetDir, ".agents"), { recursive: true });
@@ -153,5 +171,5 @@ export async function scaffoldCabinet(
     await writeIndex();
   }
 
-  await seedGettingStartedDir(targetDir);
+  await seedGettingStartedDir(targetDir, locale);
 }

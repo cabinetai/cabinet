@@ -18,6 +18,7 @@ interface CreateCabinetRequest {
   parentPath?: string;
   description?: string;
   selectedAgents?: string[];
+  locale?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
       name: name.trim(),
       kind,
       description,
+      locale: body.locale,
     });
 
     // Copy selected agents from library
