@@ -7,13 +7,18 @@ import { startCase } from "@/components/cabinets/cabinet-utils";
 import type { CabinetJobSummary } from "@/types/cabinets";
 import { useAgentsContext } from "./agents-context";
 import { FilterChip, ListShell } from "./list-shell";
-import { TabExplainer } from "./tab-explainer";
+import {
+  ExplainerCard,
+  ExplainerIcon,
+  useExplainerState,
+} from "./tab-explainer";
 import { AgentRow } from "./agent-row";
 
 export function AgentsTab() {
   const { loading, agents, jobs, toggleAgentActive, setOrgChartOpen } =
     useAgentsContext();
   const setSection = useAppStore((s) => s.setSection);
+  const explainer = useExplainerState("agents");
 
   const [query, setQuery] = useState("");
   const [deptFilter, setDeptFilter] = useState<string | "all">("all");
@@ -68,25 +73,19 @@ export function AgentsTab() {
   return (
     <ListShell
       explainer={
-        <TabExplainer
-          id="agents"
-          ariaLabel="About your agents"
-          body={
-            <>
-              <p>
-                Your AI teammates. Each one has a specialty — a writer, a
-                researcher, a planner. Click any agent to set them up or read
-                what they&apos;ve been doing.
-              </p>
-              <p>
-                The switch on each row is the agent&apos;s on / off button.
-                When it&apos;s on, the agent does its scheduled work on its
-                own. When it&apos;s off, nothing fires automatically — but
-                you can still chat with the agent any time.
-              </p>
-            </>
-          }
-        />
+        <ExplainerCard state={explainer}>
+          <p>
+            Your AI teammates. Each one has a specialty, a writer, a
+            researcher, a planner. Click any agent to set them up or read
+            what they&apos;ve been doing.
+          </p>
+          <p>
+            The switch on each row is the agent&apos;s on / off button. When
+            it&apos;s on, the agent does its scheduled work on its own. When
+            it&apos;s off, nothing fires automatically, but you can still
+            chat with the agent any time.
+          </p>
+        </ExplainerCard>
       }
       stats={
         <>
@@ -95,6 +94,7 @@ export function AgentsTab() {
           {" · "}
           <span className="tabular-nums text-foreground">{departmentCount}</span>{" "}
           departments
+          <ExplainerIcon state={explainer} ariaLabel="About your agents" />
         </>
       }
       query={query}

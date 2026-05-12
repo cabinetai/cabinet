@@ -9,7 +9,11 @@ import { cronToHuman } from "@/lib/agents/cron-utils";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import { useAgentsContext } from "./agents-context";
 import { FilterChip, ListShell } from "./list-shell";
-import { TabExplainer } from "./tab-explainer";
+import {
+  ExplainerCard,
+  ExplainerIcon,
+  useExplainerState,
+} from "./tab-explainer";
 
 export function HeartbeatsTab() {
   const {
@@ -19,6 +23,7 @@ export function HeartbeatsTab() {
     toggleAllHeartbeats,
     setHeartbeatDialog,
   } = useAgentsContext();
+  const explainer = useExplainerState("heartbeats");
 
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -68,27 +73,20 @@ export function HeartbeatsTab() {
   return (
     <ListShell
       explainer={
-        <TabExplainer
-          id="heartbeats"
-          ariaLabel="About heartbeats"
-          body={
-            <>
-              <p>
-                A heartbeat is what makes your agent feel alive. Every time
-                it ticks, the agent wakes up, looks around, and decides what
-                to do next — no instructions needed. It&apos;s the
-                difference between an agent that waits to be told and one
-                that takes initiative.
-              </p>
-              <p>
-                Pick a rhythm that fits the work — every few minutes for
-                fast-moving things, once a day for quieter ones. Switch it
-                off any time to give the agent a break without stopping it
-                completely.
-              </p>
-            </>
-          }
-        />
+        <ExplainerCard state={explainer}>
+          <p>
+            A heartbeat is what makes your agent feel alive. Every time it
+            ticks, the agent wakes up, looks around, and decides what to do
+            next, no instructions needed. It&apos;s the difference between
+            an agent that waits to be told and one that takes initiative.
+          </p>
+          <p>
+            Pick a rhythm that fits the work, every few minutes for
+            fast-moving things, once a day for quieter ones. Switch it off
+            any time to give the agent a break without stopping it
+            completely.
+          </p>
+        </ExplainerCard>
       }
       stats={
         <>
@@ -99,6 +97,7 @@ export function HeartbeatsTab() {
           {" · "}
           <span className="tabular-nums text-foreground">{stats.locked}</span>{" "}
           locked
+          <ExplainerIcon state={explainer} ariaLabel="About heartbeats" />
         </>
       }
       query={query}

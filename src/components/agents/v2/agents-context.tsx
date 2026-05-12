@@ -61,6 +61,11 @@ interface AgentsContextValue {
 
   // Bulk
   toggleAllHeartbeats: () => Promise<void>;
+  /** Flip every agent on/off via the scheduler `start-all` / `stop-all`
+   *  action. When any agent is currently active, this stops all of them
+   *  (which also gates their heartbeats and routines via PR #77). When
+   *  none are active, this starts all. */
+  toggleAllAgentsActive: () => Promise<void>;
 
   // Dialog openers
   heartbeatDialog: HeartbeatDialogState | null;
@@ -206,6 +211,19 @@ export function AgentsContextProvider({
     [effectivePath]
   );
 
+  const toggleAllAgentsActive = useCallback(async () => {
+    const anyActive = agents.some((a) => a.active);
+    await fetch("/api/agents/scheduler", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: anyActive ? "stop-all" : "start-all",
+        cabinetPath: effectivePath,
+      }),
+    }).catch(() => {});
+    await refresh();
+  }, [agents, effectivePath, refresh]);
+
   const toggleAllHeartbeats = useCallback(async () => {
     const anyEnabled = agents.some(
       (a) => !!a.heartbeat && a.heartbeatEnabled !== false
@@ -234,6 +252,7 @@ export function AgentsContextProvider({
       toggleHeartbeatEnabled,
       toggleJobEnabled,
       toggleAllHeartbeats,
+      toggleAllAgentsActive,
       heartbeatDialog,
       setHeartbeatDialog,
       routineDialog,
@@ -255,6 +274,7 @@ export function AgentsContextProvider({
       toggleHeartbeatEnabled,
       toggleJobEnabled,
       toggleAllHeartbeats,
+      toggleAllAgentsActive,
       heartbeatDialog,
       routineDialog,
       newAgentOpen,

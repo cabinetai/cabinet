@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import { useAgentsContext } from "./agents-context";
@@ -84,6 +85,8 @@ function TopBar({
         >
           <RefreshCw className="size-3.5" />
         </button>
+        <Divider />
+        <MasterToggle />
         <NewButton tab={tab} />
       </div>
     </header>
@@ -92,6 +95,33 @@ function TopBar({
 
 function Divider() {
   return <div className="h-3.5 w-px bg-border/60" aria-hidden />;
+}
+
+/**
+ * Master Switch in the top nav. Reflects "is any agent running?". Toggling
+ * flips every agent on/off (which also gates their heartbeats and routines
+ * via the V2 data model). Always visible on the Team section so users can
+ * pause everything regardless of which tab they're on.
+ */
+function MasterToggle() {
+  const { agents, toggleAllAgentsActive } = useAgentsContext();
+  const anyActive = agents.some((a) => a.active);
+  const label = anyActive
+    ? "Stop every agent (and pause their heartbeats and routines)"
+    : "Start every agent";
+  return (
+    <label
+      title={label}
+      className="inline-flex h-7 cursor-pointer select-none items-center gap-1.5 rounded-md px-2 text-[11.5px] font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+    >
+      <Switch
+        checked={anyActive}
+        onCheckedChange={() => void toggleAllAgentsActive()}
+        aria-label={label}
+      />
+      <span>{anyActive ? "Team on" : "Team off"}</span>
+    </label>
+  );
 }
 
 function TabStrip({

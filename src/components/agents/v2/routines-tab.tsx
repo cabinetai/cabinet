@@ -10,7 +10,11 @@ import type { CabinetAgentSummary, CabinetJobSummary } from "@/types/cabinets";
 import type { JobConfig } from "@/types/jobs";
 import { useAgentsContext } from "./agents-context";
 import { FilterChip, ListShell } from "./list-shell";
-import { TabExplainer } from "./tab-explainer";
+import {
+  ExplainerCard,
+  ExplainerIcon,
+  useExplainerState,
+} from "./tab-explainer";
 
 export function RoutinesTab() {
   const {
@@ -20,6 +24,7 @@ export function RoutinesTab() {
     toggleJobEnabled,
     setRoutineDialog,
   } = useAgentsContext();
+  const explainer = useExplainerState("routines");
 
   const [query, setQuery] = useState("");
   const [agentFilter, setAgentFilter] = useState<string | "all">("all");
@@ -83,25 +88,19 @@ export function RoutinesTab() {
   return (
     <ListShell
       explainer={
-        <TabExplainer
-          id="routines"
-          ariaLabel="About routines"
-          body={
-            <>
-              <p>
-                A routine is a recurring task you give an agent. Write it
-                once, pick when it should run, and your agent handles it on
-                schedule — like <em>&ldquo;every weekday at 9am, summarize
-                yesterday&rsquo;s work.&rdquo;</em>
-              </p>
-              <p>
-                Switch a routine off to pause it without losing the prompt.
-                If the agent itself is stopped, its routines wait until you
-                start it again.
-              </p>
-            </>
-          }
-        />
+        <ExplainerCard state={explainer}>
+          <p>
+            A routine is a recurring task you give an agent. Write it once,
+            pick when it should run, and your agent handles it on schedule,
+            like <em>&ldquo;every weekday at 9am, summarize yesterday&rsquo;s
+            work.&rdquo;</em>
+          </p>
+          <p>
+            Switch a routine off to pause it without losing the prompt. If
+            the agent itself is stopped, its routines wait until you start
+            it again.
+          </p>
+        </ExplainerCard>
       }
       stats={
         <>
@@ -112,6 +111,7 @@ export function RoutinesTab() {
           {" · "}
           <span className="tabular-nums text-foreground">{stats.locked}</span>{" "}
           locked
+          <ExplainerIcon state={explainer} ariaLabel="About routines" />
         </>
       }
       query={query}
