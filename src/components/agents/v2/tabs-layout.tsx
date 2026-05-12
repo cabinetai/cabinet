@@ -132,58 +132,65 @@ function MasterToggle() {
     <Tooltip>
       <TooltipTrigger
         render={
-          <SwitchPrimitive.Root
-            checked={anyActive}
-            onCheckedChange={() => void toggleAllAgentsActive()}
-            disabled={totalCount === 0}
-            aria-label={anyActive ? "Stop every agent" : "Start every agent"}
-            className={cn(
-              "group/master peer relative inline-flex h-7 w-[5.5rem] shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors outline-none",
-              "focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              "data-[checked]:bg-emerald-500 data-[unchecked]:bg-muted-foreground/30"
-            )}
-          >
-            {/* Track label — sits opposite the thumb. "Team on" hugs the
-                left when checked (thumb on right); "Team off" hugs the
-                right when unchecked (thumb on left). */}
-            <span
-              aria-hidden
+          /* Span wrapper carries the tooltip's hover/focus listeners; the
+             Switch.Root inside owns click handling. Rendering Switch.Root
+             directly as the trigger caused base-ui to overwrite its
+             onCheckedChange handler with its own merged props. */
+          <span className="inline-flex">
+            <SwitchPrimitive.Root
+              checked={anyActive}
+              onCheckedChange={() => void toggleAllAgentsActive()}
+              disabled={totalCount === 0}
+              aria-label={anyActive ? "Stop every agent" : "Start every agent"}
               className={cn(
-                "pointer-events-none absolute inset-y-0 left-2 flex items-center text-[10.5px] font-bold uppercase tracking-wider text-white transition-opacity",
-                "opacity-0 group-data-[checked]/master:opacity-100"
+                "group/master peer relative inline-flex h-7 w-[5.5rem] shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors outline-none",
+                "focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-1 focus-visible:ring-offset-background",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "data-[checked]:bg-emerald-500 data-[unchecked]:bg-muted-foreground/30"
               )}
             >
-              Team on
-            </span>
-            <span
-              aria-hidden
-              className={cn(
-                "pointer-events-none absolute inset-y-0 right-2 flex items-center text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground/80 transition-opacity",
-                "opacity-100 group-data-[checked]/master:opacity-0"
-              )}
-            >
-              Team off
-            </span>
-            <SwitchPrimitive.Thumb
-              className={cn(
-                "pointer-events-none relative z-10 block size-5 rounded-full bg-background shadow-sm ring-0 transition-transform",
-                "data-[checked]:translate-x-16 data-[unchecked]:translate-x-1"
-              )}
-            />
-          </SwitchPrimitive.Root>
+              <span
+                aria-hidden
+                className={cn(
+                  "pointer-events-none absolute inset-y-0 left-2 flex items-center text-[10.5px] font-bold uppercase tracking-wider text-white transition-opacity",
+                  "opacity-0 group-data-[checked]/master:opacity-100"
+                )}
+              >
+                Team on
+              </span>
+              <span
+                aria-hidden
+                className={cn(
+                  "pointer-events-none absolute inset-y-0 right-2 flex items-center text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground/80 transition-opacity",
+                  "opacity-100 group-data-[checked]/master:opacity-0"
+                )}
+              >
+                Team off
+              </span>
+              <SwitchPrimitive.Thumb
+                className={cn(
+                  "pointer-events-none relative z-10 block size-5 rounded-full bg-background shadow-sm ring-0 transition-transform",
+                  "data-[checked]:translate-x-16 data-[unchecked]:translate-x-1"
+                )}
+              />
+            </SwitchPrimitive.Root>
+          </span>
         }
       />
       <TooltipContent
         side="bottom"
         variant="themed"
-        className="flex max-w-[260px] flex-col items-start gap-1 p-3 text-left"
+        className="flex max-w-[280px] flex-col items-start gap-1 p-3 text-left"
       >
         <p className="text-[12px] font-semibold">
           {anyActive ? "Team is running" : "Team is stopped"}
         </p>
         <p className="text-[11px] text-muted-foreground">{summaryLine}.</p>
         <p className="text-[11px] text-muted-foreground">{actionLine}</p>
+        <p className="text-[11px] italic text-muted-foreground/80">
+          Tasks already running won&apos;t be interrupted — only future
+          fires are affected.
+        </p>
       </TooltipContent>
     </Tooltip>
   );
