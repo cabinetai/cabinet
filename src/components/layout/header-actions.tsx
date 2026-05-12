@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { ThemePicker } from "@/components/layout/theme-picker";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Global header actions shared across all file-type toolbars:
  * Search, Terminal toggle, AI panel toggle, Theme picker.
  */
 export function HeaderActions() {
+  const { t } = useLocale();
   const { isOpen, toggle } = useAIPanelStore();
 
   return (
@@ -36,8 +38,8 @@ export function HeaderActions() {
       <Button
         variant="ghost"
         size="icon"
-        aria-label={isOpen ? "Close AI panel" : "Open AI panel"}
-        title={isOpen ? "Close AI panel" : "Open AI panel"}
+        aria-label={isOpen ? t("common:aiPanel.close") : t("common:aiPanel.open")}
+        title={isOpen ? t("common:aiPanel.close") : t("common:aiPanel.open")}
         className={cn("h-7 w-7", isOpen && "text-primary")}
         onClick={toggle}
       >

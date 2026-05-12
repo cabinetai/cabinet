@@ -14,6 +14,10 @@
     "goBack": "Go back",
     "goForward": "Go forward"
   },
+  "aiPanel": {
+    "open": "Open AI panel",
+    "close": "Close AI panel"
+  },
   "states": {
     "loading": "Loading…",
     "saving": "Saving…",

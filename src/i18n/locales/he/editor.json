@@ -1,4 +1,13 @@
 {
+  "header": {
+    "exportPage": "ייצוא דף",
+    "copyMarkdown": "העתקה כ-Markdown",
+    "copyForLlms": "העתקה עבור LLM",
+    "copyAsHtml": "העתקה כ-HTML",
+    "downloadMarkdown": "הורדה כ-md",
+    "downloadPdf": "הורדה כ-PDF",
+    "copiedForLlmToast": "הועתקו {{size}} של Markdown עבור LLM"
+  },
   "toolbar": {
     "heading1": "כותרת 1",
     "heading2": "כותרת 2",

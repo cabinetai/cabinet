@@ -6,12 +6,14 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CONFIRM_EVENT, type ConfirmEventDetail } from "@/lib/ui/confirm";
+import { useLocale } from "@/i18n/use-locale";
 
 interface ActiveDialog extends ConfirmEventDetail {
   key: string;
 }
 
 export function ConfirmDialogHost() {
+  const { t } = useLocale();
   const [active, setActive] = useState<ActiveDialog | null>(null);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export function ConfirmDialogHost() {
           </div>
           <div className="mt-5 flex items-center justify-end gap-2">
             <Button variant="ghost" size="sm" onClick={() => resolve(false)}>
-              {active.cancelText ?? "Cancel"}
+              {active.cancelText ?? t("common:actions.cancel")}
             </Button>
             <Button
               size="sm"
@@ -75,7 +77,7 @@ export function ConfirmDialogHost() {
               onClick={() => resolve(true)}
               autoFocus
             >
-              {active.confirmText ?? "Confirm"}
+              {active.confirmText ?? t("common:actions.confirm")}
             </Button>
           </div>
         </Dialog.Popup>

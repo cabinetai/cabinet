@@ -10,8 +10,10 @@ import {
 import { useEditorStore } from "@/stores/editor-store";
 import { VersionHistory } from "@/components/editor/version-history";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { useLocale } from "@/i18n/use-locale";
 
 export function Header() {
+  const { t } = useLocale();
   const { frontmatter, content, currentPath } = useEditorStore();
 
   const handleCopyMarkdown = async () => {
@@ -35,7 +37,10 @@ export function Header() {
     const display = bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
     window.dispatchEvent(
       new CustomEvent("cabinet:toast", {
-        detail: { kind: "success", message: `Copied ${display} of Markdown for LLM` },
+        detail: {
+          kind: "success",
+          message: t("editor:header.copiedForLlmToast", { size: display }),
+        },
       })
     );
   };
@@ -68,25 +73,25 @@ export function Header() {
     <ViewerToolbar path={currentPath || undefined} showBreadcrumb={!!currentPath}>
       {currentPath && (
         <DropdownMenu>
-          <DropdownMenuTrigger aria-label="Export page" title="Export page" className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
+          <DropdownMenuTrigger aria-label={t("editor:header.exportPage")} title={t("editor:header.exportPage")} className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
             <Download className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleCopyMarkdown}>
               <Copy className="h-4 w-4 mr-2" />
-              Copy Markdown
+              {t("editor:header.copyMarkdown")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleCopyForLLM}>
               <Sparkles className="h-4 w-4 mr-2" />
-              Copy for LLMs
+              {t("editor:header.copyForLlms")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleCopyHTML}>
               <FileCode className="h-4 w-4 mr-2" />
-              Copy as HTML
+              {t("editor:header.copyAsHtml")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleDownloadMarkdown}>
               <Download className="h-4 w-4 mr-2" />
-              Download .md
+              {t("editor:header.downloadMarkdown")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={async () => {
               const editorEl = document.querySelector(".tiptap");
@@ -107,7 +112,7 @@ export function Header() {
               pdf.save(`${frontmatter?.title || "page"}.pdf`);
             }}>
               <FileDown className="h-4 w-4 mr-2" />
-              Download PDF
+              {t("editor:header.downloadPdf")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

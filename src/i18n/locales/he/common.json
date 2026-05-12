@@ -14,6 +14,10 @@
     "goBack": "חזרה",
     "goForward": "קדימה"
   },
+  "aiPanel": {
+    "open": "פתיחת חלונית ה-AI",
+    "close": "סגירת חלונית ה-AI"
+  },
   "states": {
     "loading": "טוען…",
     "saving": "שומר…",

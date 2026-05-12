@@ -1,4 +1,13 @@
 {
+  "header": {
+    "exportPage": "Export page",
+    "copyMarkdown": "Copy Markdown",
+    "copyForLlms": "Copy for LLMs",
+    "copyAsHtml": "Copy as HTML",
+    "downloadMarkdown": "Download .md",
+    "downloadPdf": "Download PDF",
+    "copiedForLlmToast": "Copied {{size}} of Markdown for LLM"
+  },
   "toolbar": {
     "heading1": "Heading 1",
     "heading2": "Heading 2",
