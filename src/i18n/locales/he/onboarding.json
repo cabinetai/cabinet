@@ -1,0 +1,38 @@
+{
+  "intro": {
+    "tagline1": "מאגר הידע שלך.",
+    "tagline2": "צוות ה-AI שלך.",
+    "getStarted": "בואו נתחיל"
+  },
+  "welcome": {
+    "paragraph": "הבית שלכם הוא שלכם. בתוכו תקימו חדרים לתחומי החיים השונים: עבודה, מוח שני, מחקר, משפחה. בכל חדר יש ארוניות: ההערות שלכם, הקבצים שלכם, וצוות AI שעובד ברקע ודואג שדברים יקרו."
+  },
+  "welcomeBack": {
+    "heading": "ברוכים השבים",
+    "headingNamed": "ברוכים השבים אל {{cabinet}}",
+    "subtitle": "מצאנו כאן ארונית קיימת. בואו נסיים את ההגדרה.",
+    "continue": "המשך"
+  },
+  "verify": {
+    "passed": "עבר",
+    "notInstalled": "לא מותקן",
+    "authRequired": "נדרשת הזדהות",
+    "paymentRequired": "נדרש תשלום",
+    "quotaExceeded": "חריגה ממכסה",
+    "error": "שגיאה"
+  },
+  "providerStatus": {
+    "ready": "מוכן",
+    "loginRequired": "נדרשת התחברות",
+    "notInstalled": "לא מותקן"
+  },
+  "actions": {
+    "back": "חזרה",
+    "next": "הבא",
+    "continue": "המשך",
+    "skip": "דילוג",
+    "finish": "סיום",
+    "complete": "סיום ההגדרה",
+    "copyToClipboard": "העתקה ללוח"
+  }
+}

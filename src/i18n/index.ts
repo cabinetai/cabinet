@@ -3,12 +3,14 @@ import { initReactI18next } from "react-i18next";
 
 import enCommon from "./locales/en/common.json";
 import enEditor from "./locales/en/editor.json";
+import enOnboarding from "./locales/en/onboarding.json";
 import enSettings from "./locales/en/settings.json";
 import enSidebar from "./locales/en/sidebar.json";
 import enTour from "./locales/en/tour.json";
 
 import heCommon from "./locales/he/common.json";
 import heEditor from "./locales/he/editor.json";
+import heOnboarding from "./locales/he/onboarding.json";
 import heSettings from "./locales/he/settings.json";
 import heSidebar from "./locales/he/sidebar.json";
 import heTour from "./locales/he/tour.json";
@@ -40,6 +42,7 @@ const resources = {
   en: {
     common: enCommon,
     editor: enEditor,
+    onboarding: enOnboarding,
     settings: enSettings,
     sidebar: enSidebar,
     tour: enTour,
@@ -47,6 +50,7 @@ const resources = {
   he: {
     common: heCommon,
     editor: heEditor,
+    onboarding: heOnboarding,
     settings: heSettings,
     sidebar: heSidebar,
     tour: heTour,
@@ -59,7 +63,7 @@ if (!i18n.isInitialized) {
     lng: getInitialLocale(),
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: "common",
-    ns: ["common", "editor", "settings", "sidebar", "tour"],
+    ns: ["common", "editor", "onboarding", "settings", "sidebar", "tour"],
     interpolation: { escapeValue: false },
     returnNull: false,
   });
