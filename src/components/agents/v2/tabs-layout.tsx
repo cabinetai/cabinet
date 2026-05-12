@@ -176,13 +176,14 @@ function MasterToggle() {
       />
       <TooltipContent
         side="bottom"
-        className="flex max-w-[260px] flex-col items-start gap-1 text-left"
+        variant="themed"
+        className="flex max-w-[260px] flex-col items-start gap-1 p-3 text-left"
       >
-        <p className="font-medium">
+        <p className="text-[12px] font-semibold">
           {anyActive ? "Team is running" : "Team is stopped"}
         </p>
-        <p className="text-[11px] opacity-80">{summaryLine}.</p>
-        <p className="text-[11px] opacity-80">{actionLine}</p>
+        <p className="text-[11px] text-muted-foreground">{summaryLine}.</p>
+        <p className="text-[11px] text-muted-foreground">{actionLine}</p>
       </TooltipContent>
     </Tooltip>
   );
