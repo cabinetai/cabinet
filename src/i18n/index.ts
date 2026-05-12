@@ -4,7 +4,9 @@ import { initReactI18next } from "react-i18next";
 import enCommon from "./locales/en/common.json";
 import enDialogs from "./locales/en/dialogs.json";
 import enEditor from "./locales/en/editor.json";
+import enHome from "./locales/en/home.json";
 import enOnboarding from "./locales/en/onboarding.json";
+import enSearch from "./locales/en/search.json";
 import enSettings from "./locales/en/settings.json";
 import enSidebar from "./locales/en/sidebar.json";
 import enStatus from "./locales/en/status.json";
@@ -13,7 +15,9 @@ import enTour from "./locales/en/tour.json";
 import heCommon from "./locales/he/common.json";
 import heDialogs from "./locales/he/dialogs.json";
 import heEditor from "./locales/he/editor.json";
+import heHome from "./locales/he/home.json";
 import heOnboarding from "./locales/he/onboarding.json";
+import heSearch from "./locales/he/search.json";
 import heSettings from "./locales/he/settings.json";
 import heSidebar from "./locales/he/sidebar.json";
 import heStatus from "./locales/he/status.json";
@@ -47,7 +51,9 @@ const resources = {
     common: enCommon,
     dialogs: enDialogs,
     editor: enEditor,
+    home: enHome,
     onboarding: enOnboarding,
+    search: enSearch,
     settings: enSettings,
     sidebar: enSidebar,
     status: enStatus,
@@ -57,7 +63,9 @@ const resources = {
     common: heCommon,
     dialogs: heDialogs,
     editor: heEditor,
+    home: heHome,
     onboarding: heOnboarding,
+    search: heSearch,
     settings: heSettings,
     sidebar: heSidebar,
     status: heStatus,
@@ -71,7 +79,7 @@ if (!i18n.isInitialized) {
     lng: getInitialLocale(),
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: "common",
-    ns: ["common", "dialogs", "editor", "onboarding", "settings", "sidebar", "status", "tour"],
+    ns: ["common", "dialogs", "editor", "home", "onboarding", "search", "settings", "sidebar", "status", "tour"],
     interpolation: { escapeValue: false },
     returnNull: false,
   });

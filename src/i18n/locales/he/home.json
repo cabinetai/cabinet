@@ -1,0 +1,9 @@
+{
+  "newCabinet": {
+    "namePlaceholder": "שם הארונית…",
+    "renameWarning": "אי אפשר לשנות את שם הארונית מאוחר יותר (לעת עתה). בחרו בקפידה."
+  },
+  "quickActions": {
+    "shuffle": "הצג הצעות אחרות"
+  }
+}

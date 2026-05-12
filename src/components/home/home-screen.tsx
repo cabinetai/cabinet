@@ -295,6 +295,7 @@ function ImportDialog({
   onImportStart: () => void;
   onImportEnd: () => void;
 }) {
+  const { t } = useLocale();
   const [name, setName] = useState("");
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -369,10 +370,10 @@ function ImportDialog({
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Cabinet name..."
+              placeholder={t("home:newCabinet.namePlaceholder")}
             />
             <p className="text-[11px] text-muted-foreground/70">
-              Cabinet names can&apos;t be renamed later (for now). Choose wisely.
+              {t("home:newCabinet.renameWarning")}
             </p>
           </div>
           {error && (
@@ -401,6 +402,7 @@ function ImportDialog({
 }
 
 export function HomeScreen() {
+  const { t } = useLocale();
   const setSection = useAppStore((s) => s.setSection);
   const treeNodes = useTreeStore((s) => s.nodes);
   const [userName, setUserName] = useState<string | null>(null);
@@ -710,8 +712,8 @@ export function HomeScreen() {
               type="button"
               onClick={() => setChipShuffle((n) => n + 1)}
               disabled={composer.submitting || quickRunning || daemonDown}
-              title="Show different suggestions"
-              aria-label="Show different suggestions"
+              title={t("home:quickActions.shuffle")}
+              aria-label={t("home:quickActions.shuffle")}
               className={cn(
                 "inline-flex items-center justify-center rounded-full border border-dashed border-border/70 bg-card/40 size-7",
                 "text-muted-foreground hover:bg-secondary hover:border-border hover:text-foreground",

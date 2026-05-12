@@ -32,17 +32,18 @@ import {
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { useAppStore } from "@/stores/app-store";
+import { useLocale } from "@/i18n/use-locale";
 
 type FlatEntry =
   | { kind: "page"; key: string; hit: PageHit }
   | { kind: "agent"; key: string; hit: AgentHit }
   | { kind: "task"; key: string; hit: TaskHit };
 
-const SCOPES: Array<{ id: SearchScope; label: string }> = [
-  { id: "all", label: "All" },
-  { id: "pages", label: "Pages" },
-  { id: "agents", label: "Agents" },
-  { id: "tasks", label: "Tasks" },
+const SCOPES: Array<{ id: SearchScope; labelKey: string }> = [
+  { id: "all", labelKey: "search:scopes.all" },
+  { id: "pages", labelKey: "search:scopes.pages" },
+  { id: "agents", labelKey: "search:scopes.agents" },
+  { id: "tasks", labelKey: "search:scopes.tasks" },
 ];
 
 const DEBOUNCE_MS = 180;
@@ -202,6 +203,7 @@ function highlight(text: string, query: string): React.ReactNode {
 }
 
 export function SearchPalette() {
+  const { t } = useLocale();
   const open = useSearchStore((s) => s.open);
   const query = useSearchStore((s) => s.query);
   const scope = useSearchStore((s) => s.scope);
@@ -445,7 +447,7 @@ export function SearchPalette() {
             "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95"
           )}
         >
-          <Dialog.Title className="sr-only">Search</Dialog.Title>
+          <Dialog.Title className="sr-only">{t("search:title")}</Dialog.Title>
           {/* Header / input */}
           <div className="flex items-center gap-2 border-b border-border px-3">
             <SearchIcon className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -454,7 +456,7 @@ export function SearchPalette() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={onKeyDown}
-              placeholder="Search pages, agents, tasks…"
+              placeholder={t("search:placeholder")}
               className="h-12 flex-1 border-0 bg-transparent text-[14px] outline-none placeholder:text-muted-foreground/60"
               spellCheck={false}
               autoCorrect="off"
@@ -463,7 +465,7 @@ export function SearchPalette() {
             {query && (
               <button
                 onClick={() => setQuery("")}
-                aria-label="Clear query"
+                aria-label={t("search:clearQuery")}
                 className="rounded p-1 text-muted-foreground hover:bg-muted"
               >
                 <X className="h-3.5 w-3.5" />
@@ -498,7 +500,7 @@ export function SearchPalette() {
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <span>{s.label}</span>
+                  <span>{t(s.labelKey)}</span>
                   {count != null && count > 0 && (
                     <span className="rounded bg-background/50 px-1 text-[10px] tabular-nums">
                       {count}
@@ -530,7 +532,7 @@ export function SearchPalette() {
                 {isCommandMode ? (
                   matchedCommands.length === 0 ? (
                     <div className="flex flex-col items-start gap-1 px-3 py-6 text-[12px] text-muted-foreground">
-                      <p>No commands match.</p>
+                      <p>{t("search:noCommands")}</p>
                       <p className="text-[11px] text-muted-foreground/70">
                         Try <code className="rounded bg-muted px-1">/theme paper</code>{" "}
                         or <code className="rounded bg-muted px-1">/open settings</code>.
@@ -730,6 +732,7 @@ function ResultList({
   onSelect: (key: string) => void;
   onActivate: (entry: FlatEntry) => void;
 }) {
+  const { t } = useLocale();
   const groups = useMemo(() => {
     const pages = flat.filter((e) => e.kind === "page");
     const agents = flat.filter((e) => e.kind === "agent");
@@ -740,7 +743,7 @@ function ResultList({
   return (
     <div className="px-1 py-1">
       {groups.pages.length > 0 && (
-        <Group label="Pages">
+        <Group label={t("search:groups.pages")}>
           {groups.pages.map((e) => (
             <Row
               key={e.key}
@@ -754,7 +757,7 @@ function ResultList({
         </Group>
       )}
       {groups.agents.length > 0 && (
-        <Group label="Agents">
+        <Group label={t("search:groups.agents")}>
           {groups.agents.map((e) => (
             <Row
               key={e.key}
@@ -768,7 +771,7 @@ function ResultList({
         </Group>
       )}
       {groups.tasks.length > 0 && (
-        <Group label="Tasks">
+        <Group label={t("search:groups.tasks")}>
           {groups.tasks.map((e) => (
             <Row
               key={e.key}
