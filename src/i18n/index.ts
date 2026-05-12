@@ -2,12 +2,16 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
 import enCommon from "./locales/en/common.json";
+import enEditor from "./locales/en/editor.json";
 import enSettings from "./locales/en/settings.json";
 import enSidebar from "./locales/en/sidebar.json";
+import enTour from "./locales/en/tour.json";
 
 import heCommon from "./locales/he/common.json";
+import heEditor from "./locales/he/editor.json";
 import heSettings from "./locales/he/settings.json";
 import heSidebar from "./locales/he/sidebar.json";
+import heTour from "./locales/he/tour.json";
 
 export const SUPPORTED_LOCALES = ["en", "he"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -33,8 +37,20 @@ function getInitialLocale(): Locale {
 }
 
 const resources = {
-  en: { common: enCommon, settings: enSettings, sidebar: enSidebar },
-  he: { common: heCommon, settings: heSettings, sidebar: heSidebar },
+  en: {
+    common: enCommon,
+    editor: enEditor,
+    settings: enSettings,
+    sidebar: enSidebar,
+    tour: enTour,
+  },
+  he: {
+    common: heCommon,
+    editor: heEditor,
+    settings: heSettings,
+    sidebar: heSidebar,
+    tour: heTour,
+  },
 } as const;
 
 if (!i18n.isInitialized) {
@@ -43,7 +59,7 @@ if (!i18n.isInitialized) {
     lng: getInitialLocale(),
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: "common",
-    ns: ["common", "settings", "sidebar"],
+    ns: ["common", "editor", "settings", "sidebar", "tour"],
     interpolation: { escapeValue: false },
     returnNull: false,
   });

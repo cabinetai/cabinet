@@ -2,10 +2,22 @@
   "settings": "הגדרות",
   "createPage": "דף חדש",
   "newPage": "דף חדש",
+  "newAgent": "סוכן חדש",
+  "newTask": "משימה חדשה",
   "archive": "ארכיון",
   "trash": "אשפה",
   "search": "חיפוש",
   "agents": "סוכנים",
   "tasks": "משימות",
-  "missions": "מטרות"
+  "missions": "מטרות",
+  "goHome": "מעבר לדף הבית",
+  "refresh": "רענון סרגל הצד",
+  "refreshDescription": "רענון סרגל הצד (קריאה מחדש של תיקיית הנתונים)",
+  "collapseSidebar": "כיווץ סרגל הצד",
+  "expandSidebar": "הרחבת סרגל הצד",
+  "resizeHandle": "שינוי גודל — לחיצה כפולה לאיפוס",
+  "resetWidth": "לחיצה כפולה לאיפוס הרוחב",
+  "refreshedNoChanges": "רוענן — אין שינויים.",
+  "refreshedWithChanges": "רוענן — {{added}} נוספו, {{removed}} הוסרו.",
+  "refreshFailed": "הרענון נכשל."
 }

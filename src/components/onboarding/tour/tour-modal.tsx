@@ -8,15 +8,13 @@ import { SlideData, DATA_SCENE_COUNT } from "./slide-data";
 import { SlideAgents } from "./slide-agents";
 import { SlideTasks } from "./slide-tasks";
 import { TOUR_PALETTE as P } from "./palette";
+import { useLocale } from "@/i18n/use-locale";
 
 interface TourModalProps {
   open: boolean;
   onClose: () => void;
   onLaunchTask: (starterPrompt: string) => void;
 }
-
-const STARTER_TASK =
-  "Let's talk through my goals and what I want to achieve here, then capture it in a new About page.";
 
 // Each data scene is its own back/next step. `stageKey` is stable across
 // all data slides so `SlideData` stays mounted while stepping through
@@ -69,6 +67,7 @@ function TourBody({
   onClose: () => void;
   onLaunchTask: (starterPrompt: string) => void;
 }) {
+  const { t } = useLocale();
   const [index, setIndex] = useState(0);
   const [viewerRevealed, setViewerRevealed] = useState(false);
 
@@ -92,9 +91,9 @@ function TourBody({
     transition(() => setIndex((i) => Math.max(i - 1, 0)));
   }, []);
   const finish = useCallback(() => {
-    onLaunchTask(STARTER_TASK);
+    onLaunchTask(t("tour:starterTask"));
     onClose();
-  }, [onLaunchTask, onClose]);
+  }, [onLaunchTask, onClose, t]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -129,7 +128,7 @@ function TourBody({
       className="fixed inset-0 z-[200] flex items-center justify-center backdrop-blur-md"
       role="dialog"
       aria-modal="true"
-      aria-label="Meet your Cabinet tour"
+      aria-label={t("tour:ariaLabel")}
       style={{ background: `${P.paper}F0`, color: P.text }}
     >
       {/* Soft decorative background wash — warm cream with subtle mocha glow */}
@@ -144,7 +143,7 @@ function TourBody({
       {/* Skip / close */}
       <button
         onClick={onClose}
-        aria-label="Skip tour"
+        aria-label={t("tour:skipAriaLabel")}
         className="absolute right-6 top-6 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] transition-colors"
         style={{
           color: P.textSecondary,
@@ -152,7 +151,7 @@ function TourBody({
           border: `1px solid ${P.border}`,
         }}
       >
-        <span>Skip</span>
+        <span>{t("tour:skip")}</span>
         <X className="h-3.5 w-3.5" />
       </button>
 
@@ -181,7 +180,7 @@ function TourBody({
             }}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back
+            {t("tour:back")}
           </button>
 
           {/* Progress dots */}
@@ -190,7 +189,7 @@ function TourBody({
               <button
                 key={s.id}
                 onClick={() => goTo(i)}
-                aria-label={`Go to slide ${i + 1}`}
+                aria-label={t("tour:goToSlide", { n: i + 1 })}
                 className="h-1.5 rounded-full transition-all duration-300"
                 style={
                   i === index
@@ -212,7 +211,7 @@ function TourBody({
               }}
             >
               <Sparkles className="h-4 w-4" />
-              Write your first task
+              {t("tour:writeFirstTask")}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           ) : (
@@ -221,7 +220,7 @@ function TourBody({
               className="flex items-center gap-1.5 rounded-full px-5 py-2 text-[12px] font-semibold transition-all hover:-translate-y-px"
               style={{ background: P.text, color: P.paper }}
             >
-              Next
+              {t("tour:next")}
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           )}

@@ -26,6 +26,7 @@ import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import type { TreeNode } from "@/types";
+import { useLocale } from "@/i18n/use-locale";
 
 function collectPaths(nodes: TreeNode[], out: Set<string> = new Set()): Set<string> {
   for (const n of nodes) {
@@ -57,6 +58,7 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export function Sidebar() {
+  const { t } = useLocale();
   const isMobile = useIsMobile();
   const collapsed = useAppStore((s) => s.sidebarCollapsed);
   const setCollapsed = useAppStore((s) => s.setSidebarCollapsed);
@@ -133,8 +135,8 @@ export function Sidebar() {
       });
       const message =
         added === 0 && removed === 0
-          ? "Refreshed — no changes."
-          : `Refreshed — ${added} added, ${removed} removed.`;
+          ? t("sidebar:refreshedNoChanges")
+          : t("sidebar:refreshedWithChanges", { added, removed });
       window.dispatchEvent(
         new CustomEvent("cabinet:toast", {
           detail: { kind: "success", message },
@@ -143,7 +145,7 @@ export function Sidebar() {
     } catch {
       window.dispatchEvent(
         new CustomEvent("cabinet:toast", {
-          detail: { kind: "error", message: "Refresh failed." },
+          detail: { kind: "error", message: t("sidebar:refreshFailed") },
         })
       );
     } finally {
@@ -180,8 +182,8 @@ export function Sidebar() {
             <button
               onClick={() => setSection({ type: "home" })}
               className="group ml-1 flex items-center gap-1.5 rounded px-1 font-logo text-[22px] italic tracking-[-0.01em] text-foreground hover:text-foreground/80 hover:bg-accent/60 transition-colors cursor-pointer"
-              title="Go to home"
-              aria-label="Go to home"
+              title={t("sidebar:goHome")}
+              aria-label={t("sidebar:goHome")}
             >
               cabinet
               <Home className="size-3.5 not-italic opacity-0 group-hover:opacity-50 transition-opacity shrink-0" />
@@ -191,8 +193,8 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Refresh sidebar"
-              title="Refresh sidebar (re-read data folder)"
+              aria-label={t("sidebar:refresh")}
+              title={t("sidebar:refreshDescription")}
               className="h-7 w-7 text-muted-foreground/60 hover:text-muted-foreground"
               onClick={refreshTree}
               disabled={refreshing}
@@ -204,8 +206,8 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Collapse sidebar"
-              title="Collapse sidebar"
+              aria-label={t("sidebar:collapseSidebar")}
+              title={t("sidebar:collapseSidebar")}
               className="h-7 w-7"
               onClick={() => setCollapsed(true)}
             >
@@ -229,7 +231,7 @@ export function Sidebar() {
           {sidebarDrawer === "agents" && (
             <button
               type="button"
-              title="New Agent"
+              title={t("sidebar:newAgent")}
               onClick={() => {
                 setSection({
                   type: "agents",
@@ -242,13 +244,13 @@ export function Sidebar() {
               className="flex min-w-0 flex-1 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
             >
               <UserPlus className="h-4 w-4 shrink-0" />
-              <span className="min-w-0 truncate">New Agent</span>
+              <span className="min-w-0 truncate">{t("sidebar:newAgent")}</span>
             </button>
           )}
           {sidebarDrawer === "tasks" && (
             <button
               type="button"
-              title="New Task"
+              title={t("sidebar:newTask")}
               onClick={() => {
                 setSection({
                   type: "tasks",
@@ -261,14 +263,14 @@ export function Sidebar() {
               className="flex min-w-0 flex-1 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
             >
               <Plus className="h-4 w-4 shrink-0" />
-              <span className="min-w-0 truncate">New Task</span>
+              <span className="min-w-0 truncate">{t("sidebar:newTask")}</span>
             </button>
           )}
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Settings"
-            title="Settings"
+            aria-label={t("sidebar:settings")}
+            title={t("sidebar:settings")}
             className={cn(
               "h-7 w-7 shrink-0",
               section.type === "settings" && "bg-accent text-foreground"
@@ -284,8 +286,8 @@ export function Sidebar() {
           <div
             role="separator"
             aria-orientation="vertical"
-            aria-label="Resize sidebar — double-click to reset"
-            title="Double-click to reset width"
+            aria-label={t("sidebar:resizeHandle")}
+            title={t("sidebar:resetWidth")}
             onPointerDown={startResize}
             onDoubleClick={() => setSidebarWidth(SIDEBAR_DEFAULT_WIDTH)}
             className="absolute inset-y-0 left-1/2 w-3 -translate-x-1/2 cursor-col-resize bg-transparent"
@@ -296,8 +298,8 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Expand sidebar"
-          title="Expand sidebar"
+          aria-label={t("sidebar:expandSidebar")}
+          title={t("sidebar:expandSidebar")}
           className={cn(
             "absolute top-3 h-7 w-7",
             isMobile ? "left-3 z-50" : "left-2 z-20"
