@@ -239,6 +239,18 @@ html[data-custom-theme] .font-logo,
   font-family: var(--font-logo), Georgia, serif !important;
 }
 
+/* RTL override: Cardo for the `cabinet` logo + any .font-logo surface
+   when the UI is in Hebrew. Cardo carries a calligraphic Latin italic
+   that pairs better with Hebrew chrome than Instrument Serif. */
+html[dir="rtl"] h1.font-logo,
+html[dir="rtl"] h2.font-logo,
+html[dir="rtl"] h3.font-logo,
+html[dir="rtl"] h4.font-logo,
+html[dir="rtl"] span.font-logo,
+html[dir="rtl"] .font-logo {
+  font-family: var(--font-logo-rtl), Cardo, Georgia, serif !important;
+}
+
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
