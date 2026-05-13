@@ -22,6 +22,7 @@ import {
   selectedRect,
 } from "@tiptap/pm/tables";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 interface TableMenuProps {
   editor: Editor | null;
@@ -71,6 +72,7 @@ function Separator() {
 }
 
 export function TableMenu({ editor }: TableMenuProps) {
+  const { t } = useLocale();
   if (!editor) return null;
 
   const getRect = () => {
@@ -135,79 +137,79 @@ export function TableMenu({ editor }: TableMenuProps) {
       shouldShow={({ editor: activeEditor }) => activeEditor.isActive("table")}
       className="flex items-center gap-0.5 rounded-md border border-border bg-popover px-1 py-1 shadow-lg"
     >
-      <TableButton label="Select cell text" icon={Table} onAction={selectCellText} />
+      <TableButton label={t("editor:toolbar.table.selectCellText")} icon={Table} onAction={selectCellText} />
       <Separator />
       <TableButton
-        label="Add row above"
+        label={t("editor:toolbar.table.addRowAbove")}
         icon={Rows3}
         onAction={() => run(() => editor.chain().focus().addRowBefore().run())}
       />
       <TableButton
-        label="Add row below"
+        label={t("editor:toolbar.table.addRowBelow")}
         icon={ArrowDown}
         onAction={() => run(() => editor.chain().focus().addRowAfter().run())}
       />
       <TableButton
-        label="Move row up"
+        label={t("editor:toolbar.table.moveRowUp")}
         icon={ArrowUp}
         disabled={!canMoveRowUp}
         onAction={() => moveRow(-1)}
       />
       <TableButton
-        label="Move row down"
+        label={t("editor:toolbar.table.moveRowDown")}
         icon={ArrowDown}
         disabled={!canMoveRowDown}
         onAction={() => moveRow(1)}
       />
       <TableButton
-        label="Delete row"
+        label={t("editor:toolbar.table.deleteRow")}
         icon={Trash2}
         danger
         onAction={() => run(() => editor.chain().focus().deleteRow().run())}
       />
       <Separator />
       <TableButton
-        label="Add column before"
+        label={t("editor:toolbar.table.addColumnBefore")}
         icon={Columns3}
         onAction={() => run(() => editor.chain().focus().addColumnBefore().run())}
       />
       <TableButton
-        label="Add column after"
+        label={t("editor:toolbar.table.addColumnAfter")}
         icon={ArrowRight}
         onAction={() => run(() => editor.chain().focus().addColumnAfter().run())}
       />
       <TableButton
-        label="Move column left"
+        label={t("editor:toolbar.table.moveColumnLeft")}
         icon={ArrowLeft}
         disabled={!canMoveColumnLeft}
         onAction={() => moveColumn(-1)}
       />
       <TableButton
-        label="Move column right"
+        label={t("editor:toolbar.table.moveColumnRight")}
         icon={ArrowRight}
         disabled={!canMoveColumnRight}
         onAction={() => moveColumn(1)}
       />
       <TableButton
-        label="Delete column"
+        label={t("editor:toolbar.table.deleteColumn")}
         icon={Trash2}
         danger
         onAction={() => run(() => editor.chain().focus().deleteColumn().run())}
       />
       <Separator />
       <TableButton
-        label="Toggle header row"
+        label={t("editor:toolbar.table.toggleHeaderRow")}
         icon={PanelTop}
         onAction={() => run(() => editor.chain().focus().toggleHeaderRow().run())}
       />
       <TableButton
-        label="Toggle header column"
+        label={t("editor:toolbar.table.toggleHeaderColumn")}
         icon={PanelLeft}
         onAction={() => run(() => editor.chain().focus().toggleHeaderColumn().run())}
       />
       <Separator />
       <TableButton
-        label="Delete table"
+        label={t("editor:toolbar.table.deleteTable")}
         icon={Trash2}
         danger
         onAction={() => editor.chain().focus().deleteTable().run()}
