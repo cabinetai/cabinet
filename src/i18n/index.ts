@@ -1,6 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+import enAgents from "./locales/en/agents.json";
 import enCommon from "./locales/en/common.json";
 import enDialogs from "./locales/en/dialogs.json";
 import enEditor from "./locales/en/editor.json";
@@ -12,6 +13,7 @@ import enSidebar from "./locales/en/sidebar.json";
 import enStatus from "./locales/en/status.json";
 import enTour from "./locales/en/tour.json";
 
+import heAgents from "./locales/he/agents.json";
 import heCommon from "./locales/he/common.json";
 import heDialogs from "./locales/he/dialogs.json";
 import heEditor from "./locales/he/editor.json";
@@ -48,6 +50,7 @@ function getInitialLocale(): Locale {
 
 const resources = {
   en: {
+    agents: enAgents,
     common: enCommon,
     dialogs: enDialogs,
     editor: enEditor,
@@ -60,6 +63,7 @@ const resources = {
     tour: enTour,
   },
   he: {
+    agents: heAgents,
     common: heCommon,
     dialogs: heDialogs,
     editor: heEditor,
@@ -79,7 +83,7 @@ if (!i18n.isInitialized) {
     lng: getInitialLocale(),
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: "common",
-    ns: ["common", "dialogs", "editor", "home", "onboarding", "search", "settings", "sidebar", "status", "tour"],
+    ns: ["agents", "common", "dialogs", "editor", "home", "onboarding", "search", "settings", "sidebar", "status", "tour"],
     interpolation: { escapeValue: false },
     returnNull: false,
   });

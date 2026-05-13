@@ -21,6 +21,7 @@ import {
   getDefaultAdapterTypeForProviderInfo,
   resolveAdapterTypeForProvider,
 } from "@/lib/agents/adapter-options";
+import { useLocale } from "@/i18n/use-locale";
 
 interface GoalInput {
   metric: string;
@@ -46,6 +47,7 @@ const EMOJI_OPTIONS = [
 const DEPARTMENTS = ["marketing", "sales", "engineering", "research", "operations", "content", "support", "general"];
 
 export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgentDialogProps) {
+  const { t } = useLocale();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [emoji, setEmoji] = useState("🤖");
@@ -214,7 +216,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
 
             {/* Emoji picker */}
             <div className="space-y-1">
-              <label className="text-[12px] font-medium">Avatar</label>
+              <label className="text-[12px] font-medium">{t("agents:dialog.avatar")}</label>
               <div className="flex flex-wrap gap-1">
                 {EMOJI_OPTIONS.map((e) => (
                   <button
@@ -240,7 +242,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
                 <Input
                   value={name}
                   onChange={(e) => { setName(e.target.value); markDirty(); }}
-                  placeholder="Marketing Agent"
+                  placeholder={t("agents:dialog.namePlaceholder")}
                   className="text-[12px] h-8"
                 />
               </div>
@@ -249,7 +251,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
                 <Input
                   value={role}
                   onChange={(e) => { setRole(e.target.value); markDirty(); }}
-                  placeholder="Content Specialist"
+                  placeholder={t("agents:dialog.rolePlaceholder")}
                   className="text-[12px] h-8"
                 />
               </div>
@@ -264,7 +266,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[12px] font-medium">Department</label>
+                <label className="text-[12px] font-medium">{t("agents:dialog.department")}</label>
                 <select
                   value={department}
                   onChange={(e) => { setDepartment(e.target.value); markDirty(); }}
@@ -284,14 +286,14 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
                   onChange={(e) => { setType(e.target.value as "specialist" | "lead"); markDirty(); }}
                   className="w-full h-8 text-[12px] rounded-md border border-input bg-background px-2"
                 >
-                  <option value="specialist">Specialist</option>
-                  <option value="lead">Department Lead</option>
+                  <option value="specialist">{t("agents:dialog.specialist")}</option>
+                  <option value="lead">{t("agents:dialog.departmentLead")}</option>
                 </select>
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[12px] font-medium">Provider</label>
+              <label className="text-[12px] font-medium">{t("agents:dialog.provider")}</label>
               <select
                 value={provider}
                 onChange={(e) => {
@@ -320,7 +322,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
             </div>
             {adapterOptions.length > 0 ? (
               <div className="space-y-1">
-                <label className="text-[12px] font-medium">Runtime</label>
+                <label className="text-[12px] font-medium">{t("agents:dialog.runtime")}</label>
                 <select
                   value={
                     adapterType ||
@@ -396,17 +398,17 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <label className="text-[10px] text-muted-foreground/50">Metric name</label>
+                    <label className="text-[10px] text-muted-foreground/50">{t("agents:metric.name")}</label>
                     <Input
                       value={g.metric}
                       onChange={(e) => updateGoal(i, "metric", e.target.value)}
-                      placeholder="reddit_replies"
+                      placeholder={t("agents:metric.namePlaceholder")}
                       className="text-[12px] h-7 font-mono"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-1.5">
                     <div className="space-y-1">
-                      <label className="text-[10px] text-muted-foreground/50">Target</label>
+                      <label className="text-[10px] text-muted-foreground/50">{t("agents:metric.target")}</label>
                       <Input
                         type="number"
                         value={g.target}
@@ -415,7 +417,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] text-muted-foreground/50">Floor</label>
+                      <label className="text-[10px] text-muted-foreground/50">{t("agents:metric.floor")}</label>
                       <Input
                         type="number"
                         value={g.floor || ""}
@@ -437,15 +439,15 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] text-muted-foreground/50">Period</label>
+                    <label className="text-[10px] text-muted-foreground/50">{t("agents:metric.period")}</label>
                     <select
                       value={g.period}
                       onChange={(e) => updateGoal(i, "period", e.target.value)}
                       className="w-full h-7 text-[12px] rounded-md border border-input bg-background px-2"
                     >
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
+                      <option value="daily">{t("agents:metric.daily")}</option>
+                      <option value="weekly">{t("agents:metric.weekly")}</option>
+                      <option value="monthly">{t("agents:metric.monthly")}</option>
                     </select>
                   </div>
                 </div>
@@ -462,7 +464,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
               value={body}
               onChange={(e) => { setBody(e.target.value); markDirty(); }}
               rows={6}
-              placeholder="You are a marketing agent for..."
+              placeholder={t("agents:dialog.promptPlaceholder")}
               className="w-full text-[12px] rounded-md border border-input bg-background px-3 py-2 resize-y leading-relaxed font-mono placeholder:text-muted-foreground/30"
             />
           </div>

@@ -21,6 +21,7 @@ import {
   getDefaultAdapterTypeForProviderInfo,
   resolveAdapterTypeForProvider,
 } from "@/lib/agents/adapter-options";
+import { useLocale } from "@/i18n/use-locale";
 
 interface GoalInput {
   metric: string;
@@ -43,6 +44,7 @@ const EMOJI_OPTIONS = [
 const DEPARTMENTS = ["marketing", "sales", "engineering", "research", "operations", "content", "support", "general"];
 
 export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgentDialogProps) {
+  const { t } = useLocale();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [emoji, setEmoji] = useState("🤖");
@@ -161,7 +163,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Agent</DialogTitle>
+          <DialogTitle>{t("agents:dialog.createAgent")}</DialogTitle>
           <DialogDescription>
             Define a new agent with its identity, schedule, and goals.
           </DialogDescription>
@@ -176,7 +178,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
 
             {/* Emoji picker */}
             <div className="space-y-1">
-              <label className="text-[12px] font-medium">Avatar</label>
+              <label className="text-[12px] font-medium">{t("agents:dialog.avatar")}</label>
               <div className="flex flex-wrap gap-1">
                 {EMOJI_OPTIONS.map((e) => (
                   <button
@@ -202,7 +204,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Marketing Agent"
+                  placeholder={t("agents:dialog.namePlaceholder")}
                   className="text-[12px] h-8"
                 />
               </div>
@@ -211,7 +213,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                 <Input
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  placeholder="Content Specialist"
+                  placeholder={t("agents:dialog.rolePlaceholder")}
                   className="text-[12px] h-8"
                 />
               </div>
@@ -232,7 +234,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[12px] font-medium">Department</label>
+                <label className="text-[12px] font-medium">{t("agents:dialog.department")}</label>
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
@@ -277,7 +279,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
             </div>
 
             <div className="space-y-1">
-              <label className="text-[12px] font-medium">Provider</label>
+              <label className="text-[12px] font-medium">{t("agents:dialog.provider")}</label>
               <select
                 value={provider}
                 onChange={(e) => {
@@ -305,7 +307,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
             </div>
             {adapterOptions.length > 0 ? (
               <div className="space-y-1">
-                <label className="text-[12px] font-medium">Runtime</label>
+                <label className="text-[12px] font-medium">{t("agents:dialog.runtime")}</label>
                 <select
                   value={
                     adapterType ||
@@ -367,7 +369,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                       <Input
                         value={g.metric}
                         onChange={(e) => setGoals((prev) => prev.map((goal, idx) => idx === i ? { ...goal, metric: e.target.value } : goal))}
-                        placeholder="reddit_replies"
+                        placeholder={t("agents:metric.namePlaceholder")}
                         className="text-[11px] h-7 col-span-2"
                       />
                       <Input
@@ -380,7 +382,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                       <Input
                         value={g.unit}
                         onChange={(e) => setGoals((prev) => prev.map((goal, idx) => idx === i ? { ...goal, unit: e.target.value } : goal))}
-                        placeholder="replies/week"
+                        placeholder={t("agents:metric.targetPlaceholder")}
                         className="text-[11px] h-7"
                       />
                       <select
@@ -388,9 +390,9 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                         onChange={(e) => setGoals((prev) => prev.map((goal, idx) => idx === i ? { ...goal, period: e.target.value } : goal))}
                         className="text-[11px] h-7 bg-background border border-border rounded-md px-1.5 focus:outline-none focus:ring-1 focus:ring-ring col-span-2"
                       >
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
+                        <option value="daily">{t("agents:metric.daily")}</option>
+                        <option value="weekly">{t("agents:metric.weekly")}</option>
+                        <option value="monthly">{t("agents:metric.monthly")}</option>
                       </select>
                     </div>
                     <button

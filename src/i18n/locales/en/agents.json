@@ -1,0 +1,25 @@
+{
+  "dialog": {
+    "createAgent": "Create Agent",
+    "avatar": "Avatar",
+    "namePlaceholder": "Marketing Agent",
+    "rolePlaceholder": "Content Specialist",
+    "department": "Department",
+    "specialist": "Specialist",
+    "departmentLead": "Department Lead",
+    "provider": "Provider",
+    "runtime": "Runtime",
+    "promptPlaceholder": "You are a marketing agent for…"
+  },
+  "metric": {
+    "name": "Metric name",
+    "namePlaceholder": "reddit_replies",
+    "target": "Target",
+    "targetPlaceholder": "replies/week",
+    "floor": "Floor",
+    "period": "Period",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly"
+  }
+}
