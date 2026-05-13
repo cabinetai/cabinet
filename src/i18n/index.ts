@@ -11,6 +11,7 @@ import enSearch from "./locales/en/search.json";
 import enSettings from "./locales/en/settings.json";
 import enSidebar from "./locales/en/sidebar.json";
 import enStatus from "./locales/en/status.json";
+import enTasks from "./locales/en/tasks.json";
 import enTour from "./locales/en/tour.json";
 
 import heAgents from "./locales/he/agents.json";
@@ -23,6 +24,7 @@ import heSearch from "./locales/he/search.json";
 import heSettings from "./locales/he/settings.json";
 import heSidebar from "./locales/he/sidebar.json";
 import heStatus from "./locales/he/status.json";
+import heTasks from "./locales/he/tasks.json";
 import heTour from "./locales/he/tour.json";
 
 export const SUPPORTED_LOCALES = ["en", "he"] as const;
@@ -60,6 +62,7 @@ const resources = {
     settings: enSettings,
     sidebar: enSidebar,
     status: enStatus,
+    tasks: enTasks,
     tour: enTour,
   },
   he: {
@@ -73,6 +76,7 @@ const resources = {
     settings: heSettings,
     sidebar: heSidebar,
     status: heStatus,
+    tasks: heTasks,
     tour: heTour,
   },
 } as const;
@@ -83,7 +87,7 @@ if (!i18n.isInitialized) {
     lng: getInitialLocale(),
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: "common",
-    ns: ["agents", "common", "dialogs", "editor", "home", "onboarding", "search", "settings", "sidebar", "status", "tour"],
+    ns: ["agents", "common", "dialogs", "editor", "home", "onboarding", "search", "settings", "sidebar", "status", "tasks", "tour"],
     interpolation: { escapeValue: false },
     returnNull: false,
   });

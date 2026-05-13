@@ -32,6 +32,7 @@ import { TerminalExitedView } from "@/components/terminal/terminal-exited-view";
 import { ClaudeTranscriptView } from "@/components/tasks/conversation/claude-transcript-view";
 import { ConversationResultView } from "@/components/agents/conversation-result-view";
 import { confirmDialog } from "@/lib/ui/confirm";
+import { useLocale } from "@/i18n/use-locale";
 import {
   closeConversation,
   deleteConversation,
@@ -134,6 +135,7 @@ function StatusActionButton({
   onMarkDone: () => void;
   onRetry: () => void;
 }) {
+  const { t } = useLocale();
   if (status === "done") {
     return (
       <span className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-3 text-[12px] font-semibold text-emerald-300">
@@ -150,7 +152,7 @@ function StatusActionButton({
         disabled={busy}
         onClick={onRetry}
         className="inline-flex h-9 items-center gap-1.5 rounded-md border border-rose-500/30 bg-rose-500/15 px-3 text-[12px] font-semibold text-rose-300 transition-colors hover:bg-rose-500/25 hover:text-rose-200 disabled:opacity-50"
-        title="Restart this task from the original prompt"
+        title={t("tasks:conversation.restartFromOriginal")}
       >
         <RotateCcw className="size-4" />
         Retry
@@ -191,7 +193,7 @@ function StatusActionButton({
       disabled={busy}
       onClick={onMarkDone}
       className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 text-[12px] font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/20 hover:text-emerald-200 disabled:opacity-50"
-      title="Mark this task as done"
+      title={t("tasks:conversation.markAsDone")}
     >
       <Check className="size-4" />
       Mark done
@@ -338,6 +340,7 @@ export function TaskConversationPage({
   readOnly = false,
   returnContext,
 }: TaskConversationPageProps) {
+  const { t } = useLocale();
   const isDemo = taskId === "demo";
   const isCompact = variant === "compact";
   const [task, setTask] = useState<Task | null>(isDemo ? MOCK_TASK : null);
@@ -939,7 +942,7 @@ export function TaskConversationPage({
         <div className="shrink-0 bg-zinc-950 px-2 pt-2">
           <div
             role="tablist"
-            aria-label="Task view"
+            aria-label={t("tasks:conversation.viewAriaLabel")}
             className={cn(
               "relative z-10 grid gap-1 -mb-px text-[12px] font-medium",
               isClaudeProvider ? "grid-cols-3" : "grid-cols-2"
@@ -958,7 +961,7 @@ export function TaskConversationPage({
               )}
             >
               <Terminal className="size-3.5" />
-              <span>Terminal</span>
+              <span>{t("tasks:conversation.terminal")}</span>
             </button>
             {isClaudeProvider ? (
               <button
@@ -972,10 +975,10 @@ export function TaskConversationPage({
                     ? "border-zinc-800 bg-background text-foreground"
                     : "border-transparent bg-zinc-900/40 text-zinc-500 hover:bg-zinc-900/60 hover:text-zinc-200"
                 )}
-                title="Claude Code native session JSONL"
+                title={t("tasks:conversation.transcriptTitle")}
               >
                 <ScrollText className="size-3.5" />
-                <span>Transcript</span>
+                <span>{t("tasks:conversation.transcript")}</span>
               </button>
             ) : null}
             <button
@@ -991,7 +994,7 @@ export function TaskConversationPage({
               )}
             >
               <Sparkles className="size-3.5" />
-              <span>Details</span>
+              <span>{t("tasks:conversation.details")}</span>
               {detail?.artifacts?.length ? (
                 <span className="rounded-full bg-emerald-500/20 px-1.5 py-px text-[9.5px] font-semibold text-emerald-300">
                   {detail.artifacts.length}
@@ -1007,7 +1010,7 @@ export function TaskConversationPage({
               <Link
                 href="/"
                 className="inline-flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                title="Back"
+                title={t("tasks:conversation.back")}
               >
                 <ArrowLeft className="size-3.5" />
               </Link>
@@ -1016,7 +1019,7 @@ export function TaskConversationPage({
               </h1>
               <span
                 className="shrink-0 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground"
-                title="Reads ~/.claude/projects/<slug>/<session>.jsonl"
+                title={t("tasks:conversation.transcriptHint")}
               >
                 claude-code
               </span>
@@ -1042,7 +1045,7 @@ export function TaskConversationPage({
               <Link
                 href="/"
                 className="inline-flex size-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                title="Back"
+                title={t("tasks:conversation.back")}
               >
                 <ArrowLeft className="size-3.5" />
               </Link>
@@ -1179,7 +1182,7 @@ export function TaskConversationPage({
             onClick={copyPrompt}
             disabled={!terminalPrompt}
             className="inline-flex size-7 items-center justify-center rounded text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-100 disabled:opacity-40"
-            title="Copy original prompt"
+            title={t("tasks:conversation.copyPrompt")}
           >
             <Copy className="size-3.5" />
           </button>
@@ -1202,7 +1205,7 @@ export function TaskConversationPage({
                   setBusy(false);
                 }
               }}
-              title="Gracefully close the CLI (writes /exit to the PTY)"
+              title={t("tasks:conversation.gracefulExit")}
             >
               <CheckCircle2 className="size-3.5" />
               Done
@@ -1225,7 +1228,7 @@ export function TaskConversationPage({
                   setBusy(false);
                 }
               }}
-              title="Send SIGTERM to the running PTY process"
+              title={t("tasks:conversation.sendSigterm")}
             >
               <Square className="size-3 fill-current" />
               Stop
@@ -1242,8 +1245,8 @@ export function TaskConversationPage({
           <DropdownMenu>
             <DropdownMenuTrigger
               className="inline-flex size-9 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-100"
-              title="More actions"
-              aria-label="More actions"
+              title={t("tasks:conversation.moreActions")}
+              aria-label={t("tasks:conversation.moreActions")}
             >
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
@@ -1333,7 +1336,7 @@ export function TaskConversationPage({
           <div className="flex items-center gap-2">
             {isTerminalMode && (
               <span
-                title="Running in terminal (PTY) mode"
+                title={t("tasks:conversation.ptyMode")}
                 className="inline-flex items-center gap-1 rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400"
               >
                 <Terminal className="size-3" />
@@ -1391,7 +1394,7 @@ export function TaskConversationPage({
             className="h-8 gap-1.5 text-[11px]"
             disabled={busy || isDemo || task.turns.length < 2}
             onClick={handleCompact}
-            title="Collapse prior turns into a digest to free context window"
+            title={t("tasks:conversation.compactContext")}
           >
             <RefreshCw className="size-3.5" />
             Compact
@@ -1405,8 +1408,8 @@ export function TaskConversationPage({
           <DropdownMenu>
             <DropdownMenuTrigger
               className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              title="More actions"
-              aria-label="More actions"
+              title={t("tasks:conversation.moreActions")}
+              aria-label={t("tasks:conversation.moreActions")}
             >
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
@@ -1481,7 +1484,7 @@ export function TaskConversationPage({
             <>
               <p className="flex-1 text-[13px] leading-relaxed text-foreground/80">
                 {task.meta.summary || (
-                  <span className="text-muted-foreground/70">No summary yet.</span>
+                  <span className="text-muted-foreground/70">{t("tasks:conversation.noSummary")}</span>
                 )}
               </p>
               <Button
@@ -1541,12 +1544,12 @@ export function TaskConversationPage({
                     {task.meta.status === "idle" ? (
                       <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-2 text-[11px] text-zinc-400">
                         <CheckCircle2 className="size-3 text-emerald-500" />
-                        <span>Session ended — type to continue in the same terminal.</span>
+                        <span>{t("tasks:conversation.sessionEnded")}</span>
                       </div>
                     ) : task.meta.status === "running" ? (
                       <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-2 text-[11px] text-zinc-400">
                         <Loader2 className="size-3 animate-spin text-emerald-500" />
-                        <span>Terminal live. Your next prompt queues after this turn finishes.</span>
+                        <span>{t("tasks:conversation.terminalLive")}</span>
                       </div>
                     ) : null}
                     <div className="[&_textarea]:bg-zinc-900 [&_textarea]:text-zinc-100 [&_textarea]:placeholder:text-zinc-500 [&_textarea]:border-zinc-800 [&_*]:!text-zinc-100">

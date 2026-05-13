@@ -1,0 +1,22 @@
+{
+  "conversation": {
+    "restartFromOriginal": "הפעלת המשימה מחדש מה-prompt המקורי",
+    "markAsDone": "סימון המשימה כהושלמה",
+    "viewAriaLabel": "תצוגת משימה",
+    "terminal": "טרמינל",
+    "transcript": "תמלול",
+    "details": "פרטים",
+    "transcriptTitle": "JSONL של סשן Claude Code מקורי",
+    "transcriptHint": "קורא מ-~/.claude/projects/<slug>/<session>.jsonl",
+    "back": "חזרה",
+    "copyPrompt": "העתקת ה-prompt המקורי",
+    "gracefulExit": "סגירה מסודרת של ה-CLI (שולח /exit ל-PTY)",
+    "sendSigterm": "שליחת SIGTERM לתהליך ה-PTY הרץ",
+    "moreActions": "פעולות נוספות",
+    "ptyMode": "רץ במצב טרמינל (PTY)",
+    "compactContext": "כיווץ תורים קודמים לתקציר כדי לפנות חלון הקשר",
+    "noSummary": "אין עדיין תקציר.",
+    "sessionEnded": "הסשן הסתיים — הקלידו להמשיך באותו טרמינל.",
+    "terminalLive": "הטרמינל פעיל. ה-prompt הבא שלכם ייכנס לתור לאחר שתור זה יסתיים."
+  }
+}
