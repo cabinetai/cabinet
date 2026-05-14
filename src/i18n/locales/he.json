@@ -232,7 +232,70 @@
     "placeholder": "הדביקו קישור (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, או כל URL)",
     "notValidUrl": "לא URL תקין",
     "anyUrlWorks": "כל URL ציבורי עובד.",
-    "facebook": "Facebook"
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "כל URL של iframe"
+  },
+  "rowActions": {
+    "stop": "עצירה",
+    "restart": "הפעלה מחדש",
+    "reassign": "הקצאה מחדש"
+  },
+  "schedulesPanel": {
+    "title": "משימות מתוזמנות",
+    "noJobs": "טרם הוגדרו משימות לארונית.",
+    "heartbeats": "פעימות",
+    "noHeartbeats": "טרם הוגדרו פעימות."
+  },
+  "mermaidViewer": {
+    "zoomOut": "התרחקות",
+    "zoomIn": "התקרבות",
+    "resetView": "איפוס תצוגה",
+    "syntaxError": "שגיאת תחביר בתרשים"
+  },
+  "helpPage": {
+    "keyboard": "מקלדת",
+    "skills": "כישורים",
+    "apiKeys": "מפתחות API",
+    "mcpServers": "שרתי MCP"
+  },
+  "keyboardShortcuts": {
+    "title": "קיצורי מקשים",
+    "filterPlaceholder": "סינון…",
+    "close": "סגירה"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "טרמינל חי",
+    "runningHeartbeat": "מריץ פעימה…",
+    "memory": "זיכרון",
+    "recentActivity": "פעילות אחרונה"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "האווטאר שלך",
+    "preset": "ערכה מוגדרת",
+    "useInitials": "שימוש בראשי תיבות",
+    "custom": "מותאם אישית"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "זוהו שינויים מקומיים בקוד האפליקציה"
+  },
+  "logsPanel": {
+    "classifiedError": "שגיאה מסווגת",
+    "session": "סשן",
+    "noEvents": "אין עדיין אירועים.",
+    "noTranscript": "אין עדיין תמלול."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "תוצאה",
+    "noSummary": "לא נלכד תקציר."
+  },
+  "scheduleRowPlus": {
+    "delete": "מחיקה"
+  },
+  "attachmentPicker": {
+    "attachFiles": "צירוף קבצים"
   },
   "dataLocations": {
     "title": "איפה הנתונים שלך חיים",

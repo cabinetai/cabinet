@@ -232,7 +232,70 @@
     "placeholder": "Paste a link (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, or any URL)",
     "notValidUrl": "Not a valid URL",
     "anyUrlWorks": "Any public URL works.",
-    "facebook": "Facebook"
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Any iframe URL"
+  },
+  "rowActions": {
+    "stop": "Stop",
+    "restart": "Restart",
+    "reassign": "Reassign"
+  },
+  "schedulesPanel": {
+    "title": "Scheduled jobs",
+    "noJobs": "No cabinet jobs configured yet.",
+    "heartbeats": "Heartbeats",
+    "noHeartbeats": "No heartbeats configured yet."
+  },
+  "mermaidViewer": {
+    "zoomOut": "Zoom out",
+    "zoomIn": "Zoom in",
+    "resetView": "Reset view",
+    "syntaxError": "Diagram syntax error"
+  },
+  "helpPage": {
+    "keyboard": "Keyboard",
+    "skills": "Skills",
+    "apiKeys": "API keys",
+    "mcpServers": "MCP servers"
+  },
+  "keyboardShortcuts": {
+    "title": "Keyboard shortcuts",
+    "filterPlaceholder": "Filter…",
+    "close": "Close"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Live Terminal",
+    "runningHeartbeat": "Running heartbeat…",
+    "memory": "Memory",
+    "recentActivity": "Recent Activity"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Your avatar",
+    "preset": "Preset",
+    "useInitials": "Use initials fallback",
+    "custom": "Custom"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Local app-code changes detected"
+  },
+  "logsPanel": {
+    "classifiedError": "Classified error",
+    "session": "Session",
+    "noEvents": "No events yet.",
+    "noTranscript": "No transcript yet."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "Result",
+    "noSummary": "No summary captured."
+  },
+  "scheduleRowPlus": {
+    "delete": "Delete"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Attach files"
   },
   "dataLocations": {
     "title": "Where your data lives",

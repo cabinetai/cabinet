@@ -108,7 +108,7 @@ export function UpdateSummary({
 
       {update.dirtyAppFiles.length > 0 && (
         <div className="rounded-lg border border-destructive/25 bg-destructive/10 p-3 text-xs text-destructive">
-          <p className="font-medium">Local app-code changes detected</p>
+          <p className="font-medium">{t("updateSummaryPlus:dirtyDetected")}</p>
           <p className="mt-1 break-all font-mono text-[11px]">
             {update.dirtyAppFiles.slice(0, 8).join(", ")}
             {update.dirtyAppFiles.length > 8 ? ` +${update.dirtyAppFiles.length - 8} more` : ""}

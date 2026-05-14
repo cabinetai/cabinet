@@ -12,6 +12,7 @@ import {
 import { ReassignMenu } from "./reassign-menu";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import type { TaskMeta, TaskStatus } from "@/types/tasks";
+import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Hover-revealed action cluster for a task row/card. Shows Stop / Restart /
@@ -29,6 +30,7 @@ export function RowActions({
   onRefresh?: () => Promise<void> | void;
   className?: string;
 }) {
+  const { t } = useLocale();
   const [busy, setBusy] = useState<
     "stop" | "restart" | "delete" | "reassign" | null
   >(null);
@@ -87,7 +89,7 @@ export function RowActions({
     >
       {visibility.stop ? (
         <ActionButton
-          title="Stop"
+          title={t("rowActions:stop")}
           tone="destructive"
           onClick={(e) => {
             e.stopPropagation();
@@ -99,7 +101,7 @@ export function RowActions({
       ) : null}
       {visibility.restart ? (
         <ActionButton
-          title="Restart"
+          title={t("rowActions:restart")}
           tone="primary"
           onClick={(e) => {
             e.stopPropagation();
@@ -121,7 +123,7 @@ export function RowActions({
           ) : (
             <ArrowRightLeft className="size-3.5" />
           )}
-          <span className="sr-only">Reassign</span>
+          <span className="sr-only">{t("rowActions:reassign")}</span>
         </ReassignMenu>
       ) : null}
       {visibility.delete ? (

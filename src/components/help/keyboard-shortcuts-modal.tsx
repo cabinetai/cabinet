@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { cn } from "@/lib/utils";
 import { Search as SearchIcon, X } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 
 // Audit #053: single cheat sheet listing every Cabinet keyboard shortcut.
 // Opened via the global "?" key (see src/hooks/use-global-hotkeys.ts) or
@@ -99,6 +100,7 @@ function renderKeyToken(token: string, isMac: boolean): string {
 }
 
 export function KeyboardShortcutsModal() {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const isMac = useMemo(() => isMacPlatform(), []);
@@ -136,9 +138,9 @@ export function KeyboardShortcutsModal() {
             "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95"
           )}
         >
-          <Dialog.Title className="sr-only">Keyboard shortcuts</Dialog.Title>
+          <Dialog.Title className="sr-only">{t("keyboardShortcuts:title")}</Dialog.Title>
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
-            <span className="text-[13px] font-semibold">Keyboard shortcuts</span>
+            <span className="text-[13px] font-semibold">{t("keyboardShortcuts:title")}</span>
             <div className="ml-auto flex items-center gap-2">
               <div className="relative">
                 <SearchIcon className="pointer-events-none absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
@@ -146,7 +148,7 @@ export function KeyboardShortcutsModal() {
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Filter…"
+                  placeholder={t("keyboardShortcuts:filterPlaceholder")}
                   className="h-7 w-44 rounded-md border border-border bg-background pl-6 pr-2 text-[12px] outline-none focus-visible:ring-1 focus-visible:ring-ring/60"
                   spellCheck={false}
                 />
@@ -154,7 +156,7 @@ export function KeyboardShortcutsModal() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Close"
+                aria-label={t("keyboardShortcuts:close")}
                 className="rounded p-1 text-muted-foreground hover:bg-muted"
               >
                 <X className="h-3.5 w-3.5" />

@@ -16,8 +16,10 @@ import {
 import { usePageMeta } from "@/hooks/use-page-meta";
 import { cn } from "@/lib/utils";
 import { ConversationApprovalPanel } from "./conversation-approval-panel";
+import { useLocale } from "@/i18n/use-locale";
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useLocale();
   const isCompleted = status === "completed";
   const isFailed = status === "failed";
   const Icon = isCompleted ? CheckCircle : isFailed ? XCircle : Clock;
@@ -44,6 +46,7 @@ export function ConversationResultView({
   onOpenArtifact: (path: string) => void;
   onRefresh?: () => void;
 }) {
+  const { t } = useLocale();
   const transcriptUrl = appendConversationCabinetPath(
     `/agents/conversations/${detail.meta.id}`,
     detail.meta.cabinetPath
@@ -82,7 +85,7 @@ export function ConversationResultView({
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-muted-foreground" />
-              <h4 className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Prompt</h4>
+              <h4 className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{t("conversationResult:prompt")}</h4>
             </div>
             <div className="flex items-center gap-1.5">
               <Button
@@ -124,7 +127,7 @@ export function ConversationResultView({
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <h4 className="text-[13px] font-semibold">Result</h4>
+              <h4 className="text-[13px] font-semibold">{t("conversationResult:result")}</h4>
             </div>
             <StatusBadge status={detail.meta.status} />
           </div>
@@ -138,7 +141,7 @@ export function ConversationResultView({
               Waiting for the CLI to emit a cabinet-block summary. Check the Terminal tab for live output.
             </p>
           ) : (
-            <p className="text-[13px] text-muted-foreground">No summary captured.</p>
+            <p className="text-[13px] text-muted-foreground">{t("conversationResult:noSummary")}</p>
           )}
 
           {detail.meta.contextSummary ? (

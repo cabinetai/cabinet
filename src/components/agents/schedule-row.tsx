@@ -160,7 +160,7 @@ function ScheduleRow({
               disabled={running}
               className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 disabled:opacity-60"
               aria-label={t("scheduleRow:runNow")}
-              title="Run now"
+              title={t("scheduleRow:runNow")}
             >
               {running ? (
                 <Loader2 className="size-3.5 animate-spin" />
@@ -195,8 +195,8 @@ function ScheduleRow({
                   setConfirming(true);
                 }}
                 className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-red-500/10 hover:text-red-500 focus:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100"
-                aria-label="Delete"
-                title="Delete"
+                aria-label={t("scheduleRowPlus:delete")}
+                title={t("scheduleRowPlus:delete")}
               >
                 <Trash2 className="size-3.5" />
               </button>

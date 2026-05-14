@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Download, Code2, Eye, Copy, Check, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { useLocale } from "@/i18n/use-locale";
 
 interface MermaidViewerProps {
   path: string;
@@ -11,6 +12,7 @@ interface MermaidViewerProps {
 }
 
 export function MermaidViewer({ path, title }: MermaidViewerProps) {
+  const { t } = useLocale();
   const [source, setSource] = useState("");
   const [svg, setSvg] = useState("");
   const [error, setError] = useState("");
@@ -142,16 +144,16 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
         {svg && !showSource && (
           <>
             <div className="h-4 w-px bg-border mx-0.5" />
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={zoomOut} title="Zoom out">
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={zoomOut} title={t("mermaidViewer:zoomOut")}>
               <ZoomOut className="h-3.5 w-3.5" />
             </Button>
             <span className="text-[11px] text-muted-foreground tabular-nums w-10 text-center select-none">
               {Math.round(zoom * 100)}%
             </span>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={zoomIn} title="Zoom in">
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={zoomIn} title={t("mermaidViewer:zoomIn")}>
               <ZoomIn className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={resetView} title="Reset view">
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={resetView} title={t("mermaidViewer:resetView")}>
               <Maximize className="h-3.5 w-3.5" />
             </Button>
             <div className="h-4 w-px bg-border mx-0.5" />
@@ -193,7 +195,7 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
               <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
                 <Code2 className="h-5 w-5 text-red-500" />
               </div>
-              <p className="text-red-500 font-medium">Diagram syntax error</p>
+              <p className="text-red-500 font-medium">{t("mermaidViewer:syntaxError")}</p>
             </div>
             <pre className="text-muted-foreground text-xs max-w-lg text-left bg-muted/50 rounded-md p-3 overflow-auto whitespace-pre-wrap">{error}</pre>
             <Button variant="outline" size="sm" onClick={() => setShowSource(true)}>

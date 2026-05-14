@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, CircleAlert, RefreshCw, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ConversationDetail, ConversationMeta } from "@/types/conversations";
+import { useLocale } from "@/i18n/use-locale";
 
 interface EventLine {
   ts?: string;
@@ -18,6 +19,7 @@ export function LogsPanel({
   taskId: string;
   cabinetPath?: string;
 }) {
+  const { t } = useLocale();
   const [events, setEvents] = useState<EventLine[] | null>(null);
   const [transcript, setTranscript] = useState<string | null>(null);
   const [meta, setMeta] = useState<ConversationMeta | null>(null);
@@ -87,7 +89,7 @@ export function LogsPanel({
               <ChevronRight className="size-3.5 text-destructive" />
             )}
             <CircleAlert className="size-3.5 text-destructive" />
-            <span className="text-destructive">Classified error</span>
+            <span className="text-destructive">{t("logsPanel:classifiedError")}</span>
             <span className="ml-1 rounded-sm bg-destructive/15 px-1.5 py-px text-[10px] font-medium uppercase tracking-wide text-destructive">
               {meta.errorKind.replace(/_/g, " ")}
             </span>
@@ -121,7 +123,7 @@ export function LogsPanel({
         <section className="rounded-xl border border-border/70 bg-card">
           <div className="flex items-center gap-2 px-4 py-2 text-[12px]">
             <RefreshCw className="size-3.5 text-muted-foreground" />
-            <span className="font-medium">Session</span>
+            <span className="font-medium">{t("logsPanel:session")}</span>
             <span className="ml-auto font-mono text-[11px] text-muted-foreground">
               {session.alive ? "alive" : "dead"}
               {session.displayId ? ` · ${session.displayId}` : ""}
@@ -158,7 +160,7 @@ export function LogsPanel({
             {events === null ? (
               <p className="text-[12px] text-muted-foreground">Loading…</p>
             ) : events.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground">No events yet.</p>
+              <p className="text-[12px] text-muted-foreground">{t("logsPanel:noEvents")}</p>
             ) : (
               <ul className="space-y-1">
                 {events.map((event, i) => (
@@ -214,7 +216,7 @@ export function LogsPanel({
             {transcript === null ? (
               <p className="text-[12px] text-muted-foreground">Loading…</p>
             ) : transcript.trim() === "" ? (
-              <p className="text-[12px] text-muted-foreground">No transcript yet.</p>
+              <p className="text-[12px] text-muted-foreground">{t("logsPanel:noTranscript")}</p>
             ) : (
               <pre className="max-h-[60vh] overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted/40 p-3 font-mono text-[11.5px] leading-relaxed text-foreground/85">
                 {transcript}

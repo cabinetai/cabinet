@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Paperclip } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AttachmentPickerButtonProps {
   onPick: (files: FileList) => void;
@@ -17,6 +18,7 @@ export function AttachmentPickerButton({
   accept,
   className,
 }: AttachmentPickerButtonProps) {
+  const { t } = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -25,8 +27,8 @@ export function AttachmentPickerButton({
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={disabled}
-        aria-label="Attach files"
-        title="Attach files"
+        aria-label={t("attachmentPicker:attachFiles")}
+        title={t("attachmentPicker:attachFiles")}
         className={cn(
           "inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-40",
           className
@@ -42,7 +44,7 @@ export function AttachmentPickerButton({
         // shows up to assistive tech. Give it both name and label so it
         // stops tripping the "form field needs id/name" warning.
         name="attachment-picker"
-        aria-label="Attach files"
+        aria-label={t("attachmentPicker:attachFiles")}
         multiple
         accept={accept}
         className="hidden"

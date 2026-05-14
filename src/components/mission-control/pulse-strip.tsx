@@ -274,7 +274,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2 px-3 sm:px-4 py-2">
         <MetricCard
           icon={Bot}
-          label="Agents"
+          label={t("agents:pulseStrip.agents")}
           value={metrics.totalAgents}
           subValue={`${metrics.activeAgents} active`}
           status={
@@ -285,7 +285,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={Play}
-          label="Running"
+          label={t("agents:pulseStrip.running")}
           value={metrics.runningPlays}
           subValue="running now"
           onClick={handleRunningClick}
@@ -293,7 +293,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={Target}
-          label="Goals"
+          label={t("agents:pulseStrip.goals")}
           value={`${metrics.goalsOnTrack}/${metrics.totalGoals}`}
           subValue="goals on track"
           status={goalStatus}
@@ -301,7 +301,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={AlertTriangle}
-          label="Alerts"
+          label={t("agents:pulseStrip.alerts")}
           value={metrics.alerts}
           subValue="pending alerts"
           status={metrics.alerts >= 3 ? "critical" : metrics.alerts > 0 ? "warning" : "ok"}
@@ -309,7 +309,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={DollarSign}
-          label="Cost"
+          label={t("agents:pulseStrip.cost")}
           value={metrics.estimatedCost !== undefined && metrics.estimatedCost > 0
             ? `$${metrics.estimatedCost.toFixed(2)}`
             : "$0"}

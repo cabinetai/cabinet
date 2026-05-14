@@ -21,6 +21,7 @@ import {
   useUserProfile,
 } from "@/hooks/use-user-profile";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 export function EditUserAvatarDialog({
   open,
@@ -29,6 +30,7 @@ export function EditUserAvatarDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { t } = useLocale();
   const state = useUserProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profile = state.status === "ready" ? state.data.profile : null;
@@ -80,7 +82,7 @@ export function EditUserAvatarDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Your avatar</DialogTitle>
+          <DialogTitle>{t("editUserAvatar:yourAvatar")}</DialogTitle>
           <DialogDescription>
             Pick a preset or upload your own image. Appears in conversations and
             anywhere else you&apos;re shown in the app.
@@ -105,7 +107,7 @@ export function EditUserAvatarDialog({
           </div>
 
           <div className="space-y-1.5">
-            <span className="text-xs font-medium text-foreground/80">Preset</span>
+            <span className="text-xs font-medium text-foreground/80">{t("editUserAvatar:preset")}</span>
             <div className="grid max-h-64 grid-cols-6 gap-2 overflow-y-auto pr-1">
               <button
                 type="button"
@@ -114,7 +116,7 @@ export function EditUserAvatarDialog({
                   "flex h-12 w-12 items-center justify-center rounded-full border-2 bg-muted text-[10px] text-muted-foreground",
                   !profile?.avatar ? "border-foreground" : "border-transparent"
                 )}
-                title="Use initials fallback"
+                title={t("editUserAvatar:useInitials")}
               >
                 None
               </button>
@@ -146,7 +148,7 @@ export function EditUserAvatarDialog({
           </div>
 
           <div className="space-y-1.5">
-            <span className="text-xs font-medium text-foreground/80">Custom</span>
+            <span className="text-xs font-medium text-foreground/80">{t("editUserAvatar:custom")}</span>
             <div className="flex items-center gap-2">
               <input
                 ref={fileInputRef}

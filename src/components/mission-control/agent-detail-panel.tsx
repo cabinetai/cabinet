@@ -635,7 +635,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               </Section>
 
               {/* LIVE TERMINAL */}
-              <Section icon={Terminal} title="Live Terminal" action={
+              <Section icon={Terminal} title={t("agentDetailPanelPlus:liveTerminal")} action={
                 <div className="flex items-center gap-2">
                   {history.length > 0 && !runningHeartbeat && (
                     <span className="text-[10px] text-muted-foreground/50 tabular-nums">
@@ -673,7 +673,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                   <div className="rounded-lg bg-[#0a0a0a] border border-emerald-500/20 p-3 font-mono text-[11px] leading-relaxed">
                     <div className="flex items-center gap-2 text-emerald-400 mb-2">
                       <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="font-medium">Running heartbeat...</span>
+                      <span className="font-medium">{t("agentDetailPanelPlus:runningHeartbeat")}</span>
                     </div>
                     <div className="text-[#e5e5e5]/50 space-y-1">
                       <p>$ Loading persona &amp; memory...</p>
@@ -719,7 +719,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               </Section>
 
               {/* MEMORY */}
-              <Section icon={Brain} title="Memory" action={
+              <Section icon={Brain} title={t("agentDetailPanelPlus:memory")} action={
                 <button
                   className="text-[10px] text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
                   onClick={() => onOpenFile?.(`/data/.agents/${slug}/.memory`)}
@@ -767,7 +767,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               </Section>
 
               {/* RECENT ACTIVITY (interleaved heartbeats + slack messages) */}
-              <Section icon={Clock} title="Recent Activity" action={
+              <Section icon={Clock} title={t("agentDetailPanelPlus:recentActivity")} action={
                 <div className="flex items-center gap-1">
                   {(["all", "heartbeats", "messages"] as const).map((tab) => (
                     <button

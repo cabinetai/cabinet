@@ -98,10 +98,10 @@ export function EmbedPopover({ anchor, onCancel, onInsert }: Props) {
               </span>
             ))}
             <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">TikTok</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Facebook</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Instagram</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Spotify</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Any iframe URL</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">{t("embedPopover:facebook")}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">{t("embedPopover:instagram")}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">{t("embedPopover:spotify")}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">{t("embedPopover:anyIframe")}</span>
           </div>
         </div>
       </div>

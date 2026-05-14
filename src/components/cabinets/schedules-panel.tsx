@@ -5,6 +5,7 @@ import { Clock3 } from "lucide-react";
 import { cronToHuman, cronToShortLabel } from "@/lib/agents/cron-utils";
 import { cn } from "@/lib/utils";
 import type { CabinetAgentSummary, CabinetJobSummary } from "@/types/cabinets";
+import { useLocale } from "@/i18n/use-locale";
 
 export function SchedulesPanel({
   agents,
@@ -19,6 +20,7 @@ export function SchedulesPanel({
   onJobClick?: (job: CabinetJobSummary, agent: CabinetAgentSummary) => void;
   onHeartbeatClick?: (agent: CabinetAgentSummary) => void;
 }) {
+  const { t } = useLocale();
   const agentMap = useMemo(() => {
     const map = new Map<string, CabinetAgentSummary>();
     for (const a of agents) {
@@ -58,7 +60,7 @@ export function SchedulesPanel({
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-foreground">Scheduled jobs</h3>
+        <h3 className="text-sm font-medium text-foreground">{t("schedulesPanel:title")}</h3>
         <div className="mt-3 border-t border-border/70">
           {jobsWithOwners.length > 0 ? (
             jobsWithOwners.map((job) => {
@@ -103,13 +105,13 @@ export function SchedulesPanel({
               );
             })
           ) : (
-            <p className="py-4 text-sm text-muted-foreground">No cabinet jobs configured yet.</p>
+            <p className="py-4 text-sm text-muted-foreground">{t("schedulesPanel:noJobs")}</p>
           )}
         </div>
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-foreground">Heartbeats</h3>
+        <h3 className="text-sm font-medium text-foreground">{t("schedulesPanel:heartbeats")}</h3>
         <div className="mt-3 border-t border-border/70">
           {heartbeatAgents.length > 0 ? (
             heartbeatAgents.map((agent) => (
@@ -135,7 +137,7 @@ export function SchedulesPanel({
               </button>
             ))
           ) : (
-            <p className="py-4 text-sm text-muted-foreground">No heartbeats configured yet.</p>
+            <p className="py-4 text-sm text-muted-foreground">{t("schedulesPanel:noHeartbeats")}</p>
           )}
         </div>
       </div>

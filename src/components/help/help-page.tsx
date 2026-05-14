@@ -190,7 +190,7 @@ function getHelpItems(t: (k: string) => string): HelpItem[] { return [
     id: "shortcuts",
     title: (
       <>
-        <span style={{ color: P.accent }}>Keyboard</span> shortcuts.
+        <span style={{ color: P.accent }}>{t("helpPage:keyboard")}</span> shortcuts.
       </>
     ),
     description:
@@ -205,7 +205,7 @@ function getHelpItems(t: (k: string) => string): HelpItem[] { return [
     id: "skills",
     title: (
       <>
-        <span style={{ color: P.accent }}>Skills</span> for your agents.
+        <span style={{ color: P.accent }}>{t("helpPage:skills")}</span> for your agents.
       </>
     ),
     description:
@@ -218,7 +218,7 @@ function getHelpItems(t: (k: string) => string): HelpItem[] { return [
     id: "api-keys",
     title: (
       <>
-        <span style={{ color: P.accent }}>API keys</span> for your tools.
+        <span style={{ color: P.accent }}>{t("helpPage:apiKeys")}</span> for your tools.
       </>
     ),
     description:
@@ -231,7 +231,7 @@ function getHelpItems(t: (k: string) => string): HelpItem[] { return [
     id: "integrations",
     title: (
       <>
-        <span style={{ color: P.accent }}>MCP servers</span> & integrations.
+        <span style={{ color: P.accent }}>{t("helpPage:mcpServers")}</span> & integrations.
       </>
     ),
     description:
