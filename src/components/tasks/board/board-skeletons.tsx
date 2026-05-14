@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Skeleton loaders that mirror each view's real layout so the Tasks board
@@ -30,6 +31,7 @@ function Bar({ className, style }: BarProps) {
 }
 
 export function ListSkeleton({ rowCount = 10 }: { rowCount?: number }) {
+  const { t } = useLocale();
   // Pre-baked widths so the skeleton reads as "varied rows" rather than
   // identical stripes. Cycling through keeps every render stable.
   const widths = [82, 68, 76, 60, 88, 72, 58, 80, 64, 78, 72, 86];
@@ -37,7 +39,7 @@ export function ListSkeleton({ rowCount = 10 }: { rowCount?: number }) {
     <div
       className="flex flex-1 flex-col gap-0.5 overflow-hidden px-1 pt-1"
       aria-busy="true"
-      aria-label="Loading tasks"
+      aria-label={t("boardSkeleton:loadingTasks")}
     >
       {Array.from({ length: rowCount }).map((_, i) => (
         <div
@@ -60,11 +62,12 @@ export function ListSkeleton({ rowCount = 10 }: { rowCount?: number }) {
 }
 
 export function KanbanSkeleton() {
+  const { t } = useLocale();
   return (
     <div
       className="flex min-h-0 flex-1 gap-2 overflow-x-auto px-2 pt-2"
       aria-busy="true"
-      aria-label="Loading tasks"
+      aria-label={t("boardSkeleton:loadingTasks")}
     >
       {LANE_TITLES.map((title, laneIdx) => (
         <div
@@ -95,11 +98,12 @@ export function KanbanSkeleton() {
 }
 
 export function ScheduleSkeleton() {
+  const { t } = useLocale();
   return (
     <div
       className="flex flex-1 flex-col gap-2 overflow-hidden px-3 pt-3"
       aria-busy="true"
-      aria-label="Loading tasks"
+      aria-label={t("boardSkeleton:loadingTasks")}
     >
       {Array.from({ length: 6 }).map((_, i) => (
         <div

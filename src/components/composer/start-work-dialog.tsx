@@ -37,6 +37,7 @@ import { createConversation } from "@/lib/agents/conversation-client";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import type { JobConfig } from "@/types/jobs";
+import { useLocale } from "@/i18n/use-locale";
 
 const PLACEHOLDERS = [
   "Write a blog post about our Q2 results...",
@@ -75,6 +76,7 @@ export function StartWorkDialog({
   initialAgentSlug?: string;
   onStarted?: (conversationId: string, conversationCabinetPath?: string) => void;
 }) {
+  const { t } = useLocale();
   const treeNodes = useTreeStore((s) => s.nodes);
   const setSection = useAppStore((s) => s.setSection);
 
@@ -395,7 +397,7 @@ export function StartWorkDialog({
             <WhenChip mode={mode} onChange={handleModeChange} />
             <DialogClose className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground">
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{t("startWork:close")}</span>
             </DialogClose>
           </div>
         </DialogHeader>
@@ -605,11 +607,12 @@ function AgentDropdown({
   selectedAgent: CabinetAgentSummary | null;
   onSelect: (slug: string) => void;
 }) {
+  const { t } = useLocale();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border/70 bg-background px-2 text-[11px] text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-        title="Select agent"
+        title={t("startWork:selectAgent")}
       >
         {selectedAgent ? (
           <AgentAvatar agent={selectedAgent} shape="circle" size="xs" />

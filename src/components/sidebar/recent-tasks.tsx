@@ -10,6 +10,7 @@ import { getAgentColor, tintFromHex } from "@/lib/agents/cron-compute";
 import { isLegacyAdapterType } from "@/lib/agents/adapters/legacy-ids";
 import type { ConversationMeta } from "@/types/conversations";
 import type { TaskMeta } from "@/types/tasks";
+import { useLocale } from "@/i18n/use-locale";
 
 function normalizeConversation(meta: ConversationMeta): TaskMeta {
   return conversationMetaToTaskMeta(meta);
@@ -67,6 +68,7 @@ export function RecentTasks({
   cabinetPath?: string;
   agents?: SidebarAgentRef[];
 }) {
+  const { t } = useLocale();
   const setSection = useAppStore((s) => s.setSection);
   const activeTaskId = useAppStore((s) =>
     s.section.type === "task" ? s.section.taskId : undefined
@@ -286,7 +288,7 @@ export function RecentTasks({
             {isLegacyAdapterType(task.adapterType) && (
               <Terminal
                 className="ml-auto size-2.5 shrink-0 text-emerald-500"
-                aria-label="Terminal (PTY) mode"
+                aria-label={t("recentTasks:ptyMode")}
               />
             )}
           </button>
@@ -308,10 +310,10 @@ export function RecentTasks({
             animationDelay: `${Math.min(visibleTasks.length, 12) * 22}ms`,
             animationFillMode: "backwards",
           }}
-          title="Reveal more older tasks"
+          title={t("recentTasks:revealOlder")}
         >
           <span className="size-1.5 shrink-0" aria-hidden />
-          <span>Show older</span>
+          <span>{t("recentTasks:showOlder")}</span>
         </button>
       )}
     </>

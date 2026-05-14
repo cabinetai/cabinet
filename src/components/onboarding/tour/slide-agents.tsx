@@ -3,6 +3,7 @@
 import { Brain, Heart, Calendar, Search, PenLine, FolderTree } from "lucide-react";
 import { MockupSidebar } from "./mockup-sidebar";
 import { TOUR_PALETTE as P } from "./palette";
+import { useLocale } from "@/i18n/use-locale";
 
 const OTHER_AGENTS = [
   { name: "Writer", icon: PenLine, tone: "#6B8CC4" },
@@ -10,6 +11,7 @@ const OTHER_AGENTS = [
 ];
 
 export function SlideAgents() {
+  const { t } = useLocale();
   return (
     <div className="grid h-full grid-cols-[minmax(260px,320px)_1fr] gap-10 lg:gap-14 items-center">
       <div className="h-[440px] w-full">
@@ -108,7 +110,7 @@ export function SlideAgents() {
                 num={1}
                 icon={Brain}
                 iconColor={P.accent}
-                label="Persona"
+                label={t("slideAgents:persona")}
                 body="&ldquo;Rigorous analyst. Cites sources. Flags conflicting claims.&rdquo;"
                 delay="2500ms"
               />
@@ -118,7 +120,7 @@ export function SlideAgents() {
                 num={2}
                 icon={Heart}
                 iconColor="#C26B6B"
-                label="Heartbeat"
+                label={t("slideAgents:heartbeat")}
                 body="Scans @Market Research every 15 min"
                 delay="2900ms"
               />
@@ -128,7 +130,7 @@ export function SlideAgents() {
                 num={3}
                 icon={Calendar}
                 iconColor="#8B7FB5"
-                label="Jobs"
+                label={t("slideAgents:jobs")}
                 body="Mon 9:00 · Weekly competitor digest"
                 delay="3300ms"
               />
@@ -159,7 +161,7 @@ export function SlideAgents() {
             animationDelay: "180ms",
           }}
         >
-          Your <span style={{ color: P.accent }}>AI team</span>.
+          Your <span style={{ color: P.accent }}>{t("slideAgents:aiTeam")}</span>.
         </h2>
         <p
           className="font-body-serif text-base leading-relaxed opacity-0 lg:text-lg"

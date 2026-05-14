@@ -333,7 +333,7 @@ function AddKeyForm({
         <button
           onClick={onCancel}
           className="text-muted-foreground hover:text-foreground p-1 -m-1"
-          title="Cancel"
+          title={t("apiKeysSection:cancel")}
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -407,7 +407,7 @@ function AddKeyForm({
           type="password"
           value={state.value}
           onChange={(e) => setState({ ...state, value: e.target.value })}
-          placeholder="paste here"
+          placeholder={t("apiKeysSection:pasteHere")}
           className="h-8 text-[12.5px] font-mono"
           autoComplete="off"
           spellCheck={false}
@@ -451,6 +451,7 @@ function EditKeyForm({
   onSubmit: (value: string) => void;
   onCancel: () => void;
 }): React.ReactElement {
+  const { t } = useLocale();
   const canSubmit = state.value.trim().length > 0;
   return (
     <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
@@ -459,7 +460,7 @@ function EditKeyForm({
         type="password"
         value={state.value}
         onChange={(e) => setState({ ...state, value: e.target.value })}
-        placeholder="paste new value"
+        placeholder={t("apiKeysSection:pasteNewValue")}
         className="h-7 text-[12.5px] font-mono flex-1"
         autoFocus
         autoComplete="off"

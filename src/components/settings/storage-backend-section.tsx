@@ -19,6 +19,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Github, ExternalLink, AlertCircle, CheckCircle2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/i18n/use-locale";
 
 const IS_CLOUD = process.env.NEXT_PUBLIC_CABINET_EDITION === "cloud";
 const POLL_INTERVAL_MS = 2000;
@@ -43,6 +44,7 @@ interface StorageStatus {
 }
 
 export function StorageBackendSection() {
+  const { t } = useLocale();
   const [status, setStatus] = useState<StorageStatus | null>(null);
   const [repos, setRepos] = useState<RepoSummary[] | null>(null);
   const [loadingRepos, setLoadingRepos] = useState(false);
@@ -108,7 +110,7 @@ export function StorageBackendSection() {
   if (!status) {
     return (
       <div className="border-t border-border pt-6">
-        <h3 className="text-[14px] font-semibold mb-1">Storage backend</h3>
+        <h3 className="text-[14px] font-semibold mb-1">{t("storageBackend:title")}</h3>
         <p className="text-[12px] text-muted-foreground flex items-center gap-2">
           <Loader2 className="h-3 w-3 animate-spin" /> Loading…
         </p>
@@ -227,7 +229,7 @@ export function StorageBackendSection() {
 
   return (
     <div className="border-t border-border pt-6">
-      <h3 className="text-[14px] font-semibold mb-1">Storage backend</h3>
+      <h3 className="text-[14px] font-semibold mb-1">{t("storageBackend:title")}</h3>
       <p className="text-[12px] text-muted-foreground mb-4">
         By default cabinet stores your data in our managed cloud. You can switch to your own GitHub repo for full version history and portability.
       </p>
@@ -243,7 +245,7 @@ export function StorageBackendSection() {
         <div className="mb-4 flex items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-[12px]">
           <AlertCircle className="h-4 w-4 shrink-0 text-red-500 mt-0.5" />
           <div>
-            <div className="font-medium">Migration failed</div>
+            <div className="font-medium">{t("storageBackend:migrationFailed")}</div>
             <div className="text-muted-foreground">{status.error}</div>
           </div>
         </div>

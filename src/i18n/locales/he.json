@@ -297,6 +297,61 @@
   "attachmentPicker": {
     "attachFiles": "צירוף קבצים"
   },
+  "demos": {
+    "aiTeam": "צוות AI",
+    "specialist": "מומחה",
+    "legal": "משפטי",
+    "global": "גלובלי",
+    "editor": "עורך",
+    "slashMenu": "תפריט לוכסן"
+  },
+  "slideAgents": {
+    "persona": "פרסונה",
+    "heartbeat": "פעימה",
+    "jobs": "משימות",
+    "aiTeam": "צוות AI"
+  },
+  "startWork": {
+    "close": "סגירה",
+    "selectAgent": "בחירת סוכן"
+  },
+  "googleDoc": {
+    "noUrl": "לא הוגדר URL של Google",
+    "anyoneWithLink": "כל מי שיש לו הקישור",
+    "publishedToWeb": "פורסם לאינטרנט"
+  },
+  "feedback": {
+    "close": "סגירה",
+    "rolePlaceholder": "למשל: יזם עצמאי, מנהל מוצר ב-SaaS, סטודנט עיצוב, חובב…",
+    "joinDiscord": "הצטרפו לדיסקורד"
+  },
+  "apiKeysSection": {
+    "cancel": "ביטול",
+    "pasteHere": "הדביקו כאן",
+    "pasteNewValue": "הדביקו ערך חדש"
+  },
+  "storageBackend": {
+    "title": "תשתית אחסון",
+    "migrationFailed": "ההגירה נכשלה"
+  },
+  "linkRepo": {
+    "title": "טעינת ידע",
+    "autoDetectPlaceholder": "זיהוי אוטומטי מ-git remote (אופציונלי)",
+    "shortSummaryPlaceholder": "תיאור קצר אופציונלי לסוכנים"
+  },
+  "recentTasks": {
+    "ptyMode": "מצב טרמינל (PTY)",
+    "revealOlder": "חשיפת משימות ישנות נוספות",
+    "showOlder": "הצגת ישנות"
+  },
+  "treeNode": {
+    "openCabinet": "פתיחת תצוגת הארונית",
+    "pageTitlePlaceholder": "כותרת הדף…",
+    "rename": "שינוי שם"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "טוען משימות"
+  },
   "dataLocations": {
     "title": "איפה הנתונים שלך חיים",
     "whyThisMatters": "למה זה חשוב",

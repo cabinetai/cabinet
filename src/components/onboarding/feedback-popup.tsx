@@ -9,6 +9,7 @@ import {
   formatGithubStars,
 } from "@/components/layout/star-explosion";
 import { useGithubStatsStore } from "@/stores/github-stats-store";
+import { useLocale } from "@/i18n/use-locale";
 
 const LAUNCH_COUNT_KEY = "cabinet.feedback.launchCount";
 const PROMPTED_AT_2_KEY = "cabinet.feedback.promptedAt2";
@@ -137,6 +138,7 @@ interface PopupProps {
 }
 
 function FeedbackForm({ trigger, launchCount, onClose }: PopupProps) {
+  const { t } = useLocale();
   const [rating, setRating] = useState<number>(0);
   const [q1, setQ1] = useState("");
   const [q2, setQ2] = useState("");
@@ -298,7 +300,7 @@ function FeedbackForm({ trigger, launchCount, onClose }: PopupProps) {
       <div className="relative max-w-lg w-[92vw] rounded-xl border border-border bg-card p-6 shadow-xl">
         <button
           type="button"
-          aria-label="Close"
+          aria-label={t("feedback:close")}
           className="absolute top-3 right-3 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
           onClick={dismiss}
         >
@@ -413,7 +415,7 @@ function FeedbackForm({ trigger, launchCount, onClose }: PopupProps) {
             type="text"
             value={background}
             onChange={(e) => setBackground(e.target.value.slice(0, BACKGROUND_MAX))}
-            placeholder="e.g. indie hacker, PM at a SaaS, design student, hobbyist…"
+            placeholder={t("feedback:rolePlaceholder")}
             maxLength={BACKGROUND_MAX}
             className="w-full rounded-md border border-border bg-background px-2.5 py-2 text-[12.5px] focus:outline-none focus:ring-2 focus:ring-ring/50"
           />
@@ -431,7 +433,7 @@ function FeedbackForm({ trigger, launchCount, onClose }: PopupProps) {
           >
             Want to talk directly, or hang with other Cabinet members?
             {" "}
-            <span className="underline">Join the Discord</span> →
+            <span className="underline">{t("feedback:joinDiscord")}</span> →
           </a>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={dismiss} disabled={submitting}>

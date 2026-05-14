@@ -2,9 +2,11 @@
 
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 /* ─── shared kbd chip ─────────────────────────────────────────────────── */
 function Kbd({ children }: { children: React.ReactNode }) {
+  const { t } = useLocale();
   return (
     <kbd
       className="inline-flex items-center rounded px-1.5 py-0.5 font-mono text-[10.5px] font-semibold leading-none"
@@ -66,6 +68,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 const MOD = "⌘";
 
 function SlideGlobal() {
+  const { t } = useLocale();
   const rows: { keys: React.ReactNode[]; label: string }[] = [
     { keys: [`${MOD}⌥T`], label: "Add task to Inbox" },
     { keys: [`${MOD}⌥R`], label: "Run task now" },
@@ -92,7 +95,7 @@ function SlideGlobal() {
       description="Global shortcuts work from any surface — editor, agents, tasks, terminal. No hunting through menus."
     >
       <div style={{ width: 360 }} className="space-y-1">
-        <SectionLabel>Global</SectionLabel>
+        <SectionLabel>{t("demos:global")}</SectionLabel>
         {rows.map((r, i) => (
           <Row key={i} keys={r.keys} label={r.label} delay={280 + i * 60} />
         ))}
@@ -103,6 +106,7 @@ function SlideGlobal() {
 
 /* ─── Slide 2: Editor shortcuts ─────────────────────────────────────── */
 function SlideEditor() {
+  const { t } = useLocale();
   const rows: { keys: React.ReactNode[]; label: string }[] = [
     { keys: ["/"], label: "Open slash command menu" },
     { keys: [`${MOD}E`], label: "Add / edit link" },
@@ -134,7 +138,7 @@ function SlideEditor() {
       <div className="flex gap-3" style={{ width: 420 }}>
         {/* keyboard shortcuts */}
         <div className="flex-1 space-y-1">
-          <SectionLabel>Editor</SectionLabel>
+          <SectionLabel>{t("demos:editor")}</SectionLabel>
           {rows.map((r, i) => (
             <Row key={i} keys={r.keys} label={r.label} delay={280 + i * 60} />
           ))}
@@ -142,7 +146,7 @@ function SlideEditor() {
 
         {/* slash commands */}
         <div style={{ width: 140 }} className="space-y-1">
-          <SectionLabel>Slash menu</SectionLabel>
+          <SectionLabel>{t("demos:slashMenu")}</SectionLabel>
           {slashRows.map((r, i) => (
             <div
               key={i}

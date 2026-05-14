@@ -59,6 +59,7 @@ import { LinkRepoDialog } from "./link-repo-dialog";
 import { NewCabinetDialog } from "./new-cabinet-dialog";
 import { useFileImport } from "./use-file-import";
 import { getDataDir } from "@/lib/data-dir-cache";
+import { useLocale } from "@/i18n/use-locale";
 
 interface TreeNodeProps {
   node: TreeNodeType;
@@ -87,6 +88,7 @@ export function TreeNode({
   onMoveToRequest,
   animationDelayMs,
 }: TreeNodeProps) {
+  const { t } = useLocale();
   const {
     selectedPath,
     expandedPaths,
@@ -533,7 +535,7 @@ export function TreeNode({
                 role="button"
                 tabIndex={0}
                 aria-label={`Open cabinet ${title}`}
-                title="Open cabinet view"
+                title={t("treeNode:openCabinet")}
                 onClick={handleOpenCabinet}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -660,7 +662,7 @@ export function TreeNode({
             className="flex gap-2"
           >
             <Input
-              placeholder="Page title..."
+              placeholder={t("treeNode:pageTitlePlaceholder")}
               value={subPageTitle}
               onChange={(e) => setSubPageTitle(e.target.value)}
               autoFocus
@@ -675,7 +677,7 @@ export function TreeNode({
       <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Rename</DialogTitle>
+            <DialogTitle>{t("treeNode:rename")}</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={async (e) => {

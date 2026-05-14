@@ -297,6 +297,61 @@
   "attachmentPicker": {
     "attachFiles": "Attach files"
   },
+  "demos": {
+    "aiTeam": "AI team",
+    "specialist": "Specialist",
+    "legal": "Legal",
+    "global": "Global",
+    "editor": "Editor",
+    "slashMenu": "Slash menu"
+  },
+  "slideAgents": {
+    "persona": "Persona",
+    "heartbeat": "Heartbeat",
+    "jobs": "Jobs",
+    "aiTeam": "AI team"
+  },
+  "startWork": {
+    "close": "Close",
+    "selectAgent": "Select agent"
+  },
+  "googleDoc": {
+    "noUrl": "No Google URL set",
+    "anyoneWithLink": "Anyone with the link",
+    "publishedToWeb": "Published to the web"
+  },
+  "feedback": {
+    "close": "Close",
+    "rolePlaceholder": "e.g. indie hacker, PM at a SaaS, design student, hobbyist…",
+    "joinDiscord": "Join the Discord"
+  },
+  "apiKeysSection": {
+    "cancel": "Cancel",
+    "pasteHere": "paste here",
+    "pasteNewValue": "paste new value"
+  },
+  "storageBackend": {
+    "title": "Storage backend",
+    "migrationFailed": "Migration failed"
+  },
+  "linkRepo": {
+    "title": "Load Knowledge",
+    "autoDetectPlaceholder": "Auto-detect from git remote (optional)",
+    "shortSummaryPlaceholder": "Optional short summary for agents"
+  },
+  "recentTasks": {
+    "ptyMode": "Terminal (PTY) mode",
+    "revealOlder": "Reveal more older tasks",
+    "showOlder": "Show older"
+  },
+  "treeNode": {
+    "openCabinet": "Open cabinet view",
+    "pageTitlePlaceholder": "Page title…",
+    "rename": "Rename"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Loading tasks"
+  },
   "dataLocations": {
     "title": "Where your data lives",
     "whyThisMatters": "Why this matters",

@@ -21,8 +21,10 @@ import {
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 function CardChrome({ width = 320, children }: { width?: number; children: React.ReactNode }) {
+  const { t } = useLocale();
   return (
     <div
       className="rounded-2xl"
@@ -40,6 +42,7 @@ function CardChrome({ width = 320, children }: { width?: number; children: React
 
 /* ── Slide 1: Hire your team ─────────────────────────────────────────── */
 function SlideHire() {
+  const { t } = useLocale();
   const team: { name: string; role: string; icon: typeof Search; tint: string; tag: string }[] = [
     { name: "Researcher", role: "Specialist", icon: Search, tint: "#E8C896", tag: "Claude · Sonnet" },
     { name: "Editor", role: "Specialist", icon: PenLine, tint: "#D9B98A", tag: "GPT-4" },
@@ -51,7 +54,7 @@ function SlideHire() {
     <DemoSlideShell
       title={
         <>
-          Your <span style={{ color: P.accent }}>AI team</span>.
+          Your <span style={{ color: P.accent }}>{t("demos:aiTeam")}</span>.
         </>
       }
       description={
@@ -116,6 +119,7 @@ function SlideHire() {
 
 /* ── Slide 2: Each agent is a persona ────────────────────────────────── */
 function SlidePersona() {
+  const { t } = useLocale();
   const others: { label: string; icon: typeof Gavel; tint: string }[] = [
     { label: "Lead Marketer", icon: Megaphone, tint: "#E8C896" },
     { label: "Mom guidance", icon: Heart, tint: "#F0C9C0" },
@@ -191,9 +195,9 @@ function SlidePersona() {
                 className="mt-0.5 text-[11px] flex items-center gap-1.5"
                 style={{ color: P.textTertiary }}
               >
-                <span>Specialist</span>
+                <span>{t("demos:specialist")}</span>
                 <span style={{ opacity: 0.4 }}>·</span>
-                <span>Legal</span>
+                <span>{t("demos:legal")}</span>
                 <span style={{ opacity: 0.4 }}>·</span>
                 <span>Claude</span>
               </div>
