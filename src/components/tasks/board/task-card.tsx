@@ -11,6 +11,7 @@ import type { LaneKey } from "./lane-rules";
 import { AgentPill } from "./agent-pill";
 import { RowActions } from "./row-actions";
 import { StatusIcon, deriveCardState } from "./status-icon";
+import { useLocale } from "@/i18n/use-locale";
 
 function relTime(fromIso: string | undefined, now: number): string {
   if (!fromIso) return "";
@@ -44,6 +45,7 @@ export function TaskCard({
   onRefresh?: () => Promise<void> | void;
   density?: "compact" | "comfortable";
 }) {
+  const { t } = useLocale();
   const state = deriveCardState(task, lane);
   const lastActivity = task.lastActivityAt ?? task.startedAt;
   const isTerminal = isLegacyAdapterType(task.adapterType);
@@ -155,7 +157,7 @@ export function TaskCard({
         ) : null}
         {isTerminal && (
           <span
-            title="Running in terminal (PTY) mode"
+            title={t("taskCard:ptyMode")}
             className="inline-flex items-center gap-0.5 rounded bg-emerald-500/15 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400"
           >
             <Terminal className="size-2.5" />

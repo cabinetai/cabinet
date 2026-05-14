@@ -411,6 +411,64 @@
     "closeDemo": "Close demo",
     "close": "Close"
   },
+  "demosPlus": {
+    "anything": "Anything",
+    "yours": "Yours",
+    "install": "Install",
+    "attach": "Attach"
+  },
+  "narrowViewport": {
+    "dismiss": "Dismiss narrow viewport hint",
+    "dismissTitle": "Dismiss until next session"
+  },
+  "agentCard": {
+    "runHeartbeat": "Run heartbeat"
+  },
+  "schedulePicker": {
+    "frequency": "Frequency",
+    "onDay": "On day"
+  },
+  "slackPanel": {
+    "createChannel": "Create channel",
+    "thread": "Thread"
+  },
+  "uninstall": {
+    "title": "Uninstall Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet drawers",
+    "pageTitlePlaceholder": "Page title…"
+  },
+  "skillAddPlus": {
+    "cancel": "Cancel"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Audit data unavailable from skills.sh for this skill",
+    "searchPlaceholder": "Search skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Refresh",
+    "noSkills": "No skills yet."
+  },
+  "taskDetail": {
+    "close": "Close (Esc)"
+  },
+  "rowActionsPlus": {
+    "delete": "Delete"
+  },
+  "taskCard": {
+    "ptyMode": "Running in terminal (PTY) mode"
+  },
+  "undoToast": {
+    "dismiss": "Dismiss"
+  },
+  "terminalExited": {
+    "openDetails": "Open structured details (prompt, artifacts, turns)",
+    "reconnect": "Reconnect to the daemon and stream the raw PTY replay"
+  },
+  "terminalTabsPlus": {
+    "resize": "Resize terminal panel"
+  },
   "dataLocations": {
     "title": "Where your data lives",
     "whyThisMatters": "Why this matters",

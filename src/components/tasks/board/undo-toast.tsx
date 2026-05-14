@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RotateCcw, X } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 
 export interface PendingUndo {
   id: string;
@@ -18,6 +19,7 @@ export function UndoToast({
   pending: PendingUndo | null;
   onDismiss: () => void;
 }) {
+  const { t } = useLocale();
   const [remaining, setRemaining] = useState(0);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export function UndoToast({
           type="button"
           onClick={onDismiss}
           className="text-muted-foreground hover:text-foreground"
-          aria-label="Dismiss"
+          aria-label={t("undoToast:dismiss")}
         >
           <X className="size-3.5" />
         </button>

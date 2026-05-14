@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { ConversationDetail } from "@/types/conversations";
 import type { TaskMeta } from "@/types/tasks";
+import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Post-exit view for a terminal-mode task. Replaces the raw xterm replay
@@ -107,6 +108,7 @@ export function TerminalExitedView({
   onShowRaw,
   onOpenDetails,
 }: TerminalExitedViewProps) {
+  const { t } = useLocale();
   const compacted = useMemo(
     () => compactTranscript(detail?.transcript ?? "", 80),
     [detail?.transcript]
@@ -180,7 +182,7 @@ export function TerminalExitedView({
               type="button"
               onClick={onOpenDetails}
               className="inline-flex shrink-0 items-center gap-1.5 rounded border border-zinc-700 bg-zinc-800/60 px-2.5 py-1 text-[11px] text-zinc-200 transition-colors hover:bg-zinc-800"
-              title="Open structured details (prompt, artifacts, turns)"
+              title={t("terminalExited:openDetails")}
             >
               <ScrollText className="size-3.5" />
               View details
@@ -200,7 +202,7 @@ export function TerminalExitedView({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded border border-zinc-700 bg-zinc-800/60 px-2.5 py-1 text-[11px] text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-40"
                 )}
-                title="Reconnect to the daemon and stream the raw PTY replay"
+                title={t("terminalExited:reconnect")}
               >
                 <PlayCircle className="size-3.5" />
                 Show raw replay

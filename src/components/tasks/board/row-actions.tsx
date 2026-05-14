@@ -128,7 +128,7 @@ export function RowActions({
       ) : null}
       {visibility.delete ? (
         <ActionButton
-          title="Delete"
+          title={t("rowActionsPlus:delete")}
           tone="destructive"
           onClick={(e) => {
             e.stopPropagation();

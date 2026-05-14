@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/i18n/use-locale";
 
 type CabinetDesktopBridge = {
   runtime: "electron";
@@ -25,6 +26,7 @@ declare global {
  * in the confirmation so you know where to find it.
  */
 export function UninstallSection() {
+  const { t } = useLocale();
   const [bridge, setBridge] = useState<CabinetDesktopBridge | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +71,7 @@ export function UninstallSection() {
 
   return (
     <div className="border-t border-border pt-6">
-      <h3 className="text-[14px] font-semibold mb-1">Uninstall Cabinet</h3>
+      <h3 className="text-[14px] font-semibold mb-1">{t("uninstall:title")}</h3>
       <p className="text-[12px] text-muted-foreground mb-3">
         Remove Cabinet.app and Library caches/preferences/state/logs from your
         Mac. Your cabinet content at{" "}

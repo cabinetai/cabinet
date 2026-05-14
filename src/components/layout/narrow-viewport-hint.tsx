@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 
 // Audit #063: Cabinet's layout is desktop-first (Electron, primary breakpoint
 // ~1280px). Below 960px, parts of the chrome cramp visibly even after the
@@ -13,6 +14,7 @@ const STORAGE_KEY = "cabinet.narrow-viewport-hint-dismissed";
 const NARROW_BREAKPOINT_PX = 960;
 
 export function NarrowViewportHint() {
+  const { t } = useLocale();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -56,8 +58,8 @@ export function NarrowViewportHint() {
             // Non-fatal.
           }
         }}
-        aria-label="Dismiss narrow viewport hint"
-        title="Dismiss until next session"
+        aria-label={t("narrowViewport:dismiss")}
+        title={t("narrowViewport:dismissTitle")}
         className="shrink-0 rounded p-0.5 text-amber-900/70 transition-colors hover:bg-amber-500/20 hover:text-amber-900 dark:text-amber-100/70 dark:hover:text-amber-100"
       >
         <X className="size-3" />

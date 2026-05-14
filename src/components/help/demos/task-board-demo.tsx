@@ -20,8 +20,10 @@ import {
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 function CardChrome({ width = 320, children }: { width?: number; children: React.ReactNode }) {
+  const { t } = useLocale();
   return (
     <div
       className="rounded-2xl"
@@ -693,6 +695,7 @@ function SlideRuntime() {
 
 /* ── Slide 6: Inside a task ──────────────────────────────────────────── */
 function SlideInside() {
+  const { t } = useLocale();
   return (
     <DemoSlideShell
       title={
@@ -725,7 +728,7 @@ function SlideInside() {
           <div className="mt-1 flex items-center gap-2 text-[10px]" style={{ color: P.textTertiary }}>
             <span style={{ color: "#5A9E7B" }}>● running</span>
             <span style={{ opacity: 0.4 }}>·</span>
-            <span>Editor</span>
+            <span>{t("demos:editor")}</span>
             <span style={{ opacity: 0.4 }}>·</span>
             <span>Claude Sonnet 4.6</span>
           </div>

@@ -414,7 +414,7 @@ export function SkillAddDialog({
         </div>
 
         <DialogFooter>
-          <DialogClose render={<Button variant="ghost">Cancel</Button>} />
+          <DialogClose render={<Button variant="ghost">{t("skillAddPlus:cancel")}</Button>} />
           <Button
             onClick={handleImport}
             disabled={tab !== "paste" || !source.trim() || importing}

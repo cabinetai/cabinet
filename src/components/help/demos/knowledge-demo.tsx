@@ -22,8 +22,10 @@ import {
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 function CardChrome({ width = 320, children }: { width?: number; children: React.ReactNode }) {
+  const { t } = useLocale();
   return (
     <div
       className="rounded-2xl"
@@ -41,6 +43,7 @@ function CardChrome({ width = 320, children }: { width?: number; children: React
 
 /* ── Slide 1: Anything goes ──────────────────────────────────────────── */
 function SlideAnything() {
+  const { t } = useLocale();
   const types: { icon: typeof FileText; label: string; ext: string }[] = [
     { icon: FileText, label: "Markdown", ext: ".md" },
     { icon: FileSpreadsheet, label: "Spreadsheets", ext: ".csv .xlsx" },
@@ -57,7 +60,7 @@ function SlideAnything() {
     <DemoSlideShell
       title={
         <>
-          <span style={{ color: P.accent }}>Anything</span> goes.
+          <span style={{ color: P.accent }}>{t("demosPlus:anything")}</span> goes.
         </>
       }
       description={
@@ -437,6 +440,7 @@ function SlideMentions() {
 
 /* ── Slide 5: Yours, not ours ────────────────────────────────────────── */
 function SlideYours() {
+  const { t } = useLocale();
   const tree: { name: string; depth: number; icon: typeof Folder; isFolder?: boolean; emphasize?: boolean }[] = [
     { name: "~/Cabinet", depth: 0, icon: HardDrive, isFolder: true, emphasize: true },
     { name: "Marketing", depth: 1, icon: Folder, isFolder: true },
@@ -450,7 +454,7 @@ function SlideYours() {
     <DemoSlideShell
       title={
         <>
-          <span style={{ color: P.accent }}>Yours</span>, not ours.
+          <span style={{ color: P.accent }}>{t("demosPlus:yours")}</span>, not ours.
         </>
       }
       description={

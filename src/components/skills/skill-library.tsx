@@ -365,7 +365,7 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
             size="sm"
             onClick={refresh}
             disabled={loading}
-            aria-label="Refresh"
+            aria-label={t("skillLibraryPlus:refresh")}
           >
             <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
           </Button>
@@ -384,7 +384,7 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
           {!loading && managed.length === 0 && system.length === 0 && (
             <div className="text-center py-12 flex flex-col items-center gap-2">
               <Library className="size-8 text-muted-foreground/40" />
-              <p className="text-sm text-muted-foreground">No skills yet.</p>
+              <p className="text-sm text-muted-foreground">{t("skillLibraryPlus:noSkills")}</p>
               <Button size="sm" onClick={() => setAddOpen(true)}>
                 Add your first skill
               </Button>

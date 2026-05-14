@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Clock, ChevronDown, Loader2, Sparkles } from "lucide-react";
 import { cronToHuman } from "@/lib/agents/cron-utils";
+import { useLocale } from "@/i18n/use-locale";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -159,6 +160,7 @@ function pickerStateToCron(state: PickerState): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) {
+  const { t } = useLocale();
   const [state, setState] = useState<PickerState>(() => cronToPickerState(value));
   const [showCron, setShowCron] = useState(false);
   const emittedCronRef = useRef(value);
@@ -246,7 +248,7 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
 
       {/* Frequency mode tabs */}
       <div className="space-y-1.5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Frequency</p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">{t("schedulePicker:frequency")}</p>
         <div className="flex flex-wrap gap-1">
           {MODES.map((mode) => (
             <button
@@ -367,7 +369,7 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
       {/* Monthly: day-of-month picker */}
       {state.mode === "monthly" && (
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 shrink-0">On day</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 shrink-0">{t("schedulePicker:onDay")}</span>
           <select
             value={state.monthDay}
             onChange={(e) => update({ monthDay: parseInt(e.target.value, 10) })}

@@ -411,6 +411,64 @@
     "closeDemo": "סגירת ההדגמה",
     "close": "סגירה"
   },
+  "demosPlus": {
+    "anything": "כל דבר",
+    "yours": "שלך",
+    "install": "התקנה",
+    "attach": "צירוף"
+  },
+  "narrowViewport": {
+    "dismiss": "סגירת רמז ל-viewport צר",
+    "dismissTitle": "סגירה עד הסשן הבא"
+  },
+  "agentCard": {
+    "runHeartbeat": "הפעלת פעימה"
+  },
+  "schedulePicker": {
+    "frequency": "תדירות",
+    "onDay": "ביום"
+  },
+  "slackPanel": {
+    "createChannel": "יצירת ערוץ",
+    "thread": "שרשור"
+  },
+  "uninstall": {
+    "title": "הסרת Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "מגירות ארונית",
+    "pageTitlePlaceholder": "כותרת הדף…"
+  },
+  "skillAddPlus": {
+    "cancel": "ביטול"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "נתוני audit לא זמינים מ-skills.sh עבור כישור זה",
+    "searchPlaceholder": "חיפוש ב-skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "רענון",
+    "noSkills": "אין עדיין כישורים."
+  },
+  "taskDetail": {
+    "close": "סגירה (Esc)"
+  },
+  "rowActionsPlus": {
+    "delete": "מחיקה"
+  },
+  "taskCard": {
+    "ptyMode": "רץ במצב טרמינל (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "סגירה"
+  },
+  "terminalExited": {
+    "openDetails": "פתיחת פרטים מובנים (prompt, ארטיפקטים, תורים)",
+    "reconnect": "חיבור מחדש ל-daemon וזרימת ה-PTY replay הגולמי"
+  },
+  "terminalTabsPlus": {
+    "resize": "שינוי גודל פאנל הטרמינל"
+  },
   "dataLocations": {
     "title": "איפה הנתונים שלך חיים",
     "whyThisMatters": "למה זה חשוב",

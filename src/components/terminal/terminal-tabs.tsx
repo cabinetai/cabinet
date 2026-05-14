@@ -208,7 +208,7 @@ export function TerminalTabs() {
         <div
           role="separator"
           aria-orientation="vertical"
-          aria-label="Resize terminal panel"
+          aria-label={t("terminalTabsPlus:resize")}
           tabIndex={0}
           className="flex items-center justify-center w-1 cursor-col-resize hover:bg-primary/20 transition-colors group shrink-0 hover:w-1.5"
           onMouseDown={handleHorizontalMouseDown}
@@ -235,7 +235,7 @@ export function TerminalTabs() {
       <div
         role="separator"
         aria-orientation="horizontal"
-        aria-label="Resize terminal panel"
+        aria-label={t("terminalTabsPlus:resize")}
         tabIndex={0}
         className="flex items-center justify-center h-1 cursor-row-resize hover:bg-primary/20 transition-colors group hover:h-1.5"
         onMouseDown={handleVerticalMouseDown}

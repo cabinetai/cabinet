@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Pause, Play, Loader2, Inbox } from "lucide-react";
 import { GoalBar } from "./goal-bar";
 import type { GoalMetric } from "@/types/agents";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentCardProps {
   name: string;
@@ -45,6 +46,7 @@ function formatCountdown(dateStr: string): string {
 }
 
 function StatusIndicator({ active, running, lastHeartbeat, nextHeartbeat, onToggle }: { active: boolean; running?: boolean; lastHeartbeat?: string; nextHeartbeat?: string; onToggle?: () => void }) {
+  const { t } = useLocale();
   if (running) {
     return (
       <span className="flex items-center gap-1 text-[10px] text-emerald-500">
@@ -135,6 +137,7 @@ export function AgentCard({
   onToggle,
   onRun,
 }: AgentCardProps) {
+  const { t } = useLocale();
   const [runLoading, setRunLoading] = useState(false);
 
   const handleRun = async (e: React.MouseEvent) => {
@@ -182,7 +185,7 @@ export function AgentCard({
                 ? "opacity-100"
                 : "opacity-0 group-hover:opacity-100 hover:bg-emerald-500/10"
             )}
-            title="Run heartbeat"
+            title={t("agentCard:runHeartbeat")}
           >
             {runLoading ? (
               <Loader2 className="h-3 w-3 animate-spin text-emerald-500" />

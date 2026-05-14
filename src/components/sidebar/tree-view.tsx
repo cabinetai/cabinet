@@ -57,6 +57,7 @@ import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
 import { getDataDir } from "@/lib/data-dir-cache";
 import { DepthDropdown } from "@/components/cabinets/depth-dropdown";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentSummary {
   scopedId?: string;
@@ -89,6 +90,7 @@ const itemClass = (active: boolean) =>
   );
 
 export function TreeView() {
+  const { t } = useLocale();
   const { nodes, loading } = useTreeStore();
   const selectPage = useTreeStore((s) => s.selectPage);
   const createPage = useTreeStore((s) => s.createPage);
@@ -494,7 +496,7 @@ export function TreeView() {
              header above, inset by mx-[9px] so the header reads as a crown. */
           <div
             role="tablist"
-            aria-label="Cabinet drawers"
+            aria-label={t("treeView:drawersAriaLabel")}
             className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-1 pt-2 border border-border/60"
           >
                 {([
@@ -872,7 +874,7 @@ export function TreeView() {
           className="flex gap-2"
         >
           <Input
-            placeholder="Page title..."
+            placeholder={t("treeView:pageTitlePlaceholder")}
             value={kbSubPageTitle}
             onChange={(e) => setKbSubPageTitle(e.target.value)}
             autoFocus

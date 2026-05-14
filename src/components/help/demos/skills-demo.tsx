@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 /* ── Slide 0: What is a skill? — floating colorful tiles ────────────── */
 
@@ -54,6 +55,7 @@ const SKILL_TILES: SkillTile[] = [
 ];
 
 function SlideWhatIsSkill() {
+  const { t } = useLocale();
   return (
     <DemoSlideShell
       title={
@@ -192,11 +194,12 @@ const CATALOG: CatalogResult[] = [
 ];
 
 function SlideInstall() {
+  const { t } = useLocale();
   return (
     <DemoSlideShell
       title={
         <>
-          <span style={{ color: P.accent }}>Install</span> a skill.
+          <span style={{ color: P.accent }}>{t("demosPlus:install")}</span> a skill.
         </>
       }
       description={
@@ -336,6 +339,7 @@ function SlideInstall() {
 /* ── Slide 2: Attach to an agent (or @-mention) ─────────────────────── */
 
 function SlideAttach() {
+  const { t } = useLocale();
   const personaSkills = ["code-review-excellence", "seo-research"];
 
   return (
@@ -343,7 +347,7 @@ function SlideAttach() {
       reversed
       title={
         <>
-          <span style={{ color: P.accent }}>Attach</span> to an agent.
+          <span style={{ color: P.accent }}>{t("demosPlus:attach")}</span> to an agent.
         </>
       }
       description={

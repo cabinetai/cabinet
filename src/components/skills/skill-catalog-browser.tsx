@@ -11,6 +11,7 @@ import {
   Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Search-first browse for skills.sh. Single search input + result list,
@@ -60,11 +61,12 @@ function formatInstalls(n: number): string {
 }
 
 function AuditBadge({ audits }: { audits: AuditSummary }) {
+  const { t } = useLocale();
   if (!audits.available || audits.total === 0) {
     return (
       <span
         className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/70"
-        title="Audit data unavailable from skills.sh for this skill"
+        title={t("skillCatalog:auditUnavailable")}
       >
         <Shield className="size-3" />
         audits unavailable
@@ -88,6 +90,7 @@ function AuditBadge({ audits }: { audits: AuditSummary }) {
 }
 
 export function SkillCatalogBrowser({ onPick }: SkillCatalogBrowserProps) {
+  const { t } = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -138,7 +141,7 @@ export function SkillCatalogBrowser({ onPick }: SkillCatalogBrowserProps) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search skills.sh"
+          placeholder={t("skillCatalog:searchPlaceholder")}
           autoFocus
           className={cn(
             "w-full text-xs pl-9 pr-9 py-2 bg-card border border-border rounded-md",
