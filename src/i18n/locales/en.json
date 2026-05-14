@@ -383,6 +383,16 @@
     "editor": "Editor",
     "slashMenu": "Slash menu"
   },
+  "slideDataCopy": {
+    "slideNum": "01 · DATA",
+    "headlineSentence": "Your <accent>single source</accent> of truth.",
+    "paragraphPrefix": "Markdown, PDFs, spreadsheets, slides, images, video, audio, linked repos, embedded web apps, Google Docs. Mention any of it with ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "One place for everything — so you and your AI team read, edit, and ship from the ",
+    "sameFiles": "same files",
+    "secondParagraphSuffix": ", not copies of copies.",
+    "mockTitle": "Hila's Cabinet"
+  },
   "slideData": {
     "thailandRootLabel": "Thailand Trip",
     "thailandCaption": "View all your files in one place.",

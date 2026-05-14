@@ -1172,5 +1172,15 @@
     "repoCaption": "程式碼庫 — 連結任何 Git 倉庫,智慧代理可以搜尋。",
     "schemaTitle": "schema.ts",
     "tsBadge": "TS"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · 資料",
+    "headlineSentence": "你<accent>唯一的事實來源</accent>。",
+    "paragraphPrefix": "Markdown、PDF、試算表、投影片、圖片、影片、音訊、連結的程式碼庫、嵌入的網頁應用、Google Docs。用 ",
+    "paragraphSuffix": " 提及它們中的任何一個。",
+    "secondParagraphPrefix": "一切都在一個地方 — 這樣你和你的 AI 團隊都從",
+    "sameFiles": "同一份檔案",
+    "secondParagraphSuffix": "裡讀、寫、發佈,而不是一層層的副本。",
+    "mockTitle": "Hila 的凱比內特"
   }
 }

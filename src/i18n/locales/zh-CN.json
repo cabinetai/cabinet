@@ -1172,5 +1172,15 @@
     "repoCaption": "代码库 — 链接任意 Git 仓库,智能体可以搜索。",
     "schemaTitle": "schema.ts",
     "tsBadge": "TS"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · 数据",
+    "headlineSentence": "你<accent>唯一的真相来源</accent>。",
+    "paragraphPrefix": "Markdown、PDF、表格、幻灯片、图片、视频、音频、链接的代码库、嵌入的网页应用、Google Docs。用 ",
+    "paragraphSuffix": " 提及它们中的任何一个。",
+    "secondParagraphPrefix": "一切都在一个地方 — 这样你和你的 AI 团队都从",
+    "sameFiles": "同一份文件",
+    "secondParagraphSuffix": "里读、写、发布,而不是层层副本。",
+    "mockTitle": "Hila 的凯比内特"
   }
 }

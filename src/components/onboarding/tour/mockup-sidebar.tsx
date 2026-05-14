@@ -66,12 +66,13 @@ export function MockupSidebar({
   hideBody = false,
   tabsPopIn = false,
   tabsPopInDelay = 900,
-  title = "Hila's Cabinet",
+  title,
   titleDelay = 0,
   headerBadge = "+1",
   viewTransitionName,
 }: MockupSidebarProps) {
   const { t } = useLocale();
+  const resolvedTitle = title ?? t("slideDataCopy:mockTitle");
   const rootStyle: CSSProperties = {
     color: P.text,
     ...(viewTransitionName ? { viewTransitionName } : {}),
@@ -107,7 +108,7 @@ export function MockupSidebar({
           className="min-w-0 flex-1 truncate text-sm font-medium"
           style={{ color: P.textSecondary, ...titleAnimStyle }}
         >
-          {title}
+          {resolvedTitle}
         </span>
         {headerBadge && (
           <span

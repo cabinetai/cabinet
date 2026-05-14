@@ -1172,5 +1172,15 @@
     "repoCaption": "קודבייסים — קשרו כל ריפו ב-Git, חיפושי על-ידי הסוכנים שלכם.",
     "schemaTitle": "schema.ts",
     "tsBadge": "TS"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · נתונים",
+    "headlineSentence": "<accent>מקור האמת היחיד</accent> שלכם.",
+    "paragraphPrefix": "Markdown, PDFים, גיליונות, מצגות, תמונות, וידאו, אודיו, ריפואים מקושרים, אפליקציות אינטרנט משובצות, Google Docs. אזכרו כל אחד מהם עם ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "מקום אחד להכל — כך אתם וצוות ה-AI קוראים, עורכים ומשגרים מאותם ",
+    "sameFiles": "קבצים",
+    "secondParagraphSuffix": ", לא מעותקים של עותקים.",
+    "mockTitle": "הארונית של הילה"
   }
 }

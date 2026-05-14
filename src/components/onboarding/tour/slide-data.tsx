@@ -19,6 +19,7 @@ import {
   Play,
   TrendingUp,
 } from "lucide-react";
+import { Trans } from "react-i18next";
 import { MockupSidebar } from "./mockup-sidebar";
 import { TOUR_PALETTE as P } from "./palette";
 import { useLocale } from "@/i18n/use-locale";
@@ -556,7 +557,7 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
             animationDelay: "350ms",
           }}
         >
-          01 &middot; DATA
+          {t("slideDataCopy:slideNum")}
         </span>
         <h2
           className="font-logo text-4xl italic tracking-tight opacity-0 lg:text-5xl"
@@ -566,7 +567,10 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
             animationDelay: "500ms",
           }}
         >
-          Your <span style={{ color: P.accent }}>single source</span> of truth.
+          <Trans
+            i18nKey="slideDataCopy:headlineSentence"
+            components={{ accent: <span style={{ color: P.accent }} /> }}
+          />
         </h2>
         <p
           className="font-body-serif text-base leading-relaxed opacity-0 lg:text-lg"
@@ -576,9 +580,9 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
             animationDelay: "650ms",
           }}
         >
-          Markdown, PDFs, spreadsheets, slides, images, video, audio, linked
-          repos, embedded web apps, Google Docs. Mention any of it with{" "}
-          <span className="font-mono" style={{ color: P.accent }}>@</span>.
+          {t("slideDataCopy:paragraphPrefix")}
+          <span className="font-mono" style={{ color: P.accent }}>@</span>
+          {t("slideDataCopy:paragraphSuffix")}
         </p>
         <p
           className="font-body-serif text-sm leading-relaxed opacity-0 lg:text-base"
@@ -588,10 +592,9 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
             animationDelay: "800ms",
           }}
         >
-          One place for everything — so you and your AI team read, edit, and
-          ship from the{" "}
-          <span style={{ color: P.text, fontWeight: 600 }}>same files</span>,
-          not copies of copies.
+          {t("slideDataCopy:secondParagraphPrefix")}
+          <span style={{ color: P.text, fontWeight: 600 }}>{t("slideDataCopy:sameFiles")}</span>
+          {t("slideDataCopy:secondParagraphSuffix")}
         </p>
       </div>
     </div>
