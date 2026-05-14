@@ -812,7 +812,7 @@ export function RuntimeMatrixPicker({
             title={t("runtime:nativeTranscriptTitle")}
           >
             <Sparkles className="h-4 w-4" />
-            <span>Native</span>
+            <span>{t("runtime:native")}</span>
           </button>
           <button
             type="button"
@@ -825,10 +825,10 @@ export function RuntimeMatrixPicker({
                 ? "border-emerald-500/50 bg-zinc-950 text-zinc-100 shadow-[0_-1px_0_0_rgba(16,185,129,0.5)] dark:border-emerald-400/50"
                 : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
             )}
-            title="Run the CLI in a live PTY terminal session (experimental hacker mode)"
+            title={t("runtime:terminalTitle")}
           >
             <Terminal className="h-4 w-4" />
-            <span>Terminal</span>
+            <span>{t("runtime:terminal")}</span>
           </button>
         </div>
       )}
@@ -852,7 +852,7 @@ export function RuntimeMatrixPicker({
             <div className="flex px-1.5 pt-1.5 overflow-x-auto scrollbar-none">
               <TabsList
                 variant="line"
-                aria-label="Providers"
+                aria-label={t("runtime:providers")}
                 className="h-auto w-max min-w-full justify-start gap-1.5 rounded-none bg-transparent p-0 !border-b-0"
               >
                 {selectableProviders.map((provider) => {

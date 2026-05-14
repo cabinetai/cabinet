@@ -80,7 +80,7 @@ export function UpdateSummary({
           <p className="mt-1 break-all font-mono text-[11px]">{update.dataDir}</p>
         </div>
         <div className="rounded-lg border border-border/70 bg-background/60 p-3">
-          <p className="font-medium text-foreground">Backups</p>
+          <p className="font-medium text-foreground">{t("updateSummary:backups")}</p>
           <p className="mt-1 break-all font-mono text-[11px]">{update.backupRoot}</p>
         </div>
       </div>

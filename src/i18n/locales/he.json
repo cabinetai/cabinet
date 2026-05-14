@@ -141,7 +141,22 @@
     "noProvider": "לא נבחר ספק",
     "modeAriaLabel": "מצב סביבת ריצה",
     "nativeTranscriptTitle": "התמלול המקורי של Cabinet — JSON stream מובנה, ארטיפקטים, תקציר, חוויה מלאה",
-    "ptyWarningTitle": "דורש מפתח OpenAI API. לא זמין בחשבונות Codex של ChatGPT — בחירת המודל הזה תיכשל עם 'model not supported when using Codex with a ChatGPT account'."
+    "ptyWarningTitle": "דורש מפתח OpenAI API. לא זמין בחשבונות Codex של ChatGPT — בחירת המודל הזה תיכשל עם 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "מקורי",
+    "terminal": "טרמינל",
+    "terminalTitle": "הרצת ה-CLI בסשן טרמינל PTY חי (מצב האקרים ניסיוני)",
+    "providers": "ספקים"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "סוכנים פועלים בגישה מלאה.",
+    "backUp": "גבו את הנתונים שלכם באופן קבוע.",
+    "betaSoftware": "תוכנת ביתא. דברים עלולים להישבר.",
+    "iAccept": "קראתי ואני מקבל"
+  },
+  "skillAdd": {
+    "addSkill": "הוספת כישור",
+    "auditTooltip": "תוצאה מבדיקות חיצוניות של skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "נתוני audit מ-skills.sh לא זמינים לכישור הזה"
   },
   "help": {
     "page": {
@@ -171,7 +186,8 @@
   },
   "updateSummary": {
     "cabinetUpdates": "עדכוני Cabinet",
-    "dataDirectory": "ספריית נתונים"
+    "dataDirectory": "ספריית נתונים",
+    "backups": "גיבויים"
   },
   "kanban": {
     "stopAllInLane": "עצירת כל המשימות הפעילות במסלול זה",

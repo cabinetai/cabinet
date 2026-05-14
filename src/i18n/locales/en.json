@@ -141,7 +141,22 @@
     "noProvider": "No provider selected",
     "modeAriaLabel": "Runtime mode",
     "nativeTranscriptTitle": "Cabinet's native transcript — structured JSON stream, artifacts, summary, the full UX",
-    "ptyWarningTitle": "Requires an OpenAI API key. Not available on ChatGPT-plan Codex accounts — picking this model will fail with 'model not supported when using Codex with a ChatGPT account'."
+    "ptyWarningTitle": "Requires an OpenAI API key. Not available on ChatGPT-plan Codex accounts — picking this model will fail with 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Native",
+    "terminal": "Terminal",
+    "terminalTitle": "Run the CLI in a live PTY terminal session (experimental hacker mode)",
+    "providers": "Providers"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Agents run with full access.",
+    "backUp": "Back up your data regularly.",
+    "betaSoftware": "Beta software. Things may break.",
+    "iAccept": "I have read and I accept"
+  },
+  "skillAdd": {
+    "addSkill": "Add skill",
+    "auditTooltip": "Result from skills.sh's external audits (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "skills.sh audit data isn't available for this skill"
   },
   "help": {
     "page": {
@@ -171,7 +186,8 @@
   },
   "updateSummary": {
     "cabinetUpdates": "Cabinet Updates",
-    "dataDirectory": "Data directory"
+    "dataDirectory": "Data directory",
+    "backups": "Backups"
   },
   "kanban": {
     "stopAllInLane": "Stop all running tasks in this lane",

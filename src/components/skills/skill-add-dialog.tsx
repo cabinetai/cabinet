@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { SkillCatalogBrowser } from "./skill-catalog-browser";
+import { useLocale } from "@/i18n/use-locale";
 
 interface RepoMeta {
   owner: string;
@@ -98,6 +99,7 @@ export function SkillAddDialog({
   initialSource,
   attachToAgents,
 }: SkillAddDialogProps) {
+  const { t } = useLocale();
   const [source, setSource] = useState(initialSource ?? "");
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<RepoMeta | null>(null);
@@ -229,7 +231,7 @@ export function SkillAddDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[92vw] max-w-3xl sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Add skill</DialogTitle>
+          <DialogTitle>{t("skillAdd:addSkill")}</DialogTitle>
           <DialogDescription>
             Paste a skills.sh URL, GitHub URL, or `github:owner/repo[/skill]` shortcode.
           </DialogDescription>
@@ -320,7 +322,7 @@ export function SkillAddDialog({
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-amber-600 dark:text-amber-400",
                     )}
-                    title="Result from skills.sh's external audits (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)"
+                    title={t("skillAdd:auditTooltip")}
                   >
                     {allAuditsPass ? (
                       <ShieldCheck className="size-3" />
@@ -332,7 +334,7 @@ export function SkillAddDialog({
                 ) : (
                   <span
                     className="flex items-center gap-1 text-[10px] text-muted-foreground/70"
-                    title="skills.sh audit data isn't available for this skill"
+                    title={t("skillAdd:auditUnavailable")}
                   >
                     <Shield className="size-3" />
                     audits unavailable

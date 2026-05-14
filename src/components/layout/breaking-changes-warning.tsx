@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/i18n/use-locale";
 
 // Bump when the disclaimer text materially changes — older acks become
 // invalid and the user gets re-prompted with the new copy.
@@ -41,6 +42,7 @@ export function acknowledgeDisclaimer() {
 }
 
 export function BreakingChangesWarning() {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [accepted, setAccepted] = useState(false);
 
@@ -111,7 +113,7 @@ export function BreakingChangesWarning() {
             <li className="flex gap-3">
               <span className="mt-2 size-1 shrink-0 rounded-full bg-foreground/30" aria-hidden />
               <span className="text-muted-foreground">
-                <strong className="font-medium text-foreground">Agents run with full access.</strong>{" "}
+                <strong className="font-medium text-foreground">{t("breakingChanges:agentsFullAccess")}</strong>{" "}
                 Cabinet uses{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-[11px]">--dangerously-skip-permissions</code>{" "}
                 (Claude Code) and equivalent flags in other providers. This is identical to running these CLI
@@ -122,7 +124,7 @@ export function BreakingChangesWarning() {
             <li className="flex gap-3">
               <span className="mt-2 size-1 shrink-0 rounded-full bg-foreground/30" aria-hidden />
               <span className="text-muted-foreground">
-                <strong className="font-medium text-foreground">Back up your data regularly.</strong>{" "}
+                <strong className="font-medium text-foreground">{t("breakingChanges:backUp")}</strong>{" "}
                 Agents can read, write, and delete files across your KB and linked repos. Cabinet is
                 not responsible for data loss. You are responsible for the AI providers you choose
                 and their terms of service.
@@ -131,7 +133,7 @@ export function BreakingChangesWarning() {
             <li className="flex gap-3">
               <span className="mt-2 size-1 shrink-0 rounded-full bg-foreground/30" aria-hidden />
               <span className="text-muted-foreground">
-                <strong className="font-medium text-foreground">Beta software. Things may break.</strong>{" "}
+                <strong className="font-medium text-foreground">{t("breakingChanges:betaSoftware")}</strong>{" "}
                 We ship fast. Breaking changes can land without notice.
               </span>
             </li>
@@ -141,7 +143,7 @@ export function BreakingChangesWarning() {
             <input
               type="checkbox"
               name="disclaimer-accept"
-              aria-label="I have read and I accept"
+              aria-label={t("breakingChanges:iAccept")}
               checked={accepted}
               onChange={(e) => setAccepted(e.target.checked)}
               className="mt-0.5 size-4 shrink-0 rounded border border-border accent-foreground"
