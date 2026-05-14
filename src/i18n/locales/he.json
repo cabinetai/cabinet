@@ -424,7 +424,8 @@
   "treeNode": {
     "openCabinet": "פתיחת תצוגת הארונית",
     "pageTitlePlaceholder": "כותרת הדף…",
-    "rename": "שינוי שם"
+    "rename": "שינוי שם",
+    "openBadge": "פתח"
   },
   "boardSkeleton": {
     "loadingTasks": "טוען משימות"
@@ -551,7 +552,19 @@
     "noRecentActivity": "אין פעילות אחרונה",
     "noAgents": "אין סוכנים",
     "noAgentsConfigured": "טרם הוגדרו סוכנים לארונית זו.",
-    "cabinetScope": "טווח הארונית:"
+    "cabinetScope": "טווח הארונית:",
+    "depthDropdownHeader": "טווח של הארונית",
+    "depthOwnLabel": "רק הארונית הזו",
+    "depthOwnShort": "רק היא",
+    "depthOwnDesc": "דפים, סוכנים ומשימות מהארונית הזו בלבד.",
+    "depthChildren1Label": "כולל ילדים ישירים",
+    "depthChildren1Desc": "להוסיף שכבה אחת של ארוניות-משנה.",
+    "depthChildren2Label": "כולל שתי שכבות",
+    "depthChildren2Desc": "להוסיף שתי שכבות של ארוניות-משנה.",
+    "depthAllLabel": "כולל הכל",
+    "depthAllShort": "הכל",
+    "depthAllDesc": "להוסיף את כל תת-העץ.",
+    "scopeTooltip": "טווח הארונית: {{label}}. לחצו לשינוי."
   },
   "composerExtras": {
     "skillAttached": "כישור — מצורף לריצה הזו בלבד",

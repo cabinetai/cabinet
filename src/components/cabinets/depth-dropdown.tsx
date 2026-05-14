@@ -27,9 +27,38 @@ export function DepthDropdown({
   className,
 }: DepthDropdownProps) {
   const { t } = useLocale();
+  // Map each visibility value to translation keys; shortLabel falls back to
+  // the English source so number-like ones (+1, +2) stay readable.
+  const optionMeta: Record<
+    CabinetVisibilityMode,
+    { labelKey: string; shortLabel: string; descKey: string }
+  > = {
+    own: {
+      labelKey: "cabinetsExtras:depthOwnLabel",
+      shortLabel: t("cabinetsExtras:depthOwnShort"),
+      descKey: "cabinetsExtras:depthOwnDesc",
+    },
+    "children-1": {
+      labelKey: "cabinetsExtras:depthChildren1Label",
+      shortLabel: "+1",
+      descKey: "cabinetsExtras:depthChildren1Desc",
+    },
+    "children-2": {
+      labelKey: "cabinetsExtras:depthChildren2Label",
+      shortLabel: "+2",
+      descKey: "cabinetsExtras:depthChildren2Desc",
+    },
+    all: {
+      labelKey: "cabinetsExtras:depthAllLabel",
+      shortLabel: t("cabinetsExtras:depthAllShort"),
+      descKey: "cabinetsExtras:depthAllDesc",
+    },
+  };
   const current =
     CABINET_VISIBILITY_OPTIONS.find((o) => o.value === mode) ??
     CABINET_VISIBILITY_OPTIONS[0];
+  const currentMeta = optionMeta[current.value];
+  const currentLabel = t(currentMeta.labelKey);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -38,12 +67,12 @@ export function DepthDropdown({
           compact ? "px-1 py-0.5 text-[10px]" : "px-1.5 py-0.5 text-[11px]",
           className
         )}
-        title={`Cabinet scope: ${current.label}. Click to change.`}
-        aria-label={`Cabinet scope: ${current.label}. Click to change.`}
+        title={t("cabinetsExtras:scopeTooltip", { label: currentLabel })}
+        aria-label={t("cabinetsExtras:scopeTooltip", { label: currentLabel })}
       >
         {!compact && <FolderTree className="size-3.5" />}
         <span className="sr-only">{t("cabinetsExtras:cabinetScope")} </span>
-        <span className="tabular-nums">{current.shortLabel}</span>
+        <span className="tabular-nums">{currentMeta.shortLabel}</span>
         <ChevronDown className="size-3 opacity-60" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -52,10 +81,11 @@ export function DepthDropdown({
         collisionAvoidance={{ side: "none" }}
       >
         <div className="px-2 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
-          Cabinet scope
+          {t("cabinetsExtras:depthDropdownHeader")}
         </div>
         {CABINET_VISIBILITY_OPTIONS.map((opt) => {
           const active = opt.value === mode;
+          const meta = optionMeta[opt.value];
           return (
             <DropdownMenuItem
               key={opt.value}
@@ -64,12 +94,12 @@ export function DepthDropdown({
             >
               <span className="flex items-start gap-2">
                 <span className="inline-flex w-6 shrink-0 justify-center pt-0.5 text-[11px] font-semibold tabular-nums text-muted-foreground">
-                  {opt.shortLabel}
+                  {meta.shortLabel}
                 </span>
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-[12.5px] leading-tight">{opt.label}</span>
+                  <span className="text-[12.5px] leading-tight">{t(meta.labelKey)}</span>
                   <span className="text-[11px] leading-tight text-muted-foreground/80">
-                    {opt.description}
+                    {t(meta.descKey)}
                   </span>
                 </span>
               </span>

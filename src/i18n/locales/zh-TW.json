@@ -424,7 +424,8 @@
   "treeNode": {
     "openCabinet": "開啟凱比內特檢視",
     "pageTitlePlaceholder": "頁面標題……",
-    "rename": "重新命名"
+    "rename": "重新命名",
+    "openBadge": "開啟"
   },
   "boardSkeleton": {
     "loadingTasks": "正在載入任務"
@@ -551,7 +552,19 @@
     "noRecentActivity": "無近期活動",
     "noAgents": "無智慧代理",
     "noAgentsConfigured": "尚未為此凱比內特設定任何智慧代理。",
-    "cabinetScope": "凱比內特範圍:"
+    "cabinetScope": "凱比內特範圍:",
+    "depthDropdownHeader": "凱比內特範圍",
+    "depthOwnLabel": "僅目前凱比內特",
+    "depthOwnShort": "本",
+    "depthOwnDesc": "只顯示目前凱比內特的頁面、智慧代理和任務。",
+    "depthChildren1Label": "包含直接子層",
+    "depthChildren1Desc": "再加一層子凱比內特。",
+    "depthChildren2Label": "包含兩層",
+    "depthChildren2Desc": "再加兩層子凱比內特。",
+    "depthAllLabel": "包含全部後代",
+    "depthAllShort": "全",
+    "depthAllDesc": "包含整個子樹。",
+    "scopeTooltip": "凱比內特範圍:{{label}}。點擊更改。"
   },
   "composerExtras": {
     "skillAttached": "技能 — 僅附加於此次執行",

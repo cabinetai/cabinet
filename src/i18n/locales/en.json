@@ -425,7 +425,8 @@
   "treeNode": {
     "openCabinet": "Open cabinet view",
     "pageTitlePlaceholder": "Page title…",
-    "rename": "Rename"
+    "rename": "Rename",
+    "openBadge": "Open"
   },
   "boardSkeleton": {
     "loadingTasks": "Loading tasks"
@@ -579,7 +580,19 @@
     "noRecentActivity": "No recent activity",
     "noAgents": "No agents",
     "noAgentsConfigured": "No agents configured for this cabinet yet.",
-    "cabinetScope": "Cabinet scope:"
+    "cabinetScope": "Cabinet scope:",
+    "depthDropdownHeader": "Cabinet scope",
+    "depthOwnLabel": "This cabinet only",
+    "depthOwnShort": "Own",
+    "depthOwnDesc": "Pages, agents, and tasks from this cabinet only.",
+    "depthChildren1Label": "Include direct children",
+    "depthChildren1Desc": "Add one level of sub-cabinets.",
+    "depthChildren2Label": "Include two cabinet levels",
+    "depthChildren2Desc": "Add two levels of sub-cabinets.",
+    "depthAllLabel": "Include all descendants",
+    "depthAllShort": "All",
+    "depthAllDesc": "Include the entire sub-tree.",
+    "scopeTooltip": "Cabinet scope: {{label}}. Click to change."
   },
   "composerExtras": {
     "skillAttached": "Skill — attached to this run only",

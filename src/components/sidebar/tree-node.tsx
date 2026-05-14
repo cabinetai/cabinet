@@ -551,7 +551,7 @@ export function TreeNode({
                   "hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 )}
               >
-                Open
+                {t("treeNode:openBadge")}
               </span>
             )}
           </button>
