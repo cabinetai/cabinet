@@ -137,6 +137,38 @@
     "newTask": "New Task",
     "newRoutine": "New Routine"
   },
+  "runtime": {
+    "noProvider": "No provider selected",
+    "modeAriaLabel": "Runtime mode",
+    "nativeTranscriptTitle": "Cabinet's native transcript — structured JSON stream, artifacts, summary, the full UX",
+    "ptyWarningTitle": "Requires an OpenAI API key. Not available on ChatGPT-plan Codex accounts — picking this model will fail with 'model not supported when using Codex with a ChatGPT account'."
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "AI team",
+      "aiTeams": "AI teams",
+      "routines": "Routines"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Edit agent configuration",
+    "exportBundle": "Export agent bundle",
+    "goals": "Goals",
+    "workspace": "Workspace"
+  },
+  "scheduleRow": {
+    "deleteQ": "Delete?",
+    "confirmDelete": "Confirm delete",
+    "cancelDelete": "Cancel delete",
+    "runNow": "Run now"
+  },
+  "embedPopover": {
+    "placeholder": "Paste a link (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, or any URL)",
+    "notValidUrl": "Not a valid URL",
+    "anyUrlWorks": "Any public URL works.",
+    "facebook": "Facebook"
+  },
   "dataLocations": {
     "title": "Where your data lives",
     "whyThisMatters": "Why this matters",

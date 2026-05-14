@@ -35,6 +35,7 @@ import { GoalBar } from "./goal-bar";
 import { EditAgentDialog } from "./edit-agent-dialog";
 import { cronToHuman } from "@/lib/agents/cron-utils";
 import type { GoalMetric, SlackMessage } from "@/types/agents";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentDetail {
   name: string;
@@ -149,6 +150,7 @@ function getFileIcon(name: string) {
 }
 
 export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile }: AgentDetailPanelProps) {
+  const { t } = useLocale();
   const [agent, setAgent] = useState<AgentDetail | null>(null);
   const [history, setHistory] = useState<HeartbeatRecord[]>([]);
   const [slackMessages, setSlackMessages] = useState<SlackMessage[]>([]);
@@ -382,7 +384,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                     size="sm"
                     className="h-7 text-[11px] gap-1"
                     onClick={() => setEditDialogOpen(true)}
-                    title="Edit agent configuration"
+                    title={t("agentDetailPanel:editConfig")}
                   >
                     <Pencil className="h-3 w-3" />
                     Edit
@@ -405,7 +407,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                         URL.revokeObjectURL(url);
                       } catch { /* ignore */ }
                     }}
-                    title="Export agent bundle"
+                    title={t("agentDetailPanel:exportBundle")}
                   >
                     <Download className="h-3 w-3" />
                     Export
@@ -485,7 +487,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
             <div className="flex-1 overflow-y-auto">
               {/* GOALS */}
               {agent.goals.length > 0 && (
-                <Section icon={Target} title="Goals" action={
+                <Section icon={Target} title={t("agentDetailPanel:goals")} action={
                   <span className="text-[10px] text-muted-foreground/50 font-medium tabular-nums">
                     Period: {currentPeriodLabel()}
                   </span>
@@ -512,7 +514,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               )}
 
               {/* WORKSPACE */}
-              <Section icon={FolderOpen} title="Workspace" action={
+              <Section icon={FolderOpen} title={t("agentDetailPanel:workspace")} action={
                 workspace.length > 0 ? (
                   <button
                     className="text-[10px] text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
@@ -984,6 +986,7 @@ function Section({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const { t } = useLocale();
   return (
     <div className="px-5 py-4 border-b border-border/50">
       <div className="flex items-center justify-between mb-3">

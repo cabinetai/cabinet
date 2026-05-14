@@ -137,6 +137,38 @@
     "newTask": "משימה חדשה",
     "newRoutine": "שגרה חדשה"
   },
+  "runtime": {
+    "noProvider": "לא נבחר ספק",
+    "modeAriaLabel": "מצב סביבת ריצה",
+    "nativeTranscriptTitle": "התמלול המקורי של Cabinet — JSON stream מובנה, ארטיפקטים, תקציר, חוויה מלאה",
+    "ptyWarningTitle": "דורש מפתח OpenAI API. לא זמין בחשבונות Codex של ChatGPT — בחירת המודל הזה תיכשל עם 'model not supported when using Codex with a ChatGPT account'."
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "צוות AI",
+      "aiTeams": "צוותי AI",
+      "routines": "שגרות"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "עריכת הגדרות הסוכן",
+    "exportBundle": "ייצוא חבילת הסוכן",
+    "goals": "מטרות",
+    "workspace": "מרחב עבודה"
+  },
+  "scheduleRow": {
+    "deleteQ": "למחוק?",
+    "confirmDelete": "אישור מחיקה",
+    "cancelDelete": "ביטול מחיקה",
+    "runNow": "הפעל עכשיו"
+  },
+  "embedPopover": {
+    "placeholder": "הדביקו קישור (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, או כל URL)",
+    "notValidUrl": "לא URL תקין",
+    "anyUrlWorks": "כל URL ציבורי עובד.",
+    "facebook": "Facebook"
+  },
   "dataLocations": {
     "title": "איפה הנתונים שלך חיים",
     "whyThisMatters": "למה זה חשוב",

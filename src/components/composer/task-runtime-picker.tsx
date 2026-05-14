@@ -5,6 +5,7 @@ import { useAppStore } from "@/stores/app-store";
 import { BrainCircuit, Check, Sparkles, Terminal } from "lucide-react";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 import {
   formatEffortName,
   getModelEffortLevels,
@@ -361,6 +362,7 @@ function ProviderRuntimeMatrix({
   selectedEffortId?: string;
   onSelect: (modelId: string, effortId?: string) => void;
 }) {
+  const { t } = useLocale();
   const matrixEffortColumns = getProviderEffortColumns(provider);
   const models = provider.models || [];
 
@@ -449,7 +451,7 @@ function ProviderRuntimeMatrix({
                           {model.name}
                           {model.requires === "api_key" ? (
                             <span
-                              title="Requires an OpenAI API key. Not available on ChatGPT-plan Codex accounts — picking this model will fail with 'model not supported when using Codex with a ChatGPT account'."
+                              title={t("runtime:ptyWarningTitle")}
                               className="inline-flex items-center rounded-sm border border-amber-500/40 bg-amber-500/10 px-1 py-px text-[8.5px] font-medium uppercase tracking-wide text-amber-600 dark:text-amber-400"
                             >
                               API key
@@ -542,6 +544,7 @@ export function RuntimeSelectionBanner({
   trailing,
   className,
 }: RuntimeSelectionBannerProps) {
+  const { t } = useLocale();
   const currentProvider = useMemo(
     () =>
       resolveSelectedProvider(providers, value.providerId ?? undefined, undefined),
@@ -630,7 +633,7 @@ export function RuntimeSelectionBanner({
             )}
           </>
         ) : (
-          <span className="text-[10px] text-muted-foreground">No provider selected</span>
+          <span className="text-[10px] text-muted-foreground">{t("runtime:noProvider")}</span>
         )}
       </div>
       {trailing}
@@ -678,6 +681,7 @@ export function RuntimeMatrixPicker({
   className,
   emptyText = "No providers available.",
 }: RuntimeMatrixPickerProps) {
+  const { t } = useLocale();
   const runtimeMode: RuntimeMode = value.runtimeMode === "terminal" ? "terminal" : "native";
   const selectableProviders = useMemo(() => {
     const base = includeUnavailable
@@ -791,7 +795,7 @@ export function RuntimeMatrixPicker({
       {showRuntimeModeToggle && (
         <div
           role="tablist"
-          aria-label="Runtime mode"
+          aria-label={t("runtime:modeAriaLabel")}
           className="relative z-10 grid grid-cols-2 gap-1 -mb-px px-2 pt-2 text-[12px] font-medium"
         >
           <button
@@ -805,7 +809,7 @@ export function RuntimeMatrixPicker({
                 ? "border-border/70 bg-background text-foreground shadow-[0_-1px_0_0_var(--border)]"
                 : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
             )}
-            title="Cabinet's native transcript — structured JSON stream, artifacts, summary, the full UX"
+            title={t("runtime:nativeTranscriptTitle")}
           >
             <Sparkles className="h-4 w-4" />
             <span>Native</span>
@@ -936,6 +940,7 @@ function TerminalProviderPanel({
   selectedProviderId: string | null;
   onSelect: (providerId: string) => void;
 }) {
+  const { t } = useLocale();
   return (
     <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
       <div className="flex items-center gap-2 border-b border-zinc-800 bg-zinc-900/60 px-3 py-2 text-[10px] font-medium text-zinc-300">

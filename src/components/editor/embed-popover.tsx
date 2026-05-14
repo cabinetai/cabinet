@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { detectEmbed, providerLabel } from "@/lib/embeds/detect";
 import { Sparkles, Globe } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 
 interface Props {
   anchor: { top: number; left: number };
@@ -18,6 +19,7 @@ const SAMPLES = [
 ];
 
 export function EmbedPopover({ anchor, onCancel, onInsert }: Props) {
+  const { t } = useLocale();
   const [url, setUrl] = useState("");
   const detected = useMemo(() => (url ? detectEmbed(url) : null), [url]);
 
@@ -51,7 +53,7 @@ export function EmbedPopover({ anchor, onCancel, onInsert }: Props) {
           type="url"
           autoFocus
           value={url}
-          placeholder="Paste a link (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, or any URL)"
+          placeholder={t("embedPopover:placeholder")}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -68,9 +70,9 @@ export function EmbedPopover({ anchor, onCancel, onInsert }: Props) {
               <Globe className="w-3 h-3" /> Detected: {providerLabel(detected.provider)}
             </span>
           ) : url.trim() ? (
-            <span className="text-muted-foreground">Not a valid URL</span>
+            <span className="text-muted-foreground">{t("embedPopover:notValidUrl")}</span>
           ) : (
-            <span className="text-muted-foreground">Any public URL works.</span>
+            <span className="text-muted-foreground">{t("embedPopover:anyUrlWorks")}</span>
           )}
           <button
             type="button"
