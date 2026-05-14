@@ -24,8 +24,10 @@ import {
 import { usePageMeta } from "@/hooks/use-page-meta";
 import { cn } from "@/lib/utils";
 import { ConversationApprovalPanel } from "./conversation-approval-panel";
+import { useLocale } from "@/i18n/use-locale";
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useLocale();
   const color =
     status === "running"
       ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20"
@@ -50,6 +52,7 @@ export function ConversationLiveView({
   onOpenArtifact?: (path: string) => void;
   onRefresh?: () => void;
 }) {
+  const { t } = useLocale();
   const transcriptUrl = appendConversationCabinetPath(
     `/agents/conversations/${detail.meta.id}`,
     detail.meta.cabinetPath
@@ -136,7 +139,7 @@ export function ConversationLiveView({
             <div className="flex items-center gap-2">
               <RadioTower className="h-4 w-4 text-primary" />
               <div>
-                <h4 className="text-[13px] font-semibold">Live Output</h4>
+                <h4 className="text-[13px] font-semibold">{t("conversationLive:liveOutput")}</h4>
                 <p className="text-[11px] text-muted-foreground">
                   Cabinet is rendering the saved transcript instead of the web terminal.
                 </p>
@@ -154,7 +157,7 @@ export function ConversationLiveView({
             <div className="flex min-h-40 items-center justify-center rounded-xl border border-dashed border-border px-4 py-10 text-center">
               <div className="space-y-2 text-muted-foreground">
                 <Loader2 className="mx-auto h-5 w-5 animate-spin" />
-                <p className="text-[13px]">Waiting for the first output chunk...</p>
+                <p className="text-[13px]">{t("conversationLive:waitingFirstChunk")}</p>
               </div>
             </div>
           )}

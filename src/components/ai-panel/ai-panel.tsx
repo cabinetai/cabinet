@@ -35,6 +35,7 @@ import {
 } from "@/components/composer/agent-picker";
 import { useComposer, type MentionableItem } from "@/hooks/use-composer";
 import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
+import { useLocale } from "@/i18n/use-locale";
 
 interface PastSession {
   id: string;
@@ -87,6 +88,7 @@ function startCase(value: string | undefined, fallback = "Editor"): string {
 }
 
 export function AIPanel() {
+  const { t } = useLocale();
   const {
     isOpen,
     close,
@@ -516,7 +518,7 @@ export function AIPanel() {
               variant="ghost"
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-foreground"
-              title="Clear all sessions"
+              title={t("aiPanel:clearSessions")}
               onClick={() => {
                 clearAllSessions();
                 setPendingSessions([]);
@@ -633,7 +635,7 @@ export function AIPanel() {
                             }
                           }}
                           className="shrink-0 p-1 text-muted-foreground/40 transition-colors hover:text-destructive"
-                          title="Dismiss"
+                          title={t("aiPanel:dismiss")}
                         >
                           <X className="h-3.5 w-3.5" />
                         </span>

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Code2, Save, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { useLocale } from "@/i18n/use-locale";
 
 interface CsvViewerProps {
   path: string;
@@ -68,6 +69,7 @@ function rowsToCsv(rows: string[][]): string {
 }
 
 export function CsvViewer({ path }: CsvViewerProps) {
+  const { t } = useLocale();
   const [rows, setRows] = useState<string[][]>([]);
   const [rawText, setRawText] = useState("");
   const [sourceMode, setSourceMode] = useState(false);
@@ -185,7 +187,7 @@ export function CsvViewer({ path }: CsvViewerProps) {
         <button
           onClick={() => window.open(csvUrl, "_blank")}
           className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-          title="Download CSV"
+          title={t("csvViewer:downloadCsv")}
         >
           <Download className="h-4 w-4" />
         </button>
@@ -256,7 +258,7 @@ export function CsvViewer({ path }: CsvViewerProps) {
                       <button
                         className="hidden group-hover:inline text-red-400 hover:text-red-300 text-[10px]"
                         onClick={() => deleteRow(r)}
-                        title="Delete row"
+                        title={t("csvViewer:deleteRow")}
                       >
                         ×
                       </button>

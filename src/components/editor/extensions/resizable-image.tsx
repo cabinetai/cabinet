@@ -3,6 +3,7 @@
 import { ReactNodeViewRenderer, NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import Image from "@tiptap/extension-image";
 import { useRef, useState, useCallback } from "react";
+import { useLocale } from "@/i18n/use-locale";
 
 interface ImageAttrs {
   src: string;
@@ -13,6 +14,7 @@ interface ImageAttrs {
 }
 
 function ResizableImageComponent(props: NodeViewProps) {
+  const { t } = useLocale();
   const { node, updateAttributes, selected, editor } = props;
   const attrs = node.attrs as ImageAttrs;
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -90,14 +92,14 @@ function ResizableImageComponent(props: NodeViewProps) {
         {editor.isEditable && (
           <>
             <div
-              aria-label="Resize from left"
+              aria-label={t("resizableImage:resizeLeft")}
               onPointerDown={(e) => beginResize(e, "left")}
               className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
             >
               <div className="w-1 h-8 bg-white border border-black/40 rounded-full shadow" />
             </div>
             <div
-              aria-label="Resize from right"
+              aria-label={t("resizableImage:resizeRight")}
               onPointerDown={(e) => beginResize(e, "right")}
               className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
             >

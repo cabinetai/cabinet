@@ -164,8 +164,8 @@ export function CabinetSchedulerControls({
             >
               <RefreshCw className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium text-foreground">Restart all agents</p>
-                <p className="text-[11px] text-muted-foreground">Stop then re-activate all schedules</p>
+                <p className="text-sm font-medium text-foreground">{t("schedulerPlus:restartAll")}</p>
+                <p className="text-[11px] text-muted-foreground">{t("schedulerPlus:restartSubtitle")}</p>
               </div>
             </button>
           </div>

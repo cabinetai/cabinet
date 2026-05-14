@@ -352,6 +352,65 @@
   "boardSkeleton": {
     "loadingTasks": "טוען משימות"
   },
+  "agentList": {
+    "agentLibrary": "ספריית סוכנים",
+    "newAgent": "סוכן חדש"
+  },
+  "agentLive": {
+    "dismiss": "סגירה",
+    "paused": "הסוכן מושהה"
+  },
+  "conversationLive": {
+    "liveOutput": "פלט חי",
+    "waitingFirstChunk": "ממתין למקטע הפלט הראשון…"
+  },
+  "editIdentityPlus": {
+    "avatar": "אווטאר",
+    "useIconInstead": "השתמש באייקון במקום"
+  },
+  "pendingActions": {
+    "rejectAll": "דחיית כל הפעולות הממתינות",
+    "approveAll": "אישור ושיגור כל פעולה ללא חסימה קשה"
+  },
+  "aiPanel": {
+    "clearSessions": "ניקוי כל הסשנים",
+    "dismiss": "סגירה"
+  },
+  "schedulerPlus": {
+    "restartAll": "הפעלה מחדש של כל הסוכנים",
+    "restartSubtitle": "עצירה ואז הפעלה מחדש של כל לוחות הזמנים"
+  },
+  "csvViewer": {
+    "downloadCsv": "הורדת CSV",
+    "deleteRow": "מחיקת שורה"
+  },
+  "resizableImage": {
+    "resizeLeft": "שינוי גודל משמאל",
+    "resizeRight": "שינוי גודל מימין"
+  },
+  "folderIndex": {
+    "listView": "תצוגת רשימה",
+    "galleryView": "תצוגת גלריה"
+  },
+  "linkPopover": {
+    "openLink": "פתיחת הקישור",
+    "removeLink": "הסרת הקישור"
+  },
+  "officeChrome": {
+    "openInFinder": "פתיחה ב-Finder",
+    "downloadOriginal": "הורדת המקור"
+  },
+  "sourceViewer": {
+    "copyContents": "העתקת תוכן הקובץ",
+    "downloadFile": "הורדת הקובץ"
+  },
+  "versionHistory": {
+    "title": "היסטוריית גרסאות"
+  },
+  "demoModal": {
+    "closeDemo": "סגירת ההדגמה",
+    "close": "סגירה"
+  },
   "dataLocations": {
     "title": "איפה הנתונים שלך חיים",
     "whyThisMatters": "למה זה חשוב",

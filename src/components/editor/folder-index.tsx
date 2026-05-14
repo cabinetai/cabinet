@@ -17,6 +17,7 @@ import {
 import type { TreeNode } from "@/types";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
+import { useLocale } from "@/i18n/use-locale";
 
 type ViewMode = "list" | "gallery";
 
@@ -103,6 +104,7 @@ interface FolderIndexProps {
 // folder changes — that's why state can safely seed from the path on mount
 // without a re-sync effect.
 export function FolderIndex({ folderPath, entries }: FolderIndexProps) {
+  const { t } = useLocale();
   const imageHeavy = useMemo(() => isImageHeavy(entries), [entries]);
 
   const [mode, setMode] = useState<ViewMode>(() => {
@@ -143,7 +145,7 @@ export function FolderIndex({ folderPath, entries }: FolderIndexProps) {
                 : "text-muted-foreground hover:text-foreground"
             }`}
             aria-pressed={mode === "list"}
-            title="List view"
+            title={t("folderIndex:listView")}
           >
             <ListIcon className="h-3 w-3" />
             List
@@ -156,7 +158,7 @@ export function FolderIndex({ folderPath, entries }: FolderIndexProps) {
                 : "text-muted-foreground hover:text-foreground"
             }`}
             aria-pressed={mode === "gallery"}
-            title="Gallery view"
+            title={t("folderIndex:galleryView")}
           >
             <LayoutGrid className="h-3 w-3" />
             Gallery

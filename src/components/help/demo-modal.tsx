@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { ArrowLeft, ArrowRight, Sparkles, X } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
+import { useLocale } from "@/i18n/use-locale";
 
 export interface DemoSlide {
   id: string;
@@ -51,11 +52,13 @@ function transition(update: () => void) {
 }
 
 export function DemoModal({ demo, onClose }: DemoModalProps) {
+  const { t } = useLocale();
   if (!demo) return null;
   return <DemoBody demo={demo} onClose={onClose} />;
 }
 
 function DemoBody({ demo, onClose }: { demo: DemoConfig; onClose: () => void }) {
+  const { t } = useLocale();
   const slides = demo.slides;
   const [index, setIndex] = useState(0);
 
@@ -126,7 +129,7 @@ function DemoBody({ demo, onClose }: { demo: DemoConfig; onClose: () => void }) 
 
       <button
         onClick={onClose}
-        aria-label="Close demo"
+        aria-label={t("demoModal:closeDemo")}
         className="absolute right-6 top-6 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] transition-colors"
         style={{
           color: P.textSecondary,
@@ -134,7 +137,7 @@ function DemoBody({ demo, onClose }: { demo: DemoConfig; onClose: () => void }) 
           border: `1px solid ${P.border}`,
         }}
       >
-        <span>Close</span>
+        <span>{t("demoModal:close")}</span>
         <X className="h-3.5 w-3.5" />
       </button>
 

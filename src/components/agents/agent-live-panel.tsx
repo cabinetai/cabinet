@@ -22,6 +22,7 @@ import {
   type AgentLiveSession,
 } from "@/stores/ai-panel-store";
 import type { AgentPersona, HeartbeatRecord } from "@/lib/agents/persona-manager";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentLivePanelProps {
   persona: AgentPersona;
@@ -45,6 +46,7 @@ function formatDuration(ms: number): string {
 }
 
 export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
+  const { t } = useLocale();
   const [history, setHistory] = useState<HeartbeatRecord[]>([]);
   const [expandedPast, setExpandedPast] = useState<Set<string>>(new Set());
   const [running, setRunning] = useState(false);
@@ -285,7 +287,7 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
                 <button
                   onClick={() => removeAgentSession(session.sessionId)}
                   className="text-muted-foreground/40 hover:text-destructive shrink-0 p-1"
-                  title="Dismiss"
+                  title={t("agentLive:dismiss")}
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -335,7 +337,7 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
           {running ? "Starting…" : "Run Now"}
         </Button>
         {!persona.active && (
-          <span className="text-[11px] text-muted-foreground">Agent is paused</span>
+          <span className="text-[11px] text-muted-foreground">{t("agentLive:paused")}</span>
         )}
       </div>
     </div>

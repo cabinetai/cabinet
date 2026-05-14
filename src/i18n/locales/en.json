@@ -352,6 +352,65 @@
   "boardSkeleton": {
     "loadingTasks": "Loading tasks"
   },
+  "agentList": {
+    "agentLibrary": "Agent Library",
+    "newAgent": "New Agent"
+  },
+  "agentLive": {
+    "dismiss": "Dismiss",
+    "paused": "Agent is paused"
+  },
+  "conversationLive": {
+    "liveOutput": "Live Output",
+    "waitingFirstChunk": "Waiting for the first output chunk…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Use icon instead"
+  },
+  "pendingActions": {
+    "rejectAll": "Reject every pending action",
+    "approveAll": "Approve and dispatch every action that has no hard blockers"
+  },
+  "aiPanel": {
+    "clearSessions": "Clear all sessions",
+    "dismiss": "Dismiss"
+  },
+  "schedulerPlus": {
+    "restartAll": "Restart all agents",
+    "restartSubtitle": "Stop then re-activate all schedules"
+  },
+  "csvViewer": {
+    "downloadCsv": "Download CSV",
+    "deleteRow": "Delete row"
+  },
+  "resizableImage": {
+    "resizeLeft": "Resize from left",
+    "resizeRight": "Resize from right"
+  },
+  "folderIndex": {
+    "listView": "List view",
+    "galleryView": "Gallery view"
+  },
+  "linkPopover": {
+    "openLink": "Open link",
+    "removeLink": "Remove link"
+  },
+  "officeChrome": {
+    "openInFinder": "Open in Finder",
+    "downloadOriginal": "Download original"
+  },
+  "sourceViewer": {
+    "copyContents": "Copy file contents",
+    "downloadFile": "Download file"
+  },
+  "versionHistory": {
+    "title": "Version History"
+  },
+  "demoModal": {
+    "closeDemo": "Close demo",
+    "close": "Close"
+  },
   "dataLocations": {
     "title": "Where your data lives",
     "whyThisMatters": "Why this matters",

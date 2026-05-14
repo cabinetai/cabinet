@@ -20,6 +20,7 @@ import { useAppStore } from "@/stores/app-store";
 import { formatEffortName, getModelEffortLevels } from "@/lib/agents/runtime-options";
 import type { ProviderInfo } from "@/types/agents";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 const TYPE_COLORS: Record<string, string> = {
   LAUNCH_TASK: "bg-pink-500/15 text-pink-400 border-pink-500/20",
@@ -83,6 +84,7 @@ function ActionRuntimePicker({
   disabled,
   onChange,
 }: ActionRuntimePickerProps) {
+  const { t } = useLocale();
   const current = mergedRuntime(action, override);
   const overridden = !!(override?.model || override?.effort);
 
@@ -236,6 +238,7 @@ export function PendingActionsPanel({
   parentProviderId,
   onRefresh,
 }: PendingActionsPanelProps) {
+  const { t } = useLocale();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [submitting, setSubmitting] = useState<null | "approve" | "reject">(null);
   const [error, setError] = useState<string | null>(null);
@@ -399,7 +402,7 @@ export function PendingActionsPanel({
                   pending.map((item) => item.id)
                 )
               }
-              title="Reject every pending action"
+              title={t("pendingActions:rejectAll")}
             >
               {submitting === "reject" && selected.size === 0 ? (
                 <Loader2 className="size-3 animate-spin" />
@@ -419,7 +422,7 @@ export function PendingActionsPanel({
                   approvable.map((item) => item.id)
                 )
               }
-              title="Approve and dispatch every action that has no hard blockers"
+              title={t("pendingActions:approveAll")}
             >
               {submitting === "approve" && selected.size === 0 ? (
                 <Loader2 className="size-3 animate-spin" />

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
+import { useLocale } from "@/i18n/use-locale";
 
 interface SourceViewerProps {
   path: string;
@@ -42,6 +43,7 @@ function formatBadge(filename: string): string {
 }
 
 export function SourceViewer({ path }: SourceViewerProps) {
+  const { t } = useLocale();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [wrap, setWrap] = useState(false);
@@ -109,7 +111,7 @@ export function SourceViewer({ path }: SourceViewerProps) {
           size="sm"
           className="h-7 gap-1.5 text-xs"
           onClick={copyToClipboard}
-          title="Copy file contents"
+          title={t("sourceViewer:copyContents")}
         >
           {copied
             ? <Check className="h-3.5 w-3.5 text-green-500" />
@@ -126,7 +128,7 @@ export function SourceViewer({ path }: SourceViewerProps) {
             a.download = filename;
             a.click();
           }}
-          title="Download file"
+          title={t("sourceViewer:downloadFile")}
         >
           <Download className="h-3.5 w-3.5" />
           Download

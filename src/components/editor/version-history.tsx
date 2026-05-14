@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditorStore } from "@/stores/editor-store";
 import { confirmDialog } from "@/lib/ui/confirm";
+import { useLocale } from "@/i18n/use-locale";
 
 interface GitLogEntry {
   hash: string;
@@ -15,6 +16,7 @@ interface GitLogEntry {
 }
 
 export function VersionHistory() {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [history, setHistory] = useState<GitLogEntry[]>([]);
   const [diff, setDiff] = useState<string | null>(null);
@@ -78,7 +80,7 @@ export function VersionHistory() {
         size="icon"
         className="h-7 w-7"
         onClick={() => setOpen(!open)}
-        title="Version History"
+        title={t("versionHistory:title")}
       >
         <History className="h-4 w-4" />
       </Button>
@@ -88,7 +90,7 @@ export function VersionHistory() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
               <History className="h-4 w-4" />
-              <span className="text-[13px] font-semibold">Version History</span>
+              <span className="text-[13px] font-semibold">{t("versionHistory:title")}</span>
             </div>
             <Button
               variant="ghost"

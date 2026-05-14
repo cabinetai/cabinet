@@ -3,6 +3,7 @@
 import { Download, FolderOpen, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { useLocale } from "@/i18n/use-locale";
 
 interface OfficeChromeProps {
   path: string;
@@ -15,6 +16,7 @@ interface OfficeChromeProps {
 }
 
 export function OfficeChrome({ path, extLabel, external, hideFinder }: OfficeChromeProps) {
+  const { t } = useLocale();
   const assetUrl = `/api/assets/${path}`;
   const filename = path.split("/").pop() || path;
 
@@ -49,7 +51,7 @@ export function OfficeChrome({ path, extLabel, external, hideFinder }: OfficeChr
           size="sm"
           className="gap-1.5 text-[11px] h-7"
           onClick={revealInFinder}
-          title="Open in Finder"
+          title={t("officeChrome:openInFinder")}
         >
           <FolderOpen className="h-3.5 w-3.5" />
           Reveal
@@ -66,7 +68,7 @@ export function OfficeChrome({ path, extLabel, external, hideFinder }: OfficeChr
             a.download = filename;
             a.click();
           }}
-          title="Download original"
+          title={t("officeChrome:downloadOriginal")}
         >
           <Download className="h-3.5 w-3.5" />
           Download
