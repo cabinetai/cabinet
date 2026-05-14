@@ -3,6 +3,8 @@ import { DEFAULT_LOCALE, type Locale } from "./index";
 const LOCALE_TO_BCP47: Record<Locale, string> = {
   en: "en-US",
   he: "he-IL",
+  "zh-CN": "zh-CN",
+  "zh-TW": "zh-TW",
 };
 
 export function bcp47(locale: Locale | undefined | null): string {

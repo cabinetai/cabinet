@@ -710,6 +710,38 @@ function buildFontStylesheetUrl(families: string[]): string | null {
   return `https://fonts.googleapis.com/css2?${encoded.join("&")}&display=swap`;
 }
 
+/**
+ * Load Noto Sans SC / TC when the active locale is Chinese, so themes whose
+ * Latin font lacks CJK glyphs still render Chinese correctly. CSS rules in
+ * globals.css scoped to `html:lang(zh-*)` add these as a font-stack fallback
+ * after the theme font — browsers cascade per-character, so Latin keeps the
+ * theme's look and Chinese characters pull from Noto Sans.
+ */
+export function loadCjkFonts(locale: string) {
+  if (typeof document === "undefined") return;
+  const link = document.getElementById("cjk-fonts-link") as HTMLLinkElement | null;
+  let family: string | null = null;
+  if (locale.startsWith("zh-Hans") || locale === "zh-CN" || locale === "zh") {
+    family = "Noto+Sans+SC";
+  } else if (locale.startsWith("zh-Hant") || locale === "zh-TW") {
+    family = "Noto+Sans+TC";
+  }
+  if (!family) {
+    link?.remove();
+    return;
+  }
+  const url = `https://fonts.googleapis.com/css2?family=${family}:wght@400;500;600;700&display=swap`;
+  if (link) {
+    if (link.href !== url) link.href = url;
+    return;
+  }
+  const el = document.createElement("link");
+  el.id = "cjk-fonts-link";
+  el.rel = "stylesheet";
+  el.href = url;
+  document.head.appendChild(el);
+}
+
 // Swap the active Google Fonts <link> to only the families the current theme
 // actually uses. Previously we loaded every theme's fonts (30+ families) on
 // every page load, blocking LCP for seconds.

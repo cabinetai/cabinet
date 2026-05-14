@@ -3,8 +3,10 @@ import { initReactI18next } from "react-i18next";
 
 import en from "./locales/en.json";
 import he from "./locales/he.json";
+import zhCN from "./locales/zh-CN.json";
+import zhTW from "./locales/zh-TW.json";
 
-export const SUPPORTED_LOCALES = ["en", "he"] as const;
+export const SUPPORTED_LOCALES = ["en", "he", "zh-CN", "zh-TW"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_STORAGE_KEY = "cabinet-locale";
@@ -12,6 +14,8 @@ export const LOCALE_STORAGE_KEY = "cabinet-locale";
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: "English",
   he: "עברית",
+  "zh-CN": "简体中文",
+  "zh-TW": "繁體中文",
 };
 
 /**
@@ -56,8 +60,6 @@ export const REQUESTABLE_LOCALES: RequestableLocale[] = ([
   { code: "bg",     label: "Български",        englishName: "Bulgarian",          dir: "ltr" },
   { code: "my",     label: "မြန်မာ",          englishName: "Burmese",            dir: "ltr" },
   { code: "ca",     label: "Català",           englishName: "Catalan",            dir: "ltr" },
-  { code: "zh-CN",  label: "简体中文",          englishName: "Chinese (Simplified)", dir: "ltr" },
-  { code: "zh-TW",  label: "繁體中文",          englishName: "Chinese (Traditional)", dir: "ltr" },
   { code: "hr",     label: "Hrvatski",         englishName: "Croatian",           dir: "ltr" },
   { code: "cs",     label: "Čeština",          englishName: "Czech",              dir: "ltr" },
   { code: "da",     label: "Dansk",            englishName: "Danish",             dir: "ltr" },
@@ -147,7 +149,7 @@ function getInitialLocale(): Locale {
  *   4. Add the option to the Language section in settings-page.tsx.
  * That's the whole flow — no per-namespace files to keep in sync.
  */
-const resources = { en, he } as const;
+const resources = { en, he, "zh-CN": zhCN, "zh-TW": zhTW } as const;
 
 const NAMESPACES = Object.keys(en) as Array<keyof typeof en>;
 

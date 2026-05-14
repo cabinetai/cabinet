@@ -722,6 +722,8 @@
       "description": "Changes language and reading direction. Existing pages keep their per-document direction.",
       "english": "English",
       "hebrew": "עברית",
+      "chineseSimplified": "简体中文",
+      "chineseTraditional": "繁體中文",
       "moreLanguages": "More languages",
       "moreLanguagesHint": "Click any to tell us you'd like Cabinet in that language — we'll prioritize the most-requested ones.",
       "comingSoon": "Coming soon",

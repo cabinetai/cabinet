@@ -171,6 +171,34 @@ html[data-custom-theme] .tiptap h3,
 html[data-custom-theme] .tiptap h4 {
   font-family: var(--font-heading-theme, var(--font-theme)) !important;
 }
+
+/* CJK fallback — appends Noto Sans SC / TC after the active theme font so
+   Chinese glyphs render correctly across all themes. Browsers cascade
+   font-family per character, so Latin keeps the theme's look and CJK chars
+   resolve to Noto Sans. The font itself is loaded on demand by
+   `loadCjkFonts()` in src/lib/themes.ts when the locale changes. */
+html:lang(zh-CN),
+html:lang(zh-CN) body,
+html[lang^="zh-Hans"],
+html[lang^="zh-Hans"] body {
+  font-family: var(--font-theme, var(--font-sans)), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+html:lang(zh-CN) h1, html:lang(zh-CN) h2, html:lang(zh-CN) h3, html:lang(zh-CN) h4,
+html:lang(zh-CN) .tiptap h1, html:lang(zh-CN) .tiptap h2, html:lang(zh-CN) .tiptap h3, html:lang(zh-CN) .tiptap h4,
+html[lang^="zh-Hans"] h1, html[lang^="zh-Hans"] h2, html[lang^="zh-Hans"] h3, html[lang^="zh-Hans"] h4 {
+  font-family: var(--font-heading-theme, var(--font-theme, var(--font-sans))), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+html:lang(zh-TW),
+html:lang(zh-TW) body,
+html[lang^="zh-Hant"],
+html[lang^="zh-Hant"] body {
+  font-family: var(--font-theme, var(--font-sans)), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif !important;
+}
+html:lang(zh-TW) h1, html:lang(zh-TW) h2, html:lang(zh-TW) h3, html:lang(zh-TW) h4,
+html:lang(zh-TW) .tiptap h1, html:lang(zh-TW) .tiptap h2, html:lang(zh-TW) .tiptap h3, html:lang(zh-TW) .tiptap h4,
+html[lang^="zh-Hant"] h1, html[lang^="zh-Hant"] h2, html[lang^="zh-Hant"] h3, html[lang^="zh-Hant"] h4 {
+  font-family: var(--font-heading-theme, var(--font-theme, var(--font-sans))), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif !important;
+}
 /* Cloud sway animation (from runcabinet.com) */
 @keyframes waitlist-cloud-sway {
   0% { transform: translate3d(11%, 0, 0); }

@@ -722,6 +722,8 @@
       "description": "משנה שפה וכיוון קריאה. דפים קיימים שומרים על הכיוון שהוגדר להם.",
       "english": "English",
       "hebrew": "עברית",
+      "chineseSimplified": "简体中文",
+      "chineseTraditional": "繁體中文",
       "moreLanguages": "שפות נוספות",
       "moreLanguagesHint": "לחצו על שפה כדי להגיד לנו שתרצו את Cabinet בה — נתעדף את המבוקשות ביותר.",
       "comingSoon": "בקרוב",

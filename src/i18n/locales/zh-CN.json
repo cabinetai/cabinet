@@ -1,0 +1,949 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "创建智能体",
+      "avatar": "头像",
+      "namePlaceholder": "营销智能体",
+      "rolePlaceholder": "内容专员",
+      "department": "部门",
+      "specialist": "专员",
+      "departmentLead": "部门主管",
+      "provider": "服务商",
+      "runtime": "运行时",
+      "promptPlaceholder": "你是一位营销智能体……"
+    },
+    "metric": {
+      "name": "指标名称",
+      "namePlaceholder": "reddit_replies",
+      "target": "目标",
+      "targetPlaceholder": "回复/周",
+      "floor": "下限",
+      "period": "周期",
+      "daily": "每日",
+      "weekly": "每周",
+      "monthly": "每月"
+    },
+    "workspace": {
+      "promise": "承诺",
+      "orgChart": "团队组织图",
+      "jobDetails": "任务详情",
+      "heartbeat": "心跳",
+      "workspace": "工作区",
+      "editAgent": "编辑智能体",
+      "instructions": "指令",
+      "instructionsPlaceholder": "用 Markdown 编写该智能体的指令。",
+      "newAgent": "新建智能体",
+      "routines": "例行任务",
+      "browseLibrary": "浏览智能体库",
+      "editYourOwn": "编辑你自己的智能体",
+      "editorPlaceholder": "编辑器",
+      "productAgentPlaceholder": "产品写作智能体",
+      "instructionsBodyPlaceholder": "定义这个智能体在凯比内特和知识库中的工作方式。",
+      "perAgentPrompts": "每个智能体的循环提示词",
+      "runNow": "立即运行",
+      "delete": "删除",
+      "viewOrgChart": "以组织图查看此团队(全屏打开)",
+      "hideIntro": "隐藏此介绍",
+      "sharedAcrossCabinets": "在所有凯比内特间共享",
+      "expandSchedule": "展开计划",
+      "heartbeatsOnAgentPage": "心跳在每个智能体的页面上配置",
+      "exitFullscreen": "退出全屏"
+    },
+    "detail": {
+      "clickToTurnOff": "点击以关闭。",
+      "color": "颜色",
+      "customColor": "自定义颜色",
+      "preset": "预设",
+      "editIconColor": "编辑图标、颜色或头像",
+      "sharedAcrossCabinetsHint": "在所有凯比内特间共享 — 编辑将应用于所有位置",
+      "inbox": "收件箱",
+      "conversations": "对话",
+      "recentWork": "最近工作",
+      "schedule": "计划",
+      "heartbeat": "心跳",
+      "runNow": "立即运行",
+      "editRoutine": "编辑例行任务",
+      "addRoutine": "添加例行任务",
+      "details": "详情",
+      "editingGlobalAgent": "正在编辑全局智能体",
+      "displayName": "显示名称",
+      "role": "角色",
+      "department": "部门",
+      "type": "类型",
+      "workspace": "工作区",
+      "tags": "标签",
+      "openSkillsSettings": "打开设置 → 技能",
+      "notInCatalog": "目录中未找到 — 点击以移除",
+      "recommendedForRole": "推荐给此角色 — 点击以附加",
+      "promise": "承诺",
+      "saved": "已保存"
+    },
+    "missionControl": {
+      "gallery": "图集",
+      "newAgent": "新建智能体",
+      "allGoals": "全部目标",
+      "noGoals": "尚未为任何智能体配置目标。",
+      "fromScratch": "从零开始",
+      "describeIt": "描述它",
+      "import": "导入",
+      "closeDialog": "关闭对话框",
+      "describeYourAgent": "描述你的智能体",
+      "describePlaceholder": "我需要一个监控 Hacker News 上关于 GPU 帖子并撰写深入评论、链接到我们博客的智能体……"
+    },
+    "pulseStrip": {
+      "agents": "智能体",
+      "running": "运行中",
+      "goals": "目标",
+      "alerts": "告警",
+      "cost": "成本",
+      "runningPlays": "进行中的剧本",
+      "noRunning": "当前没有正在运行的智能体。",
+      "costBreakdown": "成本细分",
+      "noUsage": "尚无 API 使用量。",
+      "totalEstimated": "总估算"
+    },
+    "routine": {
+      "runNowTitle": "立即运行此例行任务(一次性,不在计划之内)",
+      "deletePermanently": "永久删除此例行任务",
+      "promptPlaceholder": "这个例行任务该做什么?例如:总结昨日的活动……",
+      "jobName": "任务名称",
+      "jobNamePlaceholder": "每周策略摘要",
+      "jobId": "任务 ID",
+      "schedule": "计划",
+      "model": "模型",
+      "enabled": "已启用"
+    }
+  },
+  "registry": {
+    "loading": "正在从注册表加载……",
+    "readyToImport": "准备好导入这个凯比内特了吗?",
+    "organization": "组织",
+    "agents": "智能体",
+    "scheduledJobs": "已排程任务",
+    "about": "关于",
+    "cabinetName": "凯比内特名称",
+    "cabinetNamePlaceholder": "凯比内特名称……",
+    "searchPlaceholder": "搜索凯比内特……",
+    "noResults": "没有匹配你搜索的凯比内特。"
+  },
+  "tasksBoard": {
+    "title": "任务",
+    "manualTooltip": "手动 — 你直接启动的任务",
+    "jobsTooltip": "任务 — 已排程的循环运行",
+    "heartbeatTooltip": "心跳 — 智能体自主驱动的运行",
+    "clearSelection": "清除选择 (Esc)",
+    "createTask": "创建新任务",
+    "moreNewTypes": "更多新建类型",
+    "newTask": "新建任务",
+    "newRoutine": "新建例行任务"
+  },
+  "runtime": {
+    "noProvider": "未选择服务商",
+    "modeAriaLabel": "运行时模式",
+    "nativeTranscriptTitle": "凯比内特的原生记录 — 结构化 JSON 流、产物、摘要,完整 UX",
+    "ptyWarningTitle": "需要 OpenAI API 密钥。在 ChatGPT 计划的 Codex 账户上不可用 — 选择该模型会失败并提示 'model not supported when using Codex with a ChatGPT account'。",
+    "native": "原生",
+    "terminal": "终端",
+    "terminalTitle": "在实时 PTY 终端会话中运行 CLI(实验性黑客模式)",
+    "providers": "服务商"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "智能体以完全权限运行。",
+    "backUp": "请定期备份你的数据。",
+    "betaSoftware": "测试版软件,可能存在问题。",
+    "iAccept": "我已阅读并接受"
+  },
+  "skillAdd": {
+    "addSkill": "添加技能",
+    "auditTooltip": "来自 skills.sh 外部审计的结果(Alibaba Threat Hunter、Socket、Snyk、zeroleaks)",
+    "auditUnavailable": "此技能没有 skills.sh 审计数据"
+  },
+  "help": {
+    "page": {
+      "cabinet": "凯比内特",
+      "aiTeam": "AI 团队",
+      "aiTeams": "AI 团队",
+      "routines": "例行任务"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "编辑智能体配置",
+    "exportBundle": "导出智能体包",
+    "goals": "目标",
+    "workspace": "工作区"
+  },
+  "scheduleRow": {
+    "deleteQ": "确认删除?",
+    "confirmDelete": "确认删除",
+    "cancelDelete": "取消删除",
+    "runNow": "立即运行"
+  },
+  "apiKeys": {
+    "addKey": "添加密钥",
+    "edit": "编辑",
+    "remove": "移除",
+    "newApiKey": "新建 API 密钥"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "凯比内特更新",
+    "dataDirectory": "数据目录",
+    "backups": "备份"
+  },
+  "kanban": {
+    "stopAllInLane": "停止此栏内所有正在运行的任务",
+    "restartAllInLane": "重启此栏内所有任务",
+    "newTask": "新建任务",
+    "collapseColumn": "折叠列"
+  },
+  "terminalTabs": {
+    "newTab": "新建终端标签页",
+    "closeTab": "关闭终端"
+  },
+  "newTaskButton": {
+    "createNew": "新建……",
+    "newTask": "新建任务",
+    "newRoutine": "新建例行任务"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "每周策略摘要",
+    "schedule": "计划",
+    "jobId": "任务 ID",
+    "enabled": "已启用 — 按此计划运行"
+  },
+  "editIdentity": {
+    "title": "编辑智能体",
+    "displayName": "显示名称",
+    "color": "颜色",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "启动所有智能体",
+    "startAllSubtitle": "激活心跳和定时任务",
+    "stopAll": "停止所有智能体",
+    "stopAllSubtitle": "暂停心跳和定时任务"
+  },
+  "skillLibrary": {
+    "readOnly": "只读 — 无法在凯比内特中编辑",
+    "noUpstream": "直接在此凯比内特中创建 — 未记录上游 git 来源",
+    "executableWarning": "包内含可执行脚本 — 批准前请审核",
+    "skills": "技能"
+  },
+  "embedPopover": {
+    "placeholder": "粘贴链接 (YouTube、X、Vimeo、Loom、TikTok、Facebook、Instagram、Spotify 或任意 URL)",
+    "notValidUrl": "不是有效的 URL",
+    "anyUrlWorks": "任何公开 URL 都可以。",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "任意 iframe URL"
+  },
+  "rowActions": {
+    "stop": "停止",
+    "restart": "重启",
+    "reassign": "重新分配"
+  },
+  "schedulesPanel": {
+    "title": "已排程任务",
+    "noJobs": "尚未为该凯比内特配置任何任务。",
+    "heartbeats": "心跳",
+    "noHeartbeats": "尚未配置任何心跳。"
+  },
+  "mermaidViewer": {
+    "zoomOut": "缩小",
+    "zoomIn": "放大",
+    "resetView": "重置视图",
+    "syntaxError": "图表语法错误"
+  },
+  "helpPage": {
+    "keyboard": "键盘",
+    "skills": "技能",
+    "apiKeys": "API 密钥",
+    "mcpServers": "MCP 服务器"
+  },
+  "keyboardShortcuts": {
+    "title": "键盘快捷键",
+    "filterPlaceholder": "筛选……",
+    "close": "关闭"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "实时终端",
+    "runningHeartbeat": "心跳运行中……",
+    "memory": "记忆",
+    "recentActivity": "最近活动"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "你的头像",
+    "preset": "预设",
+    "useInitials": "使用首字母回退",
+    "custom": "自定义"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "检测到本地应用代码改动"
+  },
+  "logsPanel": {
+    "classifiedError": "已分类错误",
+    "session": "会话",
+    "noEvents": "尚无事件。",
+    "noTranscript": "尚无记录。"
+  },
+  "conversationResult": {
+    "prompt": "提示词",
+    "result": "结果",
+    "noSummary": "未捕获摘要。"
+  },
+  "scheduleRowPlus": {
+    "delete": "删除"
+  },
+  "attachmentPicker": {
+    "attachFiles": "附加文件"
+  },
+  "demos": {
+    "aiTeam": "AI 团队",
+    "specialist": "专员",
+    "legal": "法务",
+    "global": "全局",
+    "editor": "编辑器",
+    "slashMenu": "斜杠菜单"
+  },
+  "slideAgents": {
+    "persona": "角色",
+    "heartbeat": "心跳",
+    "jobs": "任务",
+    "aiTeam": "AI 团队"
+  },
+  "startWork": {
+    "close": "关闭",
+    "selectAgent": "选择智能体"
+  },
+  "googleDoc": {
+    "noUrl": "未设置 Google URL",
+    "anyoneWithLink": "拥有链接的任何人",
+    "publishedToWeb": "已发布到网络"
+  },
+  "feedback": {
+    "close": "关闭",
+    "rolePlaceholder": "如:独立开发者、SaaS PM、设计专业学生、爱好者……",
+    "joinDiscord": "加入 Discord"
+  },
+  "apiKeysSection": {
+    "cancel": "取消",
+    "pasteHere": "粘贴到此处",
+    "pasteNewValue": "粘贴新值"
+  },
+  "storageBackend": {
+    "title": "存储后端",
+    "migrationFailed": "迁移失败"
+  },
+  "linkRepo": {
+    "title": "加载知识",
+    "autoDetectPlaceholder": "从 git remote 自动检测(可选)",
+    "shortSummaryPlaceholder": "面向智能体的可选简短摘要"
+  },
+  "recentTasks": {
+    "ptyMode": "终端 (PTY) 模式",
+    "revealOlder": "显示更多较早任务",
+    "showOlder": "显示较早"
+  },
+  "treeNode": {
+    "openCabinet": "打开凯比内特视图",
+    "pageTitlePlaceholder": "页面标题……",
+    "rename": "重命名"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "正在加载任务"
+  },
+  "agentList": {
+    "agentLibrary": "智能体库",
+    "newAgent": "新建智能体"
+  },
+  "agentLive": {
+    "dismiss": "关闭",
+    "paused": "智能体已暂停"
+  },
+  "conversationLive": {
+    "liveOutput": "实时输出",
+    "waitingFirstChunk": "等待第一个输出块……"
+  },
+  "editIdentityPlus": {
+    "avatar": "头像",
+    "useIconInstead": "改用图标"
+  },
+  "pendingActions": {
+    "rejectAll": "拒绝所有待执行操作",
+    "approveAll": "批准并派发所有无硬性阻塞的操作"
+  },
+  "aiPanel": {
+    "clearSessions": "清除所有会话",
+    "dismiss": "关闭"
+  },
+  "schedulerPlus": {
+    "restartAll": "重启所有智能体",
+    "restartSubtitle": "先停止再重新激活所有计划"
+  },
+  "csvViewer": {
+    "downloadCsv": "下载 CSV",
+    "deleteRow": "删除行"
+  },
+  "resizableImage": {
+    "resizeLeft": "从左侧调整大小",
+    "resizeRight": "从右侧调整大小"
+  },
+  "folderIndex": {
+    "listView": "列表视图",
+    "galleryView": "图集视图"
+  },
+  "linkPopover": {
+    "openLink": "打开链接",
+    "removeLink": "移除链接"
+  },
+  "officeChrome": {
+    "openInFinder": "在 Finder 中打开",
+    "downloadOriginal": "下载原始文件"
+  },
+  "sourceViewer": {
+    "copyContents": "复制文件内容",
+    "downloadFile": "下载文件"
+  },
+  "versionHistory": {
+    "title": "版本历史"
+  },
+  "demoModal": {
+    "closeDemo": "关闭演示",
+    "close": "关闭"
+  },
+  "demosPlus": {
+    "anything": "任何东西",
+    "yours": "你的",
+    "install": "安装",
+    "attach": "附加"
+  },
+  "narrowViewport": {
+    "dismiss": "关闭窄屏提示",
+    "dismissTitle": "在下次会话前关闭"
+  },
+  "agentCard": {
+    "runHeartbeat": "运行心跳"
+  },
+  "schedulePicker": {
+    "frequency": "频率",
+    "onDay": "在某日"
+  },
+  "slackPanel": {
+    "createChannel": "创建频道",
+    "thread": "讨论串"
+  },
+  "uninstall": {
+    "title": "卸载凯比内特"
+  },
+  "treeView": {
+    "drawersAriaLabel": "凯比内特抽屉",
+    "pageTitlePlaceholder": "页面标题……"
+  },
+  "skillAddPlus": {
+    "cancel": "取消"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "skills.sh 上没有此技能的审计数据",
+    "searchPlaceholder": "搜索 skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "刷新",
+    "noSkills": "尚无技能。"
+  },
+  "taskDetail": {
+    "close": "关闭 (Esc)"
+  },
+  "rowActionsPlus": {
+    "delete": "删除"
+  },
+  "taskCard": {
+    "ptyMode": "在终端 (PTY) 模式中运行"
+  },
+  "undoToast": {
+    "dismiss": "关闭"
+  },
+  "terminalExited": {
+    "openDetails": "打开结构化详情(提示词、产物、轮次)",
+    "reconnect": "重新连接守护进程并以流式重放原始 PTY"
+  },
+  "terminalTabsPlus": {
+    "resize": "调整终端面板大小"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "显示所有智能体",
+    "noRecentActivity": "无最近活动",
+    "noAgents": "无智能体",
+    "noAgentsConfigured": "尚未为该凯比内特配置任何智能体。",
+    "cabinetScope": "凯比内特范围:"
+  },
+  "composerExtras": {
+    "skillAttached": "技能 — 仅附加到此次运行",
+    "pageTitlePlaceholder": "页面标题……",
+    "active": "已激活 — 按此计划唤醒智能体",
+    "pickCliPty": "选择要在 PTY 中启动的 CLI:"
+  },
+  "editorExtras": {
+    "editWithAi": "用 AI 编辑",
+    "jupyterLab": "复制:jupyter lab <path>",
+    "exitApp": "退出应用"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI 账户",
+    "aiTeams": "AI 团队"
+  },
+  "whatsNew": {
+    "dismiss": "关闭"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "我已了解并希望继续。"
+  },
+  "daemonHealth": {
+    "dismiss": "关闭"
+  },
+  "tinyExtras": {
+    "light": "浅色",
+    "home": "主页",
+    "workspaceGallery": "工作区图集",
+    "savingTo": "正在保存到",
+    "comingSoon": "即将推出",
+    "deleteSkill": "删除技能",
+    "skillsOffered": "提供的技能:",
+    "allAgents": "所有智能体",
+    "noTranscript": "未找到记录",
+    "noDiff": "无可用差异。",
+    "headsUp": "提醒:",
+    "back": "返回",
+    "editYourAvatar": "编辑你的头像",
+    "openFullTaskViewer": "打开完整任务查看器",
+    "close": "关闭",
+    "copyToClipboard": "复制到剪贴板",
+    "starOnGithub": "在 GitHub 上为凯比内特点星",
+    "helpMoreFind": "帮助更多人发现这个社区",
+    "joinDiscord": "加入 Discord",
+    "chatWithBuilders": "与构建凯比内特的人聊天",
+    "joinWaitlist": "加入凯比内特云端候补名单",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "添加到收件箱",
+    "runTaskNow": "立即运行任务",
+    "search": "搜索",
+    "aiPanel": "AI 面板",
+    "drawers": "抽屉"
+  },
+  "dataLocations": {
+    "title": "你的数据存放位置",
+    "whyThisMatters": "为什么这很重要",
+    "location": "位置",
+    "contains": "包含",
+    "network": "网络",
+    "revealInFinder": "在文件管理器中显示",
+    "stored": "已存储",
+    "resetOnboarding": "重置入门引导"
+  },
+  "common": {
+    "actions": {
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "confirm": "确认",
+      "close": "关闭",
+      "open": "打开",
+      "back": "返回",
+      "next": "下一步",
+      "done": "完成"
+    },
+    "nav": {
+      "goBack": "返回",
+      "goForward": "前进"
+    },
+    "aiPanel": {
+      "open": "打开 AI 面板",
+      "close": "关闭 AI 面板"
+    },
+    "states": {
+      "loading": "加载中……",
+      "saving": "保存中……",
+      "saved": "已保存",
+      "error": "出错了"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "新建页面",
+      "title": "创建新页面",
+      "placeholder": "页面标题……",
+      "create": "创建",
+      "creating": "正在创建……"
+    },
+    "newCabinet": {
+      "trigger": "新建凯比内特",
+      "title": "创建新凯比内特",
+      "subtitle": "凯比内特是一个拥有自己的智能体、任务和知识的工作区。",
+      "importFromRegistry": "从注册表导入",
+      "nameLabel": "凯比内特名称",
+      "namePlaceholder": "如:我的初创公司、营销团队、研究实验室……",
+      "selectAgents": "选择智能体",
+      "selectedCount": "已选 {{count}} 个",
+      "createCabinet": "创建凯比内特",
+      "creating": "正在创建……",
+      "createFailed": "创建凯比内特失败"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "导出页面",
+      "copyMarkdown": "复制 Markdown",
+      "copyForLlms": "复制给 LLM",
+      "copyAsHtml": "复制为 HTML",
+      "downloadMarkdown": "下载 .md",
+      "downloadPdf": "下载 PDF",
+      "copiedForLlmToast": "已复制 {{size}} 的 Markdown 给 LLM"
+    },
+    "toolbar": {
+      "heading1": "一级标题",
+      "heading2": "二级标题",
+      "heading3": "三级标题",
+      "bold": "粗体",
+      "italic": "斜体",
+      "underline": "下划线",
+      "strikethrough": "删除线",
+      "inlineCode": "行内代码",
+      "link": "链接",
+      "textColor": "文字颜色",
+      "highlight": "高亮",
+      "background": "背景",
+      "bulletList": "项目符号列表",
+      "orderedList": "有序列表",
+      "blockquote": "引用块",
+      "checklist": "清单",
+      "codeBlock": "代码块",
+      "divider": "分隔线",
+      "alignLeft": "左对齐",
+      "alignCenter": "居中对齐",
+      "alignRight": "右对齐",
+      "justify": "两端对齐",
+      "align": "对齐",
+      "table": {
+        "selectCellText": "选择单元格文本",
+        "addRowAbove": "在上方添加行",
+        "addRowBelow": "在下方添加行",
+        "moveRowUp": "上移该行",
+        "moveRowDown": "下移该行",
+        "deleteRow": "删除行",
+        "addColumnBefore": "在前面添加列",
+        "addColumnAfter": "在后面添加列",
+        "moveColumnLeft": "左移该列",
+        "moveColumnRight": "右移该列",
+        "deleteColumn": "删除列",
+        "toggleHeaderRow": "切换表头行",
+        "toggleHeaderColumn": "切换表头列",
+        "deleteTable": "删除表格"
+      },
+      "superscript": "上标",
+      "subscript": "下标",
+      "insertImage": "插入图片",
+      "insertVideo": "插入视频",
+      "embed": "嵌入",
+      "undo": "撤销",
+      "redo": "重做",
+      "switchToLtr": "切换为从左至右",
+      "switchToRtl": "切换为从右至左",
+      "scrollLeft": "向左滚动工具栏",
+      "scrollRight": "向右滚动工具栏"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "凯比内特名称……",
+      "renameWarning": "凯比内特名称之后无法重命名(暂时如此)。请慎重选择。"
+    },
+    "quickActions": {
+      "shuffle": "显示不同建议"
+    }
+  },
+  "onboarding": {
+    "intro": {
+      "tagline1": "你的知识库。",
+      "tagline2": "你的 AI 团队。",
+      "getStarted": "开始使用"
+    },
+    "welcome": {
+      "paragraph": "你的主页是你的。在里面,你将为生活的不同部分搭建房间:工作、第二大脑、研究、家庭。每个房间都有凯比内特:你的笔记、你的文件,以及一个在后台默默把事做完的 AI 团队。"
+    },
+    "welcomeBack": {
+      "heading": "欢迎回来",
+      "headingNamed": "欢迎回到 {{cabinet}}",
+      "subtitle": "我们在这里找到了一个已有的凯比内特,继续把它配置完成吧。",
+      "continue": "继续"
+    },
+    "verify": {
+      "passed": "已通过",
+      "notInstalled": "未安装",
+      "authRequired": "需要认证",
+      "paymentRequired": "需要付费",
+      "quotaExceeded": "配额/速率限制",
+      "error": "错误"
+    },
+    "providerStatus": {
+      "ready": "就绪",
+      "loginRequired": "需要登录",
+      "notInstalled": "未安装"
+    },
+    "actions": {
+      "back": "返回",
+      "next": "下一步",
+      "continue": "继续",
+      "skip": "跳过",
+      "finish": "完成",
+      "complete": "完成设置",
+      "copyToClipboard": "复制到剪贴板"
+    }
+  },
+  "search": {
+    "title": "搜索",
+    "placeholder": "搜索页面、智能体、任务……",
+    "clearQuery": "清除查询",
+    "noCommands": "没有匹配的命令。",
+    "scopes": {
+      "all": "全部",
+      "pages": "页面",
+      "agents": "智能体",
+      "tasks": "任务"
+    },
+    "groups": {
+      "pages": "页面",
+      "agents": "智能体",
+      "tasks": "任务"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "语言",
+      "description": "更改语言和阅读方向。已有页面会保留各自的文档方向。",
+      "english": "English",
+      "hebrew": "עברית",
+      "chineseSimplified": "简体中文",
+      "chineseTraditional": "繁體中文",
+      "moreLanguages": "更多语言",
+      "moreLanguagesHint": "点击任意语言告诉我们你希望凯比内特支持它 — 我们会优先处理最受欢迎的语言。",
+      "comingSoon": "即将推出",
+      "requestSubmitted": "感谢!我们已经记录了你对 {{language}} 的请求。我们会优先处理最受欢迎的语言。",
+      "requestFailed": "无法连接服务器。请稍后再试。"
+    },
+    "appearance": {
+      "title": "外观",
+      "theme": "主题",
+      "themeDescription": "为界面选择一个主题。",
+      "matchSystem": "跟随系统",
+      "matchSystemDescription": "随操作系统外观自动切换。",
+      "lightThemes": "浅色主题",
+      "darkThemes": "深色主题",
+      "lightVariant": "浅色变体",
+      "darkVariant": "深色变体",
+      "sidebar": "侧边栏",
+      "showHiddenFiles": "显示隐藏文件"
+    },
+    "tabs": {
+      "profile": "个人资料",
+      "providers": "服务商",
+      "skills": "技能",
+      "storage": "存储",
+      "integrations": "集成",
+      "notifications": "通知",
+      "appearance": "外观",
+      "updates": "更新",
+      "about": "关于"
+    },
+    "common": {
+      "copyToClipboard": "复制到剪贴板",
+      "categoriesAriaLabel": "设置类别",
+      "loading": "加载中……",
+      "connect": "连接",
+      "recommended": "推荐"
+    },
+    "storage": {
+      "dataDirectory": "数据目录",
+      "restartRequired": "需要重启"
+    },
+    "updates": {
+      "checking": "正在检查凯比内特更新……"
+    },
+    "providers": {
+      "title": "智能体服务商",
+      "defaultModel": "默认模型",
+      "setupGuide": "配置指南"
+    },
+    "notifications": {
+      "channels": "通知渠道",
+      "alertRules": "告警规则",
+      "alwaysOn": "始终开启",
+      "comingSoon": "即将推出",
+      "emailPlaceholder": "you@company.com"
+    },
+    "about": {
+      "cabinet": "凯比内特",
+      "version": "版本",
+      "release": "发行版",
+      "framework": "框架",
+      "storage": "存储",
+      "privacy": "隐私",
+      "telemetry": "匿名使用遥测"
+    },
+    "profile": {
+      "title": "个人资料",
+      "name": "姓名",
+      "namePlaceholder": "Hila",
+      "displayName": "显示名称",
+      "role": "角色",
+      "rolePlaceholder": "构建者",
+      "avatar": "头像",
+      "accentColor": "强调色",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "回退图标",
+      "useIconInstead": "改用图标",
+      "searchAvatars": "搜索头像……",
+      "searchIcons": "搜索图标……"
+    },
+    "workspace": {
+      "title": "工作区",
+      "name": "工作区名称",
+      "namePlaceholder": "我的凯比内特",
+      "description": "描述",
+      "descriptionPlaceholder": "你是做什么的?",
+      "teamSize": "团队规模",
+      "teamSizePlaceholder": "独立 / 2–5 / 6–20 / 20+"
+    }
+  },
+  "sidebar": {
+    "settings": "设置",
+    "createPage": "创建页面",
+    "newPage": "新建页面",
+    "newAgent": "新建智能体",
+    "newTask": "新建任务",
+    "archive": "归档",
+    "trash": "回收站",
+    "search": "搜索",
+    "agents": "智能体",
+    "tasks": "任务",
+    "missions": "任务",
+    "goHome": "回到主页",
+    "refresh": "刷新侧边栏",
+    "refreshDescription": "刷新侧边栏(重新读取数据文件夹)",
+    "collapseSidebar": "折叠侧边栏",
+    "expandSidebar": "展开侧边栏",
+    "resizeHandle": "调整侧边栏 — 双击重置",
+    "resetWidth": "双击重置宽度",
+    "refreshedNoChanges": "已刷新 — 无变化。",
+    "refreshedWithChanges": "已刷新 — 新增 {{added}},移除 {{removed}}。",
+    "refreshFailed": "刷新失败。"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "状态栏",
+      "askAiAriaLabel": "请 AI 编辑此页面",
+      "askAiPlaceholder": "如何编辑此页面?",
+      "sendHint": "↵ 发送"
+    },
+    "server": {
+      "serverStatusAriaLabel": "服务器状态 — 点击查看详情",
+      "checking": "正在检查服务器状态……",
+      "allRunning": "全部服务运行中",
+      "appNotResponding": "应用服务器无响应",
+      "daemonDownNoProviders": "守护进程无响应;无可用智能体服务商",
+      "daemonDown": "守护进程无响应",
+      "noProviders": "没有可用的智能体服务商",
+      "checkingShort": "检查中……",
+      "online": "在线",
+      "offline": "离线",
+      "degraded": "受损",
+      "allSystemsRunning": "全部系统运行中",
+      "serviceDisruption": "服务中断",
+      "appServer": "应用服务器",
+      "daemon": "守护进程",
+      "agentProviders": "智能体服务商",
+      "running": "运行中",
+      "down": "下线",
+      "lastSeen": "最后一次响应:{{when}}",
+      "appWorking": "页面、编辑器、搜索和文件管理正常工作。",
+      "appDown": "页面、编辑器、搜索和保存不可用。仍可阅读已缓存的内容。",
+      "daemonWorking": "AI 智能体、定时任务和网页终端正常工作。",
+      "daemonDownDescription": "AI 智能体、定时任务和网页终端不可用。页面编辑仍可正常工作。",
+      "available": "可用",
+      "noneReady": "无可用",
+      "providerReady": "就绪",
+      "providerNotLoggedIn": "未登录",
+      "providerNotInstalled": "未安装",
+      "install": "安装",
+      "howToFix": "如何修复"
+    },
+    "save": {
+      "retryTitle": "点击以重试失败的保存",
+      "retryAriaLabel": "保存失败 — 点击重试",
+      "autoSaving": "自动保存中……",
+      "forceSave": "强制保存:⌘S",
+      "editing": "编辑中 — 暂停后会自动保存",
+      "wordCountTitle": "此页面的字数(排除 Markdown 语法)",
+      "savedJustNow": "刚刚",
+      "savedNever": "从未",
+      "savedAgoSeconds": "{{n}} 秒前",
+      "savedAgoMinutes": "{{n}} 分钟前",
+      "savedAgoHours": "{{n}} 小时前",
+      "savedAgoDays": "{{n}} 天前"
+    },
+    "git": {
+      "statusModified": "已修改",
+      "statusNew": "新增",
+      "statusAdded": "已添加",
+      "statusDeleted": "已删除",
+      "statusRenamed": "已重命名",
+      "commitMessageAriaLabel": "提交信息"
+    },
+    "help": {
+      "menuAriaLabel": "打开帮助与社区菜单",
+      "menuTitle": "帮助与社区",
+      "demos": "演示、视频与指南",
+      "discord": "在 Discord 上聊天",
+      "discordSubtitle": "支持与反馈",
+      "github": "在 GitHub 上贡献",
+      "githubSubtitle": "源代码、问题、PR",
+      "ifUseful": "如果你觉得它有用"
+    },
+    "common": {
+      "dismiss": "关闭",
+      "close": "关闭",
+      "openSettings": "打开设置以查看已安装的更新"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "从原始提示词重新启动此任务",
+      "markAsDone": "将此任务标记为已完成",
+      "viewAriaLabel": "任务视图",
+      "terminal": "终端",
+      "transcript": "记录",
+      "details": "详情",
+      "transcriptTitle": "Claude Code 原生会话 JSONL",
+      "transcriptHint": "读取 ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "返回",
+      "copyPrompt": "复制原始提示词",
+      "gracefulExit": "优雅关闭 CLI(向 PTY 写入 /exit)",
+      "sendSigterm": "向运行中的 PTY 进程发送 SIGTERM",
+      "moreActions": "更多操作",
+      "ptyMode": "在终端 (PTY) 模式中运行",
+      "compactContext": "将之前的轮次折叠为摘要以释放上下文窗口",
+      "noSummary": "尚无摘要。",
+      "sessionEnded": "会话已结束 — 输入即可在同一终端中继续。",
+      "terminalLive": "终端实时运行中。你的下一条提示词将在本轮完成后排队。"
+    }
+  },
+  "tour": {
+    "ariaLabel": "认识你的凯比内特之旅",
+    "skip": "跳过",
+    "skipAriaLabel": "跳过引导",
+    "back": "返回",
+    "next": "下一步",
+    "writeFirstTask": "写下你的第一个任务",
+    "goToSlide": "前往幻灯片 {{n}}",
+    "starterTask": "我们来聊聊我的目标和我想在这里实现什么,然后把它记录到一个新的「关于」页面里。"
+  }
+}

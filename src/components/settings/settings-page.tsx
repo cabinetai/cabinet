@@ -239,6 +239,8 @@ function LanguageSection() {
   const supported: { value: Locale; label: string }[] = [
     { value: "en", label: t("settings:language.english") },
     { value: "he", label: t("settings:language.hebrew") },
+    { value: "zh-CN", label: t("settings:language.chineseSimplified") },
+    { value: "zh-TW", label: t("settings:language.chineseTraditional") },
   ];
 
   const requestLanguage = async (code: string, label: string) => {

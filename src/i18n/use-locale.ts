@@ -9,6 +9,7 @@ import i18n, {
   localeToDir,
   type Locale,
 } from "./index";
+import { loadCjkFonts } from "@/lib/themes";
 
 const LOCALE_CHANGE_EVENT = "cabinet-locale-change";
 
@@ -36,6 +37,7 @@ export function applyDocumentLocale(locale: Locale) {
   if (typeof document === "undefined") return;
   document.documentElement.lang = locale;
   document.documentElement.dir = localeToDir(locale);
+  loadCjkFonts(locale);
 }
 
 export function setLocale(locale: Locale) {
