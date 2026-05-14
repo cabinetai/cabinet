@@ -1,0 +1,426 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Create Agent",
+      "avatar": "Avatar",
+      "namePlaceholder": "Marketing Agent",
+      "rolePlaceholder": "Content Specialist",
+      "department": "Department",
+      "specialist": "Specialist",
+      "departmentLead": "Department Lead",
+      "provider": "Provider",
+      "runtime": "Runtime",
+      "promptPlaceholder": "You are a marketing agent for…"
+    },
+    "metric": {
+      "name": "Metric name",
+      "namePlaceholder": "reddit_replies",
+      "target": "Target",
+      "targetPlaceholder": "replies/week",
+      "floor": "Floor",
+      "period": "Period",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    }
+  },
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "close": "Close",
+      "open": "Open",
+      "back": "Back",
+      "next": "Next",
+      "done": "Done"
+    },
+    "nav": {
+      "goBack": "Go back",
+      "goForward": "Go forward"
+    },
+    "aiPanel": {
+      "open": "Open AI panel",
+      "close": "Close AI panel"
+    },
+    "states": {
+      "loading": "Loading…",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "error": "Something went wrong"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "New Page",
+      "title": "Create New Page",
+      "placeholder": "Page title…",
+      "create": "Create",
+      "creating": "Creating…"
+    },
+    "newCabinet": {
+      "trigger": "New Cabinet",
+      "title": "Create New Cabinet",
+      "subtitle": "A cabinet is a workspace with its own agents, jobs, and knowledge.",
+      "importFromRegistry": "Import from Registry",
+      "nameLabel": "Cabinet name",
+      "namePlaceholder": "e.g. My Startup, Marketing Team, Research Lab…",
+      "selectAgents": "Select agents",
+      "selectedCount": "{{count}} selected",
+      "createCabinet": "Create Cabinet",
+      "creating": "Creating…",
+      "createFailed": "Failed to create cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Export page",
+      "copyMarkdown": "Copy Markdown",
+      "copyForLlms": "Copy for LLMs",
+      "copyAsHtml": "Copy as HTML",
+      "downloadMarkdown": "Download .md",
+      "downloadPdf": "Download PDF",
+      "copiedForLlmToast": "Copied {{size}} of Markdown for LLM"
+    },
+    "toolbar": {
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strikethrough": "Strikethrough",
+      "inlineCode": "Inline code",
+      "link": "Link",
+      "textColor": "Text color",
+      "highlight": "Highlight",
+      "background": "Background",
+      "bulletList": "Bullet list",
+      "orderedList": "Ordered list",
+      "blockquote": "Blockquote",
+      "checklist": "Checklist",
+      "codeBlock": "Code block",
+      "divider": "Divider",
+      "alignLeft": "Align left",
+      "alignCenter": "Align center",
+      "alignRight": "Align right",
+      "justify": "Justify",
+      "align": "Align",
+      "table": {
+        "selectCellText": "Select cell text",
+        "addRowAbove": "Add row above",
+        "addRowBelow": "Add row below",
+        "moveRowUp": "Move row up",
+        "moveRowDown": "Move row down",
+        "deleteRow": "Delete row",
+        "addColumnBefore": "Add column before",
+        "addColumnAfter": "Add column after",
+        "moveColumnLeft": "Move column left",
+        "moveColumnRight": "Move column right",
+        "deleteColumn": "Delete column",
+        "toggleHeaderRow": "Toggle header row",
+        "toggleHeaderColumn": "Toggle header column",
+        "deleteTable": "Delete table"
+      },
+      "superscript": "Superscript",
+      "subscript": "Subscript",
+      "insertImage": "Insert image",
+      "insertVideo": "Insert video",
+      "embed": "Embed",
+      "undo": "Undo",
+      "redo": "Redo",
+      "switchToLtr": "Switch to LTR",
+      "switchToRtl": "Switch to RTL",
+      "scrollLeft": "Scroll toolbar left",
+      "scrollRight": "Scroll toolbar right"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet name…",
+      "renameWarning": "Cabinet names can't be renamed later (for now). Choose wisely."
+    },
+    "quickActions": {
+      "shuffle": "Show different suggestions"
+    }
+  },
+  "onboarding": {
+    "intro": {
+      "tagline1": "Your knowledge base.",
+      "tagline2": "Your AI team.",
+      "getStarted": "Get started"
+    },
+    "welcome": {
+      "paragraph": "Your Home is yours. Inside it, you'll set up rooms for different parts of your life: work, second brain, research, family. And every room has cabinets: your notes, your files, and an AI team quietly getting things done in the background."
+    },
+    "welcomeBack": {
+      "heading": "Welcome back",
+      "headingNamed": "Welcome back to {{cabinet}}",
+      "subtitle": "We found an existing cabinet here. Let's finish setting it up.",
+      "continue": "Continue"
+    },
+    "verify": {
+      "passed": "Passed",
+      "notInstalled": "Not installed",
+      "authRequired": "Auth required",
+      "paymentRequired": "Payment required",
+      "quotaExceeded": "Quota / rate limit",
+      "error": "Error"
+    },
+    "providerStatus": {
+      "ready": "Ready",
+      "loginRequired": "Log in required",
+      "notInstalled": "Not installed"
+    },
+    "actions": {
+      "back": "Back",
+      "next": "Next",
+      "continue": "Continue",
+      "skip": "Skip",
+      "finish": "Finish",
+      "complete": "Complete setup",
+      "copyToClipboard": "Copy to clipboard"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search pages, agents, tasks…",
+    "clearQuery": "Clear query",
+    "noCommands": "No commands match.",
+    "scopes": {
+      "all": "All",
+      "pages": "Pages",
+      "agents": "Agents",
+      "tasks": "Tasks"
+    },
+    "groups": {
+      "pages": "Pages",
+      "agents": "Agents",
+      "tasks": "Tasks"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Language",
+      "description": "Changes language and reading direction. Existing pages keep their per-document direction.",
+      "english": "English",
+      "hebrew": "עברית"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "themeDescription": "Choose a theme for the interface.",
+      "matchSystem": "Match system",
+      "matchSystemDescription": "Switch automatically with your OS appearance.",
+      "lightThemes": "Light Themes",
+      "darkThemes": "Dark Themes",
+      "lightVariant": "Light variant",
+      "darkVariant": "Dark variant",
+      "sidebar": "Sidebar",
+      "showHiddenFiles": "Show hidden files"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "providers": "Providers",
+      "skills": "Skills",
+      "storage": "Storage",
+      "integrations": "Integrations",
+      "notifications": "Notifications",
+      "appearance": "Appearance",
+      "updates": "Updates",
+      "about": "About"
+    },
+    "common": {
+      "copyToClipboard": "Copy to clipboard",
+      "categoriesAriaLabel": "Settings categories",
+      "loading": "Loading…",
+      "connect": "Connect",
+      "recommended": "Recommended"
+    },
+    "storage": {
+      "dataDirectory": "Data Directory",
+      "restartRequired": "Restart required"
+    },
+    "updates": {
+      "checking": "Checking for Cabinet updates…"
+    },
+    "providers": {
+      "title": "Agent Providers",
+      "defaultModel": "Default Model",
+      "setupGuide": "Setup guide"
+    },
+    "notifications": {
+      "channels": "Notification Channels",
+      "alertRules": "Alert Rules",
+      "alwaysOn": "Always on",
+      "comingSoon": "Coming Soon",
+      "emailPlaceholder": "you@company.com"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Version",
+      "release": "Release",
+      "framework": "Framework",
+      "storage": "Storage",
+      "privacy": "Privacy",
+      "telemetry": "Anonymous usage telemetry"
+    },
+    "profile": {
+      "title": "Profile",
+      "name": "Name",
+      "namePlaceholder": "Hila",
+      "displayName": "Display name",
+      "role": "Role",
+      "rolePlaceholder": "Builder",
+      "avatar": "Avatar",
+      "accentColor": "Accent color",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Fallback icon",
+      "useIconInstead": "Use icon instead",
+      "searchAvatars": "Search avatars…",
+      "searchIcons": "Search icons…"
+    },
+    "workspace": {
+      "title": "Workspace",
+      "name": "Workspace name",
+      "namePlaceholder": "My Cabinet",
+      "description": "Description",
+      "descriptionPlaceholder": "What do you do?",
+      "teamSize": "Team size",
+      "teamSizePlaceholder": "Solo / 2–5 / 6–20 / 20+"
+    }
+  },
+  "sidebar": {
+    "settings": "Settings",
+    "createPage": "Create page",
+    "newPage": "New page",
+    "newAgent": "New Agent",
+    "newTask": "New Task",
+    "archive": "Archive",
+    "trash": "Trash",
+    "search": "Search",
+    "agents": "Agents",
+    "tasks": "Tasks",
+    "missions": "Missions",
+    "goHome": "Go to home",
+    "refresh": "Refresh sidebar",
+    "refreshDescription": "Refresh sidebar (re-read data folder)",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "resizeHandle": "Resize sidebar — double-click to reset",
+    "resetWidth": "Double-click to reset width",
+    "refreshedNoChanges": "Refreshed — no changes.",
+    "refreshedWithChanges": "Refreshed — {{added}} added, {{removed}} removed.",
+    "refreshFailed": "Refresh failed."
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Status bar",
+      "askAiAriaLabel": "Ask AI to edit this page",
+      "askAiPlaceholder": "How to edit this page?",
+      "sendHint": "↵ to send"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Server status — click for details",
+      "checking": "Checking server status…",
+      "allRunning": "All systems running",
+      "appNotResponding": "App server is not responding",
+      "daemonDownNoProviders": "Daemon is not responding; no agent providers available",
+      "daemonDown": "Daemon is not responding",
+      "noProviders": "No agent providers available",
+      "checkingShort": "Checking…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Degraded",
+      "allSystemsRunning": "All Systems Running",
+      "serviceDisruption": "Service Disruption",
+      "appServer": "App Server",
+      "daemon": "Daemon",
+      "agentProviders": "Agent Providers",
+      "running": "Running",
+      "down": "Down",
+      "lastSeen": "Last seen: {{when}}",
+      "appWorking": "Pages, editor, search, and file management are working.",
+      "appDown": "Pages, editor, search, and saving are unavailable. You can still read cached content.",
+      "daemonWorking": "AI agents, scheduled jobs, and the web terminal are working.",
+      "daemonDownDescription": "AI agents, scheduled jobs, and the web terminal are unavailable. Page editing still works.",
+      "available": "Available",
+      "noneReady": "None Ready",
+      "providerReady": "Ready",
+      "providerNotLoggedIn": "Not logged in",
+      "providerNotInstalled": "Not installed",
+      "install": "Install",
+      "howToFix": "How to fix"
+    },
+    "save": {
+      "retryTitle": "Click to retry the failed save",
+      "retryAriaLabel": "Save failed — click to retry",
+      "autoSaving": "Auto-saving…",
+      "forceSave": "Force save: ⌘S",
+      "editing": "Editing — autosave will run when you pause",
+      "wordCountTitle": "Word count for this page (markdown syntax excluded)",
+      "savedJustNow": "just now",
+      "savedNever": "never",
+      "savedAgoSeconds": "{{n}}s ago",
+      "savedAgoMinutes": "{{n}}m ago",
+      "savedAgoHours": "{{n}}h ago",
+      "savedAgoDays": "{{n}}d ago"
+    },
+    "git": {
+      "statusModified": "Modified",
+      "statusNew": "New",
+      "statusAdded": "Added",
+      "statusDeleted": "Deleted",
+      "statusRenamed": "Renamed",
+      "commitMessageAriaLabel": "Commit message"
+    },
+    "help": {
+      "menuAriaLabel": "Open Help & community menu",
+      "menuTitle": "Help & community",
+      "demos": "Demos, videos, and guides",
+      "discord": "Chat on Discord",
+      "discordSubtitle": "Support and feedback",
+      "github": "Contribute on GitHub",
+      "githubSubtitle": "Source, issues, PRs",
+      "ifUseful": "If you find it useful"
+    },
+    "common": {
+      "dismiss": "Dismiss",
+      "close": "Close",
+      "openSettings": "Open Settings to review the installed update"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Restart this task from the original prompt",
+      "markAsDone": "Mark this task as done",
+      "viewAriaLabel": "Task view",
+      "terminal": "Terminal",
+      "transcript": "Transcript",
+      "details": "Details",
+      "transcriptTitle": "Claude Code native session JSONL",
+      "transcriptHint": "Reads ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Back",
+      "copyPrompt": "Copy original prompt",
+      "gracefulExit": "Gracefully close the CLI (writes /exit to the PTY)",
+      "sendSigterm": "Send SIGTERM to the running PTY process",
+      "moreActions": "More actions",
+      "ptyMode": "Running in terminal (PTY) mode",
+      "compactContext": "Collapse prior turns into a digest to free context window",
+      "noSummary": "No summary yet.",
+      "sessionEnded": "Session ended — type to continue in the same terminal.",
+      "terminalLive": "Terminal live. Your next prompt queues after this turn finishes."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Meet your Cabinet tour",
+    "skip": "Skip",
+    "skipAriaLabel": "Skip tour",
+    "back": "Back",
+    "next": "Next",
+    "writeFirstTask": "Write your first task",
+    "goToSlide": "Go to slide {{n}}",
+    "starterTask": "Let's talk through my goals and what I want to achieve here, then capture it in a new About page."
+  }
+}

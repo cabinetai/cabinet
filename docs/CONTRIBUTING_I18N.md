@@ -4,23 +4,28 @@ Cabinet ships in English and Hebrew today. This doc explains how to add a
 string, audit what's still hardcoded, and add a third locale when the time
 comes.
 
-## Where strings live
+## File layout
 
 ```
 src/i18n/
-  index.ts                  i18next init (eager-loaded namespaces)
+  index.ts                  i18next init (eager-loaded, single file per locale)
   use-locale.ts             useLocale() hook: { t, locale, setLocale, dir }
   formatters.ts             Intl-based date/time/number helpers
   locales/
-    en/
-      common.json           verbs, generic labels, nav, AI panel
-      dialogs.json          New Page, New Cabinet, etc.
-      editor.json           Editor toolbar + page header
-      onboarding.json       Wizard intro, welcome, verify states
-      settings.json         Settings page tabs + appearance copy
-      sidebar.json          Sidebar tooltips + toasts
-      tour.json             Onboarding tour modal
-    he/                     <same namespaces, Hebrew strings>
+    en.json                 ALL English strings, organized by namespace
+    he.json                 ALL Hebrew strings, organized by namespace
+    <new-locale>.json       drop a new file here to add a language
+```
+
+Each locale is **one consolidated JSON file** with namespaces as top-level
+keys:
+
+```jsonc
+{
+  "common": { "actions": { "save": "Save", "cancel": "Cancel" } },
+  "editor": { "toolbar": { "bold": "Bold", "italic": "Italic" } },
+  "settings": { "language": { "title": "Language" } }
+}
 ```
 
 App locale lives in `localStorage` under `cabinet-locale` (`en` | `he`). A
@@ -33,16 +38,14 @@ respects it, even if the app chrome is the opposite direction.
 
 ## Adding a string
 
-1. **Decide on a namespace.** Use the closest fit from the table above. New
-   surface? Add a new namespace file in both `en/` and `he/` and register
-   it in `src/i18n/index.ts` (both `resources` and the `ns` array in
-   `i18n.init`).
-2. **Add the key to `en/{ns}.json`.** Prefer nested objects (`toolbar.bold`)
-   over flat keys (`toolbarBold`).
-3. **Add the Hebrew translation to `he/{ns}.json`.** If you can't translate
-   it, leave it empty (`""`) — `i18n.init` falls back to English at
-   render time, and the empty value flags it for review.
-4. **Wrap the call site:**
+1. Pick a namespace from the top level of `en.json` (or create a new one
+   if no existing namespace fits — keep the count small).
+2. Add the key to **both** `en.json` and `he.json`. Prefer nested objects
+   (`toolbar.bold`) over flat keys (`toolbarBold`).
+3. If you don't have a translation, leave the Hebrew value empty (`""`) —
+   `i18n.init` falls back to English at render time, and the empty value
+   flags it in code review.
+4. Wrap the call site:
    ```tsx
    import { useLocale } from "@/i18n/use-locale";
 
@@ -51,38 +54,55 @@ respects it, even if the app chrome is the opposite direction.
      return <button title={t("editor:toolbar.bold")}>...</button>;
    }
    ```
-5. **For interpolated values:**
+5. For interpolated values:
    ```tsx
    t("sidebar:refreshedWithChanges", { added, removed })
    // JSON: "refreshedWithChanges": "Refreshed — {{added}} added, {{removed}} removed."
    ```
 
-## Finding what's still hardcoded
+## Auto-extracting keys you forgot to add
 
-A regex-based detector lists every file that still has user-facing English
-text outside of a `t()` call:
+If you sprinkled new `t()` calls through code but didn't add the keys to
+the JSON yet, this script walks `src/` and fills them in:
+
+```sh
+npm run i18n:extract         # adds missing keys (en: defaults to key path, he: empty)
+npm run i18n:check           # exits non-zero if any keys missing (use in CI)
+```
+
+`i18n:extract` is idempotent: existing keys are preserved, only missing
+ones are added. Diff the JSON to review.
+
+## Finding what's still hardcoded
 
 ```sh
 npm run i18n:report
 ```
 
-Output is grouped by file with sample hits. False positives happen (the
-detector is conservative, not perfect), but it's the right starting point
-for "what's left." Treat the count as a budget that should trend down.
+Walks `src/components/` for JSX text + `title=`/`aria-label=`/`placeholder=`
+attribute values that look like user-facing English and aren't wrapped in
+`t()`. Best-effort regex pass — false positives happen, but it's the right
+starting point for "what's left." Treat the count as a budget that should
+trend down.
 
-## Extracting keys from t() calls
+## Adding a new locale
 
-`i18next-parser` walks the source tree and updates the locale JSON files
-in place — it adds new keys it sees in `t()` calls, preserves existing
-translations, and (with our config) leaves new English values equal to
-the key name so it's obvious which strings still need real copy:
+End-to-end (e.g. Spanish):
 
-```sh
-npm run i18n:extract
-```
+1. Copy `src/i18n/locales/en.json` → `es.json`. Translate every value.
+2. In `src/i18n/index.ts`:
+   - Add `import es from "./locales/es.json";`
+   - Add to `SUPPORTED_LOCALES`: `["en", "he", "es"]`
+   - Add to `LOCALE_LABELS`: `es: "Español"`
+   - Add to `resources`: `{ en, he, es }`
+3. In `src/i18n/formatters.ts` add `es: "es-ES"` to `LOCALE_TO_BCP47`.
+4. In `src/components/settings/settings-page.tsx`, add a row to the
+   `LanguageSection` options array.
+5. If the new locale is RTL (Arabic, Persian, Urdu), update `localeToDir`
+   in `src/i18n/index.ts` to return `"rtl"` for it. Most RTL polish for
+   Hebrew also handles other RTL scripts.
 
-Run this whenever you've added new `t()` calls and want the JSON files
-caught up. Diff the JSON to review changes before committing.
+That's it. No per-namespace files to sync; one file in, one language out.
 
 ## RTL polish patterns
 
@@ -99,21 +119,10 @@ caught up. Diff the JSON to review changes before committing.
   `RegistryCarousel` in `src/components/home/home-screen.tsx`.
 - **Keyboard ArrowLeft/ArrowRight:** in RTL, ArrowLeft = forward. See
   the `dir`-aware key handler in `src/components/onboarding/tour/tour-modal.tsx`.
-- **Custom toasts / centered overlays:** generally RTL-safe. Don't touch
-  unless you specifically need to.
-
-## Adding a new locale (e.g. Spanish)
-
-1. Add the BCP47 tag to `SUPPORTED_LOCALES` and `LOCALE_LABELS` in
-   `src/i18n/index.ts`. Also add a BCP47 row to `LOCALE_TO_BCP47` in
-   `src/i18n/formatters.ts`.
-2. Copy `src/i18n/locales/en/` to `src/i18n/locales/es/` and translate.
-3. Add an import + resources entry for the new locale in
-   `src/i18n/index.ts`. Run `tsc --noEmit` to catch missing files.
-4. Add the option to the Language section in
-   `src/components/settings/settings-page.tsx` (`LanguageSection`).
-5. If the new locale is RTL, make sure logical-property usage covers it.
-   Most RTL polish for Hebrew also handles Arabic/Persian/Urdu.
+- **Per-block auto-direction:** `unicode-bidi: plaintext` + `text-align: start`
+  on `.tiptap` / `.registry-prose` block elements means each paragraph
+  picks its direction from its first strong character. Layered with
+  `dir="auto"` on Tiptap block nodes via the `AutoDirection` extension.
 
 ## Agent locale propagation
 

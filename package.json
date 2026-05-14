@@ -22,7 +22,8 @@
     "skills:sync": "tsx scripts/skills-sync.ts",
     "test:unit": "tsx --test test/update-system.test.ts",
     "test": "tsx --test test/*.test.ts",
-    "i18n:extract": "i18next 'src/**/*.{ts,tsx}'",
+    "i18n:extract": "node scripts/i18n-extract.mjs",
+    "i18n:check": "node scripts/i18n-extract.mjs --check",
     "i18n:report": "node scripts/i18n-find-hardcoded.mjs",
     "postinstall": "node scripts/postinstall.mjs"
   },
@@ -127,7 +128,6 @@
     "electron": "^36.2.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
-    "i18next-parser": "^9.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

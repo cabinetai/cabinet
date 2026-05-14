@@ -1,0 +1,426 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "יצירת סוכן",
+      "avatar": "אווטאר",
+      "namePlaceholder": "סוכן שיווק",
+      "rolePlaceholder": "מומחה תוכן",
+      "department": "מחלקה",
+      "specialist": "מומחה",
+      "departmentLead": "ראש מחלקה",
+      "provider": "ספק",
+      "runtime": "סביבת ריצה",
+      "promptPlaceholder": "אתה סוכן שיווק עבור…"
+    },
+    "metric": {
+      "name": "שם מדד",
+      "namePlaceholder": "reddit_replies",
+      "target": "יעד",
+      "targetPlaceholder": "תגובות/שבוע",
+      "floor": "רצפה",
+      "period": "תקופה",
+      "daily": "יומי",
+      "weekly": "שבועי",
+      "monthly": "חודשי"
+    }
+  },
+  "common": {
+    "actions": {
+      "save": "שמירה",
+      "cancel": "ביטול",
+      "delete": "מחיקה",
+      "confirm": "אישור",
+      "close": "סגירה",
+      "open": "פתיחה",
+      "back": "חזרה",
+      "next": "הבא",
+      "done": "סיום"
+    },
+    "nav": {
+      "goBack": "חזרה",
+      "goForward": "קדימה"
+    },
+    "aiPanel": {
+      "open": "פתיחת חלונית ה-AI",
+      "close": "סגירת חלונית ה-AI"
+    },
+    "states": {
+      "loading": "טוען…",
+      "saving": "שומר…",
+      "saved": "נשמר",
+      "error": "משהו השתבש"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "דף חדש",
+      "title": "יצירת דף חדש",
+      "placeholder": "כותרת הדף…",
+      "create": "יצירה",
+      "creating": "יוצר…"
+    },
+    "newCabinet": {
+      "trigger": "ארונית חדשה",
+      "title": "יצירת ארונית חדשה",
+      "subtitle": "ארונית היא סביבת עבודה עם הסוכנים, המשימות והידע שלה.",
+      "importFromRegistry": "ייבוא מהמאגר",
+      "nameLabel": "שם הארונית",
+      "namePlaceholder": "למשל: הסטארטאפ שלי, צוות שיווק, מעבדת מחקר…",
+      "selectAgents": "בחירת סוכנים",
+      "selectedCount": "{{count}} נבחרו",
+      "createCabinet": "יצירת ארונית",
+      "creating": "יוצר…",
+      "createFailed": "יצירת הארונית נכשלה"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "ייצוא דף",
+      "copyMarkdown": "העתקה כ-Markdown",
+      "copyForLlms": "העתקה עבור LLM",
+      "copyAsHtml": "העתקה כ-HTML",
+      "downloadMarkdown": "הורדה כ-md",
+      "downloadPdf": "הורדה כ-PDF",
+      "copiedForLlmToast": "הועתקו {{size}} של Markdown עבור LLM"
+    },
+    "toolbar": {
+      "heading1": "כותרת 1",
+      "heading2": "כותרת 2",
+      "heading3": "כותרת 3",
+      "bold": "מודגש",
+      "italic": "נטוי",
+      "underline": "קו תחתי",
+      "strikethrough": "קו חוצה",
+      "inlineCode": "קוד מוטבע",
+      "link": "קישור",
+      "textColor": "צבע טקסט",
+      "highlight": "סימון",
+      "background": "רקע",
+      "bulletList": "רשימה",
+      "orderedList": "רשימה ממוספרת",
+      "blockquote": "ציטוט",
+      "checklist": "רשימת משימות",
+      "codeBlock": "בלוק קוד",
+      "divider": "מפריד",
+      "alignLeft": "יישור לשמאל",
+      "alignCenter": "יישור למרכז",
+      "alignRight": "יישור לימין",
+      "justify": "יישור לשני הצדדים",
+      "align": "יישור",
+      "table": {
+        "selectCellText": "בחירת טקסט תא",
+        "addRowAbove": "הוספת שורה מעל",
+        "addRowBelow": "הוספת שורה מתחת",
+        "moveRowUp": "העברת שורה למעלה",
+        "moveRowDown": "העברת שורה למטה",
+        "deleteRow": "מחיקת שורה",
+        "addColumnBefore": "הוספת עמודה לפני",
+        "addColumnAfter": "הוספת עמודה אחרי",
+        "moveColumnLeft": "העברת עמודה שמאלה",
+        "moveColumnRight": "העברת עמודה ימינה",
+        "deleteColumn": "מחיקת עמודה",
+        "toggleHeaderRow": "החלפת שורת כותרת",
+        "toggleHeaderColumn": "החלפת עמודת כותרת",
+        "deleteTable": "מחיקת טבלה"
+      },
+      "superscript": "כתב עילי",
+      "subscript": "כתב תחתי",
+      "insertImage": "הוספת תמונה",
+      "insertVideo": "הוספת וידאו",
+      "embed": "הטמעה",
+      "undo": "ביטול",
+      "redo": "חזרה",
+      "switchToLtr": "מעבר לכיוון משמאל לימין",
+      "switchToRtl": "מעבר לכיוון מימין לשמאל",
+      "scrollLeft": "גלילת סרגל הכלים שמאלה",
+      "scrollRight": "גלילת סרגל הכלים ימינה"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "שם הארונית…",
+      "renameWarning": "אי אפשר לשנות את שם הארונית מאוחר יותר (לעת עתה). בחרו בקפידה."
+    },
+    "quickActions": {
+      "shuffle": "הצג הצעות אחרות"
+    }
+  },
+  "onboarding": {
+    "intro": {
+      "tagline1": "מאגר הידע שלך.",
+      "tagline2": "צוות ה-AI שלך.",
+      "getStarted": "בואו נתחיל"
+    },
+    "welcome": {
+      "paragraph": "הבית שלכם הוא שלכם. בתוכו תקימו חדרים לתחומי החיים השונים: עבודה, מוח שני, מחקר, משפחה. בכל חדר יש ארוניות: ההערות שלכם, הקבצים שלכם, וצוות AI שעובד ברקע ודואג שדברים יקרו."
+    },
+    "welcomeBack": {
+      "heading": "ברוכים השבים",
+      "headingNamed": "ברוכים השבים אל {{cabinet}}",
+      "subtitle": "מצאנו כאן ארונית קיימת. בואו נסיים את ההגדרה.",
+      "continue": "המשך"
+    },
+    "verify": {
+      "passed": "עבר",
+      "notInstalled": "לא מותקן",
+      "authRequired": "נדרשת הזדהות",
+      "paymentRequired": "נדרש תשלום",
+      "quotaExceeded": "חריגה ממכסה",
+      "error": "שגיאה"
+    },
+    "providerStatus": {
+      "ready": "מוכן",
+      "loginRequired": "נדרשת התחברות",
+      "notInstalled": "לא מותקן"
+    },
+    "actions": {
+      "back": "חזרה",
+      "next": "הבא",
+      "continue": "המשך",
+      "skip": "דילוג",
+      "finish": "סיום",
+      "complete": "סיום ההגדרה",
+      "copyToClipboard": "העתקה ללוח"
+    }
+  },
+  "search": {
+    "title": "חיפוש",
+    "placeholder": "חיפוש דפים, סוכנים, משימות…",
+    "clearQuery": "ניקוי חיפוש",
+    "noCommands": "אין פקודות תואמות.",
+    "scopes": {
+      "all": "הכול",
+      "pages": "דפים",
+      "agents": "סוכנים",
+      "tasks": "משימות"
+    },
+    "groups": {
+      "pages": "דפים",
+      "agents": "סוכנים",
+      "tasks": "משימות"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "שפה",
+      "description": "משנה שפה וכיוון קריאה. דפים קיימים שומרים על הכיוון שהוגדר להם.",
+      "english": "English",
+      "hebrew": "עברית"
+    },
+    "appearance": {
+      "title": "מראה",
+      "theme": "ערכת נושא",
+      "themeDescription": "בחר ערכת נושא לממשק.",
+      "matchSystem": "התאם למערכת",
+      "matchSystemDescription": "החלפה אוטומטית בהתאם להגדרות מערכת ההפעלה.",
+      "lightThemes": "ערכות בהירות",
+      "darkThemes": "ערכות כהות",
+      "lightVariant": "גרסה בהירה",
+      "darkVariant": "גרסה כהה",
+      "sidebar": "סרגל צד",
+      "showHiddenFiles": "הצג קבצים מוסתרים"
+    },
+    "tabs": {
+      "profile": "פרופיל",
+      "providers": "ספקים",
+      "skills": "כישורים",
+      "storage": "אחסון",
+      "integrations": "אינטגרציות",
+      "notifications": "התראות",
+      "appearance": "מראה",
+      "updates": "עדכונים",
+      "about": "אודות"
+    },
+    "common": {
+      "copyToClipboard": "העתקה ללוח",
+      "categoriesAriaLabel": "קטגוריות הגדרות",
+      "loading": "טוען…",
+      "connect": "התחבר",
+      "recommended": "מומלץ"
+    },
+    "storage": {
+      "dataDirectory": "ספריית נתונים",
+      "restartRequired": "נדרשת הפעלה מחדש"
+    },
+    "updates": {
+      "checking": "בודק עדכונים ל-Cabinet…"
+    },
+    "providers": {
+      "title": "ספקי סוכנים",
+      "defaultModel": "מודל ברירת מחדל",
+      "setupGuide": "מדריך התקנה"
+    },
+    "notifications": {
+      "channels": "ערוצי התראה",
+      "alertRules": "כללי התראה",
+      "alwaysOn": "תמיד פעיל",
+      "comingSoon": "בקרוב",
+      "emailPlaceholder": "you@company.com"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "גרסה",
+      "release": "מהדורה",
+      "framework": "Framework",
+      "storage": "אחסון",
+      "privacy": "פרטיות",
+      "telemetry": "נתוני שימוש אנונימיים"
+    },
+    "profile": {
+      "title": "פרופיל",
+      "name": "שם",
+      "namePlaceholder": "הילה",
+      "displayName": "שם תצוגה",
+      "role": "תפקיד",
+      "rolePlaceholder": "בונה",
+      "avatar": "אווטאר",
+      "accentColor": "צבע הדגשה",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "אייקון חלופי",
+      "useIconInstead": "השתמש באייקון במקום",
+      "searchAvatars": "חיפוש אווטארים…",
+      "searchIcons": "חיפוש אייקונים…"
+    },
+    "workspace": {
+      "title": "מרחב עבודה",
+      "name": "שם מרחב העבודה",
+      "namePlaceholder": "הארונית שלי",
+      "description": "תיאור",
+      "descriptionPlaceholder": "מה אתם עושים?",
+      "teamSize": "גודל צוות",
+      "teamSizePlaceholder": "סולו / 2–5 / 6–20 / 20+"
+    }
+  },
+  "sidebar": {
+    "settings": "הגדרות",
+    "createPage": "דף חדש",
+    "newPage": "דף חדש",
+    "newAgent": "סוכן חדש",
+    "newTask": "משימה חדשה",
+    "archive": "ארכיון",
+    "trash": "אשפה",
+    "search": "חיפוש",
+    "agents": "סוכנים",
+    "tasks": "משימות",
+    "missions": "מטרות",
+    "goHome": "מעבר לדף הבית",
+    "refresh": "רענון סרגל הצד",
+    "refreshDescription": "רענון סרגל הצד (קריאה מחדש של תיקיית הנתונים)",
+    "collapseSidebar": "כיווץ סרגל הצד",
+    "expandSidebar": "הרחבת סרגל הצד",
+    "resizeHandle": "שינוי גודל — לחיצה כפולה לאיפוס",
+    "resetWidth": "לחיצה כפולה לאיפוס הרוחב",
+    "refreshedNoChanges": "רוענן — אין שינויים.",
+    "refreshedWithChanges": "רוענן — {{added}} נוספו, {{removed}} הוסרו.",
+    "refreshFailed": "הרענון נכשל."
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "סרגל מצב",
+      "askAiAriaLabel": "בקשו מה-AI לערוך את הדף",
+      "askAiPlaceholder": "איך לערוך את הדף?",
+      "sendHint": "↵ לשליחה"
+    },
+    "server": {
+      "serverStatusAriaLabel": "מצב השרת — לחיצה לפרטים",
+      "checking": "בודק מצב שרת…",
+      "allRunning": "כל המערכות פעילות",
+      "appNotResponding": "שרת האפליקציה לא מגיב",
+      "daemonDownNoProviders": "הדמון לא מגיב; אין ספקי סוכנים זמינים",
+      "daemonDown": "הדמון לא מגיב",
+      "noProviders": "אין ספקי סוכנים זמינים",
+      "checkingShort": "בודק…",
+      "online": "מחובר",
+      "offline": "מנותק",
+      "degraded": "פגום",
+      "allSystemsRunning": "כל המערכות פעילות",
+      "serviceDisruption": "שיבוש בשירות",
+      "appServer": "שרת אפליקציה",
+      "daemon": "דמון",
+      "agentProviders": "ספקי סוכנים",
+      "running": "פעיל",
+      "down": "מושבת",
+      "lastSeen": "נראה לאחרונה: {{when}}",
+      "appWorking": "דפים, עורך, חיפוש וניהול קבצים פעילים.",
+      "appDown": "דפים, עורך, חיפוש ושמירה אינם זמינים. תוכן שנשמר במטמון עדיין זמין לקריאה.",
+      "daemonWorking": "סוכני AI, משימות מתוזמנות והטרמינל פעילים.",
+      "daemonDownDescription": "סוכני AI, משימות מתוזמנות והטרמינל אינם זמינים. עריכת דפים עדיין פועלת.",
+      "available": "זמין",
+      "noneReady": "אף אחד לא מוכן",
+      "providerReady": "מוכן",
+      "providerNotLoggedIn": "לא מחובר",
+      "providerNotInstalled": "לא מותקן",
+      "install": "התקנה",
+      "howToFix": "איך לתקן"
+    },
+    "save": {
+      "retryTitle": "לחיצה לניסיון שמירה חוזר",
+      "retryAriaLabel": "השמירה נכשלה — לחיצה לניסיון חוזר",
+      "autoSaving": "שומר אוטומטית…",
+      "forceSave": "שמירה כפויה: ⌘S",
+      "editing": "עריכה — שמירה אוטומטית תרוץ כשתפסיקו",
+      "wordCountTitle": "ספירת מילים לדף הזה (ללא תחביר markdown)",
+      "savedJustNow": "ממש עכשיו",
+      "savedNever": "מעולם לא",
+      "savedAgoSeconds": "לפני {{n}} שניות",
+      "savedAgoMinutes": "לפני {{n}} דקות",
+      "savedAgoHours": "לפני {{n}} שעות",
+      "savedAgoDays": "לפני {{n}} ימים"
+    },
+    "git": {
+      "statusModified": "שונה",
+      "statusNew": "חדש",
+      "statusAdded": "נוסף",
+      "statusDeleted": "נמחק",
+      "statusRenamed": "שונה שם",
+      "commitMessageAriaLabel": "הודעת קומיט"
+    },
+    "help": {
+      "menuAriaLabel": "פתיחת תפריט עזרה וקהילה",
+      "menuTitle": "עזרה וקהילה",
+      "demos": "הדגמות, סרטונים ומדריכים",
+      "discord": "צ׳אט בדיסקורד",
+      "discordSubtitle": "תמיכה ומשוב",
+      "github": "תרומה ב-GitHub",
+      "githubSubtitle": "קוד מקור, issues, PRs",
+      "ifUseful": "אם זה שימושי"
+    },
+    "common": {
+      "dismiss": "סגירה",
+      "close": "סגירה",
+      "openSettings": "פתיחת ההגדרות לסקירת העדכון המותקן"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "הפעלת המשימה מחדש מה-prompt המקורי",
+      "markAsDone": "סימון המשימה כהושלמה",
+      "viewAriaLabel": "תצוגת משימה",
+      "terminal": "טרמינל",
+      "transcript": "תמלול",
+      "details": "פרטים",
+      "transcriptTitle": "JSONL של סשן Claude Code מקורי",
+      "transcriptHint": "קורא מ-~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "חזרה",
+      "copyPrompt": "העתקת ה-prompt המקורי",
+      "gracefulExit": "סגירה מסודרת של ה-CLI (שולח /exit ל-PTY)",
+      "sendSigterm": "שליחת SIGTERM לתהליך ה-PTY הרץ",
+      "moreActions": "פעולות נוספות",
+      "ptyMode": "רץ במצב טרמינל (PTY)",
+      "compactContext": "כיווץ תורים קודמים לתקציר כדי לפנות חלון הקשר",
+      "noSummary": "אין עדיין תקציר.",
+      "sessionEnded": "הסשן הסתיים — הקלידו להמשיך באותו טרמינל.",
+      "terminalLive": "הטרמינל פעיל. ה-prompt הבא שלכם ייכנס לתור לאחר שתור זה יסתיים."
+    }
+  },
+  "tour": {
+    "ariaLabel": "סיור היכרות עם Cabinet",
+    "skip": "דילוג",
+    "skipAriaLabel": "דילוג על הסיור",
+    "back": "חזרה",
+    "next": "הבא",
+    "writeFirstTask": "כתבו את המשימה הראשונה שלכם",
+    "goToSlide": "מעבר לשקופית {{n}}",
+    "starterTask": "בואו נדבר על המטרות שלי ועל מה שאני רוצה להשיג כאן, ואז נתעד את זה בדף ׳אודות׳ חדש."
+  }
+}

@@ -1,9 +1,0 @@
-{
-  "newCabinet": {
-    "namePlaceholder": "Cabinet name…",
-    "renameWarning": "Cabinet names can't be renamed later (for now). Choose wisely."
-  },
-  "quickActions": {
-    "shuffle": "Show different suggestions"
-  }
-}
