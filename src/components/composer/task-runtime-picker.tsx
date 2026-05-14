@@ -945,7 +945,7 @@ function TerminalProviderPanel({
     <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
       <div className="flex items-center gap-2 border-b border-zinc-800 bg-zinc-900/60 px-3 py-2 text-[10px] font-medium text-zinc-300">
         <Terminal className="size-3 text-emerald-400" />
-        <span>Pick a CLI to spawn in a PTY:</span>
+        <span>{t("composerExtras:pickCliPty")}</span>
       </div>
       <div className="grid grid-cols-2 gap-1.5 p-2 sm:grid-cols-3">
         {providers.map((provider) => {

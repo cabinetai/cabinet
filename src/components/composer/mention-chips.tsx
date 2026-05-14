@@ -2,6 +2,7 @@
 
 import { X, FileText, Bot, Sparkles } from "lucide-react";
 import type { MentionableItem } from "@/hooks/use-composer";
+import { useLocale } from "@/i18n/use-locale";
 
 interface MentionChipsProps {
   mentionedPaths: string[];
@@ -24,6 +25,7 @@ export function MentionChips({
   onRemove,
   inline = false,
 }: MentionChipsProps) {
+  const { t } = useLocale();
   if (
     mentionedPaths.length === 0 &&
     mentionedAgents.length === 0 &&
@@ -63,7 +65,7 @@ export function MentionChips({
         <span
           key={`skill-${key}`}
           className="group inline-flex items-center gap-1 rounded-full bg-violet-500/10 px-2.5 py-1 text-[11px] text-violet-700 dark:text-violet-300"
-          title="Skill — attached to this run only"
+          title={t("composerExtras:skillAttached")}
         >
           <Sparkles className="h-3 w-3" />
           {findLabel("skill", key)}

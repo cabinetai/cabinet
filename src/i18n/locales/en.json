@@ -469,6 +469,37 @@
   "terminalTabsPlus": {
     "resize": "Resize terminal panel"
   },
+  "cabinetsExtras": {
+    "showAllAgents": "Show all agents",
+    "noRecentActivity": "No recent activity",
+    "noAgents": "No agents",
+    "noAgentsConfigured": "No agents configured for this cabinet yet.",
+    "cabinetScope": "Cabinet scope:"
+  },
+  "composerExtras": {
+    "skillAttached": "Skill — attached to this run only",
+    "pageTitlePlaceholder": "Page title…",
+    "active": "Active — wake the agent on this schedule",
+    "pickCliPty": "Pick a CLI to spawn in a PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Edit with AI",
+    "jupyterLab": "Copy: jupyter lab <path>",
+    "exitApp": "Exit app"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI accounts",
+    "aiTeams": "AI teams"
+  },
+  "whatsNew": {
+    "dismiss": "Dismiss"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "I understand and want to continue."
+  },
+  "daemonHealth": {
+    "dismiss": "Dismiss"
+  },
   "dataLocations": {
     "title": "Where your data lives",
     "whyThisMatters": "Why this matters",

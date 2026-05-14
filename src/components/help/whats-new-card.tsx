@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles, X, ExternalLink } from "lucide-react";
 import { version as pkgVersion } from "../../../package.json";
+import { useLocale } from "@/i18n/use-locale";
 
 // Audit #057: lightweight "What's new" card for the home screen. Compares
 // the current package.json version to the user's lastSeenVersion in
@@ -69,6 +70,7 @@ function findReleaseFor(version: string): ReleaseEntry | null {
 }
 
 export function WhatsNewCard() {
+  const { t } = useLocale();
   const [show, setShow] = useState(false);
   const [release, setRelease] = useState<ReleaseEntry | null>(null);
 
@@ -145,7 +147,7 @@ export function WhatsNewCard() {
         <button
           type="button"
           onClick={dismiss}
-          aria-label="Dismiss"
+          aria-label={t("whatsNew:dismiss")}
           className="shrink-0 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <X className="size-3.5" />

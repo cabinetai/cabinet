@@ -129,6 +129,7 @@ export function HeartbeatFields({
   /** When present, shows an "Edit agent instructions" affordance. */
   onEditPersona?: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-pink-500/30 bg-pink-500/5 px-3.5 py-3 text-[12px] leading-5 text-muted-foreground">
@@ -160,7 +161,7 @@ export function HeartbeatFields({
           onChange={(event) => onChange({ ...draft, active: event.target.checked })}
           className="size-4"
         />
-        <span>Active — wake the agent on this schedule</span>
+        <span>{t("composerExtras:active")}</span>
       </label>
 
       {onEditPersona ? (

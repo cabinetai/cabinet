@@ -3,6 +3,7 @@
 import { ExternalLink, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { useLocale } from "@/i18n/use-locale";
 
 interface WebsiteViewerProps {
   path: string;
@@ -12,6 +13,7 @@ interface WebsiteViewerProps {
 }
 
 export function WebsiteViewer({ path, title, fullscreen, onExit }: WebsiteViewerProps) {
+  const { t } = useLocale();
   const iframeSrc = `/api/assets/${path}/index.html`;
   const exitButton =
     fullscreen && onExit ? (
@@ -20,7 +22,7 @@ export function WebsiteViewer({ path, title, fullscreen, onExit }: WebsiteViewer
         size="sm"
         className="h-7 gap-1.5 text-xs"
         onClick={onExit}
-        title="Exit app"
+        title={t("editorExtras:exitApp")}
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         Exit app

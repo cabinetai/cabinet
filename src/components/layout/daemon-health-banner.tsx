@@ -1,12 +1,14 @@
 "use client";
 
 import { AlertTriangle, X } from "lucide-react";
+import { useLocale } from "@/i18n/use-locale";
 import {
   selectShowDaemonDownBanner,
   useHealthStore,
 } from "@/stores/health-store";
 
 export function DaemonHealthBanner() {
+  const { t } = useLocale();
   const show = useHealthStore(selectShowDaemonDownBanner);
   const installKind = useHealthStore((s) => s.installKind);
   const dismiss = useHealthStore((s) => s.dismissBanner);
@@ -33,7 +35,7 @@ export function DaemonHealthBanner() {
       <button
         onClick={dismiss}
         className="shrink-0 rounded p-1 hover:bg-amber-500/20"
-        aria-label="Dismiss"
+        aria-label={t("daemonHealth:dismiss")}
       >
         <X className="h-3.5 w-3.5" />
       </button>

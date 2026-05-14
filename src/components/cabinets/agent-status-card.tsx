@@ -3,6 +3,7 @@
 import { Clock3, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CabinetAgentSummary, CabinetJobSummary } from "@/types/cabinets";
+import { useLocale } from "@/i18n/use-locale";
 
 function timeAgo(dateStr?: string): string {
   if (!dateStr) return "never";
@@ -34,6 +35,7 @@ export function AgentStatusCard({
   onClick?: () => void;
   onSend?: () => void;
 }) {
+  const { t } = useLocale();
   const isRunning = latestConversation?.status === "running";
   const jobCount = jobs.length;
 
@@ -100,7 +102,7 @@ export function AgentStatusCard({
               &ldquo;{latestConversation.title}&rdquo;
             </p>
           ) : (
-            <p className="text-[11px] text-muted-foreground/40">No recent activity</p>
+            <p className="text-[11px] text-muted-foreground/40">{t("cabinetsExtras:noRecentActivity")}</p>
           )}
         </div>
       </button>

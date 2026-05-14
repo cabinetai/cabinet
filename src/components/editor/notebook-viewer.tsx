@@ -7,6 +7,7 @@ import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
 import { markdownToHtml } from "@/lib/markdown/to-html";
+import { useLocale } from "@/i18n/use-locale";
 
 interface NotebookViewerProps {
   path: string;
@@ -91,6 +92,7 @@ function highlightCode(code: string, language: string): string {
 }
 
 function CellOutput({ output }: { output: NotebookOutput }) {
+  const { t } = useLocale();
   if (output.output_type === "stream") {
     const text = stripAnsi(joinSource(output.text));
     const isErr = output.name === "stderr";
@@ -219,6 +221,7 @@ function RawCellView({ cell }: { cell: RawCell }) {
 }
 
 export function NotebookViewer({ path }: NotebookViewerProps) {
+  const { t } = useLocale();
   const [notebook, setNotebook] = useState<Notebook | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -276,7 +279,7 @@ export function NotebookViewer({ path }: NotebookViewerProps) {
           size="sm"
           className="h-7 gap-1.5 text-xs"
           onClick={copyJupyterCommand}
-          title="Copy: jupyter lab <path>"
+          title={t("editorExtras:jupyterLab")}
         >
           {copied ? (
             <Check className="h-3.5 w-3.5 text-green-500" />

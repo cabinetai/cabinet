@@ -28,6 +28,7 @@ import { AgentAvatar } from "@/components/agents/agent-avatar";
 import { cn } from "@/lib/utils";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import { getGreeting } from "./cabinet-utils";
+import { useLocale } from "@/i18n/use-locale";
 
 export function CabinetTaskComposer({
   cabinetPath,
@@ -48,6 +49,7 @@ export function CabinetTaskComposer({
   focusRequest?: number;
   onNavigate: (agentSlug: string, agentCabinetPath: string, conversationId: string) => void;
 }) {
+  const { t } = useLocale();
   const [selectedAgent, setSelectedAgent] = useState<CabinetAgentSummary | null>(null);
   const [taskRuntime, setTaskRuntime] = useState<TaskRuntimeSelection>({});
   const [handoffOpen, setHandoffOpen] = useState(false);
@@ -248,6 +250,7 @@ function AgentPickerCompact({
   selected: CabinetAgentSummary | null;
   onSelect: (agent: CabinetAgentSummary) => void;
 }) {
+  const { t } = useLocale();
   const disabled = agents.length === 0;
   return (
     <DropdownMenu>
@@ -266,7 +269,7 @@ function AgentPickerCompact({
             </span>
           </>
         ) : (
-          <span className="px-1 text-[11px]">No agents</span>
+          <span className="px-1 text-[11px]">{t("cabinetsExtras:noAgents")}</span>
         )}
         <ChevronDown className="size-3 text-muted-foreground/70" />
       </DropdownMenuTrigger>

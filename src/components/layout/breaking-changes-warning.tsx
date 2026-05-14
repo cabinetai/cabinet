@@ -148,7 +148,7 @@ export function BreakingChangesWarning() {
               onChange={(e) => setAccepted(e.target.checked)}
               className="mt-0.5 size-4 shrink-0 rounded border border-border accent-foreground"
             />
-            <span>I understand and want to continue.</span>
+            <span>{t("breakingChangesPlus:iUnderstand")}</span>
           </label>
         </div>
 

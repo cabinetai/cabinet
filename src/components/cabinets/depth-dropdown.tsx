@@ -10,6 +10,7 @@ import {
 import { CABINET_VISIBILITY_OPTIONS } from "@/lib/cabinets/visibility";
 import type { CabinetVisibilityMode } from "@/types/cabinets";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 
 interface DepthDropdownProps {
   mode: CabinetVisibilityMode;
@@ -25,6 +26,7 @@ export function DepthDropdown({
   compact,
   className,
 }: DepthDropdownProps) {
+  const { t } = useLocale();
   const current =
     CABINET_VISIBILITY_OPTIONS.find((o) => o.value === mode) ??
     CABINET_VISIBILITY_OPTIONS[0];

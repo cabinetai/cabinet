@@ -3,6 +3,7 @@
 import { KeyRound, Lock, Bot, Calendar, Image as ImageIcon } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 interface KeyRow {
   preset: string;
@@ -22,6 +23,7 @@ const KEYS: KeyRow[] = [
  * but visually breaks to its own line.
  */
 function DevFootnote({ children }: { children: React.ReactNode }) {
+  const { t } = useLocale();
   return (
     <span
       className="font-mono text-[11.5px] leading-relaxed"
@@ -44,11 +46,12 @@ function DevFootnote({ children }: { children: React.ReactNode }) {
 /* ── Slide 1: Plug in your AI accounts ──────────────────────────────── */
 
 function SlideSetOnce() {
+  const { t } = useLocale();
   return (
     <DemoSlideShell
       title={
         <>
-          Plug in your <span style={{ color: P.accent }}>AI accounts</span>.
+          Plug in your <span style={{ color: P.accent }}>{t("demosExtras:aiAccounts")}</span>.
         </>
       }
       description={

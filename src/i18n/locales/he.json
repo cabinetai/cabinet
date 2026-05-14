@@ -469,6 +469,37 @@
   "terminalTabsPlus": {
     "resize": "שינוי גודל פאנל הטרמינל"
   },
+  "cabinetsExtras": {
+    "showAllAgents": "הצגת כל הסוכנים",
+    "noRecentActivity": "אין פעילות אחרונה",
+    "noAgents": "אין סוכנים",
+    "noAgentsConfigured": "טרם הוגדרו סוכנים לארונית זו.",
+    "cabinetScope": "טווח הארונית:"
+  },
+  "composerExtras": {
+    "skillAttached": "כישור — מצורף לריצה הזו בלבד",
+    "pageTitlePlaceholder": "כותרת הדף…",
+    "active": "פעיל — העירו את הסוכן בלוח זמנים זה",
+    "pickCliPty": "בחרו CLI להשקה ב-PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "עריכה עם AI",
+    "jupyterLab": "העתקה: jupyter lab <path>",
+    "exitApp": "יציאה מהאפליקציה"
+  },
+  "demosExtras": {
+    "aiAccounts": "חשבונות AI",
+    "aiTeams": "צוותי AI"
+  },
+  "whatsNew": {
+    "dismiss": "סגירה"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "אני מבין ורוצה להמשיך."
+  },
+  "daemonHealth": {
+    "dismiss": "סגירה"
+  },
   "dataLocations": {
     "title": "איפה הנתונים שלך חיים",
     "whyThisMatters": "למה זה חשוב",

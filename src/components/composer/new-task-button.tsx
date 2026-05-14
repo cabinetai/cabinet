@@ -208,7 +208,7 @@ export function NewTaskButton() {
             className="flex gap-2"
           >
             <Input
-              placeholder="Page title..."
+              placeholder={t("composerExtras:pageTitlePlaceholder")}
               value={pageTitle}
               onChange={(e) => setPageTitle(e.target.value)}
               autoFocus

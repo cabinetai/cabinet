@@ -13,6 +13,7 @@ import { formatRelative } from "./cabinet-utils";
 import type { ConversationMeta } from "@/types/conversations";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import type { TaskStatus } from "@/types/tasks";
+import { useLocale } from "@/i18n/use-locale";
 
 interface ActivityFeedProps {
   cabinetPath: string;
@@ -50,6 +51,7 @@ export function ActivityFeed({
   onAgentPillClick,
   onClearAgentFilter,
 }: ActivityFeedProps) {
+  const { t } = useLocale();
   const [conversations, setConversations] = useState<ConversationMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const providerIcons = useProviderIcons();
@@ -117,7 +119,7 @@ export function ActivityFeed({
                 type="button"
                 onClick={onClearAgentFilter}
                 className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[10.5px] font-medium text-foreground transition-colors hover:bg-muted/70"
-                title="Show all agents"
+                title={t("cabinetsExtras:showAllAgents")}
               >
                 <X className="size-2.5" />
                 {filterAgent?.displayName ?? filterAgent?.name ?? agentSlug}

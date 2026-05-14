@@ -15,8 +15,10 @@ import {
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { DemoSlideShell, type DemoConfig } from "../demo-modal";
+import { useLocale } from "@/i18n/use-locale";
 
 function CardChrome({ width = 320, children }: { width?: number; children: React.ReactNode }) {
+  const { t } = useLocale();
   return (
     <div
       className="rounded-2xl"
@@ -34,6 +36,7 @@ function CardChrome({ width = 320, children }: { width?: number; children: React
 
 /* ── Slide 1: Nested teams ───────────────────────────────────────────── */
 function SlideNested() {
+  const { t } = useLocale();
   type Node = { label: string; depth: number; emphasis?: boolean; sub?: boolean; muted?: boolean };
   const tree: Node[] = [
     { label: "My Cabinet", depth: 0, emphasis: true },
@@ -50,7 +53,7 @@ function SlideNested() {
     <DemoSlideShell
       title={
         <>
-          A team of <span style={{ color: P.accent }}>AI teams</span>.
+          A team of <span style={{ color: P.accent }}>{t("demosExtras:aiTeams")}</span>.
         </>
       }
       description={
