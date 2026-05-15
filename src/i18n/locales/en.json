@@ -155,7 +155,24 @@
     "viewKanban": "Kanban",
     "viewList": "List",
     "viewSchedule": "Schedule",
-    "filterByAgent": "Filter by agent: {{name}}"
+    "filterByAgent": "Filter by agent: {{name}}",
+    "noToDeleteTitle": "No tasks to delete",
+    "noToDeleteFiltered": "Nothing matches {{filter}}. Clear the filter, pick another view, or create a new task.",
+    "noToDeleteEmpty": "There are no tasks on the board yet. Create one with the + New Task button.",
+    "gotIt": "Got it",
+    "deleteCountTitle": "Delete {{count}} task?",
+    "deleteCountTitlePlural": "Delete {{count}} tasks?",
+    "deleteBody": "This permanently removes conversation meta, transcripts, and artifacts for every task currently shown. This can't be undone.",
+    "deleteBodyFiltered": "This permanently removes conversation meta, transcripts, and artifacts for every task currently shown by the active filters. This can't be undone.",
+    "deleteConfirm": "Delete {{count}}",
+    "deleteAllShown": "Delete all {{count}} shown task",
+    "deleteAllShownPlural": "Delete all {{count}} shown tasks",
+    "nothingToDelete": "Nothing to delete in this view",
+    "deleteAllAria": "Delete all shown tasks",
+    "noTasksAria": "No tasks in this view",
+    "filterTrigger": "the {{trigger}} filter",
+    "filterTriggerAndAgent": "the {{trigger}} filter and selected agent",
+    "filterSelectedAgent": "the selected agent filter"
   },
   "runtime": {
     "noProvider": "No provider selected",
@@ -299,6 +316,14 @@
     "noJobs": "No cabinet jobs configured yet.",
     "heartbeats": "Heartbeats",
     "noHeartbeats": "No heartbeats configured yet."
+  },
+  "scheduleTab": {
+    "explainer1": "Everything your team is doing this week, on one calendar. Pink is a heartbeat, green is a routine. Click any pill to edit it.",
+    "explainer2": "Use this tab to spot conflicts, find quiet stretches, or just see at a glance how busy the team is.",
+    "aboutAria": "About the schedule",
+    "modeDay": "Day",
+    "modeWeek": "Week",
+    "modeMonth": "Month"
   },
   "mermaidViewer": {
     "zoomOut": "Zoom out",
@@ -1054,7 +1079,9 @@
       "lightVariant": "Light variant",
       "darkVariant": "Dark variant",
       "sidebar": "Sidebar",
-      "showHiddenFiles": "Show hidden files"
+      "showHiddenFiles": "Show hidden files",
+      "sidebarDescription": "Configure how files are displayed in the sidebar.",
+      "showHiddenFilesHint": "Display files and folders starting with a dot (e.g. .env, .git)"
     },
     "tabs": {
       "profile": "Profile",
@@ -1083,7 +1110,20 @@
     },
     "storage": {
       "dataDirectory": "Data Directory",
-      "restartRequired": "Restart required"
+      "restartRequired": "Restart required",
+      "dataDirectoryDescription": "All Knowledge Base content is stored in this directory. Changing the path requires a restart.",
+      "restartHint": "The data directory will change after you restart Cabinet.",
+      "currentPath": "Current path",
+      "loadingPath": "Loading...",
+      "changeDirectory": "Change directory",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "Browse",
+      "save": "Save",
+      "openInFinder": "Open in Finder",
+      "envVarHint1": "You can also set the ",
+      "envVarHint2": " environment variable, which takes priority over this setting.",
+      "failedToSave": "Failed to save.",
+      "failedToSaveDir": "Failed to save data directory."
     },
     "updates": {
       "checking": "Checking for Cabinet updates…"
@@ -1091,14 +1131,43 @@
     "providers": {
       "title": "Agent Providers",
       "defaultModel": "Default Model",
-      "setupGuide": "Setup guide"
+      "setupGuide": "Setup guide",
+      "troubleshoot": "Troubleshoot AI providers",
+      "subtitle": "Configure AI agent providers. CLI agents run via terminal, API agents use direct API calls.",
+      "defaultRuntime": "Default runtime",
+      "defaultRuntimeHint": "General conversations and fallback runs use this provider/model/effort.",
+      "cliAgents": "CLI Agents",
+      "apiAgents": "API Agents",
+      "ready": "Ready",
+      "installedNotLoggedIn": "Installed but not logged in",
+      "notInstalled": "Not installed",
+      "emptyMatrix": "No providers are configured. Add one below."
     },
     "notifications": {
       "channels": "Notification Channels",
       "alertRules": "Alert Rules",
       "alwaysOn": "Always on",
       "comingSoon": "Coming Soon",
-      "emailPlaceholder": "you@company.com"
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "Configure how you receive alerts when agents need your attention.",
+      "rulesHint": "Notifications are triggered automatically for these events:",
+      "previewHint": "Browser push, Telegram, Slack, and email notifications.",
+      "channelPushName": "Browser Push",
+      "channelPushDesc": "Instant alerts when Cabinet tab is open or PWA installed",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Instant mobile notifications via Telegram bot",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "Forward alerts to your team's Slack channel",
+      "channelEmailName": "Email Digest",
+      "channelEmailDesc": "Batched summary of alerts and agent activity",
+      "ruleAlertsEvent": "#alerts channel messages",
+      "ruleAlertsDesc": "Any agent posting to the alerts channel",
+      "ruleMentionsEvent": "@human mentions",
+      "ruleMentionsDesc": "When an agent mentions @human in any channel",
+      "ruleFloorEvent": "Goal floor breached",
+      "ruleFloorDesc": "A goal drops below its minimum threshold",
+      "ruleHealthEvent": "Agent health degraded",
+      "ruleHealthDesc": "3+ consecutive heartbeat failures"
     },
     "about": {
       "cabinet": "Cabinet",
@@ -1107,7 +1176,27 @@
       "framework": "Framework",
       "storage": "Storage",
       "privacy": "Privacy",
-      "telemetry": "Anonymous usage telemetry"
+      "telemetry": "Anonymous usage telemetry",
+      "tagline": "AI-first self-hosted knowledge base and startup OS.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Local filesystem",
+      "aiLabel": "AI",
+      "aiValue": "Powered by local AI CLIs",
+      "philosophy": "All content lives as markdown files on disk. Humans define intent. Agents do the work. The knowledge base is the shared memory between both.",
+      "privacyBody": "Cabinet sends anonymous usage telemetry to help us improve the product. No file contents, paths, prompts, or secrets are collected.",
+      "privacyLink": "What's collected?",
+      "telemetryEnvDisabled": "Disabled by CABINET_TELEMETRY_DISABLED=1 (env var).",
+      "telemetryHint": "Event counts, versions, and platform info only. Toggle off to stop sending.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "Connect to your Cabinet from anywhere, while your AI team works 24/7 for you. Drop your email below and we'll let you know when Cabinet Cloud opens up.",
+      "cloudAlready": "You're already on the list — we'll be in touch.",
+      "cloudSuccess": "You're on the list. We'll email you when Cabinet Cloud opens up.",
+      "cloudSending": "Sending…",
+      "cloudJoinWaitlist": "Join waitlist",
+      "cloudError": "Something went wrong. Check the email and try again.",
+      "connectTitle": "Connect",
+      "connectBody": "Get help, share feedback, or just say hi.",
+      "joinDiscord": "Join the Discord"
     },
     "profile": {
       "title": "Profile",
@@ -1122,7 +1211,18 @@
       "fallbackIcon": "Fallback icon",
       "useIconInstead": "Use icon instead",
       "searchAvatars": "Search avatars…",
-      "searchIcons": "Search icons…"
+      "searchIcons": "Search icons…",
+      "howAppear": "How you appear in conversations and across the app.",
+      "youFallback": "You",
+      "displayNameHint": "Shown in conversations. Defaults to Name.",
+      "iconHint": "Used when no avatar image is set. Click again to clear.",
+      "tintHint": "Tints the fallback avatar when no image is set.",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "browseAll": "Browse all ({{count}})",
+      "showFavorites": "Show favorites",
+      "showFewer": "Show fewer"
     },
     "workspace": {
       "title": "Workspace",
@@ -1131,7 +1231,8 @@
       "description": "Description",
       "descriptionPlaceholder": "What do you do?",
       "teamSize": "Team size",
-      "teamSizePlaceholder": "Solo / 2–5 / 6–20 / 20+"
+      "teamSizePlaceholder": "Solo / 2–5 / 6–20 / 20+",
+      "subtitle": "Captured during onboarding. Agents read these when planning work."
     }
   },
   "sidebar": {

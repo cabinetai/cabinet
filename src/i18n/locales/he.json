@@ -154,7 +154,24 @@
     "viewKanban": "קנבן",
     "viewList": "רשימה",
     "viewSchedule": "לוח זמנים",
-    "filterByAgent": "סינון לפי סוכן: {{name}}"
+    "filterByAgent": "סינון לפי סוכן: {{name}}",
+    "noToDeleteTitle": "אין משימות למחוק",
+    "noToDeleteFiltered": "שום דבר לא תואם ל-{{filter}}. נקו את הסינון, בחרו תצוגה אחרת, או צרו משימה חדשה.",
+    "noToDeleteEmpty": "אין עדיין משימות בלוח. צרו אחת עם כפתור + משימה חדשה.",
+    "gotIt": "הבנתי",
+    "deleteCountTitle": "למחוק משימה {{count}}?",
+    "deleteCountTitlePlural": "למחוק {{count}} משימות?",
+    "deleteBody": "פעולה זו מוחקת לצמיתות מטא-נתוני שיחה, תמלולים וארטיפקטים של כל משימה שמוצגת כעת. אי אפשר לבטל.",
+    "deleteBodyFiltered": "פעולה זו מוחקת לצמיתות מטא-נתוני שיחה, תמלולים וארטיפקטים של כל משימה שמוצגת כעת על-ידי הסינונים הפעילים. אי אפשר לבטל.",
+    "deleteConfirm": "מחק {{count}}",
+    "deleteAllShown": "מחק את כל {{count}} המשימות המוצגות",
+    "deleteAllShownPlural": "מחק את כל {{count}} המשימות המוצגות",
+    "nothingToDelete": "אין מה למחוק בתצוגה הזאת",
+    "deleteAllAria": "מחק את כל המשימות המוצגות",
+    "noTasksAria": "אין משימות בתצוגה הזאת",
+    "filterTrigger": "סינון ה-{{trigger}}",
+    "filterTriggerAndAgent": "סינון ה-{{trigger}} והסוכן הנבחר",
+    "filterSelectedAgent": "סינון הסוכן הנבחר"
   },
   "runtime": {
     "noProvider": "לא נבחר ספק",
@@ -983,7 +1000,9 @@
       "lightVariant": "גרסה בהירה",
       "darkVariant": "גרסה כהה",
       "sidebar": "סרגל צד",
-      "showHiddenFiles": "הצג קבצים מוסתרים"
+      "showHiddenFiles": "הצג קבצים מוסתרים",
+      "sidebarDescription": "הגדירו איך קבצים מוצגים בסרגל הצד.",
+      "showHiddenFilesHint": "להציג קבצים ותיקיות שמתחילים בנקודה (למשל .env, .git)"
     },
     "tabs": {
       "profile": "פרופיל",
@@ -1005,7 +1024,20 @@
     },
     "storage": {
       "dataDirectory": "ספריית נתונים",
-      "restartRequired": "נדרשת הפעלה מחדש"
+      "restartRequired": "נדרשת הפעלה מחדש",
+      "dataDirectoryDescription": "כל תוכן בסיס הידע מאוחסן בספרייה הזאת. שינוי הנתיב דורש הפעלה מחדש.",
+      "restartHint": "ספריית הנתונים תשתנה אחרי הפעלה מחדש של Cabinet.",
+      "currentPath": "נתיב נוכחי",
+      "loadingPath": "טוען...",
+      "changeDirectory": "שינוי ספרייה",
+      "directoryPlaceholder": "/נתיב/לנתונים",
+      "browse": "עיון",
+      "save": "שמירה",
+      "openInFinder": "פתח ב-Finder",
+      "envVarHint1": "ניתן גם להגדיר את משתנה הסביבה ",
+      "envVarHint2": " , שמקבל עדיפות על ההגדרה הזאת.",
+      "failedToSave": "השמירה נכשלה.",
+      "failedToSaveDir": "שמירת ספריית הנתונים נכשלה."
     },
     "updates": {
       "checking": "בודק עדכונים ל-Cabinet…"
@@ -1013,14 +1045,43 @@
     "providers": {
       "title": "ספקי סוכנים",
       "defaultModel": "מודל ברירת מחדל",
-      "setupGuide": "מדריך התקנה"
+      "setupGuide": "מדריך התקנה",
+      "troubleshoot": "פתרון בעיות בספקי AI",
+      "subtitle": "הגדירו ספקי סוכני AI. סוכני CLI רצים דרך הטרמינל, סוכני API משתמשים בקריאות API ישירות.",
+      "defaultRuntime": "סביבת ריצה ברירת מחדל",
+      "defaultRuntimeHint": "שיחות כלליות וריצות נופלות-חזרה משתמשות בספק/מודל/מאמץ הזה.",
+      "cliAgents": "סוכני CLI",
+      "apiAgents": "סוכני API",
+      "ready": "מוכן",
+      "installedNotLoggedIn": "מותקן אבל לא מחובר",
+      "notInstalled": "לא מותקן",
+      "emptyMatrix": "לא הוגדרו ספקים. הוסיפו אחד למטה."
     },
     "notifications": {
       "channels": "ערוצי התראה",
       "alertRules": "כללי התראה",
       "alwaysOn": "תמיד פעיל",
       "comingSoon": "בקרוב",
-      "emailPlaceholder": "you@company.com"
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "הגדירו איך אתם מקבלים התראות כשסוכנים זקוקים לתשומת ליבכם.",
+      "rulesHint": "התראות מופעלות אוטומטית לאירועים הבאים:",
+      "previewHint": "התראות דפדפן, Telegram, Slack ודוא״ל.",
+      "channelPushName": "Push בדפדפן",
+      "channelPushDesc": "התראות מיידיות כשטאב Cabinet פתוח או PWA מותקן",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "התראות נייד מיידיות דרך בוט Telegram",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "העבירו התראות לערוץ Slack של הצוות שלכם",
+      "channelEmailName": "תקציר אימייל",
+      "channelEmailDesc": "סיכום מאוגד של התראות ופעילות הסוכנים",
+      "ruleAlertsEvent": "הודעות בערוץ #alerts",
+      "ruleAlertsDesc": "כל סוכן שמפרסם בערוץ ההתראות",
+      "ruleMentionsEvent": "אזכורי @human",
+      "ruleMentionsDesc": "כשסוכן מאזכר @human בכל ערוץ",
+      "ruleFloorEvent": "רצפת מטרה נחצתה",
+      "ruleFloorDesc": "מטרה ירדה מתחת לסף המינימלי שלה",
+      "ruleHealthEvent": "בריאות הסוכן ירדה",
+      "ruleHealthDesc": "3+ כשלי heartbeat רצופים"
     },
     "about": {
       "cabinet": "Cabinet",
@@ -1029,7 +1090,27 @@
       "framework": "Framework",
       "storage": "אחסון",
       "privacy": "פרטיות",
-      "telemetry": "נתוני שימוש אנונימיים"
+      "telemetry": "נתוני שימוש אנונימיים",
+      "tagline": "בסיס ידע מבוסס AI, מתארח עצמאית, ומערכת הפעלה לסטארטאפ.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "מערכת קבצים מקומית",
+      "aiLabel": "AI",
+      "aiValue": "מבוסס על AI CLIs מקומיים",
+      "philosophy": "כל התוכן חי כקבצי markdown על הדיסק. בני אדם מגדירים כוונה. סוכנים עושים את העבודה. בסיס הידע הוא הזיכרון המשותף בין שניהם.",
+      "privacyBody": "Cabinet שולח טלמטריית שימוש אנונימית כדי לעזור לנו לשפר את המוצר. לא נאסף תוכן קבצים, נתיבים, פרומפטים או סודות.",
+      "privacyLink": "מה נאסף?",
+      "telemetryEnvDisabled": "מושבת על-ידי CABINET_TELEMETRY_DISABLED=1 (משתנה סביבה).",
+      "telemetryHint": "ספירת אירועים, גרסאות ומידע על הפלטפורמה בלבד. כבו כדי להפסיק לשלוח.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "התחברו ל-Cabinet שלכם מכל מקום, בזמן שצוות ה-AI שלכם עובד 24/7 בשבילכם. הזינו את האימייל שלכם כאן והודיע לכם כש-Cabinet Cloud ייפתח.",
+      "cloudAlready": "אתם כבר ברשימה — אנחנו ניצור קשר.",
+      "cloudSuccess": "אתם ברשימה. נשלח אימייל כש-Cabinet Cloud ייפתח.",
+      "cloudSending": "שולח…",
+      "cloudJoinWaitlist": "הצטרפו לרשימת ההמתנה",
+      "cloudError": "משהו השתבש. בדקו את האימייל ונסו שוב.",
+      "connectTitle": "להתחבר",
+      "connectBody": "קבלו עזרה, שתפו משוב, או פשוט תגידו שלום.",
+      "joinDiscord": "הצטרפו ל-Discord"
     },
     "profile": {
       "title": "פרופיל",
@@ -1044,7 +1125,18 @@
       "fallbackIcon": "אייקון חלופי",
       "useIconInstead": "השתמש באייקון במקום",
       "searchAvatars": "חיפוש אווטארים…",
-      "searchIcons": "חיפוש אייקונים…"
+      "searchIcons": "חיפוש אייקונים…",
+      "howAppear": "איך אתם נראים בשיחות וברחבי האפליקציה.",
+      "youFallback": "אתם",
+      "displayNameHint": "מוצג בשיחות. ברירת המחדל היא השם.",
+      "iconHint": "משמש כשאין תמונת אווטאר. לחיצה נוספת מנקה.",
+      "tintHint": "צובע את האווטאר הנגדי כשאין תמונה.",
+      "save": "שמור",
+      "saving": "שומר…",
+      "saved": "נשמר",
+      "browseAll": "ראו הכל ({{count}})",
+      "showFavorites": "הציגו מועדפים",
+      "showFewer": "הציגו פחות"
     },
     "workspace": {
       "title": "מרחב עבודה",
@@ -1053,7 +1145,8 @@
       "description": "תיאור",
       "descriptionPlaceholder": "מה אתם עושים?",
       "teamSize": "גודל צוות",
-      "teamSizePlaceholder": "סולו / 2–5 / 6–20 / 20+"
+      "teamSizePlaceholder": "סולו / 2–5 / 6–20 / 20+",
+      "subtitle": "נקלט במהלך ההגעה. סוכנים קוראים את זה כשהם מתכננים עבודה."
     },
     "page": {
       "title": "הגדרות",
@@ -1300,5 +1393,13 @@
     "sameFiles": "קבצים",
     "secondParagraphSuffix": ", לא מעותקים של עותקים.",
     "mockTitle": "הארונית של הילה"
+  },
+  "scheduleTab": {
+    "explainer1": "כל מה שהצוות שלכם עושה השבוע, ביומן אחד. ורוד הוא heartbeat, ירוק הוא שגרה. לחצו על כל גלולה כדי לערוך.",
+    "explainer2": "השתמשו בטאב הזה כדי לזהות התנגשויות, למצוא קטעים שקטים, או פשוט לראות במבט אחד כמה הצוות עסוק.",
+    "aboutAria": "על לוח הזמנים",
+    "modeDay": "יום",
+    "modeWeek": "שבוע",
+    "modeMonth": "חודש"
   }
 }

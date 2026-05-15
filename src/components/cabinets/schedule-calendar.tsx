@@ -31,11 +31,14 @@ const MAX_PILLS_MULTIDAY = 2;
 const MAX_PILLS_MONTH = 3;
 const DEFAULT_VISIBLE_START_HOUR = 5; // 5 AM
 const DEFAULT_VISIBLE_END_HOUR = 23; // 11 PM
-const DAY_NAMES_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+// Locale-aware short weekday names, Monday-first to match the calendar's
+// column order. 2024-01-01 is a Monday — walk 7 days from it and let
+// Intl.DateTimeFormat localize (Hebrew/Chinese resolve automatically from
+// the document language the browser exposes via undefined locale).
+const DAY_NAMES_SHORT = Array.from({ length: 7 }, (_, i) => {
+  const d = new Date(2024, 0, 1 + i); // Jan 1 2024 = Monday
+  return d.toLocaleDateString(undefined, { weekday: "short" });
+});
 
 /* ─── Helpers ─── */
 

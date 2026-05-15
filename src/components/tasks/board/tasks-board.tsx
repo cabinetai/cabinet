@@ -391,27 +391,21 @@ export function TasksBoard({
               const toDelete = filteredTasks.slice();
               const count = toDelete.length;
               if (count === 0) {
-                const scope =
-                  triggerFilter !== "all"
-                    ? `${triggerFilter} task`
-                    : agentFilter
-                    ? "task"
-                    : "task";
                 const narrowedBy =
                   triggerFilter !== "all" && agentFilter
-                    ? `the ${triggerFilter} filter and selected agent`
+                    ? t("tasksBoard:filterTriggerAndAgent", { trigger: triggerFilter })
                     : triggerFilter !== "all"
-                    ? `the ${triggerFilter} filter`
+                    ? t("tasksBoard:filterTrigger", { trigger: triggerFilter })
                     : agentFilter
-                    ? "the selected agent filter"
+                    ? t("tasksBoard:filterSelectedAgent")
                     : null;
                 setPendingConfirm({
                   id: `delete-empty-${Date.now()}`,
-                  title: `No ${scope}s to delete`,
+                  title: t("tasksBoard:noToDeleteTitle"),
                   body: narrowedBy
-                    ? `Nothing matches ${narrowedBy}. Clear the filter, pick another view, or create a new task.`
-                    : `There are no tasks on the board yet. Create one with the + New Task button.`,
-                  confirmLabel: "Got it",
+                    ? t("tasksBoard:noToDeleteFiltered", { filter: narrowedBy })
+                    : t("tasksBoard:noToDeleteEmpty"),
+                  confirmLabel: t("tasksBoard:gotIt"),
                   infoOnly: true,
                   onConfirm: () => {},
                 });
@@ -420,11 +414,14 @@ export function TasksBoard({
               const narrowed = !!agentFilter || triggerFilter !== "all";
               setPendingConfirm({
                 id: `delete-all-${Date.now()}`,
-                title: `Delete ${count} task${count === 1 ? "" : "s"}?`,
-                body: `This permanently removes conversation meta, transcripts, and artifacts for every task currently shown${
-                  narrowed ? " by the active filters" : ""
-                }. This can't be undone.`,
-                confirmLabel: `Delete ${count}`,
+                title:
+                  count === 1
+                    ? t("tasksBoard:deleteCountTitle", { count })
+                    : t("tasksBoard:deleteCountTitlePlural", { count }),
+                body: narrowed
+                  ? t("tasksBoard:deleteBodyFiltered")
+                  : t("tasksBoard:deleteBody"),
+                confirmLabel: t("tasksBoard:deleteConfirm", { count }),
                 destructive: true,
                 typedConfirmation: "DELETE",
                 onConfirm: async () => {
@@ -444,15 +441,15 @@ export function TasksBoard({
             }}
             title={
               filteredTasks.length > 0
-                ? `Delete all ${filteredTasks.length} shown task${
-                    filteredTasks.length === 1 ? "" : "s"
-                  }`
-                : "Nothing to delete in this view"
+                ? filteredTasks.length === 1
+                  ? t("tasksBoard:deleteAllShown", { count: filteredTasks.length })
+                  : t("tasksBoard:deleteAllShownPlural", { count: filteredTasks.length })
+                : t("tasksBoard:nothingToDelete")
             }
             aria-label={
               filteredTasks.length > 0
-                ? "Delete all shown tasks"
-                : "No tasks in this view"
+                ? t("tasksBoard:deleteAllAria")
+                : t("tasksBoard:noTasksAria")
             }
             className={cn(
               "inline-flex size-5 items-center justify-center rounded-md transition-colors",

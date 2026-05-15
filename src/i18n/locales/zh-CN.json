@@ -154,7 +154,24 @@
     "viewKanban": "看板",
     "viewList": "列表",
     "viewSchedule": "日程",
-    "filterByAgent": "按智能体筛选:{{name}}"
+    "filterByAgent": "按智能体筛选:{{name}}",
+    "noToDeleteTitle": "没有可删除的任务",
+    "noToDeleteFiltered": "没有匹配 {{filter}} 的内容。清除筛选、换个视图,或创建一个新任务。",
+    "noToDeleteEmpty": "看板上还没有任务。用 + 新建任务 按钮创建一个。",
+    "gotIt": "知道了",
+    "deleteCountTitle": "删除 {{count}} 个任务?",
+    "deleteCountTitlePlural": "删除 {{count}} 个任务?",
+    "deleteBody": "这将永久删除当前显示的每个任务的对话元数据、记录和产物。无法撤销。",
+    "deleteBodyFiltered": "这将永久删除当前在活动筛选下显示的每个任务的对话元数据、记录和产物。无法撤销。",
+    "deleteConfirm": "删除 {{count}}",
+    "deleteAllShown": "删除全部 {{count}} 个显示的任务",
+    "deleteAllShownPlural": "删除全部 {{count}} 个显示的任务",
+    "nothingToDelete": "此视图中没有可删除的内容",
+    "deleteAllAria": "删除全部显示的任务",
+    "noTasksAria": "此视图中没有任务",
+    "filterTrigger": "{{trigger}} 筛选",
+    "filterTriggerAndAgent": "{{trigger}} 筛选和所选智能体",
+    "filterSelectedAgent": "所选智能体筛选"
   },
   "runtime": {
     "noProvider": "未选择服务商",
@@ -983,7 +1000,9 @@
       "lightVariant": "浅色变体",
       "darkVariant": "深色变体",
       "sidebar": "侧边栏",
-      "showHiddenFiles": "显示隐藏文件"
+      "showHiddenFiles": "显示隐藏文件",
+      "sidebarDescription": "配置文件在侧边栏中的显示方式。",
+      "showHiddenFilesHint": "显示以点开头的文件和文件夹(例如 .env、.git)"
     },
     "tabs": {
       "profile": "个人资料",
@@ -1005,7 +1024,20 @@
     },
     "storage": {
       "dataDirectory": "数据目录",
-      "restartRequired": "需要重启"
+      "restartRequired": "需要重启",
+      "dataDirectoryDescription": "所有知识库内容都存放在该目录。修改路径需要重启。",
+      "restartHint": "重启凯比内特后,数据目录将变更。",
+      "currentPath": "当前路径",
+      "loadingPath": "加载中...",
+      "changeDirectory": "更改目录",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "浏览",
+      "save": "保存",
+      "openInFinder": "在 Finder 中打开",
+      "envVarHint1": "你也可以设置环境变量 ",
+      "envVarHint2": " ,它的优先级高于该设置。",
+      "failedToSave": "保存失败。",
+      "failedToSaveDir": "保存数据目录失败。"
     },
     "updates": {
       "checking": "正在检查凯比内特更新……"
@@ -1013,14 +1045,43 @@
     "providers": {
       "title": "智能体服务商",
       "defaultModel": "默认模型",
-      "setupGuide": "配置指南"
+      "setupGuide": "配置指南",
+      "troubleshoot": "排查 AI 服务商问题",
+      "subtitle": "配置 AI 智能体服务商。CLI 智能体通过终端运行,API 智能体直接调用 API。",
+      "defaultRuntime": "默认运行时",
+      "defaultRuntimeHint": "一般对话和回退运行会使用这个服务商/模型/强度。",
+      "cliAgents": "CLI 智能体",
+      "apiAgents": "API 智能体",
+      "ready": "就绪",
+      "installedNotLoggedIn": "已安装但未登录",
+      "notInstalled": "未安装",
+      "emptyMatrix": "未配置任何服务商。在下方添加一个。"
     },
     "notifications": {
       "channels": "通知渠道",
       "alertRules": "告警规则",
       "alwaysOn": "始终开启",
       "comingSoon": "即将推出",
-      "emailPlaceholder": "you@company.com"
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "配置当智能体需要你关注时如何通知你。",
+      "rulesHint": "以下事件会自动触发通知:",
+      "previewHint": "浏览器推送、Telegram、Slack 和邮件通知。",
+      "channelPushName": "浏览器推送",
+      "channelPushDesc": "当凯比内特标签页打开或 PWA 已安装时即时提醒",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "通过 Telegram 机器人即时移动通知",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "转发提醒到团队的 Slack 频道",
+      "channelEmailName": "邮件摘要",
+      "channelEmailDesc": "提醒和智能体活动的批量摘要",
+      "ruleAlertsEvent": "#alerts 频道消息",
+      "ruleAlertsDesc": "任意智能体发布到 alerts 频道",
+      "ruleMentionsEvent": "@human 提及",
+      "ruleMentionsDesc": "智能体在任意频道提及 @human 时",
+      "ruleFloorEvent": "目标下限被突破",
+      "ruleFloorDesc": "某个目标降到了最小阈值以下",
+      "ruleHealthEvent": "智能体健康下降",
+      "ruleHealthDesc": "连续 3 次或更多心跳失败"
     },
     "about": {
       "cabinet": "凯比内特",
@@ -1029,7 +1090,27 @@
       "framework": "框架",
       "storage": "存储",
       "privacy": "隐私",
-      "telemetry": "匿名使用遥测"
+      "telemetry": "匿名使用遥测",
+      "tagline": "AI 优先的自托管知识库与创业 OS。",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "本地文件系统",
+      "aiLabel": "AI",
+      "aiValue": "由本地 AI CLI 驱动",
+      "philosophy": "所有内容都以 markdown 文件的形式存在你的硬盘上。人类定义意图,智能体执行工作。知识库是两者共享的记忆。",
+      "privacyBody": "凯比内特发送匿名使用遥测,以帮助我们改进产品。不收集文件内容、路径、提示词或密钥。",
+      "privacyLink": "收集了什么?",
+      "telemetryEnvDisabled": "被 CABINET_TELEMETRY_DISABLED=1(环境变量)禁用。",
+      "telemetryHint": "仅收集事件计数、版本和平台信息。关闭后停止发送。",
+      "cabinetCloud": "凯比内特云",
+      "cloudBody": "随时随地连接到你的凯比内特,而 AI 团队 24/7 为你工作。在下面留下邮箱,凯比内特云开放时我们会通知你。",
+      "cloudAlready": "你已经在名单上了 — 我们会联系你。",
+      "cloudSuccess": "你已经在名单上。凯比内特云开放时我们会发邮件。",
+      "cloudSending": "发送中……",
+      "cloudJoinWaitlist": "加入候补名单",
+      "cloudError": "出了点问题。检查邮箱再试一次。",
+      "connectTitle": "联系",
+      "connectBody": "获取帮助、分享反馈,或者来打个招呼。",
+      "joinDiscord": "加入 Discord"
     },
     "profile": {
       "title": "个人资料",
@@ -1044,7 +1125,18 @@
       "fallbackIcon": "回退图标",
       "useIconInstead": "改用图标",
       "searchAvatars": "搜索头像……",
-      "searchIcons": "搜索图标……"
+      "searchIcons": "搜索图标……",
+      "howAppear": "你在对话中和整个应用里的呈现方式。",
+      "youFallback": "你",
+      "displayNameHint": "在对话中显示。默认使用「姓名」。",
+      "iconHint": "未设置头像图片时使用。再次点击清除。",
+      "tintHint": "未设置图片时为回退头像上色。",
+      "save": "保存",
+      "saving": "正在保存……",
+      "saved": "已保存",
+      "browseAll": "浏览全部 ({{count}})",
+      "showFavorites": "显示收藏",
+      "showFewer": "显示更少"
     },
     "workspace": {
       "title": "工作区",
@@ -1053,7 +1145,8 @@
       "description": "描述",
       "descriptionPlaceholder": "你是做什么的?",
       "teamSize": "团队规模",
-      "teamSizePlaceholder": "独立 / 2–5 / 6–20 / 20+"
+      "teamSizePlaceholder": "独立 / 2–5 / 6–20 / 20+",
+      "subtitle": "入门时记录的内容。智能体在规划工作时会读取。"
     },
     "page": {
       "title": "设置",
@@ -1300,5 +1393,13 @@
     "sameFiles": "同一份文件",
     "secondParagraphSuffix": "里读、写、发布,而不是层层副本。",
     "mockTitle": "Hila 的凯比内特"
+  },
+  "scheduleTab": {
+    "explainer1": "你的团队这周在做的一切,都在一个日历上。粉色是心跳,绿色是例行任务。点击任意药丸即可编辑。",
+    "explainer2": "用这个标签页发现冲突、找出空闲时段,或一眼看出团队有多忙。",
+    "aboutAria": "关于日程",
+    "modeDay": "日",
+    "modeWeek": "周",
+    "modeMonth": "月"
   }
 }

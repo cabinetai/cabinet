@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ScheduleCalendar } from "@/components/cabinets/schedule-calendar";
 import type { ScheduleEvent } from "@/lib/agents/cron-compute";
 import type { JobConfig } from "@/types/jobs";
+import { useLocale } from "@/i18n/use-locale";
 import { useAgentsContext } from "./agents-context";
 import {
   ExplainerCard,
@@ -14,6 +15,7 @@ import {
 type Mode = "day" | "week" | "month";
 
 export function ScheduleTab() {
+  const { t } = useLocale();
   const { agents, jobs, setRoutineDialog, setHeartbeatDialog } =
     useAgentsContext();
   const explainer = useExplainerState("schedule");
@@ -54,18 +56,12 @@ export function ScheduleTab() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
       <ExplainerCard state={explainer}>
-        <p>
-          Everything your team is doing this week, on one calendar. Pink is
-          a heartbeat, green is a routine. Click any pill to edit it.
-        </p>
-        <p>
-          Use this tab to spot conflicts, find quiet stretches, or just see
-          at a glance how busy the team is.
-        </p>
+        <p>{t("scheduleTab:explainer1")}</p>
+        <p>{t("scheduleTab:explainer2")}</p>
       </ExplainerCard>
       <div className="flex items-center justify-between gap-3">
         <span className="inline-flex items-center text-[11.5px] text-muted-foreground/80">
-          <ExplainerIcon state={explainer} ariaLabel="About the schedule" />
+          <ExplainerIcon state={explainer} ariaLabel={t("scheduleTab:aboutAria")} />
         </span>
         <div className="inline-flex shrink-0 items-center rounded-md border border-border/70 bg-background p-0.5">
           {(["day", "week", "month"] as const).map((m) => (
@@ -79,7 +75,7 @@ export function ScheduleTab() {
                   : "rounded px-2.5 py-1 text-[11.5px] font-medium text-muted-foreground hover:text-foreground"
               }
             >
-              {m[0].toUpperCase() + m.slice(1)}
+              {m === "day" ? t("scheduleTab:modeDay") : m === "week" ? t("scheduleTab:modeWeek") : t("scheduleTab:modeMonth")}
             </button>
           ))}
         </div>
