@@ -45,8 +45,7 @@ export function NarrowViewportHint() {
   return (
     <div className="flex items-center justify-between gap-2 border-b border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-900 dark:text-amber-100">
       <span>
-        Cabinet is best at <strong>≥960&nbsp;px</strong> wide. Some surfaces
-        cramp at narrower widths.
+        {t("narrowViewport:hintPrefix")}<strong>{t("narrowViewport:hintWidth")}</strong>{t("narrowViewport:hintSuffix")}
       </span>
       <button
         type="button"

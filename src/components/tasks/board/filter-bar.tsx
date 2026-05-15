@@ -97,7 +97,7 @@ export function AgentFilterDropdown({
     : null;
   const triggerLabel = selected
     ? selected.displayName ?? selected.name
-    : "All agents";
+    : t("tinyExtras:allAgents");
   const hasImage = selected ? hasAgentAvatarImage(selected) : false;
   const SelectedIcon = selected
     ? resolveAgentIcon(selected.slug, selected.iconKey ?? null)
@@ -105,8 +105,8 @@ export function AgentFilterDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        title={`Filter by agent: ${triggerLabel}`}
-        aria-label={`Filter by agent: ${triggerLabel}`}
+        title={t("tasksBoard:filterByAgent", { name: triggerLabel })}
+        aria-label={t("tasksBoard:filterByAgent", { name: triggerLabel })}
         className={cn(
           "inline-flex h-7 items-center gap-1.5 rounded-md border border-border/70 bg-card/60 px-2 text-[11px] text-foreground/80 transition-colors hover:bg-accent hover:text-foreground hover:border-border data-[popup-open]:bg-accent",
           selected && "border-primary/60",

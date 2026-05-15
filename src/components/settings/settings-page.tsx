@@ -761,27 +761,27 @@ export function SettingsPage() {
     items: { id: Tab; label: string; icon: React.ReactNode }[];
   }[] = [
     {
-      label: "You",
+      label: t("settings:page.groupYou"),
       items: [
-        { id: "profile", label: "Profile", icon: <CircleUser className="h-3.5 w-3.5" /> },
-        { id: "notifications", label: "Notifications", icon: <Bell className="h-3.5 w-3.5" /> },
-        { id: "appearance", label: "Appearance", icon: <Palette className="h-3.5 w-3.5" /> },
+        { id: "profile", label: t("settings:tabs.profile"), icon: <CircleUser className="h-3.5 w-3.5" /> },
+        { id: "notifications", label: t("settings:tabs.notifications"), icon: <Bell className="h-3.5 w-3.5" /> },
+        { id: "appearance", label: t("settings:tabs.appearance"), icon: <Palette className="h-3.5 w-3.5" /> },
       ],
     },
     {
-      label: "Workspace",
+      label: t("settings:page.groupWorkspace"),
       items: [
-        { id: "providers", label: "Providers", icon: <Cpu className="h-3.5 w-3.5" /> },
-        { id: "skills", label: "Skills", icon: <Sparkles className="h-3.5 w-3.5" /> },
-        { id: "storage", label: "Storage", icon: <HardDrive className="h-3.5 w-3.5" /> },
-        { id: "integrations", label: "Integrations", icon: <Plug className="h-3.5 w-3.5" /> },
+        { id: "providers", label: t("settings:tabs.providers"), icon: <Cpu className="h-3.5 w-3.5" /> },
+        { id: "skills", label: t("settings:tabs.skills"), icon: <Sparkles className="h-3.5 w-3.5" /> },
+        { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
+        { id: "integrations", label: t("settings:tabs.integrations"), icon: <Plug className="h-3.5 w-3.5" /> },
       ],
     },
     {
-      label: "App",
+      label: t("settings:page.groupApp"),
       items: [
-        { id: "updates", label: "Updates", icon: <CloudDownload className="h-3.5 w-3.5" /> },
-        { id: "about", label: "About", icon: <Info className="h-3.5 w-3.5" /> },
+        { id: "updates", label: t("settings:tabs.updates"), icon: <CloudDownload className="h-3.5 w-3.5" /> },
+        { id: "about", label: t("settings:tabs.about"), icon: <Info className="h-3.5 w-3.5" /> },
       ],
     },
   ];
@@ -799,7 +799,7 @@ export function SettingsPage() {
            * should be H1, not H2. Visual size kept identical via Tailwind.
            */}
           <h1 className="text-[15px] font-semibold tracking-[-0.02em]">
-            Settings
+            {t("settings:page.title")}
           </h1>
         </div>
         <div className="flex items-center gap-1.5">
@@ -810,7 +810,7 @@ export function SettingsPage() {
             onClick={() => { refresh(); loadConfig(); }}
           >
             <RefreshCw className="h-3.5 w-3.5" />
-            Refresh
+            {t("settings:page.refresh")}
           </Button>
         </div>
       </div>

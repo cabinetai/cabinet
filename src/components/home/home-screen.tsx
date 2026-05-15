@@ -757,13 +757,13 @@ export function HomeScreen() {
       <div className="w-screen pb-8 pt-4 space-y-3">
         <div className="flex items-center justify-center gap-3">
           <h2 className="text-sm font-medium text-muted-foreground">
-            Start from a template
+            {t("home:templates.header")}
           </h2>
           <button
             onClick={() => setSection({ type: "registry" })}
             className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2 cursor-pointer transition-colors"
           >
-            Browse all &rarr;
+            {t("home:templates.browseAll")}
           </button>
         </div>
         <RegistryCarousel

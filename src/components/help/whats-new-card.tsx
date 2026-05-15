@@ -116,7 +116,7 @@ export function WhatsNewCard() {
         <div className="flex flex-1 flex-col gap-1">
           <div className="flex items-baseline gap-2">
             <span className="text-[13px] font-semibold">
-              What&rsquo;s new in v{release.version}
+              {t("whatsNew:headerPrefix")}{release.version}
             </span>
             <span className="text-[10px] text-muted-foreground/70">
               {release.date}
@@ -140,7 +140,7 @@ export function WhatsNewCard() {
             rel="noreferrer noopener"
             className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 underline-offset-2 hover:underline"
           >
-            Read full release notes
+            {t("whatsNew:readFull")}
             <ExternalLink className="size-3" />
           </a>
         </div>

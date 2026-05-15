@@ -88,7 +88,8 @@
       "notInCatalog": "לא נמצא בקטלוג — לחיצה להסרה",
       "recommendedForRole": "מומלץ לתפקיד הזה — לחיצה לצירוף",
       "promise": "הבטחה",
-      "saved": "נשמר"
+      "saved": "נשמר",
+      "iconLabel": "אייקון"
     },
     "missionControl": {
       "gallery": "גלריה",
@@ -147,7 +148,11 @@
     "createTask": "יצירת משימה חדשה",
     "moreNewTypes": "סוגי פריטים חדשים נוספים",
     "newTask": "משימה חדשה",
-    "newRoutine": "שגרה חדשה"
+    "newRoutine": "שגרה חדשה",
+    "viewKanban": "קנבן",
+    "viewList": "רשימה",
+    "viewSchedule": "לוח זמנים",
+    "filterByAgent": "סינון לפי סוכן: {{name}}"
   },
   "runtime": {
     "noProvider": "לא נבחר ספק",
@@ -205,7 +210,18 @@
     "stopAllInLane": "עצירת כל המשימות הפעילות במסלול זה",
     "restartAllInLane": "הפעלה מחדש של כל המשימות במסלול זה",
     "newTask": "משימה חדשה",
-    "collapseColumn": "כיווץ עמודה"
+    "collapseColumn": "כיווץ עמודה",
+    "kill": "עצור",
+    "laneInbox": "תיבת דואר",
+    "laneInboxHint": "טיוטה — מחכה שתפעילו",
+    "laneNeeds": "התור שלכם",
+    "laneNeedsHint": "סוכן שאל שאלה או צריך אישור",
+    "laneRunning": "פועל",
+    "laneRunningHint": "סוכנים עובדים כרגע",
+    "laneDone": "זה עתה הסתיים",
+    "laneDoneHint": "הושלם בשעה האחרונה",
+    "laneArchive": "ארכיון",
+    "laneArchiveHint": "ישן יותר וכבר אושר"
   },
   "terminalTabs": {
     "newTab": "טאב טרמינל חדש",
@@ -407,7 +423,27 @@
   },
   "startWork": {
     "close": "סגירה",
-    "selectAgent": "בחירת סוכן"
+    "selectAgent": "בחירת סוכן",
+    "titleNow": "מה צריך לעשות?",
+    "titleRecurring": "הגדירו שגרה חוזרת",
+    "titleHeartbeat": "העירו את הסוכן לפי לוח זמנים",
+    "submitStart": "התחל",
+    "submitAddInbox": "הוסיפו לתיבת הדואר",
+    "submitCreateRoutine": "צרו שגרה",
+    "submitSaveHeartbeat": "שמרו heartbeat",
+    "saving": "שומר…",
+    "current": "נוכחי",
+    "modeInboxLabel": "→ תיבת דואר",
+    "modeInboxHint": "שמרו לתיבת הדואר — תפעילו כשתהיו מוכנים",
+    "modeNowLabel": "הפעל עכשיו",
+    "modeNowHint": "התחילו את השיחה הזו מיד",
+    "modeRecurringLabel": "לפי לוח זמנים",
+    "modeRecurringHint": "הריצו את הפרומפט הזה לפי לוח זמנים",
+    "modeHeartbeatLabel": "Heartbeat",
+    "modeHeartbeatHint": "העירו את הסוכן לפי הקצב שלו",
+    "agentFallback": "סוכן",
+    "failedToStart": "ההפעלה נכשלה",
+    "failedToSaveHeartbeat": "שמירת ה-heartbeat נכשלה"
   },
   "googleDoc": {
     "noUrl": "לא הוגדר URL של Google",
@@ -514,7 +550,10 @@
   },
   "narrowViewport": {
     "dismiss": "סגירת רמז ל-viewport צר",
-    "dismissTitle": "סגירה עד הסשן הבא"
+    "dismissTitle": "סגירה עד הסשן הבא",
+    "hintPrefix": "Cabinet עובד הכי טוב ב-",
+    "hintWidth": "≥960 פיקסלים",
+    "hintSuffix": " לרוחב. בחלק מהמשטחים יש צפיפות ברוחבים צרים יותר."
   },
   "agentCard": {
     "runHeartbeat": "הפעלת פעימה"
@@ -599,7 +638,9 @@
     "aiTeams": "צוותי AI"
   },
   "whatsNew": {
-    "dismiss": "סגירה"
+    "dismiss": "סגירה",
+    "headerPrefix": "מה חדש ב-v",
+    "readFull": "קראו את הערות המוצא המלאות"
   },
   "breakingChangesPlus": {
     "iUnderstand": "אני מבין ורוצה להמשיך."
@@ -790,7 +831,11 @@
     "greetingWithName": "{{greeting}}, {{name}}.",
     "greetingNoName": "{{greeting}}.",
     "composerPlaceholder": "אני רוצה ליצור...",
-    "composerDaemonDown": "ה-daemon של הסוכנים לא פעיל — הפעילו מחדש כדי לשלוח"
+    "composerDaemonDown": "ה-daemon של הסוכנים לא פעיל — הפעילו מחדש כדי לשלוח",
+    "templates": {
+      "header": "התחילו מתבנית",
+      "browseAll": "ראו הכל ←"
+    }
   },
   "onboarding": {
     "intro": {
@@ -943,6 +988,13 @@
       "descriptionPlaceholder": "מה אתם עושים?",
       "teamSize": "גודל צוות",
       "teamSizePlaceholder": "סולו / 2–5 / 6–20 / 20+"
+    },
+    "page": {
+      "title": "הגדרות",
+      "refresh": "רענון",
+      "groupYou": "אתם",
+      "groupWorkspace": "מרחב עבודה",
+      "groupApp": "אפליקציה"
     }
   },
   "sidebar": {

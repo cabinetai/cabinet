@@ -89,7 +89,8 @@
       "notInCatalog": "Not found in catalog — click to remove",
       "recommendedForRole": "Recommended for this role — click to attach",
       "promise": "Promise",
-      "saved": "Saved"
+      "saved": "Saved",
+      "iconLabel": "Icon"
     },
     "missionControl": {
       "gallery": "Gallery",
@@ -148,7 +149,11 @@
     "createTask": "Create a new task",
     "moreNewTypes": "More new item types",
     "newTask": "New Task",
-    "newRoutine": "New Routine"
+    "newRoutine": "New Routine",
+    "viewKanban": "Kanban",
+    "viewList": "List",
+    "viewSchedule": "Schedule",
+    "filterByAgent": "Filter by agent: {{name}}"
   },
   "runtime": {
     "noProvider": "No provider selected",
@@ -206,7 +211,18 @@
     "stopAllInLane": "Stop all running tasks in this lane",
     "restartAllInLane": "Restart all tasks in this lane",
     "newTask": "New task",
-    "collapseColumn": "Collapse column"
+    "collapseColumn": "Collapse column",
+    "kill": "Kill",
+    "laneInbox": "Inbox",
+    "laneInboxHint": "Drafted — waiting for you to start",
+    "laneNeeds": "Your turn",
+    "laneNeedsHint": "Agent asked a question or needs approval",
+    "laneRunning": "Running",
+    "laneRunningHint": "Agents working right now",
+    "laneDone": "Just Finished",
+    "laneDoneHint": "Completed in the last hour",
+    "laneArchive": "Archive",
+    "laneArchiveHint": "Older and acknowledged"
   },
   "terminalTabs": {
     "newTab": "New terminal tab",
@@ -452,7 +468,27 @@
   },
   "startWork": {
     "close": "Close",
-    "selectAgent": "Select agent"
+    "selectAgent": "Select agent",
+    "titleNow": "What needs to get done?",
+    "titleRecurring": "Set up a recurring routine",
+    "titleHeartbeat": "Wake this agent on a schedule",
+    "submitStart": "Start",
+    "submitAddInbox": "Add to Inbox",
+    "submitCreateRoutine": "Create routine",
+    "submitSaveHeartbeat": "Save heartbeat",
+    "saving": "Saving…",
+    "current": "current",
+    "modeInboxLabel": "→ Inbox",
+    "modeInboxHint": "Save to Inbox — start it when you're ready",
+    "modeNowLabel": "Run now",
+    "modeNowHint": "Start this conversation right away",
+    "modeRecurringLabel": "On a schedule",
+    "modeRecurringHint": "Run this prompt on a schedule",
+    "modeHeartbeatLabel": "Heartbeat",
+    "modeHeartbeatHint": "Wake the agent on its own rhythm",
+    "agentFallback": "Agent",
+    "failedToStart": "Failed to start",
+    "failedToSaveHeartbeat": "Failed to save heartbeat"
   },
   "googleDoc": {
     "noUrl": "No Google URL set",
@@ -586,7 +622,10 @@
   },
   "narrowViewport": {
     "dismiss": "Dismiss narrow viewport hint",
-    "dismissTitle": "Dismiss until next session"
+    "dismissTitle": "Dismiss until next session",
+    "hintPrefix": "Cabinet is best at ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " wide. Some surfaces cramp at narrower widths."
   },
   "agentCard": {
     "runHeartbeat": "Run heartbeat"
@@ -671,7 +710,9 @@
     "aiTeams": "AI teams"
   },
   "whatsNew": {
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "headerPrefix": "What's new in v",
+    "readFull": "Read full release notes"
   },
   "breakingChangesPlus": {
     "iUnderstand": "I understand and want to continue."
@@ -836,6 +877,10 @@
       "namePlaceholder": "Cabinet name…",
       "renameWarning": "Cabinet names can't be renamed later (for now). Choose wisely."
     },
+    "templates": {
+      "header": "Start from a template",
+      "browseAll": "Browse all →"
+    },
     "quickActions": {
       "shuffle": "Show different suggestions",
       "launch10Songs": "Launch 10 song-writing editors",
@@ -956,6 +1001,13 @@
       "appearance": "Appearance",
       "updates": "Updates",
       "about": "About"
+    },
+    "page": {
+      "title": "Settings",
+      "refresh": "Refresh",
+      "groupYou": "You",
+      "groupWorkspace": "Workspace",
+      "groupApp": "App"
     },
     "common": {
       "copyToClipboard": "Copy to clipboard",

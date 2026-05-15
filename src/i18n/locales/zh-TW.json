@@ -88,7 +88,8 @@
       "notInCatalog": "目錄中找不到 — 點擊以移除",
       "recommendedForRole": "推薦給此角色 — 點擊以附加",
       "promise": "承諾",
-      "saved": "已儲存"
+      "saved": "已儲存",
+      "iconLabel": "圖示"
     },
     "missionControl": {
       "gallery": "圖庫",
@@ -147,7 +148,11 @@
     "createTask": "建立新任務",
     "moreNewTypes": "更多新增類型",
     "newTask": "新增任務",
-    "newRoutine": "新增例行任務"
+    "newRoutine": "新增例行任務",
+    "viewKanban": "看板",
+    "viewList": "清單",
+    "viewSchedule": "排程",
+    "filterByAgent": "依智慧代理篩選:{{name}}"
   },
   "runtime": {
     "noProvider": "未選擇服務商",
@@ -205,7 +210,18 @@
     "stopAllInLane": "停止此欄內所有執行中的任務",
     "restartAllInLane": "重新啟動此欄內所有任務",
     "newTask": "新增任務",
-    "collapseColumn": "折疊欄"
+    "collapseColumn": "折疊欄",
+    "kill": "終止",
+    "laneInbox": "收件匣",
+    "laneInboxHint": "草稿 — 等你啟動",
+    "laneNeeds": "輪到你",
+    "laneNeedsHint": "智慧代理提了問題或需要核准",
+    "laneRunning": "執行中",
+    "laneRunningHint": "智慧代理正在工作",
+    "laneDone": "剛完成",
+    "laneDoneHint": "最近一小時內完成",
+    "laneArchive": "封存",
+    "laneArchiveHint": "較舊且已查看"
   },
   "terminalTabs": {
     "newTab": "新增終端機分頁",
@@ -407,7 +423,27 @@
   },
   "startWork": {
     "close": "關閉",
-    "selectAgent": "選擇智慧代理"
+    "selectAgent": "選擇智慧代理",
+    "titleNow": "需要做點什麼?",
+    "titleRecurring": "設定一個循環例行任務",
+    "titleHeartbeat": "按時喚醒這個智慧代理",
+    "submitStart": "開始",
+    "submitAddInbox": "加入收件匣",
+    "submitCreateRoutine": "建立例行任務",
+    "submitSaveHeartbeat": "儲存心跳",
+    "saving": "儲存中……",
+    "current": "目前",
+    "modeInboxLabel": "→ 收件匣",
+    "modeInboxHint": "儲存到收件匣 — 等你準備好再啟動",
+    "modeNowLabel": "立即執行",
+    "modeNowHint": "現在就開始這個對話",
+    "modeRecurringLabel": "按排程執行",
+    "modeRecurringHint": "按排程執行這個提示詞",
+    "modeHeartbeatLabel": "心跳",
+    "modeHeartbeatHint": "按它自己的節奏喚醒智慧代理",
+    "agentFallback": "智慧代理",
+    "failedToStart": "啟動失敗",
+    "failedToSaveHeartbeat": "儲存心跳失敗"
   },
   "googleDoc": {
     "noUrl": "未設定 Google URL",
@@ -514,7 +550,10 @@
   },
   "narrowViewport": {
     "dismiss": "關閉窄螢幕提示",
-    "dismissTitle": "在下次工作階段前關閉"
+    "dismissTitle": "在下次工作階段前關閉",
+    "hintPrefix": "凱比內特最適合 ",
+    "hintWidth": "≥960 像素",
+    "hintSuffix": " 寬。在更窄的寬度下,部分介面會顯得擁擠。"
   },
   "agentCard": {
     "runHeartbeat": "執行心跳"
@@ -599,7 +638,10 @@
     "aiTeams": "AI 團隊"
   },
   "whatsNew": {
-    "dismiss": "關閉"
+    "dismiss": "關閉",
+    "headerPrefix": "v",
+    "headerSuffix": " 的新內容",
+    "readFull": "閱讀完整版本說明"
   },
   "breakingChangesPlus": {
     "iUnderstand": "我已了解並想繼續。"
@@ -790,7 +832,11 @@
     "greetingWithName": "{{greeting}},{{name}}。",
     "greetingNoName": "{{greeting}}。",
     "composerPlaceholder": "我想建立……",
-    "composerDaemonDown": "智慧代理守護程式離線 — 請重新啟動才能傳送"
+    "composerDaemonDown": "智慧代理守護程式離線 — 請重新啟動才能傳送",
+    "templates": {
+      "header": "從範本開始",
+      "browseAll": "瀏覽全部 →"
+    }
   },
   "onboarding": {
     "intro": {
@@ -943,6 +989,13 @@
       "descriptionPlaceholder": "你在做什麼?",
       "teamSize": "團隊規模",
       "teamSizePlaceholder": "單人 / 2–5 / 6–20 / 20+"
+    },
+    "page": {
+      "title": "設定",
+      "refresh": "重新整理",
+      "groupYou": "你",
+      "groupWorkspace": "工作區",
+      "groupApp": "應用程式"
     }
   },
   "sidebar": {

@@ -725,7 +725,7 @@ function AvatarEditorPopover({
       {tab === "icon" ? (
         <div className="p-3 space-y-3">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">Icon</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">{t("agents:detail.iconLabel")}</p>
             <div className="grid grid-cols-8 gap-1 max-h-56 overflow-y-auto pr-1">
               {ICON_PICKER_KEYS.map((key) => {
                 const IconComp = ICON_CATALOG[key];

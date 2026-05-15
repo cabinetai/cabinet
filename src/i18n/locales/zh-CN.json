@@ -88,7 +88,8 @@
       "notInCatalog": "目录中未找到 — 点击以移除",
       "recommendedForRole": "推荐给此角色 — 点击以附加",
       "promise": "承诺",
-      "saved": "已保存"
+      "saved": "已保存",
+      "iconLabel": "图标"
     },
     "missionControl": {
       "gallery": "图集",
@@ -147,7 +148,11 @@
     "createTask": "创建新任务",
     "moreNewTypes": "更多新建类型",
     "newTask": "新建任务",
-    "newRoutine": "新建例行任务"
+    "newRoutine": "新建例行任务",
+    "viewKanban": "看板",
+    "viewList": "列表",
+    "viewSchedule": "日程",
+    "filterByAgent": "按智能体筛选:{{name}}"
   },
   "runtime": {
     "noProvider": "未选择服务商",
@@ -205,7 +210,18 @@
     "stopAllInLane": "停止此栏内所有正在运行的任务",
     "restartAllInLane": "重启此栏内所有任务",
     "newTask": "新建任务",
-    "collapseColumn": "折叠列"
+    "collapseColumn": "折叠列",
+    "kill": "终止",
+    "laneInbox": "收件箱",
+    "laneInboxHint": "草稿 — 等你启动",
+    "laneNeeds": "轮到你",
+    "laneNeedsHint": "智能体提了问题或需要批准",
+    "laneRunning": "运行中",
+    "laneRunningHint": "智能体正在工作",
+    "laneDone": "刚完成",
+    "laneDoneHint": "最近一小时内完成",
+    "laneArchive": "归档",
+    "laneArchiveHint": "更早且已查看"
   },
   "terminalTabs": {
     "newTab": "新建终端标签页",
@@ -407,7 +423,27 @@
   },
   "startWork": {
     "close": "关闭",
-    "selectAgent": "选择智能体"
+    "selectAgent": "选择智能体",
+    "titleNow": "需要做点什么?",
+    "titleRecurring": "设置一个循环例行任务",
+    "titleHeartbeat": "按时唤醒这个智能体",
+    "submitStart": "开始",
+    "submitAddInbox": "加入收件箱",
+    "submitCreateRoutine": "创建例行任务",
+    "submitSaveHeartbeat": "保存心跳",
+    "saving": "保存中……",
+    "current": "当前",
+    "modeInboxLabel": "→ 收件箱",
+    "modeInboxHint": "保存到收件箱 — 等你准备好再启动",
+    "modeNowLabel": "立即运行",
+    "modeNowHint": "现在就开始这个对话",
+    "modeRecurringLabel": "按时运行",
+    "modeRecurringHint": "按时运行这个提示词",
+    "modeHeartbeatLabel": "心跳",
+    "modeHeartbeatHint": "按它自己的节奏唤醒智能体",
+    "agentFallback": "智能体",
+    "failedToStart": "启动失败",
+    "failedToSaveHeartbeat": "保存心跳失败"
   },
   "googleDoc": {
     "noUrl": "未设置 Google URL",
@@ -514,7 +550,10 @@
   },
   "narrowViewport": {
     "dismiss": "关闭窄屏提示",
-    "dismissTitle": "在下次会话前关闭"
+    "dismissTitle": "在下次会话前关闭",
+    "hintPrefix": "凯比内特最适合 ",
+    "hintWidth": "≥960 像素",
+    "hintSuffix": " 宽。在更窄的宽度下,部分界面会显得局促。"
   },
   "agentCard": {
     "runHeartbeat": "运行心跳"
@@ -599,7 +638,10 @@
     "aiTeams": "AI 团队"
   },
   "whatsNew": {
-    "dismiss": "关闭"
+    "dismiss": "关闭",
+    "headerPrefix": "v",
+    "headerSuffix": " 的新内容",
+    "readFull": "阅读完整发布说明"
   },
   "breakingChangesPlus": {
     "iUnderstand": "我已了解并希望继续。"
@@ -790,7 +832,11 @@
     "greetingWithName": "{{greeting}},{{name}}。",
     "greetingNoName": "{{greeting}}。",
     "composerPlaceholder": "我想创建……",
-    "composerDaemonDown": "智能体守护进程已离线 — 重启后才能发送"
+    "composerDaemonDown": "智能体守护进程已离线 — 重启后才能发送",
+    "templates": {
+      "header": "从模板开始",
+      "browseAll": "浏览全部 →"
+    }
   },
   "onboarding": {
     "intro": {
@@ -943,6 +989,13 @@
       "descriptionPlaceholder": "你是做什么的?",
       "teamSize": "团队规模",
       "teamSizePlaceholder": "独立 / 2–5 / 6–20 / 20+"
+    },
+    "page": {
+      "title": "设置",
+      "refresh": "刷新",
+      "groupYou": "你",
+      "groupWorkspace": "工作区",
+      "groupApp": "应用"
     }
   },
   "sidebar": {

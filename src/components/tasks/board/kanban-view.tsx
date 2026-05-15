@@ -38,12 +38,22 @@ interface LaneDef {
   spin?: boolean;
 }
 
-const LANES: LaneDef[] = [
-  { key: "inbox", label: "Inbox", hint: "Drafted — waiting for you to start", icon: Inbox },
-  { key: "needs", label: "Your turn", hint: "Agent asked a question or needs approval", icon: MessageCircleQuestion },
-  { key: "running", label: "Running", hint: "Agents working right now", icon: Loader2, spin: true },
-  { key: "done", label: "Just Finished", hint: "Completed in the last hour", icon: CheckCircle2 },
-  { key: "archive", label: "Archive", hint: "Older and acknowledged", icon: Archive },
+interface LaneDefRaw {
+  key: LaneDef["key"];
+  labelKey: string;
+  hintKey: string;
+  icon: LucideIcon;
+  spin?: boolean;
+}
+
+// Translation keys for lane labels/hints. Real `LaneDef[]` (with `label`
+// and `hint` strings) is built inside the component via `t()`.
+const LANES_RAW: LaneDefRaw[] = [
+  { key: "inbox", labelKey: "kanban:laneInbox", hintKey: "kanban:laneInboxHint", icon: Inbox },
+  { key: "needs", labelKey: "kanban:laneNeeds", hintKey: "kanban:laneNeedsHint", icon: MessageCircleQuestion },
+  { key: "running", labelKey: "kanban:laneRunning", hintKey: "kanban:laneRunningHint", icon: Loader2, spin: true },
+  { key: "done", labelKey: "kanban:laneDone", hintKey: "kanban:laneDoneHint", icon: CheckCircle2 },
+  { key: "archive", labelKey: "kanban:laneArchive", hintKey: "kanban:laneArchiveHint", icon: Archive },
 ];
 
 function LaneHeader({
@@ -85,7 +95,7 @@ function LaneHeader({
           title={t("kanban:stopAllInLane")}
         >
           <Square className="size-2.5" />
-          Kill
+          {t("kanban:kill")}
         </button>
       ) : null}
       {onRestartAll ? (
@@ -241,6 +251,14 @@ export function KanbanView({
   density?: "compact" | "comfortable";
 }) {
   const { t } = useLocale();
+  // Build the LaneDef array each render using current locale.
+  const LANES: LaneDef[] = LANES_RAW.map((raw) => ({
+    key: raw.key,
+    label: t(raw.labelKey),
+    hint: t(raw.hintKey),
+    icon: raw.icon,
+    spin: raw.spin,
+  }));
   // Persisted set of collapsed lane keys. Audit #035: Archive used to be
   // collapsed by default, hiding "what the team did overnight" behind a
   // narrow vertical rail on first open. Now the default is empty (all
