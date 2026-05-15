@@ -55,7 +55,7 @@ export function NewAgentDialog({
       try {
         const res = await fetch("/api/agents/library");
         if (!res.ok) {
-          setError("Couldn't load the agent library.");
+          setError(t("agents:dialog.errorLoadLibrary"));
           return;
         }
         const data = await res.json();
@@ -83,7 +83,7 @@ export function NewAgentDialog({
       });
       // 409 = already exists — just navigate to it.
       if (!res.ok && res.status !== 409) {
-        setError("Couldn't add this agent.");
+        setError(t("agents:dialog.errorAddAgent"));
         return;
       }
       await onAdded();

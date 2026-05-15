@@ -296,7 +296,7 @@ export function SkillAddDialog({
                 onClick={() => handlePreview()}
                 disabled={!source.trim() || previewing}
               >
-                {previewing ? <Loader2 className="size-3.5 animate-spin" /> : "Preview"}
+                {previewing ? <Loader2 className="size-3.5 animate-spin" /> : t("skillAdd:preview")}
               </Button>
             </div>
           )}

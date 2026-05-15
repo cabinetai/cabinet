@@ -13,7 +13,9 @@
       "promptPlaceholder": "你是一位营销智能体……",
       "addAgentTitle": "把一个智能体加入你的团队",
       "addAgentDescription": "从库中挑选一位专员。添加后你可以编辑它的名字、角色和指令。",
-      "searchLibraryPlaceholder": "搜索库"
+      "searchLibraryPlaceholder": "搜索库",
+      "errorLoadLibrary": "无法加载智能体库。",
+      "errorAddAgent": "无法添加此智能体。"
     },
     "metric": {
       "name": "指标名称",
@@ -190,7 +192,8 @@
   "skillAdd": {
     "addSkill": "添加技能",
     "auditTooltip": "来自 skills.sh 外部审计的结果(Alibaba Threat Hunter、Socket、Snyk、zeroleaks)",
-    "auditUnavailable": "此技能没有 skills.sh 审计数据"
+    "auditUnavailable": "此技能没有 skills.sh 审计数据",
+    "preview": "预览"
   },
   "help": {
     "page": {
@@ -271,7 +274,10 @@
     "readOnly": "只读 — 无法在凯比内特中编辑",
     "noUpstream": "直接在此凯比内特中创建 — 未记录上游 git 来源",
     "executableWarning": "包内含可执行脚本 — 批准前请审核",
-    "skills": "技能"
+    "skills": "技能",
+    "imported": "已导入",
+    "importing": "正在导入……",
+    "import": "导入"
   },
   "embedPopover": {
     "placeholder": "粘贴链接 (YouTube、X、Vimeo、Loom、TikTok、Facebook、Instagram、Spotify 或任意 URL)",
@@ -577,7 +583,23 @@
   },
   "schedulePicker": {
     "frequency": "频率",
-    "onDay": "在某日"
+    "onDay": "在某日",
+    "modeInterval": "间隔",
+    "modeDaily": "每日",
+    "modeWeekdays": "工作日",
+    "modeWeekly": "每周",
+    "modeMonthly": "每月",
+    "modeCustom": "自定义",
+    "parse": "解析",
+    "showCron": "显示 cron 表达式",
+    "hideCron": "隐藏 cron 表达式",
+    "weekdayMo": "一",
+    "weekdayTu": "二",
+    "weekdayWe": "三",
+    "weekdayTh": "四",
+    "weekdayFr": "五",
+    "weekdaySa": "六",
+    "weekdaySu": "日"
   },
   "slackPanel": {
     "createChannel": "创建频道",
@@ -891,7 +913,8 @@
       "finish": "完成",
       "complete": "完成设置",
       "copyToClipboard": "复制到剪贴板"
-    }
+    },
+    "launchHeading": "启动你的 <accent>凯比内特</accent>"
   },
   "search": {
     "title": "搜索",

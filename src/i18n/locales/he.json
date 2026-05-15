@@ -13,7 +13,9 @@
       "promptPlaceholder": "אתה סוכן שיווק עבור…",
       "addAgentTitle": "הוסיפו סוכן לצוות",
       "addAgentDescription": "בחרו מומחה מהספרייה. תוכלו לערוך את השם, התפקיד וההוראות אחרי ההוספה.",
-      "searchLibraryPlaceholder": "חיפוש בספרייה"
+      "searchLibraryPlaceholder": "חיפוש בספרייה",
+      "errorLoadLibrary": "לא הצלחנו לטעון את ספריית הסוכנים.",
+      "errorAddAgent": "לא הצלחנו להוסיף את הסוכן הזה."
     },
     "metric": {
       "name": "שם מדד",
@@ -190,7 +192,8 @@
   "skillAdd": {
     "addSkill": "הוספת כישור",
     "auditTooltip": "תוצאה מבדיקות חיצוניות של skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
-    "auditUnavailable": "נתוני audit מ-skills.sh לא זמינים לכישור הזה"
+    "auditUnavailable": "נתוני audit מ-skills.sh לא זמינים לכישור הזה",
+    "preview": "תצוגה מקדימה"
   },
   "help": {
     "page": {
@@ -271,7 +274,10 @@
     "readOnly": "קריאה בלבד — לא ניתן לעריכה מ-Cabinet",
     "noUpstream": "נכתב ישירות בארונית זו — אין מקור git רשום",
     "executableWarning": "החבילה כוללת סקריפטים בני-ביצוע — סקרו לפני אישור",
-    "skills": "כישורים"
+    "skills": "כישורים",
+    "imported": "יובא",
+    "importing": "מייבא…",
+    "import": "ייבוא"
   },
   "embedPopover": {
     "placeholder": "הדביקו קישור (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, או כל URL)",
@@ -577,7 +583,23 @@
   },
   "schedulePicker": {
     "frequency": "תדירות",
-    "onDay": "ביום"
+    "onDay": "ביום",
+    "modeInterval": "מרווח",
+    "modeDaily": "יומי",
+    "modeWeekdays": "ימי חול",
+    "modeWeekly": "שבועי",
+    "modeMonthly": "חודשי",
+    "modeCustom": "מותאם",
+    "parse": "פרסור",
+    "showCron": "הציגו ביטוי cron",
+    "hideCron": "הסתירו ביטוי cron",
+    "weekdayMo": "ב'",
+    "weekdayTu": "ג'",
+    "weekdayWe": "ד'",
+    "weekdayTh": "ה'",
+    "weekdayFr": "ו'",
+    "weekdaySa": "ש'",
+    "weekdaySu": "א'"
   },
   "slackPanel": {
     "createChannel": "יצירת ערוץ",
@@ -890,7 +912,8 @@
       "finish": "סיום",
       "complete": "סיום ההגדרה",
       "copyToClipboard": "העתקה ללוח"
-    }
+    },
+    "launchHeading": "התחילו את ה-<accent>Cabinet</accent> שלכם"
   },
   "search": {
     "title": "חיפוש",

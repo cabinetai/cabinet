@@ -61,10 +61,11 @@ export function ScheduleView({
   }
 
   const label = useMemo(() => {
-    const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December",
-    ];
+    // Use Intl.DateTimeFormat with `undefined` locale so the browser
+    // picks up document language automatically — this hands us proper
+    // Hebrew month names for `<html lang="he">` and Chinese for zh-*.
+    const monthOf = (d: Date) =>
+      d.toLocaleDateString(undefined, { month: "long" });
     if (mode === "day") {
       return anchor.toLocaleDateString(undefined, {
         weekday: "long",
@@ -73,7 +74,7 @@ export function ScheduleView({
       });
     }
     if (mode === "month") {
-      return `${months[anchor.getMonth()]} ${anchor.getFullYear()}`;
+      return `${monthOf(anchor)} ${anchor.getFullYear()}`;
     }
     const s = new Date(anchor);
     const dow = s.getDay();
@@ -81,8 +82,8 @@ export function ScheduleView({
     const e = new Date(s);
     e.setDate(e.getDate() + 6);
     return s.getMonth() === e.getMonth()
-      ? `${months[s.getMonth()]} ${s.getDate()}–${e.getDate()}, ${s.getFullYear()}`
-      : `${months[s.getMonth()]} ${s.getDate()} – ${months[e.getMonth()]} ${e.getDate()}`;
+      ? `${monthOf(s)} ${s.getDate()}–${e.getDate()}, ${s.getFullYear()}`
+      : `${monthOf(s)} ${s.getDate()} – ${monthOf(e)} ${e.getDate()}`;
   }, [anchor, mode]);
 
   return (

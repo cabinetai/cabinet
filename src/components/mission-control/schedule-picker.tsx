@@ -41,16 +41,24 @@ const INTERVAL_PRESETS = [
   { label: "4h",  cron: "0 */4 * * *" },
 ];
 
-// 1=Mon … 7=Sun matches WEEKDAY_LABELS index+1
-const WEEKDAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+// Translation keys for weekday short labels (1=Mon … 7=Sun, index+1).
+const WEEKDAY_LABEL_KEYS = [
+  "schedulePicker:weekdayMo",
+  "schedulePicker:weekdayTu",
+  "schedulePicker:weekdayWe",
+  "schedulePicker:weekdayTh",
+  "schedulePicker:weekdayFr",
+  "schedulePicker:weekdaySa",
+  "schedulePicker:weekdaySu",
+];
 
-const MODE_LABELS: Record<Mode, string> = {
-  interval: "Interval",
-  daily: "Daily",
-  weekdays: "Weekdays",
-  weekly: "Weekly",
-  monthly: "Monthly",
-  custom: "Custom",
+const MODE_LABEL_KEYS: Record<Mode, string> = {
+  interval: "schedulePicker:modeInterval",
+  daily: "schedulePicker:modeDaily",
+  weekdays: "schedulePicker:modeWeekdays",
+  weekly: "schedulePicker:modeWeekly",
+  monthly: "schedulePicker:modeMonthly",
+  custom: "schedulePicker:modeCustom",
 };
 
 const MODES: Mode[] = ["interval", "daily", "weekdays", "weekly", "monthly", "custom"];
@@ -239,7 +247,7 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
           disabled={!state.nlInput.trim() || state.nlParsing}
           className="px-3 py-1.5 text-[11px] bg-muted/30 border border-border/40 rounded-lg hover:bg-muted/60 disabled:opacity-40 flex items-center gap-1.5 shrink-0 transition-colors"
         >
-          {state.nlParsing ? <Loader2 className="h-3 w-3 animate-spin" /> : "Parse"}
+          {state.nlParsing ? <Loader2 className="h-3 w-3 animate-spin" /> : t("schedulePicker:parse")}
         </button>
       </div>
       {state.nlError && (
@@ -262,7 +270,7 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
                   : "border-border/50 text-muted-foreground hover:border-border hover:text-foreground"
               )}
             >
-              {MODE_LABELS[mode]}
+              {t(MODE_LABEL_KEYS[mode])}
             </button>
           ))}
         </div>
@@ -337,7 +345,8 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 w-5 shrink-0">On</span>
           <div className="flex gap-1">
-            {WEEKDAY_LABELS.map((dayLabel, i) => {
+            {WEEKDAY_LABEL_KEYS.map((dayLabelKey, i) => {
+              const dayLabel = t(dayLabelKey);
               const dayNum = i + 1; // 1=Mon … 7=Sun
               const active = state.weekDays.includes(dayNum);
               return (
@@ -408,7 +417,7 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
             className="flex items-center gap-1 text-[10px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
           >
             <ChevronDown className={cn("h-3 w-3 transition-transform", showCron && "rotate-180")} />
-            {showCron ? "Hide" : "Show"} cron expression
+            {showCron ? t("schedulePicker:hideCron") : t("schedulePicker:showCron")}
           </button>
           {showCron && (
             <div className="text-[12px] font-mono bg-muted/30 border border-border/50 rounded-md px-3 py-1.5 text-muted-foreground select-all">

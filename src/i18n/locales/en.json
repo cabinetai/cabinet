@@ -13,7 +13,9 @@
       "promptPlaceholder": "You are a marketing agent for…",
       "addAgentTitle": "Add an agent to your team",
       "addAgentDescription": "Pick a specialist from the library. You can edit its name, role, and instructions after it's added.",
-      "searchLibraryPlaceholder": "Search the library"
+      "searchLibraryPlaceholder": "Search the library",
+      "errorLoadLibrary": "Couldn't load the agent library.",
+      "errorAddAgent": "Couldn't add this agent."
     },
     "metric": {
       "name": "Metric name",
@@ -191,7 +193,8 @@
   "skillAdd": {
     "addSkill": "Add skill",
     "auditTooltip": "Result from skills.sh's external audits (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
-    "auditUnavailable": "skills.sh audit data isn't available for this skill"
+    "auditUnavailable": "skills.sh audit data isn't available for this skill",
+    "preview": "Preview"
   },
   "help": {
     "page": {
@@ -272,7 +275,10 @@
     "readOnly": "Read-only — cannot edit from Cabinet",
     "noUpstream": "Authored directly in this cabinet — no upstream git source recorded",
     "executableWarning": "Bundle includes executable scripts — review before approving",
-    "skills": "Skills"
+    "skills": "Skills",
+    "imported": "Imported",
+    "importing": "Importing…",
+    "import": "Import"
   },
   "embedPopover": {
     "placeholder": "Paste a link (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, or any URL)",
@@ -649,7 +655,23 @@
   },
   "schedulePicker": {
     "frequency": "Frequency",
-    "onDay": "On day"
+    "onDay": "On day",
+    "modeInterval": "Interval",
+    "modeDaily": "Daily",
+    "modeWeekdays": "Weekdays",
+    "modeWeekly": "Weekly",
+    "modeMonthly": "Monthly",
+    "modeCustom": "Custom",
+    "parse": "Parse",
+    "showCron": "Show cron expression",
+    "hideCron": "Hide cron expression",
+    "weekdayMo": "Mo",
+    "weekdayTu": "Tu",
+    "weekdayWe": "We",
+    "weekdayTh": "Th",
+    "weekdayFr": "Fr",
+    "weekdaySa": "Sa",
+    "weekdaySu": "Su"
   },
   "slackPanel": {
     "createChannel": "Create channel",
@@ -927,6 +949,7 @@
     "composerDaemonDown": "Agent daemon offline — restart to send"
   },
   "onboarding": {
+    "launchHeading": "Start your <accent>Cabinet</accent>",
     "intro": {
       "tagline1": "Your knowledge base.",
       "tagline2": "Your AI team.",

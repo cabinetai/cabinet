@@ -1,6 +1,7 @@
 "use client";
 
 import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Trans } from "react-i18next";
 import {
   ArrowLeft,
   ArrowRight,
@@ -2993,7 +2994,10 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             <div className="mx-auto flex max-w-4xl flex-col gap-6 animate-in fade-in duration-300">
               <div className="text-center space-y-2">
                 <h1 className="font-logo text-2xl tracking-tight italic">
-                  Start your <span style={{ color: WEB.accent }}>Cabinet</span>
+                  <Trans
+                    i18nKey="onboarding:launchHeading"
+                    components={{ accent: <span style={{ color: WEB.accent }} /> }}
+                  />
                 </h1>
               </div>
 

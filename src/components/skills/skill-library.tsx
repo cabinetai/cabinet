@@ -455,7 +455,7 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
                           ) : isImported ? (
                             <Check className="size-3 mr-1" />
                           ) : null}
-                          {isImported ? "Imported" : isImporting ? "Importing…" : "Import"}
+                          {isImported ? t("skillLibrary:imported") : isImporting ? t("skillLibrary:importing") : t("skillLibrary:import")}
                         </Button>
                       </div>
                     );
