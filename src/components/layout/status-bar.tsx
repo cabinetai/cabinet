@@ -6,7 +6,6 @@ import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { useAppStore } from "@/stores/app-store";
-import { useAIPanelStore } from "@/stores/ai-panel-store";
 import {
   selectAppLevel,
   selectDaemonLevel,
@@ -181,10 +180,8 @@ export function StatusBar() {
   const selectedPath = useTreeStore((s) => s.selectedPath);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
-  const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
   const terminalOpen = useAppStore((s) => s.terminalOpen);
   const toggleTerminal = useAppStore((s) => s.toggleTerminal);
-  const { open, addEditorSession } = useAIPanelStore();
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiSubmitting, setAiSubmitting] = useState(false);
   const [aiRuntime, setAiRuntime] = useState<TaskRuntimeSelection>({});
@@ -196,8 +193,13 @@ export function StatusBar() {
     const message = aiPrompt.trim();
     setAiPrompt("");
     setAiSubmitting(true);
-    setAiPanelCollapsed(false);
-    open();
+    // Open the drawer immediately (compose, editor-scoped) for instant
+    // feedback, then swap it to the live conversation once created.
+    useAppStore.getState().openTaskPanelCompose({
+      source: "editor",
+      pinnedPagePath: selectedPath,
+      defaultAgentSlug: "editor",
+    });
     try {
       try {
         const data = await createConversation({
@@ -207,17 +209,9 @@ export function StatusBar() {
           mentionedPaths: [],
           ...aiRuntime,
         });
-        const conversation = data.conversation as { id: string; title: string };
-        addEditorSession({
-          id: conversation.id,
-          sessionId: conversation.id,
-          pagePath: selectedPath,
-          userMessage: message,
-          prompt: conversation.title,
-          timestamp: Date.now(),
-          status: "running",
-          reconnect: true,
-        });
+        if (useAppStore.getState().taskPanelOpen) {
+          useAppStore.getState().swapToConversation(data.conversation);
+        }
       } catch {
         // Preserve the previous fire-and-forget behavior for the status bar action.
       }

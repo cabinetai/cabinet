@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useAppStore } from "@/stores/app-store";
 import { useEditorStore } from "@/stores/editor-store";
-import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { useSearchStore } from "@/stores/search-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
@@ -86,12 +85,18 @@ export function useGlobalHotkeys(): void {
         return;
       }
 
-      // Cmd+Opt+A — toggle AI panel
+      // Cmd+Opt+A — toggle the task drawer in compose mode
       // (Cmd+Shift+A = "Search tabs" in Chrome 94+)
       // e.code used because Option modifies e.key on macOS (Option+A → "å")
       if (e.altKey && !e.shiftKey && e.code === "KeyA") {
         e.preventDefault();
-        useAIPanelStore.getState().toggle();
+        const sectionType = useAppStore.getState().section.type;
+        const pagePath = useEditorStore.getState().currentPath;
+        useAppStore.getState().toggleTaskPanelCompose(
+          sectionType === "page" && pagePath
+            ? { source: "editor", pinnedPagePath: pagePath, defaultAgentSlug: "editor" }
+            : undefined
+        );
         return;
       }
 

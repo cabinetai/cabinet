@@ -1,29 +1,22 @@
 "use client";
 
 /**
- * Demo: the two right-side drawers, side by side.
+ * Demo: the unified task drawer (src/components/tasks/task-detail-panel.tsx).
  *
- *  - "AI Editor"  → src/components/ai-panel/ai-panel.tsx   (useAIPanelStore)
- *  - "Task Detail" → src/components/tasks/task-detail-panel.tsx
- *
- * Both are the real components (not mocks) so the comparison always
- * reflects production. We just seed the global stores they read from:
- * open the AI panel + give it a current page, and fetch a conversation
- * meta to feed the task panel. State is restored on unmount so visiting
- * this page doesn't leak into the rest of the app.
+ * It's the real component (not a mock), so this always reflects production.
+ * We drive it through the new app-store actions: open it in "compose"
+ * (generic or editor/page-scoped) and load an existing conversation by id.
+ * State is restored on unmount so visiting this page doesn't leak into the
+ * rest of the app.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { AIPanel } from "@/components/ai-panel/ai-panel";
 import { TaskDetailPanel } from "@/components/tasks/task-detail-panel";
-import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { useAppStore } from "@/stores/app-store";
 import { useEditorStore } from "@/stores/editor-store";
 
-const DEFAULT_TASK_ID =
-  "2026-05-15T15-23-30-013Z-3a52ce78-editor-manual";
-
+const DEFAULT_TASK_ID = "2026-05-15T15-23-30-013Z-3a52ce78-editor-manual";
 const DEMO_PAGE_PATH = "data/demo/example-page";
 
 function SpecRow({ label, value }: { label: string; value: string }) {
@@ -39,7 +32,6 @@ export default function DrawersDemoPage() {
   const [taskId, setTaskId] = useState(DEFAULT_TASK_ID);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const taskConversation = useAppStore((s) => s.taskPanelConversation);
 
   const loadTask = useCallback(async (id: string) => {
     const trimmed = id.trim();
@@ -58,41 +50,58 @@ export default function DrawersDemoPage() {
       useAppStore.getState().setTaskPanelConversation(data.meta);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load task");
-      useAppStore.getState().setTaskPanelConversation(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Seed both drawers on mount; restore globals on unmount.
+  // Seed a page (so editor-scoped compose has a pinned page) and open the
+  // drawer in compose mode on mount; restore globals on unmount.
   useEffect(() => {
     const prevPath = useEditorStore.getState().currentPath;
-    // Enable the AI Editor composer without a network round-trip.
     useEditorStore.setState({ currentPath: DEMO_PAGE_PATH });
-    useAIPanelStore.getState().open();
-    void loadTask(DEFAULT_TASK_ID);
+    useAppStore.getState().openTaskPanelCompose();
 
     return () => {
-      useAIPanelStore.getState().close();
+      useAppStore.getState().closeTaskPanel();
       useAppStore.getState().setTaskPanelConversation(null);
       useEditorStore.setState({ currentPath: prevPath });
     };
-  }, [loadTask]);
+  }, []);
 
-  const reopenAi = () => useAIPanelStore.getState().open();
+  const openGeneric = () => useAppStore.getState().openTaskPanelCompose();
+  const openEditor = () =>
+    useAppStore.getState().openTaskPanelCompose({
+      source: "editor",
+      pinnedPagePath: DEMO_PAGE_PATH,
+      defaultAgentSlug: "editor",
+    });
+  const closeDrawer = () => useAppStore.getState().closeTaskPanel();
 
   return (
     <div className="flex h-dvh flex-col bg-background text-foreground">
-      {/* Toolbar */}
       <header className="shrink-0 border-b border-border/70 px-6 py-4">
         <h1 className="text-lg font-semibold tracking-tight">
-          Drawer comparison — AI Editor vs. Task Detail
+          Task drawer demo
         </h1>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          The two right-side drawers rendered side by side with the live
-          components. Best viewed on a wide desktop window.
+          The single unified drawer — compose a new task, or load an existing
+          conversation. Best viewed on a wide desktop window.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            onClick={openGeneric}
+            className="inline-flex h-8 items-center rounded-md border border-border bg-card px-3 text-[12px] font-medium transition-colors hover:bg-accent"
+          >
+            Compose (generic)
+          </button>
+          <button
+            onClick={openEditor}
+            className="inline-flex h-8 items-center rounded-md border border-border bg-card px-3 text-[12px] font-medium transition-colors hover:bg-accent"
+          >
+            Compose (editor / page)
+          </button>
+          <span className="mx-1 h-5 w-px bg-border" />
           <input
             value={taskId}
             onChange={(e) => setTaskId(e.target.value)}
@@ -106,13 +115,13 @@ export default function DrawersDemoPage() {
             className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-[12px] font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {loading && <Loader2 className="size-3.5 animate-spin" />}
-            Load task
+            Load conversation
           </button>
           <button
-            onClick={reopenAi}
+            onClick={closeDrawer}
             className="inline-flex h-8 items-center rounded-md border border-border bg-card px-3 text-[12px] font-medium transition-colors hover:bg-accent"
           >
-            Re-open AI Editor
+            Close
           </button>
           {error && (
             <span className="text-[12px] text-destructive">{error}</span>
@@ -120,60 +129,25 @@ export default function DrawersDemoPage() {
         </div>
       </header>
 
-      {/* Side-by-side stage */}
-      <div className="flex min-h-0 flex-1 items-stretch gap-8 overflow-auto p-8">
-        {/* AI Editor */}
+      <div className="flex min-h-0 flex-1 gap-8 overflow-auto p-8">
         <section className="flex min-w-0 flex-col gap-3">
           <div className="space-y-1">
             <h2 className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
-              AI Editor drawer
-            </h2>
-            <div className="space-y-0.5 rounded-lg bg-muted/40 p-3 ring-1 ring-border/50">
-              <SpecRow label="Source" value="ai-panel.tsx" />
-              <SpecRow label="Width" value="resizable 380–760, default 480" />
-              <SpecRow label="Chrome" value="no navbar — X close only" />
-              <SpecRow label="Open/close" value="width push/release tween" />
-              <SpecRow
-                label="Composer"
-                value="rounded bg-muted/50 surface, no divider"
-              />
-            </div>
-          </div>
-          <div className="flex h-[78vh] overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-            <AIPanel />
-          </div>
-        </section>
-
-        {/* Task Detail */}
-        <section className="flex min-w-0 flex-col gap-3">
-          <div className="space-y-1">
-            <h2 className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
-              Task Detail drawer
+              Task drawer
             </h2>
             <div className="space-y-0.5 rounded-lg bg-muted/40 p-3 ring-1 ring-border/50">
               <SpecRow label="Source" value="task-detail-panel.tsx" />
-              <SpecRow label="Width" value="fixed 420 (or fullscreen)" />
-              <SpecRow
-                label="Chrome"
-                value="header: status, title, fullscreen, X"
-              />
-              <SpecRow label="Open/close" value="mount/unmount (no tween)" />
-              <SpecRow
-                label="Body"
-                value="TaskConversationPage (compact)"
-              />
+              <SpecRow label="Width" value="resizable 380–760, default 480" />
+              <SpecRow label="Open/close" value="width push/release tween" />
+              <SpecRow label="Modes" value="compose · conversation" />
+              <SpecRow label="Chrome" value="header + fullscreen + X" />
             </div>
           </div>
+          {/* The drawer docks to the inline-end of this flex row and animates
+              its width, exactly as it does in the real app shell. */}
           <div className="flex h-[78vh] overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-            {taskConversation ? (
-              <TaskDetailPanel />
-            ) : (
-              <div className="flex flex-1 items-center justify-center p-6 text-center text-[13px] text-muted-foreground">
-                {loading
-                  ? "Loading task…"
-                  : "No task loaded — paste a conversation id above and press “Load task”."}
-              </div>
-            )}
+            <div className="flex-1" />
+            <TaskDetailPanel />
           </div>
         </section>
       </div>

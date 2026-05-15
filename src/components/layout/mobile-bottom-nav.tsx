@@ -3,7 +3,6 @@
 import { Home, Users, ListChecks, Sparkles, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
-import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 
 type TabId = "home" | "agents" | "tasks" | "ai" | "menu";
@@ -26,12 +25,11 @@ export function MobileBottomNav() {
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
-  const aiOpen = useAIPanelStore((s) => s.isOpen);
-  const openAI = useAIPanelStore((s) => s.open);
-  const closeAI = useAIPanelStore((s) => s.close);
-  const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
+  const taskPanelOpen = useAppStore((s) => s.taskPanelOpen);
+  const openTaskPanelCompose = useAppStore((s) => s.openTaskPanelCompose);
+  const closeTaskPanel = useAppStore((s) => s.closeTaskPanel);
 
-  const activeTab: TabId = aiOpen
+  const activeTab: TabId = taskPanelOpen
     ? "ai"
     : section.type === "agents" || section.type === "agent"
       ? "agents"
@@ -43,16 +41,15 @@ export function MobileBottomNav() {
 
   const onSelect = (id: TabId) => {
     if (id === "ai") {
-      if (aiOpen) {
-        closeAI();
+      if (taskPanelOpen) {
+        closeTaskPanel();
       } else {
-        setAiPanelCollapsed(false);
-        openAI();
+        openTaskPanelCompose();
       }
       return;
     }
-    // Always close AI when navigating away
-    if (aiOpen) closeAI();
+    // Always close the task drawer when navigating away
+    if (taskPanelOpen) closeTaskPanel();
     if (id === "menu") {
       setSidebarCollapsed(false);
       return;

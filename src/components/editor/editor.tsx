@@ -11,7 +11,7 @@ import { EditorBubbleMenu } from "./bubble-menu";
 import { TableMenu } from "./table-menu";
 import { FolderIndex } from "./folder-index";
 import { useEditorStore } from "@/stores/editor-store";
-import { useAIPanelStore } from "@/stores/ai-panel-store";
+import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { findNodeByPath } from "@/lib/cabinets/tree";
 import { markdownToHtml } from "@/lib/markdown/to-html";
@@ -120,7 +120,6 @@ export function KBEditor() {
   const { currentPath, content, saveStatus, frontmatter, isLoading, loadStatus, createMissingPage } = useEditorStore();
   const nodes = useTreeStore((s) => s.nodes);
   const isRtl = frontmatter?.dir === "rtl";
-  const { open: openAI, clearMessages } = useAIPanelStore();
   const isLoadingRef = useRef(false);
   const [sourceMode, setSourceMode] = useState(false);
   const [sourceText, setSourceText] = useState("");
@@ -369,8 +368,11 @@ export function KBEditor() {
     currentPath !== null && (isLoading || renderedPath !== currentPath);
 
   const handleOpenAI = () => {
-    clearMessages();
-    openAI();
+    useAppStore.getState().openTaskPanelCompose({
+      source: "editor",
+      pinnedPagePath: currentPath,
+      defaultAgentSlug: "editor",
+    });
   };
 
 

@@ -3,11 +3,13 @@
 import { ArrowUpRight, BrainCircuit, Maximize2, Minimize2, X } from "lucide-react";
 import { useAppStore } from "@/stores/app-store";
 import { TaskConversationPage } from "@/components/tasks/conversation/task-conversation-page";
+import { TaskComposeBody } from "@/components/tasks/task-compose-body";
+import { SideDrawer } from "@/components/ui/side-drawer";
+import { useSideDrawer } from "@/hooks/use-side-drawer";
 import { Button } from "@/components/ui/button";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
 import { useProviderIcon } from "@/hooks/use-provider-icons";
 import { formatEffortName } from "@/lib/agents/runtime-options";
-import { cn } from "@/lib/utils";
 import { useLocale } from "@/i18n/use-locale";
 import type {
   ConversationMeta,
@@ -15,7 +17,6 @@ import type {
 } from "@/types/conversations";
 
 function StatusDot({ status }: { status: ConversationStatus }) {
-  const { t } = useLocale();
   if (status === "running") {
     return <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>;
   }
@@ -99,18 +100,26 @@ function buildRuntimeLabel(
 export function TaskDetailPanel() {
   const { t } = useLocale();
   const conversation = useAppStore((s) => s.taskPanelConversation);
-  const setTaskPanelConversation = useAppStore((s) => s.setTaskPanelConversation);
   const setSection = useAppStore((s) => s.setSection);
   const fullscreen = useAppStore((s) => s.taskPanelFullscreen);
   const toggleFullscreen = useAppStore((s) => s.toggleTaskPanelFullscreen);
+  const taskPanelOpen = useAppStore((s) => s.taskPanelOpen);
+  const taskPanelMode = useAppStore((s) => s.taskPanelMode);
+  const composeContext = useAppStore((s) => s.taskPanelComposeContext);
+  const closeTaskPanel = useAppStore((s) => s.closeTaskPanel);
   const providerIcon = useProviderIcon(conversation?.providerId);
+  const drawer = useSideDrawer({
+    isOpen: taskPanelOpen,
+    storageKey: "cabinet-task-panel-width",
+  });
 
-  if (!conversation) return null;
-  const runtimeLabel = buildRuntimeLabel(conversation);
-  const errorKind = conversation.errorKind;
+  if (!drawer.shouldRender) return null;
+
+  const isCompose = taskPanelMode === "compose" || !conversation;
 
   const openFullPage = () => {
-    setTaskPanelConversation(null);
+    if (!conversation) return;
+    closeTaskPanel();
     setSection({
       type: "task",
       taskId: conversation.id,
@@ -118,52 +127,56 @@ export function TaskDetailPanel() {
     });
   };
 
-  return (
-    <div
-      className={cn(
-        "flex flex-col bg-background",
-        fullscreen
-          ? "fixed inset-0 z-50"
-          : "h-full w-[420px] shrink-0 border-l border-border/70"
-      )}
-    >
-      <div className="flex items-center gap-2 border-b border-border/70 px-4 py-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <StatusDot status={conversation.status} />
-            {providerIcon ? (
-              <div
-                className="flex size-4 shrink-0 items-center justify-center rounded border border-border/60 bg-muted/30"
-                title={providerIcon.name}
-              >
-                <ProviderGlyph
-                  icon={providerIcon.icon}
-                  asset={providerIcon.iconAsset}
-                  className="h-2.5 w-2.5"
-                />
+  const runtimeLabel = conversation ? buildRuntimeLabel(conversation) : null;
+  const errorKind = conversation?.errorKind;
+
+  const header = (
+    <div className="flex items-center gap-2 border-b border-border/70 px-4 py-3 shrink-0">
+      <div className="min-w-0 flex-1">
+        {isCompose || !conversation ? (
+          <p className="truncate text-[13px] font-medium text-foreground">
+            New task
+          </p>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <StatusDot status={conversation.status} />
+              {providerIcon ? (
+                <div
+                  className="flex size-4 shrink-0 items-center justify-center rounded border border-border/60 bg-muted/30"
+                  title={providerIcon.name}
+                >
+                  <ProviderGlyph
+                    icon={providerIcon.icon}
+                    asset={providerIcon.iconAsset}
+                    className="h-2.5 w-2.5"
+                  />
+                </div>
+              ) : null}
+              <p className="truncate text-[13px] font-medium text-foreground">
+                {conversation.title}
+              </p>
+            </div>
+            <p className="mt-0.5 truncate pl-4 text-[11px] text-muted-foreground">
+              {startCase(conversation.agentSlug)}
+              {" · "}
+              {formatRelative(conversation.startedAt)}
+              {errorKind ? (
+                <span className="ml-1.5 rounded-sm bg-destructive/10 px-1 py-px text-[9px] font-medium uppercase tracking-wide text-destructive">
+                  {errorKind.replace(/_/g, " ")}
+                </span>
+              ) : null}
+            </p>
+            {runtimeLabel ? (
+              <div className="mt-1 flex items-center gap-1.5 pl-4 text-[11px] text-muted-foreground">
+                <BrainCircuit className="size-3.5 shrink-0" />
+                <p className="truncate">{runtimeLabel}</p>
               </div>
             ) : null}
-            <p className="truncate text-[13px] font-medium text-foreground">
-              {conversation.title}
-            </p>
-          </div>
-          <p className="mt-0.5 truncate pl-4 text-[11px] text-muted-foreground">
-            {startCase(conversation.agentSlug)}
-            {" · "}
-            {formatRelative(conversation.startedAt)}
-            {errorKind ? (
-              <span className="ml-1.5 rounded-sm bg-destructive/10 px-1 py-px text-[9px] font-medium uppercase tracking-wide text-destructive">
-                {errorKind.replace(/_/g, " ")}
-              </span>
-            ) : null}
-          </p>
-          {runtimeLabel ? (
-            <div className="mt-1 flex items-center gap-1.5 pl-4 text-[11px] text-muted-foreground">
-              <BrainCircuit className="size-3.5 shrink-0" />
-              <p className="truncate">{runtimeLabel}</p>
-            </div>
-          ) : null}
-        </div>
+          </>
+        )}
+      </div>
+      {!drawer.isMobile ? (
         <Button
           variant="ghost"
           size="sm"
@@ -173,6 +186,8 @@ export function TaskDetailPanel() {
         >
           {fullscreen ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
         </Button>
+      ) : null}
+      {!isCompose && conversation ? (
         <Button
           variant="ghost"
           size="sm"
@@ -182,16 +197,22 @@ export function TaskDetailPanel() {
         >
           <ArrowUpRight className="size-3.5" />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 w-7 shrink-0 p-0"
-          onClick={() => setTaskPanelConversation(null)}
-        >
-          <X className="size-4" />
-        </Button>
-      </div>
+      ) : null}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 shrink-0 p-0"
+        onClick={closeTaskPanel}
+      >
+        <X className="size-4" />
+      </Button>
+    </div>
+  );
 
+  const body =
+    isCompose || !conversation ? (
+      <TaskComposeBody context={composeContext} />
+    ) : (
       <div className="flex-1 overflow-hidden">
         <TaskConversationPage
           taskId={conversation.id}
@@ -203,6 +224,27 @@ export function TaskDetailPanel() {
           }}
         />
       </div>
-    </div>
+    );
+
+  const content = (
+    <>
+      {header}
+      {body}
+    </>
+  );
+
+  // Fullscreen is a separate overlay layout — bypass the drawer width-tween.
+  if (fullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col bg-background">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <SideDrawer drawer={drawer} onScrimClick={closeTaskPanel}>
+      {content}
+    </SideDrawer>
   );
 }

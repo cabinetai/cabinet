@@ -31,7 +31,6 @@ const PptxViewer = dynamic(
 import { HomeScreen } from "@/components/home/home-screen";
 import type { ConversationMeta } from "@/types/conversations";
 import { TerminalTabs } from "@/components/terminal/terminal-tabs";
-import { AIPanel } from "@/components/ai-panel/ai-panel";
 import { TaskDetailPanel } from "@/components/tasks/task-detail-panel";
 import { SearchPalette } from "@/components/search/search-palette";
 import { KeyboardShortcutsModal } from "@/components/help/keyboard-shortcuts-modal";
@@ -158,8 +157,6 @@ export function AppShell() {
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
   const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
-  const aiPanelCollapsed = useAppStore((s) => s.aiPanelCollapsed);
-  const taskPanelConversation = useAppStore((s) => s.taskPanelConversation);
   const setTaskPanelConversation = useAppStore((s) => s.setTaskPanelConversation);
   const {
     update,
@@ -855,8 +852,7 @@ export function AppShell() {
       </div>
       <MobileBottomNav />
       {terminalOpen && terminalPosition === "right" && <TerminalTabs />}
-      {taskPanelConversation && <TaskDetailPanel />}
-      {!aiPanelCollapsed && <AIPanel />}
+      <TaskDetailPanel />
       <SearchPalette />
       <KeyboardShortcutsModal />
       <WhatsNewCard />

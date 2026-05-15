@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppStore } from "@/stores/app-store";
-import { useAIPanelStore } from "@/stores/ai-panel-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
@@ -44,7 +43,7 @@ import { useLocale } from "@/i18n/use-locale";
  */
 export function NewTaskButton() {
   const { t } = useLocale();
-  const openAIPanel = useAIPanelStore((s) => s.open);
+  const openTaskPanelCompose = useAppStore((s) => s.openTaskPanelCompose);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const setTaskPanelConversation = useAppStore(
@@ -145,7 +144,17 @@ export function NewTaskButton() {
         <div className="inline-flex h-7 items-stretch overflow-hidden rounded-md border border-border/70 bg-card/60 text-foreground/80">
           <button
             type="button"
-            onClick={() => openAIPanel()}
+            onClick={() =>
+              openTaskPanelCompose(
+                section.type === "page" && selectedPath
+                  ? {
+                      source: "editor",
+                      pinnedPagePath: selectedPath,
+                      defaultAgentSlug: "editor",
+                    }
+                  : undefined
+              )
+            }
             title={t("common:aiPanel.open")}
             aria-label={t("common:aiPanel.open")}
             className="inline-flex items-center gap-1.5 px-3 transition-colors hover:bg-accent hover:text-foreground"
