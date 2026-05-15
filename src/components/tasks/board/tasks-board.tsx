@@ -5,10 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRightLeft,
-  Bot,
   ChevronDown,
-  Clock3,
-  HeartPulse,
   Loader2,
   Plus,
   Repeat,
@@ -38,7 +35,11 @@ import { ScheduleView } from "./schedule-view";
 import { DetailPanel } from "./detail-panel";
 import { ViewToggle, type BoardViewMode } from "./view-toggle";
 import { DensityToggle, type BoardDensity } from "./density-toggle";
-import { AgentFilterDropdown, TriggerChip, type TriggerFilter } from "./filter-bar";
+import {
+  AgentFilterDropdown,
+  TriggerFilterDropdown,
+  type TriggerFilter,
+} from "./filter-bar";
 import { UndoToast, type PendingUndo } from "./undo-toast";
 import { ConfirmPopover, type PendingConfirm } from "./confirm-popover";
 import { StartWorkDialog, type StartWorkMode } from "@/components/composer/start-work-dialog";
@@ -290,47 +291,17 @@ export function TasksBoard({
 
           <div className="h-3.5 w-px bg-border/60" />
 
-          {/* trigger filter chips — "All" carries the task count */}
-          <div className="flex items-center gap-1">
-            <TriggerChip
-              active={triggerFilter === "all"}
-              onClick={() => setTriggerFilter("all")}
-              count={
-                agentFilter
-                  ? `${filteredTasks.length}/${tasks.length}`
-                  : tasks.length
-              }
-            >
-              All
-            </TriggerChip>
-            <TriggerChip
-              active={triggerFilter === "manual"}
-              onClick={() => setTriggerFilter("manual")}
-              icon={<Bot className="size-3" />}
-              tone="sky"
-              title={t("tasksBoard:manualTooltip")}
-            >
-              Manual
-            </TriggerChip>
-            <TriggerChip
-              active={triggerFilter === "job"}
-              onClick={() => setTriggerFilter("job")}
-              icon={<Clock3 className="size-3" />}
-              tone="emerald"
-              title={t("tasksBoard:jobsTooltip")}
-            >
-              Jobs
-            </TriggerChip>
-            <TriggerChip
-              active={triggerFilter === "heartbeat"}
-              onClick={() => setTriggerFilter("heartbeat")}
-              icon={<HeartPulse className="size-3" />}
-              tone="pink"
-              title={t("tasksBoard:heartbeatTooltip")}
-            >
-              Heartbeat
-            </TriggerChip>
-          </div>
+          {/* trigger filter — dropdown, styled like the cabinet-scope and
+              agent-filter dropdowns. "All" carries the task count. */}
+          <TriggerFilterDropdown
+            value={triggerFilter}
+            onChange={setTriggerFilter}
+            count={
+              agentFilter
+                ? `${filteredTasks.length}/${tasks.length}`
+                : tasks.length
+            }
+          />
 
           {selection.size > 0 && (
             <>

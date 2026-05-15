@@ -1,6 +1,14 @@
 "use client";
 
-import { Users, Check, ChevronDown } from "lucide-react";
+import {
+  Users,
+  Check,
+  ChevronDown,
+  ListFilter,
+  Bot,
+  Clock3,
+  HeartPulse,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -177,6 +185,112 @@ export function AgentFilterDropdown({
                 </span>
               </span>
               {active && <Check className="size-3.5 text-primary" />}
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+const TRIGGER_OPTIONS: {
+  value: TriggerFilter;
+  label: string;
+  description: string;
+  icon: typeof Bot;
+}[] = [
+  {
+    value: "all",
+    label: "All",
+    description: "Every task, regardless of how it started",
+    icon: ListFilter,
+  },
+  {
+    value: "manual",
+    label: "Manual",
+    description: "Tasks you launched directly",
+    icon: Bot,
+  },
+  {
+    value: "job",
+    label: "Jobs",
+    description: "Scheduled recurring runs",
+    icon: Clock3,
+  },
+  {
+    value: "heartbeat",
+    label: "Heartbeat",
+    description: "Self-directed agent runs",
+    icon: HeartPulse,
+  },
+];
+
+/**
+ * Trigger filter as a dropdown — replaces the inline All/Manual/Jobs/Heartbeat
+ * chip row. Styled to match DepthDropdown / AgentFilterDropdown so the board
+ * header reads as one consistent set of filter controls (and so it doesn't
+ * overflow on narrow viewports).
+ */
+export function TriggerFilterDropdown({
+  value,
+  onChange,
+  count,
+  className,
+}: {
+  value: TriggerFilter;
+  onChange: (next: TriggerFilter) => void;
+  /** Shown next to the trigger label when "all" is selected. */
+  count?: React.ReactNode;
+  className?: string;
+}) {
+  const current =
+    TRIGGER_OPTIONS.find((o) => o.value === value) ?? TRIGGER_OPTIONS[0];
+  const CurrentIcon = current.icon;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        title={`Filter by trigger: ${current.label}`}
+        aria-label={`Filter by trigger: ${current.label}`}
+        className={cn(
+          "inline-flex h-7 items-center gap-1.5 rounded-md border border-border/70 bg-card/60 px-2 text-[11px] text-foreground/80 transition-colors hover:bg-accent hover:text-foreground hover:border-border data-[popup-open]:bg-accent",
+          value !== "all" && "border-primary/60",
+          className
+        )}
+      >
+        <CurrentIcon className="size-3" />
+        <span className="font-medium">{current.label}</span>
+        {value === "all" && count != null && (
+          <span className="tabular-nums opacity-60">{count}</span>
+        )}
+        <ChevronDown className="size-3 opacity-60" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[240px]">
+        <div className="px-2 pt-1.5 pb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+          Filter by trigger
+        </div>
+        {TRIGGER_OPTIONS.map((opt) => {
+          const active = opt.value === value;
+          const Icon = opt.icon;
+          return (
+            <DropdownMenuItem
+              key={opt.value}
+              onClick={() => onChange(opt.value)}
+              className="flex items-start justify-between gap-3 py-1.5"
+            >
+              <span className="flex items-start gap-2">
+                <Icon className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                <span className="flex flex-col gap-0.5">
+                  <span className="text-[12.5px] leading-tight">
+                    {opt.label}
+                  </span>
+                  <span className="text-[11px] leading-tight text-muted-foreground/80">
+                    {opt.description}
+                  </span>
+                </span>
+              </span>
+              {active && (
+                <Check className="mt-1 size-3.5 shrink-0 text-primary" />
+              )}
             </DropdownMenuItem>
           );
         })}
