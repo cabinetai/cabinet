@@ -1110,3 +1110,10 @@ html[data-custom-theme="cyber"] :where(button:not([data-no-bevel])):hover {
     background-image: none;
   }
 }
+
+/* Tour data slide — 3-column grid at md+ (sidebar / viewer / copy). */
+@media (min-width: 768px) {
+  .cabinet-tour-data-grid {
+    grid-template-columns: 280px 340px 1fr;
+  }
+}

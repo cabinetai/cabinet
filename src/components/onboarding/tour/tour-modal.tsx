@@ -128,7 +128,7 @@ function TourBody({
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center backdrop-blur-md"
+      className="fixed inset-0 z-[200] flex flex-col backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-label={t("tour:ariaLabel")}
@@ -143,11 +143,11 @@ function TourBody({
         }}
       />
 
-      {/* Skip / close */}
+      {/* Skip / close — tighter offset on mobile so it doesn't crowd the slide */}
       <button
         onClick={onClose}
         aria-label={t("tour:skipAriaLabel")}
-        className="absolute right-6 top-6 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] transition-colors"
+        className="absolute end-4 top-4 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] transition-colors sm:end-6 sm:top-6"
         style={{
           color: P.textSecondary,
           background: P.bgCard,
@@ -158,24 +158,29 @@ function TourBody({
         <X className="h-3.5 w-3.5" />
       </button>
 
-      {/* Slide stage */}
-      <div className="relative flex h-full w-full max-w-6xl flex-col px-10 py-16 lg:px-14">
+      {/* Slide stage — scrolls vertically on mobile; centered/static on desktop */}
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 min-h-0 flex-col overflow-y-auto px-4 pb-4 pt-16 sm:px-10 sm:pt-16 lg:px-14">
         <div
           key={current.stageKey}
-          className="cabinet-tour-animated flex-1"
+          className="cabinet-tour-animated flex flex-1 min-h-0 items-center justify-center"
         >
           {current.id === "data-0"
             ? <SlideData sceneIdx={0} viewerRevealed={viewerRevealed} />
             : current.render()}
         </div>
+      </div>
 
-        {/* Footer nav */}
-        <div className="mt-8 flex items-center justify-between gap-4">
+      {/* Footer nav — pinned at the bottom of the modal so it never scrolls off-screen */}
+      <div
+        className="shrink-0 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-3 sm:px-10 sm:pt-4 lg:px-14"
+        style={{ borderTop: `1px solid ${P.border}` }}
+      >
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
           {/* Back */}
           <button
             onClick={back}
             disabled={index === 0}
-            className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed sm:px-4"
             style={{
               color: P.textSecondary,
               background: P.bgCard,
@@ -183,11 +188,11 @@ function TourBody({
             }}
           >
             <DirIcon ltr={ArrowLeft} rtl={ArrowRight} className="h-3.5 w-3.5" />
-            {t("tour:back")}
+            <span className="hidden sm:inline">{t("tour:back")}</span>
           </button>
 
           {/* Progress dots */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {SLIDES.map((s, i) => (
               <button
                 key={s.id}
@@ -207,14 +212,15 @@ function TourBody({
           {isLast ? (
             <button
               onClick={finish}
-              className="group flex items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-semibold text-white transition-all hover:-translate-y-px"
+              className="group flex items-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-semibold text-white transition-all hover:-translate-y-px sm:px-5"
               style={{
                 background: P.accent,
                 boxShadow: `0 10px 25px -10px ${P.accent}80`,
               }}
             >
               <Sparkles className="h-4 w-4" />
-              {t("tour:writeFirstTask")}
+              <span className="hidden sm:inline">{t("tour:writeFirstTask")}</span>
+              <span className="sm:hidden">{t("tour:next")}</span>
               <DirIcon
                 ltr={ArrowRight}
                 rtl={ArrowLeft}
@@ -224,7 +230,7 @@ function TourBody({
           ) : (
             <button
               onClick={next}
-              className="flex items-center gap-1.5 rounded-full px-5 py-2 text-[12px] font-semibold transition-all hover:-translate-y-px"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold transition-all hover:-translate-y-px sm:px-5"
               style={{ background: P.text, color: P.paper }}
             >
               {t("tour:next")}

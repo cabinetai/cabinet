@@ -26,8 +26,8 @@ export function SlideTasks() {
   const { t } = useLocale();
   const TYPED_COMMAND = t("slideTasks:typedCommand");
   return (
-    <div className="grid h-full grid-cols-[minmax(360px,420px)_1fr] gap-10 lg:gap-14 items-center">
-      <div className="h-[440px] w-full">
+    <div className="flex h-full flex-col items-center gap-6 md:grid md:grid-cols-[minmax(360px,420px)_1fr] md:gap-10 md:items-center lg:gap-14">
+      <div className="order-2 h-[420px] w-full max-w-[320px] md:order-1 md:h-[440px] md:max-w-none">
         <MockupSidebar activeTab="tasks" viewTransitionName="cabinet-card">
           <div className="flex h-full flex-col gap-2 px-2 py-2">
             {/* Composer */}
@@ -174,7 +174,7 @@ export function SlideTasks() {
       </div>
 
       {/* Copy */}
-      <div className="flex flex-col gap-5 max-w-lg">
+      <div className="order-1 flex flex-col items-center gap-3 max-w-lg text-center md:order-2 md:items-start md:gap-5 md:text-start">
         <span
           className="inline-block w-fit rounded-full px-3 py-1 text-[10px] font-semibold tracking-[0.18em] opacity-0"
           style={{
@@ -188,7 +188,7 @@ export function SlideTasks() {
           {t("slideTasks:slideNum")}
         </span>
         <h2
-          className="font-logo text-4xl italic tracking-tight opacity-0 lg:text-5xl"
+          className="font-logo text-3xl italic tracking-tight opacity-0 md:text-4xl lg:text-5xl"
           style={{
             color: P.text,
             animation: "cabinet-tour-fade-up 0.5s ease-out forwards",

@@ -407,11 +407,10 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
 
   return (
     <div
-      className="grid h-full items-center gap-8 lg:gap-10"
-      style={{ gridTemplateColumns: "280px 340px 1fr" }}
+      className="cabinet-tour-data-grid flex h-full flex-col items-center gap-6 md:grid md:items-center md:gap-8 lg:gap-10"
     >
       {/* ── Column 1: Sidebar + caption ─── */}
-      <div className="flex h-[500px] w-full flex-col gap-3">
+      <div className="order-2 flex h-[440px] w-full max-w-[260px] flex-col gap-3 md:order-1 md:h-[500px] md:max-w-none">
         <div
           className="h-[440px] w-full opacity-0"
           style={{ animation: "cabinet-tour-fade-up 0.4s ease-out forwards", animationDelay: "0ms" }}
@@ -525,7 +524,7 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
       </div>
 
       {/* ── Column 2: File viewer panel — appears last ─── */}
-      <div className="h-[440px] w-full">
+      <div className="order-3 hidden h-[440px] w-full md:order-2 md:block">
         <div
           key={scene.id + "-viewer"}
           className="h-full w-full opacity-0"
@@ -546,7 +545,7 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
       </div>
 
       {/* ── Column 3: Copy — appears first ─── */}
-      <div className="flex flex-col gap-5 max-w-md">
+      <div className="order-1 flex flex-col items-center gap-3 max-w-md text-center md:order-3 md:items-start md:gap-5 md:text-start">
         <span
           className="inline-block w-fit rounded-full px-3 py-1 text-[10px] font-semibold tracking-[0.18em] opacity-0"
           style={{
@@ -560,7 +559,7 @@ export function SlideData({ sceneIdx, viewerRevealed }: SlideDataProps) {
           {t("slideDataCopy:slideNum")}
         </span>
         <h2
-          className="font-logo text-4xl italic tracking-tight opacity-0 lg:text-5xl"
+          className="font-logo text-3xl italic tracking-tight opacity-0 md:text-4xl lg:text-5xl"
           style={{
             color: P.text,
             animation: "cabinet-tour-fade-up 0.35s ease-out forwards",
