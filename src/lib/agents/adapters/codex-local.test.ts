@@ -110,3 +110,44 @@ exit 1
   assert.equal(classified?.kind, "model_unavailable");
   assert.match(classified?.hint ?? "", /available on this account's plan/i);
 });
+
+test("codexLocalAdapter suppresses codex tracing diagnostics (skill-load errors) from stderr", async () => {
+  // Repro for the first-run report: a malformed host skill (invalid
+  // SKILL.md YAML) makes codex log `<ts> ERROR codex_core::session: failed
+  // to load skill …` on stderr at session startup — before the turn. These
+  // are pure tracing diagnostics and must not surface as a stderr chunk
+  // (which the daemon would otherwise fold into the visible turn) nor reach
+  // the model output.
+  const scriptPath = await createExecutableScript(`#!/bin/sh
+cat >/dev/null
+printf '%s\n' \
+  '{"type":"thread.started","thread_id":"thread-skill"}' \
+  '{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"CEO online."}}' \
+  '{"type":"turn.completed","usage":{"input_tokens":1,"output_tokens":1}}'
+printf '%s\n' \
+  '2026-05-15T11:30:17.532244Z ERROR codex_core::session: failed to load skill /tmp/skills/short-form-video/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 385' \
+  '2026-05-15T11:30:17.532649Z ERROR codex_core::session: failed to load skill /tmp/.agents/skills/short-form-video/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 385' >&2
+`);
+
+  const chunks: Array<{ stream: "stdout" | "stderr"; chunk: string }> = [];
+  const result = await codexLocalAdapter.execute?.({
+    runId: "run-skill",
+    adapterType: "codex_local",
+    config: { command: scriptPath, model: "gpt-5.4" },
+    prompt: "hi",
+    cwd: process.cwd(),
+    onLog: async (stream, chunk) => {
+      chunks.push({ stream, chunk });
+    },
+  });
+
+  assert.ok(result);
+  assert.equal(result.exitCode, 0);
+  assert.equal(result.output, "CEO online.");
+  // The skill-load ERROR lines are the only stderr; all of it is filtered,
+  // so no stderr chunk is emitted and the visible output is clean.
+  assert.deepEqual(chunks, [
+    { stream: "stdout", chunk: "CEO online.\n" },
+  ]);
+  assert.ok(!JSON.stringify(chunks).includes("short-form-video"));
+});

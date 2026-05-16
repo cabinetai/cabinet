@@ -242,6 +242,13 @@ export function flushCodexJsonStream(
 
 const CODEX_STDERR_NOISE_PATTERNS = [
   /^Reading prompt from stdin\.\.\.$/,
+  // Codex's Rust `tracing` diagnostics: `<ISO-8601>Z <LEVEL> <target>: msg`.
+  // These are session/runtime logs (skill-load failures, state-db migration
+  // warnings, snapshot cleanup) — never model output, which arrives on stdout
+  // as JSON. Suppress the whole class so a malformed host skill (invalid
+  // SKILL.md YAML) or any future codex log line can't leak into the turn or
+  // pollute the error-classification input.
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\s+(?:TRACE|DEBUG|INFO|WARN|ERROR)\b/,
   /WARN codex_state::runtime: failed to open state db/,
   /WARN codex_rollout::list: state db discrepancy/,
   /WARN codex_core::plugins::manifest: ignoring interface\.defaultPrompt/,

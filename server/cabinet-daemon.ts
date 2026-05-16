@@ -833,11 +833,18 @@ function createStructuredSession(input: {
         sessionParams: input.adapterSessionParams ?? null,
         onLog: async (stream, chunk) => {
           if (stream === "stderr") {
+            // Diagnostic only: buffer for classifyError, but never fold
+            // stderr into the user-visible turn. Structured adapters curate
+            // their display via stdout; codex/claude/etc. emit startup
+            // tracing (e.g. skill-load errors) on stderr that would otherwise
+            // land at the TOP of the assistant message. Mirrors the
+            // stderr handling in conversation-runner's executeWithPrompt.
             session.stderrBuffer = (session.stderrBuffer ?? "") + chunk;
             // Cap stderr buffer at 64 KB so a chatty adapter doesn't OOM us.
             if (session.stderrBuffer.length > 65_536) {
               session.stderrBuffer = session.stderrBuffer.slice(-65_536);
             }
+            return;
           }
           emitSessionOutput(session, chunk, input.onData);
         },
