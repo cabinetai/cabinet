@@ -306,15 +306,25 @@ function normalizeSingleArtifactCandidate(raw: string): string | null {
   // up as file names in the "Recent work" block (UX audit #73).
   //
   // A real artifact path either contains a directory separator or ends in a
-  // known file extension; and it must not contain whitespace in the segment
-  // before the extension / separator. Anything else is prose.
+  // known file extension.
   const hasSeparator = normalized.includes("/");
   const hasExtension = /\.[A-Za-z0-9]{1,8}$/.test(normalized);
   if (!hasSeparator && !hasExtension) return null;
   const pathHead = hasExtension
     ? normalized.replace(/\.[A-Za-z0-9]{1,8}$/, "")
     : normalized;
-  if (/\s/.test(pathHead)) return null;
+  // Whitespace in the path head usually means prose that accidentally ends
+  // in a file-like extension. But real KB pages legitimately have spaces in
+  // their name (e.g. "Thailand Trip.md"), so only reject when it actually
+  // reads like a sentence rather than a short filename.
+  if (/\s/.test(pathHead)) {
+    const looksLikeProse =
+      !hasExtension ||
+      normalized.length > 80 ||
+      pathHead.split(/\s+/).filter(Boolean).length > 6 ||
+      /[.;:!?]\s/.test(pathHead);
+    if (looksLikeProse) return null;
+  }
   // Paths we generate are short — 200 chars is already a runaway match.
   if (normalized.length > 200) return null;
   return normalized;
