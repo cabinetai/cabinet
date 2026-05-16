@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal, PanelRight } from "lucide-react";
+import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal, PanelRight, Heart } from "lucide-react";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -16,10 +16,12 @@ import { StarExplosion, formatGithubStars } from "@/components/layout/star-explo
 import { useTaskRail } from "@/components/tasks/rail/task-rail-context";
 import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { useLocale } from "@/i18n/use-locale";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import type { TFunction } from "i18next";
 
 const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
 const GITHUB_REPO_URL = "https://github.com/hilash/cabinet";
+const CABINET_INVITE_URL = "https://runcabinet.com";
 
 // Audit #094: each "Not installed" provider row needs a one-click path to
 // the canonical install instructions. Mapped by the provider id used by
@@ -144,6 +146,36 @@ function formatRelativeSavedAgo(ts: number, now: number, t: TFunction): string {
 
 export function StatusBar() {
   const { t } = useLocale();
+  const profileState = useUserProfile();
+  // First name only — a warm, personal "thanks" beats a sterile
+  // "link copied". Falls back to a localized "friend" when the profile
+  // hasn't loaded or the user never set a name.
+  const shareName = useMemo(() => {
+    const p = profileState.status === "ready" ? profileState.data.profile : null;
+    const full = (p?.displayName || p?.name || "").trim();
+    return full.split(/\s+/)[0] || t("status:help.friend");
+  }, [profileState, t]);
+  const shareCabinet = useCallback(() => {
+    void navigator.clipboard
+      ?.writeText(CABINET_INVITE_URL)
+      .then(() => {
+        window.dispatchEvent(
+          new CustomEvent("cabinet:toast", {
+            detail: {
+              kind: "success",
+              message: t("status:help.shareCopied", { name: shareName }),
+            },
+          })
+        );
+      })
+      .catch(() => {
+        window.dispatchEvent(
+          new CustomEvent("cabinet:toast", {
+            detail: { kind: "error", message: t("status:help.shareFailed") },
+          })
+        );
+      });
+  }, [t, shareName]);
   const { saveStatus, currentPath, isDirty, lastSavedAt } = useEditorStore();
   const retrySave = useEditorStore((s) => s.save);
   const editorContent = useEditorStore((s) => s.content);
@@ -937,19 +969,44 @@ export function StatusBar() {
           <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
             {t("status:help.label")}
           </span>
-          {displayStars !== null && (
-            <span
-              // Audit #004: explain what the count is on hover. The whole
-              // Help button opens a popup that links to GitHub, so the
-              // number itself doesn't need an extra click target — just
-              // a clear name.
-              title={`${formatGithubStars(displayStars)} GitHub stars — open Help & community menu to star Cabinet`}
-              className="-mr-0.5 inline-flex items-center gap-0.5 rounded-full bg-amber-500/15 px-1.5 py-px text-[9px] font-semibold text-amber-700 dark:text-amber-300"
-            >
-              <Star className="h-2.5 w-2.5 fill-current" />
+        </button>
+        {/* Stars moved out of the Help pill into their own control so the
+            count — and its count-up + burst animation — reads as a
+            standalone community signal rather than Help-pill chrome. */}
+        {displayStars !== null && (
+          <a
+            href={GITHUB_REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t("status:help.starsAriaLabel", {
+              count: formatGithubStars(displayStars),
+            })}
+            title={t("status:help.starsTitle", {
+              count: formatGithubStars(displayStars),
+            })}
+            className="relative inline-flex items-center gap-1 rounded-full border border-border bg-muted/55 px-2.5 py-1 text-muted-foreground transition-all hover:-translate-y-px hover:border-foreground/15 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
+          >
+            {starsExploding && <StarExplosion />}
+            <Star className="h-3 w-3 fill-current text-amber-500/75" />
+            <span className="text-[10px] font-semibold tabular-nums tracking-[0.04em] text-foreground">
               {formatGithubStars(displayStars)}
             </span>
-          )}
+          </a>
+        )}
+        {/* Share Cabinet — a first-class status-bar control. Sharing is the
+            single highest-leverage thing a happy user can do for the project,
+            so it gets its own pill rather than hiding in the menu. */}
+        <button
+          type="button"
+          onClick={shareCabinet}
+          aria-label={t("status:help.share")}
+          title={t("status:help.shareSubtitle")}
+          className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/55 px-2.5 py-1 text-muted-foreground transition-all hover:-translate-y-px hover:border-foreground/15 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
+        >
+          <Heart className="h-3.5 w-3.5 fill-current text-rose-300/60 transition-transform group-hover:scale-110" />
+          <span className="text-[10px] font-semibold tracking-[0.04em] text-foreground">
+            {t("status:help.share")}
+          </span>
         </button>
         {/* Rail toggle — kept as the rightmost status-bar control so it sits
             right against the rail's reserved gutter. */}
@@ -1023,9 +1080,8 @@ export function StatusBar() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setShowCommunityPopup(false)}
-              className="relative flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
             >
-              {starsExploding && <StarExplosion />}
               <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
               <span className="flex flex-col">
                 <span className="font-medium text-foreground">
@@ -1034,6 +1090,20 @@ export function StatusBar() {
                 <span className="text-[10px] text-muted-foreground">{t("status:help.ifUseful")}</span>
               </span>
             </a>
+            <button
+              type="button"
+              onClick={() => {
+                shareCabinet();
+                setShowCommunityPopup(false);
+              }}
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
+            >
+              <Heart className="h-3.5 w-3.5 fill-current text-rose-500" />
+              <span className="flex flex-col">
+                <span className="font-medium text-foreground">{t("status:help.share")}</span>
+                <span className="text-[10px] text-muted-foreground">{t("status:help.shareSubtitle")}</span>
+              </span>
+            </button>
           </div>
         )}
       </div>

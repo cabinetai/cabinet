@@ -1180,6 +1180,9 @@
     "refreshedNoChanges": "已刷新 — 无变化。",
     "refreshedWithChanges": "已刷新 — 新增 {{added}},移除 {{removed}}。",
     "refreshFailed": "刷新失败。",
+    "searchPlaceholder": "搜索文件…",
+    "searchSearching": "搜索中…",
+    "searchNoResults": "没有匹配“{{query}}”的文件",
     "drawerData": "数据",
     "drawerAgents": "团队",
     "drawerTasks": "任务"
@@ -1254,7 +1257,14 @@
       "github": "在 GitHub 上贡献",
       "githubSubtitle": "源代码、问题、PR",
       "ifUseful": "如果你觉得它有用",
-      "label": "帮助"
+      "label": "帮助",
+      "starsAriaLabel": "{{count}} 个 GitHub star — 在 GitHub 上打开 Cabinet",
+      "starsTitle": "{{count}} 个 GitHub star — 在 GitHub 上为 Cabinet 点星",
+      "share": "分享",
+      "shareSubtitle": "复制邀请链接并分享出去",
+      "shareCopied": "你太棒了，{{name}} 🩷 谢谢你把未来的 Cabinet 成员带进来。链接已复制，去分享这份热爱吧！",
+      "shareFailed": "无法复制链接",
+      "friend": "朋友"
     },
     "common": {
       "dismiss": "关闭",

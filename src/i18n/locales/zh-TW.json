@@ -1180,6 +1180,9 @@
     "refreshedNoChanges": "已重新整理 — 無變更。",
     "refreshedWithChanges": "已重新整理 — 新增 {{added}},移除 {{removed}}。",
     "refreshFailed": "重新整理失敗。",
+    "searchPlaceholder": "搜尋檔案…",
+    "searchSearching": "搜尋中…",
+    "searchNoResults": "沒有符合「{{query}}」的檔案",
     "drawerData": "資料",
     "drawerAgents": "團隊",
     "drawerTasks": "任務"
@@ -1254,7 +1257,14 @@
       "github": "在 GitHub 上貢獻",
       "githubSubtitle": "原始碼、議題、PR",
       "ifUseful": "如果你覺得它有用",
-      "label": "說明"
+      "label": "說明",
+      "starsAriaLabel": "{{count}} 個 GitHub star — 在 GitHub 上開啟 Cabinet",
+      "starsTitle": "{{count}} 個 GitHub star — 在 GitHub 上為 Cabinet 點星",
+      "share": "分享",
+      "shareSubtitle": "複製邀請連結並分享出去",
+      "shareCopied": "你太棒了，{{name}} 🩷 謝謝你把未來的 Cabinet 成員帶進來。連結已複製，快去分享這份熱愛吧！",
+      "shareFailed": "無法複製連結",
+      "friend": "朋友"
     },
     "common": {
       "dismiss": "關閉",

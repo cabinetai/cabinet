@@ -1180,6 +1180,9 @@
     "refreshedNoChanges": "רוענן — אין שינויים.",
     "refreshedWithChanges": "רוענן — {{added}} נוספו, {{removed}} הוסרו.",
     "refreshFailed": "הרענון נכשל.",
+    "searchPlaceholder": "חיפוש קבצים…",
+    "searchSearching": "מחפש…",
+    "searchNoResults": "אין קבצים התואמים ל־“{{query}}”",
     "drawerData": "נתונים",
     "drawerAgents": "צוות",
     "drawerTasks": "משימות"
@@ -1254,7 +1257,14 @@
       "github": "תרומה ב-GitHub",
       "githubSubtitle": "קוד מקור, issues, PRs",
       "ifUseful": "אם זה שימושי",
-      "label": "עזרה"
+      "label": "עזרה",
+      "starsAriaLabel": "{{count}} כוכבים ב-GitHub — פתיחת Cabinet ב-GitHub",
+      "starsTitle": "{{count}} כוכבים ב-GitHub — סמנו כוכב ל-Cabinet ב-GitHub",
+      "share": "שיתוף",
+      "shareSubtitle": "העתקת קישור הזמנה והפצת הבשורה",
+      "shareCopied": "את/ה אלופ/ה, {{name}} 🩷 תודה שאת/ה מביא/ה חברי Cabinet עתידיים. הקישור הועתק, קדימה לשתף!",
+      "shareFailed": "לא ניתן היה להעתיק את הקישור",
+      "friend": "חבר/ה"
     },
     "common": {
       "dismiss": "סגירה",

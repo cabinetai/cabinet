@@ -1260,7 +1260,10 @@
     "resetWidth": "Double-click to reset width",
     "refreshedNoChanges": "Refreshed — no changes.",
     "refreshedWithChanges": "Refreshed — {{added}} added, {{removed}} removed.",
-    "refreshFailed": "Refresh failed."
+    "refreshFailed": "Refresh failed.",
+    "searchPlaceholder": "Search files…",
+    "searchSearching": "Searching…",
+    "searchNoResults": "No files match “{{query}}”"
   },
   "status": {
     "bar": {
@@ -1332,7 +1335,14 @@
       "github": "Contribute on GitHub",
       "githubSubtitle": "Source, issues, PRs",
       "ifUseful": "If you find it useful",
-      "label": "Help"
+      "label": "Help",
+      "starsAriaLabel": "{{count}} GitHub stars — open Cabinet on GitHub",
+      "starsTitle": "{{count}} GitHub stars — star Cabinet on GitHub",
+      "share": "Share",
+      "shareSubtitle": "Copy an invite link & spread the word",
+      "shareCopied": "You're awesome, {{name}} 🩷 Thank you for bringing future Cabinet members on board. Link copied, go share the love!",
+      "shareFailed": "Couldn't copy the link",
+      "friend": "friend"
     },
     "git2": {
       "allCommitted": "All committed",
