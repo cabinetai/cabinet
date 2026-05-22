@@ -42,20 +42,27 @@ export function detectGoogle(rawUrl: string): GoogleLink | null {
 }
 
 function computeEmbedUrl(kind: GoogleKind, id: string, rawUrl: string): string {
-  // Preserve any `?e=` / share-link variant Google already generated
-  const hasE = /\/d\/e\//.test(rawUrl);
-  const idSeg = hasE ? `e/${id}` : id;
+  // A "Publish to web" link has the /d/e/<publishId>/pub… shape — its id is a
+  // distinct *publish* id, so for those we keep the `pub`/`pubhtml` endpoints.
+  // A plain "Anyone with the link" share link has /d/<docId>/… — for those the
+  // `pub*` endpoints 302 to a Google sign-in wall, so we use `/preview`, which
+  // renders read-only for anyone with the link (and for published docs too).
+  const isPublished = /\/d\/e\//.test(rawUrl);
   switch (kind) {
     case "sheets":
-      // `pubhtml` renders as a scrollable table; `edit?embed=true` keeps full UI
-      // when the doc is published. Prefer `pubhtml` for minimal chrome.
-      return `https://docs.google.com/spreadsheets/d/${idSeg}/pubhtml?widget=true&headers=false`;
+      return isPublished
+        ? `https://docs.google.com/spreadsheets/d/e/${id}/pubhtml?widget=true&headers=false`
+        : `https://docs.google.com/spreadsheets/d/${id}/preview`;
     case "slides":
-      return `https://docs.google.com/presentation/d/${idSeg}/embed?start=false&loop=false&delayms=3000`;
+      return isPublished
+        ? `https://docs.google.com/presentation/d/e/${id}/embed?start=false&loop=false&delayms=3000`
+        : `https://docs.google.com/presentation/d/${id}/embed?start=false&loop=false&delayms=3000`;
     case "docs":
-      return `https://docs.google.com/document/d/${idSeg}/pub?embedded=true`;
+      return isPublished
+        ? `https://docs.google.com/document/d/e/${id}/pub?embedded=true`
+        : `https://docs.google.com/document/d/${id}/preview`;
     case "forms":
-      return `https://docs.google.com/forms/d/${idSeg}/viewform?embedded=true`;
+      return `https://docs.google.com/forms/d/${isPublished ? `e/${id}` : id}/viewform?embedded=true`;
     case "drive":
       return `https://drive.google.com/file/d/${id}/preview`;
   }
