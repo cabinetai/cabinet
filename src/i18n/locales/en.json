@@ -1244,7 +1244,8 @@
       "disclaimerAccess": "<strong>Agents run with full access.</strong> Cabinet uses <flag>--dangerously-skip-permissions</flag> (Claude Code) and equivalent flags in other providers. This is identical to running these CLI tools from your own terminal. Any MCP servers or tools you've configured may be invoked automatically by agents.",
       "disclaimerBackup": "<strong>Back up your data regularly.</strong> Agents can read, write, and delete files across your KB and linked repos. Cabinet is not responsible for data loss. You are responsible for the AI providers you choose and their terms of service.",
       "disclaimerBeta": "<strong>Beta software. Things may break.</strong> We ship fast. Breaking changes can land without notice.",
-      "legalNotice": "By continuing you agree to our <terms>Terms</terms> and <privacy>Privacy</privacy>. Cabinet is an <oss>open-source project</oss>."
+      "legalNotice": "By continuing you agree to our <terms>Terms</terms> and <privacy>Privacy</privacy>. Cabinet is an <oss>open-source project</oss>.",
+      "keepInTouch": "Keep me in touch. Cabinet is open source and built in the open, and we'd love to learn what to build next. Use my email for occasional product updates. No spam, and you can opt out anytime."
     },
     "provider": {
       "agentType": "{{type}} agent",
