@@ -2,25 +2,59 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Check } from "lucide-react";
+import { X, Check, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ROOM_ICON_KEYS, getRoomIcon, ROOM_COLORS } from "@/lib/cabinets/room-icons";
 import { THEMES } from "@/lib/themes";
-import { useRoomsStore, type RoomMetaClient } from "@/stores/rooms-store";
+import { type RoomMetaClient } from "@/stores/rooms-store";
 import { useLocale } from "@/i18n/use-locale";
 
 interface RoomEditDialogProps {
   room: RoomMetaClient;
   onClose: () => void;
-  /** Called after a successful save with the updated room. */
+  /**
+   * Called after a successful save with the updated room. The parent is
+   * responsible for closing the dialog (so the close + cache-invalidation
+   * sequence happens together) and for refreshing the rooms store.
+   */
   onSaved?: (room: RoomMetaClient) => void;
+  /**
+   * If provided, a destructive "Delete room…" button is rendered in the
+   * footer. The parent (typically the switcher) is responsible for closing
+   * this dialog and opening its slug-typed confirmation so the dangerous
+   * step is never one click away.
+   */
+  onRequestDelete?: () => void;
+  /**
+   * Gate for the Delete button. False when this is the last remaining
+   * room (the API would refuse anyway, but we want the affordance to
+   * communicate why up front).
+   */
+  canDelete?: boolean;
 }
 
-export function RoomEditDialog({ room, onClose, onSaved }: RoomEditDialogProps) {
+/**
+ * Customize a room's identity — display name, icon, color, theme.
+ *
+ * Only the manifest `name` is updated, never the directory slug. The slug
+ * is the deterministic identifier used by agent/task/job paths and the
+ * per-room search index, so changing it would require a heavier rename-
+ * with-path-migration job. The copy makes that boundary explicit
+ * ("Display name" + a small hint about the slug).
+ *
+ * The dialog stays open on error so the user can retry or read the
+ * server's message; on success the parent closes it.
+ */
+export function RoomEditDialog({
+  room,
+  onClose,
+  onSaved,
+  onRequestDelete,
+  canDelete = true,
+}: RoomEditDialogProps) {
   const { t } = useLocale();
-  const reloadRooms = useRoomsStore((s) => s.load);
   const [name, setName] = useState(room.name);
   const [icon, setIcon] = useState<string | null>(room.icon);
   const [color, setColor] = useState<string | null>(room.color);
@@ -54,15 +88,14 @@ export function RoomEditDialog({ room, onClose, onSaved }: RoomEditDialogProps) 
         }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
         setError(data.error || t("rooms:editFailed"));
         setSaving(false);
         return;
       }
       const data = (await res.json()) as { room: RoomMetaClient };
-      await reloadRooms(true);
+      // Parent owns the close + cache-bust sequence.
       onSaved?.(data.room);
-      onClose();
     } catch {
       setError(t("rooms:editFailed"));
       setSaving(false);
@@ -97,7 +130,7 @@ export function RoomEditDialog({ room, onClose, onSaved }: RoomEditDialogProps) 
         </div>
 
         <form onSubmit={handleSave} className="px-6 pb-6 space-y-5">
-          {/* Name */}
+          {/* Display name */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground">
               {t("rooms:nameLabel")}
@@ -109,6 +142,9 @@ export function RoomEditDialog({ room, onClose, onSaved }: RoomEditDialogProps) 
               className="h-10"
               disabled={saving}
             />
+            <p className="text-xs text-muted-foreground">
+              {t("rooms:slugHint", { slug: room.path })}
+            </p>
           </div>
 
           {/* Icon */}
@@ -233,18 +269,42 @@ export function RoomEditDialog({ room, onClose, onSaved }: RoomEditDialogProps) 
 
           {error && <p className="text-sm text-destructive">{error}</p>}
 
-          <div className="flex items-center justify-end gap-3 pt-1 border-t border-border">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={saving}
-            >
-              {t("common:actions.cancel")}
-            </Button>
-            <Button type="submit" disabled={saving}>
-              {saving ? t("common:states.saving") : t("common:actions.save")}
-            </Button>
+          <div className="flex items-center justify-between gap-3 pt-1 border-t border-border">
+            {onRequestDelete ? (
+              <button
+                type="button"
+                onClick={onRequestDelete}
+                disabled={saving || !canDelete}
+                title={
+                  canDelete
+                    ? undefined
+                    : t("rooms:deleteLastRoomDisabledHint")
+                }
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm transition-colors",
+                  "text-destructive hover:bg-destructive/10",
+                  "disabled:cursor-not-allowed disabled:text-muted-foreground/50 disabled:hover:bg-transparent"
+                )}
+              >
+                <Trash2 className="h-4 w-4" />
+                {t("rooms:deleteRoom")}
+              </button>
+            ) : (
+              <span />
+            )}
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={saving}
+              >
+                {t("common:actions.cancel")}
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? t("common:states.saving") : t("common:actions.save")}
+              </Button>
+            </div>
           </div>
         </form>
       </div>

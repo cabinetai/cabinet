@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { resolveContentPath } from "@/lib/storage/path-utils";
 import { ensureDirectory, fileExists } from "@/lib/storage/fs-operations";
+import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 import fs from "fs/promises";
 
@@ -79,6 +80,13 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     await fs.writeFile(filePath, buffer);
     if (!skipCommit) {
       autoCommit(`${virtualPath}/${filename}`, "Add");
+    }
+
+    // Refresh the tree for visible imports (sidebar Import File). Skip hidden
+    // targets (e.g. conversation attachments) so editor pastes don't thrash
+    // the 5s buildTree cache.
+    if (!virtualPath.split("/").some((seg) => seg.startsWith("."))) {
+      invalidateTreeCache();
     }
 
     const mimeType = file.type || "";

@@ -13,6 +13,8 @@
       "promptPlaceholder": "คุณคือเอเจนต์การตลาดสำหรับ…",
       "addAgentTitle": "เพิ่มเอเจนต์เข้าสู่ทีมของคุณ",
       "addAgentDescription": "เลือกผู้เชี่ยวชาญจากไลบรารี คุณสามารถแก้ไขชื่อ บทบาท และคำแนะนำได้หลังจากเพิ่มแล้ว",
+      "createFromScratchTitle": "สร้างจากศูนย์",
+      "createFromScratchDescription": "สร้างเอเจนต์ใหม่พร้อมข้อมูลระบุตัวตน บทบาท และคำแนะนำของตัวเอง",
       "searchLibraryPlaceholder": "ค้นหาในไลบรารี",
       "errorLoadLibrary": "ไม่สามารถโหลดไลบรารีเอเจนต์ได้",
       "errorAddAgent": "ไม่สามารถเพิ่มเอเจนต์นี้ได้"
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "โหลดความรู้",
+    "intro": "ชี้ Cabinet ไปยังโฟลเดอร์ใดก็ได้บนเครื่องของคุณ Cabinet จะสร้าง symlink เพื่อให้เนื้อหาในโฟลเดอร์ปรากฏในฐานความรู้ของคุณ และพร้อมใช้งานสำหรับเอเจนต์ AI ในฐานะบริบท โฟลเดอร์ต้นฉบับจะไม่ถูกย้ายหรือคัดลอก",
+    "symlinkNote": "นี่เป็นการสร้างลิงก์เชิงสัญลักษณ์ — ไฟล์จะยังคงอยู่ที่เดิม",
     "autoDetectPlaceholder": "ตรวจจับอัตโนมัติจาก git remote (ไม่บังคับ)",
     "shortSummaryPlaceholder": "สรุปสั้น ๆ สำหรับเอเจนต์ (ไม่บังคับ)"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "เปิดมุมมอง Cabinet",
     "pageTitlePlaceholder": "ชื่อหน้า…",
     "rename": "เปลี่ยนชื่อ",
-    "openBadge": "เปิด"
+    "openBadge": "เปิด",
+    "sectionAdd": "เพิ่มไปยังรายการนี้",
+    "sectionThis": "รายการนี้",
+    "addSubPage": "เพิ่มหน้าย่อย",
+    "newFolder": "โฟลเดอร์ใหม่",
+    "createFile": "สร้างไฟล์ใหม่…",
+    "connectKnowledge": "เชื่อมต่อความรู้…",
+    "symlinkTag": "Symlink",
+    "importFile": "นำเข้าไฟล์…",
+    "importFolder": "นำเข้าโฟลเดอร์…",
+    "createCabinet": "สร้าง Cabinet ที่นี่",
+    "editSymlink": "แก้ไข Symlink…",
+    "settings": "การตั้งค่า…",
+    "moveTo": "ย้ายไปที่…",
+    "copyRelativePath": "คัดลอกพาธสัมพัทธ์",
+    "copyFullPath": "คัดลอกพาธเต็ม",
+    "openInFinder": "เปิดใน Finder",
+    "delete": "ลบ",
+    "unlink": "เลิกเชื่อมโยง",
+    "folderNamePlaceholder": "ชื่อโฟลเดอร์",
+    "creating": "กำลังสร้าง…",
+    "create": "สร้าง",
+    "addSubPageTitle": "เพิ่มหน้าย่อยไปยัง “{{name}}”",
+    "newFolderTitle": "โฟลเดอร์ใหม่ใน “{{name}}”"
+  },
+  "newFile": {
+    "title": "สร้างไฟล์ใหม่",
+    "subtitle": "เลือกประเภทไฟล์ Cabinet จะเปิดไฟล์นั้นในตัวแก้ไขเมื่อพร้อมใช้งาน",
+    "groupNative": "แก้ไขใน Cabinet",
+    "groupOffice": "Office (ว่างเปล่า — แก้ไขภายนอก)",
+    "groupGoogle": "Google (เชื่อมโยงแล้ว)",
+    "namePlaceholder": "ชื่อไฟล์",
+    "create": "สร้าง",
+    "creating": "กำลังสร้าง…",
+    "googleUrlLabel": "URL ของ Google (ไม่บังคับ)",
+    "googleUrlPlaceholder": "วางลิงก์ Google ที่แชร์ได้ หรือเว้นว่างไว้เพื่อเพิ่มภายหลัง",
+    "officeNote": "Cabinet แสดงไฟล์ Office แบบอ่านอย่างเดียว ใช้ “เปิดใน Finder” เพื่อแก้ไขในแอปเดสก์ท็อป",
+    "types": {
+      "markdown": "หน้า Markdown",
+      "markdownDesc": "บันทึกข้อความแบบ Rich Text แก้ไขได้ใน Cabinet",
+      "code": "ไฟล์โค้ด",
+      "codeDesc": "ไฟล์ต้นฉบับ/ข้อความใดๆ — เลือกนามสกุลไฟล์",
+      "mermaid": "แผนภาพ Mermaid",
+      "mermaidDesc": "ผังงานและแผนภาพในรูปแบบโค้ด",
+      "csv": "ตาราง CSV",
+      "csvDesc": "ข้อมูลสเปรดชีตที่คั่นด้วยจุลภาค",
+      "docx": "เอกสาร Word",
+      "docxDesc": ".docx เปล่า",
+      "xlsx": "สเปรดชีต Excel",
+      "xlsxDesc": ".xlsx เปล่า",
+      "pptx": "PowerPoint",
+      "pptxDesc": ".pptx เปล่า",
+      "gdoc": "Google Doc",
+      "gdocDesc": "ฝัง Google Doc",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "ฝัง Google Sheet",
+      "gslides": "Google Slides",
+      "gslidesDesc": "ฝัง Google Slides"
+    },
+    "codeExtLabel": "นามสกุลไฟล์",
+    "googleTag": "Google",
+    "extHint": "เพียงพิมพ์ชื่อ — Cabinet จะเพิ่มนามสกุลไฟล์ {{ext}}",
+    "createFailed": "ไม่สามารถสร้างไฟล์ได้"
+  },
+  "fileSettings": {
+    "googleTitle": "การตั้งค่าการฝัง Google",
+    "googleKindLabel": "ประเภท",
+    "googleUrlLabel": "URL ของ Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "การแชร์เอกสารต้องเป็น “ทุกคนที่มีลิงก์” หรือ “เผยแพร่สู่เว็บ” เพื่อให้การฝังโหลดได้",
+    "openLink": "เปิดใน Google",
+    "googleKinds": {
+      "docs": "Docs",
+      "sheets": "Sheets",
+      "slides": "Slides",
+      "forms": "Forms",
+      "drive": "Drive"
+    },
+    "appTitle": "การตั้งค่าเว็บแอป",
+    "modeLabel": "ควรเปิดสิ่งนี้อย่างไร?",
+    "modeWebsite": "มุมมองหน้า",
+    "modeWebsiteDesc": "เปิดแบบอินไลน์โดยแสดงแถบด้านข้างและแผง AI",
+    "modeApp": "เว็บแอป",
+    "modeAppDesc": "เปิดแบบเต็มหน้าจอ; แถบด้านข้างและแผง AI จะยุบอัตโนมัติ",
+    "convertNote": "นี่เป็นการสลับไฟล์เครื่องหมาย .app ในโฟลเดอร์ ไฟล์ของคุณไม่เปลี่ยนแปลง",
+    "save": "บันทึก",
+    "saving": "กำลังบันทึก…",
+    "cancel": "ยกเลิก",
+    "saveFailed": "ไม่สามารถบันทึกการตั้งค่าได้"
+  },
+  "editSymlink": {
+    "title": "แก้ไข Symlink",
+    "intro": "รายการฐานความรู้นี้เป็นลิงก์สัญลักษณ์ไปยังโฟลเดอร์อื่นบนเครื่องของคุณ",
+    "kbPathLabel": "เส้นทางฐานความรู้",
+    "targetLabel": "ลิงก์ไปยัง (บนดิสก์)",
+    "brokenWarning": "โฟลเดอร์เป้าหมายไม่มีอยู่แล้ว โปรดชี้ไปยังโฟลเดอร์ที่ถูกต้องด้านล่าง",
+    "repointLabel": "ชี้ไปยังโฟลเดอร์ใหม่",
+    "repointHint": "Cabinet จะแทนที่ลิงก์ให้ชี้มาที่นี่ ไฟล์จะไม่ถูกย้าย",
+    "browse": "เรียกดู",
+    "nameLabel": "ชื่อ",
+    "descriptionLabel": "คำอธิบาย",
+    "save": "บันทึก",
+    "saving": "กำลังบันทึก…",
+    "copyTarget": "คัดลอกเส้นทางเป้าหมาย",
+    "saveFailed": "ไม่สามารถอัปเดต symlink ได้"
+  },
+  "importFolder": {
+    "importing": "กำลังนำเข้าโฟลเดอร์…",
+    "failed": "การนำเข้าโฟลเดอร์ล้มเหลว: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "กำลังโหลดงาน"
@@ -707,7 +819,7 @@
     "dismiss": "ปิดคำแนะนำมุมมองแคบ",
     "dismissTitle": "ปิดจนกว่าจะถึงเซสชันถัดไป",
     "hintPrefix": "Cabinet ทำงานได้ดีที่สุดเมื่อ",
-    "hintWidth": "≥960 px",
+    "hintWidth": "≥960 พิกเซล",
     "hintSuffix": " กว้าง พื้นที่บางส่วนอาจคับแคบเมื่อความกว้างน้อยลง"
   },
   "agentCard": {
@@ -756,7 +868,9 @@
     "noSkills": "ยังไม่มีทักษะ"
   },
   "taskDetail": {
-    "close": "ปิด (Esc)"
+    "close": "ปิด (Esc)",
+    "muteTask": "ปิดเสียงงานนี้ — งานที่เสร็จแล้วจะถูกย้ายไปที่คลังทันที",
+    "unmuteTask": "เปิดเสียงงานนี้ — งานที่เสร็จแล้วจะกลับมาแสดงใน \"เพิ่งเสร็จสิ้น\""
   },
   "rowActionsPlus": {
     "edit": "แก้ไข",
@@ -861,6 +975,41 @@
     "revealInFinder": "แสดงในตัวจัดการไฟล์",
     "stored": "จัดเก็บแล้ว",
     "resetOnboarding": "รีเซ็ตการเริ่มต้นใช้งาน"
+  },
+  "rooms": {
+    "switcherTitle": "สลับห้อง",
+    "switchRoom": "ห้อง",
+    "loading": "กำลังโหลด…",
+    "defaultTag": "หน้าหลัก",
+    "openInNewWindow": "เปิดในหน้าต่างใหม่",
+    "opensBrowserWindow": "เปิดหน้าต่างเบราว์เซอร์ใหม่",
+    "customizeRoom": "แก้ไขห้อง",
+    "addRoom": "เพิ่มห้อง…",
+    "editTitle": "แก้ไขห้อง",
+    "editSubtitle": "ตั้งชื่อ ไอคอน สี และธีมของห้องนี้",
+    "nameLabel": "ชื่อที่แสดง",
+    "slugHint": "ชื่อโฟลเดอร์บนดิสก์จะยังคงเป็น {{slug}} การเปลี่ยนชื่อโฟลเดอร์เป็นการดำเนินการขั้นสูงที่แยกต่างหาก",
+    "iconLabel": "ไอคอน",
+    "colorLabel": "สี",
+    "colorAuto": "อัตโนมัติ",
+    "themeLabel": "ธีม",
+    "themeGlobal": "ใช้ค่าเริ่มต้นทั่วโลก",
+    "editFailed": "ไม่สามารถบันทึกห้องได้ โปรดลองอีกครั้ง",
+    "deleteRoom": "ลบห้อง…",
+    "deleteLastRoomDisabledHint": "คุณไม่สามารถลบห้องสุดท้ายของคุณได้",
+    "deleteTitle": "ลบห้องนี้หรือไม่?",
+    "deleteSubtitle": "ห้องนี้และทุกสิ่งที่อยู่ภายในจะถูกย้ายไปยังถังขยะ",
+    "deleteWarningIntro": "การย้ายห้องไปยังถังขยะจะลบสิ่งต่อไปนี้ด้วย:",
+    "deleteWarningPages": "หน้าและไฟล์ภายในห้องนี้",
+    "deleteWarningAgents": "เอเจนต์ การสนทนา และหน่วยความจำที่กำหนดขอบเขตไว้สำหรับห้องนี้",
+    "deleteWarningJobs": "งานที่กำหนดเวลาและกิจวัตรในห้องนี้",
+    "deleteWarningChat": "ประวัติการแชทของทีมสำหรับห้องนี้",
+    "deleteWarningSearch": "ดัชนีการค้นหาของห้อง (สร้างใหม่โดยอัตโนมัติหากกู้คืน)",
+    "deleteRecoveryNote": "การกู้คืน: ห้องถูกย้ายไปที่ data/.trash/ — กู้คืนโดยย้ายโฟลเดอร์กลับไปที่ data/.",
+    "deleteConfirmLabel": "พิมพ์ {{slug}} เพื่อยืนยัน",
+    "deleteConfirmButton": "ลบห้อง",
+    "deleting": "กำลังลบ…",
+    "deleteFailed": "ไม่สามารถลบห้องได้ โปรดลองอีกครั้ง"
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "ก่อนเริ่มใช้งาน",
       "defaultCabinetName": "Cabinet ของคุณ",
       "defaultDescription": "ฐานความรู้ + ทีม AI",
+      "knowledgeBaseLabel": "ฐานความรู้",
+      "aiTeamLabel": "ทีม AI",
       "launchCabinet": "เริ่มใช้งาน Cabinet",
       "settingUp": "กำลังตั้งค่า...",
       "disclaimerAccess": "<strong>เอเจนต์ทำงานด้วยสิทธิ์เข้าถึงเต็มรูปแบบ</strong> Cabinet ใช้ <flag>--dangerously-skip-permissions</flag> (Claude Code) และแฟล็กที่เทียบเท่าในผู้ให้บริการรายอื่น ซึ่งเหมือนกับการรันเครื่องมือ CLI เหล่านี้จากเทอร์มินัลของคุณเอง เซิร์ฟเวอร์ MCP หรือเครื่องมือใดๆ ที่คุณกำหนดค่าไว้อาจถูกเรียกใช้โดยเอเจนต์โดยอัตโนมัติ",
       "disclaimerBackup": "<strong>สำรองข้อมูลของคุณเป็นประจำ</strong> เอเจนต์สามารถอ่าน เขียน และลบไฟล์ใน KB และรีโพที่เชื่อมโยงของคุณได้ Cabinet ไม่รับผิดชอบต่อการสูญหายของข้อมูล คุณมีหน้าที่รับผิดชอบต่อผู้ให้บริการ AI ที่คุณเลือกและข้อกำหนดในการให้บริการของพวกเขา",
       "disclaimerBeta": "<strong>ซอฟต์แวร์เบต้า อาจเกิดข้อผิดพลาดได้</strong> เราพัฒนาอย่างรวดเร็ว การเปลี่ยนแปลงที่ส่งผลกระทบอาจเกิดขึ้นได้โดยไม่ต้องแจ้งให้ทราบล่วงหน้า",
-      "legalNotice": "การดำเนินการต่อแสดงว่าคุณยอมรับ <terms>ข้อกำหนด</terms> และ <privacy>ความเป็นส่วนตัว</privacy> ของเรา Cabinet เป็น <oss>โครงการโอเพนซอร์ส</oss>"
+      "legalNotice": "การดำเนินการต่อแสดงว่าคุณยอมรับ <terms>ข้อกำหนด</terms> และ <privacy>ความเป็นส่วนตัว</privacy> ของเรา Cabinet เป็น <oss>โครงการโอเพนซอร์ส</oss>",
+      "keepInTouch": "ติดตามข่าวสาร Cabinet เป็นโอเพนซอร์สและพัฒนาแบบเปิดเผย เราอยากรู้ว่าควรสร้างอะไรต่อไป ไม่มีสแปม เราสัญญา"
     },
     "provider": {
       "agentType": "เอเจนต์ {{type}}",
@@ -1119,6 +1271,7 @@
       "comingSoon": "เร็วๆ นี้",
       "guide": "คู่มือ",
       "heading": "ผู้ให้บริการเอเจนต์",
+      "moreModels": "AI เพิ่มเติม",
       "install": "ติดตั้ง",
       "logIn": "เข้าสู่ระบบ",
       "openTerminalButton": "เปิดเทอร์มินัล",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "Cabinet นี้มีไว้สำหรับอะไร? แต่ละห้องมาพร้อมกับทีม AI ของตัวเอง",
       "heading": "เลือก <accent>ห้อง</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet คืออะไร?",
+      "body": "Cabinet คือพื้นที่ทำงานที่เน้นเฉพาะด้านสำหรับชีวิตหรืองานของคุณ ซึ่งเก็บไฟล์ โน้ต เครื่องมือ เอเจนต์ และงานของคุณ เพื่อให้ทีม AI ของคุณมีบริบทที่จำเป็นในการช่วยเหลือได้อย่างแท้จริง",
+      "examplesLabel": "ผู้คนใช้ Cabinet อย่างไร",
+      "example1": "สตาร์ทอัพของคุณ",
+      "example2": "รีโพ GitHub",
+      "example3": "งานการตลาดของคุณ",
+      "example4": "โปรเจกต์ลูกค้า",
+      "example5": "ฐานความรู้ส่วนตัวของคุณ"
+    },
+    "access": {
+      "heading": "{{name}} เข้าถึงอะไรได้บ้าง?",
+      "subtitle": "เลือกความรู้และเครื่องมือที่เอเจนต์นี้สามารถใช้ได้ คุณสามารถเปลี่ยนได้ตลอดเวลา",
+      "defaultAgent": "เอเจนต์ของคุณ",
+      "files": "ไฟล์และความรู้",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "เซิร์ฟเวอร์ MCP",
+      "plugins": "ปลั๊กอิน",
+      "skills": "ทักษะ",
+      "placeholderNote": "คุณสามารถปรับแต่งการเข้าถึงได้ภายหลังในการตั้งค่าของเอเจนต์"
+    },
+    "heartbeat": {
+      "heading": "{{name}} ควรทำงานแบบ Heartbeat หรือไม่?",
+      "subtitle": "Heartbeat ช่วยให้เอเจนต์ตรวจสอบและทำงานได้เองตามกำหนดเวลา",
+      "off": "ปิด",
+      "offHint": "ทำงานเมื่อคุณสั่งเท่านั้น แนะนำสำหรับการเริ่มต้น",
+      "daily": "รายวัน",
+      "dailyHint": "ตรวจสอบวันละครั้ง",
+      "weekly": "รายสัปดาห์",
+      "weeklyHint": "ตรวจสอบสัปดาห์ละครั้ง",
+      "tokenNote": "ข้อควรทราบ: Heartbeat จะเรียกใช้เอเจนต์โดยอัตโนมัติ ซึ่งจะใช้โทเค็น AI (และโควตาผู้ให้บริการของคุณ) ทุกครั้งที่ทำงาน คุณสามารถเปลี่ยนหรือปิดได้ตลอดเวลา"
+    },
+    "firstTask": {
+      "heading": "สร้างงานแรกของคุณ",
+      "subtitle": "งานคือวิธีที่คุณมอบหมายงานให้ {{name}} เขียนตอนนี้ แล้วงานจะไปอยู่ใน Cabinet ของคุณ พร้อมทำงาน",
+      "label": "{{name}} ควรทำอะไรก่อน?",
+      "placeholder": "เช่น ร่างอีเมลต้อนรับสำหรับลูกค้าใหม่",
+      "example1": "สรุปโน้ตล่าสุดของฉัน",
+      "example2": "ร่างแผนโครงการ",
+      "example3": "วิจัยคู่แข่ง 3 อันดับแรกของเรา",
+      "note": "คุณสามารถเว้นว่างไว้และเพิ่มงานภายหลังได้ จะไม่มีอะไรทำงานจนกว่าคุณจะเชื่อมต่อผู้ให้บริการ AI"
+    },
+    "rail": {
+      "untitled": "Cabinet ของคุณ",
+      "dataCaption": "ไฟล์และบันทึกทั้งหมดของโปรเจกต์ของคุณอยู่ที่นี่",
+      "teamEmpty": "ยังไม่มีเอเจนต์",
+      "teamCaption": "ทีม AI ของคุณทำงานที่นี่",
+      "tasksEmpty": "ยังไม่มีงาน",
+      "tasksCaption": "งานที่คุณมอบหมายให้ทีมจะแสดงที่นี่",
+      "assignedTo": "มอบหมายให้ {{name}}",
+      "you": "คุณ"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "นำเข้าล้มเหลว",
       "importFailedConnection": "นำเข้าล้มเหลว ตรวจสอบการเชื่อมต่อของคุณ",
       "importTitle": "นำเข้า {{name}}",
-      "orPickAgents": "หรือเลือกเอเจนต์ของคุณ",
+      "pickAgents": "เลือกเอเจนต์ของคุณ",
       "required": "จำเป็น",
-      "startFromTemplate": "เริ่มจากเทมเพลต",
       "subtitle": "แต่ละ Cabinet คือทีม AI — เอเจนต์ งาน และฐานความรู้ที่ใช้ร่วมกัน ทำงานร่วมกันเป็นหนึ่งเดียว",
       "heading": "สร้างทีม<accent>ของคุณ</accent>",
+      "nameLabel": "ชื่อเอเจนต์",
+      "namePlaceholder": "เช่น บรรณาธิการ, นักวิจัย, ผู้ช่วย",
+      "roleLabel": "บทบาท",
+      "rolePlaceholder": "เช่น ผู้ช่วยเขียน",
+      "instructionsLabel": "เอเจนต์นี้ควรทำอะไร?",
+      "instructionsPlaceholder": "อธิบายว่าควรช่วยอย่างไร เช่น ร่างและแก้ไขหน้าเว็บของฉัน รักษาโทนเสียงให้ชัดเจนและเป็นมิตร และแนะนำการปรับปรุง",
+      "agentOptionalHint": "ไม่บังคับ คุณสามารถข้ามขั้นตอนนี้และเพิ่มเอเจนต์ในภายหลังได้จากภายในห้อง",
       "agentCount_one": "เอเจนต์ {{count}} ตัว",
       "agentCount_other": "เอเจนต์ {{count}} ตัว",
       "jobCount_one": "{{count}} งาน",
@@ -1410,6 +1622,10 @@
       "loading": "กำลังโหลด…",
       "connect": "เชื่อมต่อ",
       "recommended": "แนะนำ"
+    },
+    "integrationsPreview": {
+      "comingSoon": "เร็วๆ นี้",
+      "hint": "การเชื่อมต่อการผสานรวมภายนอกและเครื่องมือในตัวกำลังจะมาถึง"
     },
     "storage": {
       "dataDirectory": "ไดเรกทอรีข้อมูล",

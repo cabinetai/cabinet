@@ -295,3 +295,28 @@ test("isCabinetBlockMissing returns true for an empty cabinet fence (no fields)"
   const empty = "Done.\n```cabinet\n```";
   assert.equal(store.isCabinetBlockMissing(empty), true);
 });
+
+test("finalizeConversation classifies codex model_unavailable when errorHint is omitted", async () => {
+  const errorMsg =
+    "The 'gpt-5.2-codex' model is not supported when using Codex with a ChatGPT account.";
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "Model gate",
+    trigger: "manual",
+    prompt: "User request:\ntest",
+    adapterType: "codex_local",
+    providerId: "codex-cli",
+  });
+  await store.appendConversationTranscript(meta.id, errorMsg);
+  const finalized = await store.finalizeConversation(meta.id, {
+    status: "failed",
+    exitCode: 1,
+    output: errorMsg,
+  });
+  assert.equal(finalized?.errorKind, "model_unavailable");
+  assert.match(finalized?.errorHint ?? "", /isn't available on this account's plan/i);
+
+  const turns = await store.readConversationTurns(finalized!.id);
+  const agent = turns.find((turn) => turn.role === "agent");
+  assert.match(agent?.content ?? "", /not supported when using Codex/i);
+});

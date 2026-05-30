@@ -967,7 +967,7 @@ export function AppShell() {
       <Sidebar />
       <div
         className="flex-1 flex flex-col overflow-hidden max-md:pb-[calc(56px+env(safe-area-inset-bottom))]"
-        style={{ '--sidebar-toggle-offset': sidebarCollapsed ? '2.25rem' : '0px' } as React.CSSProperties}
+        style={{ '--sidebar-toggle-offset': sidebarCollapsed ? 'calc(2.25rem + var(--traffic-clearance, 0px))' : '0px' } as React.CSSProperties}
       >
         <DaemonHealthBanner />
         {!isMobile && <NarrowViewportHint />}

@@ -178,6 +178,7 @@ export function TreeView() {
   // (you switch into them via the room switcher). Sub-rooms already scope to
   // their own subtree via `activeCabinet.children`.
   const rooms = useRoomsStore((s) => s.rooms);
+  const defaultRoom = useRoomsStore((s) => s.defaultRoom);
   const loadRooms = useRoomsStore((s) => s.load);
   useEffect(() => {
     void loadRooms();
@@ -297,11 +298,21 @@ export function TreeView() {
   // depth-based padding matching TreeNode: depth * 16 + 8
   const pad = (depth: number) => ({ paddingLeft: `${depth * 16 + 8}px` });
   const cabinetPath = activeCabinet?.path || rootCabinet?.path || ROOT_CABINET_PATH;
-  const dataRootPath = activeCabinet
-    ? activeCabinet.path === ROOT_CABINET_PATH
-      ? ""
-      : activeCabinet.path
-    : "";
+  // The folder that empty-space create actions (Add Sub Page / Create New File
+  // / Connect Knowledge) target. In rooms-v3 you are always inside a room, so
+  // this must resolve to the active *room*, never the neutral home container —
+  // otherwise new files/symlinks land as siblings of the room and vanish from
+  // its tree. Mirror the sidebar footer's robust fallback chain
+  // (activeCabinet → route cabinetPath → defaultRoom) so a not-yet-resolved
+  // `activeCabinet` can't silently drop the target back to "" (the container).
+  const dataRootPath =
+    activeCabinet && activeCabinet.path !== ROOT_CABINET_PATH
+      ? activeCabinet.path
+      : routeCabinetPath && routeCabinetPath !== ROOT_CABINET_PATH
+        ? routeCabinetPath
+        : defaultRoom && defaultRoom !== ROOT_CABINET_PATH
+          ? defaultRoom
+          : "";
   const selectedAgentScopedId =
     section.agentScopedId ||
     (section.type === "agent" && section.cabinetPath && section.slug
@@ -924,7 +935,11 @@ export function TreeView() {
       </DialogContent>
     </Dialog>
 
-    <LinkRepoDialog open={linkRepoOpen} onOpenChange={setLinkRepoOpen} />
+    <LinkRepoDialog
+      open={linkRepoOpen}
+      onOpenChange={setLinkRepoOpen}
+      parentPath={dataRootPath}
+    />
 
     <NewFileDialog
       open={newFileOpen}

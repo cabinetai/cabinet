@@ -13,6 +13,8 @@
       "promptPlaceholder": "Şunun için bir pazarlama temsilcisisiniz…",
       "addAgentTitle": "Ekibinize bir temsilci ekleyin",
       "addAgentDescription": "Kütüphaneden bir uzman seçin. Eklendikten sonra adını, rolünü ve talimatlarını düzenleyebilirsiniz.",
+      "createFromScratchTitle": "Sıfırdan oluştur",
+      "createFromScratchDescription": "Kendi kimliği, rolü ve talimatları olan yeni bir aracı oluşturun.",
       "searchLibraryPlaceholder": "Kütüphanede ara",
       "errorLoadLibrary": "Temsilci kütüphanesi yüklenemedi.",
       "errorAddAgent": "Bu temsilci eklenemedi."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "Bilgiyi Yükle",
+    "intro": "Cabinet'i makinenizdeki herhangi bir klasöre yönlendirin. Cabinet, klasörün içeriğinin Bilgi Tabanınızda görünmesi ve yapay zeka aracılarının bağlam olarak kullanabilmesi için bir sembolik bağlantı oluşturur. Orijinal klasör asla taşınmaz veya kopyalanmaz.",
+    "symlinkNote": "Bu, bir sembolik bağlantı oluşturur — dosyalar yerinde kalır.",
     "autoDetectPlaceholder": "Git uzak deposundan otomatik algıla (isteğe bağlı)",
     "shortSummaryPlaceholder": "Aracılar için isteğe bağlı kısa özet"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Cabinet görünümünü aç",
     "pageTitlePlaceholder": "Sayfa başlığı…",
     "rename": "Yeniden Adlandır",
-    "openBadge": "Aç"
+    "openBadge": "Aç",
+    "sectionAdd": "Bu öğeye ekle",
+    "sectionThis": "Bu öğe",
+    "addSubPage": "Alt Sayfa Ekle",
+    "newFolder": "Yeni Klasör",
+    "createFile": "Yeni Dosya Oluştur…",
+    "connectKnowledge": "Bilgi Bağla…",
+    "symlinkTag": "Sembolik Bağlantı",
+    "importFile": "Dosya İçe Aktar…",
+    "importFolder": "Klasör İçe Aktar…",
+    "createCabinet": "Burada Cabinet Oluştur",
+    "editSymlink": "Sembolik Bağlantıyı Düzenle…",
+    "settings": "Ayarlar…",
+    "moveTo": "Taşı…",
+    "copyRelativePath": "Göreceli Yolu Kopyala",
+    "copyFullPath": "Tam Yolu Kopyala",
+    "openInFinder": "Finder'da Aç",
+    "delete": "Sil",
+    "unlink": "Bağlantıyı Kaldır",
+    "folderNamePlaceholder": "Klasör adı",
+    "creating": "Oluşturuluyor…",
+    "create": "Oluştur",
+    "addSubPageTitle": "“{{name}}” öğesine Alt Sayfa Ekle",
+    "newFolderTitle": "“{{name}}” içinde Yeni Klasör"
+  },
+  "newFile": {
+    "title": "Yeni Dosya Oluştur",
+    "subtitle": "Bir dosya türü seçin. Hazır olduğunda Cabinet, dosyayı düzenleyicide açar.",
+    "groupNative": "Cabinet'te Düzenle",
+    "groupOffice": "Office (boş — harici olarak düzenle)",
+    "groupGoogle": "Google (bağlı)",
+    "namePlaceholder": "Dosya adı",
+    "create": "Oluştur",
+    "creating": "Oluşturuluyor…",
+    "googleUrlLabel": "Google URL'si (isteğe bağlı)",
+    "googleUrlPlaceholder": "Paylaşılabilir bir Google bağlantısı yapıştırın veya daha sonra eklemek için boş bırakın",
+    "officeNote": "Cabinet, Office dosyalarını salt okunur gösterir. Masaüstü uygulamasında düzenlemek için “Finder'da Aç”ı kullanın.",
+    "types": {
+      "markdown": "Markdown Sayfası",
+      "markdownDesc": "Cabinet'te düzenlenebilir zengin metin notları",
+      "code": "Kod Dosyası",
+      "codeDesc": "Herhangi bir kaynak/metin dosyası — uzantıyı seçin",
+      "mermaid": "Mermaid Diyagramı",
+      "mermaidDesc": "Kod olarak akış şemaları ve diyagramlar",
+      "csv": "CSV Tablosu",
+      "csvDesc": "Virgülle ayrılmış e-tablo verileri",
+      "docx": "Word Belgesi",
+      "docxDesc": "Boş .docx",
+      "xlsx": "Excel E-Tablosu",
+      "xlsxDesc": "Boş .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Boş .pptx",
+      "gdoc": "Google Doküman",
+      "gdocDesc": "Bir Google Dokümanı yerleştir",
+      "gsheet": "Google E-Tablo",
+      "gsheetDesc": "Bir Google E-Tablosu yerleştir",
+      "gslides": "Google Slaytlar",
+      "gslidesDesc": "Google Slaytlar'ı yerleştir"
+    },
+    "codeExtLabel": "Uzantı",
+    "googleTag": "Google",
+    "extHint": "Sadece adı yazın — Cabinet, {{ext}} uzantısını ekler.",
+    "createFailed": "Dosya oluşturulamadı."
+  },
+  "fileSettings": {
+    "googleTitle": "Google Yerleştirme Ayarları",
+    "googleKindLabel": "Tür",
+    "googleUrlLabel": "Google URL'si",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Yerleştirmenin yüklenebilmesi için dokümanın paylaşım ayarı “Bağlantıya sahip herkes” veya “Web'de yayınlandı” olmalıdır.",
+    "openLink": "Google'da Aç",
+    "googleKinds": {
+      "docs": "Dokümanlar",
+      "sheets": "E-Tablolar",
+      "slides": "Slaytlar",
+      "forms": "Formlar",
+      "drive": "Drive"
+    },
+    "appTitle": "Web Uygulaması Ayarları",
+    "modeLabel": "Bu nasıl açılmalı?",
+    "modeWebsite": "Sayfa görünümü",
+    "modeWebsiteDesc": "Kenar çubuğu ve yapay zeka paneli görünür şekilde satır içi açılır.",
+    "modeApp": "Web Uygulaması",
+    "modeAppDesc": "Tam ekran açılır; kenar çubuğu ve yapay zeka paneli otomatik olarak daralır.",
+    "convertNote": "Bu, klasördeki .app işaretleyici dosyasını açıp kapatır. Dosyalarınız değişmez.",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor…",
+    "cancel": "İptal",
+    "saveFailed": "Ayarlar kaydedilemedi."
+  },
+  "editSymlink": {
+    "title": "Sembolik Bağlantıyı Düzenle",
+    "intro": "Bu Bilgi Tabanı girişi, makinenizin başka bir yerindeki bir klasöre sembolik bir bağlantıdır.",
+    "kbPathLabel": "Bilgi Tabanı yolu",
+    "targetLabel": "Bağlantı hedefi (disk üzerinde)",
+    "brokenWarning": "Hedef klasör artık mevcut değil. Aşağıda geçerli bir klasöre yeniden yönlendirin.",
+    "repointLabel": "Yeni bir klasöre yönlendir",
+    "repointHint": "Cabinet, bağlantıyı burayı gösterecek şekilde değiştirecek. Dosyalar asla taşınmaz.",
+    "browse": "Gözat",
+    "nameLabel": "Ad",
+    "descriptionLabel": "Açıklama",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor…",
+    "copyTarget": "Hedef yolu kopyala",
+    "saveFailed": "Sembolik bağlantı güncellenemedi."
+  },
+  "importFolder": {
+    "importing": "Klasör içe aktarılıyor…",
+    "failed": "Klasör içe aktarma başarısız oldu: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Görevler yükleniyor"
@@ -756,7 +868,9 @@
     "noSkills": "Henüz yetenek yok."
   },
   "taskDetail": {
-    "close": "Kapat (Esc)"
+    "close": "Kapat (Esc)",
+    "muteTask": "Bu görevi sessize al — tamamlanan çalışmaları doğrudan Arşiv'e gider",
+    "unmuteTask": "Bu görevin sesini aç — tamamlanan çalışmaları \"Yeni Bitirilenler\"de yeniden görünür"
   },
   "rowActionsPlus": {
     "edit": "Düzenle",
@@ -861,6 +975,41 @@
     "revealInFinder": "Dosya yöneticisinde göster",
     "stored": "Depolandı",
     "resetOnboarding": "İlk kurulumu sıfırla"
+  },
+  "rooms": {
+    "switcherTitle": "Oda değiştir",
+    "switchRoom": "Odalar",
+    "loading": "Yükleniyor…",
+    "defaultTag": "Ana Sayfa",
+    "openInNewWindow": "Yeni pencerede aç",
+    "opensBrowserWindow": "Yeni bir tarayıcı penceresi açar",
+    "customizeRoom": "Odayı düzenle",
+    "addRoom": "Oda ekle…",
+    "editTitle": "Odayı düzenle",
+    "editSubtitle": "Bu odanın adını, simgesini, rengini ve temasını ayarla.",
+    "nameLabel": "Görünen ad",
+    "slugHint": "Disk üzerindeki klasör adı {{slug}} olarak kalır. Klasörü yeniden adlandırmak ayrı, gelişmiş bir eylemdir.",
+    "iconLabel": "Simge",
+    "colorLabel": "Renk",
+    "colorAuto": "Otomatik",
+    "themeLabel": "Tema",
+    "themeGlobal": "Genel varsayılanı kullan",
+    "editFailed": "Oda kaydedilemedi. Lütfen tekrar deneyin.",
+    "deleteRoom": "Odayı sil…",
+    "deleteLastRoomDisabledHint": "Son odanızı silemezsiniz.",
+    "deleteTitle": "Bu odayı sil?",
+    "deleteSubtitle": "Bu oda ve içindeki her şey çöp kutusuna taşınacak.",
+    "deleteWarningIntro": "Odayı çöp kutusuna taşımak şunları da kaldırır:",
+    "deleteWarningPages": "Bu odadaki sayfalar ve dosyalar",
+    "deleteWarningAgents": "Bu odaya özel aracılar, konuşmalar ve bellek",
+    "deleteWarningJobs": "Bu odadaki zamanlanmış işler ve rutinler",
+    "deleteWarningChat": "Bu odaya ait ekip sohbet geçmişi",
+    "deleteWarningSearch": "Odanın arama dizini (geri yüklenirse otomatik olarak yeniden oluşturulur)",
+    "deleteRecoveryNote": "Kurtarma: oda data/.trash/ konumuna taşınır — klasörü tekrar data/ içine taşıyarak geri yükleyin.",
+    "deleteConfirmLabel": "Onaylamak için {{slug}} yazın",
+    "deleteConfirmButton": "Odayı sil",
+    "deleting": "Siliniyor…",
+    "deleteFailed": "Oda silinemedi. Lütfen tekrar deneyin."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Başlatmadan önce",
       "defaultCabinetName": "Cabinet'iniz",
       "defaultDescription": "Bilgi tabanı + Yapay zeka ekibi",
+      "knowledgeBaseLabel": "Bilgi tabanı",
+      "aiTeamLabel": "Yapay zeka ekibi",
       "launchCabinet": "Cabinet'i Başlat",
       "settingUp": "Kuruluyor...",
       "disclaimerAccess": "<strong>Aracılar tam erişimle çalışır.</strong> Cabinet, <flag>--dangerously-skip-permissions</flag> (Claude Code) ve diğer sağlayıcılarda eşdeğer bayrakları kullanır. Bu, bu CLI araçlarını kendi terminalinizden çalıştırmakla aynıdır. Yapılandırdığınız herhangi bir MCP sunucusu veya aracı, aracılar tarafından otomatik olarak çağrılabilir.",
       "disclaimerBackup": "<strong>Verilerinizi düzenli olarak yedekleyin.</strong> Aracılar, bilgi tabanınız ve bağlantılı depolarınızdaki dosyaları okuyabilir, yazabilir ve silebilir. Cabinet veri kaybından sorumlu değildir. Seçtiğiniz yapay zeka sağlayıcılarından ve hizmet şartlarından siz sorumlusunuz.",
       "disclaimerBeta": "<strong>Beta yazılım. Hatalar oluşabilir.</strong> Hızlı yayın yaparız. Kırıcı değişiklikler bildirim yapılmadan gelebilir.",
-      "legalNotice": "Devam ederek <terms>Şartlarımızı</terms> ve <privacy>Gizliliğimizi</privacy> kabul etmiş olursunuz. Cabinet bir <oss>açık kaynak projesidir</oss>."
+      "legalNotice": "Devam ederek <terms>Şartlarımızı</terms> ve <privacy>Gizliliğimizi</privacy> kabul etmiş olursunuz. Cabinet bir <oss>açık kaynak projesidir</oss>.",
+      "keepInTouch": "Beni haberdar et. Cabinet açık kaynaklıdır ve açık bir şekilde geliştirilmiştir; bir sonraki neyi geliştireceğimizi öğrenmek isteriz. Spam yok, söz veriyoruz."
     },
     "provider": {
       "agentType": "{{type}} aracı",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Çok yakında",
       "guide": "Rehber",
       "heading": "Aracı Sağlayıcı",
+      "moreModels": "Daha fazla yapay zeka",
       "install": "Yükle",
       "logIn": "Giriş yap",
       "openTerminalButton": "Terminali aç",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "Bu cabinet ne için? Her oda kendi yapay zeka ekibiyle gelir.",
       "heading": "Bir <accent>oda</accent> seçin"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet nedir?",
+      "body": "Cabinet, hayatınızın veya işinizin belirli bir alanı için odaklanmış bir çalışma alanıdır. Dosyalarınızı, notlarınızı, araçlarınızı, aracılarınızı ve görevlerinizi barındırır, böylece yapay zeka ekibiniz gerçekten yardımcı olmak için ihtiyaç duyduğu bağlama sahip olur.",
+      "examplesLabel": "İnsanlar Cabinet'i nasıl kullanır",
+      "example1": "startup'ınız",
+      "example2": "bir GitHub deposu",
+      "example3": "pazarlama işiniz",
+      "example4": "bir müşteri projesi",
+      "example5": "kişisel bilgi tabanınız"
+    },
+    "access": {
+      "heading": "{{name}} neye erişebilir?",
+      "subtitle": "Bu aracının kullanabileceği bilgi ve araçları seçin. Bunu istediğiniz zaman değiştirebilirsiniz.",
+      "defaultAgent": "aracınız",
+      "files": "Dosyalar ve bilgi",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP sunucuları",
+      "plugins": "Eklentiler",
+      "skills": "Beceriler",
+      "placeholderNote": "Erişimi daha sonra aracının ayarlarından ince ayar yapabilirsiniz."
+    },
+    "heartbeat": {
+      "heading": "{{name}} bir kalp atışıyla çalışsın mı?",
+      "subtitle": "Bir kalp atışı, aracının belirli bir programa göre kendi başına kontrol etmesini ve çalışmasını sağlar.",
+      "off": "Kapalı",
+      "offHint": "Yalnızca siz istediğinizde çalışır. Başlamak için önerilir.",
+      "daily": "Günlük",
+      "dailyHint": "Günde bir kez kontrol eder.",
+      "weekly": "Haftalık",
+      "weeklyHint": "Haftada bir kez kontrol eder.",
+      "tokenNote": "Dikkat: bir kalp atışı, aracıyı otomatik olarak çalıştırır ve her tetiklendiğinde yapay zeka jetonları (ve sağlayıcı kotanız) kullanır. Bunu istediğiniz zaman değiştirebilir veya kapatabilirsiniz."
+    },
+    "firstTask": {
+      "heading": "İlk görevinizi oluşturun",
+      "subtitle": "Görevler, işi {{name}}'e nasıl devrettiğinizdir. Şimdi bir tane yazın ve cabinet'inize düşsün, çalışmaya hazır olsun.",
+      "label": "{{name}} ilk olarak ne yapmalı?",
+      "placeholder": "örn. Yeni müşteriler için bir hoş geldin e-postası taslağı hazırla",
+      "example1": "Son notlarımı özetle",
+      "example2": "Bir proje planı taslağı hazırla",
+      "example3": "En iyi 3 rakibimizi araştır",
+      "note": "Bunu boş bırakıp görevleri daha sonra ekleyebilirsiniz. Bir yapay zeka sağlayıcısı bağlayana kadar hiçbir şey çalışmaz."
+    },
+    "rail": {
+      "untitled": "Cabinet'iniz",
+      "dataCaption": "Projenizin tüm dosyaları ve notları burada bulunur.",
+      "teamEmpty": "Henüz ajan yok.",
+      "teamCaption": "Yapay zeka ekibiniz burada çalışır.",
+      "tasksEmpty": "Henüz görev yok.",
+      "tasksCaption": "Ekibinize verdiğiniz işler burada görünür.",
+      "assignedTo": "{{name}}'e atandı",
+      "you": "Siz"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "İçe aktarma başarısız oldu",
       "importFailedConnection": "İçe aktarma başarısız oldu. Bağlantınızı kontrol edin.",
       "importTitle": "{{name}} içe aktar",
-      "orPickAgents": "Veya aracılarınızı seçin",
+      "pickAgents": "Ajanlarınızı seçin",
       "required": "Gerekli",
-      "startFromTemplate": "Şablondan Başla",
       "subtitle": "Her Cabinet, ajanlar, görevler ve paylaşılan bir bilgi tabanından oluşan, tek bir bütün olarak çalışan bir yapay zeka ekibidir.",
       "heading": "<accent>Ekibini</accent> kur",
+      "nameLabel": "Ajan adı",
+      "namePlaceholder": "örn. Editör, Araştırmacı, Asistan",
+      "roleLabel": "Rol",
+      "rolePlaceholder": "örn. Yazım asistanı",
+      "instructionsLabel": "Bu ajan ne yapmalı?",
+      "instructionsPlaceholder": "Nasıl yardımcı olması gerektiğini açıklayın. Örneğin: Sayfalarımı taslak haline getir ve düzenle, tonu net ve samimi tut ve iyileştirmeler öner.",
+      "agentOptionalHint": "İsteğe bağlı. Bunu atlayabilir ve ajanları daha sonra odanın içinden ekleyebilirsiniz.",
       "agentCount_one": "{{count}} ajan",
       "agentCount_other": "{{count}} ajan",
       "jobCount_one": "{{count}} iş",
@@ -1410,6 +1622,10 @@
       "loading": "Yükleniyor…",
       "connect": "Bağlan",
       "recommended": "Önerilen"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Çok yakında",
+      "hint": "Harici entegrasyonlar ve yerleşik araçların bağlantısı yolda."
     },
     "storage": {
       "dataDirectory": "Veri Dizini",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Loader2, Plus, Search } from "lucide-react";
+import { Check, Loader2, PenLine, Plus, Search } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -33,12 +33,15 @@ export function NewAgentDialog({
   cabinetPath,
   existingSlugs,
   onAdded,
+  onCreateFromScratch,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cabinetPath: string;
   existingSlugs?: Set<string>;
   onAdded: () => void | Promise<void>;
+  /** Switch to the build-from-scratch flow. The parent owns that dialog. */
+  onCreateFromScratch?: () => void;
 }) {
   const { t } = useLocale();
   const [templates, setTemplates] = useState<AgentTemplate[]>([]);
@@ -173,6 +176,29 @@ export function NewAgentDialog({
               className="h-8 w-full rounded-md border border-border/70 bg-background pl-8 pr-3 text-[12.5px] outline-none placeholder:text-muted-foreground focus:border-ring"
             />
           </div>
+
+          {onCreateFromScratch ? (
+            <button
+              type="button"
+              onClick={() => {
+                onOpenChange(false);
+                onCreateFromScratch();
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg border border-dashed border-border px-3 py-2 text-left transition-colors hover:border-primary hover:bg-primary/5"
+            >
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                <PenLine className="size-3.5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[12.5px] font-semibold text-foreground">
+                  {t("agents:dialog.createFromScratchTitle")}
+                </span>
+                <span className="block truncate text-[11px] text-muted-foreground">
+                  {t("agents:dialog.createFromScratchDescription")}
+                </span>
+              </span>
+            </button>
+          ) : null}
 
           {error ? (
             <p className="rounded-md bg-destructive/10 px-3 py-2 text-[12px] text-destructive">

@@ -1,5 +1,8 @@
 "use client";
 
+import { invalidateDedupFetch } from "@/lib/api/dedup-fetch";
+import { useAppStore } from "@/stores/app-store";
+
 /**
  * Thin client helpers for the v2 task board's write actions. Each maps to a
  * PATCH on /api/agents/conversations/[id]. Server shape is defined in
@@ -131,6 +134,13 @@ export async function deleteConversation(
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`delete ${id} failed: ${res.status} ${text}`);
+  }
+
+  invalidateDedupFetch("/api/agents/conversations");
+
+  const open = useAppStore.getState().taskPanelConversation;
+  if (open?.id === id) {
+    useAppStore.getState().setTaskPanelConversation(null);
   }
 }
 

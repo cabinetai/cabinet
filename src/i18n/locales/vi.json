@@ -13,6 +13,8 @@
       "promptPlaceholder": "Bạn là tác nhân marketing cho…",
       "addAgentTitle": "Thêm tác nhân vào nhóm của bạn",
       "addAgentDescription": "Chọn một chuyên gia từ thư viện. Bạn có thể chỉnh sửa tên, vai trò và hướng dẫn của nó sau khi thêm.",
+      "createFromScratchTitle": "Tạo từ đầu",
+      "createFromScratchDescription": "Xây dựng một tác nhân mới với danh tính, vai trò và hướng dẫn riêng.",
       "searchLibraryPlaceholder": "Tìm kiếm thư viện",
       "errorLoadLibrary": "Không thể tải thư viện tác nhân.",
       "errorAddAgent": "Không thể thêm tác nhân này."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "Tải kiến thức",
+    "intro": "Chỉ định Cabinet đến bất kỳ thư mục nào trên máy của bạn. Cabinet tạo một liên kết tượng trưng (symlink) để nội dung thư mục xuất hiện trong Cơ sở Tri thức của bạn và có sẵn cho các tác nhân AI làm ngữ cảnh. Thư mục gốc không bao giờ bị di chuyển hoặc sao chép.",
+    "symlinkNote": "Thao tác này tạo một liên kết tượng trưng — các tệp vẫn ở vị trí ban đầu.",
     "autoDetectPlaceholder": "Tự động phát hiện từ git remote (tùy chọn)",
     "shortSummaryPlaceholder": "Tóm tắt ngắn tùy chọn cho các tác nhân"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Mở chế độ xem cabinet",
     "pageTitlePlaceholder": "Tiêu đề trang…",
     "rename": "Đổi tên",
-    "openBadge": "Mở"
+    "openBadge": "Mở",
+    "sectionAdd": "Thêm vào mục này",
+    "sectionThis": "Mục này",
+    "addSubPage": "Thêm Trang Con",
+    "newFolder": "Thư mục Mới",
+    "createFile": "Tạo Tệp Mới…",
+    "connectKnowledge": "Kết nối Tri thức…",
+    "symlinkTag": "Liên kết tượng trưng",
+    "importFile": "Nhập Tệp…",
+    "importFolder": "Nhập Thư mục…",
+    "createCabinet": "Tạo Cabinet Tại Đây",
+    "editSymlink": "Sửa Liên kết tượng trưng…",
+    "settings": "Cài đặt…",
+    "moveTo": "Di chuyển đến…",
+    "copyRelativePath": "Sao chép Đường dẫn Tương đối",
+    "copyFullPath": "Sao chép Đường dẫn Đầy đủ",
+    "openInFinder": "Mở trong Finder",
+    "delete": "Xóa",
+    "unlink": "Hủy liên kết",
+    "folderNamePlaceholder": "Tên thư mục",
+    "creating": "Đang tạo…",
+    "create": "Tạo",
+    "addSubPageTitle": "Thêm Trang Con vào “{{name}}”",
+    "newFolderTitle": "Thư mục Mới trong “{{name}}”"
+  },
+  "newFile": {
+    "title": "Tạo Tệp Mới",
+    "subtitle": "Chọn loại tệp. Cabinet sẽ mở tệp đó trong trình chỉnh sửa khi sẵn sàng.",
+    "groupNative": "Chỉnh sửa trong Cabinet",
+    "groupOffice": "Office (trống — chỉnh sửa bên ngoài)",
+    "groupGoogle": "Google (đã liên kết)",
+    "namePlaceholder": "Tên tệp",
+    "create": "Tạo",
+    "creating": "Đang tạo…",
+    "googleUrlLabel": "URL Google (tùy chọn)",
+    "googleUrlPlaceholder": "Dán liên kết Google có thể chia sẻ, hoặc để trống để thêm sau",
+    "officeNote": "Cabinet hiển thị các tệp Office ở chế độ chỉ đọc. Sử dụng “Mở trong Finder” để chỉnh sửa trong ứng dụng máy tính.",
+    "types": {
+      "markdown": "Trang Markdown",
+      "markdownDesc": "Ghi chú văn bản đa dạng thức, có thể chỉnh sửa trong Cabinet",
+      "code": "Tệp mã",
+      "codeDesc": "Bất kỳ tệp nguồn/văn bản nào — chọn phần mở rộng",
+      "mermaid": "Sơ đồ Mermaid",
+      "mermaidDesc": "Lưu đồ và sơ đồ dưới dạng mã",
+      "csv": "Bảng CSV",
+      "csvDesc": "Dữ liệu bảng tính phân tách bằng dấu phẩy",
+      "docx": "Tài liệu Word",
+      "docxDesc": "Trống .docx",
+      "xlsx": "Bảng tính Excel",
+      "xlsxDesc": "Trống .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Trống .pptx",
+      "gdoc": "Google Tài liệu",
+      "gdocDesc": "Nhúng Google Tài liệu",
+      "gsheet": "Google Trang tính",
+      "gsheetDesc": "Nhúng Google Trang tính",
+      "gslides": "Google Trang trình bày",
+      "gslidesDesc": "Nhúng Google Trang trình bày"
+    },
+    "codeExtLabel": "Phần mở rộng",
+    "googleTag": "Google",
+    "extHint": "Chỉ cần nhập tên — Cabinet sẽ thêm phần mở rộng {{ext}}.",
+    "createFailed": "Không thể tạo tệp."
+  },
+  "fileSettings": {
+    "googleTitle": "Cài đặt nhúng Google",
+    "googleKindLabel": "Loại",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Tài liệu phải được chia sẻ ở chế độ “Bất kỳ ai có liên kết” hoặc “Đã xuất bản lên web” để có thể nhúng.",
+    "openLink": "Mở trong Google",
+    "googleKinds": {
+      "docs": "Tài liệu",
+      "sheets": "Trang tính",
+      "slides": "Trang trình bày",
+      "forms": "Biểu mẫu",
+      "drive": "Drive"
+    },
+    "appTitle": "Cài đặt ứng dụng web",
+    "modeLabel": "Mở bằng cách nào?",
+    "modeWebsite": "Chế độ xem trang",
+    "modeWebsiteDesc": "Mở nội tuyến với thanh bên và bảng AI hiển thị.",
+    "modeApp": "Ứng dụng web",
+    "modeAppDesc": "Mở toàn màn hình; thanh bên và bảng AI tự động thu gọn.",
+    "convertNote": "Thao tác này bật/tắt tệp đánh dấu .app trong thư mục. Các tệp của bạn không bị thay đổi.",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "cancel": "Hủy",
+    "saveFailed": "Không thể lưu cài đặt."
+  },
+  "editSymlink": {
+    "title": "Sửa Symlink",
+    "intro": "Mục Cơ sở Tri thức này là một liên kết tượng trưng đến một thư mục khác trên máy của bạn.",
+    "kbPathLabel": "Đường dẫn Cơ sở Tri thức",
+    "targetLabel": "Liên kết đến (trên ổ đĩa)",
+    "brokenWarning": "Thư mục đích không còn tồn tại. Vui lòng trỏ lại đến một thư mục hợp lệ bên dưới.",
+    "repointLabel": "Trỏ lại đến thư mục mới",
+    "repointHint": "Cabinet sẽ thay thế liên kết để trỏ đến đây. Các tệp không bao giờ bị di chuyển.",
+    "browse": "Duyệt",
+    "nameLabel": "Tên",
+    "descriptionLabel": "Mô tả",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "copyTarget": "Sao chép đường dẫn đích",
+    "saveFailed": "Không thể cập nhật symlink."
+  },
+  "importFolder": {
+    "importing": "Đang nhập thư mục…",
+    "failed": "Nhập thư mục thất bại: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Đang tải tác vụ"
@@ -756,7 +868,9 @@
     "noSkills": "Chưa có kỹ năng nào."
   },
   "taskDetail": {
-    "close": "Đóng (Esc)"
+    "close": "Đóng (Esc)",
+    "muteTask": "Tắt tiếng tác vụ này — các lần chạy đã hoàn thành của nó sẽ chuyển thẳng vào Kho lưu trữ",
+    "unmuteTask": "Bật tiếng tác vụ này — các lần chạy đã hoàn thành của nó sẽ xuất hiện lại trong Đã hoàn thành gần đây"
   },
   "rowActionsPlus": {
     "edit": "Sửa",
@@ -861,6 +975,41 @@
     "revealInFinder": "Hiển thị trong trình quản lý tệp",
     "stored": "Đã lưu trữ",
     "resetOnboarding": "Đặt lại hướng dẫn"
+  },
+  "rooms": {
+    "switcherTitle": "Chuyển phòng",
+    "switchRoom": "Phòng",
+    "loading": "Đang tải…",
+    "defaultTag": "Trang chủ",
+    "openInNewWindow": "Mở trong cửa sổ mới",
+    "opensBrowserWindow": "Mở một cửa sổ trình duyệt mới",
+    "customizeRoom": "Sửa phòng",
+    "addRoom": "Thêm phòng…",
+    "editTitle": "Sửa phòng",
+    "editSubtitle": "Đặt tên, biểu tượng, màu sắc và chủ đề cho phòng này.",
+    "nameLabel": "Tên hiển thị",
+    "slugHint": "Tên thư mục trên ổ đĩa vẫn là {{slug}}. Đổi tên thư mục là một hành động riêng biệt, nâng cao.",
+    "iconLabel": "Biểu tượng",
+    "colorLabel": "Màu sắc",
+    "colorAuto": "Tự động",
+    "themeLabel": "Chủ đề",
+    "themeGlobal": "Sử dụng mặc định toàn cầu",
+    "editFailed": "Không thể lưu phòng. Vui lòng thử lại.",
+    "deleteRoom": "Xóa phòng…",
+    "deleteLastRoomDisabledHint": "Bạn không thể xóa phòng cuối cùng của mình.",
+    "deleteTitle": "Xóa phòng này?",
+    "deleteSubtitle": "Phòng này và mọi thứ bên trong nó sẽ được chuyển vào thùng rác.",
+    "deleteWarningIntro": "Việc chuyển phòng vào thùng rác cũng xóa:",
+    "deleteWarningPages": "Các trang và tệp bên trong phòng này",
+    "deleteWarningAgents": "Tác nhân, cuộc trò chuyện và bộ nhớ của phòng này",
+    "deleteWarningJobs": "Công việc và quy trình đã lên lịch của phòng này",
+    "deleteWarningChat": "Lịch sử trò chuyện nhóm của phòng này",
+    "deleteWarningSearch": "Chỉ mục tìm kiếm của phòng (tự động xây dựng lại nếu khôi phục)",
+    "deleteRecoveryNote": "Khôi phục: phòng được chuyển đến data/.trash/ — hãy khôi phục bằng cách di chuyển thư mục trở lại data/.",
+    "deleteConfirmLabel": "Nhập {{slug}} để xác nhận",
+    "deleteConfirmButton": "Xóa phòng",
+    "deleting": "Đang xóa…",
+    "deleteFailed": "Không thể xóa phòng. Vui lòng thử lại."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Trước khi khởi chạy",
       "defaultCabinetName": "Cabinet của bạn",
       "defaultDescription": "Cơ sở tri thức + Đội ngũ AI",
+      "knowledgeBaseLabel": "Cơ sở tri thức",
+      "aiTeamLabel": "Đội ngũ AI",
       "launchCabinet": "Khởi chạy Cabinet",
       "settingUp": "Đang thiết lập...",
       "disclaimerAccess": "<strong>Các tác nhân chạy với quyền truy cập đầy đủ.</strong> Cabinet sử dụng <flag>--dangerously-skip-permissions</flag> (Claude Code) và các cờ tương đương ở các nhà cung cấp khác. Điều này giống hệt như việc chạy các công cụ CLI này từ terminal của riêng bạn. Bất kỳ máy chủ hoặc công cụ MCP nào bạn đã cấu hình đều có thể được các tác nhân tự động gọi.",
       "disclaimerBackup": "<strong>Sao lưu dữ liệu của bạn thường xuyên.</strong> Các tác nhân có thể đọc, ghi và xóa tệp trên KB và các kho lưu trữ được liên kết của bạn. Cabinet không chịu trách nhiệm về việc mất dữ liệu. Bạn chịu trách nhiệm về các nhà cung cấp AI bạn chọn và điều khoản dịch vụ của họ.",
       "disclaimerBeta": "<strong>Phần mềm Beta. Mọi thứ có thể gặp lỗi.</strong> Chúng tôi phát hành nhanh chóng. Các thay đổi gây lỗi có thể xuất hiện mà không báo trước.",
-      "legalNotice": "Bằng cách tiếp tục, bạn đồng ý với <terms>Điều khoản</terms> và <privacy>Quyền riêng tư</privacy> của chúng tôi. Cabinet là một <oss>dự án mã nguồn mở</oss>."
+      "legalNotice": "Bằng cách tiếp tục, bạn đồng ý với <terms>Điều khoản</terms> và <privacy>Quyền riêng tư</privacy> của chúng tôi. Cabinet là một <oss>dự án mã nguồn mở</oss>.",
+      "keepInTouch": "Hãy giữ liên lạc. Cabinet là mã nguồn mở và được xây dựng công khai, chúng tôi rất muốn biết nên xây dựng gì tiếp theo. Không spam, chúng tôi hứa."
     },
     "provider": {
       "agentType": "{{type}} tác nhân",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Sắp ra mắt",
       "guide": "Hướng dẫn",
       "heading": "Nhà cung cấp tác nhân",
+      "moreModels": "Thêm AI",
       "install": "Cài đặt",
       "logIn": "Đăng nhập",
       "openTerminalButton": "Mở terminal",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "Cabinet này dùng để làm gì? Mỗi phòng đi kèm với đội ngũ AI riêng.",
       "heading": "Chọn một <accent>phòng</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet là gì?",
+      "body": "Cabinet là một không gian làm việc tập trung cho một lĩnh vực trong cuộc sống hoặc công việc của bạn. Nó chứa các tệp, ghi chú, công cụ, tác nhân và nhiệm vụ của bạn, để đội ngũ AI của bạn có ngữ cảnh cần thiết để thực sự giúp đỡ.",
+      "examplesLabel": "Cách mọi người sử dụng Cabinet",
+      "example1": "startup của bạn",
+      "example2": "một kho lưu trữ GitHub",
+      "example3": "công việc marketing của bạn",
+      "example4": "một dự án khách hàng",
+      "example5": "cơ sở tri thức cá nhân của bạn"
+    },
+    "access": {
+      "heading": "{{name}} có thể truy cập gì?",
+      "subtitle": "Chọn kiến thức và công cụ mà tác nhân này có thể sử dụng. Bạn có thể thay đổi điều này bất cứ lúc nào.",
+      "defaultAgent": "tác nhân của bạn",
+      "files": "Tệp & kiến thức",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Máy chủ MCP",
+      "plugins": "Plugin",
+      "skills": "Kỹ năng",
+      "placeholderNote": "Bạn có thể tinh chỉnh quyền truy cập sau này trong cài đặt của tác nhân."
+    },
+    "heartbeat": {
+      "heading": "{{name}} có nên chạy theo nhịp tim không?",
+      "subtitle": "Nhịp tim cho phép tác nhân tự động kiểm tra và làm việc theo lịch trình.",
+      "off": "Tắt",
+      "offHint": "Chỉ chạy khi bạn yêu cầu. Nên bắt đầu với tùy chọn này.",
+      "daily": "Hàng ngày",
+      "dailyHint": "Kiểm tra một lần mỗi ngày.",
+      "weekly": "Hàng tuần",
+      "weeklyHint": "Kiểm tra một lần mỗi tuần.",
+      "tokenNote": "Lưu ý: nhịp tim tự động chạy tác nhân, điều này sử dụng token AI (và hạn mức nhà cung cấp của bạn) mỗi khi nó kích hoạt. Bạn có thể thay đổi hoặc tắt tính năng này bất cứ lúc nào."
+    },
+    "firstTask": {
+      "heading": "Giao nhiệm vụ đầu tiên của bạn",
+      "subtitle": "Nhiệm vụ là cách bạn giao việc cho {{name}}. Viết một nhiệm vụ ngay bây giờ và nó sẽ nằm trong cabinet của bạn, sẵn sàng để chạy.",
+      "label": "{{name}} nên làm gì trước tiên?",
+      "placeholder": "ví dụ: Soạn email chào mừng cho khách hàng mới",
+      "example1": "Tóm tắt các ghi chú mới nhất của tôi",
+      "example2": "Soạn thảo kế hoạch dự án",
+      "example3": "Nghiên cứu 3 đối thủ cạnh tranh hàng đầu của chúng tôi",
+      "note": "Bạn có thể để trống và thêm tác vụ sau. Không có gì chạy cho đến khi bạn kết nối nhà cung cấp AI."
+    },
+    "rail": {
+      "untitled": "Cabinet của bạn",
+      "dataCaption": "Tất cả tệp và ghi chú dự án của bạn nằm ở đây.",
+      "teamEmpty": "Chưa có tác nhân nào.",
+      "teamCaption": "Đội ngũ AI của bạn làm việc ở đây.",
+      "tasksEmpty": "Chưa có tác vụ nào.",
+      "tasksCaption": "Công việc bạn giao cho nhóm sẽ hiển thị ở đây.",
+      "assignedTo": "Được giao cho {{name}}",
+      "you": "Bạn"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "Nhập thất bại",
       "importFailedConnection": "Nhập thất bại. Kiểm tra kết nối của bạn.",
       "importTitle": "Nhập {{name}}",
-      "orPickAgents": "Hoặc chọn các tác nhân của bạn",
+      "pickAgents": "Chọn tác nhân của bạn",
       "required": "Bắt buộc",
-      "startFromTemplate": "Bắt đầu từ một mẫu",
       "subtitle": "Mỗi cabinet là một đội ngũ AI — các tác nhân, nhiệm vụ và một cơ sở tri thức chung, cùng nhau hoạt động như một thể thống nhất.",
       "heading": "Xây dựng đội ngũ <accent>của bạn</accent>",
+      "nameLabel": "Tên tác nhân",
+      "namePlaceholder": "ví dụ: Biên tập viên, Nghiên cứu viên, Trợ lý",
+      "roleLabel": "Vai trò",
+      "rolePlaceholder": "ví dụ: Trợ lý viết",
+      "instructionsLabel": "Tác nhân này nên làm gì?",
+      "instructionsPlaceholder": "Mô tả cách nó nên giúp đỡ. Ví dụ: Soạn thảo và chỉnh sửa các trang của tôi, giữ giọng văn rõ ràng và thân thiện, và đề xuất cải tiến.",
+      "agentOptionalHint": "Tùy chọn. Bạn có thể bỏ qua bước này và thêm tác nhân sau từ bên trong phòng.",
       "agentCount_one": "{{count}} tác nhân",
       "agentCount_other": "{{count}} tác nhân",
       "jobCount_one": "{{count}} công việc",
@@ -1410,6 +1622,10 @@
       "loading": "Đang tải…",
       "connect": "Kết nối",
       "recommended": "Được đề xuất"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Sắp ra mắt",
+      "hint": "Kết nối các tích hợp bên ngoài và công cụ tích hợp đang được triển khai."
     },
     "storage": {
       "dataDirectory": "Thư mục dữ liệu",

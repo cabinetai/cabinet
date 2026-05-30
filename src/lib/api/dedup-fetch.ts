@@ -90,3 +90,20 @@ export function resetDedupFetch(): void {
   inflight.clear();
   recent.clear();
 }
+
+/**
+ * Drop cached GET responses whose dedup key contains `urlIncludes`.
+ * Call after mutations (e.g. delete) so the next list refresh cannot
+ * resurrect stale rows from the short TTL cache.
+ */
+export function invalidateDedupFetch(urlIncludes?: string): void {
+  if (!urlIncludes) {
+    recent.clear();
+    return;
+  }
+  for (const key of recent.keys()) {
+    if (key.includes(urlIncludes)) {
+      recent.delete(key);
+    }
+  }
+}

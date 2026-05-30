@@ -13,6 +13,8 @@
       "promptPlaceholder": "أنت وكيل تسويق لـ…",
       "addAgentTitle": "أضف وكيلاً إلى فريقك",
       "addAgentDescription": "اختر أخصائيًا من المكتبة. يمكنك تعديل اسمه ودوره وتعليماته بعد إضافته.",
+      "createFromScratchTitle": "إنشاء من الصفر",
+      "createFromScratchDescription": "أنشئ وكيلًا جديدًا بهويته ودوره وتعليماته الخاصة.",
       "searchLibraryPlaceholder": "البحث في المكتبة",
       "errorLoadLibrary": "تعذر تحميل مكتبة الوكلاء.",
       "errorAddAgent": "تعذر إضافة هذا الوكيل."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "تحميل المعرفة",
+    "intro": "وجّه Cabinet إلى أي مجلد على جهازك. ينشئ Cabinet رابطًا رمزيًا (symlink) بحيث تظهر محتويات المجلد في قاعدة معارفك وتكون متاحة لوكلاء الذكاء الاصطناعي كسياق. لا يتم نقل المجلد الأصلي أو نسخه أبدًا.",
+    "symlinkNote": "ينشئ هذا رابطًا رمزيًا — تبقى الملفات في مكانها.",
     "autoDetectPlaceholder": "اكتشاف تلقائي من git remote (اختياري)",
     "shortSummaryPlaceholder": "ملخص قصير اختياري للوكلاء"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "فتح عرض Cabinet",
     "pageTitlePlaceholder": "عنوان الصفحة…",
     "rename": "إعادة تسمية",
-    "openBadge": "فتح"
+    "openBadge": "فتح",
+    "sectionAdd": "إضافة إلى هذا العنصر",
+    "sectionThis": "هذا العنصر",
+    "addSubPage": "إضافة صفحة فرعية",
+    "newFolder": "مجلد جديد",
+    "createFile": "إنشاء ملف جديد…",
+    "connectKnowledge": "ربط المعرفة…",
+    "symlinkTag": "رابط رمزي",
+    "importFile": "استيراد ملف…",
+    "importFolder": "استيراد مجلد…",
+    "createCabinet": "إنشاء Cabinet هنا",
+    "editSymlink": "تعديل الرابط الرمزي…",
+    "settings": "الإعدادات…",
+    "moveTo": "نقل إلى…",
+    "copyRelativePath": "نسخ المسار النسبي",
+    "copyFullPath": "نسخ المسار الكامل",
+    "openInFinder": "فتح في Finder",
+    "delete": "حذف",
+    "unlink": "إلغاء الربط",
+    "folderNamePlaceholder": "اسم المجلد",
+    "creating": "جارٍ الإنشاء…",
+    "create": "إنشاء",
+    "addSubPageTitle": "إضافة صفحة فرعية إلى “{{name}}”",
+    "newFolderTitle": "مجلد جديد في “{{name}}”"
+  },
+  "newFile": {
+    "title": "إنشاء ملف جديد",
+    "subtitle": "اختر نوع ملف. سيفتحه Cabinet في المحرر عندما يكون جاهزًا.",
+    "groupNative": "تعديل في Cabinet",
+    "groupOffice": "Office (فارغ — تعديل خارجيًا)",
+    "groupGoogle": "Google (مرتبط)",
+    "namePlaceholder": "اسم الملف",
+    "create": "إنشاء",
+    "creating": "جارٍ الإنشاء…",
+    "googleUrlLabel": "رابط Google (اختياري)",
+    "googleUrlPlaceholder": "الصق رابط Google قابل للمشاركة، أو اتركه فارغًا للإضافة لاحقًا",
+    "officeNote": "يعرض Cabinet ملفات Office للقراءة فقط. استخدم “فتح في Finder” للتعديل في تطبيق سطح المكتب.",
+    "types": {
+      "markdown": "صفحة Markdown",
+      "markdownDesc": "ملاحظات نص منسق، قابلة للتحرير في Cabinet",
+      "code": "ملف تعليمات برمجية",
+      "codeDesc": "أي ملف مصدر/نصي — اختر الامتداد",
+      "mermaid": "مخطط Mermaid",
+      "mermaidDesc": "مخططات انسيابية ورسوم بيانية كتعليمات برمجية",
+      "csv": "جدول CSV",
+      "csvDesc": "بيانات جدول بيانات مفصولة بفواصل",
+      "docx": "مستند Word",
+      "docxDesc": "docx. فارغ",
+      "xlsx": "جدول بيانات Excel",
+      "xlsxDesc": "xlsx. فارغ",
+      "pptx": "PowerPoint",
+      "pptxDesc": "pptx. فارغ",
+      "gdoc": "مستند Google",
+      "gdocDesc": "تضمين مستند Google",
+      "gsheet": "ورقة Google",
+      "gsheetDesc": "تضمين ورقة Google",
+      "gslides": "شرائح Google",
+      "gslidesDesc": "تضمين شرائح Google"
+    },
+    "codeExtLabel": "الامتداد",
+    "googleTag": "جوجل",
+    "extHint": "فقط اكتب الاسم — يضيف Cabinet امتداد {{ext}}.",
+    "createFailed": "تعذر إنشاء الملف."
+  },
+  "fileSettings": {
+    "googleTitle": "إعدادات تضمين جوجل",
+    "googleKindLabel": "النوع",
+    "googleUrlLabel": "رابط جوجل",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "يجب أن تكون مشاركة المستند “أي شخص لديه الرابط” أو “منشور على الويب” لكي يتم تحميل التضمين.",
+    "openLink": "فتح في جوجل",
+    "googleKinds": {
+      "docs": "مستندات",
+      "sheets": "جداول بيانات",
+      "slides": "شرائح",
+      "forms": "نماذج",
+      "drive": "درايف"
+    },
+    "appTitle": "إعدادات تطبيق الويب",
+    "modeLabel": "كيف يجب أن يفتح هذا؟",
+    "modeWebsite": "عرض الصفحة",
+    "modeWebsiteDesc": "يفتح مضمنًا مع ظهور الشريط الجانبي ولوحة الذكاء الاصطناعي.",
+    "modeApp": "تطبيق الويب",
+    "modeAppDesc": "يفتح بملء الشاشة؛ ينهار الشريط الجانبي ولوحة الذكاء الاصطناعي تلقائيًا.",
+    "convertNote": "هذا يبدل ملف علامة .app في المجلد. لم يتم تغيير ملفاتك.",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…",
+    "cancel": "إلغاء",
+    "saveFailed": "تعذر حفظ الإعدادات."
+  },
+  "editSymlink": {
+    "title": "تعديل الارتباط الرمزي",
+    "intro": "هذا الإدخال في قاعدة المعرفة هو ارتباط رمزي إلى مجلد آخر على جهازك.",
+    "kbPathLabel": "مسار قاعدة المعرفة",
+    "targetLabel": "روابط إلى (على القرص)",
+    "brokenWarning": "المجلد الهدف لم يعد موجودًا. أعد توجيهه إلى مجلد صالح أدناه.",
+    "repointLabel": "أعد التوجيه إلى مجلد جديد",
+    "repointHint": "سيستبدل Cabinet الرابط ليشير إلى هنا. لا يتم نقل الملفات أبدًا.",
+    "browse": "استعراض",
+    "nameLabel": "الاسم",
+    "descriptionLabel": "الوصف",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…",
+    "copyTarget": "نسخ مسار الهدف",
+    "saveFailed": "تعذر تحديث الرابط الرمزي."
+  },
+  "importFolder": {
+    "importing": "جارٍ استيراد المجلد…",
+    "failed": "فشل استيراد المجلد: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "جارٍ تحميل المهام"
@@ -756,7 +868,9 @@
     "noSkills": "لا توجد مهارات بعد."
   },
   "taskDetail": {
-    "close": "إغلاق (Esc)"
+    "close": "إغلاق (Esc)",
+    "muteTask": "كتم هذه المهمة — عمليات تشغيلها المكتملة تذهب مباشرة إلى الأرشيف",
+    "unmuteTask": "إلغاء كتم هذه المهمة — عمليات تشغيلها المكتملة تظهر مرة أخرى في المنتهية للتو"
   },
   "rowActionsPlus": {
     "edit": "تعديل",
@@ -861,6 +975,41 @@
     "revealInFinder": "إظهار في مدير الملفات",
     "stored": "مخزن",
     "resetOnboarding": "إعادة تعيين الإعداد الأولي"
+  },
+  "rooms": {
+    "switcherTitle": "تبديل الغرفة",
+    "switchRoom": "الغرف",
+    "loading": "جارٍ التحميل…",
+    "defaultTag": "الرئيسية",
+    "openInNewWindow": "فتح في نافذة جديدة",
+    "opensBrowserWindow": "يفتح نافذة متصفح جديدة",
+    "customizeRoom": "تحرير الغرفة",
+    "addRoom": "إضافة غرفة…",
+    "editTitle": "تحرير الغرفة",
+    "editSubtitle": "عيّن اسم هذه الغرفة، أيقونتها، لونها، ومظهرها.",
+    "nameLabel": "اسم العرض",
+    "slugHint": "يبقى اسم المجلد على القرص كما هو {{slug}}. إعادة تسمية المجلد هي إجراء منفصل ومتقدم.",
+    "iconLabel": "الأيقونة",
+    "colorLabel": "اللون",
+    "colorAuto": "تلقائي",
+    "themeLabel": "المظهر",
+    "themeGlobal": "استخدام الافتراضي العام",
+    "editFailed": "تعذر حفظ الغرفة. يرجى المحاولة مرة أخرى.",
+    "deleteRoom": "حذف الغرفة…",
+    "deleteLastRoomDisabledHint": "لا يمكنك حذف غرفتك الأخيرة.",
+    "deleteTitle": "هل تريد حذف هذه الغرفة؟",
+    "deleteSubtitle": "سيتم نقل هذه الغرفة وكل ما بداخلها إلى سلة المهملات.",
+    "deleteWarningIntro": "نقل الغرفة إلى سلة المهملات يزيل أيضًا:",
+    "deleteWarningPages": "الصفحات والملفات داخل هذه الغرفة",
+    "deleteWarningAgents": "الوكلاء والمحادثات والذاكرة الخاصة بهذه الغرفة",
+    "deleteWarningJobs": "المهام الروتينية والمجدولة في هذه الغرفة",
+    "deleteWarningChat": "سجل دردشة الفريق لهذه الغرفة",
+    "deleteWarningSearch": "فهرس بحث الغرفة (يُعاد بناؤه تلقائيًا عند الاستعادة)",
+    "deleteRecoveryNote": "الاستعادة: يتم نقل الغرفة إلى data/.trash/ — استعدها بنقل المجلد مرة أخرى إلى data/.",
+    "deleteConfirmLabel": "اكتب {{slug}} للتأكيد",
+    "deleteConfirmButton": "حذف الغرفة",
+    "deleting": "جارٍ الحذف…",
+    "deleteFailed": "تعذر حذف الغرفة. يرجى المحاولة مرة أخرى."
   },
   "common": {
     "actions": {
@@ -972,7 +1121,7 @@
       "switchToRtl": "التبديل إلى RTL",
       "scrollLeft": "تمرير شريط الأدوات لليسار",
       "scrollRight": "تمرير شريط الأدوات لليمين",
-      "markdown": "Markdown",
+      "markdown": "ماركداون",
       "preview": "معاينة"
     }
   },
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "قبل الإطلاق",
       "defaultCabinetName": "خزانتك",
       "defaultDescription": "قاعدة معرفة + فريق ذكاء اصطناعي",
+      "knowledgeBaseLabel": "قاعدة المعرفة",
+      "aiTeamLabel": "فريق الذكاء الاصطناعي",
       "launchCabinet": "إطلاق Cabinet",
       "settingUp": "جارٍ الإعداد...",
       "disclaimerAccess": "<strong>تعمل الوكلاء بصلاحيات كاملة.</strong> يستخدم Cabinet <flag>--dangerously-skip-permissions</flag> (Claude Code) وعلامات مكافئة في المزودين الآخرين. هذا مطابق لتشغيل أدوات سطر الأوامر هذه من طرفيتك الخاصة. قد يتم استدعاء أي خوادم أو أدوات MCP قمت بتكوينها تلقائيًا بواسطة الوكلاء.",
       "disclaimerBackup": "<strong>احتفظ بنسخة احتياطية من بياناتك بانتظام.</strong> يمكن للوكلاء قراءة الملفات وكتابتها وحذفها عبر قاعدة بياناتك والمستودعات المرتبطة. Cabinet غير مسؤول عن فقدان البيانات. أنت مسؤول عن مزودي الذكاء الاصطناعي الذين تختارهم وشروط خدمتهم.",
       "disclaimerBeta": "<strong>برنامج تجريبي. قد تحدث أعطال.</strong> نحن نطلق التحديثات بسرعة. قد تحدث تغييرات جذرية دون إشعار.",
-      "legalNotice": "بالمتابعة، أنت توافق على <terms>شروطنا</terms> و <privacy>الخصوصية</privacy>. Cabinet هو <oss>مشروع مفتوح المصدر</oss>."
+      "legalNotice": "بالمتابعة، أنت توافق على <terms>شروطنا</terms> و <privacy>الخصوصية</privacy>. Cabinet هو <oss>مشروع مفتوح المصدر</oss>.",
+      "keepInTouch": "أبقني على اطلاع. Cabinet مفتوح المصدر ومبني بشفافية، ونود أن نعرف ما الذي يجب بناؤه لاحقًا. لا بريد مزعج، نعدك بذلك."
     },
     "provider": {
       "agentType": "وكيل {{type}}",
@@ -1119,6 +1271,7 @@
       "comingSoon": "قريبًا",
       "guide": "دليل",
       "heading": "مزود الوكيل",
+      "moreModels": "المزيد من الذكاءات الاصطناعية",
       "install": "تثبيت",
       "logIn": "تسجيل الدخول",
       "openTerminalButton": "فتح الطرفية",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "ما فائدة هذه الخزانة؟ كل غرفة تأتي مع فريق الذكاء الاصطناعي الخاص بها.",
       "heading": "اختر <accent>غرفة</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "ما هو Cabinet؟",
+      "body": "Cabinet هو مساحة عمل مركزة لمجال واحد من حياتك أو عملك. يحتوي على ملفاتك وملاحظاتك وأدواتك ووكلائك ومهامك، ليمتلك فريق الذكاء الاصطناعي السياق الذي يحتاجه للمساعدة فعليًا.",
+      "examplesLabel": "كيف يستخدم الناس Cabinet",
+      "example1": "شركتك الناشئة",
+      "example2": "مستودع GitHub",
+      "example3": "عملك التسويقي",
+      "example4": "مشروع عميل",
+      "example5": "قاعدة معرفتك الشخصية"
+    },
+    "access": {
+      "heading": "ما الذي يمكن لـ {{name}} الوصول إليه؟",
+      "subtitle": "اختر المعرفة والأدوات التي يمكن لهذا الوكيل استخدامها. يمكنك تغيير هذا في أي وقت.",
+      "defaultAgent": "وكيلك",
+      "files": "الملفات والمعرفة",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "خوادم MCP",
+      "plugins": "الإضافات",
+      "skills": "المهارات",
+      "placeholderNote": "يمكنك ضبط الوصول لاحقًا في إعدادات الوكيل."
+    },
+    "heartbeat": {
+      "heading": "هل يجب أن يعمل {{name}} بانتظام؟",
+      "subtitle": "يتيح التشغيل المنتظم للوكيل التحقق والعمل بمفرده وفق جدول زمني.",
+      "off": "إيقاف",
+      "offHint": "يعمل فقط عندما تطلب ذلك. موصى به للبدء.",
+      "daily": "يوميًا",
+      "dailyHint": "يتحقق مرة واحدة يوميًا.",
+      "weekly": "أسبوعيًا",
+      "weeklyHint": "يتحقق مرة واحدة أسبوعيًا.",
+      "tokenNote": "تنبيه: التشغيل المنتظم يقوم بتشغيل الوكيل تلقائيًا، مما يستهلك رموز الذكاء الاصطناعي (وحصتك من المزود) في كل مرة يعمل فيها. يمكنك تغيير هذا أو إيقافه في أي وقت."
+    },
+    "firstTask": {
+      "heading": "سجل مهمتك الأولى",
+      "subtitle": "المهام هي كيفية تسليم العمل إلى {{name}}. اكتب واحدة الآن وستصل إلى Cabinet الخاص بك، جاهزة للتشغيل.",
+      "label": "ماذا يجب أن يفعل {{name}} أولاً؟",
+      "placeholder": "مثال: صياغة بريد إلكتروني ترحيبي للعملاء الجدد",
+      "example1": "تلخيص ملاحظاتي الأخيرة",
+      "example2": "صياغة خطة مشروع",
+      "example3": "البحث عن أفضل 3 منافسين لنا",
+      "note": "يمكنك ترك هذا فارغًا وإضافة المهام لاحقًا. لا شيء يعمل حتى تقوم بتوصيل مزود ذكاء اصطناعي."
+    },
+    "rail": {
+      "untitled": "Cabinet الخاص بك",
+      "dataCaption": "جميع ملفات وملاحظات مشروعك موجودة هنا.",
+      "teamEmpty": "لا يوجد وكلاء بعد.",
+      "teamCaption": "يعمل فريق الذكاء الاصطناعي الخاص بك هنا.",
+      "tasksEmpty": "لا توجد مهام بعد.",
+      "tasksCaption": "العمل الذي تسنده إلى فريقك يظهر هنا.",
+      "assignedTo": "مُسند إلى {{name}}",
+      "you": "أنت"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "فشل الاستيراد",
       "importFailedConnection": "فشل الاستيراد. تحقق من اتصالك.",
       "importTitle": "استيراد {{name}}",
-      "orPickAgents": "أو اختر وكلائك",
+      "pickAgents": "اختر وكلاءك",
       "required": "مطلوب",
-      "startFromTemplate": "البدء من قالب",
       "subtitle": "كل خزانة هي فريق ذكاء اصطناعي — وكلاء ومهام وقاعدة معرفة مشتركة، تعمل معًا ككيان واحد.",
       "heading": "ابنِ <accent>فريقك</accent>",
+      "nameLabel": "اسم الوكيل",
+      "namePlaceholder": "مثال: محرر، باحث، مساعد",
+      "roleLabel": "الدور",
+      "rolePlaceholder": "مثال: مساعد كتابة",
+      "instructionsLabel": "ماذا يجب أن يفعل هذا الوكيل؟",
+      "instructionsPlaceholder": "صف كيف يجب أن يساعد. على سبيل المثال: صِغ صفحاتي وحررها، وحافظ على نبرة واضحة وودودة، واقترح تحسينات.",
+      "agentOptionalHint": "اختياري. يمكنك تخطي هذا وإضافة وكلاء لاحقًا من داخل الغرفة.",
       "agentCount_one": "{{count}} وكيل",
       "agentCount_other": "{{count}} وكلاء",
       "jobCount_one": "{{count}} مهمة",
@@ -1410,6 +1622,10 @@
       "loading": "جارٍ التحميل…",
       "connect": "اتصال",
       "recommended": "موصى به"
+    },
+    "integrationsPreview": {
+      "comingSoon": "قريبًا",
+      "hint": "ربط التكاملات الخارجية والأدوات المدمجة قادم قريبًا."
     },
     "storage": {
       "dataDirectory": "دليل البيانات",

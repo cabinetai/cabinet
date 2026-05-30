@@ -196,6 +196,13 @@ export const useTreeStore = create<TreeState>((set, get) => ({
       neighbors.nextName === undefined;
     if (sameParent) return;
 
+    // Re-entrancy guard: a single drop can fire the handler more than once
+    // (synthetic-event quirks, a lingering native drag session) before the
+    // disabled-row state takes hold. Without this, the first call moves the
+    // item and the duplicates fail (the source path is gone) — surfacing a
+    // stack of "Failed to move" toasts for a move that actually succeeded.
+    if (get().movingPaths.has(fromPath)) return;
+
     set((state) => {
       const next = new Set(state.movingPaths);
       next.add(fromPath);

@@ -13,6 +13,8 @@
       "promptPlaceholder": "Anda adalah agen pemasaran untuk…",
       "addAgentTitle": "Tambahkan agen ke tim Anda",
       "addAgentDescription": "Pilih spesialis dari pustaka. Anda dapat mengedit nama, peran, dan instruksinya setelah ditambahkan.",
+      "createFromScratchTitle": "Buat dari awal",
+      "createFromScratchDescription": "Buat agen baru dengan identitas, peran, dan instruksinya sendiri.",
       "searchLibraryPlaceholder": "Cari di pustaka",
       "errorLoadLibrary": "Gagal memuat pustaka agen.",
       "errorAddAgent": "Gagal menambahkan agen ini."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "Muat Pengetahuan",
+    "intro": "Arahkan Cabinet ke folder mana pun di mesin Anda. Cabinet membuat symlink agar konten folder muncul di Basis Pengetahuan Anda dan tersedia untuk agen AI sebagai konteks. Folder asli tidak pernah dipindahkan atau disalin.",
+    "symlinkNote": "Ini membuat tautan simbolis — file tetap di tempatnya.",
     "autoDetectPlaceholder": "Deteksi otomatis dari git remote (opsional)",
     "shortSummaryPlaceholder": "Ringkasan singkat opsional untuk agen"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Buka tampilan Cabinet",
     "pageTitlePlaceholder": "Judul halaman…",
     "rename": "Ganti Nama",
-    "openBadge": "Buka"
+    "openBadge": "Buka",
+    "sectionAdd": "Tambahkan ke item ini",
+    "sectionThis": "Item ini",
+    "addSubPage": "Tambah Sub Halaman",
+    "newFolder": "Folder Baru",
+    "createFile": "Buat File Baru…",
+    "connectKnowledge": "Hubungkan Pengetahuan…",
+    "symlinkTag": "Symlink",
+    "importFile": "Impor File…",
+    "importFolder": "Impor Folder…",
+    "createCabinet": "Buat Cabinet Di Sini",
+    "editSymlink": "Edit Symlink…",
+    "settings": "Pengaturan…",
+    "moveTo": "Pindahkan ke…",
+    "copyRelativePath": "Salin Jalur Relatif",
+    "copyFullPath": "Salin Jalur Lengkap",
+    "openInFinder": "Buka di Finder",
+    "delete": "Hapus",
+    "unlink": "Putuskan Tautan",
+    "folderNamePlaceholder": "Nama folder",
+    "creating": "Membuat…",
+    "create": "Buat",
+    "addSubPageTitle": "Tambahkan Subhalaman ke “{{name}}”",
+    "newFolderTitle": "Folder Baru di “{{name}}”"
+  },
+  "newFile": {
+    "title": "Buat File Baru",
+    "subtitle": "Pilih jenis file. Cabinet akan membukanya di editor setelah siap.",
+    "groupNative": "Edit di Cabinet",
+    "groupOffice": "Office (kosong — edit secara eksternal)",
+    "groupGoogle": "Google (tertaut)",
+    "namePlaceholder": "Nama file",
+    "create": "Buat",
+    "creating": "Membuat…",
+    "googleUrlLabel": "URL Google (opsional)",
+    "googleUrlPlaceholder": "Tempel tautan Google yang dapat dibagikan, atau biarkan kosong untuk ditambahkan nanti",
+    "officeNote": "Cabinet menampilkan file Office dalam mode hanya-baca. Gunakan “Buka di Finder” untuk mengedit di aplikasi desktop.",
+    "types": {
+      "markdown": "Halaman Markdown",
+      "markdownDesc": "Catatan teks kaya, dapat diedit di Cabinet",
+      "code": "File Kode",
+      "codeDesc": "File sumber/teks apa pun — pilih ekstensinya",
+      "mermaid": "Diagram Mermaid",
+      "mermaidDesc": "Diagram alir dan diagram sebagai kode",
+      "csv": "Tabel CSV",
+      "csvDesc": "Data spreadsheet yang dipisahkan koma",
+      "docx": "Dokumen Word",
+      "docxDesc": ".docx kosong",
+      "xlsx": "Spreadsheet Excel",
+      "xlsxDesc": ".xlsx kosong",
+      "pptx": "PowerPoint",
+      "pptxDesc": ".pptx kosong",
+      "gdoc": "Google Doc",
+      "gdocDesc": "Sematkan Google Doc",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "Sematkan Google Sheet",
+      "gslides": "Google Slides",
+      "gslidesDesc": "Sematkan Google Slides"
+    },
+    "codeExtLabel": "Ekstensi",
+    "googleTag": "Google",
+    "extHint": "Cukup ketik namanya — Cabinet akan menambahkan ekstensi {{ext}}.",
+    "createFailed": "Tidak dapat membuat file."
+  },
+  "fileSettings": {
+    "googleTitle": "Pengaturan Sematan Google",
+    "googleKindLabel": "Jenis",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Pengaturan berbagi dokumen harus “Siapa saja dengan tautan” atau “Dipublikasikan ke web” agar sematan dapat dimuat.",
+    "openLink": "Buka di Google",
+    "googleKinds": {
+      "docs": "Dokumen",
+      "sheets": "Spreadsheet",
+      "slides": "Slide",
+      "forms": "Formulir",
+      "drive": "Drive"
+    },
+    "appTitle": "Pengaturan Aplikasi Web",
+    "modeLabel": "Bagaimana ini dibuka?",
+    "modeWebsite": "Tampilan Halaman",
+    "modeWebsiteDesc": "Dibuka sebaris dengan bilah sisi dan panel AI terlihat.",
+    "modeApp": "Aplikasi Web",
+    "modeAppDesc": "Dibuka layar penuh; bilah sisi dan panel AI otomatis tersembunyi.",
+    "convertNote": "Ini mengubah status file penanda .app di folder. File Anda tidak diubah.",
+    "save": "Simpan",
+    "saving": "Menyimpan…",
+    "cancel": "Batal",
+    "saveFailed": "Gagal menyimpan pengaturan."
+  },
+  "editSymlink": {
+    "title": "Edit Symlink",
+    "intro": "Entri Basis Pengetahuan ini adalah tautan simbolis ke folder di lokasi lain di perangkat Anda.",
+    "kbPathLabel": "Jalur Basis Pengetahuan",
+    "targetLabel": "Menautkan ke (di disk)",
+    "brokenWarning": "Folder target tidak lagi ada. Arahkan ulang ke folder yang valid di bawah.",
+    "repointLabel": "Arahkan ulang ke folder baru",
+    "repointHint": "Cabinet akan mengganti tautan untuk menunjuk ke sini. File tidak pernah dipindahkan.",
+    "browse": "Jelajahi",
+    "nameLabel": "Nama",
+    "descriptionLabel": "Deskripsi",
+    "save": "Simpan",
+    "saving": "Menyimpan…",
+    "copyTarget": "Salin jalur target",
+    "saveFailed": "Gagal memperbarui symlink."
+  },
+  "importFolder": {
+    "importing": "Mengimpor folder…",
+    "failed": "Impor folder gagal: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Memuat tugas"
@@ -756,7 +868,9 @@
     "noSkills": "Belum ada skill."
   },
   "taskDetail": {
-    "close": "Tutup (Esc)"
+    "close": "Tutup (Esc)",
+    "muteTask": "Bisukan tugas ini — eksekusi yang selesai langsung masuk ke Arsip",
+    "unmuteTask": "Aktifkan suara tugas ini — eksekusi yang selesai muncul kembali di Baru Selesai"
   },
   "rowActionsPlus": {
     "edit": "Edit",
@@ -861,6 +975,41 @@
     "revealInFinder": "Tampilkan di pengelola berkas",
     "stored": "Tersimpan",
     "resetOnboarding": "Setel ulang orientasi"
+  },
+  "rooms": {
+    "switcherTitle": "Ganti ruangan",
+    "switchRoom": "Ruangan",
+    "loading": "Memuat…",
+    "defaultTag": "Beranda",
+    "openInNewWindow": "Buka di jendela baru",
+    "opensBrowserWindow": "Membuka jendela browser baru",
+    "customizeRoom": "Edit Ruangan",
+    "addRoom": "Tambah ruangan…",
+    "editTitle": "Edit Ruangan",
+    "editSubtitle": "Atur nama, ikon, warna, dan tema ruangan ini.",
+    "nameLabel": "Nama tampilan",
+    "slugHint": "Nama folder di disk tetap {{slug}}. Mengganti nama folder adalah tindakan terpisah dan lanjutan.",
+    "iconLabel": "Ikon",
+    "colorLabel": "Warna",
+    "colorAuto": "Otomatis",
+    "themeLabel": "Tema",
+    "themeGlobal": "Gunakan default global",
+    "editFailed": "Gagal menyimpan ruangan. Silakan coba lagi.",
+    "deleteRoom": "Hapus ruangan…",
+    "deleteLastRoomDisabledHint": "Anda tidak bisa menghapus ruangan terakhir Anda.",
+    "deleteTitle": "Hapus ruangan ini?",
+    "deleteSubtitle": "Ruangan ini dan semua isinya akan dipindahkan ke sampah.",
+    "deleteWarningIntro": "Memindahkan ruangan ke sampah juga menghapus:",
+    "deleteWarningPages": "Halaman dan file di dalam ruangan ini",
+    "deleteWarningAgents": "Agen, percakapan, dan memori yang terkait dengan ruangan ini",
+    "deleteWarningJobs": "Tugas terjadwal dan rutinitas di ruangan ini",
+    "deleteWarningChat": "Riwayat obrolan tim untuk ruangan ini",
+    "deleteWarningSearch": "Indeks pencarian ruangan (dibangun ulang secara otomatis jika dipulihkan)",
+    "deleteRecoveryNote": "Pemulihan: ruangan dipindahkan ke data/.trash/ — pulihkan dengan memindahkan folder kembali ke data/.",
+    "deleteConfirmLabel": "Ketik {{slug}} untuk mengonfirmasi",
+    "deleteConfirmButton": "Hapus Ruangan",
+    "deleting": "Menghapus…",
+    "deleteFailed": "Gagal menghapus ruangan. Silakan coba lagi."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Sebelum Anda meluncurkan",
       "defaultCabinetName": "Cabinet Anda",
       "defaultDescription": "Basis pengetahuan + tim AI",
+      "knowledgeBaseLabel": "Basis pengetahuan",
+      "aiTeamLabel": "Tim AI",
       "launchCabinet": "Luncurkan Cabinet",
       "settingUp": "Menyiapkan...",
       "disclaimerAccess": "<strong>Agen berjalan dengan akses penuh.</strong> Cabinet menggunakan <flag>--dangerously-skip-permissions</flag> (Claude Code) dan flag setara di penyedia lain. Ini sama dengan menjalankan alat CLI ini dari terminal Anda sendiri. Server atau alat MCP apa pun yang telah Anda konfigurasi dapat dipanggil secara otomatis oleh agen.",
       "disclaimerBackup": "<strong>Cadangkan data Anda secara teratur.</strong> Agen dapat membaca, menulis, dan menghapus file di seluruh KB dan repo yang terhubung. Cabinet tidak bertanggung jawab atas kehilangan data. Anda bertanggung jawab atas penyedia AI yang Anda pilih dan ketentuan layanannya.",
       "disclaimerBeta": "<strong>Perangkat lunak beta. Hal-hal mungkin rusak.</strong> Kami merilis dengan cepat. Perubahan yang merusak dapat terjadi tanpa pemberitahuan.",
-      "legalNotice": "Dengan melanjutkan, Anda menyetujui <terms>Ketentuan</terms> dan <privacy>Privasi</privacy> kami. Cabinet adalah <oss>proyek sumber terbuka</oss>."
+      "legalNotice": "Dengan melanjutkan, Anda menyetujui <terms>Ketentuan</terms> dan <privacy>Privasi</privacy> kami. Cabinet adalah <oss>proyek sumber terbuka</oss>.",
+      "keepInTouch": "Tetap terhubung. Cabinet adalah sumber terbuka dan dibangun secara terbuka, dan kami ingin tahu apa yang harus dibangun selanjutnya. Tanpa spam, kami janji."
     },
     "provider": {
       "agentType": "agen {{type}}",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Segera hadir",
       "guide": "Panduan",
       "heading": "Penyedia Agen",
+      "moreModels": "AI Lainnya",
       "install": "Instal",
       "logIn": "Masuk",
       "openTerminalButton": "Buka terminal",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "Untuk apa cabinet ini? Setiap ruangan dilengkapi tim AI-nya sendiri.",
       "heading": "Pilih sebuah <accent>ruangan</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Apa itu Cabinet?",
+      "body": "Cabinet adalah ruang kerja terfokus untuk satu area kehidupan atau pekerjaan Anda. Ini menyimpan file, catatan, alat, agen, dan tugas Anda, sehingga tim AI Anda memiliki konteks yang dibutuhkan untuk benar-benar membantu.",
+      "examplesLabel": "Cara orang menggunakan Cabinet",
+      "example1": "startup Anda",
+      "example2": "repo GitHub",
+      "example3": "pekerjaan pemasaran Anda",
+      "example4": "proyek klien",
+      "example5": "basis pengetahuan pribadi Anda"
+    },
+    "access": {
+      "heading": "Apa yang bisa diakses {{name}}?",
+      "subtitle": "Pilih pengetahuan dan alat yang bisa digunakan agen ini. Anda bisa mengubahnya kapan saja.",
+      "defaultAgent": "agen Anda",
+      "files": "File & pengetahuan",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Server MCP",
+      "plugins": "Plugin",
+      "skills": "Keahlian",
+      "placeholderNote": "Anda dapat menyempurnakan akses nanti di pengaturan agen."
+    },
+    "heartbeat": {
+      "heading": "Haruskah {{name}} berjalan secara terjadwal?",
+      "subtitle": "Jadwal memungkinkan agen untuk memeriksa dan bekerja secara otomatis sesuai jadwal.",
+      "off": "Mati",
+      "offHint": "Hanya berjalan saat Anda minta. Direkomendasikan untuk memulai.",
+      "daily": "Harian",
+      "dailyHint": "Memeriksa sekali sehari.",
+      "weekly": "Mingguan",
+      "weeklyHint": "Memeriksa sekali seminggu.",
+      "tokenNote": "Perhatian: jadwal menjalankan agen secara otomatis, yang menggunakan token AI (dan kuota penyedia Anda) setiap kali aktif. Anda dapat mengubah atau mematikannya kapan saja."
+    },
+    "firstTask": {
+      "heading": "Ajukan tugas pertama Anda",
+      "subtitle": "Tugas adalah cara Anda menyerahkan pekerjaan kepada {{name}}. Tulis sekarang dan akan masuk ke kabinet Anda, siap dijalankan.",
+      "label": "Apa yang harus {{name}} lakukan pertama?",
+      "placeholder": "contoh: Buat draf email selamat datang untuk pelanggan baru",
+      "example1": "Rangkum catatan terbaru saya",
+      "example2": "Buat draf rencana proyek",
+      "example3": "Riset 3 pesaing teratas kami",
+      "note": "Anda bisa membiarkannya kosong dan menambahkan tugas nanti. Tidak ada yang berjalan sampai Anda menghubungkan penyedia AI."
+    },
+    "rail": {
+      "untitled": "Kabinet Anda",
+      "dataCaption": "Semua file dan catatan proyek Anda ada di sini.",
+      "teamEmpty": "Belum ada agen.",
+      "teamCaption": "Tim AI Anda bekerja di sini.",
+      "tasksEmpty": "Belum ada tugas.",
+      "tasksCaption": "Pekerjaan yang Anda serahkan kepada tim Anda muncul di sini.",
+      "assignedTo": "Ditugaskan kepada {{name}}",
+      "you": "Anda"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "Impor gagal",
       "importFailedConnection": "Impor gagal. Periksa koneksi Anda.",
       "importTitle": "Impor {{name}}",
-      "orPickAgents": "Atau pilih agen Anda",
+      "pickAgents": "Pilih agen Anda",
       "required": "Wajib",
-      "startFromTemplate": "Mulai dari templat",
       "subtitle": "Setiap cabinet adalah tim AI — agen, tugas, dan basis pengetahuan bersama, bekerja sama sebagai satu kesatuan.",
       "heading": "Bangun tim <accent>Anda</accent>",
+      "nameLabel": "Nama agen",
+      "namePlaceholder": "contoh: Editor, Peneliti, Asisten",
+      "roleLabel": "Peran",
+      "rolePlaceholder": "contoh: Asisten penulisan",
+      "instructionsLabel": "Apa yang harus agen ini lakukan?",
+      "instructionsPlaceholder": "Jelaskan bagaimana seharusnya membantu. Contoh: Buat draf dan edit halaman saya, jaga nada tetap jelas dan ramah, serta sarankan perbaikan.",
+      "agentOptionalHint": "Opsional. Anda bisa melewati ini dan menambahkan agen nanti dari dalam ruangan.",
       "agentCount_one": "{{count}} agen",
       "agentCount_other": "{{count}} agen",
       "jobCount_one": "{{count}} tugas",
@@ -1410,6 +1622,10 @@
       "loading": "Memuat…",
       "connect": "Sambungkan",
       "recommended": "Direkomendasikan"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Segera hadir",
+      "hint": "Menghubungkan integrasi eksternal dan alat bawaan sedang dalam pengembangan."
     },
     "storage": {
       "dataDirectory": "Direktori Data",

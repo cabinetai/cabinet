@@ -13,6 +13,8 @@
       "promptPlaceholder": "તમે આના માટે માર્કેટિંગ એજન્ટ છો…",
       "addAgentTitle": "તમારી ટીમમાં એક એજન્ટ ઉમેરો",
       "addAgentDescription": "લાઇબ્રેરીમાંથી એક સ્પેશિયાલિસ્ટ પસંદ કરો. ઉમેર્યા પછી તમે તેનું નામ, ભૂમિકા અને સૂચનાઓ સંપાદિત કરી શકો છો.",
+      "createFromScratchTitle": "શરૂઆતથી બનાવો",
+      "createFromScratchDescription": "નવી ઓળખ, ભૂમિકા અને સૂચનાઓ સાથે નવો એજન્ટ બનાવો.",
       "searchLibraryPlaceholder": "લાઇબ્રેરી શોધો",
       "errorLoadLibrary": "એજન્ટ લાઇબ્રેરી લોડ કરી શકાયું નથી.",
       "errorAddAgent": "આ એજન્ટ ઉમેરી શકાયો નથી."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "જ્ઞાન લોડ કરો",
+    "intro": "તમારા મશીન પરના કોઈપણ ફોલ્ડરને Cabinet સાથે જોડો. Cabinet એક સિમલિંક બનાવે છે જેથી ફોલ્ડરની સામગ્રી તમારા નોલેજ બેઝમાં દેખાય અને AI એજન્ટ્સ માટે સંદર્ભ તરીકે ઉપલબ્ધ હોય. મૂળ ફોલ્ડર ક્યારેય ખસેડવામાં કે કૉપિ કરવામાં આવતું નથી.",
+    "symlinkNote": "આ એક સિમ્બોલિક લિંક બનાવે છે — ફાઇલો જ્યાં છે ત્યાં જ રહે છે.",
     "autoDetectPlaceholder": "ગિટ રીમોટમાંથી સ્વતઃ-શોધો (વૈકલ્પિક)",
     "shortSummaryPlaceholder": "એજન્ટો માટે વૈકલ્પિક ટૂંકો સારાંશ"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Cabinet દૃશ્ય ખોલો",
     "pageTitlePlaceholder": "પૃષ્ઠ શીર્ષક…",
     "rename": "નામ બદલો",
-    "openBadge": "ખોલો"
+    "openBadge": "ખોલો",
+    "sectionAdd": "આ આઇટમમાં ઉમેરો",
+    "sectionThis": "આ આઇટમ",
+    "addSubPage": "સબ પેજ ઉમેરો",
+    "newFolder": "નવું ફોલ્ડર",
+    "createFile": "નવી ફાઇલ બનાવો…",
+    "connectKnowledge": "નોલેજ કનેક્ટ કરો…",
+    "symlinkTag": "સિમલિંક",
+    "importFile": "ફાઇલ ઇમ્પોર્ટ કરો…",
+    "importFolder": "ફોલ્ડર ઇમ્પોર્ટ કરો…",
+    "createCabinet": "અહીં Cabinet બનાવો",
+    "editSymlink": "સિમલિંક સંપાદિત કરો…",
+    "settings": "સેટિંગ્સ…",
+    "moveTo": "અહીં ખસેડો…",
+    "copyRelativePath": "સંબંધિત પાથ કૉપિ કરો",
+    "copyFullPath": "સંપૂર્ણ પાથ કૉપિ કરો",
+    "openInFinder": "ફાઇન્ડરમાં ખોલો",
+    "delete": "કાઢી નાખો",
+    "unlink": "અનલિંક કરો",
+    "folderNamePlaceholder": "ફોલ્ડરનું નામ",
+    "creating": "બનાવી રહ્યું છે…",
+    "create": "બનાવો",
+    "addSubPageTitle": "“{{name}}” માં સબ પેજ ઉમેરો",
+    "newFolderTitle": "“{{name}}” માં નવું ફોલ્ડર"
+  },
+  "newFile": {
+    "title": "નવી ફાઇલ બનાવો",
+    "subtitle": "ફાઇલનો પ્રકાર પસંદ કરો. તૈયાર થયા પછી Cabinet તેને એડિટરમાં ખોલશે.",
+    "groupNative": "Cabinet માં સંપાદિત કરો",
+    "groupOffice": "ઓફિસ (ખાલી — બહારથી સંપાદિત કરો)",
+    "groupGoogle": "Google (લિંક કરેલ)",
+    "namePlaceholder": "ફાઇલનું નામ",
+    "create": "બનાવો",
+    "creating": "બનાવી રહ્યું છે…",
+    "googleUrlLabel": "Google URL (વૈકલ્પિક)",
+    "googleUrlPlaceholder": "શેર કરી શકાય તેવી Google લિંક પેસ્ટ કરો, અથવા પછીથી ઉમેરવા માટે ખાલી છોડો",
+    "officeNote": "Cabinet Office ફાઇલોને ફક્ત વાંચવા માટે દર્શાવે છે. ડેસ્કટોપ એપ્લિકેશનમાં સંપાદિત કરવા માટે “Open in Finder” નો ઉપયોગ કરો.",
+    "types": {
+      "markdown": "માર્કડાઉન પેજ",
+      "markdownDesc": "રિચ ટેક્સ્ટ નોટ્સ, Cabinet માં સંપાદિત કરી શકાય તેવી",
+      "code": "કોડ ફાઇલ",
+      "codeDesc": "કોઈપણ સ્રોત/ટેક્સ્ટ ફાઇલ — એક્સટેન્શન પસંદ કરો",
+      "mermaid": "મરમેઇડ ડાયાગ્રામ",
+      "mermaidDesc": "કોડ તરીકે ફ્લોચાર્ટ્સ અને ડાયાગ્રામ્સ",
+      "csv": "CSV ટેબલ",
+      "csvDesc": "અલ્પવિરામથી અલગ કરેલો સ્પ્રેડશીટ ડેટા",
+      "docx": "વર્ડ ડોક્યુમેન્ટ",
+      "docxDesc": "ખાલી .docx",
+      "xlsx": "એક્સેલ સ્પ્રેડશીટ",
+      "xlsxDesc": "ખાલી .xlsx",
+      "pptx": "પાવરપોઈન્ટ",
+      "pptxDesc": "ખાલી .pptx",
+      "gdoc": "Google Doc",
+      "gdocDesc": "Google Doc એમ્બેડ કરો",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "Google Sheet એમ્બેડ કરો",
+      "gslides": "Google Slides",
+      "gslidesDesc": "Google Slides એમ્બેડ કરો"
+    },
+    "codeExtLabel": "એક્સટેન્શન",
+    "googleTag": "Google",
+    "extHint": "ફક્ત નામ ટાઇપ કરો — Cabinet {{ext}} એક્સટેન્શન ઉમેરશે.",
+    "createFailed": "ફાઇલ બનાવી શકાય નહીં."
+  },
+  "fileSettings": {
+    "googleTitle": "Google એમ્બેડ સેટિંગ્સ",
+    "googleKindLabel": "પ્રકાર",
+    "googleUrlLabel": "Google URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "એમ્બેડ લોડ થવા માટે ડોકનું શેરિંગ “Anyone with the link” અથવા “Published to web” હોવું આવશ્યક છે.",
+    "openLink": "Google માં ખોલો",
+    "googleKinds": {
+      "docs": "Docs",
+      "sheets": "Sheets",
+      "slides": "Slides",
+      "forms": "Forms",
+      "drive": "Drive"
+    },
+    "appTitle": "વેબ એપ્લિકેશન સેટિંગ્સ",
+    "modeLabel": "આ કેવી રીતે ખુલવું જોઈએ?",
+    "modeWebsite": "પેજ વ્યૂ",
+    "modeWebsiteDesc": "સાઇડબાર અને AI પેનલ દૃશ્યમાન હોય ત્યારે ઇનલાઇન ખુલે છે.",
+    "modeApp": "વેબ એપ્લિકેશન",
+    "modeAppDesc": "પૂર્ણ-સ્ક્રીન ખુલે છે; સાઇડબાર અને AI પેનલ આપમેળે સંકોચાઈ જાય છે.",
+    "convertNote": "આ ફોલ્ડરમાં .app માર્કર ફાઇલને ટૉગલ કરે છે. તમારી ફાઇલો બદલાતી નથી.",
+    "save": "સાચવો",
+    "saving": "સાચવી રહ્યું છે…",
+    "cancel": "રદ કરો",
+    "saveFailed": "સેટિંગ્સ સાચવી શકાય નહીં."
+  },
+  "editSymlink": {
+    "title": "સિમ્લિંક સંપાદિત કરો",
+    "intro": "આ નોલેજ બેઝ એન્ટ્રી તમારા મશીન પર અન્યત્ર આવેલા ફોલ્ડરની સિમ્બોલિક લિંક છે.",
+    "kbPathLabel": "નોલેજ બેઝ પાથ",
+    "targetLabel": "આનાથી લિંક થયેલ છે (ડિસ્ક પર)",
+    "brokenWarning": "લક્ષ્ય ફોલ્ડર હવે અસ્તિત્વમાં નથી. તેને નીચેના માન્ય ફોલ્ડર પર ફરીથી નિર્દેશિત કરો.",
+    "repointLabel": "નવા ફોલ્ડર પર ફરીથી નિર્દેશિત કરો",
+    "repointHint": "Cabinet અહીં નિર્દેશ કરવા માટે લિંકને બદલશે. ફાઇલો ક્યારેય ખસેડવામાં આવતી નથી.",
+    "browse": "બ્રાઉઝ કરો",
+    "nameLabel": "નામ",
+    "descriptionLabel": "વર્ણન",
+    "save": "સાચવો",
+    "saving": "સાચવી રહ્યું છે…",
+    "copyTarget": "લક્ષ્ય પાથ કોપી કરો",
+    "saveFailed": "સિમ્લિંક અપડેટ કરી શકાયું નથી."
+  },
+  "importFolder": {
+    "importing": "ફોલ્ડર આયાત કરી રહ્યું છે…",
+    "failed": "ફોલ્ડર આયાત નિષ્ફળ: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "કાર્યો લોડ કરી રહ્યા છીએ"
@@ -756,7 +868,9 @@
     "noSkills": "હજુ સુધી કોઈ કૌશલ્ય નથી."
   },
   "taskDetail": {
-    "close": "બંધ કરો (Esc)"
+    "close": "બંધ કરો (Esc)",
+    "muteTask": "આ કાર્યને મ્યૂટ કરો — તેના પૂર્ણ થયેલા રન સીધા આર્કાઇવમાં જાય છે",
+    "unmuteTask": "આ કાર્યને અનમ્યૂટ કરો — તેના પૂર્ણ થયેલા રન 'જસ્ટ ફિનિશ્ડ'માં ફરી દેખાય છે"
   },
   "rowActionsPlus": {
     "edit": "સંપાદિત કરો",
@@ -861,6 +975,41 @@
     "revealInFinder": "ફાઇલ મેનેજરમાં બતાવો",
     "stored": "સંગ્રહિત",
     "resetOnboarding": "ઓનબોર્ડિંગ રીસેટ કરો"
+  },
+  "rooms": {
+    "switcherTitle": "રૂમ બદલો",
+    "switchRoom": "રૂમ્સ",
+    "loading": "લોડ કરી રહ્યું છે…",
+    "defaultTag": "હોમ",
+    "openInNewWindow": "નવી વિન્ડોમાં ખોલો",
+    "opensBrowserWindow": "નવી બ્રાઉઝર વિન્ડો ખોલે છે",
+    "customizeRoom": "રૂમ સંપાદિત કરો",
+    "addRoom": "રૂમ ઉમેરો…",
+    "editTitle": "રૂમ સંપાદિત કરો",
+    "editSubtitle": "આ રૂમનું નામ, આઇકન, રંગ અને થીમ સેટ કરો.",
+    "nameLabel": "પ્રદર્શન નામ",
+    "slugHint": "ડિસ્ક પર ફોલ્ડરનું નામ {{slug}} જ રહેશે. ફોલ્ડરનું નામ બદલવું એ એક અલગ, અદ્યતન ક્રિયા છે.",
+    "iconLabel": "આઇકન",
+    "colorLabel": "રંગ",
+    "colorAuto": "ઓટો",
+    "themeLabel": "થીમ",
+    "themeGlobal": "વૈશ્વિક ડિફોલ્ટ વાપરો",
+    "editFailed": "રૂમ સાચવી શકાયો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.",
+    "deleteRoom": "રૂમ કાઢી નાખો…",
+    "deleteLastRoomDisabledHint": "તમે તમારો છેલ્લો રૂમ કાઢી શકતા નથી.",
+    "deleteTitle": "આ રૂમ કાઢી નાખવો છે?",
+    "deleteSubtitle": "આ રૂમ અને તેની અંદરની દરેક વસ્તુ ટ્રેશમાં ખસેડવામાં આવશે.",
+    "deleteWarningIntro": "રૂમને ટ્રેશમાં ખસેડવાથી આ પણ દૂર થાય છે:",
+    "deleteWarningPages": "આ રૂમની અંદરના પૃષ્ઠો અને ફાઇલો",
+    "deleteWarningAgents": "આ રૂમ માટે નિર્ધારિત એજન્ટ્સ, વાર્તાલાપ અને મેમરી",
+    "deleteWarningJobs": "આ રૂમમાં શેડ્યૂલ કરેલા કાર્યો અને રૂટિન",
+    "deleteWarningChat": "આ રૂમ માટે ટીમ ચેટ ઇતિહાસ",
+    "deleteWarningSearch": "રૂમનો સર્ચ ઇન્ડેક્સ (પુનઃસ્થાપિત કરવા પર આપમેળે ફરીથી બને છે)",
+    "deleteRecoveryNote": "પુનઃપ્રાપ્તિ: રૂમને data/.trash/ માં ખસેડવામાં આવ્યો છે — ફોલ્ડરને પાછું data/ માં ખસેડીને તેને પુનઃસ્થાપિત કરો.",
+    "deleteConfirmLabel": "પુષ્ટિ કરવા માટે {{slug}} ટાઇપ કરો",
+    "deleteConfirmButton": "રૂમ કાઢી નાખો",
+    "deleting": "કાઢી રહ્યું છે…",
+    "deleteFailed": "રૂમ કાઢી શકાયો નથી. કૃપા કરીને ફરી પ્રયાસ કરો."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "તમે લોન્ચ કરો તે પહેલાં",
       "defaultCabinetName": "તમારું Cabinet",
       "defaultDescription": "નોલેજ બેઝ + AI ટીમ",
+      "knowledgeBaseLabel": "નોલેજ બેઝ",
+      "aiTeamLabel": "AI ટીમ",
       "launchCabinet": "Cabinet લોન્ચ કરો",
       "settingUp": "સેટઅપ થઈ રહ્યું છે...",
       "disclaimerAccess": "<strong>એજન્ટ્સ સંપૂર્ણ ઍક્સેસ સાથે ચાલે છે.</strong> Cabinet <flag>--dangerously-skip-permissions</flag> (Claude Code) અને અન્ય પ્રદાતાઓમાં સમકક્ષ ફ્લેગ્સનો ઉપયોગ કરે છે. આ તમારા પોતાના ટર્મિનલમાંથી આ CLI ટૂલ્સ ચલાવવા સમાન છે. તમે ગોઠવેલા કોઈપણ MCP સર્વર્સ અથવા ટૂલ્સ એજન્ટ્સ દ્વારા આપમેળે બોલાવી શકાય છે.",
       "disclaimerBackup": "<strong>તમારા ડેટાનો નિયમિત બેકઅપ લો.</strong> એજન્ટ્સ તમારા KB અને લિંક કરેલા રેપોઝમાં ફાઇલો વાંચી, લખી અને ડિલીટ કરી શકે છે. ડેટા ગુમાવવા માટે Cabinet જવાબદાર નથી. તમે પસંદ કરેલા AI પ્રદાતાઓ અને તેમની સેવાની શરતો માટે તમે જવાબદાર છો.",
       "disclaimerBeta": "<strong>બીટા સોફ્ટવેર. વસ્તુઓ તૂટી શકે છે.</strong> અમે ઝડપથી શિપ કરીએ છીએ. નોટિસ વિના બ્રેકિંગ ફેરફારો આવી શકે છે.",
-      "legalNotice": "ચાલુ રાખીને તમે અમારી <terms>શરતો</terms> અને <privacy>ગોપનીયતા</privacy> સાથે સંમત થાઓ છો. Cabinet એક <oss>ઓપન-સોર્સ પ્રોજેક્ટ</oss> છે."
+      "legalNotice": "ચાલુ રાખીને તમે અમારી <terms>શરતો</terms> અને <privacy>ગોપનીયતા</privacy> સાથે સંમત થાઓ છો. Cabinet એક <oss>ઓપન-સોર્સ પ્રોજેક્ટ</oss> છે.",
+      "keepInTouch": "મને સંપર્કમાં રાખો. Cabinet ઓપન સોર્સ છે અને ખુલ્લેઆમ બનાવવામાં આવ્યું છે, અને અમે આગળ શું બનાવવું તે શીખવા માંગીએ છીએ. કોઈ સ્પામ નહીં, અમે વચન આપીએ છીએ."
     },
     "provider": {
       "agentType": "{{type}} એજન્ટ",
@@ -1119,6 +1271,7 @@
       "comingSoon": "ટૂંક સમયમાં આવી રહ્યું છે",
       "guide": "માર્ગદર્શિકા",
       "heading": "એજન્ટ પ્રદાતા",
+      "moreModels": "વધુ AI",
       "install": "ઇન્સ્ટોલ કરો",
       "logIn": "લોગ ઇન કરો",
       "openTerminalButton": "ટર્મિનલ ખોલો",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "આ cabinet શેના માટે છે? દરેક રૂમ તેની પોતાની AI ટીમ સાથે આવે છે.",
       "heading": "એક <accent>રૂમ</accent> પસંદ કરો"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet શું છે?",
+      "body": "Cabinet એ તમારા જીવન અથવા કાર્યના એક ક્ષેત્ર માટેનું એક કેન્દ્રિત કાર્યસ્થળ છે. તે તમારી ફાઇલો, નોંધો, સાધનો, એજન્ટો અને કાર્યોને રાખે છે, જેથી તમારી AI ટીમને ખરેખર મદદ કરવા માટે જરૂરી સંદર્ભ મળે.",
+      "examplesLabel": "લોકો Cabinet નો ઉપયોગ કેવી રીતે કરે છે",
+      "example1": "તમારું સ્ટાર્ટઅપ",
+      "example2": "એક GitHub રેપો",
+      "example3": "તમારું માર્કેટિંગ કાર્ય",
+      "example4": "એક ક્લાયન્ટ પ્રોજેક્ટ",
+      "example5": "તમારો વ્યક્તિગત નોલેજ બેઝ"
+    },
+    "access": {
+      "heading": "{{name}} શું ઍક્સેસ કરી શકે છે?",
+      "subtitle": "આ એજન્ટ ઉપયોગ કરી શકે તેવા જ્ઞાન અને સાધનો પસંદ કરો. તમે આ કોઈપણ સમયે બદલી શકો છો.",
+      "defaultAgent": "તમારો એજન્ટ",
+      "files": "ફાઇલો અને જ્ઞાન",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP સર્વર્સ",
+      "plugins": "પ્લગઇન્સ",
+      "skills": "કૌશલ્યો",
+      "placeholderNote": "તમે એજન્ટની સેટિંગ્સમાં પછીથી ઍક્સેસને ફાઇન-ટ્યુન કરી શકો છો."
+    },
+    "heartbeat": {
+      "heading": "શું {{name}} હાર્ટબીટ પર ચાલવું જોઈએ?",
+      "subtitle": "હાર્ટબીટ એજન્ટને શેડ્યૂલ પર પોતાની જાતે તપાસ કરવા અને કામ કરવા દે છે.",
+      "off": "બંધ",
+      "offHint": "તમે પૂછો ત્યારે જ ચાલે છે. શરૂ કરવા માટે ભલામણ કરેલ.",
+      "daily": "દૈનિક",
+      "dailyHint": "દિવસમાં એકવાર તપાસ કરે છે.",
+      "weekly": "સાપ્તાહિક",
+      "weeklyHint": "અઠવાડિયામાં એકવાર તપાસ કરે છે.",
+      "tokenNote": "ધ્યાન આપો: હાર્ટબીટ એજન્ટને આપમેળે ચલાવે છે, જે દર વખતે ચાલતી વખતે AI ટોકન્સ (અને તમારા પ્રદાતાનો ક્વોટા) નો ઉપયોગ કરે છે. તમે આ કોઈપણ સમયે બદલી અથવા બંધ કરી શકો છો."
+    },
+    "firstTask": {
+      "heading": "તમારું પ્રથમ કાર્ય ફાઇલ કરો",
+      "subtitle": "કાર્યો એ છે કે તમે {{name}} ને કામ કેવી રીતે સોંપો છો. અત્યારે એક લખો અને તે તમારા cabinet માં આવશે, ચલાવવા માટે તૈયાર.",
+      "label": "{{name}} એ પહેલા શું કરવું જોઈએ?",
+      "placeholder": "દા.ત. નવા ગ્રાહકો માટે સ્વાગત ઇમેઇલનો ડ્રાફ્ટ તૈયાર કરો",
+      "example1": "મારી નવીનતમ નોંધોનો સારાંશ આપો",
+      "example2": "પ્રોજેક્ટ પ્લાનનો ડ્રાફ્ટ તૈયાર કરો",
+      "example3": "અમારા ટોચના 3 સ્પર્ધકો પર સંશોધન કરો",
+      "note": "તમે આ ખાલી છોડી શકો છો અને પછીથી કાર્યો ઉમેરી શકો છો. તમે AI પ્રદાતાને કનેક્ટ ન કરો ત્યાં સુધી કંઈપણ ચાલશે નહીં."
+    },
+    "rail": {
+      "untitled": "તમારું Cabinet",
+      "dataCaption": "તમારા પ્રોજેક્ટની બધી ફાઇલો અને નોટ્સ અહીં છે.",
+      "teamEmpty": "હજુ કોઈ એજન્ટ નથી.",
+      "teamCaption": "તમારી AI ટીમ અહીં કામ કરે છે.",
+      "tasksEmpty": "હજુ કોઈ કાર્ય નથી.",
+      "tasksCaption": "તમે તમારી ટીમને સોંપેલું કામ અહીં દેખાશે.",
+      "assignedTo": "{{name}} ને સોંપેલું",
+      "you": "તમે"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "આયાત નિષ્ફળ",
       "importFailedConnection": "આયાત નિષ્ફળ. તમારું કનેક્શન તપાસો.",
       "importTitle": "{{name}} આયાત કરો",
-      "orPickAgents": "અથવા તમારા એજન્ટ્સ પસંદ કરો",
+      "pickAgents": "તમારા એજન્ટ્સ પસંદ કરો",
       "required": "જરૂરી",
-      "startFromTemplate": "ટેમ્પલેટમાંથી શરૂ કરો",
       "subtitle": "દરેક cabinet એક AI ટીમ છે — એજન્ટ્સ, કાર્યો અને એક શેર કરેલો નોલેજ બેઝ, જે એકસાથે કામ કરે છે.",
       "heading": "તમારી <accent>ટીમ</accent> બનાવો",
+      "nameLabel": "એજન્ટનું નામ",
+      "namePlaceholder": "દા.ત. એડિટર, રિસર્ચર, આસિસ્ટન્ટ",
+      "roleLabel": "ભૂમિકા",
+      "rolePlaceholder": "દા.ત. રાઇટિંગ આસિસ્ટન્ટ",
+      "instructionsLabel": "આ એજન્ટે શું કરવું જોઈએ?",
+      "instructionsPlaceholder": "તે કેવી રીતે મદદ કરશે તેનું વર્ણન કરો. ઉદાહરણ તરીકે: મારા પૃષ્ઠોનો ડ્રાફ્ટ બનાવો અને સંપાદિત કરો, સ્વર સ્પષ્ટ અને મૈત્રીપૂર્ણ રાખો, અને સુધારાઓ સૂચવો.",
+      "agentOptionalHint": "વૈકલ્પિક. તમે આ છોડી શકો છો અને પછીથી રૂમની અંદરથી એજન્ટ્સ ઉમેરી શકો છો.",
       "agentCount_one": "{{count}} એજન્ટ",
       "agentCount_other": "{{count}} એજન્ટ્સ",
       "jobCount_one": "{{count}} કાર્ય",
@@ -1410,6 +1622,10 @@
       "loading": "લોડ થઈ રહ્યું છે…",
       "connect": "કનેક્ટ કરો",
       "recommended": "ભલામણ કરેલ"
+    },
+    "integrationsPreview": {
+      "comingSoon": "ટૂંક સમયમાં આવી રહ્યું છે",
+      "hint": "બાહ્ય ઇન્ટિગ્રેશન અને બિલ્ટ-ઇન ટૂલ્સને કનેક્ટ કરવાનું કાર્ય પ્રગતિમાં છે."
     },
     "storage": {
       "dataDirectory": "ડેટા ડિરેક્ટરી",

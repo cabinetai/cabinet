@@ -13,6 +13,8 @@
       "promptPlaceholder": "Jste marketingový agent pro…",
       "addAgentTitle": "Přidat agenta do týmu",
       "addAgentDescription": "Vyberte specialistu z knihovny. Po přidání můžete upravit jeho jméno, roli a instrukce.",
+      "createFromScratchTitle": "Vytvořit od začátku",
+      "createFromScratchDescription": "Vytvořte nového agenta s vlastní identitou, rolí a instrukcemi.",
       "searchLibraryPlaceholder": "Hledat v knihovně",
       "errorLoadLibrary": "Nepodařilo se načíst knihovnu agentů.",
       "errorAddAgent": "Nepodařilo se přidat tohoto agenta."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "Načíst znalosti",
+    "intro": "Nasměrujte Cabinet na libovolnou složku ve vašem počítači. Cabinet vytvoří symbolický odkaz, takže obsah složky se objeví ve vaší znalostní bázi a bude k dispozici AI agentům jako kontext. Původní složka není nikdy přesunuta ani zkopírována.",
+    "symlinkNote": "Tím se vytvoří symbolický odkaz — soubory zůstanou na svém místě.",
     "autoDetectPlaceholder": "Automaticky detekovat z git remote (volitelné)",
     "shortSummaryPlaceholder": "Volitelný krátký souhrn pro agenty"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Otevřít zobrazení Cabinetu",
     "pageTitlePlaceholder": "Název stránky…",
     "rename": "Přejmenovat",
-    "openBadge": "Otevřít"
+    "openBadge": "Otevřít",
+    "sectionAdd": "Přidat k této položce",
+    "sectionThis": "Tato položka",
+    "addSubPage": "Přidat podstránku",
+    "newFolder": "Nová složka",
+    "createFile": "Vytvořit nový soubor…",
+    "connectKnowledge": "Připojit znalosti…",
+    "symlinkTag": "Symbolický odkaz",
+    "importFile": "Importovat soubor…",
+    "importFolder": "Importovat složku…",
+    "createCabinet": "Vytvořit Cabinet zde",
+    "editSymlink": "Upravit symbolický odkaz…",
+    "settings": "Nastavení…",
+    "moveTo": "Přesunout do…",
+    "copyRelativePath": "Kopírovat relativní cestu",
+    "copyFullPath": "Kopírovat úplnou cestu",
+    "openInFinder": "Otevřít ve Finderu",
+    "delete": "Odstranit",
+    "unlink": "Zrušit propojení",
+    "folderNamePlaceholder": "Název složky",
+    "creating": "Vytváří se…",
+    "create": "Vytvořit",
+    "addSubPageTitle": "Přidat podstránku k „{{name}}“",
+    "newFolderTitle": "Nová složka v „{{name}}“"
+  },
+  "newFile": {
+    "title": "Vytvořit nový soubor",
+    "subtitle": "Vyberte typ souboru. Cabinet jej otevře v editoru, jakmile bude připraven.",
+    "groupNative": "Upravit v Cabinetu",
+    "groupOffice": "Office (prázdný — upravit externě)",
+    "groupGoogle": "Google (propojeno)",
+    "namePlaceholder": "Název souboru",
+    "create": "Vytvořit",
+    "creating": "Vytváří se…",
+    "googleUrlLabel": "URL Google (volitelné)",
+    "googleUrlPlaceholder": "Vložte sdílený odkaz Google, nebo ponechte prázdné pro pozdější přidání",
+    "officeNote": "Cabinet zobrazuje soubory Office pouze pro čtení. Pro úpravy v desktopové aplikaci použijte „Otevřít ve Finderu“.",
+    "types": {
+      "markdown": "Stránka Markdown",
+      "markdownDesc": "Poznámky s formátovaným textem, upravitelné v Cabinetu",
+      "code": "Soubor kódu",
+      "codeDesc": "Jakýkoli zdrojový/textový soubor — vyberte příponu",
+      "mermaid": "Diagram Mermaid",
+      "mermaidDesc": "Vývojové diagramy a schémata jako kód",
+      "csv": "Tabulka CSV",
+      "csvDesc": "Data tabulky oddělená čárkami",
+      "docx": "Dokument Word",
+      "docxDesc": "Prázdný .docx",
+      "xlsx": "Tabulka Excel",
+      "xlsxDesc": "Prázdný .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Prázdný .pptx",
+      "gdoc": "Dokument Google",
+      "gdocDesc": "Vložit Dokument Google",
+      "gsheet": "Tabulka Google",
+      "gsheetDesc": "Vložit Tabulku Google",
+      "gslides": "Prezentace Google",
+      "gslidesDesc": "Vložit Prezentace Google"
+    },
+    "codeExtLabel": "Přípona",
+    "googleTag": "Google",
+    "extHint": "Stačí zadat název — Cabinet přidá příponu {{ext}}.",
+    "createFailed": "Soubor se nepodařilo vytvořit."
+  },
+  "fileSettings": {
+    "googleTitle": "Nastavení vložení Google",
+    "googleKindLabel": "Typ",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Sdílení dokumentu musí být nastaveno na „Kdokoli s odkazem“ nebo „Publikováno na web“, aby se vložení načetlo.",
+    "openLink": "Otevřít v Google",
+    "googleKinds": {
+      "docs": "Dokumenty",
+      "sheets": "Tabulky",
+      "slides": "Prezentace",
+      "forms": "Formuláře",
+      "drive": "Disk"
+    },
+    "appTitle": "Nastavení webové aplikace",
+    "modeLabel": "Jak se má otevřít?",
+    "modeWebsite": "Zobrazení stránky",
+    "modeWebsiteDesc": "Otevře se přímo s viditelným postranním panelem a panelem AI.",
+    "modeApp": "Webová aplikace",
+    "modeAppDesc": "Otevře se na celou obrazovku; postranní panel a panel AI se automaticky sbalí.",
+    "convertNote": "Toto přepíná soubor značky .app ve složce. Vaše soubory se nemění.",
+    "save": "Uložit",
+    "saving": "Ukládání…",
+    "cancel": "Zrušit",
+    "saveFailed": "Nepodařilo se uložit nastavení."
+  },
+  "editSymlink": {
+    "title": "Upravit symlink",
+    "intro": "Tato položka znalostní báze je symbolický odkaz na složku jinde ve vašem počítači.",
+    "kbPathLabel": "Cesta znalostní báze",
+    "targetLabel": "Odkazuje na (na disku)",
+    "brokenWarning": "Cílová složka již neexistuje. Nasměrujte ji na platnou složku níže.",
+    "repointLabel": "Nasměrovat na novou složku",
+    "repointHint": "Cabinet nahradí odkaz, aby směřoval sem. Soubory se nikdy nepřesouvají.",
+    "browse": "Procházet",
+    "nameLabel": "Název",
+    "descriptionLabel": "Popis",
+    "save": "Uložit",
+    "saving": "Ukládání…",
+    "copyTarget": "Kopírovat cílovou cestu",
+    "saveFailed": "Nepodařilo se aktualizovat symlink."
+  },
+  "importFolder": {
+    "importing": "Importuji složku…",
+    "failed": "Import složky se nezdařil: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Načítání úkolů"
@@ -756,7 +868,9 @@
     "noSkills": "Zatím žádné dovednosti."
   },
   "taskDetail": {
-    "close": "Zavřít (Esc)"
+    "close": "Zavřít (Esc)",
+    "muteTask": "Ztlumit tento úkol — jeho dokončené spuštění jde přímo do archivu",
+    "unmuteTask": "Zrušit ztlumení tohoto úkolu — jeho dokončené spuštění se znovu objeví v sekci Právě dokončeno"
   },
   "rowActionsPlus": {
     "edit": "Upravit",
@@ -861,6 +975,41 @@
     "revealInFinder": "Zobrazit ve správci souborů",
     "stored": "Uloženo",
     "resetOnboarding": "Resetovat úvodní nastavení"
+  },
+  "rooms": {
+    "switcherTitle": "Přepnout místnost",
+    "switchRoom": "Místnosti",
+    "loading": "Načítání…",
+    "defaultTag": "Domů",
+    "openInNewWindow": "Otevřít v novém okně",
+    "opensBrowserWindow": "Otevře nové okno prohlížeče",
+    "customizeRoom": "Upravit místnost",
+    "addRoom": "Přidat místnost…",
+    "editTitle": "Upravit místnost",
+    "editSubtitle": "Nastavte název, ikonu, barvu a téma této místnosti.",
+    "nameLabel": "Zobrazované jméno",
+    "slugHint": "Název složky na disku zůstává {{slug}}. Přejmenování složky je samostatná, pokročilá akce.",
+    "iconLabel": "Ikona",
+    "colorLabel": "Barva",
+    "colorAuto": "Automaticky",
+    "themeLabel": "Motiv",
+    "themeGlobal": "Použít globální výchozí",
+    "editFailed": "Nepodařilo se uložit místnost. Zkuste to prosím znovu.",
+    "deleteRoom": "Smazat místnost…",
+    "deleteLastRoomDisabledHint": "Nemůžete smazat svou poslední místnost.",
+    "deleteTitle": "Smazat tuto místnost?",
+    "deleteSubtitle": "Tato místnost a vše v ní bude přesunuto do koše.",
+    "deleteWarningIntro": "Přesunutím místnosti do koše se také odstraní:",
+    "deleteWarningPages": "Stránky a soubory v této místnosti",
+    "deleteWarningAgents": "Agenti, konverzace a paměť vázané na tuto místnost",
+    "deleteWarningJobs": "Naplánované úlohy a rutiny v této místnosti",
+    "deleteWarningChat": "Historie týmového chatu pro tuto místnost",
+    "deleteWarningSearch": "Index vyhledávání místnosti (automaticky znovu vytvořen při obnovení)",
+    "deleteRecoveryNote": "Obnova: místnost je přesunuta do data/.trash/ — obnovte ji přesunutím složky zpět do data/.",
+    "deleteConfirmLabel": "Napište {{slug}} pro potvrzení",
+    "deleteConfirmButton": "Smazat místnost",
+    "deleting": "Maže se…",
+    "deleteFailed": "Nepodařilo se smazat místnost. Zkuste to prosím znovu."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Před spuštěním",
       "defaultCabinetName": "Váš Cabinet",
       "defaultDescription": "Znalostní báze + AI tým",
+      "knowledgeBaseLabel": "Znalostní báze",
+      "aiTeamLabel": "Tým AI",
       "launchCabinet": "Spustit Cabinet",
       "settingUp": "Nastavuji...",
       "disclaimerAccess": "<strong>Agenti běží s plným přístupem.</strong> Cabinet používá <flag>--dangerously-skip-permissions</flag> (Claude Code) a ekvivalentní příznaky u jiných poskytovatelů. To je totožné se spouštěním těchto nástrojů CLI z vašeho vlastního terminálu. Jakékoli servery MCP nebo nástroje, které jste nakonfigurovali, mohou být agenty automaticky vyvolány.",
       "disclaimerBackup": "<strong>Pravidelně zálohujte svá data.</strong> Agenti mohou číst, zapisovat a mazat soubory napříč vaší KB a propojenými repozitáři. Cabinet nenese odpovědnost za ztrátu dat. Jste zodpovědní za poskytovatele AI, které si vyberete, a jejich podmínky služby.",
       "disclaimerBeta": "<strong>Beta software. Věci se mohou rozbít.</strong> Dodáváme rychle. Zásadní změny mohou přijít bez upozornění.",
-      "legalNotice": "Pokračováním souhlasíte s našimi <terms>Podmínkami</terms> a <privacy>Zásadami ochrany osobních údajů</privacy>. Cabinet je <oss>open-source projekt</oss>."
+      "legalNotice": "Pokračováním souhlasíte s našimi <terms>Podmínkami</terms> a <privacy>Zásadami ochrany osobních údajů</privacy>. Cabinet je <oss>open-source projekt</oss>.",
+      "keepInTouch": "Zůstaňte v kontaktu. Cabinet je open source a vyvíjí se otevřeně, a rádi bychom věděli, co dál stavět. Žádný spam, slibujeme."
     },
     "provider": {
       "agentType": "Agent {{type}}",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Již brzy",
       "guide": "Průvodce",
       "heading": "Poskytovatel agenta",
+      "moreModels": "Více AI",
       "install": "Instalovat",
       "logIn": "Přihlásit se",
       "openTerminalButton": "Otevřít terminál",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "K čemu je tento Cabinet? Každá místnost má svůj vlastní AI tým.",
       "heading": "Vyberte <accent>místnost</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Co je Cabinet?",
+      "body": "Cabinet je zaměřený pracovní prostor pro jednu oblast vašeho života nebo práce. Obsahuje vaše soubory, poznámky, nástroje, agenty a úkoly, takže váš tým AI má kontext, který potřebuje k efektivní pomoci.",
+      "examplesLabel": "Jak lidé používají Cabinet",
+      "example1": "váš startup",
+      "example2": "repozitář GitHub",
+      "example3": "vaše marketingová práce",
+      "example4": "klientský projekt",
+      "example5": "vaše osobní znalostní báze"
+    },
+    "access": {
+      "heading": "K čemu má {{name}} přístup?",
+      "subtitle": "Vyberte znalosti a nástroje, které může tento agent používat. Můžete to kdykoli změnit.",
+      "defaultAgent": "váš agent",
+      "files": "Soubory a znalosti",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Servery MCP",
+      "plugins": "Pluginy",
+      "skills": "Dovednosti",
+      "placeholderNote": "Přístup můžete doladit později v nastavení agenta."
+    },
+    "heartbeat": {
+      "heading": "Měl by {{name}} běžet pravidelně?",
+      "subtitle": "Pravidelný běh umožňuje agentovi hlásit se a pracovat samostatně podle plánu.",
+      "off": "Vypnuto",
+      "offHint": "Běží jen na vyžádání. Doporučeno pro začátek.",
+      "daily": "Denně",
+      "dailyHint": "Hlásí se jednou denně.",
+      "weekly": "Týdně",
+      "weeklyHint": "Hlásí se jednou týdně.",
+      "tokenNote": "Upozornění: Pravidelný běh spouští agenta automaticky, což spotřebovává AI tokeny (a vaši kvótu u poskytovatele) při každém spuštění. Můžete to kdykoli změnit nebo vypnout."
+    },
+    "firstTask": {
+      "heading": "Zadejte svůj první úkol",
+      "subtitle": "Úkoly jsou způsob, jak zadáváte práci pro {{name}}. Napište jeden teď a objeví se ve vašem cabinetu, připravený ke spuštění.",
+      "label": "Co by měl {{name}} udělat jako první?",
+      "placeholder": "např. Navrhněte uvítací e-mail pro nové zákazníky",
+      "example1": "Shrňte mé nejnovější poznámky",
+      "example2": "Navrhněte projektový plán",
+      "example3": "Prozkoumejte naše 3 hlavní konkurenty",
+      "note": "Můžete to nechat prázdné a úkoly přidat později. Nic se nespustí, dokud nepřipojíte poskytovatele AI."
+    },
+    "rail": {
+      "untitled": "Váš Cabinet",
+      "dataCaption": "Zde najdete všechny soubory a poznámky vašeho projektu.",
+      "teamEmpty": "Zatím žádní agenti.",
+      "teamCaption": "Váš AI tým pracuje zde.",
+      "tasksEmpty": "Zatím žádné úkoly.",
+      "tasksCaption": "Práce, kterou zadáte svému týmu, se zobrazí zde.",
+      "assignedTo": "Přiřazeno k {{name}}",
+      "you": "Vy"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "Import se nezdařil",
       "importFailedConnection": "Import se nezdařil. Zkontrolujte připojení.",
       "importTitle": "Importovat {{name}}",
-      "orPickAgents": "Nebo si vyberte agenty",
+      "pickAgents": "Vyberte své agenty",
       "required": "Povinné",
-      "startFromTemplate": "Začít ze šablony",
       "subtitle": "Každý kabinet je tým AI — agenti, úkoly a sdílená znalostní báze, pracující společně.",
       "heading": "Sestavte <accent>svůj</accent> tým",
+      "nameLabel": "Jméno agenta",
+      "namePlaceholder": "např. Editor, Výzkumník, Asistent",
+      "roleLabel": "Role",
+      "rolePlaceholder": "např. Asistent pro psaní",
+      "instructionsLabel": "Co by měl tento agent dělat?",
+      "instructionsPlaceholder": "Popište, jak by měl pomáhat. Například: Navrhovat a upravovat mé stránky, udržovat tón jasný a přátelský a navrhovat vylepšení.",
+      "agentOptionalHint": "Volitelné. Můžete to přeskočit a agenty přidat později z místnosti.",
       "agentCount_one": "{{count}} agent",
       "agentCount_other": "{{count}} agentů",
       "jobCount_one": "{{count}} úloha",
@@ -1410,6 +1622,10 @@
       "loading": "Načítání…",
       "connect": "Připojit",
       "recommended": "Doporučeno"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Již brzy",
+      "hint": "Připojování externích integrací a vestavěných nástrojů bude brzy k dispozici."
     },
     "storage": {
       "dataDirectory": "Datový adresář",

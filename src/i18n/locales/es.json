@@ -13,6 +13,8 @@
       "promptPlaceholder": "Eres un agente de marketing para…",
       "addAgentTitle": "Agregar un agente a tu equipo",
       "addAgentDescription": "Elige un especialista de la biblioteca. Puedes editar su nombre, rol e instrucciones después de agregarlo.",
+      "createFromScratchTitle": "Crear desde cero",
+      "createFromScratchDescription": "Crea un nuevo agente con su propia identidad, rol e instrucciones.",
       "searchLibraryPlaceholder": "Buscar en la biblioteca",
       "errorLoadLibrary": "No se pudo cargar la biblioteca de agentes.",
       "errorAddAgent": "No se pudo agregar este agente."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "Cargar conocimiento",
+    "intro": "Apunte Cabinet a cualquier carpeta de su máquina. Cabinet crea un enlace simbólico para que el contenido de la carpeta aparezca en su Base de Conocimientos y esté disponible para los agentes de IA como contexto. La carpeta original nunca se mueve ni se copia.",
+    "symlinkNote": "Esto crea un enlace simbólico: los archivos permanecen en su ubicación original.",
     "autoDetectPlaceholder": "Detección automática desde git remoto (opcional)",
     "shortSummaryPlaceholder": "Resumen corto opcional para agentes"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Abrir vista de Cabinet",
     "pageTitlePlaceholder": "Título de la página…",
     "rename": "Renombrar",
-    "openBadge": "Abrir"
+    "openBadge": "Abrir",
+    "sectionAdd": "Agregar a este elemento",
+    "sectionThis": "Este elemento",
+    "addSubPage": "Agregar subpágina",
+    "newFolder": "Nueva carpeta",
+    "createFile": "Crear nuevo archivo…",
+    "connectKnowledge": "Conectar conocimiento…",
+    "symlinkTag": "Enlace simbólico",
+    "importFile": "Importar archivo…",
+    "importFolder": "Importar carpeta…",
+    "createCabinet": "Crear Cabinet aquí",
+    "editSymlink": "Editar enlace simbólico…",
+    "settings": "Configuración…",
+    "moveTo": "Mover a…",
+    "copyRelativePath": "Copiar ruta relativa",
+    "copyFullPath": "Copiar ruta completa",
+    "openInFinder": "Abrir en Finder",
+    "delete": "Eliminar",
+    "unlink": "Desvincular",
+    "folderNamePlaceholder": "Nombre de la carpeta",
+    "creating": "Creando…",
+    "create": "Crear",
+    "addSubPageTitle": "Añadir subpágina a “{{name}}”",
+    "newFolderTitle": "Nueva carpeta en “{{name}}”"
+  },
+  "newFile": {
+    "title": "Crear archivo nuevo",
+    "subtitle": "Elige un tipo de archivo. Cabinet lo abrirá en el editor cuando esté listo.",
+    "groupNative": "Editar en Cabinet",
+    "groupOffice": "Office (en blanco — editar externamente)",
+    "groupGoogle": "Google (vinculado)",
+    "namePlaceholder": "Nombre del archivo",
+    "create": "Crear",
+    "creating": "Creando…",
+    "googleUrlLabel": "URL de Google (opcional)",
+    "googleUrlPlaceholder": "Pega un enlace de Google para compartir, o déjalo en blanco para añadirlo después",
+    "officeNote": "Cabinet muestra los archivos de Office solo en modo lectura. Usa “Abrir en Finder” para editar en la aplicación de escritorio.",
+    "types": {
+      "markdown": "Página Markdown",
+      "markdownDesc": "Notas de texto enriquecido, editables en Cabinet",
+      "code": "Archivo de código",
+      "codeDesc": "Cualquier archivo de código/texto — elige la extensión",
+      "mermaid": "Diagrama Mermaid",
+      "mermaidDesc": "Diagramas de flujo y diagramas como código",
+      "csv": "Tabla CSV",
+      "csvDesc": "Datos de hoja de cálculo separados por comas",
+      "docx": "Documento de Word",
+      "docxDesc": ".docx en blanco",
+      "xlsx": "Hoja de cálculo de Excel",
+      "xlsxDesc": ".xlsx en blanco",
+      "pptx": "PowerPoint",
+      "pptxDesc": ".pptx en blanco",
+      "gdoc": "Documento de Google",
+      "gdocDesc": "Insertar un Documento de Google",
+      "gsheet": "Hoja de cálculo de Google",
+      "gsheetDesc": "Insertar una Hoja de cálculo de Google",
+      "gslides": "Presentaciones de Google",
+      "gslidesDesc": "Insertar Presentaciones de Google"
+    },
+    "codeExtLabel": "Extensión",
+    "googleTag": "Google",
+    "extHint": "Solo escribe el nombre — Cabinet añade la extensión {{ext}}.",
+    "createFailed": "No se pudo crear el archivo."
+  },
+  "fileSettings": {
+    "googleTitle": "Configuración de inserción de Google",
+    "googleKindLabel": "Tipo",
+    "googleUrlLabel": "URL de Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "La configuración de uso compartido del documento debe ser “Cualquier persona con el enlace” o “Publicado en la web” para que la inserción se cargue.",
+    "openLink": "Abrir en Google",
+    "googleKinds": {
+      "docs": "Documentos",
+      "sheets": "Hojas de cálculo",
+      "slides": "Presentaciones",
+      "forms": "Formularios",
+      "drive": "Drive"
+    },
+    "appTitle": "Configuración de la aplicación web",
+    "modeLabel": "¿Cómo debería abrirse?",
+    "modeWebsite": "Vista de página",
+    "modeWebsiteDesc": "Se abre en línea con la barra lateral y el panel de IA visibles.",
+    "modeApp": "Aplicación web",
+    "modeAppDesc": "Se abre en pantalla completa; la barra lateral y el panel de IA se contraen automáticamente.",
+    "convertNote": "Esto alterna el archivo marcador .app en la carpeta. Sus archivos no se modifican.",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "saveFailed": "No se pudieron guardar los ajustes."
+  },
+  "editSymlink": {
+    "title": "Editar enlace simbólico",
+    "intro": "Esta entrada de la Base de Conocimientos es un enlace simbólico a una carpeta en otra parte de su máquina.",
+    "kbPathLabel": "Ruta de la Base de Conocimientos",
+    "targetLabel": "Enlaza a (en disco)",
+    "brokenWarning": "La carpeta de destino ya no existe. Vuelva a apuntar a una carpeta válida a continuación.",
+    "repointLabel": "Volver a apuntar a una nueva carpeta",
+    "repointHint": "Cabinet reemplazará el enlace para apuntar aquí. Los archivos nunca se mueven.",
+    "browse": "Explorar",
+    "nameLabel": "Nombre",
+    "descriptionLabel": "Descripción",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "copyTarget": "Copiar ruta de destino",
+    "saveFailed": "No se pudo actualizar el enlace simbólico."
+  },
+  "importFolder": {
+    "importing": "Importando carpeta…",
+    "failed": "Error al importar carpeta: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Cargando tareas"
@@ -756,7 +868,9 @@
     "noSkills": "Aún no hay habilidades."
   },
   "taskDetail": {
-    "close": "Cerrar (Esc)"
+    "close": "Cerrar (Esc)",
+    "muteTask": "Silenciar esta tarea — sus ejecuciones completadas van directamente al Archivo",
+    "unmuteTask": "Activar esta tarea — sus ejecuciones completadas reaparecen en Recién Terminadas"
   },
   "rowActionsPlus": {
     "edit": "Editar",
@@ -861,6 +975,41 @@
     "revealInFinder": "Mostrar en el explorador de archivos",
     "stored": "Almacenado",
     "resetOnboarding": "Restablecer la incorporación"
+  },
+  "rooms": {
+    "switcherTitle": "Cambiar de sala",
+    "switchRoom": "Salas",
+    "loading": "Cargando…",
+    "defaultTag": "Inicio",
+    "openInNewWindow": "Abrir en una nueva ventana",
+    "opensBrowserWindow": "Abre una nueva ventana del navegador",
+    "customizeRoom": "Editar sala",
+    "addRoom": "Añadir sala…",
+    "editTitle": "Editar sala",
+    "editSubtitle": "Establezca el nombre, icono, color y tema de esta sala.",
+    "nameLabel": "Nombre visible",
+    "slugHint": "El nombre de la carpeta en disco permanece como {{slug}}. Renombrar la carpeta es una acción avanzada y separada.",
+    "iconLabel": "Icono",
+    "colorLabel": "Color",
+    "colorAuto": "Automático",
+    "themeLabel": "Tema",
+    "themeGlobal": "Usar predeterminado global",
+    "editFailed": "No se pudo guardar la sala. Inténtalo de nuevo.",
+    "deleteRoom": "Eliminar sala…",
+    "deleteLastRoomDisabledHint": "No puedes eliminar tu última sala.",
+    "deleteTitle": "¿Eliminar esta sala?",
+    "deleteSubtitle": "Esta sala y todo su contenido se moverán a la papelera.",
+    "deleteWarningIntro": "Mover la sala a la papelera también elimina:",
+    "deleteWarningPages": "Páginas y archivos dentro de esta sala",
+    "deleteWarningAgents": "Agentes, conversaciones y memoria asociados a esta sala",
+    "deleteWarningJobs": "Tareas programadas y rutinas en esta sala",
+    "deleteWarningChat": "Historial de chat del equipo para esta sala",
+    "deleteWarningSearch": "El índice de búsqueda de la sala (se reconstruye automáticamente si se restaura)",
+    "deleteRecoveryNote": "Recuperación: la sala se mueve a data/.trash/ — restáurala moviendo la carpeta de nuevo a data/.",
+    "deleteConfirmLabel": "Escribe {{slug}} para confirmar",
+    "deleteConfirmButton": "Eliminar sala",
+    "deleting": "Eliminando…",
+    "deleteFailed": "No se pudo eliminar la sala. Inténtalo de nuevo."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Antes de iniciar",
       "defaultCabinetName": "Tu Cabinet",
       "defaultDescription": "Base de conocimiento + equipo de IA",
+      "knowledgeBaseLabel": "Base de conocimiento",
+      "aiTeamLabel": "Equipo de IA",
       "launchCabinet": "Iniciar Cabinet",
       "settingUp": "Configurando...",
       "disclaimerAccess": "<strong>Los agentes se ejecutan con acceso total.</strong> Cabinet usa <flag>--dangerously-skip-permissions</flag> (Claude Code) y banderas equivalentes en otros proveedores. Esto es idéntico a ejecutar estas herramientas CLI desde tu propia terminal. Cualquier servidor o herramienta MCP que hayas configurado puede ser invocado automáticamente por los agentes.",
       "disclaimerBackup": "<strong>Haz copias de seguridad de tus datos regularmente.</strong> Los agentes pueden leer, escribir y eliminar archivos en tu KB y repositorios vinculados. Cabinet no se hace responsable de la pérdida de datos. Eres responsable de los proveedores de IA que elijas y de sus términos de servicio.",
       "disclaimerBeta": "<strong>Software beta. Las cosas pueden fallar.</strong> Lanzamos rápido. Los cambios importantes pueden llegar sin previo aviso.",
-      "legalNotice": "Al continuar, aceptas nuestros <terms>Términos</terms> y <privacy>Privacidad</privacy>. Cabinet es un <oss>proyecto de código abierto</oss>."
+      "legalNotice": "Al continuar, aceptas nuestros <terms>Términos</terms> y <privacy>Privacidad</privacy>. Cabinet es un <oss>proyecto de código abierto</oss>.",
+      "keepInTouch": "Mantente en contacto. Cabinet es de código abierto y se construye de forma transparente, y nos encantaría saber qué construir a continuación. Sin spam, lo prometemos."
     },
     "provider": {
       "agentType": "Agente {{type}}",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Próximamente",
       "guide": "Guía",
       "heading": "Proveedor de agente",
+      "moreModels": "Más IAs",
       "install": "Instalar",
       "logIn": "Iniciar sesión",
       "openTerminalButton": "Abrir terminal",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "¿Para qué es este cabinet? Cada sala viene con su propio equipo de IA.",
       "heading": "Elige una <accent>sala</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "¿Qué es un Cabinet?",
+      "body": "Un Cabinet es un espacio de trabajo enfocado para un área de tu vida o trabajo. Contiene tus archivos, notas, herramientas, agentes y tareas, para que tu equipo de IA tenga el contexto que necesita para ayudarte de verdad.",
+      "examplesLabel": "Cómo la gente usa Cabinet",
+      "example1": "tu startup",
+      "example2": "un repositorio de GitHub",
+      "example3": "tu trabajo de marketing",
+      "example4": "un proyecto de cliente",
+      "example5": "tu base de conocimiento personal"
+    },
+    "access": {
+      "heading": "¿A qué puede acceder {{name}}?",
+      "subtitle": "Elige el conocimiento y las herramientas que este agente puede usar. Puedes cambiar esto en cualquier momento.",
+      "defaultAgent": "tu agente",
+      "files": "Archivos y conocimiento",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Servidores MCP",
+      "plugins": "Plugins",
+      "skills": "Habilidades",
+      "placeholderNote": "Puedes ajustar el acceso más tarde en la configuración del agente."
+    },
+    "heartbeat": {
+      "heading": "¿Debería {{name}} ejecutarse con un latido?",
+      "subtitle": "Un latido permite al agente registrarse y trabajar por su cuenta según un horario.",
+      "off": "Desactivado",
+      "offHint": "Se ejecuta solo cuando lo pides. Recomendado para empezar.",
+      "daily": "Diario",
+      "dailyHint": "Se activa una vez al día.",
+      "weekly": "Semanal",
+      "weeklyHint": "Se activa una vez a la semana.",
+      "tokenNote": "Atención: un 'latido' ejecuta el agente automáticamente, lo que usa tokens de IA (y tu cuota de proveedor) cada vez que se activa. Puedes cambiarlo o desactivarlo en cualquier momento."
+    },
+    "firstTask": {
+      "heading": "Registra tu primera tarea",
+      "subtitle": "Las tareas son cómo le encargas trabajo a {{name}}. Escribe una ahora y aparecerá en tu cabinet, lista para ejecutarse.",
+      "label": "¿Qué debería hacer {{name}} primero?",
+      "placeholder": "ej. Redactar un correo de bienvenida para nuevos clientes",
+      "example1": "Resumir mis últimas notas",
+      "example2": "Redactar un plan de proyecto",
+      "example3": "Investigar a nuestros 3 principales competidores",
+      "note": "Puedes dejar esto en blanco y añadir tareas más tarde. Nada se ejecuta hasta que conectes un proveedor de IA."
+    },
+    "rail": {
+      "untitled": "Tu Cabinet",
+      "dataCaption": "Todos los archivos y notas de tu proyecto viven aquí.",
+      "teamEmpty": "Aún no hay agentes.",
+      "teamCaption": "Tu equipo de IA trabaja aquí.",
+      "tasksEmpty": "Aún no hay tareas.",
+      "tasksCaption": "El trabajo que le encargas a tu equipo aparece aquí.",
+      "assignedTo": "Asignado a {{name}}",
+      "you": "Tú"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "Error al importar",
       "importFailedConnection": "Error al importar. Revisa tu conexión.",
       "importTitle": "Importar {{name}}",
-      "orPickAgents": "O elige tus agentes",
+      "pickAgents": "Elige tus agentes",
       "required": "Obligatorio",
-      "startFromTemplate": "Empezar desde una plantilla",
       "subtitle": "Cada cabinet es un equipo de IA: agentes, tareas y una base de conocimientos compartida, trabajando juntos como uno solo.",
       "heading": "Crea <accent>tu</accent> equipo",
+      "nameLabel": "Nombre del agente",
+      "namePlaceholder": "ej. Editor, Investigador, Asistente",
+      "roleLabel": "Rol",
+      "rolePlaceholder": "ej. Asistente de escritura",
+      "instructionsLabel": "¿Qué debería hacer este agente?",
+      "instructionsPlaceholder": "Describe cómo debería ayudar. Por ejemplo: Redactar y editar mis páginas, mantener un tono claro y amigable, y sugerir mejoras.",
+      "agentOptionalHint": "Opcional. Puedes omitir esto y añadir agentes más tarde desde la sala.",
       "agentCount_one": "{{count}} agente",
       "agentCount_other": "{{count}} agentes",
       "jobCount_one": "{{count}} tarea",
@@ -1410,6 +1622,10 @@
       "loading": "Cargando…",
       "connect": "Conectar",
       "recommended": "Recomendado"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Próximamente",
+      "hint": "La conexión de integraciones externas y herramientas integradas está en camino."
     },
     "storage": {
       "dataDirectory": "Directorio de datos",

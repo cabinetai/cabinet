@@ -202,15 +202,20 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
     const output = stdoutAccumulator.display.trim() || null;
     const summaryLine =
       firstNonEmptyLine(stdoutAccumulator.lastAgentMessage || output || "")?.slice(0, 300) || null;
+    const streamError = stdoutAccumulator.errorMessage?.trim() || null;
+    const synthesizedExitCode =
+      streamError && (result.exitCode ?? 0) === 0 && !result.timedOut
+        ? 1
+        : result.exitCode;
 
     return {
-      exitCode: result.exitCode,
+      exitCode: synthesizedExitCode,
       signal: result.signal,
       timedOut: result.timedOut,
       errorMessage:
-        result.exitCode === 0
+        (synthesizedExitCode ?? 0) === 0
           ? null
-          : stdoutAccumulator.errorMessage
+          : streamError
             || filteredStderr
             || result.stderr.trim()
             || output

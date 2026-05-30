@@ -879,17 +879,28 @@ em-emoji-picker {
 }
 /* The macOS traffic lights sit at the window's *physical* top-left
    (trafficLightPosition x:16,y:18, ≈80px wide) and do NOT mirror with
-   `dir` — they are OS chrome. The app shell is `flex [Sidebar][main]`, so:
-     • LTR — the sidebar occupies the window's top-left; its header clears
-       the lights.
-     • RTL — the flex row flips: the sidebar moves to the right and the
-       MAIN column is now under the lights, so the clearance must move to
-       the main column's top bar instead (and come off the sidebar header,
-       which is no longer in the corner). `main > :first-child` is every
-       section's top bar / root (editor Header, agents/tasks <header>,
-       settings/help/home roots) — view-independent, no per-section edits. */
+   `dir` — they are OS chrome. `--traffic-clearance` is the single token
+   that reserves room for them; it is non-zero only in LTR desktop builds
+   (in RTL the lights fall on the physical-left, handled by the
+   `main > :first-child` rule below, so the token stays 0 there).
+
+   The app shell is `flex [Sidebar][main]`, so what sits in the top-left
+   corner depends on `dir` AND whether the sidebar is collapsed:
+     • LTR, sidebar expanded — the sidebar occupies the corner; its header
+       clears the lights (`.sidebar-header`).
+     • LTR, sidebar collapsed — the sidebar is 0-width, so the MAIN column
+       slides under the lights. The clearance is folded into
+       `--sidebar-toggle-offset` (see app-shell), which every section's top
+       bar already honours, and the floating expand toggle is nudged past
+       the lights (see sidebar.tsx).
+     • RTL — the flex row flips: the MAIN column is under the lights in
+       both states, so the clearance lives on `main > :first-child`'s
+       physical-left (independent of the inline-start toggle offset). */
+html:not([dir="rtl"]).electron-desktop {
+  --traffic-clearance: 80px;
+}
 html:not([dir="rtl"]).electron-desktop .sidebar-header {
-  padding-left: 80px;
+  padding-left: var(--traffic-clearance);
 }
 html[dir="rtl"].electron-desktop main > :first-child {
   padding-left: 80px;

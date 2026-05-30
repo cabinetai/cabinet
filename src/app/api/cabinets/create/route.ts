@@ -6,6 +6,7 @@ import {
   sanitizeFilename,
 } from "@/lib/storage/path-utils";
 import { scaffoldCabinet } from "@/lib/storage/cabinet-scaffold";
+import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import {
   MANDATORY_AGENT_SLUGS,
   mergeMandatoryAgentSlugs,
@@ -131,6 +132,8 @@ export async function POST(req: NextRequest) {
       await ensureAgentScaffold(agentTargetDir);
     }
 
+    // New cabinet/room dir — drop the buildTree cache so it shows immediately.
+    invalidateTreeCache();
     return NextResponse.json(
       { ok: true, path: virtualPath, name: name.trim() },
       { status: 201 }

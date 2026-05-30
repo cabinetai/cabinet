@@ -522,7 +522,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   // (start-work-dialog / new-task-button.onStarted). `meta` opens the
   // animated drawer in conversation mode; `null` closes it (the
   // conversation is kept so the desktop close tween can play out).
-  setTaskPanelConversation: (conversation) =>
+  setTaskPanelConversation: (conversation) => {
     set(
       conversation
         ? {
@@ -535,15 +535,17 @@ export const useAppStore = create<AppState>((set, get) => ({
             ),
           }
         : { taskPanelOpen: false }
-    ),
+    );
+  },
 
-  openTaskPanelCompose: (context) =>
+  openTaskPanelCompose: (context) => {
     set({
       taskPanelOpen: true,
       taskPanelMode: "compose",
       taskPanelComposeContext: context ?? null,
       taskPanelConversation: null,
-    }),
+    });
+  },
 
   closeTaskPanel: () => set({ taskPanelOpen: false }),
 
@@ -562,7 +564,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   // Compose -> live swap: keep the SAME drawer mounted (width unchanged),
   // unlike the external setTaskPanelConversation.
-  swapToConversation: (conversation) =>
+  swapToConversation: (conversation) => {
     set({
       taskPanelConversation: conversation,
       taskPanelMode: "conversation",
@@ -571,7 +573,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         get().recentlyOpenedTaskIds,
         conversation.id
       ),
-    }),
+    });
+  },
 
   toggleTaskRail: () => set({ taskRailOpen: !get().taskRailOpen }),
 

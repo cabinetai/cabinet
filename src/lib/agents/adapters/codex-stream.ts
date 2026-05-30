@@ -146,17 +146,22 @@ function consumeCodexEvent(
     // Prefer the first `"error"` event's message; only fall back to
     // `turn.failed` when nothing has been captured yet — the two typically
     // arrive in quick succession and carry identical text.
+    // Surface the message in the display stream so the transcript + task
+    // drawer show the failure immediately (previously errors were captured
+    // only in errorMessage and the UI stayed "Running" until process exit).
     if (payload.type === "error") {
+      const message = extractErrorMessage(payload.message);
       if (!accumulator.errorMessage) {
-        accumulator.errorMessage = extractErrorMessage(payload.message);
+        accumulator.errorMessage = message;
       }
-      return "";
+      return message ? appendDisplay(accumulator, `${message}\n`) : "";
     }
     if (payload.type === "turn.failed") {
+      const message = extractErrorMessage(payload.error?.message);
       if (!accumulator.errorMessage) {
-        accumulator.errorMessage = extractErrorMessage(payload.error?.message);
+        accumulator.errorMessage = message;
       }
-      return "";
+      return message ? appendDisplay(accumulator, `${message}\n`) : "";
     }
 
     if (!payload.item) {

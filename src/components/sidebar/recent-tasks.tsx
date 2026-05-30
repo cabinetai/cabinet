@@ -155,8 +155,13 @@ export function RecentTasks({
     };
     es.onmessage = (msg) => {
       try {
-        const event = JSON.parse(msg.data) as { type: string };
+        const event = JSON.parse(msg.data) as { type: string; taskId?: string };
         if (event.type === "ping") return;
+        if (event.type === "task.deleted" && event.taskId) {
+          setTasks((prev) =>
+            prev ? prev.filter((task) => task.id !== event.taskId) : prev
+          );
+        }
         scheduleReload();
       } catch {
         // ignore

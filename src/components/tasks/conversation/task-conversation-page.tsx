@@ -69,6 +69,104 @@ import { compactTask, fetchTask, patchTask, postTurn } from "@/lib/agents/task-c
 import { peekTaskIsTerminal } from "@/lib/agents/terminal-mode-cache";
 import { buildRuntimeLabel } from "@/lib/agents/runtime-format";
 
+/** Map ConversationMeta.status from SSE payloads → Task UI status. */
+function conversationStatusToTaskStatus(status: string): TaskStatus | null {
+  if (status === "failed") return "failed";
+  if (status === "completed") return "idle";
+  if (status === "running") return "running";
+  return null;
+}
+
+/** Clear pending and backfill empty agent bubbles on quick failures. */
+function fillEmptyAgentTurnContent(task: Task, status: TaskStatus): Task {
+  const failedFallback =
+    task.meta.errorHint?.trim() ||
+    "The agent run failed before producing a response.";
+  return {
+    ...task,
+    turns: task.turns.map((turn) => {
+      if (turn.role !== "agent") {
+        return turn.pending ? { ...turn, pending: undefined } : turn;
+      }
+      const content =
+        turn.content.trim() ||
+        (status === "failed" ? failedFallback : turn.content);
+      return { ...turn, pending: undefined, content };
+    }),
+  };
+}
+
+/** True when a safety-poll refetch would not change drawer-visible state. */
+function isSameTaskPollState(prev: Task | null | undefined, next: Task): boolean {
+  if (!prev) return false;
+  const pm = prev.meta;
+  const nm = next.meta;
+  if (
+    pm.status !== nm.status ||
+    pm.errorHint !== nm.errorHint ||
+    pm.errorKind !== nm.errorKind ||
+    pm.lastActivityAt !== nm.lastActivityAt ||
+    (pm.tokens?.total ?? 0) !== (nm.tokens?.total ?? 0)
+  ) {
+    return false;
+  }
+  const pendingIds = (actions: Task["meta"]["pendingActions"]) =>
+    actions?.map((a) => a.id).join("\0") ?? "";
+  if (pendingIds(pm.pendingActions) !== pendingIds(nm.pendingActions)) {
+    return false;
+  }
+  if (prev.turns.length !== next.turns.length) return false;
+  for (let i = 0; i < prev.turns.length; i++) {
+    const a = prev.turns[i];
+    const b = next.turns[i];
+    if (
+      a.id !== b.id ||
+      a.content !== b.content ||
+      !!a.pending !== !!b.pending ||
+      !!a.awaitingInput !== !!b.awaitingInput ||
+      (a.artifacts?.length ?? 0) !== (b.artifacts?.length ?? 0)
+    ) {
+      return false;
+    }
+  }
+  if (!!prev.session?.alive !== !!next.session?.alive) return false;
+  return true;
+}
+
+/** Apply a terminal task.updated payload without waiting on refetch. */
+function applyTerminalPayloadToTask(
+  prev: Task,
+  payload: Record<string, unknown> | undefined
+): Task | null {
+  if (!payload || payload.streaming === true) return null;
+  const raw = payload.status;
+  if (typeof raw !== "string") return null;
+  const taskStatus = conversationStatusToTaskStatus(raw);
+  if (!taskStatus || taskStatus === "running") return null;
+  const errorHint =
+    typeof payload.errorHint === "string"
+      ? payload.errorHint
+      : prev.meta.errorHint;
+  const errorKind =
+    typeof payload.errorKind === "string"
+      ? payload.errorKind
+      : prev.meta.errorKind;
+  if (
+    prev.meta.status === taskStatus &&
+    prev.meta.errorHint === errorHint &&
+    prev.meta.errorKind === errorKind
+  ) {
+    return null;
+  }
+  return fillEmptyAgentTurnContent(
+    {
+      ...prev,
+      meta: { ...prev.meta, status: taskStatus, errorHint, errorKind },
+    },
+    taskStatus
+  );
+}
+
 const STATUS_META: Record<
   TaskStatus,
   { label: string; tone: string; icon: React.ComponentType<{ className?: string }> }
@@ -360,6 +458,11 @@ export function TaskConversationPage({
   const [busy, setBusy] = useState(false);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  const prevTaskStatusRef = useRef<TaskStatus | null>(null);
+
+  useEffect(() => {
+    prevTaskStatusRef.current = null;
+  }, [taskId, cabinetPath, variant, isDemo]);
 
   // Callback ref on the panel root: scroll doesn't bubble, so we listen in
   // the capture phase to catch scrolling inside any tab's content. A
@@ -558,7 +661,9 @@ export function TaskConversationPage({
     setLoadError(null);
     setConnectTimedOut(false);
     const watchdog = setTimeout(() => {
-      if (!cancelled) setConnectTimedOut(true);
+      if (!cancelled) {
+        setConnectTimedOut(true);
+      }
     }, 8000);
     fetchTask(taskId, cabinetPath || undefined)
       .then((t) => {
@@ -622,12 +727,22 @@ export function TaskConversationPage({
       try {
         const event = JSON.parse(msg.data) as TaskEvent | { type: "ping" };
         if (event.type === "ping") return;
-        if (event.type === "task.deleted") return;
+        if (event.type === "task.deleted") {
+          return;
+        }
+        const eventPayload =
+          "payload" in event && event.payload
+            ? (event.payload as Record<string, unknown>)
+            : undefined;
+        setTask((prev) => {
+          if (!prev) return prev;
+          return applyTerminalPayloadToTask(prev, eventPayload) ?? prev;
+        });
         // Re-fetch on any task/turn event — simple, durable
-        const fresh = await fetchTask(taskId);
+        const fresh = await fetchTask(taskId, cabinetPath || undefined);
         setTask(fresh);
       } catch {
-        // ignore malformed events
+        // ignore malformed frames / transient fetch errors
       }
     };
     es.onerror = () => {
@@ -636,7 +751,151 @@ export function TaskConversationPage({
     return () => {
       es.close();
     };
-  }, [isDemo, taskId]);
+  }, [isDemo, taskId, cabinetPath]);
+
+  // Global conversation bus — catches task.updated events published on the
+  // Next.js side (e.g. waitForConversationCompletion) even when the
+  // per-conversation SSE reconnects late. Debounced to match the board.
+  useEffect(() => {
+    if (isDemo) return;
+    const es = new EventSource("/api/agents/conversations/events");
+    let debounce: ReturnType<typeof setTimeout> | null = null;
+    const scheduleRefetch = (_reason: string) => {
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        void fetchTask(taskId, cabinetPath || undefined)
+          .then((fresh) => {
+            setTask(fresh);
+          })
+          .catch(() => {});
+      }, 200);
+    };
+    es.onmessage = (msg) => {
+      try {
+        const event = JSON.parse(msg.data) as TaskEvent | { type: "ping" };
+        if (event.type === "ping") return;
+        if ("taskId" in event && event.taskId && event.taskId !== taskId) return;
+        const eventPayload =
+          "payload" in event && event.payload
+            ? (event.payload as Record<string, unknown>)
+            : undefined;
+        setTask((prev) => {
+          if (!prev) return prev;
+          return applyTerminalPayloadToTask(prev, eventPayload) ?? prev;
+        });
+        scheduleRefetch(event.type);
+      } catch {
+        // ignore malformed frames
+      }
+    };
+    return () => {
+      if (debounce) clearTimeout(debounce);
+      es.close();
+    };
+  }, [isDemo, taskId, cabinetPath]);
+
+  // When the app-shell completion toast fires, mirror the terminal status
+  // into the open drawer immediately — the toast and waitForConversationCompletion
+  // can observe failure before meta.json / refetch catches up.
+  useEffect(() => {
+    if (isDemo) return;
+    const handler = (event: Event) => {
+      const batch = (event as CustomEvent).detail as Array<{
+        id: string;
+        status: string;
+      }>;
+      const match = batch?.find((n) => n.id === taskId);
+      if (!match) return;
+      setTask((prev) => {
+        if (!prev) return prev;
+        return (
+          applyTerminalPayloadToTask(prev, { status: match.status }) ?? prev
+        );
+      });
+      void fetchTask(taskId, cabinetPath || undefined)
+        .then((fresh) => setTask(fresh))
+        .catch(() => {});
+    };
+    window.addEventListener("cabinet:conversation-completed", handler);
+    return () =>
+      window.removeEventListener("cabinet:conversation-completed", handler);
+  }, [isDemo, taskId, cabinetPath]);
+
+  // Safety poll while the task is alive (or not yet loaded). Per-conversation
+  // SSE can miss terminal updates when the run finishes before the browser
+  // connects — notifications use a separate channel and may arrive first.
+  useEffect(() => {
+    if (isDemo) return;
+    const status = task?.meta.status;
+    const shouldPoll =
+      !task || status === "running" || status === "awaiting-input";
+    if (!shouldPoll) return;
+
+    const tick = () => {
+      void (async () => {
+        try {
+          const [fresh, daemonRes] = await Promise.all([
+            fetchTask(taskId, cabinetPath || undefined),
+            fetch(`/api/daemon/session/${encodeURIComponent(taskId)}/output`).then(
+              (r) => (r.ok ? r.json() : null)
+            ) as Promise<{
+              status?: string;
+              adapterErrorHint?: string | null;
+              adapterErrorKind?: string | null;
+            } | null>,
+          ]);
+          let next = fresh;
+          // When meta.json is stale but the daemon already knows the session
+          // ended, reflect the terminal status immediately in the drawer.
+          if (
+            daemonRes?.status &&
+            (daemonRes.status === "failed" || daemonRes.status === "completed") &&
+            fresh.meta.status === "running"
+          ) {
+            const taskStatus =
+              daemonRes.status === "completed" ? "idle" : "failed";
+            next = fillEmptyAgentTurnContent(
+              {
+                ...fresh,
+                meta: {
+                  ...fresh.meta,
+                  status: taskStatus,
+                  errorHint:
+                    daemonRes.adapterErrorHint?.trim() ||
+                    fresh.meta.errorHint,
+                  errorKind:
+                    daemonRes.adapterErrorKind ||
+                    fresh.meta.errorKind,
+                },
+              },
+              taskStatus
+            );
+          }
+          setTask((prev) =>
+            isSameTaskPollState(prev, next) ? prev : next
+          );
+        } catch {
+          // ignore transient poll failures
+        }
+      })();
+    };
+
+    // Fast ticks for the first 30s after open — that's when quick failures
+    // happen and the user is staring at the drawer waiting.
+    tick();
+    let slowInterval: ReturnType<typeof setInterval> | null = null;
+    const fastInterval = window.setInterval(tick, 500);
+    const slowSwitch = window.setTimeout(() => {
+      window.clearInterval(fastInterval);
+      slowInterval = window.setInterval(tick, 1500);
+    }, 30_000);
+
+    return () => {
+      window.clearInterval(fastInterval);
+      if (slowInterval) window.clearInterval(slowInterval);
+      window.clearTimeout(slowSwitch);
+    };
+  }, [isDemo, taskId, cabinetPath, task?.meta.status]);
 
   // Cleanup demo settle timer
   useEffect(() => {
@@ -671,6 +930,13 @@ export function TaskConversationPage({
   );
   const terminalModeActive =
     isTerminalMode || (!task && earlyIsTerminal === true);
+
+  useEffect(() => {
+    const status = task?.meta.status ?? null;
+    if (prevTaskStatusRef.current === status) return;
+    prevTaskStatusRef.current = status;
+  }, [task?.meta.status]);
+
   const firstUserTurn = task?.turns.find((t) => t.role === "user") || null;
   const terminalPrompt = firstUserTurn?.content || task?.meta.title || "";
   const attachedSkills = task ? readRuntimeSkills(task.meta.adapterConfig) : null;
@@ -880,7 +1146,7 @@ export function TaskConversationPage({
     setBusy(true);
     try {
       await deleteConversation(taskId, task.meta.cabinetPath);
-      if (typeof window !== "undefined") {
+      if (variant === "full" && typeof window !== "undefined") {
         window.location.hash = "#/";
       }
     } catch (e) {
@@ -888,7 +1154,7 @@ export function TaskConversationPage({
     } finally {
       setBusy(false);
     }
-  }, [task, isDemo, taskId]);
+  }, [task, isDemo, taskId, variant]);
 
   if (loadError && !task) {
     return (

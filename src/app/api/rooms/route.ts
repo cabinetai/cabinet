@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  deleteRoom,
   listRooms,
   resolveDefaultRoom,
   updateRoomMeta,
@@ -59,7 +60,39 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ room });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    const status = message.includes("invalid") ? 400 : 500;
+    const status = message.startsWith("invalid") ? 400 : 500;
+    return NextResponse.json({ error: message }, { status });
+  }
+}
+
+/**
+ * Soft-delete a room. The room directory is moved to `data/.trash/<slug>-<ts>/`
+ * and `home.json` is repointed if the deleted slug was the default or last
+ * active. Reversible by hand (move it back). Path is accepted via either
+ * the JSON body or a `?path=` query param so the client doesn't have to
+ * juggle two shapes for one request.
+ */
+export async function DELETE(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const queryPath = url.searchParams.get("path");
+    let bodyPath: string | undefined;
+    try {
+      const body = (await req.json()) as { path?: unknown };
+      if (typeof body.path === "string") bodyPath = body.path;
+    } catch {
+      // no body / not JSON — fall back to query
+    }
+    const targetPath = bodyPath ?? queryPath;
+    if (typeof targetPath !== "string" || !targetPath.trim()) {
+      return NextResponse.json({ error: "path is required" }, { status: 400 });
+    }
+
+    const result = await deleteRoom(targetPath);
+    return NextResponse.json(result);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const status = message.startsWith("invalid") ? 400 : 500;
     return NextResponse.json({ error: message }, { status });
   }
 }

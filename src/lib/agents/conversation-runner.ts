@@ -710,9 +710,10 @@ export async function startConversationRun(
     throw error;
   }
 
-  if (input.onComplete) {
-    void waitForConversationCompletion(meta.id, input.onComplete);
-  }
+  // Always poll for terminal status on the Next.js side. The daemon process
+  // finalizes + enqueues notifications in its own memory — those never reach
+  // the SSE tick that drives toasts unless we mirror completion here.
+  void waitForConversationCompletion(meta.id, input.onComplete);
 
   return meta;
 }
@@ -728,8 +729,8 @@ export async function waitForConversationCompletion(
   // and the user is most sensitive to latency between their prompt and the
   // first streamed bytes. Back off to the steady-state 700 ms interval after
   // the adapter is clearly producing.
-  const FAST_POLL_WINDOW_MS = 5000;
-  const FAST_POLL_INTERVAL_MS = 250;
+  const FAST_POLL_WINDOW_MS = 15_000;
+  const FAST_POLL_INTERVAL_MS = 100;
   const STEADY_POLL_INTERVAL_MS = 700;
   let lastOutputLength = 0;
   let firstPoll = true;
@@ -768,26 +769,53 @@ export async function waitForConversationCompletion(
 
       const normalizedStatus = data.status === "completed" ? "completed" : "failed";
       const currentMeta = await readConversationMeta(conversationId);
+      const cp = currentMeta?.cabinetPath;
       let finalMeta =
         currentMeta?.status === "running"
-          ? await finalizeConversation(conversationId, {
-              status: normalizedStatus,
+          ? await finalizeConversation(
+              conversationId,
+              {
+                status: normalizedStatus,
+                output: data.output,
+                exitCode: normalizedStatus === "completed" ? 0 : 1,
+                tokens: data.adapterUsage
+                  ? {
+                      input: data.adapterUsage.inputTokens,
+                      output: data.adapterUsage.outputTokens,
+                      cache: data.adapterUsage.cachedInputTokens,
+                      total:
+                        data.adapterUsage.inputTokens +
+                        data.adapterUsage.outputTokens,
+                    }
+                  : undefined,
+                errorKind: data.adapterErrorKind ?? undefined,
+                errorHint: data.adapterErrorHint ?? undefined,
+                errorRetryAfterSec: data.adapterErrorRetryAfterSec ?? undefined,
+              },
+              cp
+            )
+          : currentMeta;
+
+      if (
+        finalMeta &&
+        normalizedStatus === "failed" &&
+        !finalMeta.errorHint?.trim() &&
+        (data.adapterErrorHint?.trim() || data.output?.trim())
+      ) {
+        finalMeta =
+          (await finalizeConversation(
+            conversationId,
+            {
+              status: "failed",
+              exitCode: 1,
               output: data.output,
-              exitCode: normalizedStatus === "completed" ? 0 : 1,
-              tokens: data.adapterUsage
-                ? {
-                    input: data.adapterUsage.inputTokens,
-                    output: data.adapterUsage.outputTokens,
-                    cache: data.adapterUsage.cachedInputTokens,
-                    total:
-                      data.adapterUsage.inputTokens + data.adapterUsage.outputTokens,
-                  }
-                : undefined,
               errorKind: data.adapterErrorKind ?? undefined,
               errorHint: data.adapterErrorHint ?? undefined,
               errorRetryAfterSec: data.adapterErrorRetryAfterSec ?? undefined,
-            })
-          : currentMeta;
+            },
+            cp
+          )) || finalMeta;
+      }
 
       if (!finalMeta) {
         throw new Error(`Conversation ${conversationId} disappeared during completion`);
@@ -829,6 +857,8 @@ export async function waitForConversationCompletion(
         payload: {
           status: finalMeta.status,
           artifactPaths: finalMeta.artifactPaths,
+          ...(finalMeta.errorKind ? { errorKind: finalMeta.errorKind } : {}),
+          ...(finalMeta.errorHint ? { errorHint: finalMeta.errorHint } : {}),
         },
       });
 

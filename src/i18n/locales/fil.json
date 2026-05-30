@@ -13,6 +13,8 @@
       "promptPlaceholder": "Ikaw ay isang ahente sa marketing para sa…",
       "addAgentTitle": "Magdagdag ng ahente sa iyong team",
       "addAgentDescription": "Pumili ng espesyalista mula sa library. Maaari mong i-edit ang pangalan, tungkulin, at mga tagubilin nito matapos itong maidagdag.",
+      "createFromScratchTitle": "Gumawa mula sa simula",
+      "createFromScratchDescription": "Bumuo ng bagong ahente na may sariling pagkakakilanlan, tungkulin, at mga tagubilin.",
       "searchLibraryPlaceholder": "Maghanap sa library",
       "errorLoadLibrary": "Hindi ma-load ang library ng ahente.",
       "errorAddAgent": "Hindi maidagdag ang ahenteng ito."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "I-load ang Kaalaman",
+    "intro": "Ituro ang Cabinet sa anumang folder sa iyong makina. Gumagawa ang Cabinet ng symlink upang lumabas ang mga nilalaman ng folder sa iyong Knowledge Base at maging available sa mga AI agent bilang konteksto. Ang orihinal na folder ay hindi kailanman inililipat o kinokopya.",
+    "symlinkNote": "Lumilikha ito ng symbolic link — nananatili ang mga file kung nasaan sila.",
     "autoDetectPlaceholder": "Auto-detect mula sa git remote (opsyonal)",
     "shortSummaryPlaceholder": "Opsyonal na maikling buod para sa mga ahente"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Buksan ang view ng Cabinet",
     "pageTitlePlaceholder": "Pamagat ng pahina…",
     "rename": "Palitan ang pangalan",
-    "openBadge": "Buksan"
+    "openBadge": "Buksan",
+    "sectionAdd": "Idagdag sa item na ito",
+    "sectionThis": "Item na ito",
+    "addSubPage": "Magdagdag ng Sub Page",
+    "newFolder": "Bagong Folder",
+    "createFile": "Gumawa ng Bagong File…",
+    "connectKnowledge": "Ikonekta ang Kaalaman…",
+    "symlinkTag": "Symlink",
+    "importFile": "Mag-import ng File…",
+    "importFolder": "Mag-import ng Folder…",
+    "createCabinet": "Gumawa ng Cabinet Dito",
+    "editSymlink": "I-edit ang Symlink…",
+    "settings": "Mga Setting…",
+    "moveTo": "Ilipat sa…",
+    "copyRelativePath": "Kopyahin ang Relative Path",
+    "copyFullPath": "Kopyahin ang Full Path",
+    "openInFinder": "Buksan sa Finder",
+    "delete": "Burahin",
+    "unlink": "I-unlink",
+    "folderNamePlaceholder": "Pangalan ng Folder",
+    "creating": "Ginagawa…",
+    "create": "Gumawa",
+    "addSubPageTitle": "Magdagdag ng Sub-pahina sa “{{name}}”",
+    "newFolderTitle": "Bagong Folder sa “{{name}}”"
+  },
+  "newFile": {
+    "title": "Gumawa ng Bagong File",
+    "subtitle": "Pumili ng uri ng file. Bubuksan ito ng Cabinet sa editor kapag handa na.",
+    "groupNative": "I-edit sa Cabinet",
+    "groupOffice": "Office (blangko — i-edit sa labas)",
+    "groupGoogle": "Google (naka-link)",
+    "namePlaceholder": "Pangalan ng File",
+    "create": "Gumawa",
+    "creating": "Ginagawa…",
+    "googleUrlLabel": "Google URL (opsyonal)",
+    "googleUrlPlaceholder": "Idikit ang isang naibabahaging link ng Google, o iwanang blangko para idagdag mamaya",
+    "officeNote": "Ipinapakita ng Cabinet ang mga Office file bilang read-only. Gamitin ang “Buksan sa Finder” para i-edit sa desktop app.",
+    "types": {
+      "markdown": "Pahina ng Markdown",
+      "markdownDesc": "Mga tala ng rich text, nae-edit sa Cabinet",
+      "code": "Code File",
+      "codeDesc": "Anumang source/text file — piliin ang extension",
+      "mermaid": "Mermaid Diagram",
+      "mermaidDesc": "Mga flowchart at diagram bilang code",
+      "csv": "CSV Talaan",
+      "csvDesc": "Data ng spreadsheet na pinaghihiwalay ng kuwit",
+      "docx": "Dokumento ng Word",
+      "docxDesc": "Blangko .docx",
+      "xlsx": "Excel Spreadsheet",
+      "xlsxDesc": "Blangko .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Blangko .pptx",
+      "gdoc": "Google Doc",
+      "gdocDesc": "I-embed ang Google Doc",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "I-embed ang Google Sheet",
+      "gslides": "Google Slides",
+      "gslidesDesc": "I-embed ang Google Slides"
+    },
+    "codeExtLabel": "Extension",
+    "googleTag": "Google",
+    "extHint": "I-type lang ang pangalan — Idaragdag ng Cabinet ang extension na {{ext}}.",
+    "createFailed": "Hindi malikha ang file."
+  },
+  "fileSettings": {
+    "googleTitle": "Mga Setting ng Pag-embed ng Google",
+    "googleKindLabel": "Uri",
+    "googleUrlLabel": "Google URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Ang pagbabahagi ng doc ay dapat na “Kahit sino na may link” o “Naka-publish sa web” para mag-load ang embed.",
+    "openLink": "Buksan sa Google",
+    "googleKinds": {
+      "docs": "Docs",
+      "sheets": "Sheets",
+      "slides": "Slides",
+      "forms": "Forms",
+      "drive": "Drive"
+    },
+    "appTitle": "Mga Setting ng Web App",
+    "modeLabel": "Paano ito bubuksan?",
+    "modeWebsite": "View ng pahina",
+    "modeWebsiteDesc": "Bumubukas nang inline na nakikita ang sidebar at AI panel.",
+    "modeApp": "Web App",
+    "modeAppDesc": "Bumubukas nang full-screen; awtomatikong nagko-collapse ang sidebar at AI panel.",
+    "convertNote": "Ito ay nagpapalit ng .app marker file sa folder. Hindi nababago ang iyong mga file.",
+    "save": "I-save",
+    "saving": "Nagse-save…",
+    "cancel": "Kanselahin",
+    "saveFailed": "Hindi ma-save ang mga setting."
+  },
+  "editSymlink": {
+    "title": "I-edit ang Symlink",
+    "intro": "Ang entry na ito ng Knowledge Base ay isang symbolic link sa isang folder sa ibang bahagi ng iyong makina.",
+    "kbPathLabel": "Path ng Knowledge Base",
+    "targetLabel": "Naka-link sa (sa disk)",
+    "brokenWarning": "Wala na ang target na folder. Ituro itong muli sa isang valid na folder sa ibaba.",
+    "repointLabel": "Ituro muli sa isang bagong folder",
+    "repointHint": "Papalitan ng Cabinet ang link para ituro dito. Hindi kailanman inililipat ang mga file.",
+    "browse": "Mag-browse",
+    "nameLabel": "Pangalan",
+    "descriptionLabel": "Deskripsyon",
+    "save": "I-save",
+    "saving": "Nagse-save…",
+    "copyTarget": "Kopyahin ang target path",
+    "saveFailed": "Hindi ma-update ang symlink."
+  },
+  "importFolder": {
+    "importing": "Ini-import ang folder…",
+    "failed": "Nabigo ang pag-import ng folder: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Naglo-load ng mga gawain"
@@ -756,7 +868,9 @@
     "noSkills": "Wala pang skills."
   },
   "taskDetail": {
-    "close": "Isara (Esc)"
+    "close": "Isara (Esc)",
+    "muteTask": "I-mute ang task na ito — ang mga natapos nitong pagpapatakbo ay direktang mapupunta sa Archive",
+    "unmuteTask": "I-unmute ang task na ito — ang mga natapos nitong pagpapatakbo ay muling lilitaw sa Katatapos Lang"
   },
   "rowActionsPlus": {
     "edit": "I-edit",
@@ -861,6 +975,41 @@
     "revealInFinder": "Ipakita sa file manager",
     "stored": "Nakatago",
     "resetOnboarding": "I-reset ang onboarding"
+  },
+  "rooms": {
+    "switcherTitle": "Lumipat ng room",
+    "switchRoom": "Mga Room",
+    "loading": "Naglo-load…",
+    "defaultTag": "Home",
+    "openInNewWindow": "Buksan sa bagong window",
+    "opensBrowserWindow": "Magbubukas ng bagong window ng browser",
+    "customizeRoom": "I-edit ang room",
+    "addRoom": "Magdagdag ng room…",
+    "editTitle": "I-edit ang room",
+    "editSubtitle": "Itakda ang pangalan, icon, kulay, at tema ng room na ito.",
+    "nameLabel": "Pangalan ng display",
+    "slugHint": "Ang pangalan ng folder sa disk ay mananatiling {{slug}}. Ang pagpapalit ng pangalan ng folder ay isang hiwalay at advanced na aksyon.",
+    "iconLabel": "Icon",
+    "colorLabel": "Kulay",
+    "colorAuto": "Auto",
+    "themeLabel": "Tema",
+    "themeGlobal": "Gamitin ang global default",
+    "editFailed": "Hindi na-save ang room. Pakisubukan muli.",
+    "deleteRoom": "Burahin ang room…",
+    "deleteLastRoomDisabledHint": "Hindi mo maaaring burahin ang iyong huling room.",
+    "deleteTitle": "Burahin ang room na ito?",
+    "deleteSubtitle": "Ang room na ito at lahat ng nasa loob nito ay ililipat sa trash.",
+    "deleteWarningIntro": "Ang paglipat ng room sa trash ay magtatanggal din ng:",
+    "deleteWarningPages": "Mga page at file sa loob ng room na ito",
+    "deleteWarningAgents": "Mga agent, pag-uusap, at memory na sakop ng room na ito",
+    "deleteWarningJobs": "Mga naka-iskedyul na trabaho at routine sa room na ito",
+    "deleteWarningChat": "Kasaysayan ng chat ng team para sa room na ito",
+    "deleteWarningSearch": "Ang search index ng room (awtomatikong muling itatayo kung ibabalik)",
+    "deleteRecoveryNote": "Pagbawi: ang room ay inilipat sa data/.trash/ — ibalik ito sa pamamagitan ng paglipat ng folder pabalik sa data/.",
+    "deleteConfirmLabel": "I-type ang {{slug}} para kumpirmahin",
+    "deleteConfirmButton": "Burahin ang room",
+    "deleting": "Binubura…",
+    "deleteFailed": "Hindi nabura ang room. Pakisubukan muli."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Bago ka mag-launch",
       "defaultCabinetName": "Ang iyong Cabinet",
       "defaultDescription": "Base ng kaalaman + AI team",
+      "knowledgeBaseLabel": "Base ng Kaalaman",
+      "aiTeamLabel": "Koponan ng AI",
       "launchCabinet": "Ilunsad ang Cabinet",
       "settingUp": "Ina-setup...",
       "disclaimerAccess": "<strong>Ang mga ahente ay tumatakbo nang may buong access.</strong> Gumagamit ang Cabinet ng <flag>--dangerously-skip-permissions</flag> (Claude Code) at katumbas na flags sa ibang provider. Ito ay kapareho ng pagpapatakbo ng mga CLI tool na ito mula sa iyong sariling terminal. Anumang MCP server o tool na iyong na-configure ay maaaring awtomatikong tawagin ng mga ahente.",
       "disclaimerBackup": "<strong>Regular na i-backup ang iyong data.</strong> Maaaring magbasa, magsulat, at magtanggal ng mga file ang mga ahente sa iyong KB at mga naka-link na repo. Hindi responsable ang Cabinet sa pagkawala ng data. Ikaw ang responsable sa mga AI provider na pipiliin mo at sa kanilang mga tuntunin ng serbisyo.",
       "disclaimerBeta": "<strong>Beta software. Maaaring magkaroon ng problema.</strong> Mabilis kaming mag-ship. Maaaring magkaroon ng breaking changes nang walang abiso.",
-      "legalNotice": "Sa pagpapatuloy, sumasang-ayon ka sa aming <terms>Mga Tuntunin</terms> at <privacy>Privacy</privacy>. Ang Cabinet ay isang <oss>open-source na proyekto</oss>."
+      "legalNotice": "Sa pagpapatuloy, sumasang-ayon ka sa aming <terms>Mga Tuntunin</terms> at <privacy>Privacy</privacy>. Ang Cabinet ay isang <oss>open-source na proyekto</oss>.",
+      "keepInTouch": "Panatilihin akong updated. Ang Cabinet ay open source at binuo nang hayagan, at gusto naming malaman kung ano ang susunod na gagawin. Walang spam, pangako."
     },
     "provider": {
       "agentType": "{{type}} ahente",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Malapit na",
       "guide": "Gabay",
       "heading": "Provider ng Ahente",
+      "moreModels": "Higit pang AI",
       "install": "I-install",
       "logIn": "Mag-log in",
       "openTerminalButton": "Buksan ang terminal",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "Para saan ang cabinet na ito? Bawat silid ay may sariling AI team.",
       "heading": "Pumili ng <accent>silid</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Ano ang isang Cabinet?",
+      "body": "Ang Cabinet ay isang nakatutok na workspace para sa isang bahagi ng iyong buhay o trabaho. Naglalaman ito ng iyong mga file, tala, tool, agent, at gawain, para magkaroon ang iyong AI team ng kontekstong kailangan nito para makatulong talaga.",
+      "examplesLabel": "Paano ginagamit ang Cabinet",
+      "example1": "iyong startup",
+      "example2": "isang GitHub repo",
+      "example3": "iyong gawaing marketing",
+      "example4": "isang proyekto ng kliyente",
+      "example5": "iyong personal na base ng kaalaman"
+    },
+    "access": {
+      "heading": "Ano ang maaaring i-access ni {{name}}?",
+      "subtitle": "Piliin ang kaalaman at mga tool na maaaring gamitin ng agent na ito. Maaari mo itong baguhin anumang oras.",
+      "defaultAgent": "iyong agent",
+      "files": "Mga File at Kaalaman",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP servers",
+      "plugins": "Mga Plugin",
+      "skills": "Mga Kasanayan",
+      "placeholderNote": "Maaari mong i-fine-tune ang access mamaya sa mga setting ng agent."
+    },
+    "heartbeat": {
+      "heading": "Dapat bang may heartbeat si {{name}}?",
+      "subtitle": "Pinapayagan ng heartbeat ang agent na mag-check in at gumana nang mag-isa ayon sa iskedyul.",
+      "off": "Naka-off",
+      "offHint": "Tumatakbo lang kapag hiniling mo. Inirerekomenda para sa simula.",
+      "daily": "Araw-araw",
+      "dailyHint": "Nagche-check in isang beses sa isang araw.",
+      "weekly": "Lingguhan",
+      "weeklyHint": "Nagche-check in isang beses sa isang linggo.",
+      "tokenNote": "Paalala: awtomatikong pinapatakbo ng heartbeat ang agent, na gumagamit ng AI tokens (at iyong provider quota) sa bawat pagtakbo nito. Maaari mo itong baguhin o i-off anumang oras."
+    },
+    "firstTask": {
+      "heading": "Simulan ang iyong unang gawain",
+      "subtitle": "Ang mga gawain ay kung paano mo ibinibigay ang trabaho kay {{name}}. Sumulat ng isa ngayon at mapupunta ito sa iyong cabinet, handa nang tumakbo.",
+      "label": "Ano ang unang dapat gawin ni {{name}}?",
+      "placeholder": "hal. Gumawa ng welcome email para sa mga bagong customer",
+      "example1": "Ibuod ang aking pinakabagong mga tala",
+      "example2": "Gumawa ng plano ng proyekto",
+      "example3": "Saliksikin ang aming nangungunang 3 kakumpitensya",
+      "note": "Maaari mo itong iwang blangko at magdagdag ng mga gawain mamaya. Walang tatakbo hangga't hindi ka nagkokonekta ng AI provider."
+    },
+    "rail": {
+      "untitled": "Iyong Cabinet",
+      "dataCaption": "Lahat ng file at tala ng iyong proyekto ay narito.",
+      "teamEmpty": "Wala pang agent.",
+      "teamCaption": "Dito gumagana ang iyong AI team.",
+      "tasksEmpty": "Wala pang gawain.",
+      "tasksCaption": "Ang trabahong ibinibigay mo sa iyong team ay lumalabas dito.",
+      "assignedTo": "Nakatoka kay {{name}}",
+      "you": "Ikaw"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "Nabigo ang pag-import",
       "importFailedConnection": "Nabigo ang pag-import. Suriin ang iyong koneksyon.",
       "importTitle": "I-import ang {{name}}",
-      "orPickAgents": "O piliin ang iyong mga ahente",
+      "pickAgents": "Piliin ang iyong mga ahente",
       "required": "Kinakailangan",
-      "startFromTemplate": "Magsimula sa isang template",
       "subtitle": "Bawat cabinet ay isang AI team — mga ahente, gawain, at isang ibinahaging knowledge base, nagtutulungan bilang isa.",
       "heading": "Buuin ang <accent>iyong</accent> team",
+      "nameLabel": "Pangalan ng ahente",
+      "namePlaceholder": "hal. Editor, Researcher, Assistant",
+      "roleLabel": "Tungkulin",
+      "rolePlaceholder": "hal. Writing assistant",
+      "instructionsLabel": "Ano ang dapat gawin ng ahenteng ito?",
+      "instructionsPlaceholder": "Ilarawan kung paano ito makakatulong. Halimbawa: Gumawa at mag-edit ng aking mga pahina, panatilihing malinaw at palakaibigan ang tono, at magmungkahi ng mga pagpapabuti.",
+      "agentOptionalHint": "Opsyonal. Maaari mo itong laktawan at magdagdag ng mga ahente mamaya mula sa loob ng silid.",
       "agentCount_one": "{{count}} ahente",
       "agentCount_other": "{{count}} mga ahente",
       "jobCount_one": "{{count}} gawain",
@@ -1410,6 +1622,10 @@
       "loading": "Naglo-load…",
       "connect": "Kumonekta",
       "recommended": "Inirerekomenda"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Malapit na",
+      "hint": "Malapit nang ikonekta ang mga panlabas na integrasyon at built-in na tool."
     },
     "storage": {
       "dataDirectory": "Direktoryo ng Data",

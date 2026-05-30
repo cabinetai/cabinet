@@ -141,6 +141,7 @@ export function TaskDetailPanel() {
         </div>
         <TaskConversationPage
           taskId={conversation.id}
+          cabinetPath={conversation.cabinetPath}
           variant="compact"
           returnContext={{
             type: "task",

@@ -23,9 +23,15 @@ export function startWatcher(
 ): FSWatcher {
   const watcher = chokidar.watch(DATA_DIR, {
     ignoreInitial: true,
-    // Symlinked cabinet roots are part of the indexed tree (see walkDataDir);
-    // follow them so live add/change/remove inside linked roots reindex too.
-    followSymlinks: true,
+    // Do NOT follow symlinks. A symlinked cabinet root can point into a tree
+    // full of dev repos (node_modules, .git, …); chokidar opens fds across the
+    // whole symlink target *before* `ignored` can prune it, so a single linked
+    // root can blow past macOS's per-process fd cap (kern.maxfilesperproc,
+    // ~10240) and the watcher dies with EMFILE. With followSymlinks off,
+    // chokidar honors `ignored` during descent and only watches real dirs under
+    // DATA_DIR. Symlinked roots are still picked up by the initial walkDataDir
+    // index (and on restart); they just won't live-reindex on every keystroke.
+    followSymlinks: false,
     ignored: (p: string) => {
       const rel = p.slice(DATA_DIR.length).replace(/^\//, "");
       if (!rel) return false;

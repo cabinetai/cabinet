@@ -34,6 +34,8 @@ interface CreateAgentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated?: () => void;
+  /** Cabinet (room) the agent belongs to. Omitted = the neutral home. */
+  cabinetPath?: string;
 }
 
 const EMOJI_OPTIONS = [
@@ -43,7 +45,7 @@ const EMOJI_OPTIONS = [
 
 const DEPARTMENTS = ["marketing", "sales", "engineering", "research", "operations", "content", "support", "general"];
 
-export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgentDialogProps) {
+export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }: CreateAgentDialogProps) {
   const { t } = useLocale();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -130,7 +132,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
       const res = await fetch(`/api/agents/personas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, ...body }),
+        body: JSON.stringify({ slug, ...body, cabinetPath }),
       });
 
       if (res.ok) {

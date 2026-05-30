@@ -4,6 +4,7 @@ import path from "path";
 import yaml from "js-yaml";
 import { resolveContentPath } from "@/lib/storage/path-utils";
 import { fileExists, writeFileContent } from "@/lib/storage/fs-operations";
+import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { CABINET_LINK_META_FILE } from "@/lib/cabinets/files";
 import { autoCommit } from "@/lib/git/git-service";
 
@@ -121,6 +122,9 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // Re-point / rename changes the node — invalidate so the sidebar refresh
+    // doesn't read the stale buildTree cache.
+    invalidateTreeCache();
     autoCommit(kbPath, "Update");
     return NextResponse.json({ ok: true, target });
   } catch (error) {

@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import matter from "gray-matter";
 import yaml from "js-yaml";
-import { createTtlCache } from "@/lib/cache/ttl-cache";
+import { createTtlCache, type TtlCache } from "@/lib/cache/ttl-cache";
 import { CABINET_LINK_META_CANDIDATES, CABINET_MANIFEST_FILE } from "@/lib/cabinets/files";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import type { TreeNode, GoogleFrontmatter } from "@/types";
@@ -303,7 +303,19 @@ async function buildTreeRecursive(
 // the data/archive dump) and is fired multiple times per page load (sidebar,
 // search, auto-link, composer). Short TTL means freshness after user edits
 // self-heals within a few seconds.
-const treeCache = createTtlCache<TreeNode[]>({ ttlMs: 5000 });
+//
+// Pinned to globalThis (not a bare module-level const): Next bundles each API
+// route handler with its OWN copy of this module, so a plain `const` would give
+// the mutation routes (create-file, link-repo, …) a DIFFERENT cache instance
+// than `/api/tree` reads — making invalidateTreeCache() a no-op across routes
+// and forcing users to wait out the 5s TTL (or hit refresh) after every create.
+// globalThis is one object per process, so all route bundles share this cache.
+const globalForTree = globalThis as unknown as {
+  __cabinetTreeCache?: TtlCache<TreeNode[]>;
+};
+const treeCache =
+  globalForTree.__cabinetTreeCache ??
+  (globalForTree.__cabinetTreeCache = createTtlCache<TreeNode[]>({ ttlMs: 5000 }));
 
 export function invalidateTreeCache() {
   treeCache.invalidate();

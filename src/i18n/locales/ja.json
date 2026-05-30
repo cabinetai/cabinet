@@ -13,6 +13,8 @@
       "promptPlaceholder": "あなたは…のマーケティングエージェントです。",
       "addAgentTitle": "チームにエージェントを追加",
       "addAgentDescription": "ライブラリからスペシャリストを選択してください。追加後、名前、役割、指示を編集できます。",
+      "createFromScratchTitle": "新規作成",
+      "createFromScratchDescription": "独自のID、役割、指示を持つ新しいエージェントを作成。",
       "searchLibraryPlaceholder": "ライブラリを検索",
       "errorLoadLibrary": "エージェントライブラリを読み込めませんでした。",
       "errorAddAgent": "このエージェントを追加できませんでした。"
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "知識を読み込む",
+    "intro": "お使いのPC上の任意のフォルダーをCabinetに指定します。Cabinetはシンボリックリンクを作成し、フォルダーの内容をナレッジベースに表示し、AIエージェントのコンテキストとして利用できるようにします。元のフォルダーは移動もコピーもされません。",
+    "symlinkNote": "シンボリックリンクを作成します — ファイルは元の場所に残ります。",
     "autoDetectPlaceholder": "Gitリモートから自動検出 (任意)",
     "shortSummaryPlaceholder": "エージェント用の短い要約（任意）"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Cabinetビューを開く",
     "pageTitlePlaceholder": "ページタイトル…",
     "rename": "名前を変更",
-    "openBadge": "開く"
+    "openBadge": "開く",
+    "sectionAdd": "この項目に追加",
+    "sectionThis": "この項目",
+    "addSubPage": "サブページを追加",
+    "newFolder": "新規フォルダー",
+    "createFile": "新規ファイルを作成…",
+    "connectKnowledge": "ナレッジを接続…",
+    "symlinkTag": "シンボリックリンク",
+    "importFile": "ファイルをインポート…",
+    "importFolder": "フォルダーをインポート…",
+    "createCabinet": "ここにCabinetを作成",
+    "editSymlink": "シンボリックリンクを編集…",
+    "settings": "設定…",
+    "moveTo": "移動…",
+    "copyRelativePath": "相対パスをコピー",
+    "copyFullPath": "フルパスをコピー",
+    "openInFinder": "Finderで開く",
+    "delete": "削除",
+    "unlink": "リンク解除",
+    "folderNamePlaceholder": "フォルダー名",
+    "creating": "作成中…",
+    "create": "作成",
+    "addSubPageTitle": "「{{name}}」にサブページを追加",
+    "newFolderTitle": "「{{name}}」に新規フォルダー"
+  },
+  "newFile": {
+    "title": "新規ファイルを作成",
+    "subtitle": "ファイルの種類を選択。準備ができたらCabinetがエディターで開きます。",
+    "groupNative": "Cabinetで編集",
+    "groupOffice": "Office (空白 — 外部で編集)",
+    "groupGoogle": "Google (リンク済み)",
+    "namePlaceholder": "ファイル名",
+    "create": "作成",
+    "creating": "作成中…",
+    "googleUrlLabel": "Google URL (任意)",
+    "googleUrlPlaceholder": "共有可能なGoogleリンクを貼り付けるか、後で追加するために空白のままにします",
+    "officeNote": "CabinetはOfficeファイルを読み取り専用で表示します。「Finderで開く」でデスクトップアプリで編集してください。",
+    "types": {
+      "markdown": "Markdownページ",
+      "markdownDesc": "Cabinetで編集可能なリッチテキストノート",
+      "code": "コードファイル",
+      "codeDesc": "あらゆるソース/テキストファイル — 拡張子を選択",
+      "mermaid": "Mermaid図",
+      "mermaidDesc": "コードとしてのフローチャートと図",
+      "csv": "CSVテーブル",
+      "csvDesc": "カンマ区切りのスプレッドシートデータ",
+      "docx": "Wordドキュメント",
+      "docxDesc": "空の.docx",
+      "xlsx": "Excelスプレッドシート",
+      "xlsxDesc": "空の.xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "空の.pptx",
+      "gdoc": "Googleドキュメント",
+      "gdocDesc": "Googleドキュメントを埋め込む",
+      "gsheet": "Googleスプレッドシート",
+      "gsheetDesc": "Googleスプレッドシートを埋め込む",
+      "gslides": "Googleスライド",
+      "gslidesDesc": "Googleスライドを埋め込む"
+    },
+    "codeExtLabel": "拡張子",
+    "googleTag": "Google",
+    "extHint": "名前を入力するだけ — Cabinetが{{ext}}拡張子を追加します。",
+    "createFailed": "ファイルを作成できませんでした。"
+  },
+  "fileSettings": {
+    "googleTitle": "Google埋め込み設定",
+    "googleKindLabel": "種類",
+    "googleUrlLabel": "Google URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "埋め込みを読み込むには、ドキュメントの共有設定が「リンクを知っている全員」または「ウェブに公開」になっている必要があります。",
+    "openLink": "Googleで開く",
+    "googleKinds": {
+      "docs": "ドキュメント",
+      "sheets": "スプレッドシート",
+      "slides": "スライド",
+      "forms": "フォーム",
+      "drive": "ドライブ"
+    },
+    "appTitle": "ウェブアプリ設定",
+    "modeLabel": "どのように開きますか？",
+    "modeWebsite": "ページビュー",
+    "modeWebsiteDesc": "サイドバーとAIパネルが表示された状態でインラインで開きます。",
+    "modeApp": "ウェブアプリ",
+    "modeAppDesc": "全画面で開きます。サイドバーとAIパネルは自動的に折りたたまれます。",
+    "convertNote": "これは、フォルダ内の.appマーカーファイルを切り替えます。ファイルは変更されません。",
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "キャンセル",
+    "saveFailed": "設定を保存できませんでした。"
+  },
+  "editSymlink": {
+    "title": "シンボリックリンクを編集",
+    "intro": "このナレッジベースエントリは、お使いのマシン上の別のフォルダへのシンボリックリンクです。",
+    "kbPathLabel": "ナレッジベースパス",
+    "targetLabel": "リンク先（ディスク上）",
+    "brokenWarning": "ターゲットフォルダが存在しません。以下の有効なフォルダに再指定してください。",
+    "repointLabel": "新しいフォルダに再指定",
+    "repointHint": "Cabinet はリンクをここに置き換えます。ファイルが移動されることはありません。",
+    "browse": "参照",
+    "nameLabel": "名前",
+    "descriptionLabel": "説明",
+    "save": "保存",
+    "saving": "保存中…",
+    "copyTarget": "ターゲットパスをコピー",
+    "saveFailed": "シンボリックリンクを更新できませんでした。"
+  },
+  "importFolder": {
+    "importing": "フォルダをインポート中…",
+    "failed": "フォルダのインポートに失敗しました: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "タスクを読み込み中"
@@ -756,7 +868,9 @@
     "noSkills": "まだスキルがありません。"
   },
   "taskDetail": {
-    "close": "閉じる (Esc)"
+    "close": "閉じる (Esc)",
+    "muteTask": "このタスクをミュート — 完了した実行は直接アーカイブへ",
+    "unmuteTask": "このタスクのミュートを解除 — 完了した実行は「完了済み」に再表示されます"
   },
   "rowActionsPlus": {
     "edit": "編集",
@@ -861,6 +975,41 @@
     "revealInFinder": "ファイルマネージャーで表示",
     "stored": "保存済み",
     "resetOnboarding": "オンボーディングをリセット"
+  },
+  "rooms": {
+    "switcherTitle": "ルームを切り替え",
+    "switchRoom": "ルーム",
+    "loading": "読み込み中…",
+    "defaultTag": "ホーム",
+    "openInNewWindow": "新しいウィンドウで開く",
+    "opensBrowserWindow": "新しいブラウザウィンドウを開きます",
+    "customizeRoom": "ルームを編集",
+    "addRoom": "ルームを追加…",
+    "editTitle": "ルームを編集",
+    "editSubtitle": "このルームの名前、アイコン、色、テーマを設定します。",
+    "nameLabel": "表示名",
+    "slugHint": "ディスク上のフォルダ名は {{slug}} のままです。フォルダ名の変更は、別の高度な操作です。",
+    "iconLabel": "アイコン",
+    "colorLabel": "色",
+    "colorAuto": "自動",
+    "themeLabel": "テーマ",
+    "themeGlobal": "グローバルデフォルトを使用",
+    "editFailed": "ルームを保存できませんでした。もう一度お試しください。",
+    "deleteRoom": "ルームを削除…",
+    "deleteLastRoomDisabledHint": "最後のルームは削除できません。",
+    "deleteTitle": "このルームを削除しますか？",
+    "deleteSubtitle": "このルームとその中のすべてのコンテンツはゴミ箱に移動されます。",
+    "deleteWarningIntro": "ルームをゴミ箱に移動すると、以下も削除されます:",
+    "deleteWarningPages": "このルーム内のページとファイル",
+    "deleteWarningAgents": "このルームにスコープされたエージェント、会話、メモリ",
+    "deleteWarningJobs": "このルーム内のスケジュールされたジョブとルーチン",
+    "deleteWarningChat": "このルームのチームチャット履歴",
+    "deleteWarningSearch": "ルームの検索インデックス（復元された場合、自動的に再構築されます）",
+    "deleteRecoveryNote": "復元: ルームは data/.trash/ に移動されます — フォルダを data/ に戻すことで復元できます。",
+    "deleteConfirmLabel": "確認のため {{slug}} と入力してください",
+    "deleteConfirmButton": "部屋を削除",
+    "deleting": "削除中…",
+    "deleteFailed": "部屋を削除できませんでした。もう一度お試しください。"
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "公開前に",
       "defaultCabinetName": "あなたのCabinet",
       "defaultDescription": "ナレッジベース + AIチーム",
+      "knowledgeBaseLabel": "ナレッジベース",
+      "aiTeamLabel": "AIチーム",
       "launchCabinet": "Cabinet を起動",
       "settingUp": "設定中...",
       "disclaimerAccess": "<strong>エージェントはフルアクセスで実行されます。</strong> Cabinet は <flag>--dangerously-skip-permissions</flag> (Claude Code) および他のプロバイダーの同等のフラグを使用します。これは、これらの CLI ツールを自身のターミナルから実行するのと同等です。設定した MCP サーバーやツールは、エージェントによって自動的に呼び出される場合があります。",
       "disclaimerBackup": "<strong>データを定期的にバックアップしてください。</strong> エージェントは、KB およびリンクされたリポジトリ内のファイルを読み取り、書き込み、削除できます。Cabinet はデータ損失の責任を負いません。選択する AI プロバイダーとその利用規約については、お客様が責任を負います。",
       "disclaimerBeta": "<strong>ベータ版ソフトウェアです。不具合が発生する可能性があります。</strong> 迅速にリリースしています。破壊的な変更が予告なく行われる場合があります。",
-      "legalNotice": "続行すると、当社の<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したことになります。Cabinet は<oss>オープンソースプロジェクト</oss>です。"
+      "legalNotice": "続行すると、当社の<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したことになります。Cabinet は<oss>オープンソースプロジェクト</oss>です。",
+      "keepInTouch": "最新情報を受け取る。Cabinetはオープンソースで開発されており、次に何を開発すべきか、ぜひご意見をお聞かせください。スパムは送りません。お約束します。"
     },
     "provider": {
       "agentType": "{{type}} エージェント",
@@ -1119,6 +1271,7 @@
       "comingSoon": "近日公開",
       "guide": "ガイド",
       "heading": "エージェントプロバイダー",
+      "moreModels": "その他のAI",
       "install": "インストール",
       "logIn": "ログイン",
       "openTerminalButton": "ターミナルを開く",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "このキャビネットは何ですか？各ルームには独自の AI チームが付属しています。",
       "heading": "<accent>ルーム</accent>を選択"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinetとは？",
+      "body": "Cabinetは、生活や仕事の特定の分野に特化したワークスペースです。ファイル、メモ、ツール、エージェント、タスクを保管し、AIチームが実際に役立つために必要なコンテキストを提供します。",
+      "examplesLabel": "Cabinetの活用例",
+      "example1": "あなたのスタートアップ",
+      "example2": "GitHubリポジトリ",
+      "example3": "あなたのマーケティング業務",
+      "example4": "クライアントプロジェクト",
+      "example5": "あなたの個人ナレッジベース"
+    },
+    "access": {
+      "heading": "{{name}}は何にアクセスできますか？",
+      "subtitle": "このエージェントが使用できる知識とツールを選択してください。これはいつでも変更できます。",
+      "defaultAgent": "あなたのエージェント",
+      "files": "ファイルと知識",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP servers",
+      "plugins": "プラグイン",
+      "skills": "スキル",
+      "placeholderNote": "アクセス権は後でエージェントの設定で微調整できます。"
+    },
+    "heartbeat": {
+      "heading": "{{name}}をハートビートで実行しますか？",
+      "subtitle": "ハートビートにより、エージェントはスケジュールに基づいて自動的にチェックインし、作業を実行します。",
+      "off": "オフ",
+      "offHint": "要求されたときにのみ実行されます。開始時におすすめです。",
+      "daily": "毎日",
+      "dailyHint": "1日1回チェックインします。",
+      "weekly": "毎週",
+      "weeklyHint": "1週間に1回チェックインします。",
+      "tokenNote": "注意：ハートビートはエージェントを自動的に実行し、実行されるたびにAIトークン（およびプロバイダーのクォータ）を使用します。これはいつでも変更またはオフにできます。"
+    },
+    "firstTask": {
+      "heading": "最初のタスクを登録する",
+      "subtitle": "タスクは、{{name}}に作業を依頼する方法です。今すぐ作成すると、Cabinetに登録され、実行準備が整います。",
+      "label": "{{name}}に最初は何をさせますか？",
+      "placeholder": "例：新規顧客向けのウェルカムメールを作成する",
+      "example1": "最新のメモを要約する",
+      "example2": "プロジェクト計画を作成する",
+      "example3": "競合上位3社を調査する",
+      "note": "これは空白のままにして、後でタスクを追加できます。AIプロバイダーを接続するまで何も実行されません。"
+    },
+    "rail": {
+      "untitled": "あなたのCabinet",
+      "dataCaption": "すべてのプロジェクトファイルとメモがここにあります。",
+      "teamEmpty": "まだエージェントはありません。",
+      "teamCaption": "あなたのAIチームはここで作業します。",
+      "tasksEmpty": "まだタスクはありません。",
+      "tasksCaption": "チームに渡した作業がここに表示されます。",
+      "assignedTo": "{{name}}に割り当て済み",
+      "you": "あなた"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "インポート失敗",
       "importFailedConnection": "インポートに失敗しました。接続を確認してください。",
       "importTitle": "{{name}} をインポート",
-      "orPickAgents": "またはエージェントを選択",
+      "pickAgents": "エージェントを選択",
       "required": "必須",
-      "startFromTemplate": "テンプレートから開始",
       "subtitle": "各キャビネットは AI チームです — エージェント、タスク、共有ナレッジベースが一体となって機能します。",
       "heading": "<accent>あなたの</accent>チームを構築",
+      "nameLabel": "エージェント名",
+      "namePlaceholder": "例：エディター、リサーチャー、アシスタント",
+      "roleLabel": "役割",
+      "rolePlaceholder": "例：ライティングアシスタント",
+      "instructionsLabel": "このエージェントは何をすべきですか？",
+      "instructionsPlaceholder": "どのように役立つか説明してください。例：ページの草稿作成と編集、トーンを明確かつフレンドリーに保ち、改善点を提案する。",
+      "agentOptionalHint": "オプション。この手順をスキップして、後でルーム内からエージェントを追加できます。",
       "agentCount_one": "{{count}} エージェント",
       "agentCount_other": "{{count}} エージェント",
       "jobCount_one": "ジョブ {{count}} 件",
@@ -1410,6 +1622,10 @@
       "loading": "読み込み中…",
       "connect": "接続",
       "recommended": "おすすめ"
+    },
+    "integrationsPreview": {
+      "comingSoon": "近日公開",
+      "hint": "外部連携と組み込みツールの接続は準備中です。"
     },
     "storage": {
       "dataDirectory": "データディレクトリ",

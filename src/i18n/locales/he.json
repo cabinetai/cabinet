@@ -13,6 +13,8 @@
       "promptPlaceholder": "אתה סוכן שיווק עבור…",
       "addAgentTitle": "הוסיפו סוכן לצוות",
       "addAgentDescription": "בחרו מומחה מהספרייה. תוכלו לערוך את השם, התפקיד וההוראות אחרי ההוספה.",
+      "createFromScratchTitle": "צור מאפס",
+      "createFromScratchDescription": "בנה סוכן חדש עם זהות, תפקיד והוראות משלו.",
       "searchLibraryPlaceholder": "חיפוש בספרייה",
       "errorLoadLibrary": "לא הצלחנו לטעון את ספריית הסוכנים.",
       "errorAddAgent": "לא הצלחנו להוסיף את הסוכן הזה."
@@ -974,6 +976,41 @@
     "stored": "נשמר",
     "resetOnboarding": "איפוס ההכשרה"
   },
+  "rooms": {
+    "switcherTitle": "החלף חדר",
+    "switchRoom": "חדרים",
+    "loading": "טוען…",
+    "defaultTag": "בית",
+    "openInNewWindow": "פתח בחלון חדש",
+    "opensBrowserWindow": "פותח חלון דפדפן חדש",
+    "customizeRoom": "ערוך חדר",
+    "addRoom": "הוסף חדר…",
+    "editTitle": "ערוך חדר",
+    "editSubtitle": "הגדר את שם החדר, הסמל, הצבע והעיצוב שלו.",
+    "nameLabel": "שם תצוגה",
+    "slugHint": "שם התיקייה בדיסק נשאר {{slug}}. שינוי שם התיקייה הוא פעולה נפרדת ומתקדמת.",
+    "iconLabel": "סמל",
+    "colorLabel": "צבע",
+    "colorAuto": "אוטומטי",
+    "themeLabel": "עיצוב",
+    "themeGlobal": "השתמש בברירת המחדל הגלובלית",
+    "editFailed": "לא ניתן היה לשמור את החדר. אנא נסה שוב.",
+    "deleteRoom": "מחק חדר…",
+    "deleteLastRoomDisabledHint": "אינך יכול למחוק את החדר האחרון שלך.",
+    "deleteTitle": "למחוק חדר זה?",
+    "deleteSubtitle": "חדר זה וכל תוכנו יועברו לאשפה.",
+    "deleteWarningIntro": "העברת החדר לאשפה מסירה גם:",
+    "deleteWarningPages": "דפים וקבצים בתוך חדר זה",
+    "deleteWarningAgents": "סוכנים, שיחות וזיכרון המוגדרים לחדר זה",
+    "deleteWarningJobs": "משימות מתוזמנות ושגרות בחדר זה",
+    "deleteWarningChat": "היסטוריית צ'אט צוותית עבור חדר זה",
+    "deleteWarningSearch": "אינדקס החיפוש של החדר (נבנה מחדש אוטומטית אם ישוחזר)",
+    "deleteRecoveryNote": "שחזור: החדר הועבר ל-data/.trash/ — שחזר אותו על ידי העברת התיקייה בחזרה ל-data/.",
+    "deleteConfirmLabel": "הקלד {{slug}} כדי לאשר",
+    "deleteConfirmButton": "מחק חדר",
+    "deleting": "מוחק…",
+    "deleteFailed": "לא ניתן היה למחוק את החדר. אנא נסה שוב."
+  },
   "common": {
     "actions": {
       "save": "שמירה",
@@ -1218,12 +1255,15 @@
       "beforeYouLaunch": "לפני ההשקה",
       "defaultCabinetName": "ה-Cabinet שלך",
       "defaultDescription": "בסיס ידע + צוות AI",
+      "knowledgeBaseLabel": "בסיס ידע",
+      "aiTeamLabel": "צוות AI",
       "launchCabinet": "הפעל את Cabinet",
       "settingUp": "מגדיר...",
       "disclaimerAccess": "<strong>סוכנים פועלים עם גישה מלאה.</strong> Cabinet משתמש ב-<flag>--dangerously-skip-permissions</flag> (Claude Code) ודגלים מקבילים בספקים אחרים. זהה להפעלת כלי CLI אלה מהטרמינל שלך. כל שרתי MCP או כלים שהגדרתם עשויים להיות מופעלים אוטומטית על ידי סוכנים.",
       "disclaimerBackup": "<strong>גבה את הנתונים שלך באופן קבוע.</strong> סוכנים יכולים לקרוא, לכתוב ולמחוק קבצים בבסיס הידע שלך ובמאגרים המקושרים. Cabinet אינו אחראי לאובדן נתונים. אתה אחראי על ספקי ה-AI שתבחר ועל תנאי השירות שלהם.",
       "disclaimerBeta": "<strong>תוכנת בטא. דברים עלולים להישבר.</strong> אנו משיקים במהירות. שינויים שוברים יכולים להגיע ללא הודעה מוקדמת.",
-      "legalNotice": "בהמשך אתה מסכים ל-<terms>תנאים</terms> ו-<privacy>פרטיות</privacy>. Cabinet הוא <oss>פרויקט קוד פתוח</oss>."
+      "legalNotice": "בהמשך אתה מסכים ל-<terms>תנאים</terms> ו-<privacy>פרטיות</privacy>. Cabinet הוא <oss>פרויקט קוד פתוח</oss>.",
+      "keepInTouch": "שמור אותי מעודכן. Cabinet הוא קוד פתוח ונבנה בשקיפות, ונשמח ללמוד מה לבנות הלאה. בלי ספאם, אנחנו מבטיחים."
     },
     "provider": {
       "agentType": "{{type}} סוכן",
@@ -1231,6 +1271,7 @@
       "comingSoon": "בקרוב",
       "guide": "מדריך",
       "heading": "ספק סוכן",
+      "moreModels": "עוד AI",
       "install": "התקן",
       "logIn": "התחבר",
       "openTerminalButton": "פתח טרמינל",
@@ -1245,12 +1286,64 @@
       "subtitle": "Cabinet זקוק ל-CLI של AI כדי להפעיל את הסוכנים שלך.",
       "verifyExplanation": "אימות מריץ את הפרומפט חסר הראש של הספק מקצה לקצה ומסווג כל כשל כדי שתדע לאיזה שלב לחזור.",
       "verifying": "מאמת…",
-      "failedAtStep": "נכשל בשלב: <strong>{{step}}</strong>",
-      "moreModels": "עוד AI"
+      "failedAtStep": "נכשל בשלב: <strong>{{step}}</strong>"
     },
     "roomSetup": {
       "subtitle": "לשם מה ה-Cabinet הזה? כל חדר מגיע עם צוות AI משלו.",
       "heading": "בחר <accent>חדר</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "מהו Cabinet?",
+      "body": "Cabinet הוא סביבת עבודה ממוקדת לתחום אחד בחייך או בעבודתך. הוא מכיל את הקבצים, ההערות, הכלים, הסוכנים והמשימות שלך, כך שלצוות ה-AI שלך יהיה את ההקשר הדרוש כדי לעזור באמת.",
+      "examplesLabel": "איך אנשים משתמשים ב-Cabinet",
+      "example1": "הסטארטאפ שלך",
+      "example2": "מאגר GitHub",
+      "example3": "עבודת השיווק שלך",
+      "example4": "פרויקט לקוח",
+      "example5": "בסיס הידע האישי שלך"
+    },
+    "access": {
+      "heading": "למה {{name}} יכול לגשת?",
+      "subtitle": "בחר את הידע והכלים שסוכן זה יכול להשתמש בהם. תוכל לשנות זאת בכל עת.",
+      "defaultAgent": "הסוכן שלך",
+      "files": "קבצים וידע",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "שרתי MCP",
+      "plugins": "תוספים",
+      "skills": "כישורים",
+      "placeholderNote": "תוכל לכוונן את הגישה מאוחר יותר בהגדרות הסוכן."
+    },
+    "heartbeat": {
+      "heading": "האם {{name}} יפעל בקצב קבוע?",
+      "subtitle": "קצב קבוע מאפשר לסוכן לבדוק ולפעול באופן עצמאי לפי לוח זמנים.",
+      "off": "כבוי",
+      "offHint": "פועל רק כשאתה מבקש. מומלץ להתחיל.",
+      "daily": "יומי",
+      "dailyHint": "בודק פעם ביום.",
+      "weekly": "שבועי",
+      "weeklyHint": "בודק פעם בשבוע.",
+      "tokenNote": "שים לב: קצב קבוע מפעיל את הסוכן אוטומטית, מה שמשתמש באסימוני AI (ובמכסת הספק שלך) בכל פעם שהוא מופעל. תוכל לשנות או לכבות זאת בכל עת."
+    },
+    "firstTask": {
+      "heading": "הגש את המשימה הראשונה שלך",
+      "subtitle": "משימות הן הדרך שבה אתה מעביר עבודה ל-{{name}}. כתוב אחת עכשיו והיא תנחת ב-cabinet שלך, מוכנה להפעלה.",
+      "label": "מה {{name}} צריך לעשות קודם?",
+      "placeholder": "לדוגמה: טיוטת אימייל קבלת פנים ללקוחות חדשים",
+      "example1": "סכם את ההערות האחרונות שלי",
+      "example2": "טיוטת תוכנית פרויקט",
+      "example3": "חקור את 3 המתחרים המובילים שלנו",
+      "note": "תוכל להשאיר זאת ריק ולהוסיף משימות מאוחר יותר. שום דבר לא יפעל עד שתחבר ספק AI."
+    },
+    "rail": {
+      "untitled": "ה-Cabinet שלך",
+      "dataCaption": "כל הקבצים וההערות של הפרויקט שלך נמצאים כאן.",
+      "teamEmpty": "אין סוכנים כרגע.",
+      "teamCaption": "צוות ה-AI שלך עובד כאן.",
+      "tasksEmpty": "אין משימות כרגע.",
+      "tasksCaption": "עבודה שתמסור לצוות שלך תופיע כאן.",
+      "assignedTo": "הוקצה ל-{{name}}",
+      "you": "אתה"
     },
     "rooms": {
       "office": {
@@ -1263,7 +1356,7 @@
         "departmentNoun": "מחלקה",
         "teamSizeLabel": "גודל צוות",
         "exampleAgents": {
-          "0": "CEO",
+          "0": "מנכ\"ל",
           "1": "עורך"
         }
       },
@@ -1434,11 +1527,17 @@
       "importFailed": "הייבוא נכשל",
       "importFailedConnection": "הייבוא נכשל. בדוק את החיבור שלך.",
       "importTitle": "ייבא את {{name}}",
-      "orPickAgents": "או בחר את הסוכנים שלך",
+      "pickAgents": "בחר את הסוכנים שלך",
       "required": "נדרש",
-      "startFromTemplate": "התחל מתבנית",
       "subtitle": "כל Cabinet הוא צוות AI — סוכנים, משימות ובסיס ידע משותף, הפועלים יחד כאחד.",
       "heading": "בנה את <accent>הצוות שלך</accent>",
+      "nameLabel": "שם הסוכן",
+      "namePlaceholder": "לדוגמה: עורך, חוקר, עוזר",
+      "roleLabel": "תפקיד",
+      "rolePlaceholder": "לדוגמה: עוזר כתיבה",
+      "instructionsLabel": "מה הסוכן הזה צריך לעשות?",
+      "instructionsPlaceholder": "תאר כיצד הוא צריך לעזור. לדוגמה: ערוך וכתוב את הדפים שלי, שמור על טון ברור וידידותי, והצע שיפורים.",
+      "agentOptionalHint": "אופציונלי. באפשרותך לדלג על שלב זה ולהוסיף סוכנים מאוחר יותר מתוך החדר.",
       "agentCount_one": "{{count}} סוכן",
       "agentCount_other": "{{count}} סוכנים",
       "jobCount_one": "{{count}} משימה",

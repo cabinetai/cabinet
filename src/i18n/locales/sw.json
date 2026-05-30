@@ -13,6 +13,8 @@
       "promptPlaceholder": "Wewe ni ajenti wa masoko kwa…",
       "addAgentTitle": "Ongeza ajenti kwenye timu yako",
       "addAgentDescription": "Chagua mtaalamu kutoka maktaba. Unaweza kuhariri jina lake, jukumu, na maelekezo baada ya kuongezwa.",
+      "createFromScratchTitle": "Unda kutoka mwanzo",
+      "createFromScratchDescription": "Unda wakala mpya na utambulisho wake, jukumu, na maelekezo.",
       "searchLibraryPlaceholder": "Tafuta kwenye maktaba",
       "errorLoadLibrary": "Imeshindwa kupakia maktaba ya ajenti.",
       "errorAddAgent": "Imeshindwa kuongeza ajenti huyu."
@@ -594,6 +596,8 @@
   },
   "linkRepo": {
     "title": "Pakia Maarifa",
+    "intro": "Elekeza Cabinet kwenye folda yoyote kwenye mashine yako. Cabinet huunda symlink ili yaliyomo kwenye folda yaonekane kwenye Hifadhidata yako ya Maarifa na yapatikane kwa mawakala wa AI kama muktadha. Folda asili haihamishwi wala kunakiliwa kamwe.",
+    "symlinkNote": "Hii huunda kiungo cha ishara — faili hubaki mahali zilipo.",
     "autoDetectPlaceholder": "Gundua kiotomatiki kutoka git remote (si lazima)",
     "shortSummaryPlaceholder": "Muhtasari mfupi wa hiari kwa mawakala"
   },
@@ -606,7 +610,115 @@
     "openCabinet": "Fungua mwonekano wa cabinet",
     "pageTitlePlaceholder": "Kichwa cha ukurasa…",
     "rename": "Badilisha jina",
-    "openBadge": "Fungua"
+    "openBadge": "Fungua",
+    "sectionAdd": "Ongeza kwenye kipengee hiki",
+    "sectionThis": "Kipengee hiki",
+    "addSubPage": "Ongeza Ukurasa Mdogo",
+    "newFolder": "Folda Mpya",
+    "createFile": "Unda Faili Mpya…",
+    "connectKnowledge": "Unganisha Maarifa…",
+    "symlinkTag": "Symlink",
+    "importFile": "Ingiza Faili…",
+    "importFolder": "Ingiza Folda…",
+    "createCabinet": "Unda Cabinet Hapa",
+    "editSymlink": "Hariri Symlink…",
+    "settings": "Mipangilio…",
+    "moveTo": "Hamisha hadi…",
+    "copyRelativePath": "Nakili Njia Husika",
+    "copyFullPath": "Nakili Njia Kamili",
+    "openInFinder": "Fungua kwenye Finder",
+    "delete": "Futa",
+    "unlink": "Tenganisha Kiungo",
+    "folderNamePlaceholder": "Jina la folda",
+    "creating": "Inaumba…",
+    "create": "Unda",
+    "addSubPageTitle": "Ongeza Ukurasa Mdogo kwenye “{{name}}”",
+    "newFolderTitle": "Folda Mpya ndani ya “{{name}}”"
+  },
+  "newFile": {
+    "title": "Unda Faili Mpya",
+    "subtitle": "Chagua aina ya faili. Cabinet itaifungua kwenye kihariri itakapokuwa tayari.",
+    "groupNative": "Hariri ndani ya Cabinet",
+    "groupOffice": "Ofisi (tupu — hariri nje)",
+    "groupGoogle": "Google (imeunganishwa)",
+    "namePlaceholder": "Jina la faili",
+    "create": "Unda",
+    "creating": "Inaumba…",
+    "googleUrlLabel": "URL ya Google (si lazima)",
+    "googleUrlPlaceholder": "Bandika kiungo cha Google kinachoweza kushirikiwa, au acha wazi ili kuongeza baadaye",
+    "officeNote": "Cabinet huonyesha faili za Office kama kusoma-tu. Tumia “Fungua kwenye Finder” kuhariri katika programu ya kompyuta.",
+    "types": {
+      "markdown": "Ukurasa wa Markdown",
+      "markdownDesc": "Vidokezo vya maandishi tajiri, vinavyoweza kuhaririwa kwenye Cabinet",
+      "code": "Faili ya Msimbo",
+      "codeDesc": "Faili yoyote ya chanzo/maandishi — chagua kiendelezi",
+      "mermaid": "Mchoro wa Mermaid",
+      "mermaidDesc": "Mifumo ya mtiririko na michoro kama msimbo",
+      "csv": "Jedwali la CSV",
+      "csvDesc": "Data ya lahajedwali iliyotenganishwa kwa koma",
+      "docx": "Hati ya Word",
+      "docxDesc": "Tupu .docx",
+      "xlsx": "Lahajedwali ya Excel",
+      "xlsxDesc": "Tupu .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Tupu .pptx",
+      "gdoc": "Hati ya Google",
+      "gdocDesc": "Pachika Hati ya Google",
+      "gsheet": "Lahajedwali ya Google",
+      "gsheetDesc": "Pachika Lahajedwali ya Google",
+      "gslides": "Slaidi za Google",
+      "gslidesDesc": "Pachika Slaidi za Google"
+    },
+    "codeExtLabel": "Kiendelezi",
+    "googleTag": "Google",
+    "extHint": "Andika tu jina — Cabinet huongeza kiendelezi cha {{ext}}.",
+    "createFailed": "Imeshindwa kuunda faili."
+  },
+  "fileSettings": {
+    "googleTitle": "Mipangilio ya Upachikaji wa Google",
+    "googleKindLabel": "Aina",
+    "googleUrlLabel": "URL ya Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Ushiriki wa hati lazima uwe “Mtu yeyote mwenye kiungo” au “Iliyochapishwa kwenye wavuti” ili upachikaji upakie.",
+    "openLink": "Fungua kwenye Google",
+    "googleKinds": {
+      "docs": "Hati",
+      "sheets": "Lahajedwali",
+      "slides": "Slaidi",
+      "forms": "Fomu",
+      "drive": "Hifadhi"
+    },
+    "appTitle": "Mipangilio ya Programu ya Wavuti",
+    "modeLabel": "Hii ifunguke vipi?",
+    "modeWebsite": "Mwonekano wa ukurasa",
+    "modeWebsiteDesc": "Hufunguka ndani ya ukurasa huku upau wa kando na paneli ya AI vikiwa wazi.",
+    "modeApp": "Programu ya Wavuti",
+    "modeAppDesc": "Hufunguka skrini nzima; upau wa kando na paneli ya AI hujifunga kiotomatiki.",
+    "convertNote": "Hii hubadilisha faili ya alama ya .app kwenye folda. Faili zako hazibadilishwi.",
+    "save": "Hifadhi",
+    "saving": "Inahifadhi…",
+    "cancel": "Ghairi",
+    "saveFailed": "Imeshindwa kuhifadhi mipangilio."
+  },
+  "editSymlink": {
+    "title": "Hariri Kiungo cha Kielelezo",
+    "intro": "Kiingilio hiki cha Hifadhidata ya Maarifa ni kiungo cha ishara kwa folda mahali pengine kwenye mashine yako.",
+    "kbPathLabel": "Njia ya Hifadhidata ya Maarifa",
+    "targetLabel": "Inaelekeza kwa (kwenye diski)",
+    "brokenWarning": "Folda lengwa haipo tena. Ielekeze upya kwenye folda halali hapa chini.",
+    "repointLabel": "Elekeza upya kwenye folda mpya",
+    "repointHint": "Cabinet itabadilisha kiungo kielekeze hapa. Faili hazihamishwi kamwe.",
+    "browse": "Vinjari",
+    "nameLabel": "Jina",
+    "descriptionLabel": "Maelezo",
+    "save": "Hifadhi",
+    "saving": "Inahifadhi…",
+    "copyTarget": "Nakili njia lengwa",
+    "saveFailed": "Imeshindwa kusasisha kiungo cha ishara."
+  },
+  "importFolder": {
+    "importing": "Inaagiza folda…",
+    "failed": "Uagizaji wa folda umeshindwa: {{message}}"
   },
   "boardSkeleton": {
     "loadingTasks": "Inapakia kazi"
@@ -756,7 +868,9 @@
     "noSkills": "Hakuna ujuzi bado."
   },
   "taskDetail": {
-    "close": "Funga (Esc)"
+    "close": "Funga (Esc)",
+    "muteTask": "Nyamazisha kazi hii — matukio yake yaliyokamilika huenda moja kwa moja kwenye Kumbukumbu",
+    "unmuteTask": "Fungua sauti ya kazi hii — matukio yake yaliyokamilika huonekana tena kwenye Imemalizika Hivi Punde"
   },
   "rowActionsPlus": {
     "edit": "Hariri",
@@ -861,6 +975,41 @@
     "revealInFinder": "Onyesha kwenye kidhibiti faili",
     "stored": "Imehifadhiwa",
     "resetOnboarding": "Weka upya utambulisho"
+  },
+  "rooms": {
+    "switcherTitle": "Badilisha chumba",
+    "switchRoom": "Vyumba",
+    "loading": "Inapakia…",
+    "defaultTag": "Nyumbani",
+    "openInNewWindow": "Fungua kwenye dirisha jipya",
+    "opensBrowserWindow": "Hufungua dirisha jipya la kivinjari",
+    "customizeRoom": "Hariri chumba",
+    "addRoom": "Ongeza chumba…",
+    "editTitle": "Hariri chumba",
+    "editSubtitle": "Weka jina, ikoni, rangi, na mandhari ya chumba hiki.",
+    "nameLabel": "Jina la kuonyesha",
+    "slugHint": "Jina la folda kwenye diski linabaki kama {{slug}}. Kubadilisha jina la folda ni hatua tofauti, ya hali ya juu.",
+    "iconLabel": "Ikoni",
+    "colorLabel": "Rangi",
+    "colorAuto": "Otomatiki",
+    "themeLabel": "Mandhari",
+    "themeGlobal": "Tumia chaguo-msingi la kimataifa",
+    "editFailed": "Imeshindwa kuhifadhi chumba. Tafadhali jaribu tena.",
+    "deleteRoom": "Futa chumba…",
+    "deleteLastRoomDisabledHint": "Huwezi kufuta chumba chako cha mwisho.",
+    "deleteTitle": "Futa chumba hiki?",
+    "deleteSubtitle": "Chumba hiki na kila kitu kilichomo ndani yake kitahamishiwa kwenye pipa la takataka.",
+    "deleteWarningIntro": "Kuhamisha chumba kwenye pipa la takataka pia huondoa:",
+    "deleteWarningPages": "Kurasa na faili ndani ya chumba hiki",
+    "deleteWarningAgents": "Mawakala, mazungumzo, na kumbukumbu zilizowekwa kwa chumba hiki",
+    "deleteWarningJobs": "Kazi zilizopangwa na taratibu katika chumba hiki",
+    "deleteWarningChat": "Historia ya gumzo la timu kwa chumba hiki",
+    "deleteWarningSearch": "Kielezo cha utafutaji cha chumba (kinajengwa upya kiotomatiki kikirejeshwa)",
+    "deleteRecoveryNote": "Urejeshaji: chumba kimehamishwa hadi data/.trash/ — kirejeshe kwa kuhamisha folda kurudi data/.",
+    "deleteConfirmLabel": "Andika {{slug}} kuthibitisha",
+    "deleteConfirmButton": "Futa chumba",
+    "deleting": "Inafuta…",
+    "deleteFailed": "Imeshindwa kufuta chumba. Tafadhali jaribu tena."
   },
   "common": {
     "actions": {
@@ -1106,12 +1255,15 @@
       "beforeYouLaunch": "Kabla ya kuzindua",
       "defaultCabinetName": "Cabinet yako",
       "defaultDescription": "Msingi wa maarifa + timu ya AI",
+      "knowledgeBaseLabel": "Msingi wa maarifa",
+      "aiTeamLabel": "Timu ya AI",
       "launchCabinet": "Zindua Cabinet",
       "settingUp": "Inasanidi...",
       "disclaimerAccess": "<strong>Mawakala huendeshwa kwa ufikiaji kamili.</strong> Cabinet hutumia <flag>--dangerously-skip-permissions</flag> (Claude Code) na bendera zinazofanana katika watoa huduma wengine. Hii ni sawa na kuendesha zana hizi za CLI kutoka kwenye terminal yako mwenyewe. Seva au zana zozote za MCP ulizosanidi zinaweza kuitwa kiotomatiki na mawakala.",
       "disclaimerBackup": "<strong>Hifadhi nakala za data yako mara kwa mara.</strong> Mawakala wanaweza kusoma, kuandika, na kufuta faili katika KB yako na repos zilizounganishwa. Cabinet haina jukumu la upotezaji wa data. Wewe ndiye unayewajibika kwa watoa huduma wa AI unaowachagua na masharti yao ya huduma.",
       "disclaimerBeta": "<strong>Programu ya Beta. Mambo yanaweza kuharibika.</strong> Tunatoa masasisho haraka. Mabadiliko makubwa yanaweza kutokea bila taarifa.",
-      "legalNotice": "Kwa kuendelea unakubali <terms>Masharti</terms> yetu na <privacy>Faragha</privacy>. Cabinet ni <oss>mradi wa chanzo huria</oss>."
+      "legalNotice": "Kwa kuendelea unakubali <terms>Masharti</terms> yetu na <privacy>Faragha</privacy>. Cabinet ni <oss>mradi wa chanzo huria</oss>.",
+      "keepInTouch": "Niweke karibu. Cabinet ni chanzo huru na imejengwa wazi, na tungependa kujua nini cha kujenga baadaye. Hakuna barua taka, tunaahidi."
     },
     "provider": {
       "agentType": "{{type}} wakala",
@@ -1119,6 +1271,7 @@
       "comingSoon": "Inakuja hivi karibuni",
       "guide": "Mwongozo",
       "heading": "Mtoa Huduma wa Wakala",
+      "moreModels": "AI Zaidi",
       "install": "Sakinisha",
       "logIn": "Ingia",
       "openTerminalButton": "Fungua terminal",
@@ -1138,6 +1291,59 @@
     "roomSetup": {
       "subtitle": "Cabinet hii ni ya nini? Kila chumba huja na timu yake ya AI.",
       "heading": "Chagua <accent>chumba</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet ni nini?",
+      "body": "Cabinet ni nafasi ya kazi iliyolenga eneo moja la maisha au kazi yako. Inashikilia faili zako, madokezo, zana, mawakala, na kazi, ili timu yako ya AI iwe na muktadha unaohitaji kusaidia kikweli.",
+      "examplesLabel": "Jinsi watu wanavyotumia Cabinet",
+      "example1": "startup yako",
+      "example2": "repo ya GitHub",
+      "example3": "kazi yako ya masoko",
+      "example4": "mradi wa mteja",
+      "example5": "msingi wako wa maarifa binafsi"
+    },
+    "access": {
+      "heading": "{{name}} inaweza kufikia nini?",
+      "subtitle": "Chagua maarifa na zana ambazo wakala huyu anaweza kutumia. Unaweza kubadilisha hili wakati wowote.",
+      "defaultAgent": "wakala wako",
+      "files": "Faili na maarifa",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Seva za MCP",
+      "plugins": "Programu-jalizi",
+      "skills": "Ujuzi",
+      "placeholderNote": "Unaweza kurekebisha ufikiaji baadaye katika mipangilio ya wakala."
+    },
+    "heartbeat": {
+      "heading": "Je, {{name}} iendeshe kwa mpigo wa moyo?",
+      "subtitle": "Mpigo wa moyo huruhusu wakala kujiripoti na kufanya kazi yenyewe kwa ratiba.",
+      "off": "Zima",
+      "offHint": "Huendesha tu unapoagiza. Inapendekezwa kuanza.",
+      "daily": "Kila siku",
+      "dailyHint": "Hujiripoti mara moja kwa siku.",
+      "weekly": "Kila wiki",
+      "weeklyHint": "Hujiripoti mara moja kwa wiki.",
+      "tokenNote": "Tahadhari: mpigo wa moyo huendesha wakala kiotomatiki, ambayo hutumia tokeni za AI (na kiasi chako cha mtoa huduma) kila inapoendeshwa. Unaweza kubadilisha au kuzima hili wakati wowote."
+    },
+    "firstTask": {
+      "heading": "Weka kazi yako ya kwanza",
+      "subtitle": "Kazi ndiyo jinsi unavyomkabidhi {{name}} kazi. Andika moja sasa na itaingia kwenye cabinet yako, tayari kuendeshwa.",
+      "label": "{{name}} afanye nini kwanza?",
+      "placeholder": "k.m. Andika barua pepe ya kukaribisha wateja wapya",
+      "example1": "Fupisha madokezo yangu ya hivi karibuni",
+      "example2": "Andika rasimu ya mpango wa mradi",
+      "example3": "Fanya utafiti kuhusu washindani wetu 3 wakuu",
+      "note": "Unaweza kuacha hili wazi na kuongeza kazi baadaye. Hakuna kitakachoendeshwa hadi uunganishe mtoa huduma wa AI."
+    },
+    "rail": {
+      "untitled": "Kabati Lako",
+      "dataCaption": "Faili na madokezo yote ya mradi wako yanapatikana hapa.",
+      "teamEmpty": "Hakuna mawakala bado.",
+      "teamCaption": "Timu yako ya AI inafanya kazi hapa.",
+      "tasksEmpty": "Hakuna kazi bado.",
+      "tasksCaption": "Kazi unazokabidhi timu yako huonekana hapa.",
+      "assignedTo": "Imekabidhiwa {{name}}",
+      "you": "Wewe"
     },
     "rooms": {
       "office": {
@@ -1321,11 +1527,17 @@
       "importFailed": "Uingizaji umeshindwa",
       "importFailedConnection": "Uingizaji umeshindwa. Angalia muunganisho wako.",
       "importTitle": "Ingiza {{name}}",
-      "orPickAgents": "Au chagua mawakala wako",
+      "pickAgents": "Chagua mawakala wako",
       "required": "Inahitajika",
-      "startFromTemplate": "Anza na kiolezo",
       "subtitle": "Kila cabinet ni timu ya AI — mawakala, kazi, na msingi wa maarifa ulioshirikiwa, wakifanya kazi pamoja kama mmoja.",
       "heading": "Jenga <accent>timu yako</accent>",
+      "nameLabel": "Jina la wakala",
+      "namePlaceholder": "k.m. Mhariri, Mtafiti, Msaidizi",
+      "roleLabel": "Jukumu",
+      "rolePlaceholder": "k.m. Msaidizi wa uandishi",
+      "instructionsLabel": "Wakala huyu afanye nini?",
+      "instructionsPlaceholder": "Eleza jinsi anavyopaswa kusaidia. Kwa mfano: Andika na hariri kurasa zangu, weka sauti wazi na rafiki, na pendekeza maboresho.",
+      "agentOptionalHint": "Si lazima. Unaweza kuruka hatua hii na kuongeza mawakala baadaye kutoka ndani ya chumba.",
       "agentCount_one": "{{count}} wakala",
       "agentCount_other": "{{count}} mawakala",
       "jobCount_one": "{{count}} kazi",
@@ -1410,6 +1622,10 @@
       "loading": "Inapakia…",
       "connect": "Unganisha",
       "recommended": "Inayopendekezwa"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Inakuja hivi karibuni",
+      "hint": "Kuunganisha mifumo ya nje na zana zilizojengwa ndani kunaendelea."
     },
     "storage": {
       "dataDirectory": "Saraka ya Data",

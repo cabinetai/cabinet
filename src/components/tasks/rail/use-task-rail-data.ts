@@ -148,8 +148,11 @@ export function useTaskRailData(): TaskRailData {
     };
     es.onmessage = (msg) => {
       try {
-        const event = JSON.parse(msg.data) as { type: string };
+        const event = JSON.parse(msg.data) as { type: string; taskId?: string };
         if (event.type === "ping") return;
+        if (event.type === "task.deleted" && event.taskId) {
+          setItems((prev) => prev.filter((item) => item.task.id !== event.taskId));
+        }
         scheduleReload();
       } catch {
         // ignore malformed frames

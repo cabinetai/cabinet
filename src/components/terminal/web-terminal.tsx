@@ -84,6 +84,7 @@ export function WebTerminal({
   }, [onClose]);
 
   useEffect(() => {
+    const effectiveSessionId = sessionId || `session-${Date.now()}`;
     let terminal: import("@xterm/xterm").Terminal | null = null;
     let ws: WebSocket | null = null;
     let resizeObserver: ResizeObserver | null = null;
@@ -123,9 +124,14 @@ export function WebTerminal({
       pendingWrites.length = 0;
     };
 
-    const finishSession = (closeSocket = false) => {
+    const finishSession = (closeSocket = false, reason = "unknown") => {
       if (disposed || sessionFinished) return;
       sessionFinished = true;
+      console.debug("[WebTerminal] session ended", {
+        sessionId: effectiveSessionId,
+        reason,
+        closeSocket,
+      });
       if (statusPollHandle) {
         clearInterval(statusPollHandle);
         statusPollHandle = null;
@@ -139,7 +145,7 @@ export function WebTerminal({
 
     // ----- Chain A: connection (auth + WebSocket). Fires immediately. -----
     const startConnection = async () => {
-      const id = sessionId || `session-${Date.now()}`;
+      const id = effectiveSessionId;
       try {
         const authResponse = await fetch("/api/daemon/auth");
         if (!authResponse.ok) {
@@ -207,7 +213,7 @@ export function WebTerminal({
 
         ws.onclose = () => {
           if (disposed) return;
-          finishSession(false);
+          finishSession(false, "ws.close");
         };
 
         statusPollHandle = setInterval(() => {
@@ -218,14 +224,14 @@ export function WebTerminal({
               if (!response.ok) return;
               const data = (await response.json()) as { status?: string };
               if (data.status && data.status !== "running") {
-                finishSession(true);
+                finishSession(true, `poll:${data.status}`);
               }
             } catch {
               // Ignore transient polling failures; the socket remains the primary signal.
             }
           })();
         }, 3000);
-      } catch {
+      } catch (err) {
         if (disposed) return;
         setError("Connection failed. Is the daemon running?");
         writeToTerminal(

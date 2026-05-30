@@ -68,4 +68,9 @@ export interface PtySession extends BaseSession {
 export interface CompletedOutputEntry {
   output: string;
   completedAt: number;
+  status?: "running" | "completed" | "failed";
+  exitCode?: number | null;
+  adapterErrorKind?: string | null;
+  adapterErrorHint?: string | null;
+  adapterErrorRetryAfterSec?: number | null;
 }

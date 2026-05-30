@@ -339,7 +339,8 @@ export function Sidebar() {
           size="icon"
           aria-label={t("sidebar:expandSidebar")}
           title={t("sidebar:expandSidebar")}
-          className="absolute top-3 start-2 z-20 h-7 w-7 animate-in fade-in zoom-in-95 duration-200"
+          className="absolute top-3 z-20 h-7 w-7 animate-in fade-in zoom-in-95 duration-200"
+          style={{ insetInlineStart: "calc(0.5rem + var(--traffic-clearance, 0px))" }}
           onClick={() => setCollapsed(false)}
         >
           <PanelLeft className="h-4 w-4 rtl:rotate-180" />

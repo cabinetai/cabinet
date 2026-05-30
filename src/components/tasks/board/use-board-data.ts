@@ -142,8 +142,16 @@ export function useBoardData({ cabinetPath, visibilityMode = "own" }: Options): 
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
     es.onmessage = (msg) => {
       try {
-        const event = JSON.parse(msg.data) as { type?: string };
+        const event = JSON.parse(msg.data) as {
+          type?: string;
+          taskId?: string;
+        };
         if (!event.type || event.type === "ping") return;
+        if (event.type === "task.deleted" && event.taskId) {
+          setConversations((prev) =>
+            prev.filter((conversation) => conversation.id !== event.taskId)
+          );
+        }
         if (debounceTimer) clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           void refreshConversations();

@@ -25,6 +25,8 @@ import {
   turnsDir as turnsDirFs,
 } from "./conversation-turns";
 import { publishConversationEvent } from "./conversation-events";
+import { isLegacyAdapterType } from "./adapters/legacy-ids";
+import { agentAdapterRegistry } from "./adapters/registry";
 import { discoverCabinetPaths } from "../cabinets/discovery";
 import { buildConversationInstanceKey } from "./conversation-identity";
 import { fingerprint, parseAgentActions } from "./action-parser";
@@ -53,6 +55,62 @@ import {
 } from "../storage/fs-operations";
 
 export const CONVERSATIONS_DIR = path.join(DATA_DIR, ".agents", ".conversations");
+
+/** Classify adapter-reported failure text when the daemon hasn't set hints yet. */
+function classifyAdapterFailure(
+  adapterType: string | undefined | null,
+  output: string,
+  exitCode: number | null = 1
+): {
+  errorKind?: ConversationErrorKind;
+  errorHint?: string;
+  errorRetryAfterSec?: number;
+} {
+  const text = output.trim();
+  if (!text) return {};
+  const adapter = adapterType ? agentAdapterRegistry.get(adapterType) : undefined;
+  if (!adapter?.classifyError) return {};
+  try {
+    const classified = adapter.classifyError(text, exitCode);
+    return {
+      errorKind: classified.kind,
+      errorHint: classified.hint,
+      errorRetryAfterSec: classified.retryAfterSec,
+    };
+  } catch {
+    return { errorKind: "unknown" };
+  }
+}
+
+function resolveConversationFailureHints(
+  adapterType: string | undefined | null,
+  output: string | undefined,
+  exitCode: number | null | undefined,
+  input: {
+    errorKind?: ConversationErrorKind | null;
+    errorHint?: string | null;
+    errorRetryAfterSec?: number | null;
+  }
+): {
+  errorKind?: ConversationErrorKind;
+  errorHint?: string;
+  errorRetryAfterSec?: number;
+} {
+  let errorKind = input.errorKind ?? undefined;
+  let errorHint = input.errorHint ?? undefined;
+  let errorRetryAfterSec = input.errorRetryAfterSec ?? undefined;
+  if (!errorHint?.trim() && output?.trim()) {
+    const classified = classifyAdapterFailure(
+      adapterType,
+      output,
+      exitCode ?? 1
+    );
+    errorKind = errorKind ?? classified.errorKind;
+    errorHint = errorHint ?? classified.errorHint;
+    errorRetryAfterSec = errorRetryAfterSec ?? classified.errorRetryAfterSec;
+  }
+  return { errorKind, errorHint, errorRetryAfterSec };
+}
 
 function resolveConversationsDir(cabinetPath?: string): string {
   if (cabinetPath) return path.join(DATA_DIR, cabinetPath, ".agents", ".conversations");
@@ -984,6 +1042,208 @@ export function transcriptShowsCompletedRun(transcript: string, prompt?: string)
   return hasClaudePromptTail(transcript, prompt);
 }
 
+/**
+ * Structured adapters (codex_local, etc.) can emit a terminal error on stdout
+ * before the child process reaps. When meta.json is still `running` but the
+ * transcript already carries an error line, treat the run as failed.
+ */
+function transcriptShowsStructuredFailure(
+  transcript: string,
+  adapterType?: string | null
+): boolean {
+  const text = transcript.trim();
+  if (!text) return false;
+
+  if (adapterType === "codex_local") {
+    const lower = text.toLowerCase();
+    if (lower.includes("invalid_request_error")) return true;
+    if (lower.includes("model") && lower.includes("not supported")) return true;
+    if (lower.includes("codex") && lower.includes("failed")) return true;
+  }
+
+  return false;
+}
+
+/**
+ * Heal conversations whose meta.json still says `running` after the daemon
+ * session has already exited. `finalizeSessionConversation` can fail silently
+ * (`.catch(() => {})` in the daemon); structured adapters like codex_local
+ * then leave a zombie "running" meta that blocks `maybeResolveCompletedConversation`
+ * via the manual-trigger guard. Polling the daemon on each detail fetch closes
+ * that gap — this is what the task drawer poll/SSE path relies on.
+ */
+async function finalizeMetaFromDaemonOutput(
+  meta: ConversationMeta,
+  data: {
+    status: string;
+    output?: string;
+    adapterUsage?: {
+      inputTokens: number;
+      outputTokens: number;
+      cachedInputTokens?: number;
+    } | null;
+    adapterErrorKind?: ConversationErrorKind | null;
+    adapterErrorHint?: string | null;
+    adapterErrorRetryAfterSec?: number | null;
+  },
+  reason: string
+): Promise<ConversationMeta> {
+  const normalizedStatus: ConversationStatus =
+    data.status === "completed" ? "completed" : "failed";
+  const failureHints =
+    normalizedStatus === "failed"
+      ? resolveConversationFailureHints(
+          meta.adapterType,
+          data.output,
+          normalizedStatus === "failed" ? 1 : 0,
+          {
+            errorKind: data.adapterErrorKind,
+            errorHint: data.adapterErrorHint,
+            errorRetryAfterSec: data.adapterErrorRetryAfterSec,
+          }
+        )
+      : {};
+
+  const finalized = await finalizeConversation(
+    meta.id,
+    {
+      status: normalizedStatus,
+      output: data.output,
+      exitCode: normalizedStatus === "completed" ? 0 : 1,
+      tokens: data.adapterUsage
+        ? {
+            input: data.adapterUsage.inputTokens,
+            output: data.adapterUsage.outputTokens,
+            cache: data.adapterUsage.cachedInputTokens,
+            total:
+              data.adapterUsage.inputTokens + data.adapterUsage.outputTokens,
+          }
+        : undefined,
+      errorKind: failureHints.errorKind,
+      errorHint: failureHints.errorHint,
+      errorRetryAfterSec: failureHints.errorRetryAfterSec,
+    },
+    meta.cabinetPath
+  );
+  return finalized || meta;
+}
+
+async function reconcileStaleRunningMeta(
+  meta: ConversationMeta
+): Promise<ConversationMeta> {
+  if (meta.status !== "running") return meta;
+
+  // Manual legacy PTY sessions stay running until the user closes the xterm.
+  if (meta.trigger === "manual" && isLegacyAdapterType(meta.adapterType)) {
+    return meta;
+  }
+
+  const { getDaemonSessionOutput, listDaemonSessions } = await import(
+    "./daemon-client"
+  );
+
+  const tryHeal = async (
+    data: Awaited<ReturnType<typeof getDaemonSessionOutput>>,
+    reason: string
+  ) => {
+    if (data.status === "running") return null;
+    return finalizeMetaFromDaemonOutput(meta, data, reason);
+  };
+
+  try {
+    const primary = await getDaemonSessionOutput(meta.id);
+    const healed = await tryHeal(primary, "primary-session");
+    if (healed) return healed;
+
+    // Continue-turn runs use synthetic ids (`convId::tN::uuid`). The
+    // conversation id poll won't see them via the primary lookup above.
+    const sessions = await listDaemonSessions();
+    const related = sessions.filter(
+      (s) => s.id === meta.id || s.id.startsWith(`${meta.id}::`)
+    );
+    const exited = related.filter((s) => s.exited);
+    for (const session of exited.sort((a, b) => {
+      const aScore = (a.exitCode ?? 0) !== 0 ? 1 : 0;
+      const bScore = (b.exitCode ?? 0) !== 0 ? 1 : 0;
+      return bScore - aScore;
+    })) {
+      try {
+        const data = await getDaemonSessionOutput(session.id);
+        const fromRelated = await tryHeal(
+          data,
+          `related-session:${session.id}`
+        );
+        if (fromRelated) return fromRelated;
+      } catch {
+        // try next related session
+      }
+    }
+
+    const alive = related.some((s) => !s.exited);
+    if (alive) {
+      if (!isLegacyAdapterType(meta.adapterType)) {
+        const transcript = await readConversationTranscript(
+          meta.id,
+          meta.cabinetPath
+        );
+        const prompt = (await fileExists(promptPathFs(meta.id, meta.cabinetPath)))
+          ? await readFileContent(promptPathFs(meta.id, meta.cabinetPath))
+          : "";
+        if (
+          transcript.trim() &&
+          !transcriptShowsCompletedRun(transcript, prompt) &&
+          transcriptShowsStructuredFailure(transcript, meta.adapterType)
+        ) {
+          return finalizeMetaFromDaemonOutput(
+            meta,
+            {
+              status: "failed",
+              output: transcript,
+              adapterErrorKind: primary.adapterErrorKind ?? undefined,
+              adapterErrorHint: primary.adapterErrorHint ?? undefined,
+              adapterErrorRetryAfterSec:
+                primary.adapterErrorRetryAfterSec ?? undefined,
+            },
+            "structured-transcript-error-while-alive"
+          );
+        }
+      }
+      return meta;
+    }
+
+    // Daemon session is gone (or exited) but meta.json still says running —
+    // `finalizeSessionConversation` likely failed. For structured adapters,
+    // any non-empty transcript means the run produced output and should not
+    // stay "running" forever.
+    if (!isLegacyAdapterType(meta.adapterType)) {
+      const transcript = await readConversationTranscript(
+        meta.id,
+        meta.cabinetPath
+      );
+      if (transcript.trim()) {
+        const completedRun = transcriptShowsCompletedRun(
+          transcript,
+          (await fileExists(promptPathFs(meta.id, meta.cabinetPath)))
+            ? await readFileContent(promptPathFs(meta.id, meta.cabinetPath))
+            : ""
+        );
+        return finalizeMetaFromDaemonOutput(
+          meta,
+          {
+            status: completedRun ? "completed" : "failed",
+            output: transcript,
+          },
+          "structured-transcript-fallback"
+        );
+      }
+    }
+
+    return meta;
+  } catch (err) {
+    return meta;
+  }
+}
+
 async function maybeResolveCompletedConversation(
   meta: ConversationMeta | null
 ): Promise<ConversationMeta | null> {
@@ -994,14 +1254,44 @@ async function maybeResolveCompletedConversation(
   const prompt = (await fileExists(promptPathFs(meta.id, cabinetPath)))
     ? await readFileContent(promptPathFs(meta.id, cabinetPath))
     : "";
-  // Manual terminal-mode sessions stay "running" until the user closes
-  // them explicitly (Done button or /exit in the xterm). An idle CLI
-  // prompt is awaiting-input, not completed. Never silently flip these
-  // to status=completed from a detail-fetch side effect.
-  if (meta.status === "running" && meta.trigger === "manual") {
+  // Manual legacy PTY sessions stay "running" until the user closes them
+  // explicitly (Done button or /exit in the xterm). Structured adapters
+  // (codex_local, claude_local, …) must not inherit this guard — their
+  // daemon session exits on its own and meta should flip via reconcile/finalize.
+  if (
+    meta.status === "running" &&
+    meta.trigger === "manual" &&
+    isLegacyAdapterType(meta.adapterType)
+  ) {
     return meta;
   }
   if (meta.status === "running" && !transcriptShowsCompletedRun(transcript, prompt)) {
+    if (
+      !isLegacyAdapterType(meta.adapterType) &&
+      transcript.trim() &&
+      transcriptShowsStructuredFailure(transcript, meta.adapterType)
+    ) {
+      const failureHints = resolveConversationFailureHints(
+        meta.adapterType,
+        transcript,
+        1,
+        {}
+      );
+      return (
+        (await finalizeConversation(
+          meta.id,
+          {
+            status: "failed",
+            output: transcript,
+            exitCode: 1,
+            errorKind: failureHints.errorKind,
+            errorHint: failureHints.errorHint,
+            errorRetryAfterSec: failureHints.errorRetryAfterSec,
+          },
+          cabinetPath
+        )) || meta
+      );
+    }
     return meta;
   }
   const parsed = parseCabinetBlock(transcript, prompt);
@@ -1123,10 +1413,16 @@ export async function finalizeConversation(
   const cp = meta.cabinetPath || cabinetPath;
 
   const hasPrompt = await fileExists(promptPathFs(id, cp));
+  const priorTranscript = await readConversationTranscript(id, cp);
   const [output, prompt] = await Promise.all([
-    input.output ? Promise.resolve(input.output) : readConversationTranscript(id, cp),
+    input.output ? Promise.resolve(input.output) : Promise.resolve(priorTranscript),
     hasPrompt ? readFileContent(promptPathFs(id, cp)) : Promise.resolve(""),
   ]);
+  // Quick failures often finalize from daemon output before stream chunks
+  // landed in transcript.txt — persist so turn-1 reads show the error.
+  if (input.output?.trim() && !priorTranscript.trim()) {
+    await writeFileContent(transcriptPathFs(id, cp), input.output);
+  }
   const cleanedOutput = cleanConversationOutputForParsing(output, prompt);
   const parsed = parseCabinetBlock(cleanedOutput, prompt);
   const artifacts = parsed.artifactPaths.map((artifactPath) => ({
@@ -1214,14 +1510,20 @@ export async function finalizeConversation(
     meta.errorHint = undefined;
     meta.errorRetryAfterSec = undefined;
   } else if (input.status === "failed") {
-    if (input.errorKind) {
-      meta.errorKind = input.errorKind;
+    const failureHints = resolveConversationFailureHints(
+      meta.adapterType,
+      cleanedOutput,
+      input.exitCode,
+      input
+    );
+    if (failureHints.errorKind) {
+      meta.errorKind = failureHints.errorKind;
     }
-    if (input.errorHint !== undefined) {
-      meta.errorHint = input.errorHint ?? undefined;
+    if (failureHints.errorHint !== undefined) {
+      meta.errorHint = failureHints.errorHint ?? undefined;
     }
-    if (input.errorRetryAfterSec !== undefined) {
-      meta.errorRetryAfterSec = input.errorRetryAfterSec ?? undefined;
+    if (failureHints.errorRetryAfterSec !== undefined) {
+      meta.errorRetryAfterSec = failureHints.errorRetryAfterSec ?? undefined;
     }
   }
 
@@ -1242,12 +1544,18 @@ export async function finalizeConversation(
   // Broadcast a task.updated so every subscribed surface (task page, tasks
   // board, sidebar file tree) can refresh without waiting on an explicit
   // turn.appended event (first-turn runs never hit that path).
+  const taskUpdatedPayload: Record<string, unknown> = {
+    status: meta.status,
+    artifactPaths: meta.artifactPaths,
+  };
+  if (meta.errorKind) taskUpdatedPayload.errorKind = meta.errorKind;
+  if (meta.errorHint) taskUpdatedPayload.errorHint = meta.errorHint;
+
   const seq = await appendEventLog(
     id,
     {
       type: "task.updated",
-      status: meta.status,
-      artifactPaths: meta.artifactPaths,
+      ...taskUpdatedPayload,
     },
     cp
   );
@@ -1256,10 +1564,7 @@ export async function finalizeConversation(
     taskId: id,
     cabinetPath: cp,
     seq: seq ?? undefined,
-    payload: {
-      status: meta.status,
-      artifactPaths: meta.artifactPaths,
-    },
+    payload: taskUpdatedPayload,
   });
 
   // Push notification for terminal statuses
@@ -1305,7 +1610,10 @@ export async function readConversationDetail(
   cabinetPath?: string,
   options: { withTurns?: boolean } = {}
 ): Promise<ConversationDetail | null> {
-  const meta = await maybeResolveCompletedConversation(await readConversationMeta(id, cabinetPath));
+  const rawMeta = await readConversationMeta(id, cabinetPath);
+  if (!rawMeta) return null;
+  const reconciled = await reconcileStaleRunningMeta(rawMeta);
+  const meta = await maybeResolveCompletedConversation(reconciled);
   if (!meta) return null;
   const cp = meta.cabinetPath || cabinetPath;
 
@@ -1339,7 +1647,7 @@ export async function readConversationDetail(
 
   const [turns, session] = options.withTurns
     ? await Promise.all([
-        readConversationTurns(id, cp),
+        readConversationTurns(id, cp, meta),
         readSession(id, cp),
       ])
     : [undefined, undefined];
@@ -1661,6 +1969,29 @@ export interface UpdateAgentTurnInput {
  * Synthesize turn 1 from prompt.md + transcript.txt. Returns null when the
  * conversation is missing both.
  */
+function failedAgentMessageFromMeta(meta: ConversationMeta): string {
+  if (meta.errorHint?.trim()) return meta.errorHint.trim();
+  if (meta.summary?.trim() && !isPlaceholderCabinetValue(meta.summary)) {
+    return meta.summary.trim();
+  }
+  return "The agent run failed before producing a response.";
+}
+
+function resolveAgentTurnOneContent(
+  meta: ConversationMeta,
+  transcript: string,
+  prompt: string
+): string {
+  const fromTranscript = extractAgentTurnContent(transcript, prompt);
+  if (fromTranscript.trim()) return fromTranscript;
+  const rawTranscript = stripAnsiText(transcript).trim();
+  if (rawTranscript && meta.status === "failed") return rawTranscript;
+  if (meta.status === "failed") {
+    return failedAgentMessageFromMeta(meta);
+  }
+  return "";
+}
+
 async function readTurnOne(
   id: string,
   meta: ConversationMeta,
@@ -1709,10 +2040,22 @@ async function readTurnOne(
       };
       return { user, agent: placeholder };
     }
+    if (meta.status === "failed") {
+      const agent: ConversationTurn = {
+        id: `${id}-t1a`,
+        turn: 1,
+        role: "agent",
+        ts: meta.completedAt || meta.startedAt,
+        content: failedAgentMessageFromMeta(meta),
+        exitCode: meta.exitCode,
+        error: meta.errorHint,
+      };
+      return { user, agent };
+    }
     return { user, agent: null };
   }
 
-  const agentContent = extractAgentTurnContent(transcript, prompt);
+  const agentContent = resolveAgentTurnOneContent(meta, transcript, prompt);
   const agent: ConversationTurn = {
     id: `${id}-t1a`,
     turn: 1,
@@ -1724,8 +2067,14 @@ async function readTurnOne(
     awaitingInput: meta.awaitingInput,
     // Pending when the conversation hasn't finalized yet AND turn 1 is the
     // only turn. Once later turns exist, turn 1 agent is historical.
+    // Clear pending as soon as the transcript carries a structured error
+    // (Codex plan rejections, etc.) even if meta.json hasn't caught up.
     pending:
-      meta.status === "running" && !meta.completedAt ? true : undefined,
+      meta.status === "running" &&
+      !meta.completedAt &&
+      !transcriptShowsStructuredFailure(transcript, meta.adapterType)
+        ? true
+        : undefined,
   };
 
   return { user, agent };
@@ -1760,9 +2109,10 @@ async function readAdditionalTurns(
  */
 export async function readConversationTurns(
   id: string,
-  cabinetPath?: string
+  cabinetPath?: string,
+  metaOverride?: ConversationMeta
 ): Promise<ConversationTurn[]> {
-  const meta = await readConversationMeta(id, cabinetPath);
+  const meta = metaOverride ?? (await readConversationMeta(id, cabinetPath));
   if (!meta) return [];
   const cp = meta.cabinetPath || cabinetPath;
 
