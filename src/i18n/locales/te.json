@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "ఏజెంట్‌ను సృష్టించండి",
+      "avatar": "అవతార్",
+      "namePlaceholder": "మార్కెటింగ్ ఏజెంట్",
+      "rolePlaceholder": "కంటెంట్ స్పెషలిస్ట్",
+      "department": "విభాగం",
+      "specialist": "స్పెషలిస్ట్",
+      "departmentLead": "విభాగం లీడ్",
+      "provider": "ప్రొవైడర్",
+      "runtime": "రన్‌టైమ్",
+      "promptPlaceholder": "మీరు దీనికి మార్కెటింగ్ ఏజెంట్…",
+      "addAgentTitle": "మీ బృందానికి ఏజెంట్‌ను జోడించండి",
+      "addAgentDescription": "లైబ్రరీ నుండి ఒక స్పెషలిస్ట్‌ను ఎంచుకోండి. జోడించిన తర్వాత మీరు దాని పేరు, పాత్ర మరియు సూచనలను సవరించవచ్చు.",
+      "createFromScratchTitle": "మొదటి నుండి సృష్టించండి",
+      "createFromScratchDescription": "దాని స్వంత గుర్తింపు, పాత్ర మరియు సూచనలతో కొత్త ఏజెంట్‌ను రూపొందించండి.",
+      "searchLibraryPlaceholder": "లైబ్రరీలో శోధించండి",
+      "errorLoadLibrary": "ఏజెంట్ లైబ్రరీని లోడ్ చేయలేకపోయాము.",
+      "errorAddAgent": "ఈ ఏజెంట్‌ను జోడించలేకపోయాము."
+    },
+    "metric": {
+      "name": "మెట్రిక్ పేరు",
+      "namePlaceholder": "reddit_replies",
+      "target": "లక్ష్యం",
+      "targetPlaceholder": "ప్రత్యుత్తరాలు/వారం",
+      "floor": "ఫ్లోర్",
+      "period": "కాలం",
+      "daily": "రోజువారీ",
+      "weekly": "వారపు",
+      "monthly": "నెలవారీ"
+    },
+    "workspace": {
+      "promise": "హామీ",
+      "orgChart": "ఆర్గ్ చార్ట్",
+      "jobDetails": "ఉద్యోగ వివరాలు",
+      "heartbeat": "హార్ట్‌బీట్",
+      "workspace": "వర్క్‌స్పేస్",
+      "editAgent": "ఏజెంట్‌ను సవరించండి",
+      "instructions": "సూచనలు",
+      "instructionsPlaceholder": "ఈ ఏజెంట్ సూచనల కోసం మార్క్‌డౌన్ రాయండి.",
+      "newAgent": "కొత్త ఏజెంట్",
+      "routines": "రొటీన్‌లు",
+      "browseLibrary": "ఏజెంట్ లైబ్రరీని బ్రౌజ్ చేయండి",
+      "editYourOwn": "మీ స్వంత ఏజెంట్‌ను సవరించండి",
+      "editorPlaceholder": "ఎడిటర్",
+      "productAgentPlaceholder": "ఉత్పత్తి రచన ఏజెంట్",
+      "instructionsBodyPlaceholder": "Cabinet మరియు KB లోపల ఈ ఏజెంట్ ఎలా పని చేయాలో నిర్వచించండి.",
+      "perAgentPrompts": "ప్రతి ఏజెంట్‌కు పునరావృతమయ్యే ప్రాంప్ట్‌లు",
+      "runNow": "ఇప్పుడే అమలు చేయండి",
+      "delete": "తొలగించు",
+      "viewOrgChart": "ఈ బృందాన్ని ఆర్గ్ చార్ట్‌గా వీక్షించండి (పూర్తి స్క్రీన్‌లో తెరుచుకుంటుంది)",
+      "hideIntro": "ఈ పరిచయాన్ని దాచండి",
+      "sharedAcrossCabinets": "అన్ని క్యాబినెట్‌లలో భాగస్వామ్యం చేయబడింది",
+      "expandSchedule": "షెడ్యూల్‌ను విస్తరించండి",
+      "heartbeatsOnAgentPage": "ప్రతి ఏజెంట్ పేజీలో హార్ట్‌బీట్‌లు కాన్ఫిగర్ చేయబడతాయి",
+      "exitFullscreen": "పూర్తి స్క్రీన్ నుండి నిష్క్రమించండి",
+      "refresh": "తాజా చేయి",
+      "editHeartbeat": "హార్ట్‌బీట్‌ను సవరించు",
+      "newRoutine": "కొత్త రొటీన్",
+      "configureHeartbeat": "హార్ట్‌బీట్‌ను కాన్ఫిగర్ చేయి",
+      "openOrgChart": "ఆర్గ్ చార్ట్‌ను తెరువు",
+      "pickAnAgent": "ఏజెంట్‌ను ఎంచుకోండి",
+      "dismiss": "విస్మరించు",
+      "lockedHeartbeatTip": "ఈ ఏజెంట్ ఆగిపోయింది. హార్ట్‌బీట్‌ను ప్రారంభించడానికి ఏజెంట్ల ట్యాబ్‌లో దీన్ని ప్రారంభించండి.",
+      "lockedRoutineTip": "ఈ ఏజెంట్ ఆగిపోయింది. దాని రొటీన్‌లను ప్రారంభించడానికి ఏజెంట్ల ట్యాబ్‌లో దీన్ని ప్రారంభించండి.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "ఆఫ్ చేయడానికి క్లిక్ చేయండి.",
+      "loadError": "ఈ ఏజెంట్‌ను లోడ్ చేయలేకపోయాము.",
+      "retry": "మళ్ళీ ప్రయత్నించు",
+      "color": "రంగు",
+      "customColor": "అనుకూల రంగు",
+      "preset": "ప్రీసెట్",
+      "editIconColor": "ఐకాన్, రంగు లేదా అవతార్‌ను సవరించు",
+      "sharedAcrossCabinetsHint": "అన్ని క్యాబినెట్‌లలో భాగస్వామ్యం చేయబడింది — సవరణలు అన్ని చోట్లా వర్తిస్తాయి",
+      "inbox": "ఇన్‌బాక్స్",
+      "conversations": "సంభాషణలు",
+      "recentWork": "ఇటీవలి పని",
+      "schedule": "షెడ్యూల్",
+      "heartbeat": "హార్ట్‌బీట్",
+      "runNow": "ఇప్పుడే అమలు చేయి",
+      "editRoutine": "రొటీన్‌ను సవరించు",
+      "addRoutine": "రొటీన్‌ను జోడించు",
+      "details": "వివరాలు",
+      "editingGlobalAgent": "గ్లోబల్ ఏజెంట్‌ను సవరిస్తోంది",
+      "displayName": "ప్రదర్శన పేరు",
+      "role": "పాత్ర",
+      "department": "విభాగం",
+      "type": "రకం",
+      "workspace": "వర్క్‌స్పేస్",
+      "tags": "ట్యాగ్‌లు",
+      "openSkillsSettings": "సెట్టింగ్‌లు → నైపుణ్యాలను తెరువు",
+      "notInCatalog": "కేటలాగ్‌లో కనుగొనబడలేదు — తీసివేయడానికి క్లిక్ చేయండి",
+      "recommendedForRole": "ఈ పాత్రకు సిఫార్సు చేయబడింది — అటాచ్ చేయడానికి క్లిక్ చేయండి",
+      "promise": "వాగ్దానం",
+      "saved": "సేవ్ చేయబడింది",
+      "iconLabel": "ఐకాన్"
+    },
+    "missionControl": {
+      "gallery": "గ్యాలరీ",
+      "newAgent": "కొత్త ఏజెంట్",
+      "allGoals": "అన్ని లక్ష్యాలు",
+      "noGoals": "ఏ ఏజెంట్‌కు లక్ష్యాలు కాన్ఫిగర్ చేయబడలేదు.",
+      "fromScratch": "మొదటి నుండి",
+      "describeIt": "దాన్ని వివరించండి",
+      "import": "దిగుమతి చేయి",
+      "closeDialog": "డైలాగ్‌ను మూసివేయి",
+      "describeYourAgent": "మీ ఏజెంట్‌ను వివరించండి",
+      "describePlaceholder": "GPU-సంబంధిత పోస్ట్‌ల కోసం హ్యాకర్ న్యూస్‌ను పర్యవేక్షించే మరియు మా బ్లాగ్ పోస్ట్‌లకు లింక్ చేస్తూ ఆలోచనాత్మక వ్యాఖ్యలు వ్రాసే ఏజెంట్ నాకు కావాలి…"
+    },
+    "pulseStrip": {
+      "agents": "ఏజెంట్లు",
+      "running": "నడుస్తున్నవి",
+      "goals": "లక్ష్యాలు",
+      "alerts": "అలర్ట్‌లు",
+      "cost": "ఖర్చు",
+      "runningPlays": "నడుస్తున్న ప్లేలు",
+      "noRunning": "ప్రస్తుతం ఏ ఏజెంట్లు నడవడం లేదు.",
+      "costBreakdown": "ఖర్చుల వివరాలు",
+      "noUsage": "ఇంకా API వినియోగం లేదు.",
+      "totalEstimated": "మొత్తం అంచనా"
+    },
+    "routine": {
+      "runNowTitle": "ఈ రొటీన్‌ను ఇప్పుడు అమలు చేయండి (ఒకసారి, దాని షెడ్యూల్ వెలుపల)",
+      "deletePermanently": "ఈ రొటీన్‌ను శాశ్వతంగా తొలగించండి",
+      "promptPlaceholder": "ఈ రొటీన్ ఏమి చేయాలి? ఉదా. నిన్నటి కార్యాచరణను సంగ్రహించండి…",
+      "jobName": "పని పేరు",
+      "jobNamePlaceholder": "వారపు వ్యూహాత్మక సారాంశం",
+      "jobId": "పని ID",
+      "schedule": "షెడ్యూల్",
+      "model": "మోడల్",
+      "enabled": "ఎనేబుల్ చేయబడింది"
+    }
+  },
+  "registry": {
+    "loading": "రిజిస్ట్రీ నుండి లోడ్ అవుతోంది…",
+    "readyToImport": "ఈ cabinetను దిగుమతి చేసుకోవడానికి సిద్ధంగా ఉన్నారా?",
+    "organization": "సంస్థ",
+    "agents": "ఏజెంట్లు",
+    "scheduledJobs": "షెడ్యూల్ చేయబడిన పనులు",
+    "about": "గురించి",
+    "cabinetName": "Cabinet పేరు",
+    "cabinetNamePlaceholder": "Cabinet పేరు…",
+    "searchPlaceholder": "cabinetలను శోధించండి…",
+    "noResults": "మీ శోధనకు ఏ cabinetలు సరిపోలడం లేదు."
+  },
+  "tasksBoard": {
+    "title": "పనులు",
+    "manualTooltip": "మాన్యువల్ — మీరు నేరుగా ప్రారంభించిన పనులు",
+    "jobsTooltip": "పనులు — షెడ్యూల్ చేయబడిన పునరావృత రన్‌లు",
+    "heartbeatTooltip": "హార్ట్‌బీట్ — స్వీయ-నిర్దేశిత ఏజెంట్ రన్‌లు",
+    "clearSelection": "ఎంపికను తొలగించండి (Esc)",
+    "createTask": "కొత్త పనిని సృష్టించండి",
+    "moreNewTypes": "మరిన్ని కొత్త అంశాల రకాలు",
+    "newTask": "కొత్త పని",
+    "newRoutine": "కొత్త రొటీన్",
+    "viewKanban": "కాన్‌బాన్",
+    "viewList": "జాబితా",
+    "viewSchedule": "షెడ్యూల్",
+    "viewKanbanHint": "బోర్డు వీక్షణ — ఇన్‌బాక్స్ / మీ వంతు / నడుస్తున్నవి / ఇప్పుడే పూర్తయ్యాయి / ఆర్కైవ్‌గా సమూహపరచబడిన పనులు",
+    "viewListHint": "ప్రతి పని యొక్క ఫ్లాట్ జాబితా, కొత్త కార్యాచరణ ముందు",
+    "viewScheduleHint": "షెడ్యూల్ చేయబడిన రొటీన్‌లు మరియు రాబోయే రన్‌ల క్యాలెండర్",
+    "filterByAgent": "ఏజెంట్ ద్వారా ఫిల్టర్ చేయండి: {{name}}",
+    "noToDeleteTitle": "తొలగించడానికి పనులు లేవు",
+    "noToDeleteFiltered": "{{filter}}కి ఏదీ సరిపోలడం లేదు. ఫిల్టర్‌ను తొలగించండి, మరొక వీక్షణను ఎంచుకోండి లేదా కొత్త పనిని సృష్టించండి.",
+    "noToDeleteEmpty": "బోర్డులో ఇంకా పనులు లేవు. + కొత్త పని బటన్‌తో ఒకదాన్ని సృష్టించండి.",
+    "gotIt": "అర్థమైంది",
+    "deleteCountTitle": "{{count}} పనిని తొలగించాలా?",
+    "deleteCountTitlePlural": "{{count}} పనులను తొలగించాలా?",
+    "deleteBody": "ఇది ప్రస్తుతం చూపబడుతున్న ప్రతి పనికి సంబంధించిన సంభాషణ మెటా, ట్రాన్‌స్క్రిప్ట్‌లు మరియు ఆర్టిఫ్యాక్ట్‌లను శాశ్వతంగా తొలగిస్తుంది. దీన్ని రద్దు చేయలేరు.",
+    "deleteBodyFiltered": "ఇది ప్రస్తుతం యాక్టివ్ ఫిల్టర్‌ల ద్వారా చూపబడుతున్న ప్రతి పనికి సంబంధించిన సంభాషణ మెటా, ట్రాన్‌స్క్రిప్ట్‌లు మరియు ఆర్టిఫ్యాక్ట్‌లను శాశ్వతంగా తొలగిస్తుంది. దీన్ని రద్దు చేయలేరు.",
+    "deleteConfirm": "{{count}} తొలగించు",
+    "deleteAllShown": "చూపబడిన అన్ని {{count}} పనిని తొలగించు",
+    "deleteAllShownPlural": "చూపబడిన అన్ని {{count}} పనులను తొలగించు",
+    "nothingToDelete": "ఈ వీక్షణలో తొలగించడానికి ఏమీ లేదు",
+    "deleteAllAria": "చూపబడిన అన్ని పనులను తొలగించు",
+    "noTasksAria": "ఈ వీక్షణలో పనులు లేవు",
+    "filterTrigger": "{{trigger}} ఫిల్టర్",
+    "filterTriggerAndAgent": "{{trigger}} ఫిల్టర్ మరియు ఎంచుకున్న ఏజెంట్",
+    "filterSelectedAgent": "ఎంచుకున్న ఏజెంట్ ఫిల్టర్"
+  },
+  "runtime": {
+    "noProvider": "ప్రొవైడర్ ఎంపిక చేయబడలేదు",
+    "modeAriaLabel": "రన్‌టైమ్ మోడ్",
+    "nativeTranscriptTitle": "Cabinet యొక్క స్థానిక ట్రాన్‌స్క్రిప్ట్ — నిర్మాణాత్మక JSON స్ట్రీమ్, ఆర్టిఫ్యాక్ట్‌లు, సారాంశం, పూర్తి UX",
+    "ptyWarningTitle": "OpenAI API కీ అవసరం. ChatGPT-ప్లాన్ Codex ఖాతాలలో అందుబాటులో లేదు — ఈ మోడల్‌ను ఎంచుకోవడం 'ChatGPT ఖాతాతో Codexని ఉపయోగిస్తున్నప్పుడు మోడల్ మద్దతు ఇవ్వదు' అనే లోపంతో విఫలమవుతుంది.",
+    "native": "స్థానిక",
+    "terminal": "టెర్మినల్",
+    "terminalTitle": "లైవ్ PTY టెర్మినల్ సెషన్‌లో CLIని అమలు చేయండి (ప్రయోగాత్మక హ్యాకర్ మోడ్)",
+    "providers": "ప్రొవైడర్‌లు",
+    "modelCol": "మోడల్",
+    "auto": "ఆటో",
+    "ready": "సిద్ధంగా ఉంది",
+    "loginRequired": "లాగిన్ చేయండి",
+    "notInstalled": "ఇన్‌స్టాల్ చేయబడలేదు",
+    "notAvailable": "అందుబాటులో లేదు",
+    "defaultLabel": "డిఫాల్ట్",
+    "noProvidersAvailable": "ప్రొవైడర్‌లు అందుబాటులో లేవు",
+    "appDefault": "యాప్ డిఫాల్ట్",
+    "selectAppDefault": "యాప్ డిఫాల్ట్‌ను ఎంచుకోండి",
+    "defaultModel": "డిఫాల్ట్ మోడల్",
+    "selectedModelLabel": "ఎంచుకున్న మోడల్",
+    "loadingProviders": "ప్రొవైడర్‌లు లోడ్ అవుతున్నాయి...",
+    "loadingAvailableProviders": "అందుబాటులో ఉన్న ప్రొవైడర్‌లు లోడ్ అవుతున్నాయి…",
+    "triggerSummary": "మోడల్: {{model}} · ప్రయత్నం: {{effort}} · ద్వారా {{provider}}",
+    "triggerSystemDefault": "టాస్క్ మోడల్ — సిస్టమ్ డిఫాల్ట్‌ను ఉపయోగిస్తోంది (ఎంచుకోవడానికి క్లిక్ చేయండి)",
+    "clickToLaunch": "PTY టెర్మినల్‌లో {{name}}ని ప్రారంభించడానికి క్లిక్ చేయండి"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "ఏజెంట్‌లు పూర్తి యాక్సెస్‌తో నడుస్తాయి.",
+    "backUp": "మీ డేటాను క్రమం తప్పకుండా బ్యాకప్ చేయండి.",
+    "betaSoftware": "బీటా సాఫ్ట్‌వేర్. సమస్యలు తలెత్తవచ్చు.",
+    "iAccept": "నేను చదివాను మరియు అంగీకరిస్తున్నాను"
+  },
+  "skillAdd": {
+    "addSkill": "నైపుణ్యాన్ని జోడించండి",
+    "auditTooltip": "skills.sh యొక్క బాహ్య ఆడిట్‌ల నుండి ఫలితం (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "ఈ నైపుణ్యం కోసం skills.sh ఆడిట్ డేటా అందుబాటులో లేదు",
+    "preview": "ప్రివ్యూ"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "AI టీమ్",
+      "aiTeams": "AI టీమ్స్",
+      "routines": "రొటీన్‌లు"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "ఏజెంట్ కాన్ఫిగరేషన్‌ను సవరించండి",
+    "exportBundle": "ఏజెంట్ బండిల్‌ను ఎగుమతి చేయండి",
+    "goals": "లక్ష్యాలు",
+    "workspace": "వర్క్‌స్పేస్"
+  },
+  "scheduleRow": {
+    "deleteQ": "తొలగించాలా?",
+    "confirmDelete": "తొలగింపును నిర్ధారించండి",
+    "cancelDelete": "తొలగింపును రద్దు చేయండి",
+    "runNow": "ఇప్పుడే అమలు చేయండి"
+  },
+  "apiKeys": {
+    "addKey": "కీని జోడించండి",
+    "edit": "సవరించండి",
+    "remove": "తీసివేయండి",
+    "newApiKey": "కొత్త API కీ"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet అప్‌డేట్‌లు",
+    "dataDirectory": "డేటా డైరెక్టరీ",
+    "backups": "బ్యాకప్‌లు"
+  },
+  "kanban": {
+    "stopAllInLane": "ఈ లేన్‌లో నడుస్తున్న అన్ని పనులను ఆపండి",
+    "restartAllInLane": "ఈ లేన్‌లో అన్ని పనులను పునఃప్రారంభించండి",
+    "newTask": "కొత్త పని",
+    "collapseColumn": "నిలువు వరుసను కుదించండి",
+    "kill": "నిలిపివేయండి",
+    "laneInbox": "ఇన్‌బాక్స్",
+    "laneInboxHint": "డ్రాఫ్ట్ చేయబడింది — మీరు ప్రారంభించడానికి వేచి ఉంది",
+    "laneNeeds": "మీ వంతు",
+    "laneNeedsHint": "ఏజెంట్ ఒక ప్రశ్న అడిగింది లేదా ఆమోదం అవసరం",
+    "laneRunning": "నడుస్తోంది",
+    "laneRunningHint": "ఏజెంట్లు ప్రస్తుతం పని చేస్తున్నారు",
+    "laneDone": "ఇప్పుడే పూర్తయింది",
+    "laneDoneHint": "గత గంటలో పూర్తయింది",
+    "laneArchive": "ఆర్కైవ్",
+    "laneArchiveHint": "పాతవి మరియు గుర్తించబడినవి"
+  },
+  "terminalTabs": {
+    "newTab": "కొత్త టెర్మినల్ ట్యాబ్",
+    "closeTab": "టెర్మినల్‌ను మూసివేయండి"
+  },
+  "newTaskButton": {
+    "createNew": "కొత్తది సృష్టించండి…",
+    "newTask": "కొత్త పని",
+    "newRoutine": "కొత్త రొటీన్"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "వారపు వ్యూహాత్మక సారాంశం",
+    "schedule": "షెడ్యూల్",
+    "jobId": "జాబ్ ఐడి",
+    "enabled": "ప్రారంభించబడింది — ఈ షెడ్యూల్‌లో అమలు చేయండి"
+  },
+  "editIdentity": {
+    "title": "ఏజెంట్‌ను సవరించండి",
+    "displayName": "ప్రదర్శన పేరు",
+    "color": "రంగు",
+    "hexPlaceholder": "#హెక్స్"
+  },
+  "cabinetScheduler": {
+    "startAll": "అన్ని ఏజెంట్లను ప్రారంభించండి",
+    "startAllSubtitle": "హార్ట్‌బీట్‌లు మరియు క్రాన్ జాబ్‌లను సక్రియం చేయండి",
+    "stopAll": "అన్ని ఏజెంట్‌లను ఆపండి",
+    "stopAllSubtitle": "హార్ట్‌బీట్‌లు మరియు క్రాన్ జాబ్‌లను పాజ్ చేయండి"
+  },
+  "skillLibrary": {
+    "readOnly": "చదవడానికి మాత్రమే — Cabinet నుండి సవరించలేరు",
+    "noUpstream": "ఈ క్యాబినెట్‌లో నేరుగా రచించబడింది — ఎటువంటి అప్‌స్ట్రీమ్ git మూలం నమోదు చేయబడలేదు",
+    "executableWarning": "బండిల్‌లో ఎగ్జిక్యూటబుల్ స్క్రిప్ట్‌లు ఉన్నాయి — ఆమోదించే ముందు సమీక్షించండి",
+    "skills": "నైపుణ్యాలు",
+    "imported": "దిగుమతి చేయబడింది",
+    "importing": "దిగుమతి అవుతోంది…",
+    "import": "దిగుమతి చేయండి"
+  },
+  "embedPopover": {
+    "placeholder": "లింక్‌ను అతికించండి (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, లేదా ఏదైనా URL)",
+    "notValidUrl": "చెల్లని URL",
+    "anyUrlWorks": "ఏదైనా పబ్లిక్ URL పని చేస్తుంది.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "ఏదైనా iframe URL"
+  },
+  "rowActions": {
+    "stop": "ఆపండి",
+    "stopHint": "ఈ రన్‌ను ఇప్పుడు ఆపండి (SIGTERM పంపుతుంది)",
+    "restart": "పునఃప్రారంభించండి",
+    "restartHint": "అసలు ప్రాంప్ట్ నుండి మళ్ళీ రన్ చేయండి",
+    "runHint": "ఈ పనిని ఇప్పుడు ప్రారంభించండి"
+  },
+  "schedulesPanel": {
+    "title": "షెడ్యూల్ చేయబడిన పనులు",
+    "noJobs": "ఇంకా క్యాబినెట్ పనులు కాన్ఫిగర్ చేయబడలేదు.",
+    "heartbeats": "హార్ట్‌బీట్‌లు",
+    "noHeartbeats": "ఇంకా హార్ట్‌బీట్‌లు కాన్ఫిగర్ చేయబడలేదు."
+  },
+  "scheduleTab": {
+    "explainer1": "ఈ వారం మీ బృందం చేస్తున్న ప్రతిదీ, ఒకే క్యాలెండర్‌లో. పింక్ హార్ట్‌బీట్, గ్రీన్ ఒక రొటీన్. సవరించడానికి ఏదైనా పిల్ క్లిక్ చేయండి.",
+    "explainer2": "ఈ ట్యాబ్‌ను ఉపయోగించి సంఘర్షణలను గుర్తించండి, నిశ్శబ్ద సమయాలను కనుగొనండి లేదా బృందం ఎంత బిజీగా ఉందో ఒక చూపులో చూడండి.",
+    "aboutAria": "షెడ్యూల్ గురించి",
+    "modeDay": "రోజు",
+    "modeWeek": "వారం",
+    "modeMonth": "నెల"
+  },
+  "mermaidViewer": {
+    "zoomOut": "జూమ్ అవుట్ చేయండి",
+    "zoomIn": "జూమ్ ఇన్ చేయండి",
+    "resetView": "వీక్షణను రీసెట్ చేయండి",
+    "syntaxError": "రేఖాచిత్ర సింటాక్స్ లోపం"
+  },
+  "helpPage": {
+    "keyboard": "కీబోర్డ్",
+    "skills": "నైపుణ్యాలు",
+    "apiKeys": "API కీలు",
+    "mcpServers": "MCP సర్వర్‌లు",
+    "title": "సహాయం",
+    "howTo": "ఎలా చేయాలి",
+    "heading": "Cabinet ఎలా పని చేస్తుందో తెలుసుకోండి",
+    "subheading": "Cabinet నుండి అత్యధిక ప్రయోజనం పొందడానికి చిన్న డెమోలు, వాక్‌త్రూలు మరియు ప్రివ్యూలు.",
+    "ctaWatchTour": "టూర్ చూడండి",
+    "ctaWatchDemo": "డెమో చూడండి",
+    "ctaCheatSheet": "చీట్ షీట్ తెరవండి",
+    "ctaComingSoon": "త్వరలో",
+    "discordHeading": "మీరు వెతుకుతున్నది దొరకలేదా?",
+    "discordSubheading": "మేము డిస్కార్డ్‌లో ఉన్నాము — వచ్చి పలకరించండి, ప్రశ్నలు అడగండి, మీరు ఏమి నిర్మిస్తున్నారో పంచుకోండి.",
+    "discordCta": "డిస్కార్డ్‌లో చేరండి",
+    "items": {
+      "tour": {
+        "title": "మీ <accent>Cabinet</accent>ని కలవండి.",
+        "description": "మీ AI బృందం. మీ విజ్ఞాన స్థావరం. ఒకే చోట."
+      },
+      "agents": {
+        "title": "మీ <accent>AI బృందం</accent>.",
+        "description": "లీడ్‌లు మరియు నిపుణులను నియమించుకోండి. వారిని విభాగాలుగా విభజించండి. వారు ఒకరికొకరు పనిని పంపేలా చేయండి."
+      },
+      "tasks": {
+        "title": "<accent>పని బోర్డు</accent>.",
+        "description": "కాన్‌బాన్, జాబితా మరియు షెడ్యూల్ వీక్షణలు. ఏజెంట్ లేదా స్థితి ద్వారా ఫిల్టర్ చేయండి. ప్రతి పనికి ఒక రన్‌టైమ్‌ను ఎంచుకోండి."
+      },
+      "knowledge": {
+        "title": "మీ <accent>విజ్ఞాన స్థావరం</accent>.",
+        "description": "మార్క్‌డౌన్, CSV, PDF, కోడ్, నోట్‌బుక్‌లు, మెర్మైడ్, చిత్రాలు, ఆడియో — అన్నీ ఇన్‌లైన్‌లో రెండర్ అవుతాయి. మీ డేటా మీ మెషీన్‌లోనే ఉంటుంది; అది మీది, మాది కాదు."
+      },
+      "cabinets": {
+        "title": "<accent>AI బృందాల</accent> బృందం.",
+        "description": "Cabinetలు Cabinetలలో ఉంటాయి. ప్రతి ఒక్కటి దాని స్వంత డేటా, ఏజెంట్లు మరియు విజిబిలిటీ స్కోప్‌తో కూడిన దాని స్వంత AI బృందం — మరియు అవి ట్రీలో పైకి క్రిందికి సహకరించగలవు."
+      },
+      "routines": {
+        "title": "<accent>రొటీన్‌లు</accent> & షెడ్యూల్‌లు.",
+        "description": "ప్రతిరోజూ ఉదయం 9 గంటలకు, ప్రతి శుక్రవారం, లేదా వచ్చే సోమవారం ఒకసారి ఒక పనిని అమలు చేయండి. క్రాన్, క్యాలెండర్, లేదా సహజ భాష."
+      },
+      "conversations": {
+        "title": "సంభాషణలు & <accent>ఆమోదాలు</accent>.",
+        "description": "ఏజెంట్లు చర్యలను ప్రతిపాదిస్తారు — ఒక పనిని ప్రారంభించడం, ఒక ఉద్యోగాన్ని షెడ్యూల్ చేయడం — మరియు ఏదైనా అమలు చేయడానికి ముందు మీరు ఆమోదించాలి."
+      },
+      "themes": {
+        "title": "దీనిని <accent>మీదిగా</accent> చేసుకోండి.",
+        "description": "లైట్ మరియు డార్క్ థీమ్‌ల క్యూరేటెడ్ సెట్ నుండి ఎంచుకోండి — పేపర్, స్లేట్, క్లాడ్, ఇంక్ మరియు మరిన్ని."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — మీ స్వంత AIని తీసుకురండి.",
+        "description": "క్లాడ్, GPT, జెమిని, గ్రోక్, కోడెక్స్, కర్సర్ — మీరు ఇప్పటికే చెల్లిస్తున్న ప్రొవైడర్‌లను తీసుకురండి. డిఫాల్ట్‌ను ఎంచుకోండి, లేదా ప్రతి పనికి ఓవర్‌రైడ్ చేయండి."
+      },
+      "shortcuts": {
+        "title": "<accent>కీబోర్డ్</accent> షార్ట్‌కట్‌లు.",
+        "description": "ప్రతి Cabinet షార్ట్‌కట్ ఒక శోధించదగిన కార్డ్‌లో. దాన్ని మళ్లీ తెరవడానికి ఎక్కడి నుండైనా ? నొక్కండి. పేరు లేదా కీ ద్వారా ఫిల్టర్ చేయండి — నావిగేషన్, ఎడిటింగ్, పనులు, ప్యానెల్‌లు మరియు స్లాష్ కమాండ్‌ల కోసం."
+      },
+      "skills": {
+        "title": "మీ ఏజెంట్ల కోసం <accent>నైపుణ్యాలు</accent>.",
+        "description": "ఇన్‌స్టాల్ చేయదగిన ఏజెంట్ నైపుణ్యాలు — ఒక పని కోసం మోడల్ లాగే ప్లేబుక్‌లు. GitHub లేదా skills.sh నుండి ఇన్‌స్టాల్ చేయండి, ఒక పర్సనాకు అటాచ్ చేయండి, లేదా ఒకే రన్ కోసం ఏదైనా కంపోజర్‌లో @-మెన్షన్ చేయండి."
+      },
+      "apiKeysItem": {
+        "title": "మీ సాధనాల కోసం <accent>API కీలు</accent>.",
+        "description": "మీ OpenAI, Anthropic, లేదా GitHub ఖాతాను ఒకసారి ప్లగ్ ఇన్ చేయండి — Cabinetలోని ప్రతి ఏజెంట్ మరియు నైపుణ్యం దానిని ఉపయోగిస్తుంది. మీరు మీ స్వంత బిల్లులు చెల్లిస్తారు, మీ స్వంత కోటాను ఉపయోగిస్తారు, మధ్యవర్తి ఉండడు."
+      },
+      "integrations": {
+        "title": "<accent>MCP సర్వర్‌లు</accent> & ఇంటిగ్రేషన్‌లు.",
+        "description": "MCP సర్వర్‌లు, స్లాక్, టెలిగ్రామ్, Gmail, మరియు క్యాలెండర్ OAuth — ఒకసారి కనెక్ట్ చేయండి మరియు Cabinet టోకెన్‌లను నిర్వహిస్తుంది. త్వరలో రాబోతోంది."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "కీబోర్డ్ షార్ట్‌కట్‌లు",
+    "filterPlaceholder": "ఫిల్టర్ చేయండి…",
+    "close": "మూసివేయండి"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "లైవ్ టెర్మినల్",
+    "runningHeartbeat": "హార్ట్‌బీట్ నడుస్తోంది…",
+    "memory": "మెమరీ",
+    "recentActivity": "ఇటీవలి కార్యాచరణ"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "మీ అవతార్",
+    "preset": "ప్రీసెట్",
+    "useInitials": "ఇనిషియల్స్ ఫాల్‌బ్యాక్‌ను ఉపయోగించండి",
+    "custom": "కస్టమ్"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "స్థానిక యాప్-కోడ్ మార్పులు కనుగొనబడ్డాయి"
+  },
+  "logsPanel": {
+    "classifiedError": "వర్గీకరించబడిన లోపం",
+    "session": "సెషన్",
+    "noEvents": "ఇంకా ఈవెంట్‌లు లేవు.",
+    "noTranscript": "ఇంకా ట్రాన్‌స్క్రిప్ట్ లేదు."
+  },
+  "conversationResult": {
+    "prompt": "ప్రాంప్ట్",
+    "result": "ఫలితం",
+    "noSummary": "సారాంశం సంగ్రహించబడలేదు."
+  },
+  "scheduleRowPlus": {
+    "delete": "తొలగించు"
+  },
+  "attachmentPicker": {
+    "attachFiles": "ఫైల్‌లను జతచేయి"
+  },
+  "demos": {
+    "aiTeam": "AI బృందం",
+    "specialist": "నిపుణుడు",
+    "legal": "చట్టపరమైన",
+    "global": "గ్లోబల్",
+    "editor": "ఎడిటర్",
+    "slashMenu": "స్లాష్ మెనూ"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · డేటా",
+    "headlineSentence": "నిజానికి మీ <accent>ఏకైక మూలం</accent>.",
+    "paragraphPrefix": "మార్క్‌డౌన్, PDFలు, స్ప్రెడ్‌షీట్‌లు, స్లైడ్‌లు, చిత్రాలు, వీడియో, ఆడియో, లింక్ చేయబడిన రెపోలు, ఎంబెడెడ్ వెబ్ యాప్‌లు, Google డాక్స్. వీటిలో దేనినైనా దీనితో ప్రస్తావించండి ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "అన్నింటికీ ఒకే చోటు — తద్వారా మీరు మరియు మీ AI బృందం చదవగలరు, సవరించగలరు మరియు పంపగలరు ",
+    "sameFiles": "అదే ఫైల్‌లు",
+    "secondParagraphSuffix": ", కాపీల కాపీలు కాదు.",
+    "mockTitle": "హిలా క్యాబినెట్"
+  },
+  "slideData": {
+    "thailandRootLabel": "థాయిలాండ్ ట్రిప్",
+    "thailandCaption": "మీ అన్ని ఫైల్‌లను ఒకే చోట చూడండి.",
+    "videoTitle": "నైట్ మార్కెట్.mp4",
+    "taxRootLabel": "పన్ను 2026",
+    "taxCaption": "పన్ను 2026 — మీ cabinet లోనే పొందుపరచబడిన లైవ్ కాలిక్యులేటర్ వెబ్ యాప్.",
+    "calculatorTitle": "కాలిక్యులేటర్",
+    "liveAppBadge": "లైవ్ యాప్",
+    "taxEstimateLabel": "2026 పన్ను అంచనా",
+    "income": "ఆదాయం",
+    "deductions": "తగ్గింపులు",
+    "taxBracket": "పన్ను బ్రాకెట్",
+    "estimatedTax": "అంచనా పన్ను",
+    "healthRootLabel": "ఆరోగ్యం",
+    "healthCaption": "విటమిన్లు & ల్యాబ్‌లు — ఒక పేజీలా అనిపించే స్ప్రెడ్‌షీట్.",
+    "csvTitle": "డైలీ విటమిన్స్.csv",
+    "csvColVitamin": "విటమిన్",
+    "csvColDose": "మోతాదు",
+    "csvColTime": "సమయం",
+    "csvColDone": "పూర్తయింది",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "కోడ్‌బేస్‌లు — ఏదైనా Git రెపోను లింక్ చేయండి, మీ ఏజెంట్ల ద్వారా శోధించదగినది.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · పనులు",
+    "typedCommand": "10 పనులను అమలు చేయండి, ప్రతి ఒక్కటి ఒక పాటను వ్రాస్తుంది, @Songs/ కు సేవ్ చేయండి",
+    "headlineSentence": "<accent>ప్రారంభించడానికి</accent> సిద్ధంగా ఉన్నారా?",
+    "paragraphPrefix": "ఒక పనిని వ్రాయండి. ఒకదాన్ని అమలు చేయండి, పదింటిని అమలు చేయండి, వాటిని శాశ్వతంగా షెడ్యూల్ చేయండి. పేజీలను దీనితో ప్రస్తావించండి ",
+    "paragraphSuffix": ", అవుట్‌పుట్‌ను మీకు కావలసిన చోట సేవ్ చేయండి. ఇప్పుడు మీరు డైరెక్టర్.",
+    "savingFolder": "పాటలు/"
+  },
+  "slideAgents": {
+    "persona": "పెర్సోనా",
+    "heartbeat": "హార్ట్‌బీట్",
+    "jobs": "పనులు",
+    "aiTeam": "AI బృందం",
+    "otherWriter": "రచయిత",
+    "otherOrganizer": "ఆర్గనైజర్",
+    "idle": "నిష్క్రియ",
+    "researchAnalyst": "పరిశోధనా విశ్లేషకుడు",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "ప్రత్యక్షంగా",
+    "personaBody": "\"ఖచ్చితమైన విశ్లేషకుడు. మూలాలను ఉటంకిస్తాడు. విరుద్ధమైన వాదనలను గుర్తిస్తాడు.\"",
+    "heartbeatBody": "ప్రతి 15 నిమిషాలకు @Market Researchని స్కాన్ చేస్తుంది",
+    "jobsBody": "సోమ 9:00 · వారపు పోటీదారుల సారాంశం",
+    "slideNum": "02 · ఏజెంట్లు",
+    "paragraphPrefix": "ప్రతి ఏజెంట్‌కు ఒక ",
+    "personaWord": "పర్సనా",
+    "paragraphMiddle": ", దాని స్వంత ",
+    "scheduleWord": "షెడ్యూల్",
+    "paragraphMiddle2": ", మరియు ఒక ",
+    "memoryWord": "మెమరీ",
+    "paragraphSuffix": ". మీ AI ఏజెంట్లు 24/7 పనిని పూర్తి చేస్తాయి. మీరు మనిషిగా ఉండండి — మిగిలినవి అవి చూసుకుంటాయి.",
+    "aiTeamSentence": "మీ <accent>AI బృందం</accent>."
+  },
+  "startWork": {
+    "close": "మూసివేయి",
+    "selectAgent": "ఏజెంట్‌ను ఎంచుకోండి",
+    "titleNow": "ఏమి చేయాలి?",
+    "titleRecurring": "పునరావృతమయ్యే దినచర్యను సెటప్ చేయండి",
+    "titleHeartbeat": "ఈ ఏజెంట్‌ను షెడ్యూల్ ప్రకారం మేల్కొలపండి",
+    "titleEdit": "పనిని సవరించండి",
+    "submitStart": "ప్రారంభించు",
+    "submitAddInbox": "ఇన్‌బాక్స్‌కు జోడించు",
+    "submitSaveEdit": "మార్పులను సేవ్ చేయండి",
+    "submitCreateRoutine": "దినచర్యను సృష్టించండి",
+    "submitSaveHeartbeat": "హార్ట్‌బీట్‌ను సేవ్ చేయండి",
+    "saving": "సేవ్ చేస్తోంది…",
+    "current": "ప్రస్తుత",
+    "modeInboxLabel": "→ ఇన్‌బాక్స్",
+    "modeInboxHint": "ఇన్‌బాక్స్‌కు సేవ్ చేయండి — మీరు సిద్ధంగా ఉన్నప్పుడు ప్రారంభించండి",
+    "modeNowLabel": "ఇప్పుడే అమలు చేయండి",
+    "modeNowHint": "ఈ సంభాషణను వెంటనే ప్రారంభించండి",
+    "modeRecurringLabel": "షెడ్యూల్ ప్రకారం",
+    "modeRecurringHint": "ఈ ప్రాంప్ట్‌ను షెడ్యూల్ ప్రకారం అమలు చేయండి",
+    "modeHeartbeatLabel": "హార్ట్‌బీట్",
+    "modeHeartbeatHint": "ఏజెంట్‌ను దాని స్వంత లయలో మేల్కొలపండి",
+    "agentFallback": "ఏజెంట్",
+    "failedToStart": "ప్రారంభించడంలో విఫలమైంది",
+    "failedToSave": "మార్పులను సేవ్ చేయడంలో విఫలమైంది",
+    "failedToSaveHeartbeat": "హార్ట్‌బీట్‌ను సేవ్ చేయడంలో విఫలమైంది"
+  },
+  "googleDoc": {
+    "noUrl": "Google URL సెట్ చేయబడలేదు",
+    "anyoneWithLink": "లింక్ ఉన్న ఎవరైనా",
+    "publishedToWeb": "వెబ్‌లో ప్రచురించబడింది"
+  },
+  "feedback": {
+    "close": "మూసివేయి",
+    "rolePlaceholder": "ఉదా. ఇండి హ్యాకర్, SaaSలో PM, డిజైన్ విద్యార్థి, అభిరుచి గలవారు…",
+    "joinDiscord": "డిస్కార్డ్‌లో చేరండి",
+    "header": "హిలా నుండి త్వరిత తనిఖీ",
+    "howGoing": "ఇప్పటివరకు ఎలా ఉంది?",
+    "starsCount": "{{n}} స్టార్",
+    "starsCountPlural": "{{n}} స్టార్లు",
+    "likeCabinet": "Cabinet నచ్చిందా?",
+    "starTooltipUnknown": "GitHubలో Cabinetకి స్టార్ ఇవ్వండి — ఇది మీకు ఉపయోగకరంగా ఉంటే, స్టార్ నిజంగా సహాయపడుతుంది",
+    "starTooltipWithCount": "{{count}} GitHub స్టార్లు — మీది జోడించడానికి క్లిక్ చేయండి",
+    "starLabel": "స్టార్",
+    "backgroundLabel": "మీ నేపథ్యం ఏమిటి?",
+    "optional": "(ఐచ్ఛికం)",
+    "discordCta": "నేరుగా మాట్లాడాలనుకుంటున్నారా, లేదా ఇతర Cabinet సభ్యులతో కలవాలనుకుంటున్నారా?",
+    "maybeLater": "బహుశా తర్వాత",
+    "send": "పంపు",
+    "thanksTitle": "ధన్యవాదాలు!",
+    "thanksBody": "మీ అభిప్రాయం తదుపరి ఏమి నిర్మించబడుతుందో నిర్ణయిస్తుంది.",
+    "copy2Lead": "మీరు Cabinetని కొన్నిసార్లు తెరిచారు. ధన్యవాదాలు! Cabinet ఓపెన్ సోర్స్ మరియు ఇప్పుడే ప్రారంభమైంది, కాబట్టి మీరు ఇక్కడ చెప్పేది తదుపరి ఏమి నిర్మించబడుతుందో నిజంగా మారుస్తుంది.",
+    "copy2Q1": "ఈరోజు Cabinetలో మీరు ఏమి చేయాలనుకుంటున్నారు?",
+    "copy2Q1Hint": "ఒక వాక్యం సరిపోతుంది. మీరు దేనికోసం తెరిచారు, అది ఏమి చేయగలదని మీరు కోరుకున్నారు అని కాదు.",
+    "copy2Q2": "చివరిసారి మీరు అది చేయాలనుకున్నప్పుడు, Cabinetకి బదులుగా మీరు ఏమి ఉపయోగించారు?",
+    "copy2Q2Hint": "ఏదైనా సాధనం, యాప్ లేదా డాక్యుమెంట్, పెన్ మరియు పేపర్ కూడా.",
+    "copy6Lead": "మీరు తిరిగి వచ్చారు, మరియు అదే అత్యంత ముఖ్యమైన సంకేతం. మీరు వాటిని మర్చిపోయే ముందు నేను లోపాల గురించి వినాలనుకుంటున్నాను.",
+    "copy6Q1": "ఈరోజు Cabinetలో మీరు ఏమి చేయాలనుకుంటున్నారు?",
+    "copy6Q1Hint": "ఒక వాక్యం సరిపోతుంది.",
+    "copy6Q2": "ఈ వారం Cabinetని ఉపయోగించడం ఆపివేయడానికి మిమ్మల్ని దాదాపుగా ప్రేరేపించిన ఒక విషయం ఏమిటి?",
+    "copy6Q2Hint": "మిమ్మల్ని ఎక్కువగా ఇబ్బంది పెట్టిన విషయం. నిర్దిష్టంగా ఉండండి. \"X గందరగోళంగా ఉంది\" అనేది \"UX\" కంటే మెరుగు."
+  },
+  "apiKeysSection": {
+    "cancel": "రద్దు చేయి",
+    "pasteHere": "ఇక్కడ అతికించు",
+    "pasteNewValue": "కొత్త విలువను అతికించు"
+  },
+  "storageBackend": {
+    "title": "నిల్వ బ్యాకెండ్",
+    "migrationFailed": "మైగ్రేషన్ విఫలమైంది"
+  },
+  "linkRepo": {
+    "title": "జ్ఞానాన్ని లోడ్ చేయి",
+    "intro": "మీ మెషీన్‌లోని ఏదైనా ఫోల్డర్‌కు Cabinetను చూపండి. Cabinet ఒక సిమ్‌లింక్‌ను సృష్టిస్తుంది, తద్వారా ఫోల్డర్ కంటెంట్‌లు మీ నాలెడ్జ్ బేస్‌లో కనిపిస్తాయి మరియు AI ఏజెంట్‌లకు సందర్భంగా అందుబాటులో ఉంటాయి. అసలు ఫోల్డర్ ఎప్పుడూ తరలించబడదు లేదా కాపీ చేయబడదు.",
+    "symlinkNote": "ఇది సింబాలిక్ లింక్‌ను సృష్టిస్తుంది — ఫైల్‌లు ఉన్న చోటే ఉంటాయి.",
+    "autoDetectPlaceholder": "గిట్ రిమోట్ నుండి స్వయంచాలకంగా గుర్తించు (ఐచ్ఛికం)",
+    "shortSummaryPlaceholder": "ఏజెంట్ల కోసం ఐచ్ఛిక సంక్షిప్త సారాంశం"
+  },
+  "recentTasks": {
+    "ptyMode": "టెర్మినల్ (PTY) మోడ్",
+    "revealOlder": "మరిన్ని పాత పనులను చూపించు",
+    "showOlder": "పాతవి చూపించు"
+  },
+  "treeNode": {
+    "openCabinet": "క్యాబినెట్ వీక్షణను తెరువు",
+    "pageTitlePlaceholder": "పేజీ శీర్షిక…",
+    "rename": "పేరు మార్చు",
+    "openBadge": "తెరువు",
+    "sectionAdd": "ఈ అంశానికి జోడించండి",
+    "sectionThis": "ఈ అంశం",
+    "addSubPage": "ఉప పేజీని జోడించండి",
+    "newFolder": "కొత్త ఫోల్డర్",
+    "createFile": "కొత్త ఫైల్‌ను సృష్టించండి…",
+    "connectKnowledge": "నాలెడ్జ్‌ను కనెక్ట్ చేయండి…",
+    "symlinkTag": "Symlink",
+    "importFile": "ఫైల్‌ను దిగుమతి చేయండి…",
+    "importFolder": "ఫోల్డర్‌ను దిగుమతి చేయండి…",
+    "createCabinet": "ఇక్కడ Cabinetను సృష్టించండి",
+    "editSymlink": "సిమ్‌లింక్‌ను సవరించండి…",
+    "settings": "సెట్టింగ్‌లు…",
+    "moveTo": "దీనికి తరలించండి…",
+    "copyRelativePath": "సాపేక్ష మార్గాన్ని కాపీ చేయండి",
+    "copyFullPath": "పూర్తి మార్గాన్ని కాపీ చేయండి",
+    "openInFinder": "ఫైండర్‌లో తెరవండి",
+    "delete": "తొలగించండి",
+    "unlink": "లింక్‌ను తీసివేయండి",
+    "folderNamePlaceholder": "ఫోల్డర్ పేరు",
+    "creating": "సృష్టిస్తోంది…",
+    "create": "సృష్టించండి",
+    "addSubPageTitle": "“{{name}}”కి ఉప పేజీని జోడించండి",
+    "newFolderTitle": "“{{name}}”లో కొత్త ఫోల్డర్"
+  },
+  "newFile": {
+    "title": "కొత్త ఫైల్‌ను సృష్టించండి",
+    "subtitle": "ఫైల్ రకాన్ని ఎంచుకోండి. సిద్ధంగా ఉన్నప్పుడు Cabinet దానిని ఎడిటర్‌లో తెరుస్తుంది.",
+    "groupNative": "Cabinetలో సవరించండి",
+    "groupOffice": "ఆఫీస్ (ఖాళీ — బాహ్యంగా సవరించండి)",
+    "groupGoogle": "Google (లింక్ చేయబడింది)",
+    "namePlaceholder": "ఫైల్ పేరు",
+    "create": "సృష్టించండి",
+    "creating": "సృష్టిస్తోంది…",
+    "googleUrlLabel": "Google URL (ఐచ్ఛికం)",
+    "googleUrlPlaceholder": "షేర్ చేయదగిన Google లింక్‌ను అతికించండి, లేదా తర్వాత జోడించడానికి ఖాళీగా ఉంచండి",
+    "officeNote": "Cabinet Office ఫైల్‌లను చదవడానికి మాత్రమే చూపిస్తుంది. డెస్క్‌టాప్ యాప్‌లో సవరించడానికి “ఓపెన్ ఇన్ ఫైండర్” ఉపయోగించండి.",
+    "types": {
+      "markdown": "మార్క్‌డౌన్ పేజీ",
+      "markdownDesc": "రిచ్ టెక్స్ట్ నోట్స్, Cabinetలో సవరించదగినవి",
+      "code": "కోడ్ ఫైల్",
+      "codeDesc": "ఏదైనా సోర్స్/టెక్స్ట్ ఫైల్ — ఎక్స్‌టెన్షన్‌ను ఎంచుకోండి",
+      "mermaid": "మెర్మైడ్ రేఖాచిత్రం",
+      "mermaidDesc": "కోడ్‌గా ఫ్లోచార్ట్‌లు మరియు రేఖాచిత్రాలు",
+      "csv": "CSV పట్టిక",
+      "csvDesc": "కామాతో వేరు చేయబడిన స్ప్రెడ్‌షీట్ డేటా",
+      "docx": "వర్డ్ డాక్యుమెంట్",
+      "docxDesc": "ఖాళీ .docx",
+      "xlsx": "ఎక్సెల్ స్ప్రెడ్‌షీట్",
+      "xlsxDesc": "ఖాళీ .xlsx",
+      "pptx": "పవర్‌పాయింట్",
+      "pptxDesc": "ఖాళీ .pptx",
+      "gdoc": "గూగుల్ డాక్",
+      "gdocDesc": "గూగుల్ డాక్‌ను ఎంబెడ్ చేయండి",
+      "gsheet": "గూగుల్ షీట్",
+      "gsheetDesc": "గూగుల్ షీట్‌ను ఎంబెడ్ చేయండి",
+      "gslides": "గూగుల్ స్లైడ్స్",
+      "gslidesDesc": "గూగుల్ స్లైడ్స్‌ను ఎంబెడ్ చేయండి"
+    },
+    "codeExtLabel": "ఎక్స్‌టెన్షన్",
+    "googleTag": "గూగుల్",
+    "extHint": "పేరును టైప్ చేయండి — Cabinet {{ext}} ఎక్స్‌టెన్షన్‌ను జోడిస్తుంది.",
+    "createFailed": "ఫైల్‌ను సృష్టించలేకపోయింది."
+  },
+  "fileSettings": {
+    "googleTitle": "గూగుల్ ఎంబెడ్ సెట్టింగ్‌లు",
+    "googleKindLabel": "రకం",
+    "googleUrlLabel": "గూగుల్ URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "ఎంబెడ్ లోడ్ అవ్వడానికి డాక్యుమెంట్ షేరింగ్ “లింక్ ఉన్న ఎవరైనా” లేదా “వెబ్‌లో ప్రచురించబడింది”గా ఉండాలి.",
+    "openLink": "గూగుల్‌లో తెరవండి",
+    "googleKinds": {
+      "docs": "డాక్స్",
+      "sheets": "షీట్స్",
+      "slides": "స్లైడ్స్",
+      "forms": "ఫారమ్‌లు",
+      "drive": "డ్రైవ్"
+    },
+    "appTitle": "వెబ్ యాప్ సెట్టింగ్‌లు",
+    "modeLabel": "ఇది ఎలా తెరవాలి?",
+    "modeWebsite": "పేజీ వీక్షణ",
+    "modeWebsiteDesc": "సైడ్‌బార్ మరియు AI ప్యానెల్ కనిపించేలా ఇన్-లైన్‌లో తెరుచుకుంటుంది.",
+    "modeApp": "వెబ్ యాప్",
+    "modeAppDesc": "పూర్తి స్క్రీన్‌లో తెరుచుకుంటుంది; సైడ్‌బార్ మరియు AI ప్యానెల్ స్వయంచాలకంగా కుదించబడతాయి.",
+    "convertNote": "ఇది ఫోల్డర్‌లోని .app మార్కర్ ఫైల్‌ను టోగుల్ చేస్తుంది. మీ ఫైల్‌లు మారవు.",
+    "save": "సేవ్ చేయండి",
+    "saving": "సేవ్ అవుతోంది…",
+    "cancel": "రద్దు చేయండి",
+    "saveFailed": "సెట్టింగ్‌లను సేవ్ చేయలేకపోయింది."
+  },
+  "editSymlink": {
+    "title": "సిమ్‌లింక్‌ను సవరించండి",
+    "intro": "ఈ నాలెడ్జ్ బేస్ ఎంట్రీ మీ మెషీన్‌లో మరెక్కడో ఉన్న ఫోల్డర్‌కు సింబాలిక్ లింక్.",
+    "kbPathLabel": "నాలెడ్జ్ బేస్ మార్గం",
+    "targetLabel": "దీనికి లింక్ చేస్తుంది (డిస్క్‌లో)",
+    "brokenWarning": "టార్గెట్ ఫోల్డర్ ఇకపై లేదు. దాన్ని కింద ఉన్న చెల్లుబాటు అయ్యే ఫోల్డర్‌కు మళ్లీ పాయింట్ చేయండి.",
+    "repointLabel": "కొత్త ఫోల్డర్‌కు మళ్లీ పాయింట్ చేయండి",
+    "repointHint": "Cabinet ఇక్కడ పాయింట్ చేయడానికి లింక్‌ను భర్తీ చేస్తుంది. ఫైల్‌లు ఎప్పుడూ తరలించబడవు.",
+    "browse": "బ్రౌజ్ చేయండి",
+    "nameLabel": "పేరు",
+    "descriptionLabel": "వివరణ",
+    "save": "సేవ్ చేయండి",
+    "saving": "సేవ్ అవుతోంది…",
+    "copyTarget": "టార్గెట్ మార్గాన్ని కాపీ చేయండి",
+    "saveFailed": "సిమ్లింక్‌ను అప్‌డేట్ చేయలేకపోయాము."
+  },
+  "importFolder": {
+    "importing": "ఫోల్డర్ ఇంపోర్ట్ అవుతోంది…",
+    "failed": "ఫోల్డర్ ఇంపోర్ట్ విఫలమైంది: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "పనులు లోడ్ అవుతున్నాయి"
+  },
+  "agentList": {
+    "agentLibrary": "ఏజెంట్ లైబ్రరీ",
+    "newAgent": "కొత్త ఏజెంట్"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "మీ బృందం",
+    "lead": "నాయకుడు",
+    "specialist": "నిపుణుడు",
+    "tasks": "పనులు",
+    "todo": "చేయవలసినవి",
+    "doing": "చేస్తున్నవి",
+    "done": "పూర్తయినవి",
+    "anythingGoes": "ఏదైనా సరే",
+    "marketing": "మార్కెటింగ్",
+    "product": "ఉత్పత్తి",
+    "research": "పరిశోధన",
+    "design": "డిజైన్",
+    "routines": "దినచర్యలు",
+    "dailyReview": "రోజువారీ సమీక్ష",
+    "weeklyDigest": "వారపు సారాంశం",
+    "conversation": "సంభాషణ",
+    "userQuery": "2 వారాల థాయ్‌లాండ్ పర్యటనను ప్లాన్ చేయండి…",
+    "agentReply": "నేను లైబ్రేరియన్ మరియు ఎడిటర్‌ను పంపుతాను.",
+    "pendingAction": "పెండింగ్‌లో ఉన్న చర్య",
+    "approve": "ఆమోదించు",
+    "decline": "తిరస్కరించు",
+    "themes": "థీమ్‌లు",
+    "providers": "ప్రొవైడర్‌లు",
+    "comingSoon": "త్వరలో వస్తుంది"
+  },
+  "agentLive": {
+    "dismiss": "తొలగించు",
+    "paused": "ఏజెంట్ పాజ్ చేయబడింది"
+  },
+  "conversationLive": {
+    "liveOutput": "ప్రత్యక్ష అవుట్‌పుట్",
+    "waitingFirstChunk": "మొదటి అవుట్‌పుట్ భాగాని కోసం వేచి ఉంది…"
+  },
+  "editIdentityPlus": {
+    "avatar": "అవతార్",
+    "useIconInstead": "ఐకాన్‌ను ఉపయోగించండి"
+  },
+  "pendingActions": {
+    "rejectAll": "పెండింగ్‌లో ఉన్న ప్రతి చర్యను తిరస్కరించండి",
+    "approveAll": "ఎటువంటి కఠినమైన అడ్డంకులు లేని ప్రతి చర్యను ఆమోదించి, పంపండి"
+  },
+  "aiPanel": {
+    "clearSessions": "అన్ని సెషన్‌లను క్లియర్ చేయండి",
+    "dismiss": "తొలగించు"
+  },
+  "schedulerPlus": {
+    "restartAll": "అన్ని ఏజెంట్‌లను పునఃప్రారంభించండి",
+    "restartSubtitle": "అన్ని షెడ్యూల్‌లను ఆపివేసి, ఆపై మళ్లీ సక్రియం చేయండి"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSV డౌన్‌లోడ్ చేయండి",
+    "deleteRow": "అడ్డు వరుసను తొలగించండి"
+  },
+  "resizableImage": {
+    "resizeLeft": "ఎడమ నుండి పరిమాణాన్ని మార్చండి",
+    "resizeRight": "కుడి నుండి పరిమాణాన్ని మార్చండి"
+  },
+  "folderIndex": {
+    "listView": "జాబితా వీక్షణ",
+    "galleryView": "గ్యాలరీ వీక్షణ"
+  },
+  "linkPopover": {
+    "openLink": "లింక్‌ను తెరవండి",
+    "removeLink": "లింక్‌ను తొలగించండి"
+  },
+  "officeChrome": {
+    "openInFinder": "ఫైండర్‌లో తెరవండి",
+    "downloadOriginal": "అసలైనదాన్ని డౌన్‌లోడ్ చేయండి"
+  },
+  "sourceViewer": {
+    "copyContents": "ఫైల్ కంటెంట్‌లను కాపీ చేయండి",
+    "downloadFile": "ఫైల్‌ను డౌన్‌లోడ్ చేయండి"
+  },
+  "versionHistory": {
+    "title": "వెర్షన్ చరిత్ర"
+  },
+  "demoModal": {
+    "closeDemo": "డెమోను మూసివేయండి",
+    "close": "మూసివేయి"
+  },
+  "demosPlus": {
+    "anything": "ఏదైనా",
+    "yours": "మీది",
+    "install": "ఇన్‌స్టాల్ చేయండి",
+    "attach": "జతచేయి"
+  },
+  "narrowViewport": {
+    "dismiss": "ఇరుకైన వ్యూపోర్ట్ సూచనను తీసివేయండి",
+    "dismissTitle": "తదుపరి సెషన్ వరకు తీసివేయండి",
+    "hintPrefix": "Cabinet ఉత్తమంగా పనిచేస్తుంది ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " వెడల్పు. కొన్ని ఉపరితలాలు ఇరుకైన వెడల్పుల వద్ద ఇరుకుగా ఉంటాయి."
+  },
+  "agentCard": {
+    "runHeartbeat": "హార్ట్‌బీట్‌ను అమలు చేయండి"
+  },
+  "schedulePicker": {
+    "frequency": "తరచుదనం",
+    "onDay": "రోజున",
+    "modeInterval": "వ్యవధి",
+    "modeDaily": "రోజువారీ",
+    "modeWeekdays": "వారపు రోజులు",
+    "modeWeekly": "వారానికోసారి",
+    "modeMonthly": "నెలవారీ",
+    "modeCustom": "అనుకూలం",
+    "parse": "పార్స్ చేయండి",
+    "showCron": "క్రాన్ ఎక్స్‌ప్రెషన్‌ను చూపించు",
+    "hideCron": "క్రాన్ ఎక్స్‌ప్రెషన్‌ను దాచు",
+    "weekdayMo": "సో",
+    "weekdayTu": "మం",
+    "weekdayWe": "బు",
+    "weekdayTh": "గు",
+    "weekdayFr": "శు",
+    "weekdaySa": "శ",
+    "weekdaySu": "ఆ"
+  },
+  "slackPanel": {
+    "createChannel": "ఛానెల్‌ను సృష్టించండి",
+    "thread": "థ్రెడ్"
+  },
+  "uninstall": {
+    "title": "Cabinetను అన్‌ఇన్‌స్టాల్ చేయండి"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet డ్రాయర్లు",
+    "pageTitlePlaceholder": "పేజీ శీర్షిక…"
+  },
+  "skillAddPlus": {
+    "cancel": "రద్దు చేయి"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "ఈ నైపుణ్యం కోసం skills.sh నుండి ఆడిట్ డేటా అందుబాటులో లేదు",
+    "searchPlaceholder": "skills.shలో శోధించండి"
+  },
+  "skillLibraryPlus": {
+    "refresh": "రిఫ్రెష్",
+    "noSkills": "ఇంకా నైపుణ్యాలు లేవు."
+  },
+  "taskDetail": {
+    "close": "మూసివేయి (Esc)",
+    "muteTask": "ఈ పనిని మ్యూట్ చేయండి — పూర్తయినవి నేరుగా ఆర్కైవ్‌కు వెళ్తాయి",
+    "unmuteTask": "ఈ పనిని అన్‌మ్యూట్ చేయండి — పూర్తయినవి 'ఇప్పుడే పూర్తయినవి'లో మళ్లీ కనిపిస్తాయి"
+  },
+  "rowActionsPlus": {
+    "edit": "సవరించు",
+    "editHint": "ఇది ప్రారంభం కావడానికి ముందు ఈ సేవ్ చేసిన డ్రాఫ్ట్‌ను సవరించండి",
+    "delete": "తొలగించు",
+    "deleteHint": "శాశ్వతంగా తొలగించండి — ఇది రద్దు చేయబడదు"
+  },
+  "taskCard": {
+    "ptyMode": "టెర్మినల్ (PTY) మోడ్‌లో నడుస్తోంది"
+  },
+  "undoToast": {
+    "dismiss": "తీసివేయి"
+  },
+  "terminalExited": {
+    "openDetails": "నిర్దిష్ట వివరాలను తెరవండి (ప్రాంప్ట్, ఆర్టిఫ్యాక్ట్‌లు, టర్న్‌లు)",
+    "reconnect": "డీమన్‌కి తిరిగి కనెక్ట్ అవ్వండి మరియు రా PTY రీప్లేను స్ట్రీమ్ చేయండి"
+  },
+  "terminalTabsPlus": {
+    "resize": "టెర్మినల్ ప్యానెల్‌ను పరిమాణం మార్చండి"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "అన్ని ఏజెంట్‌లను చూపించు",
+    "noRecentActivity": "ఇటీవలి కార్యాచరణ లేదు",
+    "noAgents": "ఏ ఏజెంట్‌లు లేరు",
+    "noAgentsConfigured": "ఈ cabinet కోసం ఇంకా ఏ ఏజెంట్‌లు కాన్ఫిగర్ చేయబడలేదు.",
+    "cabinetScope": "Cabinet పరిధి:",
+    "depthDropdownHeader": "Cabinet పరిధి",
+    "depthOwnLabel": "ఈ cabinet మాత్రమే",
+    "depthOwnShort": "స్వంత",
+    "depthOwnDesc": "ఈ cabinet నుండి మాత్రమే పేజీలు, ఏజెంట్‌లు మరియు పనులు.",
+    "depthChildren1Label": "ప్రత్యక్ష పిల్లలను చేర్చండి",
+    "depthChildren1Desc": "ఉప-cabinets యొక్క ఒక స్థాయిని జోడించండి.",
+    "depthChildren2Label": "రెండు cabinet స్థాయిలను చేర్చండి",
+    "depthChildren2Desc": "ఉప-cabinets యొక్క రెండు స్థాయిలను జోడించండి.",
+    "depthAllLabel": "అన్ని వారసులను చేర్చండి",
+    "depthAllShort": "అన్నీ",
+    "depthAllDesc": "మొత్తం ఉప-వృక్షాన్ని చేర్చండి.",
+    "scopeTooltip": "Cabinet పరిధి: {{label}}. మార్చడానికి క్లిక్ చేయండి."
+  },
+  "composerExtras": {
+    "skillAttached": "నైపుణ్యం — ఈ రన్‌కి మాత్రమే జోడించబడింది",
+    "pageTitlePlaceholder": "పేజీ శీర్షిక…",
+    "active": "సక్రియం — ఈ షెడ్యూల్‌లో ఏజెంట్‌ను మేల్కొలపండి",
+    "pickCliPty": "PTYలో సృష్టించడానికి ఒక CLIని ఎంచుకోండి:"
+  },
+  "editorExtras": {
+    "editWithAi": "AIతో సవరించండి",
+    "jupyterLab": "కాపీ చేయండి: jupyter lab <path>",
+    "exitApp": "యాప్ నుండి నిష్క్రమించండి"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI ఖాతాలు",
+    "aiTeams": "AI బృందాలు"
+  },
+  "whatsNew": {
+    "dismiss": "విస్మరించు",
+    "headerPrefix": "vలో కొత్తవి ఏమిటి",
+    "readFull": "పూర్తి విడుదల గమనికలను చదవండి"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "నాకు అర్థమైంది మరియు కొనసాగించాలనుకుంటున్నాను."
+  },
+  "daemonHealth": {
+    "dismiss": "విస్మరించు"
+  },
+  "tinyExtras": {
+    "light": "కాంతి",
+    "home": "హోమ్",
+    "workspaceGallery": "వర్క్‌స్పేస్ గ్యాలరీ",
+    "savingTo": "దీనికి సేవ్ చేస్తోంది",
+    "comingSoon": "త్వరలో వస్తుంది",
+    "deleteSkill": "నైపుణ్యాన్ని తొలగించండి",
+    "skillsOffered": "అందించబడిన నైపుణ్యాలు:",
+    "allAgents": "అన్ని ఏజెంట్‌లు",
+    "noTranscript": "ట్రాన్స్‌క్రిప్ట్ కనుగొనబడలేదు",
+    "noDiff": "ఎటువంటి డిఫ్ అందుబాటులో లేదు.",
+    "headsUp": "గమనిక:",
+    "back": "వెనుకకు",
+    "editYourAvatar": "మీ అవతార్‌ను సవరించండి",
+    "openFullTaskViewer": "పూర్తి టాస్క్ వ్యూయర్‌ను తెరవండి",
+    "close": "మూసివేయి",
+    "copyToClipboard": "క్లిప్‌బోర్డ్‌కు కాపీ చేయి",
+    "starOnGithub": "GitHubలో Cabinetకి స్టార్ ఇవ్వండి",
+    "helpMoreFind": "మరింత మంది సంఘాన్ని కనుగొనడంలో సహాయపడండి",
+    "joinDiscord": "డిస్కార్డ్‌లో చేరండి",
+    "chatWithBuilders": "Cabinetని నిర్మిస్తున్న వారితో చాట్ చేయండి",
+    "joinWaitlist": "Cabinet క్లౌడ్ వెయిట్‌లిస్ట్‌లో చేరండి",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "జేన్",
+    "addToInbox": "ఇన్‌బాక్స్‌కు జోడించు",
+    "runTaskNow": "పనిని ఇప్పుడే అమలు చేయి",
+    "search": "శోధించు",
+    "aiPanel": "AI ప్యానెల్",
+    "drawers": "డ్రాయర్లు"
+  },
+  "dataLocations": {
+    "title": "మీ డేటా నివసించే చోటు",
+    "whyThisMatters": "ఇది ఎందుకు ముఖ్యం",
+    "location": "స్థానం",
+    "contains": "కలిగి ఉంది",
+    "network": "నెట్‌వర్క్",
+    "revealInFinder": "ఫైల్ మేనేజర్‌లో చూపించు",
+    "stored": "నిల్వ చేయబడింది",
+    "resetOnboarding": "ఆన్‌బోర్డింగ్‌ను రీసెట్ చేయి"
+  },
+  "rooms": {
+    "switcherTitle": "రూమ్ మార్చండి",
+    "switchRoom": "రూమ్‌లు",
+    "loading": "లోడ్ అవుతోంది…",
+    "defaultTag": "హోమ్",
+    "openInNewWindow": "కొత్త విండోలో తెరవండి",
+    "opensBrowserWindow": "కొత్త బ్రౌజర్ విండోను తెరుస్తుంది",
+    "customizeRoom": "రూమ్‌ను సవరించండి",
+    "addRoom": "రూమ్ జోడించండి…",
+    "editTitle": "రూమ్‌ను సవరించండి",
+    "editSubtitle": "ఈ రూమ్ పేరు, చిహ్నం, రంగు మరియు థీమ్‌ను సెట్ చేయండి.",
+    "nameLabel": "ప్రదర్శన పేరు",
+    "slugHint": "డిస్క్‌లోని ఫోల్డర్ పేరు {{slug}} గానే ఉంటుంది. ఫోల్డర్‌ను పేరు మార్చడం అనేది ఒక ప్రత్యేకమైన, అధునాతన చర్య.",
+    "iconLabel": "చిహ్నం",
+    "colorLabel": "రంగు",
+    "colorAuto": "ఆటో",
+    "themeLabel": "థీమ్",
+    "themeGlobal": "గ్లోబల్ డిఫాల్ట్‌ను ఉపయోగించండి",
+    "editFailed": "రూమ్‌ను సేవ్ చేయలేకపోయాము. దయచేసి మళ్లీ ప్రయత్నించండి.",
+    "deleteRoom": "రూమ్‌ను తొలగించండి…",
+    "deleteLastRoomDisabledHint": "మీరు మీ చివరి రూమ్‌ను తొలగించలేరు.",
+    "deleteTitle": "ఈ రూమ్‌ను తొలగించాలా?",
+    "deleteSubtitle": "ఈ రూమ్ మరియు దానిలోని ప్రతిదీ ట్రాష్‌కు తరలించబడుతుంది.",
+    "deleteWarningIntro": "రూమ్‌ను ట్రాష్‌కు తరలించడం వలన ఇవి కూడా తొలగించబడతాయి:",
+    "deleteWarningPages": "ఈ రూమ్‌లోని పేజీలు మరియు ఫైల్‌లు",
+    "deleteWarningAgents": "ఈ రూమ్‌కు సంబంధించిన ఏజెంట్లు, సంభాషణలు మరియు మెమరీ",
+    "deleteWarningJobs": "ఈ రూమ్‌లోని షెడ్యూల్ చేయబడిన పనులు మరియు రొటీన్‌లు",
+    "deleteWarningChat": "ఈ రూమ్ కోసం టీమ్ చాట్ చరిత్ర",
+    "deleteWarningSearch": "రూమ్ యొక్క శోధన సూచిక (పునరుద్ధరించబడితే స్వయంచాలకంగా పునర్నిర్మించబడుతుంది)",
+    "deleteRecoveryNote": "పునరుద్ధరణ: గది data/.trash/కి తరలించబడింది — ఫోల్డర్‌ను తిరిగి data/లోకి తరలించడం ద్వారా పునరుద్ధరించండి.",
+    "deleteConfirmLabel": "{{slug}} అని టైప్ చేసి నిర్ధారించండి",
+    "deleteConfirmButton": "గదిని తొలగించు",
+    "deleting": "తొలగిస్తోంది…",
+    "deleteFailed": "గదిని తొలగించలేకపోయాము. దయచేసి మళ్ళీ ప్రయత్నించండి."
+  },
+  "common": {
+    "actions": {
+      "save": "సేవ్ చేయి",
+      "cancel": "రద్దు చేయి",
+      "delete": "తొలగించు",
+      "confirm": "నిర్ధారించు",
+      "close": "మూసివేయి",
+      "open": "తెరువు",
+      "back": "వెనుకకు",
+      "next": "తదుపరి",
+      "done": "పూర్తయింది"
+    },
+    "nav": {
+      "goBack": "వెనుకకు వెళ్ళు",
+      "goForward": "ముందుకు వెళ్ళు"
+    },
+    "aiPanel": {
+      "open": "AI ప్యానెల్‌ను తెరువు",
+      "close": "AI ప్యానెల్‌ను మూసివేయి"
+    },
+    "states": {
+      "loading": "లోడ్ అవుతోంది…",
+      "saving": "సేవ్ అవుతోంది…",
+      "saved": "సేవ్ చేయబడింది",
+      "error": "ఏదో తప్పు జరిగింది"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "కొత్త పేజీ",
+      "title": "కొత్త పేజీని సృష్టించు",
+      "placeholder": "పేజీ శీర్షిక…",
+      "create": "సృష్టించు",
+      "creating": "సృష్టిస్తోంది…"
+    },
+    "newCabinet": {
+      "trigger": "కొత్త Cabinet",
+      "title": "కొత్త Cabinetని సృష్టించు",
+      "subtitle": "ఒక Cabinet అనేది దాని స్వంత ఏజెంట్లు, పనులు మరియు జ్ఞానంతో కూడిన వర్క్‌స్పేస్.",
+      "importFromRegistry": "రిజిస్ట్రీ నుండి దిగుమతి చేయి",
+      "nameLabel": "Cabinet పేరు",
+      "namePlaceholder": "ఉదా. నా స్టార్టప్, మార్కెటింగ్ టీమ్, రీసెర్చ్ ల్యాబ్…",
+      "selectAgents": "ఏజెంట్లను ఎంచుకోండి",
+      "selectedCount": "{{count}} ఎంపికయ్యాయి",
+      "createCabinet": "Cabinet సృష్టించండి",
+      "creating": "సృష్టిస్తోంది…",
+      "createFailed": "cabinet సృష్టించడంలో విఫలమైంది"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "పేజీని ఎగుమతి చేయండి",
+      "copyMarkdown": "మార్క్‌డౌన్ కాపీ చేయండి",
+      "copyForLlms": "LLMల కోసం కాపీ చేయండి",
+      "copyAsHtml": "HTMLగా కాపీ చేయండి",
+      "downloadMarkdown": ".md డౌన్‌లోడ్ చేయండి",
+      "downloadPdf": "PDF డౌన్‌లోడ్ చేయండి",
+      "copiedForLlmToast": "LLM కోసం {{size}} మార్క్‌డౌన్ కాపీ చేయబడింది"
+    },
+    "toolbar": {
+      "heading1": "శీర్షిక 1",
+      "heading2": "శీర్షిక 2",
+      "heading3": "శీర్షిక 3",
+      "bold": "బోల్డ్",
+      "italic": "ఇటాలిక్",
+      "underline": "అండర్‌లైన్",
+      "strikethrough": "స్ట్రైక్‌త్రూ",
+      "inlineCode": "ఇన్‌లైన్ కోడ్",
+      "link": "లింక్",
+      "textColor": "టెక్స్ట్ రంగు",
+      "highlight": "హైలైట్",
+      "background": "నేపథ్యం",
+      "bulletList": "బుల్లెట్ జాబితా",
+      "orderedList": "క్రమబద్ధమైన జాబితా",
+      "blockquote": "బ్లాక్‌కోట్",
+      "checklist": "చెక్‌లిస్ట్",
+      "codeBlock": "కోడ్ బ్లాక్",
+      "divider": "డివైడర్",
+      "alignLeft": "ఎడమకు సమలేఖనం చేయండి",
+      "alignCenter": "మధ్యకు సమలేఖనం చేయండి",
+      "alignRight": "కుడికి సమలేఖనం చేయండి",
+      "justify": "జస్టిఫై",
+      "align": "సమలేఖనం",
+      "table": {
+        "selectCellText": "సెల్ టెక్స్ట్ ఎంచుకోండి",
+        "addRowAbove": "పైన అడ్డువరుసను జోడించండి",
+        "addRowBelow": "కింద అడ్డువరుసను జోడించండి",
+        "moveRowUp": "అడ్డువరుసను పైకి తరలించండి",
+        "moveRowDown": "అడ్డువరుసను కిందకి తరలించండి",
+        "deleteRow": "అడ్డువరుసను తొలగించండి",
+        "addColumnBefore": "ముందు నిలువువరుసను జోడించండి",
+        "addColumnAfter": "తర్వాత నిలువువరుసను జోడించండి",
+        "moveColumnLeft": "నిలువువరుసను ఎడమకు తరలించండి",
+        "moveColumnRight": "నిలువువరుసను కుడికి తరలించండి",
+        "deleteColumn": "నిలువువరుసను తొలగించండి",
+        "toggleHeaderRow": "హెడర్ వరుసను టోగుల్ చేయి",
+        "toggleHeaderColumn": "హెడర్ నిలువు వరుసను టోగుల్ చేయి",
+        "deleteTable": "పట్టికను తొలగించు"
+      },
+      "superscript": "సూపర్ స్క్రిప్ట్",
+      "subscript": "సబ్ స్క్రిప్ట్",
+      "insertImage": "చిత్రాన్ని చేర్చు",
+      "insertVideo": "వీడియోను చేర్చు",
+      "embed": "పొందుపరచు",
+      "undo": "రద్దు చేయి",
+      "redo": "మళ్ళీ చేయి",
+      "switchToLtr": "LTRకి మార్చు",
+      "switchToRtl": "RTLకి మార్చు",
+      "scrollLeft": "టూల్‌బార్‌ను ఎడమకు స్క్రోల్ చేయి",
+      "scrollRight": "టూల్‌బార్‌ను కుడికి స్క్రోల్ చేయి",
+      "markdown": "మార్క్‌డౌన్",
+      "preview": "ప్రివ్యూ"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet పేరు…",
+      "renameWarning": "Cabinet పేర్లను తర్వాత మార్చలేరు (ప్రస్తుతానికి). తెలివిగా ఎంచుకోండి."
+    },
+    "templates": {
+      "header": "టెంప్లేట్ నుండి ప్రారంభించు",
+      "browseAll": "అన్నింటినీ బ్రౌజ్ చేయి →"
+    },
+    "quickActions": {
+      "shuffle": "విభిన్న సూచనలను చూపించు",
+      "launch10Songs": "10 పాటల రచన ఎడిటర్‌లను ప్రారంభించు",
+      "dailyReview9am": "ఉదయం 9 గంటలకు రోజువారీ సమీక్ష",
+      "weeklyReview": "వచ్చే సోమవారం వారపు సమీక్ష",
+      "thailandTrip": "నా థాయిలాండ్ పర్యటనను ప్రణాళిక చేయి",
+      "physicsApp": "నాకు ఫిజిక్స్ స్టడీ యాప్‌ను నిర్మించు",
+      "summariseRecent": "నా ఇటీవలి పనిని సంగ్రహించు",
+      "recruiterReply": "రిక్రూటర్ ప్రత్యుత్తరాన్ని ముసాయిదా చేయి",
+      "mapArticles": "వ్యాస అనుసంధానాలను మ్యాప్ చేయి",
+      "physicsCourse": "6-మాడ్యూల్ ఫిజిక్స్ కోర్సును ఏర్పాటు చేయి",
+      "shortStory": "ఒక చిన్న కథకు రూపురేఖలు గీయు",
+      "hourlyStandup": "గంటవారీ స్టాండ్-అప్ నడ్జ్",
+      "researchPhone": "నా తదుపరి ఫోన్‌ను పరిశోధించు",
+      "translateToSpanish": "ఈ cabinetను స్పానిష్‌కి అనువదించు",
+      "refactorNotes": "నా నోట్-టేకింగ్ సిస్టమ్‌ను రీఫ్యాక్టర్ చేయి",
+      "birthdayParty": "పుట్టినరోజు పార్టీని ప్రణాళిక చేయి",
+      "boardUpdate": "బోర్డు అప్‌డేట్‌ను ముసాయిదా చేయి",
+      "customerInterviews": "5 కస్టమర్ ఇంటర్వ్యూలను అనుకరించు"
+    },
+    "goodMorning": "శుభోదయం",
+    "goodAfternoon": "శుభ మధ్యాహ్నం",
+    "goodEvening": "శుభ సాయంత్రం",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "నేను సృష్టించాలనుకుంటున్నాను…",
+    "composerDaemonDown": "ఏజెంట్ డెమోన్ ఆఫ్‌లైన్ — పంపడానికి పునఃప్రారంభించు"
+  },
+  "onboarding": {
+    "launchHeading": "మీ <accent>Cabinet</accent>ను ప్రారంభించు",
+    "intro": {
+      "tagline1": "మీ నాలెడ్జ్ బేస్.",
+      "tagline2": "మీ AI బృందం.",
+      "getStarted": "ప్రారంభించండి"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "కార్యాలయం",
+        "study": "అధ్యయన గది",
+        "lab": "ప్రయోగశాల",
+        "library": "గ్రంథాలయం",
+        "kitchen": "వంటగది",
+        "family": "కుటుంబం",
+        "dining": "భోజన గది",
+        "studio": "స్టూడియో"
+      }
+    },
+    "welcome": {
+      "paragraph": "మీ హోమ్ మీదే. దానిలో, మీరు మీ జీవితంలోని వివిధ భాగాల కోసం గదులను ఏర్పాటు చేసుకుంటారు: పని, సెకండ్ బ్రెయిన్, పరిశోధన, కుటుంబం. మరియు ప్రతి గదిలో క్యాబినెట్‌లు ఉంటాయి: మీ నోట్స్, మీ ఫైల్స్, మరియు ఒక AI బృందం నేపథ్యంలో నిశ్శబ్దంగా పనులను పూర్తి చేస్తుంది.",
+      "namePrompt": "మీ పేరు ఏమిటి?",
+      "heading": "ఇంటికి <accent>స్వాగతం</accent>"
+    },
+    "welcomeBack": {
+      "heading": "తిరిగి స్వాగతం",
+      "headingNamed": "{{cabinet}}కు తిరిగి స్వాగతం",
+      "subtitle": "ఇక్కడ ఇప్పటికే ఉన్న క్యాబినెట్‌ను కనుగొన్నాము. దీన్ని సెటప్ చేయడం పూర్తి చేద్దాం.",
+      "continue": "కొనసాగించు"
+    },
+    "verify": {
+      "passed": "ఉత్తీర్ణత",
+      "notInstalled": "ఇన్‌స్టాల్ చేయబడలేదు",
+      "authRequired": "ప్రామాణీకరణ అవసరం",
+      "paymentRequired": "చెల్లింపు అవసరం",
+      "quotaExceeded": "కోటా / రేట్ పరిమితి",
+      "error": "లోపం"
+    },
+    "providerStatus": {
+      "ready": "సిద్ధంగా ఉంది",
+      "loginRequired": "లాగిన్ అవసరం",
+      "notInstalled": "ఇన్‌స్టాల్ చేయబడలేదు"
+    },
+    "actions": {
+      "back": "వెనుకకు",
+      "next": "తదుపరి",
+      "continue": "కొనసాగించు",
+      "skip": "దాటవేయి",
+      "finish": "పూర్తి చేయి",
+      "complete": "సెటప్ పూర్తి చేయండి",
+      "copyToClipboard": "క్లిప్‌బోర్డ్‌కు కాపీ చేయి"
+    },
+    "cabinetCreated": {
+      "continue": "సెటప్ కొనసాగించు",
+      "heading": "మీ క్యాబినెట్ సృష్టించబడింది",
+      "subtitle": "అన్నీ సెటప్ చేయబడ్డాయి, సిద్ధంగా ఉన్నాయి.",
+      "agentsReady_one": "{{count}} ఏజెంట్ పని చేయడానికి సిద్ధంగా ఉంది",
+      "agentsReady_other": "{{count}} ఏజెంట్లు పని చేయడానికి సిద్ధంగా ఉన్నాయి",
+      "scheduledJobs_one": "{{count}} షెడ్యూల్ చేయబడిన పని",
+      "scheduledJobs_other": "{{count}} షెడ్యూల్ చేయబడిన పనులు",
+      "subCabinets_one": "{{count}} సబ్-క్యాబినెట్",
+      "subCabinets_other": "{{count}} సబ్-క్యాబినెట్‌లు",
+      "agentsReady": "{{count}} ఏజెంట్లు పని చేయడానికి సిద్ధంగా ఉన్నాయి",
+      "scheduledJobs": "{{count}} షెడ్యూల్ చేయబడిన పనులు",
+      "subCabinets": "{{count}} సబ్-క్యాబినెట్‌లు"
+    },
+    "cloud": {
+      "alreadyOnList": "మీరు ఇప్పటికే జాబితాలో ఉన్నారు — మేము మిమ్మల్ని సంప్రదిస్తాము.",
+      "aside": "Cabinet Cloud త్వరలో వస్తుంది. అదే ఉత్పత్తి, స్వీయ-హోస్టింగ్ ఇబ్బందులు లేవు.",
+      "description": "మీ ల్యాప్‌టాప్ మూసి ఉన్నప్పటికీ, మీ AI ఏజెంట్లు పని చేస్తూనే ఉంటాయి — డ్రాఫ్టింగ్, పరిశోధన, నిర్వహణ — మీరు ఏ పరికరం నుండి అయినా మీ Cabinetని తెరవండి.",
+      "error": "ఏదో తప్పు జరిగింది. ఇమెయిల్ తనిఖీ చేసి, మళ్ళీ ప్రయత్నించండి.",
+      "joinWaitlist": "వెయిట్‌లిస్ట్‌లో చేరండి",
+      "onList": "మీరు జాబితాలో ఉన్నారు. Cabinet Cloud ప్రారంభమైనప్పుడు మేము మీకు ఇమెయిల్ చేస్తాము.",
+      "sending": "పంపుతోంది…",
+      "title": "మీ Cabinet, ఎక్కడైనా. మీ AI బృందం, ఎల్లప్పుడూ ఆన్‌లో.",
+      "waitlistSubtitle": "ఎక్కడి నుండైనా కనెక్ట్ అవ్వండి. మీ AI బృందం 24/7 పని చేస్తుంది."
+    },
+    "discord": {
+      "aside": "మీరు ముందుగా కొత్త ఫీచర్‌లను కోరుకుంటే మరియు 'టికెట్ సమర్పించండి' కంటే 'మాట్లాడటానికి రండి' అని ఇష్టపడితే, ఇది మీ కోసం.",
+      "description": "ఇక్కడ అభిప్రాయాలు ఫీచర్‌లుగా మారతాయి, స్క్రీన్‌షాట్‌లు చర్చలుగా మారతాయి మరియు ఎవరైనా సాధారణంగా ఎడ్జ్ కేస్‌ను అది మిమ్మల్ని కనుగొనకముందే కనుగొంటారు.",
+      "joinBadge": "చేరండి",
+      "title": "డిస్కార్డ్‌లో మంచి విచిత్రాలు జరుగుతాయి."
+    },
+    "github": {
+      "aside": "Cabinet ఓపెన్ సోర్స్. మీకు విజన్ నచ్చితే, మాటను వ్యాప్తి చేయడానికి మాకు సహాయం చేయండి.",
+      "description": "ఒక GitHub స్టార్ ఎక్కువ మంది Cabinetని కనుగొనడానికి మరియు సంఘంలో చేరడానికి సహాయపడుతుంది.",
+      "starsLabel": "{{stars}} GitHub స్టార్‌లు",
+      "title": "Cabinet సంఘం వృద్ధి చెందడానికి సహాయం చేయండి"
+    },
+    "launch": {
+      "beforeYouLaunch": "మీరు ప్రారంభించే ముందు",
+      "defaultCabinetName": "మీ క్యాబినెట్",
+      "defaultDescription": "నాలెడ్జ్ బేస్ + AI టీమ్",
+      "knowledgeBaseLabel": "జ్ఞాన నిధి",
+      "aiTeamLabel": "AI బృందం",
+      "launchCabinet": "క్యాబినెట్ ప్రారంభించండి",
+      "settingUp": "సెటప్ అవుతోంది...",
+      "disclaimerAccess": "<strong>ఏజెంట్లు పూర్తి యాక్సెస్‌తో నడుస్తాయి.</strong> క్యాబినెట్ <flag>--dangerously-skip-permissions</flag> (క్లాడ్ కోడ్) మరియు ఇతర ప్రొవైడర్‌లలో సమానమైన ఫ్లాగ్‌లను ఉపయోగిస్తుంది. ఇది మీ స్వంత టెర్మినల్ నుండి ఈ CLI సాధనాలను అమలు చేయడానికి సమానం. మీరు కాన్ఫిగర్ చేసిన ఏవైనా MCP సర్వర్‌లు లేదా సాధనాలు ఏజెంట్ల ద్వారా స్వయంచాలకంగా పిలవబడవచ్చు.",
+      "disclaimerBackup": "<strong>మీ డేటాను క్రమం తప్పకుండా బ్యాకప్ చేయండి.</strong> ఏజెంట్లు మీ KB మరియు లింక్ చేయబడిన రెపోలలో ఫైల్‌లను చదవగలవు, వ్రాయగలవు మరియు తొలగించగలవు. డేటా నష్టానికి క్యాబినెట్ బాధ్యత వహించదు. మీరు ఎంచుకున్న AI ప్రొవైడర్‌లు మరియు వాటి సేవా నిబంధనలకు మీరే బాధ్యత వహిస్తారు.",
+      "disclaimerBeta": "<strong>బీటా సాఫ్ట్‌వేర్. సమస్యలు తలెత్తవచ్చు.</strong> మేము వేగంగా విడుదల చేస్తాము. బ్రేకింగ్ మార్పులు నోటీసు లేకుండా రావచ్చు.",
+      "legalNotice": "కొనసాగించడం ద్వారా మీరు మా <terms>నిబంధనలు</terms> మరియు <privacy>గోప్యత</privacy>కు అంగీకరిస్తారు. క్యాబినెట్ ఒక <oss>ఓపెన్-సోర్స్ ప్రాజెక్ట్</oss>.",
+      "keepInTouch": "నాతో సన్నిహితంగా ఉండండి. Cabinet ఓపెన్ సోర్స్ మరియు బహిరంగంగా నిర్మించబడింది, తదుపరి ఏమి నిర్మించాలో తెలుసుకోవాలని మేము కోరుకుంటున్నాము. స్పామ్ ఉండదు, మేము హామీ ఇస్తున్నాము."
+    },
+    "provider": {
+      "agentType": "{{type}} ఏజెంట్",
+      "close": "మూసివేయి",
+      "comingSoon": "త్వరలో వస్తుంది",
+      "guide": "గైడ్",
+      "heading": "ఏజెంట్ ప్రొవైడర్",
+      "moreModels": "మరిన్ని AIలు",
+      "install": "ఇన్‌స్టాల్ చేయండి",
+      "logIn": "లాగిన్ అవ్వండి",
+      "openTerminalButton": "టెర్మినల్ తెరవండి",
+      "openTerminalDetail": "తదుపరి దశలను అమలు చేయడానికి మీకు టెర్మినల్ అవసరం.",
+      "openTerminalError": "టెర్మినల్‌ను స్వయంచాలకంగా తెరవలేకపోయింది. మీ సిస్టమ్ టెర్మినల్‌ను మాన్యువల్‌గా తెరవండి.",
+      "openTerminalTitle": "టెర్మినల్ తెరవండి",
+      "recheck": "ప్రొవైడర్‌లను మళ్లీ తనిఖీ చేయండి",
+      "rerunVerify": "ధృవీకరణను మళ్లీ అమలు చేయండి",
+      "runVerify": "ధృవీకరణను అమలు చేయండి",
+      "setupTitle": "{{name}} సెటప్",
+      "skipForNow": "ప్రస్తుతానికి దాటవేయి",
+      "subtitle": "మీ ఏజెంట్లకు శక్తినివ్వడానికి క్యాబినెట్‌కు AI CLI అవసరం.",
+      "verifyExplanation": "ధృవీకరణ ప్రొవైడర్ యొక్క హెడ్‌లెస్ ప్రాంప్ట్‌ను ఎండ్-టు-ఎండ్ అమలు చేస్తుంది మరియు ఏదైనా వైఫల్యాన్ని వర్గీకరిస్తుంది, తద్వారా మీరు ఏ దశను మళ్లీ సందర్శించాలో తెలుస్తుంది.",
+      "verifying": "ధృవీకరిస్తోంది…",
+      "failedAtStep": "ఈ దశలో విఫలమైంది: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "ఈ క్యాబినెట్ దేనికి? ప్రతి గది దాని స్వంత AI బృందంతో వస్తుంది.",
+      "heading": "ఒక <accent>గదిని</accent> ఎంచుకోండి"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet అంటే ఏమిటి?",
+      "body": "Cabinet అనేది మీ జీవితం లేదా పనిలోని ఒక ప్రాంతం కోసం కేంద్రీకృతమైన కార్యస్థలం. ఇది మీ ఫైల్‌లు, నోట్స్, టూల్స్, ఏజెంట్లు మరియు పనులను కలిగి ఉంటుంది, తద్వారా మీ AI బృందం నిజంగా సహాయం చేయడానికి అవసరమైన సందర్భాన్ని కలిగి ఉంటుంది.",
+      "examplesLabel": "ప్రజలు Cabinetను ఎలా ఉపయోగిస్తారు",
+      "example1": "మీ స్టార్టప్",
+      "example2": "ఒక GitHub రెపో",
+      "example3": "మీ మార్కెటింగ్ పని",
+      "example4": "ఒక క్లయింట్ ప్రాజెక్ట్",
+      "example5": "మీ వ్యక్తిగత జ్ఞాన నిధి"
+    },
+    "access": {
+      "heading": "{{name}} దేనిని యాక్సెస్ చేయగలదు?",
+      "subtitle": "ఈ ఏజెంట్ ఉపయోగించగల జ్ఞానం మరియు సాధనాలను ఎంచుకోండి. మీరు దీన్ని ఎప్పుడైనా మార్చవచ్చు.",
+      "defaultAgent": "మీ ఏజెంట్",
+      "files": "ఫైల్‌లు & జ్ఞానం",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP సర్వర్‌లు",
+      "plugins": "ప్లగిన్‌లు",
+      "skills": "నైపుణ్యాలు",
+      "placeholderNote": "మీరు ఏజెంట్ సెట్టింగ్‌లలో తర్వాత యాక్సెస్‌ను ఫైన్-ట్యూన్ చేయవచ్చు."
+    },
+    "heartbeat": {
+      "heading": "{{name}} హార్ట్‌బీట్‌పై నడవాలా?",
+      "subtitle": "హార్ట్‌బీట్ ఏజెంట్‌ను షెడ్యూల్ ప్రకారం తనిఖీ చేయడానికి మరియు స్వయంగా పని చేయడానికి అనుమతిస్తుంది.",
+      "off": "ఆఫ్",
+      "offHint": "మీరు అడిగినప్పుడు మాత్రమే నడుస్తుంది. ప్రారంభించడానికి సిఫార్సు చేయబడింది.",
+      "daily": "రోజువారీ",
+      "dailyHint": "రోజుకు ఒకసారి తనిఖీ చేస్తుంది.",
+      "weekly": "వారపు",
+      "weeklyHint": "వారానికి ఒకసారి తనిఖీ చేస్తుంది.",
+      "tokenNote": "గమనిక: హార్ట్‌బీట్ ఏజెంట్‌ను స్వయంచాలకంగా నడుపుతుంది, ఇది ప్రతిసారి పనిచేసినప్పుడు AI టోకెన్‌లను (మరియు మీ ప్రొవైడర్ కోటాను) ఉపయోగిస్తుంది. మీరు దీన్ని ఎప్పుడైనా మార్చవచ్చు లేదా ఆఫ్ చేయవచ్చు."
+    },
+    "firstTask": {
+      "heading": "మీ మొదటి పనిని ఫైల్ చేయండి",
+      "subtitle": "పనులు మీరు {{name}}కి పనిని అప్పగించే విధానం. ఇప్పుడే ఒకటి వ్రాయండి మరియు అది మీ cabinetలో చేరుతుంది, అమలు చేయడానికి సిద్ధంగా ఉంటుంది.",
+      "label": "{{name}} మొదట ఏమి చేయాలి?",
+      "placeholder": "ఉదా. కొత్త కస్టమర్‌ల కోసం స్వాగత ఇమెయిల్‌ను రూపొందించండి",
+      "example1": "నా తాజా నోట్స్‌ను సంగ్రహించండి",
+      "example2": "ప్రాజెక్ట్ ప్లాన్‌ను రూపొందించండి",
+      "example3": "మా టాప్ 3 పోటీదారులను పరిశోధించండి",
+      "note": "మీరు దీన్ని ఖాళీగా ఉంచి, తర్వాత పనులను జోడించవచ్చు. మీరు AI ప్రొవైడర్‌ను కనెక్ట్ చేసే వరకు ఏదీ నడవదు."
+    },
+    "rail": {
+      "untitled": "మీ Cabinet",
+      "dataCaption": "మీ ప్రాజెక్ట్ యొక్క అన్ని ఫైల్‌లు మరియు నోట్స్ ఇక్కడ ఉంటాయి.",
+      "teamEmpty": "ఇంకా ఏజెంట్లు లేరు.",
+      "teamCaption": "మీ AI బృందం ఇక్కడ పని చేస్తుంది.",
+      "tasksEmpty": "ఇంకా పనులు లేవు.",
+      "tasksCaption": "మీరు మీ బృందానికి అప్పగించిన పనులు ఇక్కడ కనిపిస్తాయి.",
+      "assignedTo": "{{name}}కి కేటాయించబడింది",
+      "you": "మీరు"
+    },
+    "rooms": {
+      "office": {
+        "label": "ఆఫీసు",
+        "tagline": "వ్యాపారం, స్టార్టప్ లేదా సైడ్ ప్రాజెక్ట్‌ను నిర్వహించండి.",
+        "workspaceLabel": "కంపెనీ లేదా ప్రాజెక్ట్ పేరు",
+        "workspacePlaceholder": "ఆక్మే కార్ప్",
+        "descriptionLabel": "మీరు ఏమి చేస్తారు?",
+        "descriptionPlaceholder": "మేము AI స్టార్టప్‌ల గురించి పోడ్‌కాస్ట్ చేస్తాము",
+        "departmentNoun": "విభాగం",
+        "teamSizeLabel": "టీమ్ పరిమాణం",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "ఎడిటర్"
+        }
+      },
+      "study": {
+        "label": "అధ్యయనం",
+        "tagline": "మీ రెండవ మెదడు — రచన, నోట్స్, వ్యక్తిగత సహాయకుడు.",
+        "workspaceLabel": "మీ క్యాబినెట్‌కు పేరు పెట్టండి",
+        "workspacePlaceholder": "నా అధ్యయనం",
+        "descriptionLabel": "మీరు జీవితంలోని ఏ రంగాలలో సహాయం కోరుకుంటున్నారు?",
+        "descriptionPlaceholder": "రచన, ఇమెయిల్ ట్రైయేజ్, క్యాలెండర్, అలవాటు ట్రాకింగ్",
+        "departmentNoun": "ప్రాంతం",
+        "exampleAgents": {
+          "0": "సహాయకుడు",
+          "1": "లైబ్రేరియన్"
+        }
+      },
+      "lab": {
+        "label": "పరిశోధనా ప్రయోగశాల",
+        "tagline": "అకడమిక్ పని, సాహిత్యం, బోధన, థీసిస్.",
+        "workspaceLabel": "వర్క్‌స్పేస్ పేరు",
+        "workspacePlaceholder": "మనస్సు యొక్క తత్వశాస్త్రం",
+        "descriptionLabel": "మీ రంగం ఏమిటి లేదా మీరు దేనిపై పరిశోధన చేస్తున్నారు?",
+        "descriptionPlaceholder": "ఫెనోమెనాలజీ, స్పృహ, తత్వశాస్త్ర పరిచయం బోధన",
+        "departmentNoun": "ప్రాంతం",
+        "exampleAgents": {
+          "0": "పరిశోధనా నాయకుడు",
+          "1": "లైబ్రేరియన్"
+        }
+      },
+      "family-room": {
+        "label": "కుటుంబ గది",
+        "tagline": "గృహ, కుటుంబ క్యాలెండర్, భోజనం, పిల్లలు.",
+        "workspaceLabel": "గృహ పేరు",
+        "workspacePlaceholder": "న్గుయెన్ కుటుంబం",
+        "descriptionLabel": "ఇక్కడ ఎవరు నివసిస్తున్నారు మరియు మీరు ఏమి నిర్వహిస్తున్నారు?",
+        "descriptionPlaceholder": "ఇద్దరు తల్లిదండ్రులు, ముగ్గురు పిల్లలు, రెండు పాఠశాలలు, ఒక కుక్క",
+        "departmentNoun": "ప్రాంతం",
+        "teamSizeLabel": "కుటుంబ సభ్యుల సంఖ్య",
+        "exampleAgents": {
+          "0": "గృహ నిర్వాహకుడు",
+          "1": "ప్లానర్"
+        }
+      },
+      "blank": {
+        "label": "ఖాళీ గది",
+        "tagline": "ఇంకా ఏమీ లేదు. మీ స్వంత ఏజెంట్లను, మీ స్వంత ఆకృతిని తీసుకురండి.",
+        "workspaceLabel": "మీ Cabinet కు పేరు పెట్టండి",
+        "workspacePlaceholder": "నా Cabinet",
+        "descriptionLabel": "ఇది దేనికి?",
+        "descriptionPlaceholder": "ఏదైనా — ఇంకా ఖచ్చితంగా తెలియకపోతే ఖాళీగా ఉంచండి",
+        "departmentNoun": "సమూహం",
+        "exampleAgents": {
+          "0": "మీ ఇష్టం"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "నాయకత్వం",
+      "marketing": "మార్కెటింగ్",
+      "content": "కంటెంట్",
+      "engineering": "ఇంజనీరింగ్",
+      "product-and-design": "ఉత్పత్తి & డిజైన్",
+      "business": "వ్యాపారం",
+      "research": "పరిశోధన",
+      "finance-and-ops": "ఫైనాన్స్ & ఆపరేషన్స్",
+      "personal": "వ్యక్తిగతం",
+      "second-brain": "రెండవ మెదడు",
+      "writing": "రచన",
+      "tools": "సాధనాలు",
+      "life-admin": "జీవిత నిర్వహణ",
+      "from-the-office": "కార్యాలయం నుండి",
+      "writing-and-notes": "రచన & గమనికలు",
+      "other": "ఇతర",
+      "household": "కుటుంబం",
+      "admin": "నిర్వహణ",
+      "money": "డబ్బు",
+      "product": "ఉత్పత్తి",
+      "design": "డిజైన్",
+      "sales": "అమ్మకాలు",
+      "support": "మద్దతు",
+      "analytics": "విశ్లేషణలు",
+      "finance": "ఫైనాన్స్",
+      "legal": "చట్టపరమైన",
+      "people": "వ్యక్తులు"
+    },
+    "demo": {
+      "greeting": {
+        "office": "శుభోదయం టీమ్! {{workspace}} కు స్వాగతం. వెంటనే పని ప్రారంభిద్దాం.",
+        "study": "శుభోదయం. మీ రెండవ మెదడు ఆన్‌లైన్‌లో ఉంది — {{home}} కు తిరిగి స్వాగతం.",
+        "lab": "పరిశోధన డెస్క్ సిద్ధంగా ఉంది — \"{{workspace}}\". ఈరోజు మనం దేని గురించి పరిశోధిస్తున్నాం?",
+        "family-room": "హోమ్ HQ ప్రారంభమవుతోంది — {{home}}. అందరినీ వారు ఉండాల్సిన చోటికి చేరుద్దాం.",
+        "blank": "ఖాళీ స్లేట్ — \"{{workspace}}\". {{home}}, ఇక్కడ మీరు ఏమి నిర్మించాలనుకుంటున్నారు?"
+      },
+      "assign": "{{name}}, మీరు {{topic}} ను చేపట్టగలరా?",
+      "fallbackTopic": "తర్వాత ఏమిటి?",
+      "office": {
+        "replies": {
+          "0": "దానిపై పని చేస్తున్నాను. రోజు చివరికి ఒక సమగ్ర అవలోకనం సిద్ధంగా ఉంటుంది.",
+          "1": "ఇప్పటికే ఒక ప్రణాళికను రూపొందిస్తున్నాను. త్వరలో #contentలో పంచుకుంటాను.",
+          "2": "ఇప్పుడు ప్రాథమిక వర్క్‌ఫ్లోలను ఏర్పాటు చేస్తున్నాను. ఇప్పటివరకు బాగానే ఉంది."
+        },
+        "topics": {
+          "0": "పోటీదారుల పరిశోధన",
+          "1": "కంటెంట్ క్యాలెండర్",
+          "2": "ప్రారంభ ప్రణాళిక"
+        },
+        "closing": "అందరికీ గొప్ప ఉత్సాహం. దీన్ని బలమైన మొదటి వారంగా చేద్దాం."
+      },
+      "study": {
+        "replies": {
+          "0": "నేను ఇన్‌బాక్స్‌ను తనిఖీ చేసి, మీకు అవసరమైన వాటిని తెలియజేస్తాను.",
+          "1": "మధ్యాహ్నం 3 గంటల వరకు క్యాలెండర్ ఖాళీగా ఉంది — రాయడానికి మంచి సమయం.",
+          "2": "నేను ఇప్పటికే 'డైలీ' ఇండెక్స్‌కు మూడు కొత్త నోట్స్‌ను లింక్ చేశాను."
+        },
+        "topics": {
+          "0": "నేటి ఇన్‌బాక్స్ తనిఖీ",
+          "1": "ఈ వారం రచన",
+          "2": "నా పఠన జాబితా"
+        },
+        "closing": "మంచిది. నాకు ఏదైనా అవసరమైతే పింగ్ చేయండి — లేకపోతే నేను మీకు అడ్డుగా ఉండను."
+      },
+      "lab": {
+        "replies": {
+          "0": "దీనిపై తాజా పేపర్‌ను ఇప్పుడు తీసుకుంటున్నాను — ఒక గంటలో సారాంశం సిద్ధం.",
+          "1": "దీని తర్వాత నేను గ్రంథసూచిని సమకాలీకరించి, నకిలీలను గుర్తించిస్తాను.",
+          "2": "గురువారం ఉపన్యాస రూపురేఖలు సమీక్షకు దాదాపు సిద్ధంగా ఉన్నాయి."
+        },
+        "topics": {
+          "0": "సాహిత్య సమీక్ష",
+          "1": "గురువారం ఉపన్యాస సన్నాహాలు",
+          "2": "సూచనల జాబితా"
+        },
+        "closing": "నాకు తెలియజేస్తూ ఉండండి. మీరు రోజు చివరికి పంపిన వాటిని నేను సమీక్షిస్తాను."
+      },
+      "family-room": {
+        "replies": {
+          "0": "4 తర్వాత షెడ్యూల్ ఖాళీగా ఉంది. అతివ్యాప్తి చెందుతున్న డ్రాప్-ఆఫ్‌లను గుర్తించిస్తున్నాను.",
+          "1": "వారానికి మెనూ రూపొందించబడింది — కిరాణా జాబితా సమీక్షకు సిద్ధంగా ఉంది.",
+          "2": "పిల్లల కార్యకలాపాలు సమకాలీకరించబడ్డాయి. శుక్రవారం DnD రాత్రి ఇంకా ఉంది."
+        },
+        "topics": {
+          "0": "నేటి షెడ్యూల్",
+          "1": "భోజన ప్రణాళిక",
+          "2": "పిల్లల కార్యకలాపాలు"
+        },
+        "closing": "అందరికీ ధన్యవాదాలు. పగటిపూట ఏదైనా మారితే నాకు పింగ్ చేయండి."
+      },
+      "blank": {
+        "replies": {
+          "0": "అర్థమైంది. మీరు సిద్ధంగా ఉన్నప్పుడు నేను సిద్ధంగా ఉంటాను.",
+          "1": "సిద్ధంగా ఉన్నాను.",
+          "2": "నేను ఆదేశాల కోసం వేచి ఉంటాను."
+        },
+        "topics": {
+          "0": "మొదటి విషయం",
+          "1": "తర్వాత ఏది ఉంటే అది",
+          "2": "అపరిష్కృత ప్రశ్న"
+        },
+        "closing": "మీరు సిద్ధంగా ఉన్నప్పుడు, ఏమి చేయాలో మాకు చెప్పండి."
+      }
+    },
+    "team": {
+      "browseAll": "అన్నీ బ్రౌజ్ చేయండి",
+      "browseCabinets": "క్యాబినెట్‌లను బ్రౌజ్ చేయండి",
+      "cabinetNameLabel": "క్యాబినెట్ పేరు",
+      "cancel": "రద్దు చేయండి",
+      "importButton": "దిగుమతి చేయండి",
+      "importFailed": "దిగుమతి విఫలమైంది",
+      "importFailedConnection": "దిగుమతి విఫలమైంది. మీ కనెక్షన్‌ను తనిఖీ చేయండి.",
+      "importTitle": "{{name}} దిగుమతి చేయండి",
+      "pickAgents": "మీ ఏజెంట్లను ఎంచుకోండి",
+      "required": "అవసరం",
+      "subtitle": "ప్రతి క్యాబినెట్ ఒక AI బృందం — ఏజెంట్లు, పనులు మరియు భాగస్వామ్య నాలెడ్జ్ బేస్, అన్నీ కలిసి ఒకే యూనిట్‌గా పనిచేస్తాయి.",
+      "heading": "<accent>మీ</accent> బృందాన్ని నిర్మించండి",
+      "nameLabel": "ఏజెంట్ పేరు",
+      "namePlaceholder": "ఉదా. ఎడిటర్, రీసెర్చర్, అసిస్టెంట్",
+      "roleLabel": "పాత్ర",
+      "rolePlaceholder": "ఉదా. రైటింగ్ అసిస్టెంట్",
+      "instructionsLabel": "ఈ ఏజెంట్ ఏమి చేయాలి?",
+      "instructionsPlaceholder": "ఇది ఎలా సహాయపడాలి వివరించండి. ఉదాహరణకు: నా పేజీలను డ్రాఫ్ట్ చేసి ఎడిట్ చేయండి, టోన్‌ను స్పష్టంగా మరియు స్నేహపూర్వకంగా ఉంచండి, మరియు మెరుగుదలలను సూచించండి.",
+      "agentOptionalHint": "ఐచ్ఛికం. మీరు దీన్ని దాటవేయవచ్చు మరియు తర్వాత గది లోపల నుండి ఏజెంట్లను జోడించవచ్చు.",
+      "agentCount_one": "{{count}} ఏజెంట్",
+      "agentCount_other": "{{count}} ఏజెంట్లు",
+      "jobCount_one": "{{count}} పని",
+      "jobCount_other": "{{count}} పనులు",
+      "subCabinetCount_one": "{{count}} ఉప-క్యాబినెట్",
+      "subCabinetCount_other": "{{count}} ఉప-క్యాబినెట్‌లు",
+      "cabinetsImported_one": "{{count}} క్యాబినెట్ దిగుమతి చేయబడింది",
+      "cabinetsImported_other": "{{count}} క్యాబినెట్‌లు దిగుమతి చేయబడ్డాయి",
+      "agentCount": "{{count}} ఏజెంట్లు",
+      "cabinetsImported": "{{count}} క్యాబినెట్‌లు దిగుమతి చేయబడ్డాయి",
+      "jobCount": "{{count}} పనులు",
+      "subCabinetCount": "{{count}} ఉప-క్యాబినెట్‌లు"
+    }
+  },
+  "search": {
+    "title": "శోధించు",
+    "placeholder": "పేజీలు, ఏజెంట్లు, పనులు శోధించండి…",
+    "clearQuery": "ప్రశ్నను క్లియర్ చేయి",
+    "noCommands": "ఆదేశాలు ఏవీ సరిపోలలేదు.",
+    "scopes": {
+      "all": "అన్నీ",
+      "pages": "పేజీలు",
+      "agents": "ఏజెంట్లు",
+      "tasks": "పనులు"
+    },
+    "groups": {
+      "pages": "పేజీలు",
+      "agents": "ఏజెంట్లు",
+      "tasks": "పనులు"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "భాష",
+      "description": "భాష మరియు పఠన దిశను మారుస్తుంది. ఇప్పటికే ఉన్న పేజీలు వాటి డాక్యుమెంట్ వారీ దిశను కలిగి ఉంటాయి.",
+      "english": "ఇంగ్లీష్",
+      "hebrew": "హీబ్రూ",
+      "chineseSimplified": "సరళీకృత చైనీస్",
+      "chineseTraditional": "సాంప్రదాయ చైనీస్",
+      "moreLanguages": "మరిన్ని భాషలు",
+      "moreLanguagesHint": "ఆ భాషలో Cabinet కావాలని మాకు చెప్పడానికి దేనినైనా క్లిక్ చేయండి — మేము ఎక్కువగా అభ్యర్థించిన వాటికి ప్రాధాన్యత ఇస్తాము.",
+      "comingSoon": "త్వరలో వస్తుంది",
+      "requestSubmitted": "ధన్యవాదాలు! {{language}} కోసం మీ అభ్యర్థనను మేము గుర్తించాము. ఎక్కువగా అడిగిన భాషలకు మేము ప్రాధాన్యత ఇస్తాము.",
+      "requestFailed": "సర్వర్‌ను చేరుకోలేకపోయాము. దయచేసి కాసేపట్లో మళ్లీ ప్రయత్నించండి."
+    },
+    "appearance": {
+      "title": "ప్రదర్శన",
+      "theme": "థీమ్",
+      "themeDescription": "ఇంటర్‌ఫేస్ కోసం ఒక థీమ్‌ను ఎంచుకోండి.",
+      "matchSystem": "సిస్టమ్‌కు సరిపోలు",
+      "matchSystemDescription": "మీ OS స్వరూపంతో స్వయంచాలకంగా మారండి.",
+      "lightThemes": "లేత థీమ్‌లు",
+      "darkThemes": "ముదురు థీమ్‌లు",
+      "lightVariant": "లేత రకం",
+      "darkVariant": "ముదురు రకం",
+      "sidebar": "సైడ్‌బార్",
+      "showHiddenFiles": "దాచిన ఫైల్‌లను చూపించు",
+      "sidebarDescription": "సైడ్‌బార్‌లో ఫైల్‌లు ఎలా ప్రదర్శించబడతాయో కాన్ఫిగర్ చేయండి.",
+      "showHiddenFilesHint": "చుక్కతో ప్రారంభమయ్యే ఫైల్‌లు మరియు ఫోల్డర్‌లను ప్రదర్శించు (ఉదా. .env, .git)"
+    },
+    "tabs": {
+      "profile": "ప్రొఫైల్",
+      "providers": "ప్రొవైడర్‌లు",
+      "skills": "నైపుణ్యాలు",
+      "storage": "నిల్వ",
+      "integrations": "ఇంటిగ్రేషన్‌లు",
+      "notifications": "నోటిఫికేషన్‌లు",
+      "appearance": "స్వరూపం",
+      "updates": "అప్‌డేట్‌లు",
+      "about": "గురించి"
+    },
+    "page": {
+      "title": "సెట్టింగ్‌లు",
+      "refresh": "రిఫ్రెష్ చేయండి",
+      "groupYou": "మీరు",
+      "groupWorkspace": "వర్క్‌స్పేస్",
+      "groupApp": "యాప్"
+    },
+    "common": {
+      "copyToClipboard": "క్లిప్‌బోర్డ్‌కు కాపీ చేయండి",
+      "categoriesAriaLabel": "సెట్టింగ్‌ల వర్గాలు",
+      "loading": "లోడ్ అవుతోంది…",
+      "connect": "కనెక్ట్ చేయండి",
+      "recommended": "సిఫార్సు చేయబడింది"
+    },
+    "integrationsPreview": {
+      "comingSoon": "త్వరలో వస్తుంది",
+      "hint": "బాహ్య ఇంటిగ్రేషన్‌లు మరియు అంతర్నిర్మిత సాధనాలను కనెక్ట్ చేయడం జరుగుతోంది."
+    },
+    "storage": {
+      "dataDirectory": "డేటా డైరెక్టరీ",
+      "restartRequired": "పునఃప్రారంభం అవసరం",
+      "dataDirectoryDescription": "అన్ని నాలెడ్జ్ బేస్ కంటెంట్ ఈ డైరెక్టరీలో నిల్వ చేయబడుతుంది. మార్గాన్ని మార్చడానికి పునఃప్రారంభం అవసరం.",
+      "restartHint": "మీరు Cabinetని పునఃప్రారంభించిన తర్వాత డేటా డైరెక్టరీ మారుతుంది.",
+      "currentPath": "ప్రస్తుత మార్గం",
+      "loadingPath": "లోడ్ అవుతోంది...",
+      "changeDirectory": "డైరెక్టరీని మార్చండి",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "బ్రౌజ్ చేయండి",
+      "save": "సేవ్ చేయండి",
+      "openInFinder": "ఫైండర్‌లో తెరవండి",
+      "envVarHint1": "మీరు కూడా సెట్ చేయవచ్చు ",
+      "envVarHint2": " ఎన్విరాన్‌మెంట్ వేరియబుల్, ఇది ఈ సెట్టింగ్ కంటే ప్రాధాన్యతనిస్తుంది.",
+      "failedToSave": "సేవ్ చేయడంలో విఫలమైంది.",
+      "failedToSaveDir": "డేటా డైరెక్టరీని సేవ్ చేయడంలో విఫలమైంది."
+    },
+    "updates": {
+      "checking": "Cabinet అప్‌డేట్‌ల కోసం తనిఖీ చేస్తోంది…"
+    },
+    "providers": {
+      "title": "ఏజెంట్ ప్రొవైడర్‌లు",
+      "defaultModel": "డిఫాల్ట్ మోడల్",
+      "setupGuide": "సెటప్ గైడ్",
+      "troubleshoot": "AI ప్రొవైడర్‌లను ట్రబుల్‌షూట్ చేయండి",
+      "subtitle": "AI ఏజెంట్ ప్రొవైడర్‌లను కాన్ఫిగర్ చేయండి. CLI ఏజెంట్లు టెర్మినల్ ద్వారా నడుస్తాయి, API ఏజెంట్లు డైరెక్ట్ API కాల్‌లను ఉపయోగిస్తాయి.",
+      "defaultRuntime": "డిఫాల్ట్ రన్‌టైమ్",
+      "defaultRuntimeHint": "సాధారణ సంభాషణలు మరియు ఫాల్‌బ్యాక్ రన్‌లు ఈ ప్రొవైడర్/మోడల్/ప్రయత్నాన్ని ఉపయోగిస్తాయి.",
+      "cliAgents": "CLI ఏజెంట్లు",
+      "apiAgents": "API ఏజెంట్లు",
+      "ready": "సిద్ధంగా ఉంది",
+      "installedNotLoggedIn": "ఇన్‌స్టాల్ చేయబడింది కానీ లాగిన్ కాలేదు",
+      "notInstalled": "ఇన్‌స్టాల్ చేయబడలేదు",
+      "emptyMatrix": "ప్రొవైడర్‌లు కాన్ఫిగర్ చేయబడలేదు. కింద ఒకదాన్ని జోడించండి."
+    },
+    "notifications": {
+      "channels": "నోటిఫికేషన్ ఛానెల్‌లు",
+      "alertRules": "హెచ్చరిక నియమాలు",
+      "alwaysOn": "ఎల్లప్పుడూ ఆన్‌లో ఉంటుంది",
+      "comingSoon": "త్వరలో వస్తుంది",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "ఏజెంట్లకు మీ శ్రద్ధ అవసరమైనప్పుడు మీరు హెచ్చరికలను ఎలా స్వీకరిస్తారో కాన్ఫిగర్ చేయండి.",
+      "rulesHint": "ఈ ఈవెంట్‌ల కోసం నోటిఫికేషన్‌లు స్వయంచాలకంగా ట్రిగ్గర్ చేయబడతాయి:",
+      "previewHint": "బ్రౌజర్ పుష్, టెలిగ్రామ్, స్లాక్ మరియు ఇమెయిల్ నోటిఫికేషన్‌లు.",
+      "channelPushName": "బ్రౌజర్ పుష్",
+      "channelPushDesc": "Cabinet ట్యాబ్ తెరిచి ఉన్నప్పుడు లేదా PWA ఇన్‌స్టాల్ చేయబడినప్పుడు తక్షణ హెచ్చరికలు",
+      "channelTelegramName": "టెలిగ్రామ్",
+      "channelTelegramDesc": "టెలిగ్రామ్ బాట్ ద్వారా తక్షణ మొబైల్ నోటిఫికేషన్‌లు",
+      "channelSlackName": "స్లాక్ వెబ్‌హుక్",
+      "channelSlackDesc": "మీ టీమ్ స్లాక్ ఛానెల్‌కు హెచ్చరికలను ఫార్వార్డ్ చేయండి",
+      "channelEmailName": "ఇమెయిల్ డైజెస్ట్",
+      "channelEmailDesc": "హెచ్చరికలు మరియు ఏజెంట్ కార్యకలాపాల బ్యాచ్ సారాంశం",
+      "ruleAlertsEvent": "#alerts ఛానెల్ సందేశాలు",
+      "ruleAlertsDesc": "అలర్ట్స్ ఛానెల్‌కు పోస్ట్ చేసే ఏదైనా ఏజెంట్",
+      "ruleMentionsEvent": "@human ప్రస్తావనలు",
+      "ruleMentionsDesc": "ఏదైనా ఛానెల్‌లో ఏజెంట్ @humanని ప్రస్తావించినప్పుడు",
+      "ruleFloorEvent": "లక్ష్య పరిమితి ఉల్లంఘించబడింది",
+      "ruleFloorDesc": "ఒక లక్ష్యం దాని కనిష్ట పరిమితి కంటే తక్కువగా పడిపోయినప్పుడు",
+      "ruleHealthEvent": "ఏజెంట్ ఆరోగ్యం క్షీణించింది",
+      "ruleHealthDesc": "3+ వరుస హార్ట్‌బీట్ వైఫల్యాలు"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "వెర్షన్",
+      "release": "విడుదల",
+      "framework": "ఫ్రేమ్‌వర్క్",
+      "storage": "నిల్వ",
+      "privacy": "గోప్యత",
+      "telemetry": "అనామక వినియోగ టెలిమెట్రీ",
+      "tagline": "AI-ఫస్ట్ స్వీయ-హోస్ట్ చేయబడిన నాలెడ్జ్ బేస్ మరియు స్టార్టప్ OS.",
+      "frameworkValue": "Next.js (యాప్ రూటర్)",
+      "storageValue": "స్థానిక ఫైల్‌సిస్టమ్",
+      "aiLabel": "AI",
+      "aiValue": "స్థానిక AI CLIల ద్వారా ఆధారితం",
+      "philosophy": "మొత్తం కంటెంట్ డిస్క్‌లో మార్క్‌డౌన్ ఫైల్‌లుగా ఉంటుంది. మానవులు ఉద్దేశాన్ని నిర్వచిస్తారు. ఏజెంట్లు పని చేస్తారు. నాలెడ్జ్ బేస్ రెండింటి మధ్య భాగస్వామ్య జ్ఞాపకం.",
+      "privacyBody": "ఉత్పత్తిని మెరుగుపరచడంలో మాకు సహాయపడటానికి Cabinet అనామక వినియోగ టెలిమెట్రీని పంపుతుంది. ఫైల్ కంటెంట్‌లు, మార్గాలు, ప్రాంప్ట్‌లు లేదా రహస్యాలు ఏవీ సేకరించబడవు.",
+      "privacyLink": "ఏమి సేకరించబడుతుంది?",
+      "telemetryEnvDisabled": "CABINET_TELEMETRY_DISABLED=1 (env var) ద్వారా నిలిపివేయబడింది.",
+      "telemetryHint": "ఈవెంట్ గణనలు, వెర్షన్లు మరియు ప్లాట్‌ఫారమ్ సమాచారం మాత్రమే. పంపడం ఆపడానికి ఆఫ్ చేయండి.",
+      "cabinetCloud": "Cabinet క్లౌడ్",
+      "cloudBody": "మీ Cabinetకి ఎక్కడి నుండైనా కనెక్ట్ అవ్వండి, మీ AI బృందం మీ కోసం 24/7 పని చేస్తున్నప్పుడు. మీ ఇమెయిల్‌ను క్రింద ఇవ్వండి మరియు Cabinet Cloud అందుబాటులోకి వచ్చినప్పుడు మేము మీకు తెలియజేస్తాము.",
+      "cloudAlready": "మీరు ఇప్పటికే జాబితాలో ఉన్నారు — మేము మిమ్మల్ని సంప్రదిస్తాము.",
+      "cloudSuccess": "మీరు జాబితాలో ఉన్నారు. Cabinet Cloud అందుబాటులోకి వచ్చినప్పుడు మేము మీకు ఇమెయిల్ చేస్తాము.",
+      "cloudSending": "పంపుతోంది…",
+      "cloudJoinWaitlist": "వెయిట్‌లిస్ట్‌లో చేరండి",
+      "cloudError": "ఏదో తప్పు జరిగింది. ఇమెయిల్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.",
+      "connectTitle": "కనెక్ట్ చేయండి",
+      "connectBody": "సహాయం పొందండి, అభిప్రాయాన్ని పంచుకోండి, లేదా పలకరించండి.",
+      "joinDiscord": "డిస్కార్డ్‌లో చేరండి"
+    },
+    "profile": {
+      "title": "ప్రొఫైల్",
+      "name": "పేరు",
+      "namePlaceholder": "Jane",
+      "displayName": "ప్రదర్శన పేరు",
+      "role": "పాత్ర",
+      "rolePlaceholder": "బిల్డర్",
+      "avatar": "అవతార్",
+      "accentColor": "యాక్సెంట్ రంగు",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "ఫాల్‌బ్యాక్ చిహ్నం",
+      "useIconInstead": "బదులుగా చిహ్నాన్ని ఉపయోగించండి",
+      "searchAvatars": "అవతార్‌లను శోధించండి…",
+      "searchIcons": "చిహ్నాలను శోధించండి…",
+      "howAppear": "సంభాషణలలో మరియు యాప్ అంతటా మీరు ఎలా కనిపిస్తారు.",
+      "youFallback": "మీరు",
+      "displayNameHint": "సంభాషణలలో చూపబడుతుంది. పేరుకు డిఫాల్ట్ అవుతుంది.",
+      "iconHint": "అవతార్ చిత్రం సెట్ చేయనప్పుడు ఉపయోగించబడుతుంది. క్లియర్ చేయడానికి మళ్ళీ క్లిక్ చేయండి.",
+      "tintHint": "చిత్రం సెట్ చేయనప్పుడు ఫాల్‌బ్యాక్ అవతార్‌ను రంగు చేస్తుంది.",
+      "save": "సేవ్ చేయండి",
+      "saving": "సేవ్ చేస్తోంది…",
+      "saved": "సేవ్ చేయబడింది",
+      "browseAll": "అన్నింటినీ బ్రౌజ్ చేయండి ({{count}})",
+      "showFavorites": "ఇష్టమైనవి చూపించు",
+      "showFewer": "తక్కువ చూపించు"
+    },
+    "workspace": {
+      "title": "వర్క్‌స్పేస్",
+      "name": "వర్క్‌స్పేస్ పేరు",
+      "namePlaceholder": "నా Cabinet",
+      "description": "వివరణ",
+      "descriptionPlaceholder": "మీరు ఏమి చేస్తారు?",
+      "teamSize": "బృందం పరిమాణం",
+      "teamSizePlaceholder": "ఒక్కరు / 2–5 మంది / 6–20 మంది / 20+ మంది",
+      "subtitle": "ఆన్‌బోర్డింగ్ సమయంలో సంగ్రహించబడింది. పనిని ప్లాన్ చేస్తున్నప్పుడు ఏజెంట్లు వీటిని చదువుతారు."
+    }
+  },
+  "sidebar": {
+    "settings": "సెట్టింగ్‌లు",
+    "createPage": "పేజీని సృష్టించండి",
+    "newPage": "కొత్త పేజీ",
+    "newAgent": "కొత్త ఏజెంట్",
+    "newTask": "కొత్త పని",
+    "archive": "ఆర్కైవ్ చేయి",
+    "trash": "ట్రాష్",
+    "search": "శోధించు",
+    "agents": "ఏజెంట్లు",
+    "tasks": "పనులు",
+    "missions": "మిషన్లు",
+    "drawerData": "డేటా",
+    "drawerAgents": "బృందం",
+    "drawerTasks": "పనులు",
+    "goHome": "హోమ్‌కు వెళ్ళు",
+    "brandWord": "",
+    "refresh": "సైడ్‌బార్‌ను రిఫ్రెష్ చేయి",
+    "refreshDescription": "సైడ్‌బార్‌ను రిఫ్రెష్ చేయి (డేటా ఫోల్డర్‌ను మళ్లీ చదువు)",
+    "collapseSidebar": "సైడ్‌బార్‌ను కుదించు",
+    "expandSidebar": "సైడ్‌బార్‌ను విస్తరించు",
+    "resizeHandle": "సైడ్‌బార్‌ను పరిమాణం మార్చు — రీసెట్ చేయడానికి డబుల్-క్లిక్ చేయి",
+    "resetWidth": "వెడల్పును రీసెట్ చేయడానికి డబుల్-క్లిక్ చేయి",
+    "refreshedNoChanges": "రిఫ్రెష్ చేయబడింది — మార్పులు లేవు.",
+    "refreshedWithChanges": "రిఫ్రెష్ చేయబడింది — {{added}} జోడించబడ్డాయి, {{removed}} తీసివేయబడ్డాయి.",
+    "refreshFailed": "రిఫ్రెష్ విఫలమైంది.",
+    "searchPlaceholder": "ఫైల్‌లను శోధించు…",
+    "searchSearching": "శోధిస్తోంది…",
+    "searchNoResults": "“{{query}}”కి సరిపోలే ఫైల్‌లు లేవు"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "స్థితి పట్టీ",
+      "askAiAriaLabel": "ఈ పేజీని సవరించమని AIని అడుగు",
+      "askAiPlaceholder": "ఈ పేజీని ఎలా సవరించాలి?",
+      "sendHint": "పంపడానికి ↵"
+    },
+    "server": {
+      "serverStatusAriaLabel": "సర్వర్ స్థితి — వివరాల కోసం క్లిక్ చేయి",
+      "checking": "సర్వర్ స్థితిని తనిఖీ చేస్తోంది…",
+      "allRunning": "అన్ని సిస్టమ్‌లు నడుస్తున్నాయి",
+      "appNotResponding": "యాప్ సర్వర్ స్పందించడం లేదు",
+      "daemonDownNoProviders": "డెమోన్ స్పందించడం లేదు; ఏ ఏజెంట్ ప్రొవైడర్‌లు అందుబాటులో లేరు",
+      "daemonDown": "డెమోన్ స్పందించడం లేదు",
+      "noProviders": "ఏ ఏజెంట్ ప్రొవైడర్‌లు అందుబాటులో లేరు",
+      "checkingShort": "తనిఖీ చేస్తోంది…",
+      "online": "ఆన్‌లైన్",
+      "offline": "ఆఫ్‌లైన్",
+      "degraded": "క్షీణించింది",
+      "allSystemsRunning": "అన్ని సిస్టమ్‌లు నడుస్తున్నాయి",
+      "serviceDisruption": "సేవ అంతరాయం",
+      "appServer": "యాప్ సర్వర్",
+      "daemon": "డెమోన్",
+      "agentProviders": "ఏజెంట్ ప్రొవైడర్‌లు",
+      "running": "నడుస్తోంది",
+      "down": "డౌన్",
+      "lastSeen": "చివరిగా చూసినది: {{when}}",
+      "appWorking": "పేజీలు, ఎడిటర్, శోధన మరియు ఫైల్ నిర్వహణ పనిచేస్తున్నాయి.",
+      "appDown": "పేజీలు, ఎడిటర్, శోధన మరియు సేవ్ చేయడం అందుబాటులో లేవు. మీరు ఇప్పటికీ కాష్ చేసిన కంటెంట్‌ను చదవగలరు.",
+      "daemonWorking": "AI ఏజెంట్లు, షెడ్యూల్ చేయబడిన పనులు మరియు వెబ్ టెర్మినల్ పనిచేస్తున్నాయి.",
+      "daemonDownDescription": "AI ఏజెంట్లు, షెడ్యూల్ చేయబడిన పనులు మరియు వెబ్ టెర్మినల్ అందుబాటులో లేవు. పేజీ ఎడిటింగ్ ఇప్పటికీ పనిచేస్తుంది.",
+      "available": "అందుబాటులో ఉంది",
+      "noneReady": "ఏదీ సిద్ధంగా లేదు",
+      "providerReady": "సిద్ధంగా ఉంది",
+      "providerNotLoggedIn": "లాగిన్ అవ్వలేదు",
+      "providerNotInstalled": "ఇన్‌స్టాల్ చేయబడలేదు",
+      "install": "ఇన్‌స్టాల్ చేయండి",
+      "howToFix": "ఎలా పరిష్కరించాలి"
+    },
+    "save": {
+      "retryTitle": "విఫలమైన సేవ్ మళ్లీ ప్రయత్నించడానికి క్లిక్ చేయండి",
+      "retryAriaLabel": "సేవ్ విఫలమైంది — మళ్లీ ప్రయత్నించడానికి క్లిక్ చేయండి",
+      "autoSaving": "ఆటో-సేవ్ అవుతోంది…",
+      "forceSave": "ఫోర్స్ సేవ్: ⌘S",
+      "editing": "ఎడిటింగ్ — మీరు పాజ్ చేసినప్పుడు ఆటోసేవ్ రన్ అవుతుంది",
+      "wordCountTitle": "ఈ పేజీకి పదాల సంఖ్య (మార్క్‌డౌన్ సింటాక్స్ మినహాయించి)",
+      "savedJustNow": "ఇప్పుడే",
+      "savedNever": "ఎప్పుడూ లేదు",
+      "savedAgoSeconds": "{{n}} సెకన్ల క్రితం",
+      "savedAgoMinutes": "{{n}} నిమిషాల క్రితం",
+      "savedAgoHours": "{{n}} గంటల క్రితం",
+      "savedAgoDays": "{{n}} రోజుల క్రితం",
+      "saveFailedRetry": "సేవ్ విఫలమైంది — మళ్ళీ ప్రయత్నించండి",
+      "savingText": "సేవ్ అవుతోంది…",
+      "savedText": "సేవ్ చేయబడింది",
+      "editingText": "సవరిస్తోంది…",
+      "savedAgo": "సేవ్ చేయబడింది · {{ago}}",
+      "word": "పదం",
+      "words": "పదాలు"
+    },
+    "git": {
+      "statusModified": "మార్చబడింది",
+      "statusNew": "కొత్తది",
+      "statusAdded": "జోడించబడింది",
+      "statusDeleted": "తొలగించబడింది",
+      "statusRenamed": "పేరు మార్చబడింది",
+      "commitMessageAriaLabel": "కమిట్ సందేశం"
+    },
+    "help": {
+      "menuAriaLabel": "సహాయం & కమ్యూనిటీ మెనూ తెరవండి",
+      "menuTitle": "సహాయం & కమ్యూనిటీ",
+      "demos": "డెమోలు, వీడియోలు మరియు గైడ్‌లు",
+      "discord": "డిస్కార్డ్‌లో చాట్ చేయండి",
+      "discordSubtitle": "మద్దతు మరియు అభిప్రాయం",
+      "github": "గిట్‌హబ్‌లో సహకరించండి",
+      "githubSubtitle": "సోర్స్, సమస్యలు, PRలు",
+      "ifUseful": "మీరు దీన్ని ఉపయోగకరంగా భావిస్తే",
+      "label": "సహాయం",
+      "starsAriaLabel": "{{count}} GitHub స్టార్స్ — గిట్‌హబ్‌లో Cabinet తెరవండి",
+      "starsTitle": "{{count}} GitHub స్టార్స్ — గిట్‌హబ్‌లో Cabinetకి స్టార్ ఇవ్వండి",
+      "share": "షేర్ చేయండి",
+      "shareSubtitle": "ఆహ్వాన లింక్‌ను కాపీ చేసి, అందరికీ తెలియజేయండి",
+      "shareCopied": "మీరు అద్భుతం, {{name}} 🩷 భవిష్యత్ Cabinet సభ్యులను తీసుకువచ్చినందుకు ధన్యవాదాలు. లింక్ కాపీ చేయబడింది, ప్రేమను పంచుకోండి!",
+      "shareFailed": "లింక్‌ను కాపీ చేయలేకపోయాము",
+      "friend": "స్నేహితుడు"
+    },
+    "git2": {
+      "allCommitted": "అన్నీ కమిట్ చేయబడ్డాయి",
+      "uncommittedFile": "{{count}} కమిట్ చేయని ఫైల్",
+      "uncommittedFiles": "{{count}} కమిట్ చేయని ఫైల్‌లు",
+      "uncommittedFilesAria": "{{count}} కమిట్ చేయని ఫైల్(లు) — జాబితాను చూడటానికి క్లిక్ చేయండి",
+      "uncommittedFileTip": "కట్టుబడి లేని ఫైల్‌ను చూడటానికి క్లిక్ చేయండి",
+      "uncommittedFilesTip": "కట్టుబడి లేని ఫైల్‌లను చూడటానికి క్లిక్ చేయండి",
+      "uncommittedFilesHeading": "{{count}} కట్టుబడి లేని ఫైల్",
+      "uncommittedFilesHeadingPlural": "{{count}} కట్టుబడి లేని ఫైల్‌లు",
+      "truncatedHint": "మొదటి {{count}} ఫైల్‌లు మాత్రమే చూపబడ్డాయి — పూర్తి జాబితా కోసం `git status` అమలు చేయండి.",
+      "commitDefault": "{{count}} ఫైల్‌ను అప్‌డేట్ చేయండి",
+      "commitDefaultPlural": "{{count}} ఫైల్‌లను అప్‌డేట్ చేయండి",
+      "committing": "కమిట్ చేస్తోంది…",
+      "commit": "కమిట్",
+      "commitFailed": "కమిట్ విఫలమైంది",
+      "sync": "సింక్",
+      "syncTitle": "GitHub నుండి తాజా వాటిని లాగి & రిఫ్రెష్ చేయండి",
+      "syncTitleWithLast": "GitHub నుండి తాజా వాటిని లాగి & రిఫ్రెష్ చేయండి. చివరిగా సమకాలీకరించబడింది {{when}}.",
+      "syncAriaLabel": "GitHub నుండి తాజా మార్పులను లాగి రిఫ్రెష్ చేయండి",
+      "syncAriaLabelWithLast": "GitHub నుండి తాజా మార్పులను లాగి రిఫ్రెష్ చేయండి. చివరిగా సమకాలీకరించబడింది {{when}}.",
+      "terminal": "టెర్మినల్",
+      "openTerminal": "టెర్మినల్ తెరవండి",
+      "newTerminalTab": "కొత్త టెర్మినల్ ట్యాబ్",
+      "pulling": "లాగుతోంది…",
+      "pulled": "రిమోట్ నుండి నవీకరించబడింది",
+      "upToDate": "తాజాగా ఉంది",
+      "pullFailed": "లాగడం విఫలమైంది"
+    },
+    "update2": {
+      "updateAvailable": "{{version}} అప్‌డేట్ అందుబాటులో ఉంది",
+      "updateAvailableTip": "Cabinet {{version}} అందుబాటులో ఉంది"
+    },
+    "common": {
+      "dismiss": "విస్మరించండి",
+      "close": "మూసివేయండి",
+      "openSettings": "ఇన్‌స్టాల్ చేయబడిన అప్‌డేట్‌ను సమీక్షించడానికి సెట్టింగ్‌లను తెరవండి"
+    },
+    "misc": {
+      "restartToFinishUpdate": "అప్‌డేట్ పూర్తి చేయడానికి పునఃప్రారంభించండి"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "అసలు ప్రాంప్ట్ నుండి ఈ పనిని పునఃప్రారంభించండి",
+      "markAsDone": "ఈ పనిని పూర్తయినట్లు గుర్తించండి",
+      "viewAriaLabel": "పని వీక్షణ",
+      "terminal": "టెర్మినల్",
+      "transcript": "ట్రాన్‌స్క్రిప్ట్",
+      "details": "వివరాలు",
+      "transcriptTitle": "Claude Code స్థానిక సెషన్ JSONL",
+      "transcriptHint": "~/.claude/projects/<slug>/<session>.jsonl చదువుతుంది",
+      "back": "వెనుకకు",
+      "copyPrompt": "అసలు ప్రాంప్ట్‌ను కాపీ చేయండి",
+      "gracefulExit": "CLIని సజావుగా మూసివేయండి (PTYకి /exit వ్రాస్తుంది)",
+      "sendSigterm": "నడుస్తున్న PTY ప్రక్రియకు SIGTERM పంపండి",
+      "moreActions": "మరిన్ని చర్యలు",
+      "ptyMode": "టెర్మినల్ (PTY) మోడ్‌లో నడుస్తోంది",
+      "compactContext": "సందర్భ విండోను ఖాళీ చేయడానికి మునుపటి మలుపులను డైజెస్ట్‌గా కుదించండి",
+      "noSummary": "ఇంకా సారాంశం లేదు.",
+      "sessionEnded": "సెషన్ ముగిసింది — అదే టెర్మినల్‌లో కొనసాగించడానికి టైప్ చేయండి.",
+      "terminalLive": "టెర్మినల్ లైవ్. ఈ మలుపు పూర్తయిన తర్వాత మీ తదుపరి ప్రాంప్ట్ క్యూలో ఉంటుంది."
+    }
+  },
+  "tour": {
+    "ariaLabel": "మీ Cabinet టూర్‌ను చూడండి",
+    "skip": "దాటవేయి",
+    "skipAriaLabel": "టూర్‌ను దాటవేయి",
+    "back": "వెనుకకు",
+    "next": "తదుపరి",
+    "writeFirstTask": "మీ మొదటి పనిని వ్రాయండి",
+    "goToSlide": "స్లయిడ్ {{n}}కి వెళ్ళండి",
+    "starterTask": "నా లక్ష్యాలు మరియు నేను ఇక్కడ ఏమి సాధించాలనుకుంటున్నానో చర్చిద్దాం, ఆపై దానిని కొత్త 'గురించి' పేజీలో నమోదు చేద్దాం.",
+    "savingTo": "సేవ్ చేస్తోంది ",
+    "introTitle": "మీ <accent>Cabinet</accent>ని కలవండి.",
+    "introSubtitle": "మీ AI బృందం. మీ విజ్ఞాన ఆధారం. ఒకే చోట.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "ఇటీవలి మరియు నడుస్తున్న పనులు",
+    "hide": "పనుల పట్టీని దాచు",
+    "show": "పనుల పట్టీని చూపు",
+    "empty": "పనులు లేవు",
+    "itemRunning": "{{title}} · నడుస్తోంది · {{when}}",
+    "itemNeedsReply": "{{title}} · ప్రత్యుత్తరం కావాలి",
+    "itemFailed": "{{title}} · విఫలమైంది · {{when}}",
+    "itemDone": "{{title}} · పూర్తయింది · {{when}}",
+    "itemArchived": "{{title}} · ఆర్కైవ్ చేయబడింది",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} నడుస్తున్నాయి — పనుల పట్టీని చూపు"
+  },
+  "chrome": {
+    "nav": {
+      "home": "హోమ్",
+      "agents": "ఏజెంట్లు",
+      "tasks": "పనులు",
+      "ai": "AI",
+      "menu": "మెనూ",
+      "primaryAriaLabel": "ప్రాథమిక"
+    },
+    "returnTo": {
+      "task": "పని",
+      "tasks": "పనులు",
+      "agent": "ఏజెంట్",
+      "agents": "ఏజెంట్లు",
+      "cabinet": "Cabinet",
+      "home": "హోమ్",
+      "settings": "సెట్టింగ్‌లు",
+      "registry": "రిజిస్ట్రీ",
+      "back": "వెనుకకు",
+      "backTo": "{{label}}కు వెనుకకు"
+    },
+    "theme": {
+      "defaultHeader": "డిఫాల్ట్",
+      "dark": "డార్క్",
+      "darkThemes": "డార్క్ థీమ్‌లు",
+      "lightThemes": "లేత థీమ్‌లు"
+    },
+    "update": {
+      "restartTitle": "అప్‌డేట్ పూర్తి చేయడానికి క్యాబినెట్‌ను పునఃప్రారంభించండి",
+      "availableTitle": "క్యాబినెట్ {{version}} అందుబాటులో ఉంది",
+      "updatesTitle": "క్యాబినెట్ అప్‌డేట్‌లు",
+      "description": "క్యాబినెట్ విడుదలల కోసం స్వయంచాలకంగా తనిఖీ చేస్తుంది. ఉత్పత్తి ఇంకా ప్రయోగాత్మకంగా ఉన్నందున, అప్‌డేట్‌లను ఇన్‌స్టాల్ చేసే ముందు మీ డేటా కాపీని ఉంచుకోండి.",
+      "later": "తర్వాత",
+      "releaseNotes": "విడుదల గమనికలు"
+    },
+    "daemon": {
+      "fixHintElectron": "ఏజెంట్ డెమోన్‌ను పునఃప్రారంభించడానికి క్యాబినెట్‌ను మూసివేసి, మళ్లీ ప్రారంభించండి.",
+      "fixHintDev": "ఏజెంట్ డెమోన్‌ను తిరిగి తీసుకురావడానికి `npm run dev:daemon`ను రన్ చేయండి (లేదా `npm run dev:all`ను పునఃప్రారంభించండి).",
+      "notResponding": "ఏజెంట్ డెమోన్ స్పందించడం లేదు.",
+      "willFail": "అది తిరిగి వచ్చే వరకు ఏజెంట్లు, ఉద్యోగాలు మరియు AI అభ్యర్థనలు విఫలమవుతాయి. {{fixHint}}"
+    }
+  }
+}

@@ -12,6 +12,7 @@ export interface EditorSession {
   id: string;
   sessionId: string;
   pagePath: string;
+  agentSlug?: string;
   userMessage: string;
   prompt: string;
   timestamp: number;

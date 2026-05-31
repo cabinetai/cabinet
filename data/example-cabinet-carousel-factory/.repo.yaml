@@ -1,5 +1,0 @@
-name: Cabinet
-local: ./
-source: local
-branch: main
-description: Cabinet — AI-first knowledge base and startup OS. This is the source repo for the product being marketed.

@@ -1,135 +1,258 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useAppStore } from "@/stores/app-store";
-import { Send, Users } from "lucide-react";
+import { useTreeStore } from "@/stores/tree-store";
+import { selectDaemonLevel, useHealthStore } from "@/stores/health-store";
+import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
+import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
+import { Download, Loader2, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
+import { flattenTree } from "@/lib/tree-utils";
+import { createConversation } from "@/lib/agents/conversation-client";
+import { ComposerInput } from "@/components/composer/composer-input";
+import {
+  AgentPicker,
+  type AgentPickerOption,
+} from "@/components/composer/agent-picker";
+import {
+  TaskRuntimePicker,
+  type TaskRuntimeSelection,
+} from "@/components/composer/task-runtime-picker";
+import {
+  StartWorkDialog,
+  WhenChip,
+  type StartWorkMode,
+} from "@/components/composer/start-work-dialog";
+import { useComposer, type MentionableItem } from "@/hooks/use-composer";
+import { useSkillMentionItems } from "@/hooks/use-skill-mention-items";
+import { useComposerAttachments } from "@/components/composer/use-composer-attachments";
+import type { CabinetAgentSummary } from "@/types/cabinets";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import type { RegistryTemplate } from "@/lib/registry/registry-manifest";
+import { TiltCard } from "@/components/ui/tilt-card";
 
-const QUICK_ACTIONS = [
-  "Brainstorm ideas",
-  "Map user journey",
-  "Plan roadmap",
-  "Create research plan",
-  "Create requirements doc",
-];
-
-interface Cabinet {
-  name: string;
-  description: string;
-  agents: number;
-  domain: string;
-}
-
-const CABINETS: Cabinet[] = [
-  { name: "Content Marketing Agency", description: "SEO, blogs & social media on autopilot", agents: 8, domain: "Marketing" },
-  { name: "E-commerce Operator", description: "Listings, support, inventory & ads management", agents: 10, domain: "E-commerce" },
-  { name: "YouTube Factory", description: "Scripts, edits, thumbnails, scheduling & publishing", agents: 6, domain: "Media" },
-  { name: "Dev Agency", description: "PM, engineers, QA & DevOps pipeline", agents: 9, domain: "Software" },
-  { name: "Real Estate Leads", description: "Prospecting, outreach, follow-up & closing deals", agents: 7, domain: "Sales" },
-  { name: "Bookkeeping Firm", description: "Invoice reconciliation, tax prep & reporting", agents: 6, domain: "Finance" },
-  { name: "Grant Writing Agency", description: "Research grants, draft applications & track deadlines", agents: 5, domain: "Finance" },
-  { name: "Recruiting Agency", description: "Sourcing, screening, outreach & scheduling", agents: 8, domain: "Professional Services" },
-  { name: "Legal Doc Shop", description: "Contract drafting, NDA, compliance & client intake", agents: 6, domain: "Professional Services" },
-  { name: "Translation Bureau", description: "Intake, translate, QA, localization & delivery", agents: 5, domain: "Professional Services" },
-  { name: "Podcast Production House", description: "Research, scripting, editing & distribution", agents: 7, domain: "Media" },
-  { name: "Newsletter Empire", description: "Niche research, writing, curation & growth", agents: 5, domain: "Media" },
-  { name: "Stock Photo & Video Studio", description: "AI generation, keywording, listing & licensing", agents: 4, domain: "Media" },
-  { name: "Market Research Firm", description: "Data collection, analysis & report generation", agents: 6, domain: "Data & Research" },
-  { name: "Competitive Intelligence Agency", description: "Monitoring, alerts, trend reports & executive briefs", agents: 5, domain: "Data & Research" },
-  { name: "Lead Enrichment Service", description: "Scrape, verify, enrich, score & deliver lists", agents: 5, domain: "Data & Research" },
-  { name: "Online Course Factory", description: "Curriculum, content creation & platform setup", agents: 8, domain: "Education" },
-  { name: "Resume & Career Coaching", description: "Resume writing, cover letters & interview prep", agents: 6, domain: "Education" },
-  { name: "Customer Support BPO", description: "Ticket triage, response, escalation & reporting", agents: 7, domain: "Operations" },
-  { name: "Dropshipping Brand", description: "Product research, supplier, storefront & ads", agents: 8, domain: "E-commerce" },
-  { name: "SaaS Onboarding Agency", description: "Documentation, tutorials, email sequences & analytics", agents: 6, domain: "Operations" },
-  { name: "Review Management Agency", description: "Monitor reviews, draft responses & report sentiment", agents: 4, domain: "Marketing" },
-  { name: "Event Promotion Agency", description: "Find events, create assets, distribute & sell tickets", agents: 7, domain: "Marketing" },
-  { name: "UGC Ad Factory", description: "Script hooks, brief creators, edit & A/B test", agents: 7, domain: "Paid Social" },
-  { name: "Meta Ads War Room", description: "Creative variants, audience, launch & optimize ROAS", agents: 6, domain: "Paid Social" },
-  { name: "TikTok Shop Operator", description: "Product listings, affiliate outreach & live stream", agents: 8, domain: "E-commerce" },
-  { name: "Influencer Matchmaker", description: "Find creators, negotiate, brief & measure ROI", agents: 6, domain: "Paid Social" },
-  { name: "Cold Email Agency", description: "ICP research, list building, copy & sending", agents: 7, domain: "Sales" },
-  { name: "LinkedIn Lead Gen Shop", description: "Profile optimization, connections & DM sequences", agents: 5, domain: "Sales" },
-  { name: "Appointment Setting Firm", description: "Multi-channel outreach, qualification & booking", agents: 6, domain: "Sales" },
-  { name: "Amazon FBA Launcher", description: "Product research, listing, PPC & restock alerts", agents: 8, domain: "E-commerce" },
-  { name: "Etsy Shop Manager", description: "SEO titles, photos, customer messages & refreshes", agents: 5, domain: "E-commerce" },
-  { name: "Amazon PPC Agency", description: "Keyword harvesting, bid management & reporting", agents: 4, domain: "E-commerce" },
-  { name: "Ghostwriting Studio", description: "LinkedIn posts, Twitter threads & newsletters", agents: 5, domain: "Content Ops" },
-  { name: "Clip Farm", description: "Chop long-form into reels, shorts & captions", agents: 5, domain: "Media" },
-  { name: "Blog-to-Revenue Pipeline", description: "Keyword research, write, optimize & monetize", agents: 7, domain: "Marketing" },
-  { name: "Carousel Factory", description: "Design Instagram, LinkedIn & TikTok carousels", agents: 4, domain: "Marketing" },
-  { name: "Webflow & Framer Build Shop", description: "Design, build, copy, launch & maintain sites", agents: 6, domain: "Software" },
-  { name: "Shopify Store Setup Agency", description: "Theme, products, payments & launch checklist", agents: 5, domain: "E-commerce" },
-  { name: "Notion & Airtable Systems Builder", description: "Intake requirements, build, automate & document", agents: 5, domain: "Software" },
-  { name: "Podcast Booking Agency", description: "Research shows, pitch, schedule & prep talking points", agents: 6, domain: "Media" },
-  { name: "PR Pitching Machine", description: "Media list, write pitches, send & track", agents: 5, domain: "Marketing" },
-  { name: "Proposal & RFP Factory", description: "Parse RFPs, draft responses, format & submit", agents: 6, domain: "Professional Services" },
-  { name: "Warranty Returns Processor", description: "Intake claims, verify, process & report trends", agents: 5, domain: "Operations" },
-  { name: "Price Monitoring Service", description: "Track competitor prices, alert changes & report", agents: 4, domain: "Data & Research" },
-  { name: "Job Board Aggregator", description: "Scrape postings, deduplicate & categorize", agents: 5, domain: "Data & Research" },
-  { name: "Patent & Trademark Watch", description: "Monitor filings, flag conflicts & summarize", agents: 4, domain: "Data & Research" },
-  { name: "App Store Optimization Shop", description: "Keyword research, screenshots & A/B test", agents: 5, domain: "Marketing" },
-  { name: "Churned User Win-Back Agency", description: "Segment churned users, write sequences & track", agents: 4, domain: "Marketing" },
-  { name: "Onboarding Email Studio", description: "Map user journey, write drip, test & optimize", agents: 4, domain: "Marketing" },
-];
-
-const DOMAIN_COLORS: Record<string, string> = {
-  "Marketing": "bg-blue-500/15 text-blue-400",
-  "E-commerce": "bg-emerald-500/15 text-emerald-400",
-  "Media": "bg-purple-500/15 text-purple-400",
-  "Software": "bg-orange-500/15 text-orange-400",
-  "Sales": "bg-rose-500/15 text-rose-400",
-  "Finance": "bg-yellow-500/15 text-yellow-400",
-  "Professional Services": "bg-cyan-500/15 text-cyan-400",
-  "Data & Research": "bg-indigo-500/15 text-indigo-400",
-  "Education": "bg-teal-500/15 text-teal-400",
-  "Operations": "bg-slate-500/15 text-slate-400",
-  "Paid Social": "bg-pink-500/15 text-pink-400",
-  "Content Ops": "bg-amber-500/15 text-amber-400",
+type QuickAction = {
+  /** Key under `home:quickActions.*` for the visible button label. */
+  labelKey: string;
+  label: string;
+  prompt: string;
+  // For delegation chips: ordered list of preferred dispatcher slugs. The
+  // first one that exists in the user's cabinet is used; if none exist, the
+  // chip is hidden so we never ship a "showcase" that silently routes to a
+  // non-dispatcher (e.g. editor) and quietly degrades to a solo task.
+  // Solo chips omit this field and use the composer's default routing.
+  preferredAgents?: string[];
 };
 
-function getGreeting(): string {
+// Common dispatch-enabled lead slugs. Per
+// `data/getting-started/delegating-between-agents`, leads default to
+// canDispatch:true. We try them in order; the first one present wins.
+const LEAD_FALLBACKS = ["ceo", "cto", "pm"];
+
+const QUICK_ACTIONS: QuickAction[] = [
+  {
+    labelKey: "launch10Songs",
+    label: "Launch 10 song-writing editors",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Launch 10 LAUNCH_TASKs to the editor in parallel. Each one writes a short song from the perspective of a different Harry Potter character (Harry, Hermione, Ron, Dumbledore, Snape, Hagrid, Luna, Draco, Neville, McGonagall). Save each as its own page under @Songs. Use effort=low.",
+  },
+  {
+    labelKey: "dailyReview9am",
+    label: "Daily review at 9am",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Schedule a SCHEDULE_JOB on the editor with cron `0 9 * * *` — every day at 9am, write a short daily review of yesterday and what's on today, and append it to @Daily Review.",
+  },
+  {
+    labelKey: "weeklyReview",
+    label: "Weekly review next Monday",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Schedule a SCHEDULE_TASK on the assistant for next Monday 09:00 — review what I worked on this past week by inspecting recently-modified files in this cabinet, then write @Weekly Review and a @Tasks for Next Week list.",
+  },
+  {
+    labelKey: "thailandTrip",
+    label: "Plan my Thailand trip",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Plan a 2-week Thailand trip. Dispatch a LAUNCH_TASK to the librarian (effort=high) to research itinerary, places to stay, and food spots, and a LAUNCH_TASK to the editor (effort=medium) to compile the findings into one @Thailand Trip page with a day-by-day schedule and a rough budget.",
+  },
+  {
+    labelKey: "physicsApp",
+    label: "Build me a physics study app",
+    prompt:
+      "Create an interactive webapp inside this cabinet so I can study physics for beginners. Include clear explanations, simple animations where useful, and quick checks for understanding.",
+  },
+  {
+    labelKey: "summariseRecent",
+    label: "Summarise my recent work",
+    prompt:
+      "Read the most recently modified pages in this cabinet and write a concise summary of what I've been working on. Group by theme, note any open threads, and save the result as @Recent Work Summary.",
+  },
+  {
+    labelKey: "recruiterReply",
+    label: "Draft a recruiter reply",
+    prompt:
+      "Write a polite, direct reply to a recruiter outreach message. Ask the key qualifying questions (role, comp range, company stage, remote policy) without committing to anything. Keep it under 100 words.",
+  },
+  {
+    labelKey: "mapArticles",
+    label: "Map article connections",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Pipeline of two LAUNCH_TASKs: first dispatch the librarian to identify the articles in this cabinet and map connections between their ideas, people, and concepts. Then dispatch the editor to build an interactive webapp that visualises that graph.",
+  },
+  {
+    labelKey: "physicsCourse",
+    label: "Spin up a 6-module physics course",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Plan a beginner physics curriculum across 6 modules (motion, forces, energy, waves, electricity, light). Dispatch one LAUNCH_TASK per module to the editor (effort=high) to build an interactive lesson page. Save them under @Physics 101.",
+  },
+  {
+    labelKey: "shortStory",
+    label: "Outline a short story",
+    prompt:
+      "Outline a 5-chapter short story with a clear arc, a protagonist, and a twist in chapter 4. Save it as @Story Outline. Don't write the prose yet — just chapter titles and 3–4 beats each.",
+  },
+  {
+    labelKey: "hourlyStandup",
+    label: "Hourly stand-up nudge",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Schedule a SCHEDULE_JOB on the assistant with cron `0 9-18 * * 1-5` — every weekday hour from 9am–6pm, ask me what I'm working on right now and append the answer to @Hourly Log.",
+  },
+  {
+    labelKey: "researchPhone",
+    label: "Research my next phone",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Dispatch the librarian to research the current top-3 flagship phones for someone who values battery life and camera. Compile the comparison into @Phone Research with a recommendation and the trade-offs.",
+  },
+  {
+    labelKey: "translateToSpanish",
+    label: "Translate this cabinet to Spanish",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Read every page in this cabinet and dispatch a LAUNCH_TASK per page to the editor (effort=low) to write a Spanish translation. Save each under @Translations/<original page name>.",
+  },
+  {
+    labelKey: "refactorNotes",
+    label: "Refactor my note-taking system",
+    prompt:
+      "Audit the structure of this cabinet — folders, naming, orphans, duplicates. Propose a cleaner structure as @Note System Audit with concrete moves (don't apply them yet).",
+  },
+  {
+    labelKey: "birthdayParty",
+    label: "Plan a birthday party",
+    prompt:
+      "Plan a birthday party for 12 adults at home. Output @Party Plan with: theme suggestions (3 options), shopping list, day-of timeline, and a music vibe.",
+  },
+  {
+    labelKey: "boardUpdate",
+    label: "Draft a board update",
+    prompt:
+      "Write a concise monthly board update. Cover: traction, shipped, missed, asks. Pull anything I've worked on this month from recently-modified pages. Save as @Board Update.",
+  },
+  {
+    labelKey: "customerInterviews",
+    label: "Simulate 5 customer interviews",
+    preferredAgents: LEAD_FALLBACKS,
+    prompt:
+      "Dispatch 5 LAUNCH_TASKs to the editor — each writes a transcript of a customer interview from a different persona (busy parent, freelancer, student, retiree, founder). Use my product as the subject. Save under @Interviews.",
+  },
+];
+
+function getGreetingKey(): "goodMorning" | "goodAfternoon" | "goodEvening" {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "goodMorning";
+  if (hour < 17) return "goodAfternoon";
+  return "goodEvening";
 }
 
-function CabinetCard({ cabinet }: { cabinet: Cabinet }) {
-  const colorClass = DOMAIN_COLORS[cabinet.domain] || "bg-muted text-muted-foreground";
-
+function CabinetCard({
+  template,
+  onClick,
+}: {
+  template: RegistryTemplate;
+  onClick: () => void;
+}) {
   return (
-    <div className="flex-shrink-0 w-64 h-36 rounded-xl border border-border bg-card p-4 flex flex-col cursor-default select-none">
-      <h3 className="text-sm font-medium text-foreground leading-tight">
-        {cabinet.name}
-      </h3>
-      <p className="text-xs text-muted-foreground leading-relaxed mt-2">
-        {cabinet.description}
-      </p>
-      <div className="flex items-center justify-between mt-auto pt-3">
-        <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", colorClass)}>
-          {cabinet.domain}
-        </span>
-        <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-          <Users className="h-3 w-3" />
-          {cabinet.agents} agents
-        </span>
-      </div>
-    </div>
+    <TiltCard className="flex-shrink-0 w-48">
+      <button
+        onClick={onClick}
+        className="fancy-card w-full border border-border bg-card flex flex-col text-left"
+      >
+        <div
+          className="relative h-20 w-full bg-muted"
+          style={
+            template.coverUrl
+              ? {
+                  backgroundImage: `url(${template.coverUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : undefined
+          }
+          aria-hidden
+        >
+          {!template.coverUrl && (
+            <div className="absolute inset-0 flex items-center justify-center text-xl opacity-40">
+              📦
+            </div>
+          )}
+        </div>
+        <div className="p-2.5 flex flex-col gap-1">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="text-[11px] font-medium leading-tight line-clamp-1 flex-1 min-w-0 text-foreground">
+              {template.name}
+            </p>
+            <span className="text-[9px] shrink-0 text-muted-foreground">
+              {template.agentCount === 0
+                ? "No agents"
+                : `${template.agentCount} agent${template.agentCount === 1 ? "" : "s"}`}
+            </span>
+          </div>
+          <p className="text-[9px] leading-snug line-clamp-2 text-muted-foreground">
+            {template.description}
+          </p>
+        </div>
+      </button>
+    </TiltCard>
   );
 }
 
-function InfiniteCarousel() {
+function RegistryCarousel({
+  templates,
+  onSelect,
+}: {
+  templates: RegistryTemplate[];
+  onSelect: (template: RegistryTemplate) => void;
+}) {
+  const { dir } = useLocale();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el || templates.length === 0) return;
 
     let animationId: number;
     let position = 0;
-    const speed = 1.2; // px per frame
+    const speed = 1.2;
+    // In RTL the row reverses, so the marquee scrolls in the opposite
+    // direction to keep items visually emerging from the leading edge.
+    const sign = dir === "rtl" ? 1 : -1;
 
     const animate = () => {
       if (!isPaused) {
@@ -138,178 +261,561 @@ function InfiniteCarousel() {
         if (position >= halfWidth) {
           position = 0;
         }
-        el.style.transform = `translateX(-${position}px)`;
+        el.style.transform = `translateX(${sign * position}px)`;
       }
       animationId = requestAnimationFrame(animate);
     };
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [isPaused]);
+  }, [isPaused, templates, dir]);
 
-  const doubled = [...CABINETS, ...CABINETS];
+  const doubled = [...templates, ...templates];
 
   return (
     <div
-      className="relative w-full overflow-hidden"
+      className="tilt-carousel relative w-full py-6"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div
-        ref={scrollRef}
-        className="flex gap-3 will-change-transform"
-      >
-        {doubled.map((cabinet, i) => (
-          <CabinetCard key={`${cabinet.name}-${i}`} cabinet={cabinet} />
-        ))}
+      <div ref={scrollRef} className="flex gap-3 will-change-transform">
+        {doubled.map((template, i) => {
+          const isClone = i >= templates.length;
+          return (
+            <div
+              key={`${template.slug}-${i}`}
+              aria-hidden={isClone || undefined}
+              inert={isClone || undefined}
+            >
+              <CabinetCard
+                template={template}
+                onClick={() => onSelect(template)}
+              />
+            </div>
+          );
+        })}
       </div>
-      <div className="absolute inset-0 backdrop-blur-[1.5px] hover:backdrop-blur-[0.5px] transition-all duration-500 z-10" />
-      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-        <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground bg-background/80 px-4 py-1.5 rounded-full border border-border">
-          Coming soon
-        </span>
-      </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r rtl:bg-gradient-to-l from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l rtl:bg-gradient-to-r from-background to-transparent" />
     </div>
   );
 }
 
-export function HomeScreen() {
+function ImportDialog({
+  template,
+  open,
+  onOpenChange,
+  onImportStart,
+  onImportEnd,
+}: {
+  template: RegistryTemplate | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onImportStart: () => void;
+  onImportEnd: () => void;
+}) {
+  const { t } = useLocale();
+  const [name, setName] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const loadTree = useTreeStore((s) => s.loadTree);
+  const selectPage = useTreeStore((s) => s.selectPage);
   const setSection = useAppStore((s) => s.setSection);
-  const [prompt, setPrompt] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/agents/config")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.company?.name) {
-          setUserName(data.company.name);
-        }
-      })
-      .catch(() => {});
-  }, []);
+    if (template) setName(template.name);
+  }, [template]);
 
-  const submitPrompt = async (text: string) => {
-    if (!text.trim() || submitting) return;
+  const handleImport = async () => {
+    if (!template) return;
+    setImporting(true);
+    setError(null);
+    onImportStart();
+    onOpenChange(false);
 
-    setSubmitting(true);
     try {
-      const res = await fetch("/api/agents/conversations", {
+      const res = await fetch("/api/registry/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          agentSlug: "general",
-          userMessage: text.trim(),
-          mentionedPaths: [],
+          slug: template.slug,
+          name: name.trim() !== template.name ? name.trim() : undefined,
         }),
       });
 
-      if (res.ok) {
+      if (!res.ok) {
         const data = await res.json();
-        setPrompt("");
-        setSection({
-          type: "agent",
-          slug: "general",
-          conversationId: data.conversation?.id,
-        });
+        setError(data.error || "Import failed");
+        setImporting(false);
+        onImportEnd();
+        onOpenChange(true);
+        return;
       }
+
+      await res.json();
+      onImportEnd();
+      window.location.reload();
     } catch {
-      // ignore
-    } finally {
-      setSubmitting(false);
+      setError("Import failed. Check your internet connection.");
+      setImporting(false);
+      onImportEnd();
+      onOpenChange(true);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    submitPrompt(prompt);
+  if (!template) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!importing) onOpenChange(v); }}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Import {template.name}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            {template.description}
+          </p>
+          <div className="flex gap-4 text-xs text-muted-foreground">
+            <span>{template.agentCount} {template.agentCount === 1 ? "agent" : "agents"}</span>
+            <span>{template.jobCount} {template.jobCount === 1 ? "job" : "jobs"}</span>
+            {template.childCount > 0 && (
+              <span>{template.childCount} {template.childCount === 1 ? "sub-cabinet" : "sub-cabinets"}</span>
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Cabinet name
+            </label>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t("home:newCabinet.namePlaceholder")}
+            />
+            <p className="text-[11px] text-muted-foreground/70">
+              {t("home:newCabinet.renameWarning")}
+            </p>
+          </div>
+          {error && (
+            <p className="text-xs text-destructive">{error}</p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={importing}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleImport}
+              disabled={importing || !name.trim()}
+            >
+              <Download className="me-2 h-4 w-4" />
+              Import
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function HomeScreen() {
+  const { t } = useLocale();
+  const setSection = useAppStore((s) => s.setSection);
+  const treeNodes = useTreeStore((s) => s.nodes);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [agents, setAgents] = useState<CabinetAgentSummary[]>([]);
+  const [handoffOpen, setHandoffOpen] = useState(false);
+  const [handoffMode, setHandoffMode] = useState<StartWorkMode>("recurring");
+  const [registryTemplates, setRegistryTemplates] = useState<
+    RegistryTemplate[]
+  >([]);
+  const [importTemplate, setImportTemplate] =
+    useState<RegistryTemplate | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [taskRuntime, setTaskRuntime] = useState<TaskRuntimeSelection>({});
+  const [quickRunning, setQuickRunning] = useState(false);
+  // Hold the chip row until the agents fetch has settled — only then do we
+  // know which delegation chips to show. Animating before that point causes
+  // the second wave of chips to pop in at scrambled positions and reflow the
+  // layout. The 2.5s timeout is a safety net for a hung request; in practice
+  // the local overview fetch settles in under 200ms.
+  const [chipsReady, setChipsReady] = useState(false);
+  const [chipShuffle, setChipShuffle] = useState(0);
+  const [selectedAgentSlug, setSelectedAgentSlug] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    fetch("/api/user/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        const profileName: string | undefined =
+          data?.profile?.displayName || data?.profile?.name;
+        // Filter the legacy "You" placeholder so the greeting falls back to
+        // the no-name form rather than reading "Good morning, You."
+        const cleaned = profileName?.trim();
+        if (cleaned && cleaned.toLowerCase() !== "you") {
+          setUserName(cleaned);
+        }
+      })
+      .catch(() => {});
+
+    fetchCabinetOverviewClient(".", "all")
+      .then((data) => {
+        setAgents((data?.agents || []) as CabinetAgentSummary[]);
+      })
+      .catch(() => {})
+      .finally(() => setChipsReady(true));
+
+    fetch("/api/registry")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.templates) setRegistryTemplates(data.templates);
+      })
+      .catch(() => {});
+
+    const safetyTimer = setTimeout(() => setChipsReady(true), 2500);
+    return () => clearTimeout(safetyTimer);
+  }, []);
+
+  const skillItems = useSkillMentionItems();
+
+  const mentionItems: MentionableItem[] = [
+    ...agents
+      .filter((a) => a.slug !== "editor")
+      .map((a) => ({
+        type: "agent" as const,
+        id: a.slug,
+        label: a.name,
+        sublabel: a.role || "",
+        icon: a.emoji,
+      })),
+    ...skillItems,
+    ...flattenTree(treeNodes).map((p) => ({
+      type: "page" as const,
+      id: p.path,
+      label: p.title,
+      sublabel: p.path,
+    })),
+  ];
+
+  const stagingClientUuid = useMemo(
+    () =>
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `c-${Date.now()}`,
+    []
+  );
+  const attachments = useComposerAttachments({
+    // Home-screen has no cabinet context — attachments land at the root
+    // cabinet (data/.agents/.conversations/_pending/...).
+    cabinetPath: undefined,
+    clientAttachmentId: stagingClientUuid,
+  });
+
+  const composer = useComposer({
+    items: mentionItems,
+    attachments,
+    stagingClientUuid,
+    onSubmit: async ({
+      message,
+      mentionedPaths,
+      mentionedAgents,
+      mentionedSkills,
+      attachmentPaths,
+      stagingClientUuid: turnStagingUuid,
+    }) => {
+      // v0.4.1 dispatch priority: explicitly-selected picker agent →
+      // first @-mentioned agent → "editor" fallback. The picker overrides
+      // mentions because the user just clicked it.
+      const targetAgent =
+        selectedAgentSlug ??
+        (mentionedAgents.length > 0 ? mentionedAgents[0] : "editor");
+
+      const data = await createConversation({
+        agentSlug: targetAgent,
+        userMessage: message,
+        mentionedPaths,
+        mentionedSkills,
+        attachmentPaths,
+        stagingClientUuid: turnStagingUuid,
+        ...taskRuntime,
+      });
+      setSection({
+        type: "task",
+        taskId: data.conversation?.id,
+        cabinetPath: ROOT_CABINET_PATH,
+      });
+    },
+  });
+
+  // v0.4.1: chips ignore each action's preferredAgents and dispatch via a
+  // single priority: user-picked agent → editor (if installed) → first
+  // installed agent → null (fall through to composer.submit, which then
+  // routes via its own onSubmit priority).
+  const pickDispatcher = (): string | null => {
+    if (selectedAgentSlug) return selectedAgentSlug;
+    const slugs = new Set(agents.map((a) => a.slug));
+    if (slugs.has("editor")) return "editor";
+    return agents[0]?.slug ?? null;
   };
 
-  const greeting = getGreeting();
-  const displayName = userName || "there";
+  // Audit #010: previously rendered the full pool every time; the same 9
+  // chips greeted every cold-boot. Now: keep the first chip stable as a
+  // landmark, then surface a random window of CHIP_DISPLAY_COUNT-1 from the
+  // remaining pool. The shuffle button (RefreshCw) below bumps `chipShuffle`
+  // to re-roll. All chips still render — it's just which ones are visible.
+  const CHIP_DISPLAY_COUNT = 9;
+  const visibleActions = useMemo(() => {
+    if (QUICK_ACTIONS.length <= CHIP_DISPLAY_COUNT) return QUICK_ACTIONS;
+    const [head, ...rest] = QUICK_ACTIONS;
+    const indices = rest.map((_, i) => i);
+    // Fisher–Yates with a seed derived from chipShuffle so re-rolls are
+    // deterministic per click and stable across re-renders within one roll.
+    let seed = (chipShuffle + 1) * 2654435761;
+    for (let i = indices.length - 1; i > 0; i--) {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      const j = seed % (i + 1);
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    const picked = indices
+      .slice(0, CHIP_DISPLAY_COUNT - 1)
+      .map((idx) => rest[idx]);
+    return [head, ...picked];
+  }, [chipShuffle]);
+
+  // Build options for the home-composer agent picker. Prepended "Auto"
+  // sentinel (empty slug) clears `selectedAgentSlug` so the cascade kicks in.
+  const agentPickerOptions: AgentPickerOption[] = [
+    {
+      slug: "",
+      name: "Auto",
+      role: "editor → first agent",
+    } as AgentPickerOption,
+    ...(agents as AgentPickerOption[]),
+  ];
+
+  const runQuickAction = async (action: QuickAction) => {
+    if (composer.submitting || quickRunning) return;
+    const dispatcher = pickDispatcher();
+    if (!dispatcher) {
+      void composer.submit(action.prompt);
+      return;
+    }
+    setQuickRunning(true);
+    try {
+      const data = await createConversation({
+        agentSlug: dispatcher,
+        userMessage: action.prompt,
+        mentionedPaths: [],
+        attachmentPaths: [],
+        ...taskRuntime,
+      });
+      if (data.conversation?.id) {
+        setSection({
+          type: "task",
+          taskId: data.conversation.id,
+          cabinetPath: ROOT_CABINET_PATH,
+        });
+      }
+    } catch {
+      // Best-effort: chip clicks fail silently; the composer stays interactive.
+    } finally {
+      setQuickRunning(false);
+    }
+  };
+
+  const greeting = t(`home:${getGreetingKey()}`);
+  const headline = userName
+    ? t("home:greetingWithName", { greeting, name: userName })
+    : t("home:greetingNoName", { greeting });
+
+  // Daemon owns agent execution — if it's confirmed down (≥2 missed polls)
+  // disable the prompt and surface why, instead of letting the user fire a
+  // request that will silently fail.
+  const daemonLevel = useHealthStore(selectDaemonLevel);
+  const daemonDown = daemonLevel === "down";
+  const composerPlaceholder = daemonDown
+    ? t("home:composerDaemonDown")
+    : t("home:composerPlaceholder");
 
   return (
     <div className="flex-1 flex flex-col items-center px-4 overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-xl space-y-8">
-        <h1 className="text-3xl md:text-4xl font-semibold text-center text-foreground tracking-tight">
-          {greeting}, {displayName}.<br />
-          What are we working on today?
+        {/*
+         * Audit #005 (review feedback 2026-05-02): the prior text-xl/2xl
+         * fix was too aggressive — the greeting felt undersized on a
+         * desktop. Restore the larger headline at md+ where prompt-fold
+         * isn't the constraint, but keep a smaller text-2xl on narrow
+         * viewports so 13" laptops don't push the input below the fold.
+         */}
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-center text-foreground tracking-tight">
+          {headline}
         </h1>
 
-        <form onSubmit={handleSubmit} className="relative w-full">
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
-                e.preventDefault();
-                submitPrompt(prompt);
-              } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                setPrompt((prev) => prev + "\n");
-              }
-            }}
-            placeholder="I want to create..."
-            disabled={submitting}
-            rows={1}
-            className={cn(
-              "w-full rounded-xl border border-border bg-card px-4 py-3 pr-44 sm:pr-52",
-              "text-sm text-foreground placeholder:text-muted-foreground",
-              "focus:outline-none focus:ring-2 focus:ring-ring",
-              "shadow-sm resize-none"
-            )}
-            autoFocus
-          />
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-            <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[10px] text-muted-foreground/60 font-medium">
-              <span className="rounded border border-border/50 px-1 py-0.5">⌘</span>
-              <span>+</span>
-              <span className="rounded border border-border/50 px-1 py-0.5">↵</span>
-              <span className="ml-0.5">new line</span>
-            </kbd>
-            <button
-              type="submit"
-              disabled={!prompt.trim() || submitting}
-              className={cn(
-                "h-8 w-8 rounded-lg flex items-center justify-center",
-                "transition-colors",
-                prompt.trim() && !submitting
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "bg-muted text-muted-foreground"
-              )}
-            >
-              <Send className="h-4 w-4" />
-            </button>
-          </div>
-        </form>
+        <ComposerInput
+          composer={composer}
+          placeholder={composerPlaceholder}
+          variant="card"
+          items={mentionItems}
+          attachments={attachments}
+          autoFocus
+          disabled={daemonDown}
+          className="w-full"
+          minHeight="44px"
+          mentionDropdownPlacement="below"
+          topRightOverlay={
+            <WhenChip
+              mode="now"
+              // Audit #020: home-screen composer has no agent context yet,
+              // so "Heartbeat" doesn't apply. Surface it only on agent
+              // detail / mid-conversation composers.
+              allowHeartbeat={false}
+              onChange={(next) => {
+                if (next === "now") return;
+                setHandoffMode(next);
+                setHandoffOpen(true);
+              }}
+            />
+          }
+          actionsStart={
+            <div className="flex items-center gap-1.5">
+              <AgentPicker
+                agents={agentPickerOptions}
+                selectedSlug={selectedAgentSlug ?? ""}
+                onSelect={(slug) =>
+                  setSelectedAgentSlug(slug === "" ? null : slug)
+                }
+              />
+              <TaskRuntimePicker
+                value={taskRuntime}
+                onChange={setTaskRuntime}
+              />
+            </div>
+          }
+        />
 
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {QUICK_ACTIONS.map((action) => (
+        <div className="flex flex-wrap items-start justify-center content-start gap-1.5 min-h-[8rem]">
+          {chipsReady &&
+            visibleActions.map((action, index) => {
+              const disabled = composer.submitting || quickRunning || daemonDown;
+              return (
+                <button
+                  key={`${chipShuffle}-${action.labelKey}`}
+                  onClick={() => void runQuickAction(action)}
+                  disabled={disabled}
+                  title={action.prompt}
+                  style={{
+                    fontFamily:
+                      "var(--font-heading-theme, var(--font-theme, var(--font-sans)))",
+                    animationDelay: `${Math.min(index, 12) * 50}ms`,
+                    animationFillMode: "backwards",
+                  }}
+                  className={cn(
+                    "rounded-full border border-border/70 bg-card/80 px-3 py-1",
+                    "text-xs text-foreground/85",
+                    "hover:bg-secondary hover:border-border hover:text-foreground",
+                    "transition-colors",
+                    "animate-in fade-in slide-in-from-top-1 duration-200 ease-out",
+                    disabled && "opacity-50 cursor-not-allowed"
+                  )}
+                >
+                  {t(`home:quickActions.${action.labelKey}`, { defaultValue: action.label })}
+                </button>
+              );
+            })}
+          {chipsReady && QUICK_ACTIONS.length > CHIP_DISPLAY_COUNT && (
             <button
-              key={action}
-              onClick={() => submitPrompt(action)}
-              disabled={submitting}
+              type="button"
+              onClick={() => setChipShuffle((n) => n + 1)}
+              disabled={composer.submitting || quickRunning || daemonDown}
+              title={t("home:quickActions.shuffle")}
+              aria-label={t("home:quickActions.shuffle")}
               className={cn(
-                "rounded-full border border-border px-4 py-1.5",
-                "text-sm text-foreground/80",
-                "hover:bg-accent hover:text-accent-foreground",
+                "inline-flex items-center justify-center rounded-full border border-dashed border-border/70 bg-card/40 size-7",
+                "text-muted-foreground hover:bg-secondary hover:border-border hover:text-foreground",
                 "transition-colors",
-                submitting && "opacity-50 cursor-not-allowed"
+                "animate-in fade-in slide-in-from-top-1 duration-200 ease-out",
+                (composer.submitting || quickRunning || daemonDown) &&
+                  "opacity-50 cursor-not-allowed"
               )}
+              style={{
+                animationDelay: `${Math.min(visibleActions.length, 12) * 50}ms`,
+                animationFillMode: "backwards",
+              }}
             >
-              {action}
+              <RefreshCw className="size-3.5" />
             </button>
-          ))}
+          )}
         </div>
       </div>
 
       <div className="w-screen pb-8 pt-4 space-y-3">
-        <h2 className="text-sm font-medium text-muted-foreground text-center">
-          Import a pre-made zero-human team
-        </h2>
-        <InfiniteCarousel />
+        <div className="flex items-center justify-center gap-3">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            {t("home:templates.header")}
+          </h2>
+          <button
+            onClick={() => setSection({ type: "registry" })}
+            className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2 cursor-pointer transition-colors"
+          >
+            {t("home:templates.browseAll")}
+          </button>
+        </div>
+        <RegistryCarousel
+          templates={registryTemplates}
+          onSelect={(template) => {
+            setImportTemplate(template);
+            setImportOpen(true);
+          }}
+        />
       </div>
+
+      <ImportDialog
+        template={importTemplate}
+        open={importOpen}
+        onOpenChange={(open) => {
+          setImportOpen(open);
+          if (!open && !importing) setImportTemplate(null);
+        }}
+        onImportStart={() => setImporting(true)}
+        onImportEnd={() => setImporting(false)}
+      />
+
+      <StartWorkDialog
+        open={handoffOpen}
+        onOpenChange={setHandoffOpen}
+        cabinetPath={ROOT_CABINET_PATH}
+        agents={agents}
+        initialMode={handoffMode}
+        initialPrompt={composer.input}
+        onStarted={(conversationId) => {
+          composer.reset();
+          setSection({
+            type: "task",
+            taskId: conversationId,
+            cabinetPath: ROOT_CABINET_PATH,
+          });
+        }}
+      />
+
+      {importing && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="mt-4 text-sm font-medium text-foreground">
+            Importing {importTemplate?.name || "cabinet"}...
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Downloading agents, jobs, and content from the registry
+          </p>
+          <p className="mt-3 text-[11px] text-muted-foreground/60">
+            Please do not refresh the page while importing
+          </p>
+        </div>
+      )}
     </div>
   );
 }

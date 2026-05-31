@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/i18n/use-locale";
 import {
   Bot,
   Play,
@@ -155,6 +156,7 @@ function PulsePopover({
 }
 
 export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick, onAgentClick }: PulseStripProps) {
+  const { t } = useLocale();
   const goalStatus = metrics.totalGoals === 0 ? "ok" :
     metrics.goalsOnTrack / metrics.totalGoals >= 0.7 ? "ok" :
     metrics.goalsOnTrack / metrics.totalGoals >= 0.4 ? "warning" : "critical";
@@ -272,7 +274,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2 px-3 sm:px-4 py-2">
         <MetricCard
           icon={Bot}
-          label="Agents"
+          label={t("agents:pulseStrip.agents")}
           value={metrics.totalAgents}
           subValue={`${metrics.activeAgents} active`}
           status={
@@ -283,7 +285,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={Play}
-          label="Running"
+          label={t("agents:pulseStrip.running")}
           value={metrics.runningPlays}
           subValue="running now"
           onClick={handleRunningClick}
@@ -291,7 +293,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={Target}
-          label="Goals"
+          label={t("agents:pulseStrip.goals")}
           value={`${metrics.goalsOnTrack}/${metrics.totalGoals}`}
           subValue="goals on track"
           status={goalStatus}
@@ -299,7 +301,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={AlertTriangle}
-          label="Alerts"
+          label={t("agents:pulseStrip.alerts")}
           value={metrics.alerts}
           subValue="pending alerts"
           status={metrics.alerts >= 3 ? "critical" : metrics.alerts > 0 ? "warning" : "ok"}
@@ -307,7 +309,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
         />
         <MetricCard
           icon={DollarSign}
-          label="Cost"
+          label={t("agents:pulseStrip.cost")}
           value={metrics.estimatedCost !== undefined && metrics.estimatedCost > 0
             ? `$${metrics.estimatedCost.toFixed(2)}`
             : "$0"}
@@ -318,13 +320,13 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
 
       {/* Running plays popover */}
       {showRunning && (
-        <PulsePopover title="Running Plays" icon={Play} onClose={() => setShowRunning(false)}>
+        <PulsePopover title={t("agents:pulseStrip.runningPlays")} icon={Play} onClose={() => setShowRunning(false)}>
           {loadingPanel ? (
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground/40" />
             </div>
           ) : runningAgents.length === 0 ? (
-            <p className="text-[12px] text-muted-foreground/50 py-2">No agents currently running.</p>
+            <p className="text-[12px] text-muted-foreground/50 py-2">{t("agents:pulseStrip.noRunning")}</p>
           ) : (
             <div className="space-y-2">
               {runningAgents.map((a) => (
@@ -350,14 +352,14 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
 
       {/* Cost breakdown popover */}
       {showCost && (
-        <PulsePopover title="Cost Breakdown" icon={DollarSign} onClose={() => setShowCost(false)}>
+        <PulsePopover title={t("agents:pulseStrip.costBreakdown")} icon={DollarSign} onClose={() => setShowCost(false)}>
           {loadingPanel ? (
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground/40" />
             </div>
           ) : costBreakdown.length === 0 ? (
             <div className="py-2">
-              <p className="text-[12px] text-muted-foreground/50">No API usage yet.</p>
+              <p className="text-[12px] text-muted-foreground/50">{t("agents:pulseStrip.noUsage")}</p>
               <p className="text-[10px] text-muted-foreground/40 mt-1">
                 Cost is estimated at ~$0.15 per heartbeat/play execution.
               </p>
@@ -392,7 +394,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
                 );
               })}
               <div className="flex items-center justify-between pt-2 border-t border-border/30 text-[12px] font-medium">
-                <span>Total estimated</span>
+                <span>{t("agents:pulseStrip.totalEstimated")}</span>
                 <span className="tabular-nums">${costBreakdown.reduce((s, e) => s + e.cost, 0).toFixed(2)}</span>
               </div>
             </div>
@@ -408,7 +410,7 @@ export function PulseStrip({ metrics, onAlertClick, onGoalClick, onPlaybookClick
             <span>{ticker.emoji} </span>
             <span>{ticker.text}</span>
           </span>
-          <span className="text-[10px] text-muted-foreground/40 shrink-0 tabular-nums ml-auto">
+          <span className="text-[10px] text-muted-foreground/40 shrink-0 tabular-nums ms-auto">
             {ticker.time}
           </span>
         </div>

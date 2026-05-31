@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Temsilci Oluştur",
+      "avatar": "Avatar",
+      "namePlaceholder": "Pazarlama Temsilcisi",
+      "rolePlaceholder": "İçerik Uzmanı",
+      "department": "Departman",
+      "specialist": "Uzman",
+      "departmentLead": "Departman Lideri",
+      "provider": "Sağlayıcı",
+      "runtime": "Çalışma Zamanı",
+      "promptPlaceholder": "Şunun için bir pazarlama temsilcisisiniz…",
+      "addAgentTitle": "Ekibinize bir temsilci ekleyin",
+      "addAgentDescription": "Kütüphaneden bir uzman seçin. Eklendikten sonra adını, rolünü ve talimatlarını düzenleyebilirsiniz.",
+      "createFromScratchTitle": "Sıfırdan oluştur",
+      "createFromScratchDescription": "Kendi kimliği, rolü ve talimatları olan yeni bir aracı oluşturun.",
+      "searchLibraryPlaceholder": "Kütüphanede ara",
+      "errorLoadLibrary": "Temsilci kütüphanesi yüklenemedi.",
+      "errorAddAgent": "Bu temsilci eklenemedi."
+    },
+    "metric": {
+      "name": "Metrik adı",
+      "namePlaceholder": "reddit_yanıtları",
+      "target": "Hedef",
+      "targetPlaceholder": "yanıt/hafta",
+      "floor": "Minimum",
+      "period": "Dönem",
+      "daily": "Günlük",
+      "weekly": "Haftalık",
+      "monthly": "Aylık"
+    },
+    "workspace": {
+      "promise": "Vaat",
+      "orgChart": "Organizasyon şeması",
+      "jobDetails": "İş Detayları",
+      "heartbeat": "Nabız",
+      "workspace": "Çalışma Alanı",
+      "editAgent": "Temsilciyi Düzenle",
+      "instructions": "Talimatlar",
+      "instructionsPlaceholder": "Bu temsilcinin talimatları için markdown yazın.",
+      "newAgent": "Yeni Temsilci",
+      "routines": "Rutinler",
+      "browseLibrary": "Temsilci Kütüphanesine Göz At",
+      "editYourOwn": "Kendi temsilcinizi düzenleyin",
+      "editorPlaceholder": "Düzenleyici",
+      "productAgentPlaceholder": "Ürün yazım temsilcisi",
+      "instructionsBodyPlaceholder": "Bu temsilcinin Cabinet ve KB içinde nasıl çalışması gerektiğini tanımlayın.",
+      "perAgentPrompts": "Temsilci başına yinelenen istemler",
+      "runNow": "Şimdi çalıştır",
+      "delete": "Sil",
+      "viewOrgChart": "Bu ekibi organizasyon şeması olarak görüntüle (tam ekran açılır)",
+      "hideIntro": "Bu tanıtımı gizle",
+      "sharedAcrossCabinets": "Tüm cabinet'ler arasında paylaşıldı",
+      "expandSchedule": "Programı genişlet",
+      "heartbeatsOnAgentPage": "Nabızlar her temsilcinin sayfasında yapılandırılır",
+      "exitFullscreen": "Tam ekrandan çık",
+      "refresh": "Yenile",
+      "editHeartbeat": "Nabız düzenle",
+      "newRoutine": "Yeni Rutin",
+      "configureHeartbeat": "Nabız yapılandır",
+      "openOrgChart": "Organizasyon şemasını aç",
+      "pickAnAgent": "Bir aracı seç",
+      "dismiss": "Kapat",
+      "lockedHeartbeatTip": "Bu aracı durduruldu. Nabzı etkinleştirmek için Aracılar sekmesinden başlatın.",
+      "lockedRoutineTip": "Bu aracı durduruldu. Rutinlerini etkinleştirmek için Aracılar sekmesinden başlatın.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Kapatmak için tıklayın.",
+      "loadError": "Bu aracı yüklenemedi.",
+      "retry": "Tekrar Dene",
+      "color": "Renk",
+      "customColor": "Özel renk",
+      "preset": "Ön Ayar",
+      "editIconColor": "Simgeyi, rengi veya avatarı düzenle",
+      "sharedAcrossCabinetsHint": "Tüm kabinlerde paylaşılır — düzenlemeler her yerde geçerlidir",
+      "inbox": "Gelen Kutusu",
+      "conversations": "Sohbetler",
+      "recentWork": "Son Çalışmalar",
+      "schedule": "Program",
+      "heartbeat": "Nabız",
+      "runNow": "Şimdi Çalıştır",
+      "editRoutine": "Rutin düzenle",
+      "addRoutine": "Rutin ekle",
+      "details": "Detaylar",
+      "editingGlobalAgent": "Küresel aracı düzenleniyor",
+      "displayName": "Görünen ad",
+      "role": "Rol",
+      "department": "Departman",
+      "type": "Tür",
+      "workspace": "Çalışma Alanı",
+      "tags": "Etiketler",
+      "openSkillsSettings": "Ayarlar → Beceriler'i aç",
+      "notInCatalog": "Katalogda bulunamadı — kaldırmak için tıklayın",
+      "recommendedForRole": "Bu rol için önerilir — eklemek için tıklayın",
+      "promise": "Vaat",
+      "saved": "Kaydedildi",
+      "iconLabel": "Simge"
+    },
+    "missionControl": {
+      "gallery": "Galeri",
+      "newAgent": "Yeni Aracı",
+      "allGoals": "Tüm Hedefler",
+      "noGoals": "Hiçbir aracının hedefi yapılandırılmamış.",
+      "fromScratch": "Sıfırdan",
+      "describeIt": "Açıkla",
+      "import": "İçe Aktar",
+      "closeDialog": "İletişim kutusunu kapat",
+      "describeYourAgent": "Aracınızı Tanımlayın",
+      "describePlaceholder": "Hacker News'ta GPU ile ilgili gönderileri izleyen ve blog yazılarımıza bağlantı veren düşünceli yorumlar yazan bir ajana ihtiyacım var…"
+    },
+    "pulseStrip": {
+      "agents": "Ajanlar",
+      "running": "Çalışıyor",
+      "goals": "Hedefler",
+      "alerts": "Uyarılar",
+      "cost": "Maliyet",
+      "runningPlays": "Çalışan Rutinler",
+      "noRunning": "Şu anda çalışan ajan yok.",
+      "costBreakdown": "Maliyet Dağılımı",
+      "noUsage": "Henüz API kullanımı yok.",
+      "totalEstimated": "Toplam tahmini"
+    },
+    "routine": {
+      "runNowTitle": "Bu rutini şimdi çalıştır (tek seferlik, programının dışında)",
+      "deletePermanently": "Bu rutini kalıcı olarak sil",
+      "promptPlaceholder": "Bu rutin ne yapmalı? örn. Dünkü etkinliği özetle…",
+      "jobName": "İş adı",
+      "jobNamePlaceholder": "Haftalık strateji özeti",
+      "jobId": "İş kimliği",
+      "schedule": "Program",
+      "model": "Model",
+      "enabled": "Etkin"
+    }
+  },
+  "registry": {
+    "loading": "Kayıt defterinden yükleniyor…",
+    "readyToImport": "Bu cabinet'i içe aktarmaya hazır mısınız?",
+    "organization": "Kuruluş",
+    "agents": "Ajanlar",
+    "scheduledJobs": "Planlanmış İşler",
+    "about": "Hakkında",
+    "cabinetName": "Cabinet adı",
+    "cabinetNamePlaceholder": "Cabinet adı…",
+    "searchPlaceholder": "Cabinet'lerde ara…",
+    "noResults": "Aramanızla eşleşen cabinet yok."
+  },
+  "tasksBoard": {
+    "title": "Görevler",
+    "manualTooltip": "Manuel — doğrudan başlattığınız görevler",
+    "jobsTooltip": "İşler — planlanmış yinelenen çalıştırmalar",
+    "heartbeatTooltip": "Kalp Atışı — kendi kendini yöneten ajan çalıştırmaları",
+    "clearSelection": "Seçimi temizle (Esc)",
+    "createTask": "Yeni görev oluştur",
+    "moreNewTypes": "Daha fazla yeni öğe türü",
+    "newTask": "Yeni Görev",
+    "newRoutine": "Yeni Rutin",
+    "viewKanban": "Kanban",
+    "viewList": "Liste",
+    "viewSchedule": "Takvim",
+    "viewKanbanHint": "Pano görünümü — Gelen Kutusu / Sıra Sizde / Çalışıyor / Yeni Bitti / Arşiv olarak gruplandırılmış görevler",
+    "viewListHint": "Her görevin düz listesi, en yeni etkinlik en başta",
+    "viewScheduleHint": "Planlanmış rutinlerin ve yaklaşan çalıştırmaların takvimi",
+    "filterByAgent": "Ajan'a göre filtrele: {{name}}",
+    "noToDeleteTitle": "Silinecek görev yok",
+    "noToDeleteFiltered": "{{filter}} ile eşleşen bir şey yok. Filtreyi temizleyin, başka bir görünüm seçin veya yeni bir görev oluşturun.",
+    "noToDeleteEmpty": "Panoda henüz görev yok. + Yeni Görev düğmesiyle bir tane oluşturun.",
+    "gotIt": "Anladım",
+    "deleteCountTitle": "{{count}} görevi sil?",
+    "deleteCountTitlePlural": "{{count}} görevi sil?",
+    "deleteBody": "Bu işlem, şu anda gösterilen her görev için konuşma meta verilerini, dökümleri ve yapıtları kalıcı olarak kaldırır. Bu işlem geri alınamaz.",
+    "deleteBodyFiltered": "Bu işlem, etkin filtreler tarafından şu anda gösterilen her görev için konuşma meta verilerini, dökümleri ve yapıtları kalıcı olarak kaldırır. Bu işlem geri alınamaz.",
+    "deleteConfirm": "{{count}} Sil",
+    "deleteAllShown": "Gösterilen {{count}} görevin tümünü sil",
+    "deleteAllShownPlural": "Gösterilen {{count}} görevin tümünü sil",
+    "nothingToDelete": "Bu görünümde silinecek bir şey yok",
+    "deleteAllAria": "Gösterilen tüm görevleri sil",
+    "noTasksAria": "Bu görünümde görev yok",
+    "filterTrigger": "{{trigger}} filtresi",
+    "filterTriggerAndAgent": "{{trigger}} filtresi ve seçilen aracı",
+    "filterSelectedAgent": "seçilen aracı filtresi"
+  },
+  "runtime": {
+    "noProvider": "Sağlayıcı seçilmedi",
+    "modeAriaLabel": "Çalışma zamanı modu",
+    "nativeTranscriptTitle": "Cabinet'in yerel dökümü — yapılandırılmış JSON akışı, yapıtlar, özet, tam kullanıcı deneyimi",
+    "ptyWarningTitle": "Bir OpenAI API anahtarı gerektirir. ChatGPT planlı Codex hesaplarında mevcut değildir — bu modeli seçmek 'model not supported when using Codex with a ChatGPT account' hatasıyla başarısız olacaktır.",
+    "native": "Yerel",
+    "terminal": "Terminal",
+    "terminalTitle": "CLI'yi canlı bir PTY terminal oturumunda çalıştırın (deneysel hacker modu)",
+    "providers": "Sağlayıcılar",
+    "modelCol": "Model",
+    "auto": "Otomatik",
+    "ready": "Hazır",
+    "loginRequired": "Giriş yap",
+    "notInstalled": "Yüklü değil",
+    "notAvailable": "Mevcut değil",
+    "defaultLabel": "Varsayılan",
+    "noProvidersAvailable": "Mevcut sağlayıcı yok",
+    "appDefault": "Uygulama varsayılanı",
+    "selectAppDefault": "Uygulama varsayılanını seç",
+    "defaultModel": "Varsayılan model",
+    "selectedModelLabel": "Seçilen Model",
+    "loadingProviders": "Sağlayıcılar yükleniyor...",
+    "loadingAvailableProviders": "Mevcut sağlayıcılar yükleniyor…",
+    "triggerSummary": "Model: {{model}} · Çaba: {{effort}} · via {{provider}}",
+    "triggerSystemDefault": "Görev modeli — sistem varsayılanı kullanılıyor (seçmek için tıklayın)",
+    "clickToLaunch": "{{name}} uygulamasını bir PTY terminalinde başlatmak için tıklayın"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Aracılar tam erişimle çalışır.",
+    "backUp": "Verilerinizi düzenli olarak yedekleyin.",
+    "betaSoftware": "Beta yazılımı. Hatalar oluşabilir.",
+    "iAccept": "Okudum ve kabul ediyorum"
+  },
+  "skillAdd": {
+    "addSkill": "Yetenek ekle",
+    "auditTooltip": "skills.sh'in harici denetimlerinden elde edilen sonuç (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Bu yetenek için skills.sh denetim verileri mevcut değil",
+    "preview": "Önizleme"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Yapay Zeka ekibi",
+      "aiTeams": "Yapay Zeka ekipleri",
+      "routines": "Rutinler"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Aracı yapılandırmasını düzenle",
+    "exportBundle": "Aracı paketini dışa aktar",
+    "goals": "Hedefler",
+    "workspace": "Çalışma Alanı"
+  },
+  "scheduleRow": {
+    "deleteQ": "Silinsin mi?",
+    "confirmDelete": "Silmeyi onayla",
+    "cancelDelete": "Silmeyi iptal et",
+    "runNow": "Şimdi çalıştır"
+  },
+  "apiKeys": {
+    "addKey": "Anahtar ekle",
+    "edit": "Düzenle",
+    "remove": "Kaldır",
+    "newApiKey": "Yeni API anahtarı"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet Güncellemeleri",
+    "dataDirectory": "Veri dizini",
+    "backups": "Yedeklemeler"
+  },
+  "kanban": {
+    "stopAllInLane": "Bu şeritteki tüm çalışan görevleri durdur",
+    "restartAllInLane": "Bu şeritteki tüm görevleri yeniden başlat",
+    "newTask": "Yeni görev",
+    "collapseColumn": "Sütunu daralt",
+    "kill": "Durdur",
+    "laneInbox": "Gelen Kutusu",
+    "laneInboxHint": "Taslak — başlamanızı bekliyor",
+    "laneNeeds": "Sıra sizde",
+    "laneNeedsHint": "Aracı bir soru sordu veya onay bekliyor",
+    "laneRunning": "Çalışıyor",
+    "laneRunningHint": "Şu anda çalışan aracılar",
+    "laneDone": "Az Önce Bitti",
+    "laneDoneHint": "Son bir saatte tamamlandı",
+    "laneArchive": "Arşivle",
+    "laneArchiveHint": "Eski ve onaylanmış"
+  },
+  "terminalTabs": {
+    "newTab": "Yeni terminal sekmesi",
+    "closeTab": "Terminali kapat"
+  },
+  "newTaskButton": {
+    "createNew": "Yeni oluştur…",
+    "newTask": "Yeni görev",
+    "newRoutine": "Yeni rutin"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Haftalık strateji özeti",
+    "schedule": "Program",
+    "jobId": "İş kimliği",
+    "enabled": "Etkin — bu programa göre çalıştır"
+  },
+  "editIdentity": {
+    "title": "Aracıyı düzenle",
+    "displayName": "Görünen ad",
+    "color": "Renk",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Tüm aracıları başlat",
+    "startAllSubtitle": "Kalp atışlarını ve cron işlerini etkinleştir",
+    "stopAll": "Tüm aracıları durdur",
+    "stopAllSubtitle": "Kalp atışlarını ve cron işlerini duraklat"
+  },
+  "skillLibrary": {
+    "readOnly": "Salt okunur — Cabinet'ten düzenlenemez",
+    "noUpstream": "Doğrudan bu kabinede yazıldı — yukarı akış git kaynağı kaydedilmedi",
+    "executableWarning": "Paket yürütülebilir betikler içerir — onaylamadan önce inceleyin",
+    "skills": "Yetenekler",
+    "imported": "İçe aktarıldı",
+    "importing": "İçe aktarılıyor…",
+    "import": "İçe Aktar"
+  },
+  "embedPopover": {
+    "placeholder": "Bir bağlantı yapıştırın (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify veya herhangi bir URL)",
+    "notValidUrl": "Geçerli bir URL değil",
+    "anyUrlWorks": "Herhangi bir herkese açık URL çalışır.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Herhangi bir iframe URL'si"
+  },
+  "rowActions": {
+    "stop": "Durdur",
+    "stopHint": "Bu çalıştırmayı şimdi durdur (SIGTERM gönderir)",
+    "restart": "Yeniden Başlat",
+    "restartHint": "Orijinal istemden tekrar çalıştır",
+    "runHint": "Bu görevi şimdi başlat"
+  },
+  "schedulesPanel": {
+    "title": "Zamanlanmış işler",
+    "noJobs": "Henüz kabine işi yapılandırılmadı.",
+    "heartbeats": "Kalp Atışları",
+    "noHeartbeats": "Henüz kalp atışı yapılandırılmadı."
+  },
+  "scheduleTab": {
+    "explainer1": "Ekibinizin bu hafta yaptığı her şey tek bir takvimde. Pembe bir kalp atışı, yeşil bir rutin. Düzenlemek için herhangi bir kutucuğa tıklayın.",
+    "explainer2": "Bu sekmeyi çakışmaları tespit etmek, sakin dönemleri bulmak veya ekibin ne kadar meşgul olduğunu bir bakışta görmek için kullanın.",
+    "aboutAria": "Takvim hakkında",
+    "modeDay": "Gün",
+    "modeWeek": "Hafta",
+    "modeMonth": "Ay"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Uzaklaştır",
+    "zoomIn": "Yakınlaştır",
+    "resetView": "Görünümü Sıfırla",
+    "syntaxError": "Diyagram sözdizimi hatası"
+  },
+  "helpPage": {
+    "keyboard": "Klavye",
+    "skills": "Yetenekler",
+    "apiKeys": "API anahtarları",
+    "mcpServers": "MCP sunucuları",
+    "title": "Yardım",
+    "howTo": "Nasıl Yapılır",
+    "heading": "Cabinet'in nasıl çalıştığını öğrenin",
+    "subheading": "Cabinet'ten en iyi şekilde yararlanmak için kısa demolar, rehberler ve önizlemeler.",
+    "ctaWatchTour": "Tur'u izle",
+    "ctaWatchDemo": "Demoyu izle",
+    "ctaCheatSheet": "Yardım sayfasını aç",
+    "ctaComingSoon": "Çok yakında",
+    "discordHeading": "Aradığınızı bulamadınız mı?",
+    "discordSubheading": "Discord'dayız — gelin merhaba deyin, sorular sorun, ne geliştirdiğinizi paylaşın.",
+    "discordCta": "Discord'a katılın",
+    "items": {
+      "tour": {
+        "title": "<accent>Cabinet</accent>'inizle tanışın.",
+        "description": "Yapay zeka ekibiniz. Bilgi tabanınız. Tek bir yerde."
+      },
+      "agents": {
+        "title": "Sizin <accent>yapay zeka ekibiniz</accent>.",
+        "description": "Liderleri ve uzmanları işe alın. Onları departmanlara ayırın. Birbirlerine iş atamalarına izin verin."
+      },
+      "tasks": {
+        "title": "<accent>Görev panosu</accent>.",
+        "description": "Kanban, liste ve zamanlama görünümleri. Ajana veya duruma göre filtreleyin. Görev başına bir çalışma zamanı seçin."
+      },
+      "knowledge": {
+        "title": "Sizin <accent>bilgi tabanınız</accent>.",
+        "description": "Markdown, CSV, PDF, kod, not defterleri, mermaid, görseller, ses — her şey satır içi işlenir. Verileriniz makinenizde kalır; sizin, bizim değil."
+      },
+      "cabinets": {
+        "title": "<accent>Yapay zeka ekiplerinden</accent> oluşan bir ekip.",
+        "description": "Cabinet'ler Cabinet'lerin içine yerleşir. Her biri kendi verileri, ajanları ve görünürlük kapsamı olan kendi yapay zeka ekibidir — ve ağaç yapısında yukarı ve aşağı iş birliği yapabilirler."
+      },
+      "routines": {
+        "title": "<accent>Rutinler</accent> ve zamanlamalar.",
+        "description": "Bir görevi her gün sabah 9'da, haftalık olarak Cuma günü veya gelecek Pazartesi bir kez çalıştırın. Cron, takvim veya doğal dil."
+      },
+      "conversations": {
+        "title": "Sohbetler ve <accent>onaylar</accent>.",
+        "description": "Ajanlar eylemler önerir — bir görev başlat, bir iş planla — ve herhangi bir şey çalışmadan önce siz onaylarsınız."
+      },
+      "themes": {
+        "title": "<accent>Sizin</accent> yapın.",
+        "description": "Özenle seçilmiş açık ve koyu temalar arasından seçim yapın — Paper, Slate, Claude, Ink ve daha fazlası."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — kendi yapay zekanızı getirin.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — halihazırda ödeme yaptığınız sağlayıcıları getirin. Bir varsayılan seçin veya görev başına geçersiz kılın."
+      },
+      "shortcuts": {
+        "title": "<accent>Klavye</accent> kısayolları.",
+        "description": "Her Cabinet kısayolu tek bir aranabilir kartta. Yeniden açmak için herhangi bir yerden ? tuşuna basın. Ada veya tuşa göre filtreleyin — gezinme, düzenleme, görevler, paneller ve eğik çizgi komutları için geçerlidir."
+      },
+      "skills": {
+        "title": "Ajanlarınız için <accent>Beceriler</accent>.",
+        "description": "Yüklenebilir Ajan Becerileri — modelin bir görev için kullandığı kılavuzlar. GitHub'dan veya skills.sh'den yükleyin, bir kişiliğe ekleyin veya tek bir çalıştırma için herhangi bir düzenleyicide @-bahsedin."
+      },
+      "apiKeysItem": {
+        "title": "Araçlarınız için <accent>API anahtarları</accent>.",
+        "description": "OpenAI, Anthropic veya GitHub hesabınızı bir kez bağlayın — Cabinet'teki her ajan ve beceri onu kullanacaktır. Kendi faturalarınızı ödersiniz, kendi kotanızı kullanırsınız, aracı yok."
+      },
+      "integrations": {
+        "title": "<accent>MCP sunucuları</accent> ve entegrasyonlar.",
+        "description": "MCP sunucuları, Slack, Telegram, Gmail ve Takvim OAuth — bir kez bağlanın ve Cabinet tokenları yönetir. Çok yakında."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Klavye kısayolları",
+    "filterPlaceholder": "Filtrele…",
+    "close": "Kapat"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Canlı Terminal",
+    "runningHeartbeat": "Nabız çalışıyor…",
+    "memory": "Bellek",
+    "recentActivity": "Son Etkinlik"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Avatarınız",
+    "preset": "Ön Ayar",
+    "useInitials": "Baş harfleri yedek olarak kullan",
+    "custom": "Özel"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Yerel uygulama kodu değişiklikleri algılandı"
+  },
+  "logsPanel": {
+    "classifiedError": "Sınıflandırılmış hata",
+    "session": "Oturum",
+    "noEvents": "Henüz etkinlik yok.",
+    "noTranscript": "Henüz döküm yok."
+  },
+  "conversationResult": {
+    "prompt": "İstem",
+    "result": "Sonuç",
+    "noSummary": "Özet yakalanmadı."
+  },
+  "scheduleRowPlus": {
+    "delete": "Sil"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Dosya ekle"
+  },
+  "demos": {
+    "aiTeam": "Yapay zeka ekibi",
+    "specialist": "Uzman",
+    "legal": "Hukuk",
+    "global": "Küresel",
+    "editor": "Editör",
+    "slashMenu": "Eğik çizgi menüsü"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · VERİ",
+    "headlineSentence": "<accent>Tek</accent> doğruluk kaynağınız.",
+    "paragraphPrefix": "Markdown, PDF'ler, e-tablolar, slaytlar, görseller, videolar, sesler, bağlantılı depolar, gömülü web uygulamaları, Google Dokümanlar. Bunlardan herhangi birinden bahsetmek için ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Her şey için tek bir yer — böylece siz ve yapay zeka ekibiniz ",
+    "sameFiles": "aynı dosyalar",
+    "secondParagraphSuffix": ", kopyaların kopyaları değil.",
+    "mockTitle": "Jane'nın Cabinet'i"
+  },
+  "slideData": {
+    "thailandRootLabel": "Tayland Seyahati",
+    "thailandCaption": "Tüm dosyalarınızı tek bir yerde görüntüleyin.",
+    "videoTitle": "Gece pazarı.mp4",
+    "taxRootLabel": "Vergi 2026",
+    "taxCaption": "Vergi 2026 — cabinet'inize doğrudan gömülü canlı bir hesap makinesi web uygulaması.",
+    "calculatorTitle": "Hesap Makinesi",
+    "liveAppBadge": "Canlı uygulama",
+    "taxEstimateLabel": "2026 vergi tahmini",
+    "income": "Gelir",
+    "deductions": "Kesintiler",
+    "taxBracket": "Vergi dilimi",
+    "estimatedTax": "Tahmini vergi",
+    "healthRootLabel": "Sağlık",
+    "healthCaption": "Vitaminler ve laboratuvarlar — bir sayfa gibi hissettiren bir e-tablo.",
+    "csvTitle": "Günlük vitaminler.csv",
+    "csvColVitamin": "Vitamin",
+    "csvColDose": "Doz",
+    "csvColTime": "Zaman",
+    "csvColDone": "Bitti",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Kod tabanları — herhangi bir Git deposunu bağlayın, aracılar tarafından aranabilir.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · GÖREVLER",
+    "typedCommand": "Her biri bir şarkı yazan 10 görev çalıştırın, @Songs/ konumuna kaydedin",
+    "headlineSentence": "<accent>Başlamaya</accent> hazır mısınız?",
+    "paragraphPrefix": "Bir görev yazın. Bir tane çalıştırın, on tane çalıştırın, sonsuza dek planlayın. Sayfalardan bahsetmek için ",
+    "paragraphSuffix": ", çıktıyı istediğiniz yere kaydedin. Artık yönetmen sizsiniz.",
+    "savingFolder": "Şarkılar/"
+  },
+  "slideAgents": {
+    "persona": "Kişilik",
+    "heartbeat": "Nabız",
+    "jobs": "Görevler",
+    "aiTeam": "YZ ekibi",
+    "otherWriter": "Yazar",
+    "otherOrganizer": "Düzenleyici",
+    "idle": "boşta",
+    "researchAnalyst": "Araştırma Analisti",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "canlı",
+    "personaBody": "\"Titiz analist. Kaynak gösterir. Çelişkili iddiaları işaretler.\"",
+    "heartbeatBody": "@Pazar Araştırması'nı her 15 dakikada bir tarar",
+    "jobsBody": "Pzt 9:00 · Haftalık rakip özeti",
+    "slideNum": "02 · AJANLAR",
+    "paragraphPrefix": "Her ajanın bir ",
+    "personaWord": "kişiliği",
+    "paragraphMiddle": ", kendi ",
+    "scheduleWord": "programı",
+    "paragraphMiddle2": " ve bir ",
+    "memoryWord": "hafızası",
+    "paragraphSuffix": ". YZ ajanlarınız işi 7/24 halleder. Siz insan olun — gerisini onlar halleder.",
+    "aiTeamSentence": "Sizin <accent>YZ ekibiniz</accent>."
+  },
+  "startWork": {
+    "close": "Kapat",
+    "selectAgent": "Ajan seç",
+    "titleNow": "Ne yapılması gerekiyor?",
+    "titleRecurring": "Tekrarlayan bir rutin oluştur",
+    "titleHeartbeat": "Bu ajanı bir programa göre uyandır",
+    "titleEdit": "Görevi düzenle",
+    "submitStart": "Başlat",
+    "submitAddInbox": "Gelen Kutusuna Ekle",
+    "submitSaveEdit": "Değişiklikleri kaydet",
+    "submitCreateRoutine": "Rutin oluştur",
+    "submitSaveHeartbeat": "Nabzı kaydet",
+    "saving": "Kaydediliyor…",
+    "current": "mevcut",
+    "modeInboxLabel": "→ Gelen Kutusu",
+    "modeInboxHint": "Gelen Kutusuna kaydet — hazır olduğunuzda başlatın",
+    "modeNowLabel": "Şimdi çalıştır",
+    "modeNowHint": "Bu konuşmayı hemen başlat",
+    "modeRecurringLabel": "Bir programa göre",
+    "modeRecurringHint": "Bu istemi bir programa göre çalıştır",
+    "modeHeartbeatLabel": "Nabız",
+    "modeHeartbeatHint": "Ajanı kendi ritmine göre uyandır",
+    "agentFallback": "Ajan",
+    "failedToStart": "Başlatılamadı",
+    "failedToSave": "Değişiklikler kaydedilemedi",
+    "failedToSaveHeartbeat": "Nabız kaydedilemedi"
+  },
+  "googleDoc": {
+    "noUrl": "Google URL'si ayarlanmadı",
+    "anyoneWithLink": "Bağlantıya sahip herkes",
+    "publishedToWeb": "Web'de yayınlandı"
+  },
+  "feedback": {
+    "close": "Kapat",
+    "rolePlaceholder": "örn. bağımsız geliştirici, SaaS'ta PM, tasarım öğrencisi, hobi sahibi…",
+    "joinDiscord": "Discord'a Katıl",
+    "header": "Jane'dan kısa bir kontrol",
+    "howGoing": "Şu ana kadar nasıl gidiyor?",
+    "starsCount": "{{n}} yıldız",
+    "starsCountPlural": "{{n}} yıldız",
+    "likeCabinet": "Cabinet'i beğendiniz mi?",
+    "starTooltipUnknown": "Cabinet'i GitHub'da yıldızlayın — eğer sizin için faydalıysa, bir yıldız gerçekten çok yardımcı olur",
+    "starTooltipWithCount": "{{count}} GitHub yıldızı — sizinkini eklemek için tıklayın",
+    "starLabel": "Yıldızla",
+    "backgroundLabel": "Geçmişiniz nedir?",
+    "optional": "(isteğe bağlı)",
+    "discordCta": "Doğrudan konuşmak veya diğer Cabinet üyeleriyle takılmak ister misiniz?",
+    "maybeLater": "Belki daha sonra",
+    "send": "Gönder",
+    "thanksTitle": "Teşekkürler!",
+    "thanksBody": "Geri bildiriminiz, bir sonraki adımda neyin geliştirileceğini şekillendirir.",
+    "copy2Lead": "Cabinet'i birkaç kez açtınız. Teşekkür ederiz! Cabinet açık kaynaklı ve henüz başlangıç aşamasında, bu yüzden burada söyledikleriniz bir sonraki adımda neyin geliştirileceğini gerçekten değiştirir.",
+    "copy2Q1": "Bugün Cabinet'te ne yapmaya çalışıyordunuz?",
+    "copy2Q1Hint": "Tek cümle yeterli. Ne yapmak için açtığınızı belirtin, ne yapmasını dilediğinizi değil.",
+    "copy2Q2": "En son bunu yapmak istediğinizde, Cabinet yerine ne kullandınız?",
+    "copy2Q2Hint": "Herhangi bir araç, uygulama veya belge, hatta kalem ve kağıt bile.",
+    "copy6Lead": "Geri döndünüz ve bu en önemli sinyal. Pürüzlü kenarları unutmadan önce duymak istiyorum.",
+    "copy6Q1": "Bugün Cabinet'te ne yapmaya çalışıyordunuz?",
+    "copy6Q1Hint": "Tek cümle yeterli.",
+    "copy6Q2": "Bu hafta Cabinet'i kullanmayı neredeyse bırakmanıza neden olan tek şey neydi?",
+    "copy6Q2Hint": "Sizi en çok rahatsız eden şey. Spesifik olun. \"X kafa karıştırıcıydı\" ifadesi \"kullanıcı deneyimi\"nden daha iyidir."
+  },
+  "apiKeysSection": {
+    "cancel": "İptal",
+    "pasteHere": "buraya yapıştır",
+    "pasteNewValue": "yeni değeri yapıştır"
+  },
+  "storageBackend": {
+    "title": "Depolama arka ucu",
+    "migrationFailed": "Taşıma başarısız oldu"
+  },
+  "linkRepo": {
+    "title": "Bilgiyi Yükle",
+    "intro": "Cabinet'i makinenizdeki herhangi bir klasöre yönlendirin. Cabinet, klasörün içeriğinin Bilgi Tabanınızda görünmesi ve yapay zeka aracılarının bağlam olarak kullanabilmesi için bir sembolik bağlantı oluşturur. Orijinal klasör asla taşınmaz veya kopyalanmaz.",
+    "symlinkNote": "Bu, bir sembolik bağlantı oluşturur — dosyalar yerinde kalır.",
+    "autoDetectPlaceholder": "Git uzak deposundan otomatik algıla (isteğe bağlı)",
+    "shortSummaryPlaceholder": "Aracılar için isteğe bağlı kısa özet"
+  },
+  "recentTasks": {
+    "ptyMode": "Terminal (PTY) modu",
+    "revealOlder": "Daha eski görevleri göster",
+    "showOlder": "Eskileri göster"
+  },
+  "treeNode": {
+    "openCabinet": "Cabinet görünümünü aç",
+    "pageTitlePlaceholder": "Sayfa başlığı…",
+    "rename": "Yeniden Adlandır",
+    "openBadge": "Aç",
+    "sectionAdd": "Bu öğeye ekle",
+    "sectionThis": "Bu öğe",
+    "addSubPage": "Alt Sayfa Ekle",
+    "newFolder": "Yeni Klasör",
+    "createFile": "Yeni Dosya Oluştur…",
+    "connectKnowledge": "Bilgi Bağla…",
+    "symlinkTag": "Sembolik Bağlantı",
+    "importFile": "Dosya İçe Aktar…",
+    "importFolder": "Klasör İçe Aktar…",
+    "createCabinet": "Burada Cabinet Oluştur",
+    "editSymlink": "Sembolik Bağlantıyı Düzenle…",
+    "settings": "Ayarlar…",
+    "moveTo": "Taşı…",
+    "copyRelativePath": "Göreceli Yolu Kopyala",
+    "copyFullPath": "Tam Yolu Kopyala",
+    "openInFinder": "Finder'da Aç",
+    "delete": "Sil",
+    "unlink": "Bağlantıyı Kaldır",
+    "folderNamePlaceholder": "Klasör adı",
+    "creating": "Oluşturuluyor…",
+    "create": "Oluştur",
+    "addSubPageTitle": "“{{name}}” öğesine Alt Sayfa Ekle",
+    "newFolderTitle": "“{{name}}” içinde Yeni Klasör"
+  },
+  "newFile": {
+    "title": "Yeni Dosya Oluştur",
+    "subtitle": "Bir dosya türü seçin. Hazır olduğunda Cabinet, dosyayı düzenleyicide açar.",
+    "groupNative": "Cabinet'te Düzenle",
+    "groupOffice": "Office (boş — harici olarak düzenle)",
+    "groupGoogle": "Google (bağlı)",
+    "namePlaceholder": "Dosya adı",
+    "create": "Oluştur",
+    "creating": "Oluşturuluyor…",
+    "googleUrlLabel": "Google URL'si (isteğe bağlı)",
+    "googleUrlPlaceholder": "Paylaşılabilir bir Google bağlantısı yapıştırın veya daha sonra eklemek için boş bırakın",
+    "officeNote": "Cabinet, Office dosyalarını salt okunur gösterir. Masaüstü uygulamasında düzenlemek için “Finder'da Aç”ı kullanın.",
+    "types": {
+      "markdown": "Markdown Sayfası",
+      "markdownDesc": "Cabinet'te düzenlenebilir zengin metin notları",
+      "code": "Kod Dosyası",
+      "codeDesc": "Herhangi bir kaynak/metin dosyası — uzantıyı seçin",
+      "mermaid": "Mermaid Diyagramı",
+      "mermaidDesc": "Kod olarak akış şemaları ve diyagramlar",
+      "csv": "CSV Tablosu",
+      "csvDesc": "Virgülle ayrılmış e-tablo verileri",
+      "docx": "Word Belgesi",
+      "docxDesc": "Boş .docx",
+      "xlsx": "Excel E-Tablosu",
+      "xlsxDesc": "Boş .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Boş .pptx",
+      "gdoc": "Google Doküman",
+      "gdocDesc": "Bir Google Dokümanı yerleştir",
+      "gsheet": "Google E-Tablo",
+      "gsheetDesc": "Bir Google E-Tablosu yerleştir",
+      "gslides": "Google Slaytlar",
+      "gslidesDesc": "Google Slaytlar'ı yerleştir"
+    },
+    "codeExtLabel": "Uzantı",
+    "googleTag": "Google",
+    "extHint": "Sadece adı yazın — Cabinet, {{ext}} uzantısını ekler.",
+    "createFailed": "Dosya oluşturulamadı."
+  },
+  "fileSettings": {
+    "googleTitle": "Google Yerleştirme Ayarları",
+    "googleKindLabel": "Tür",
+    "googleUrlLabel": "Google URL'si",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Yerleştirmenin yüklenebilmesi için dokümanın paylaşım ayarı “Bağlantıya sahip herkes” veya “Web'de yayınlandı” olmalıdır.",
+    "openLink": "Google'da Aç",
+    "googleKinds": {
+      "docs": "Dokümanlar",
+      "sheets": "E-Tablolar",
+      "slides": "Slaytlar",
+      "forms": "Formlar",
+      "drive": "Drive"
+    },
+    "appTitle": "Web Uygulaması Ayarları",
+    "modeLabel": "Bu nasıl açılmalı?",
+    "modeWebsite": "Sayfa görünümü",
+    "modeWebsiteDesc": "Kenar çubuğu ve yapay zeka paneli görünür şekilde satır içi açılır.",
+    "modeApp": "Web Uygulaması",
+    "modeAppDesc": "Tam ekran açılır; kenar çubuğu ve yapay zeka paneli otomatik olarak daralır.",
+    "convertNote": "Bu, klasördeki .app işaretleyici dosyasını açıp kapatır. Dosyalarınız değişmez.",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor…",
+    "cancel": "İptal",
+    "saveFailed": "Ayarlar kaydedilemedi."
+  },
+  "editSymlink": {
+    "title": "Sembolik Bağlantıyı Düzenle",
+    "intro": "Bu Bilgi Tabanı girişi, makinenizin başka bir yerindeki bir klasöre sembolik bir bağlantıdır.",
+    "kbPathLabel": "Bilgi Tabanı yolu",
+    "targetLabel": "Bağlantı hedefi (disk üzerinde)",
+    "brokenWarning": "Hedef klasör artık mevcut değil. Aşağıda geçerli bir klasöre yeniden yönlendirin.",
+    "repointLabel": "Yeni bir klasöre yönlendir",
+    "repointHint": "Cabinet, bağlantıyı burayı gösterecek şekilde değiştirecek. Dosyalar asla taşınmaz.",
+    "browse": "Gözat",
+    "nameLabel": "Ad",
+    "descriptionLabel": "Açıklama",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor…",
+    "copyTarget": "Hedef yolu kopyala",
+    "saveFailed": "Sembolik bağlantı güncellenemedi."
+  },
+  "importFolder": {
+    "importing": "Klasör içe aktarılıyor…",
+    "failed": "Klasör içe aktarma başarısız oldu: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Görevler yükleniyor"
+  },
+  "agentList": {
+    "agentLibrary": "Aracı Kütüphanesi",
+    "newAgent": "Yeni Aracı"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Ekibiniz",
+    "lead": "Lider",
+    "specialist": "Uzman",
+    "tasks": "Görevler",
+    "todo": "Yapılacaklar",
+    "doing": "Yapılıyor",
+    "done": "Tamamlandı",
+    "anythingGoes": "Her şey serbest",
+    "marketing": "Pazarlama",
+    "product": "Ürün",
+    "research": "Araştırma",
+    "design": "Tasarım",
+    "routines": "Rutinler",
+    "dailyReview": "Günlük inceleme",
+    "weeklyDigest": "Haftalık özet",
+    "conversation": "Sohbet",
+    "userQuery": "2 haftalık Tayland gezisi planla…",
+    "agentReply": "Kütüphaneci ve editörü görevlendireceğim.",
+    "pendingAction": "Bekleyen eylem",
+    "approve": "Onayla",
+    "decline": "Reddet",
+    "themes": "Temalar",
+    "providers": "Sağlayıcılar",
+    "comingSoon": "Çok yakında"
+  },
+  "agentLive": {
+    "dismiss": "Kapat",
+    "paused": "Aracı duraklatıldı"
+  },
+  "conversationLive": {
+    "liveOutput": "Canlı Çıktı",
+    "waitingFirstChunk": "İlk çıktı parçası bekleniyor…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Bunun yerine simge kullan"
+  },
+  "pendingActions": {
+    "rejectAll": "Bekleyen tüm eylemleri reddet",
+    "approveAll": "Ciddi engelleyicisi olmayan tüm eylemleri onayla ve görevlendir"
+  },
+  "aiPanel": {
+    "clearSessions": "Tüm oturumları temizle",
+    "dismiss": "Kapat"
+  },
+  "schedulerPlus": {
+    "restartAll": "Tüm aracıları yeniden başlat",
+    "restartSubtitle": "Tüm programları durdur, sonra yeniden etkinleştir"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSV İndir",
+    "deleteRow": "Satırı sil"
+  },
+  "resizableImage": {
+    "resizeLeft": "Soldan yeniden boyutlandır",
+    "resizeRight": "Sağdan yeniden boyutlandır"
+  },
+  "folderIndex": {
+    "listView": "Liste görünümü",
+    "galleryView": "Galeri görünümü"
+  },
+  "linkPopover": {
+    "openLink": "Bağlantıyı aç",
+    "removeLink": "Bağlantıyı kaldır"
+  },
+  "officeChrome": {
+    "openInFinder": "Finder'da aç",
+    "downloadOriginal": "Orijinali indir"
+  },
+  "sourceViewer": {
+    "copyContents": "Dosya içeriğini kopyala",
+    "downloadFile": "Dosyayı indir"
+  },
+  "versionHistory": {
+    "title": "Sürüm Geçmişi"
+  },
+  "demoModal": {
+    "closeDemo": "Demoyu Kapat",
+    "close": "Kapat"
+  },
+  "demosPlus": {
+    "anything": "Her Şey",
+    "yours": "Sizin",
+    "install": "Yükle",
+    "attach": "Ekle"
+  },
+  "narrowViewport": {
+    "dismiss": "Dar görünüm ipucunu kapat",
+    "dismissTitle": "Bir sonraki oturuma kadar kapat",
+    "hintPrefix": "Cabinet en iyi şekilde çalışır: ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " genişliğindedir. Daha dar genişliklerde bazı yüzeyler sıkışabilir."
+  },
+  "agentCard": {
+    "runHeartbeat": "Nabız kontrolünü çalıştır"
+  },
+  "schedulePicker": {
+    "frequency": "Sıklık",
+    "onDay": "Gün",
+    "modeInterval": "Aralık",
+    "modeDaily": "Günlük",
+    "modeWeekdays": "Hafta İçi",
+    "modeWeekly": "Haftalık",
+    "modeMonthly": "Aylık",
+    "modeCustom": "Özel",
+    "parse": "Ayrıştır",
+    "showCron": "Cron ifadesini göster",
+    "hideCron": "Cron ifadesini gizle",
+    "weekdayMo": "Pzt",
+    "weekdayTu": "Sal",
+    "weekdayWe": "Çar",
+    "weekdayTh": "Per",
+    "weekdayFr": "Cum",
+    "weekdaySa": "Cmt",
+    "weekdaySu": "Paz"
+  },
+  "slackPanel": {
+    "createChannel": "Kanal oluştur",
+    "thread": "Konu"
+  },
+  "uninstall": {
+    "title": "Cabinet'i Kaldır"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet çekmeceleri",
+    "pageTitlePlaceholder": "Sayfa başlığı…"
+  },
+  "skillAddPlus": {
+    "cancel": "İptal"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Bu yetenek için skills.sh'den denetim verileri mevcut değil",
+    "searchPlaceholder": "skills.sh'de ara"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Yenile",
+    "noSkills": "Henüz yetenek yok."
+  },
+  "taskDetail": {
+    "close": "Kapat (Esc)",
+    "muteTask": "Bu görevi sessize al — tamamlanan çalışmaları doğrudan Arşiv'e gider",
+    "unmuteTask": "Bu görevin sesini aç — tamamlanan çalışmaları \"Yeni Bitirilenler\"de yeniden görünür"
+  },
+  "rowActionsPlus": {
+    "edit": "Düzenle",
+    "editHint": "Başlamadan önce bu kaydedilmiş taslağı düzenle",
+    "delete": "Sil",
+    "deleteHint": "Kalıcı olarak sil — bu işlem geri alınamaz"
+  },
+  "taskCard": {
+    "ptyMode": "Terminal (PTY) modunda çalışıyor"
+  },
+  "undoToast": {
+    "dismiss": "Kapat"
+  },
+  "terminalExited": {
+    "openDetails": "Yapılandırılmış ayrıntıları aç (istem, yapıtlar, dönüşler)",
+    "reconnect": "Daemon'a yeniden bağlan ve ham PTY tekrarını yayınla"
+  },
+  "terminalTabsPlus": {
+    "resize": "Terminal panelini yeniden boyutlandır"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Tüm aracıları göster",
+    "noRecentActivity": "Son etkinlik yok",
+    "noAgents": "Aracı yok",
+    "noAgentsConfigured": "Bu Cabinet için henüz yapılandırılmış aracı yok.",
+    "cabinetScope": "Cabinet kapsamı:",
+    "depthDropdownHeader": "Cabinet kapsamı",
+    "depthOwnLabel": "Sadece bu Cabinet",
+    "depthOwnShort": "Kendi",
+    "depthOwnDesc": "Sadece bu Cabinet'teki sayfalar, aracılar ve görevler.",
+    "depthChildren1Label": "Doğrudan alt öğeleri dahil et",
+    "depthChildren1Desc": "Bir seviye alt Cabinet ekle.",
+    "depthChildren2Label": "İki Cabinet seviyesi dahil et",
+    "depthChildren2Desc": "İki seviye alt Cabinet ekle.",
+    "depthAllLabel": "Tüm alt öğeleri dahil et",
+    "depthAllShort": "Tümü",
+    "depthAllDesc": "Tüm alt ağacı dahil et.",
+    "scopeTooltip": "Cabinet kapsamı: {{label}}. Değiştirmek için tıklayın."
+  },
+  "composerExtras": {
+    "skillAttached": "Yetenek — sadece bu çalıştırmaya bağlı",
+    "pageTitlePlaceholder": "Sayfa başlığı…",
+    "active": "Aktif — bu programa göre aracıyı uyandır",
+    "pickCliPty": "Bir PTY'de başlatılacak bir CLI seçin:"
+  },
+  "editorExtras": {
+    "editWithAi": "Yapay Zeka ile Düzenle",
+    "jupyterLab": "Kopyala: jupyter lab <path>",
+    "exitApp": "Uygulamadan çık"
+  },
+  "demosExtras": {
+    "aiAccounts": "Yapay Zeka hesapları",
+    "aiTeams": "Yapay Zeka ekipleri"
+  },
+  "whatsNew": {
+    "dismiss": "Kapat",
+    "headerPrefix": "v sürümündeki yenilikler",
+    "readFull": "Tüm sürüm notlarını oku"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Anladım ve devam etmek istiyorum."
+  },
+  "daemonHealth": {
+    "dismiss": "Kapat"
+  },
+  "tinyExtras": {
+    "light": "Açık",
+    "home": "Ana Sayfa",
+    "workspaceGallery": "Çalışma Alanı Galerisi",
+    "savingTo": "Kaydediliyor:",
+    "comingSoon": "Çok yakında",
+    "deleteSkill": "Yetenek sil",
+    "skillsOffered": "Sunulan yetenekler:",
+    "allAgents": "Tüm aracılar",
+    "noTranscript": "Transkript bulunamadı",
+    "noDiff": "Fark mevcut değil.",
+    "headsUp": "Dikkat:",
+    "back": "Geri",
+    "editYourAvatar": "Avatarınızı düzenleyin",
+    "openFullTaskViewer": "Tam görev görüntüleyiciyi aç",
+    "close": "Kapat",
+    "copyToClipboard": "Panoya kopyala",
+    "starOnGithub": "GitHub'da Cabinet'i yıldızla",
+    "helpMoreFind": "Daha fazla kişinin topluluğu bulmasına yardımcı olun",
+    "joinDiscord": "Discord'a katıl",
+    "chatWithBuilders": "Cabinet'i geliştiren kişilerle sohbet et",
+    "joinWaitlist": "Cabinet Cloud bekleme listesine katıl",
+    "emailPlaceholder": "siz@şirket.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Gelen Kutusuna Ekle",
+    "runTaskNow": "Görevi şimdi çalıştır",
+    "search": "Ara",
+    "aiPanel": "Yapay Zeka paneli",
+    "drawers": "Çekmeceler"
+  },
+  "dataLocations": {
+    "title": "Verilerinizin bulunduğu yer",
+    "whyThisMatters": "Bu neden önemli?",
+    "location": "Konum",
+    "contains": "İçerir",
+    "network": "Ağ",
+    "revealInFinder": "Dosya yöneticisinde göster",
+    "stored": "Depolandı",
+    "resetOnboarding": "İlk kurulumu sıfırla"
+  },
+  "rooms": {
+    "switcherTitle": "Oda değiştir",
+    "switchRoom": "Odalar",
+    "loading": "Yükleniyor…",
+    "defaultTag": "Ana Sayfa",
+    "openInNewWindow": "Yeni pencerede aç",
+    "opensBrowserWindow": "Yeni bir tarayıcı penceresi açar",
+    "customizeRoom": "Odayı düzenle",
+    "addRoom": "Oda ekle…",
+    "editTitle": "Odayı düzenle",
+    "editSubtitle": "Bu odanın adını, simgesini, rengini ve temasını ayarla.",
+    "nameLabel": "Görünen ad",
+    "slugHint": "Disk üzerindeki klasör adı {{slug}} olarak kalır. Klasörü yeniden adlandırmak ayrı, gelişmiş bir eylemdir.",
+    "iconLabel": "Simge",
+    "colorLabel": "Renk",
+    "colorAuto": "Otomatik",
+    "themeLabel": "Tema",
+    "themeGlobal": "Genel varsayılanı kullan",
+    "editFailed": "Oda kaydedilemedi. Lütfen tekrar deneyin.",
+    "deleteRoom": "Odayı sil…",
+    "deleteLastRoomDisabledHint": "Son odanızı silemezsiniz.",
+    "deleteTitle": "Bu odayı sil?",
+    "deleteSubtitle": "Bu oda ve içindeki her şey çöp kutusuna taşınacak.",
+    "deleteWarningIntro": "Odayı çöp kutusuna taşımak şunları da kaldırır:",
+    "deleteWarningPages": "Bu odadaki sayfalar ve dosyalar",
+    "deleteWarningAgents": "Bu odaya özel aracılar, konuşmalar ve bellek",
+    "deleteWarningJobs": "Bu odadaki zamanlanmış işler ve rutinler",
+    "deleteWarningChat": "Bu odaya ait ekip sohbet geçmişi",
+    "deleteWarningSearch": "Odanın arama dizini (geri yüklenirse otomatik olarak yeniden oluşturulur)",
+    "deleteRecoveryNote": "Kurtarma: oda data/.trash/ konumuna taşınır — klasörü tekrar data/ içine taşıyarak geri yükleyin.",
+    "deleteConfirmLabel": "Onaylamak için {{slug}} yazın",
+    "deleteConfirmButton": "Odayı sil",
+    "deleting": "Siliniyor…",
+    "deleteFailed": "Oda silinemedi. Lütfen tekrar deneyin."
+  },
+  "common": {
+    "actions": {
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "delete": "Sil",
+      "confirm": "Onayla",
+      "close": "Kapat",
+      "open": "Aç",
+      "back": "Geri",
+      "next": "İleri",
+      "done": "Bitti"
+    },
+    "nav": {
+      "goBack": "Geri git",
+      "goForward": "İleri git"
+    },
+    "aiPanel": {
+      "open": "Yapay Zeka panelini aç",
+      "close": "Yapay Zeka panelini kapat"
+    },
+    "states": {
+      "loading": "Yükleniyor…",
+      "saving": "Kaydediliyor…",
+      "saved": "Kaydedildi",
+      "error": "Bir şeyler ters gitti"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Yeni Sayfa",
+      "title": "Yeni Sayfa Oluştur",
+      "placeholder": "Sayfa başlığı…",
+      "create": "Oluştur",
+      "creating": "Oluşturuluyor…"
+    },
+    "newCabinet": {
+      "trigger": "Yeni Cabinet",
+      "title": "Yeni Cabinet Oluştur",
+      "subtitle": "Bir cabinet, kendi aracıları, görevleri ve bilgisi olan bir çalışma alanıdır.",
+      "importFromRegistry": "Kayıt Defterinden İçe Aktar",
+      "nameLabel": "Kabine adı",
+      "namePlaceholder": "örn. Girişimim, Pazarlama Ekibi, Araştırma Laboratuvarı…",
+      "selectAgents": "Aracıları seç",
+      "selectedCount": "{{count}} seçildi",
+      "createCabinet": "Kabine Oluştur",
+      "creating": "Oluşturuluyor…",
+      "createFailed": "Kabine oluşturulamadı"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Sayfayı dışa aktar",
+      "copyMarkdown": "Markdown'ı Kopyala",
+      "copyForLlms": "LLM'ler için Kopyala",
+      "copyAsHtml": "HTML olarak Kopyala",
+      "downloadMarkdown": ".md İndir",
+      "downloadPdf": "PDF İndir",
+      "copiedForLlmToast": "LLM için {{size}} Markdown kopyalandı"
+    },
+    "toolbar": {
+      "heading1": "Başlık 1",
+      "heading2": "Başlık 2",
+      "heading3": "Başlık 3",
+      "bold": "Kalın",
+      "italic": "İtalik",
+      "underline": "Altı çizili",
+      "strikethrough": "Üstü çizili",
+      "inlineCode": "Satır içi kod",
+      "link": "Bağlantı",
+      "textColor": "Metin rengi",
+      "highlight": "Vurgula",
+      "background": "Arka plan",
+      "bulletList": "Madde işaretli liste",
+      "orderedList": "Sıralı liste",
+      "blockquote": "Alıntı bloğu",
+      "checklist": "Kontrol listesi",
+      "codeBlock": "Kod bloğu",
+      "divider": "Ayırıcı",
+      "alignLeft": "Sola hizala",
+      "alignCenter": "Ortala",
+      "alignRight": "Sağa hizala",
+      "justify": "İki yana yasla",
+      "align": "Hizala",
+      "table": {
+        "selectCellText": "Hücre metnini seç",
+        "addRowAbove": "Üste satır ekle",
+        "addRowBelow": "Alta satır ekle",
+        "moveRowUp": "Satırı yukarı taşı",
+        "moveRowDown": "Satırı aşağı taşı",
+        "deleteRow": "Satırı sil",
+        "addColumnBefore": "Öncesine sütun ekle",
+        "addColumnAfter": "Sonrasına sütun ekle",
+        "moveColumnLeft": "Sütunu sola taşı",
+        "moveColumnRight": "Sütunu sağa taşı",
+        "deleteColumn": "Sütunu sil",
+        "toggleHeaderRow": "Başlık satırını aç/kapat",
+        "toggleHeaderColumn": "Başlık sütununu aç/kapat",
+        "deleteTable": "Tabloyu sil"
+      },
+      "superscript": "Üst simge",
+      "subscript": "Alt simge",
+      "insertImage": "Resim ekle",
+      "insertVideo": "Video ekle",
+      "embed": "Göm",
+      "undo": "Geri al",
+      "redo": "Yinele",
+      "switchToLtr": "Soldan sağa geç",
+      "switchToRtl": "Sağdan sola geç",
+      "scrollLeft": "Araç çubuğunu sola kaydır",
+      "scrollRight": "Araç çubuğunu sağa kaydır",
+      "markdown": "Markdown",
+      "preview": "Önizle"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet adı…",
+      "renameWarning": "Cabinet adları daha sonra yeniden adlandırılamaz (şimdilik). Akıllıca seçin."
+    },
+    "templates": {
+      "header": "Şablondan başla",
+      "browseAll": "Tümünü incele →"
+    },
+    "quickActions": {
+      "shuffle": "Farklı öneriler göster",
+      "launch10Songs": "10 şarkı yazma düzenleyicisini başlat",
+      "dailyReview9am": "Saat 9'da günlük inceleme",
+      "weeklyReview": "Gelecek Pazartesi haftalık inceleme",
+      "thailandTrip": "Tayland seyahatimi planla",
+      "physicsApp": "Bana bir fizik çalışma uygulaması oluştur",
+      "summariseRecent": "Son çalışmalarımı özetle",
+      "recruiterReply": "Bir işe alımcıya yanıt taslağı hazırla",
+      "mapArticles": "Makale bağlantılarını haritala",
+      "physicsCourse": "6 modüllük bir fizik kursu oluştur",
+      "shortStory": "Kısa bir hikaye taslağı çıkar",
+      "hourlyStandup": "Saatlik stand-up hatırlatıcısı",
+      "researchPhone": "Bir sonraki telefonumu araştır",
+      "translateToSpanish": "Bu cabinet'i İspanyolca'ya çevir",
+      "refactorNotes": "Not alma sistemimi yeniden düzenle",
+      "birthdayParty": "Bir doğum günü partisi planla",
+      "boardUpdate": "Yönetim kurulu güncellemesi taslağı hazırla",
+      "customerInterviews": "5 müşteri görüşmesini simüle et"
+    },
+    "goodMorning": "Günaydın",
+    "goodAfternoon": "Tünaydın",
+    "goodEvening": "İyi akşamlar",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Oluşturmak istiyorum...",
+    "composerDaemonDown": "Aracı arka plan programı çevrimdışı — göndermek için yeniden başlatın"
+  },
+  "onboarding": {
+    "launchHeading": "<accent>Cabinet</accent>'inizi başlatın",
+    "intro": {
+      "tagline1": "Bilgi tabanınız.",
+      "tagline2": "Yapay zeka ekibiniz.",
+      "getStarted": "Başla"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Ofis",
+        "study": "Çalışma",
+        "lab": "Laboratuvar",
+        "library": "Kütüphane",
+        "kitchen": "Mutfak",
+        "family": "Aile",
+        "dining": "Yemek",
+        "studio": "Stüdyo"
+      }
+    },
+    "welcome": {
+      "paragraph": "Ana Sayfanız sizin. İçinde, hayatınızın farklı alanları için odalar kuracaksınız: iş, ikinci beyin, araştırma, aile. Ve her odada dolaplar bulunur: notlarınız, dosyalarınız ve arka planda sessizce işleri halleden bir yapay zeka ekibi.",
+      "namePrompt": "Adınız nedir?",
+      "heading": "<accent>Eve</accent> hoş geldiniz"
+    },
+    "welcomeBack": {
+      "heading": "Tekrar hoş geldiniz",
+      "headingNamed": "{{cabinet}}'e tekrar hoş geldiniz",
+      "subtitle": "Burada mevcut bir cabinet bulduk. Kurulumu tamamlayalım.",
+      "continue": "Devam et"
+    },
+    "verify": {
+      "passed": "Geçti",
+      "notInstalled": "Yüklü değil",
+      "authRequired": "Kimlik doğrulama gerekli",
+      "paymentRequired": "Ödeme gerekli",
+      "quotaExceeded": "Kota / hız sınırı",
+      "error": "Hata"
+    },
+    "providerStatus": {
+      "ready": "Hazır",
+      "loginRequired": "Giriş yapılması gerekli",
+      "notInstalled": "Yüklü değil"
+    },
+    "actions": {
+      "back": "Geri",
+      "next": "İleri",
+      "continue": "Devam et",
+      "skip": "Atla",
+      "finish": "Bitir",
+      "complete": "Kurulumu tamamla",
+      "copyToClipboard": "Panoya kopyala"
+    },
+    "cabinetCreated": {
+      "continue": "Kuruluma devam et",
+      "heading": "Cabinet'iniz oluşturuldu",
+      "subtitle": "Her şey ayarlandı ve kullanıma hazır.",
+      "agentsReady_one": "{{count}} ajan çalışmaya hazır",
+      "agentsReady_other": "{{count}} ajan çalışmaya hazır",
+      "scheduledJobs_one": "{{count}} planlanmış görev",
+      "scheduledJobs_other": "{{count}} planlanmış görev",
+      "subCabinets_one": "{{count}} alt-cabinet",
+      "subCabinets_other": "{{count}} alt-cabinet",
+      "agentsReady": "{{count}} ajan çalışmaya hazır",
+      "scheduledJobs": "{{count}} planlanmış görev",
+      "subCabinets": "{{count}} alt-cabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "Zaten listedesiniz — sizinle iletişime geçeceğiz.",
+      "aside": "Cabinet Cloud çok yakında. Aynı ürün, kendi kendine barındırma zahmeti yok.",
+      "description": "Yapay zeka ajanlarınız çalışmaya devam ederken (taslak oluşturma, araştırma, düzenleme) dizüstü bilgisayarınız kapalıyken bile Cabinet'inizi herhangi bir cihazdan açın.",
+      "error": "Bir şeyler ters gitti. E-postayı kontrol edin ve tekrar deneyin.",
+      "joinWaitlist": "Bekleme listesine katıl",
+      "onList": "Listedesiniz. Cabinet Cloud açıldığında size e-posta göndereceğiz.",
+      "sending": "Gönderiliyor…",
+      "title": "Cabinet'iniz her yerde. Yapay zeka ekibiniz her zaman aktif.",
+      "waitlistSubtitle": "Her yerden bağlanın. Yapay zeka ekibiniz 7/24 çalışır."
+    },
+    "discord": {
+      "aside": "Yeni özelliklere ilk siz ulaşmak ve 'lütfen bir bilet gönderin' yerine 'gelin sohbet edelim' demeyi tercih ediyorsanız, burası sizin odanız.",
+      "description": "Geri bildirimlerin özelliğe, ekran görüntülerinin tartışmalara dönüştüğü ve birinin genellikle uç durumu o sizi bulmadan önce bulduğu yer.",
+      "joinBadge": "Katıl",
+      "title": "Discord, güzel tuhaflıkların yaşandığı yer."
+    },
+    "github": {
+      "aside": "Cabinet açık kaynaklıdır. Vizyonu beğendiyseniz, yayılmasına yardım edin.",
+      "description": "Bir GitHub yıldızı, daha fazla kişinin Cabinet'i keşfetmesine ve topluluğa katılmasına yardımcı olur.",
+      "starsLabel": "{{stars}} GitHub yıldızı",
+      "title": "Cabinet topluluğunun büyümesine yardım edin"
+    },
+    "launch": {
+      "beforeYouLaunch": "Başlatmadan önce",
+      "defaultCabinetName": "Cabinet'iniz",
+      "defaultDescription": "Bilgi tabanı + Yapay zeka ekibi",
+      "knowledgeBaseLabel": "Bilgi tabanı",
+      "aiTeamLabel": "Yapay zeka ekibi",
+      "launchCabinet": "Cabinet'i Başlat",
+      "settingUp": "Kuruluyor...",
+      "disclaimerAccess": "<strong>Aracılar tam erişimle çalışır.</strong> Cabinet, <flag>--dangerously-skip-permissions</flag> (Claude Code) ve diğer sağlayıcılarda eşdeğer bayrakları kullanır. Bu, bu CLI araçlarını kendi terminalinizden çalıştırmakla aynıdır. Yapılandırdığınız herhangi bir MCP sunucusu veya aracı, aracılar tarafından otomatik olarak çağrılabilir.",
+      "disclaimerBackup": "<strong>Verilerinizi düzenli olarak yedekleyin.</strong> Aracılar, bilgi tabanınız ve bağlantılı depolarınızdaki dosyaları okuyabilir, yazabilir ve silebilir. Cabinet veri kaybından sorumlu değildir. Seçtiğiniz yapay zeka sağlayıcılarından ve hizmet şartlarından siz sorumlusunuz.",
+      "disclaimerBeta": "<strong>Beta yazılım. Hatalar oluşabilir.</strong> Hızlı yayın yaparız. Kırıcı değişiklikler bildirim yapılmadan gelebilir.",
+      "legalNotice": "Devam ederek <terms>Şartlarımızı</terms> ve <privacy>Gizliliğimizi</privacy> kabul etmiş olursunuz. Cabinet bir <oss>açık kaynak projesidir</oss>.",
+      "keepInTouch": "Beni haberdar et. Cabinet açık kaynaklıdır ve açık bir şekilde geliştirilmiştir; bir sonraki neyi geliştireceğimizi öğrenmek isteriz. Spam yok, söz veriyoruz."
+    },
+    "provider": {
+      "agentType": "{{type}} aracı",
+      "close": "Kapat",
+      "comingSoon": "Çok yakında",
+      "guide": "Rehber",
+      "heading": "Aracı Sağlayıcı",
+      "moreModels": "Daha fazla yapay zeka",
+      "install": "Yükle",
+      "logIn": "Giriş yap",
+      "openTerminalButton": "Terminali aç",
+      "openTerminalDetail": "Sonraki adımları çalıştırmak için bir terminale ihtiyacınız olacak.",
+      "openTerminalError": "Terminal otomatik olarak açılamadı. Sistem terminalinizi manuel olarak açın.",
+      "openTerminalTitle": "Bir terminal aç",
+      "recheck": "Sağlayıcıları tekrar kontrol et",
+      "rerunVerify": "Doğrulamayı tekrar çalıştır",
+      "runVerify": "Doğrulamayı çalıştır",
+      "setupTitle": "{{name}} kurulumu",
+      "skipForNow": "Şimdilik atla",
+      "subtitle": "Cabinet, aracılarının çalışması için bir yapay zeka CLI'ına ihtiyaç duyar.",
+      "verifyExplanation": "Doğrulama, sağlayıcının başsız istemini uçtan uca çalıştırır ve hataları sınıflandırarak hangi adımı tekrar ziyaret etmeniz gerektiğini gösterir.",
+      "verifying": "Doğrulanıyor…",
+      "failedAtStep": "Şu adımda başarısız oldu: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Bu cabinet ne için? Her oda kendi yapay zeka ekibiyle gelir.",
+      "heading": "Bir <accent>oda</accent> seçin"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet nedir?",
+      "body": "Cabinet, hayatınızın veya işinizin belirli bir alanı için odaklanmış bir çalışma alanıdır. Dosyalarınızı, notlarınızı, araçlarınızı, aracılarınızı ve görevlerinizi barındırır, böylece yapay zeka ekibiniz gerçekten yardımcı olmak için ihtiyaç duyduğu bağlama sahip olur.",
+      "examplesLabel": "İnsanlar Cabinet'i nasıl kullanır",
+      "example1": "startup'ınız",
+      "example2": "bir GitHub deposu",
+      "example3": "pazarlama işiniz",
+      "example4": "bir müşteri projesi",
+      "example5": "kişisel bilgi tabanınız"
+    },
+    "access": {
+      "heading": "{{name}} neye erişebilir?",
+      "subtitle": "Bu aracının kullanabileceği bilgi ve araçları seçin. Bunu istediğiniz zaman değiştirebilirsiniz.",
+      "defaultAgent": "aracınız",
+      "files": "Dosyalar ve bilgi",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP sunucuları",
+      "plugins": "Eklentiler",
+      "skills": "Beceriler",
+      "placeholderNote": "Erişimi daha sonra aracının ayarlarından ince ayar yapabilirsiniz."
+    },
+    "heartbeat": {
+      "heading": "{{name}} bir kalp atışıyla çalışsın mı?",
+      "subtitle": "Bir kalp atışı, aracının belirli bir programa göre kendi başına kontrol etmesini ve çalışmasını sağlar.",
+      "off": "Kapalı",
+      "offHint": "Yalnızca siz istediğinizde çalışır. Başlamak için önerilir.",
+      "daily": "Günlük",
+      "dailyHint": "Günde bir kez kontrol eder.",
+      "weekly": "Haftalık",
+      "weeklyHint": "Haftada bir kez kontrol eder.",
+      "tokenNote": "Dikkat: bir kalp atışı, aracıyı otomatik olarak çalıştırır ve her tetiklendiğinde yapay zeka jetonları (ve sağlayıcı kotanız) kullanır. Bunu istediğiniz zaman değiştirebilir veya kapatabilirsiniz."
+    },
+    "firstTask": {
+      "heading": "İlk görevinizi oluşturun",
+      "subtitle": "Görevler, işi {{name}}'e nasıl devrettiğinizdir. Şimdi bir tane yazın ve cabinet'inize düşsün, çalışmaya hazır olsun.",
+      "label": "{{name}} ilk olarak ne yapmalı?",
+      "placeholder": "örn. Yeni müşteriler için bir hoş geldin e-postası taslağı hazırla",
+      "example1": "Son notlarımı özetle",
+      "example2": "Bir proje planı taslağı hazırla",
+      "example3": "En iyi 3 rakibimizi araştır",
+      "note": "Bunu boş bırakıp görevleri daha sonra ekleyebilirsiniz. Bir yapay zeka sağlayıcısı bağlayana kadar hiçbir şey çalışmaz."
+    },
+    "rail": {
+      "untitled": "Cabinet'iniz",
+      "dataCaption": "Projenizin tüm dosyaları ve notları burada bulunur.",
+      "teamEmpty": "Henüz ajan yok.",
+      "teamCaption": "Yapay zeka ekibiniz burada çalışır.",
+      "tasksEmpty": "Henüz görev yok.",
+      "tasksCaption": "Ekibinize verdiğiniz işler burada görünür.",
+      "assignedTo": "{{name}}'e atandı",
+      "you": "Siz"
+    },
+    "rooms": {
+      "office": {
+        "label": "Ofis",
+        "tagline": "Bir iş, startup veya yan proje yürütün.",
+        "workspaceLabel": "Şirket veya proje adı",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Ne yapıyorsunuz?",
+        "descriptionPlaceholder": "Yapay zeka startup'ları hakkında bir podcast yapıyoruz",
+        "departmentNoun": "Departman",
+        "teamSizeLabel": "Ekip büyüklüğü",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "Editör"
+        }
+      },
+      "study": {
+        "label": "Çalışma Alanı",
+        "tagline": "İkinci beyniniz — yazma, notlar, kişisel asistan.",
+        "workspaceLabel": "Kabinetinize ad verin",
+        "workspacePlaceholder": "Çalışma Alanım",
+        "descriptionLabel": "Hayatınızın hangi alanlarında yardım almak istersiniz?",
+        "descriptionPlaceholder": "Yazma, e-posta düzenleme, takvim, alışkanlık takibi",
+        "departmentNoun": "Alan",
+        "exampleAgents": {
+          "0": "Asistan",
+          "1": "Kütüphaneci"
+        }
+      },
+      "lab": {
+        "label": "Araştırma Laboratuvarı",
+        "tagline": "Akademik çalışma, literatür, öğretim, tez.",
+        "workspaceLabel": "Çalışma alanı adı",
+        "workspacePlaceholder": "Zihin Felsefesi",
+        "descriptionLabel": "Alanınız veya ne araştırıyorsunuz?",
+        "descriptionPlaceholder": "Fenomenoloji, bilinç, Felsefeye Giriş dersi verme",
+        "departmentNoun": "Alan",
+        "exampleAgents": {
+          "0": "Araştırma Lideri",
+          "1": "Kütüphaneci"
+        }
+      },
+      "family-room": {
+        "label": "Aile Odası",
+        "tagline": "Ev işleri, aile takvimi, yemekler, çocuklar.",
+        "workspaceLabel": "Hane adı",
+        "workspacePlaceholder": "Nguyen Ailesi",
+        "descriptionLabel": "Burada kimler yaşıyor ve nelerle uğraşıyorsunuz?",
+        "descriptionPlaceholder": "İki ebeveyn, üç çocuk, iki okul, bir köpek",
+        "departmentNoun": "Alan",
+        "teamSizeLabel": "Hane büyüklüğü",
+        "exampleAgents": {
+          "0": "Ev Yöneticisi",
+          "1": "Planlayıcı"
+        }
+      },
+      "blank": {
+        "label": "Boş Oda",
+        "tagline": "Henüz bir şey yok. Kendi ajanlarınızı, kendi şeklinizi getirin.",
+        "workspaceLabel": "Kabinetinize ad verin",
+        "workspacePlaceholder": "Kabinetim",
+        "descriptionLabel": "Ne için?",
+        "descriptionPlaceholder": "Herhangi bir şey — henüz emin değilseniz boş bırakın",
+        "departmentNoun": "Grup",
+        "exampleAgents": {
+          "0": "Sizin kararınız"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Liderlik",
+      "marketing": "Pazarlama",
+      "content": "İçerik",
+      "engineering": "Mühendislik",
+      "product-and-design": "Ürün ve Tasarım",
+      "business": "İş",
+      "research": "Araştırma",
+      "finance-and-ops": "Finans ve Operasyonlar",
+      "personal": "Kişisel",
+      "second-brain": "İkinci beyin",
+      "writing": "Yazma",
+      "tools": "Araçlar",
+      "life-admin": "Hayat yönetimi",
+      "from-the-office": "Ofisten",
+      "writing-and-notes": "Yazma ve notlar",
+      "other": "Diğer",
+      "household": "Hane",
+      "admin": "Yönetim",
+      "money": "Para",
+      "product": "Ürün",
+      "design": "Tasarım",
+      "sales": "Satış",
+      "support": "Destek",
+      "analytics": "Analiz",
+      "finance": "Finans",
+      "legal": "Hukuk",
+      "people": "Kişiler"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Günaydın ekip! {{workspace}}'e hoş geldiniz. Hemen işe koyulalım.",
+        "study": "Günaydın. İkinci beyniniz çevrimiçi — {{home}}'a tekrar hoş geldiniz.",
+        "lab": "Araştırma masası hazır — \"{{workspace}}\". Bugün neye odaklanıyoruz?",
+        "family-room": "Ana Merkez başlatılıyor — {{home}}. Herkesi olması gereken yere yönlendirelim.",
+        "blank": "Boş sayfa — \"{{workspace}}\". Burada ne inşa etmek istersin, {{home}}?"
+      },
+      "assign": "{{name}}, {{topic}} ile ilgilenebilir misin?",
+      "fallbackTopic": "sırada ne var",
+      "office": {
+        "replies": {
+          "0": "Üzerindeyim. Gün sonuna kadar genel bir bakış hazırlamış olurum.",
+          "1": "Zaten bir taslak hazırlıyorum. Kısa süre içinde #content'te paylaşırım.",
+          "2": "Temel iş akışlarını şimdi kuruyorum. Şimdilik iyi görünüyor."
+        },
+        "topics": {
+          "0": "rakip araştırması",
+          "1": "içerik takvimi",
+          "2": "lansman planı"
+        },
+        "closing": "Harika enerji herkes. Bu haftayı güçlü bir başlangıç yapalım."
+      },
+      "study": {
+        "replies": {
+          "0": "Gelen kutusunu önceliklendireceğim ve sana gerekenleri belirteceğim.",
+          "1": "Takvim saat 15:00'e kadar boş — yazmak için iyi bir fırsat.",
+          "2": "'Günlük' dizinine şimdiden üç yeni not bağladım."
+        },
+        "topics": {
+          "0": "bugünün gelen kutusu önceliklendirmesi",
+          "1": "bu haftanın yazıları",
+          "2": "okuma listem"
+        },
+        "closing": "İyi. Bana bir şey gerektiğinde haber ver — yoksa yolundan çekilirim."
+      },
+      "lab": {
+        "replies": {
+          "0": "Bununla ilgili en son makaleyi şimdi çekiyorum — bir saate taslak özet hazır.",
+          "1": "Bundan sonra bibliyografyayı senkronize edeceğim ve tekrarları işaretleyeceğim.",
+          "2": "Perşembe için ders taslağı neredeyse incelemeye hazır."
+        },
+        "topics": {
+          "0": "literatür taraması",
+          "1": "Perşembe ders hazırlığı",
+          "2": "referanslar listesi"
+        },
+        "closing": "Beni bilgilendir. Gün sonuna kadar gönderdiğin her şeyi inceleyeceğim."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Program 4'ten sonra boş görünüyor. Çakışan bırakmaları işaretliyorum.",
+          "1": "Haftalık menü taslağı hazır — alışveriş listesi incelemeye hazır.",
+          "2": "Çocuk etkinlikleri senkronize edildi. Cuma günü DnD gecesi hala geçerli."
+        },
+        "topics": {
+          "0": "bugünün programı",
+          "1": "yemek planı",
+          "2": "çocuk etkinlikleri"
+        },
+        "closing": "Hepinize teşekkürler. Gün içinde bir değişiklik olursa bana haber verin."
+      },
+      "blank": {
+        "replies": {
+          "0": "Anlaşıldı. Ne zaman hazırsan hazırım.",
+          "1": "Hazır bekliyorum.",
+          "2": "Yönlendirme bekleyeceğim."
+        },
+        "topics": {
+          "0": "ilk şey",
+          "1": "sıradaki her neyse",
+          "2": "açık soru"
+        },
+        "closing": "Ne zaman hazırsan, bize ne yapacağımızı söyle."
+      }
+    },
+    "team": {
+      "browseAll": "Tümünü incele",
+      "browseCabinets": "Cabinet'leri incele",
+      "cabinetNameLabel": "Cabinet adı",
+      "cancel": "İptal",
+      "importButton": "İçe Aktar",
+      "importFailed": "İçe aktarma başarısız oldu",
+      "importFailedConnection": "İçe aktarma başarısız oldu. Bağlantınızı kontrol edin.",
+      "importTitle": "{{name}} içe aktar",
+      "pickAgents": "Ajanlarınızı seçin",
+      "required": "Gerekli",
+      "subtitle": "Her Cabinet, ajanlar, görevler ve paylaşılan bir bilgi tabanından oluşan, tek bir bütün olarak çalışan bir yapay zeka ekibidir.",
+      "heading": "<accent>Ekibini</accent> kur",
+      "nameLabel": "Ajan adı",
+      "namePlaceholder": "örn. Editör, Araştırmacı, Asistan",
+      "roleLabel": "Rol",
+      "rolePlaceholder": "örn. Yazım asistanı",
+      "instructionsLabel": "Bu ajan ne yapmalı?",
+      "instructionsPlaceholder": "Nasıl yardımcı olması gerektiğini açıklayın. Örneğin: Sayfalarımı taslak haline getir ve düzenle, tonu net ve samimi tut ve iyileştirmeler öner.",
+      "agentOptionalHint": "İsteğe bağlı. Bunu atlayabilir ve ajanları daha sonra odanın içinden ekleyebilirsiniz.",
+      "agentCount_one": "{{count}} ajan",
+      "agentCount_other": "{{count}} ajan",
+      "jobCount_one": "{{count}} iş",
+      "jobCount_other": "{{count}} iş",
+      "subCabinetCount_one": "{{count}} alt Cabinet",
+      "subCabinetCount_other": "{{count}} alt Cabinet",
+      "cabinetsImported_one": "{{count}} Cabinet içe aktarıldı",
+      "cabinetsImported_other": "{{count}} Cabinet içe aktarıldı",
+      "agentCount": "{{count}} ajan",
+      "cabinetsImported": "{{count}} Cabinet içe aktarıldı",
+      "jobCount": "{{count}} iş",
+      "subCabinetCount": "{{count}} alt Cabinet"
+    }
+  },
+  "search": {
+    "title": "Ara",
+    "placeholder": "Sayfaları, ajanları, görevleri ara…",
+    "clearQuery": "Sorguyu temizle",
+    "noCommands": "Hiçbir komut eşleşmiyor.",
+    "scopes": {
+      "all": "Tümü",
+      "pages": "Sayfalar",
+      "agents": "Ajanlar",
+      "tasks": "Görevler"
+    },
+    "groups": {
+      "pages": "Sayfalar",
+      "agents": "Ajanlar",
+      "tasks": "Görevler"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Dil",
+      "description": "Dili ve okuma yönünü değiştirir. Mevcut sayfalar belgeye özel yönlerini korur.",
+      "english": "İngilizce",
+      "hebrew": "İbranice",
+      "chineseSimplified": "Basitleştirilmiş Çince",
+      "chineseTraditional": "Geleneksel Çince",
+      "moreLanguages": "Daha fazla dil",
+      "moreLanguagesHint": "Cabinet'i o dilde istediğinizi bize bildirmek için herhangi birine tıklayın — en çok talep edilenlere öncelik vereceğiz.",
+      "comingSoon": "Çok yakında",
+      "requestSubmitted": "Teşekkürler! {{language}} için isteğinizi not aldık. En çok talep edilen dillere öncelik vereceğiz.",
+      "requestFailed": "Sunucuya ulaşılamadı. Lütfen bir süre sonra tekrar deneyin."
+    },
+    "appearance": {
+      "title": "Görünüm",
+      "theme": "Tema",
+      "themeDescription": "Arayüz için bir tema seçin.",
+      "matchSystem": "Sistemle eşleştir",
+      "matchSystemDescription": "İşletim sisteminizin görünümüyle otomatik geçiş yapın.",
+      "lightThemes": "Açık Temalar",
+      "darkThemes": "Koyu Temalar",
+      "lightVariant": "Açık varyant",
+      "darkVariant": "Koyu varyant",
+      "sidebar": "Kenar Çubuğu",
+      "showHiddenFiles": "Gizli dosyaları göster",
+      "sidebarDescription": "Dosyaların kenar çubuğunda nasıl görüntüleneceğini yapılandırın.",
+      "showHiddenFilesHint": "Nokta ile başlayan dosya ve klasörleri göster (örn. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "providers": "Sağlayıcılar",
+      "skills": "Yetenekler",
+      "storage": "Depolama",
+      "integrations": "Entegrasyonlar",
+      "notifications": "Bildirimler",
+      "appearance": "Görünüm",
+      "updates": "Güncellemeler",
+      "about": "Hakkında"
+    },
+    "page": {
+      "title": "Ayarlar",
+      "refresh": "Yenile",
+      "groupYou": "Siz",
+      "groupWorkspace": "Çalışma Alanı",
+      "groupApp": "Uygulama"
+    },
+    "common": {
+      "copyToClipboard": "Panoya kopyala",
+      "categoriesAriaLabel": "Ayarlar kategorileri",
+      "loading": "Yükleniyor…",
+      "connect": "Bağlan",
+      "recommended": "Önerilen"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Çok yakında",
+      "hint": "Harici entegrasyonlar ve yerleşik araçların bağlantısı yolda."
+    },
+    "storage": {
+      "dataDirectory": "Veri Dizini",
+      "restartRequired": "Yeniden başlatma gerekli",
+      "dataDirectoryDescription": "Tüm Bilgi Tabanı içeriği bu dizinde saklanır. Yolu değiştirmek yeniden başlatma gerektirir.",
+      "restartHint": "Veri dizini, Cabinet'i yeniden başlattıktan sonra değişecektir.",
+      "currentPath": "Mevcut yol",
+      "loadingPath": "Yükleniyor...",
+      "changeDirectory": "Dizini değiştir",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "Gözat",
+      "save": "Kaydet",
+      "openInFinder": "Finder'da aç",
+      "envVarHint1": "Ayrıca ",
+      "envVarHint2": " ortam değişkenini de ayarlayabilirsiniz, bu ayar bu ayara göre önceliklidir.",
+      "failedToSave": "Kaydedilemedi.",
+      "failedToSaveDir": "Veri dizini kaydedilemedi."
+    },
+    "updates": {
+      "checking": "Cabinet güncellemeleri kontrol ediliyor…"
+    },
+    "providers": {
+      "title": "Aracı Sağlayıcılar",
+      "defaultModel": "Varsayılan Model",
+      "setupGuide": "Kurulum rehberi",
+      "troubleshoot": "Yapay zeka sağlayıcılarında sorun giderme",
+      "subtitle": "Yapay zeka aracı sağlayıcılarını yapılandırın. CLI aracıları terminal üzerinden çalışır, API aracıları doğrudan API çağrıları kullanır.",
+      "defaultRuntime": "Varsayılan çalışma zamanı",
+      "defaultRuntimeHint": "Genel konuşmalar ve yedek çalıştırmalar bu sağlayıcıyı/modeli/çabayı kullanır.",
+      "cliAgents": "CLI Aracılar",
+      "apiAgents": "API Aracılar",
+      "ready": "Hazır",
+      "installedNotLoggedIn": "Yüklü ancak oturum açılmamış",
+      "notInstalled": "Yüklü değil",
+      "emptyMatrix": "Hiçbir sağlayıcı yapılandırılmamış. Aşağıdan bir tane ekleyin."
+    },
+    "notifications": {
+      "channels": "Bildirim Kanalları",
+      "alertRules": "Uyarı Kuralları",
+      "alwaysOn": "Her zaman açık",
+      "comingSoon": "Çok Yakında",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "Aracılar dikkatinizi gerektirdiğinde uyarıları nasıl alacağınızı yapılandırın.",
+      "rulesHint": "Bildirimler bu olaylar için otomatik olarak tetiklenir:",
+      "previewHint": "Tarayıcı anlık bildirimleri, Telegram, Slack ve e-posta bildirimleri.",
+      "channelPushName": "Tarayıcı Anlık Bildirimi",
+      "channelPushDesc": "Cabinet sekmesi açıkken veya PWA yüklüyken anlık uyarılar",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Telegram botu aracılığıyla anlık mobil bildirimler",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "Uyarıları ekibinizin Slack kanalına iletin",
+      "channelEmailName": "E-posta Özeti",
+      "channelEmailDesc": "Uyarıların ve aracı etkinliğinin toplu özeti",
+      "ruleAlertsEvent": "#alerts kanalı mesajları",
+      "ruleAlertsDesc": "Herhangi bir aracının alerts kanalına gönderi yapması",
+      "ruleMentionsEvent": "@human bahsetmeleri",
+      "ruleMentionsDesc": "Bir aracı herhangi bir kanalda @human'dan bahsettiğinde",
+      "ruleFloorEvent": "Hedef tabanı aşıldı",
+      "ruleFloorDesc": "Bir hedef minimum eşiğinin altına düştüğünde",
+      "ruleHealthEvent": "Aracı sağlığı bozuldu",
+      "ruleHealthDesc": "3+ ardışık kalp atışı hatası"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Sürüm",
+      "release": "Yayın",
+      "framework": "Çerçeve",
+      "storage": "Depolama",
+      "privacy": "Gizlilik",
+      "telemetry": "Anonim kullanım telemetrisi",
+      "tagline": "Yapay zeka öncelikli, kendi kendine barındırılan bilgi tabanı ve başlangıç işletim sistemi.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Yerel dosya sistemi",
+      "aiLabel": "Yapay Zeka",
+      "aiValue": "Yerel AI CLI'ları tarafından desteklenir",
+      "philosophy": "Tüm içerik diskte markdown dosyaları olarak bulunur. İnsanlar amacı tanımlar. Aracılar işi yapar. Bilgi tabanı, ikisi arasındaki paylaşılan bellektir.",
+      "privacyBody": "Cabinet, ürünü geliştirmemize yardımcı olmak için anonim kullanım telemetrisi gönderir. Dosya içerikleri, yollar, istemler veya sırlar toplanmaz.",
+      "privacyLink": "Neler toplanır?",
+      "telemetryEnvDisabled": "CABINET_TELEMETRY_DISABLED=1 (ortam değişkeni) tarafından devre dışı bırakıldı.",
+      "telemetryHint": "Yalnızca olay sayıları, sürümler ve platform bilgileri. Göndermeyi durdurmak için kapatın.",
+      "cabinetCloud": "Cabinet Bulut",
+      "cloudBody": "Yapay zeka ekibiniz sizin için 7/24 çalışırken Cabinet'inize her yerden bağlanın. E-postanızı aşağıya bırakın, Cabinet Cloud açıldığında size haber verelim.",
+      "cloudAlready": "Zaten listedesiniz — sizinle iletişime geçeceğiz.",
+      "cloudSuccess": "Listedesiniz. Cabinet Cloud açıldığında size e-posta göndereceğiz.",
+      "cloudSending": "Gönderiliyor…",
+      "cloudJoinWaitlist": "Bekleme listesine katıl",
+      "cloudError": "Bir şeyler ters gitti. E-postayı kontrol edin ve tekrar deneyin.",
+      "connectTitle": "Bağlan",
+      "connectBody": "Yardım alın, geri bildirim paylaşın veya sadece merhaba deyin.",
+      "joinDiscord": "Discord'a katıl"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Ad",
+      "namePlaceholder": "Jane",
+      "displayName": "Görünen ad",
+      "role": "Rol",
+      "rolePlaceholder": "Oluşturucu",
+      "avatar": "Avatar",
+      "accentColor": "Vurgu rengi",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Yedek simge",
+      "useIconInstead": "Bunun yerine simge kullan",
+      "searchAvatars": "Avatarları ara…",
+      "searchIcons": "Simgeleri ara…",
+      "howAppear": "Sohbetlerde ve uygulama genelinde nasıl göründüğünüz.",
+      "youFallback": "Siz",
+      "displayNameHint": "Sohbetlerde gösterilir. Varsayılan olarak Ad kullanılır.",
+      "iconHint": "Avatar resmi ayarlanmadığında kullanılır. Temizlemek için tekrar tıklayın.",
+      "tintHint": "Resim ayarlanmadığında yedek avatarı renklendirir.",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor…",
+      "saved": "Kaydedildi",
+      "browseAll": "Tümünü göster ({{count}})",
+      "showFavorites": "Favorileri göster",
+      "showFewer": "Daha az göster"
+    },
+    "workspace": {
+      "title": "Çalışma alanı",
+      "name": "Çalışma alanı adı",
+      "namePlaceholder": "Cabinet'im",
+      "description": "Açıklama",
+      "descriptionPlaceholder": "Ne yapıyorsunuz?",
+      "teamSize": "Ekip boyutu",
+      "teamSizePlaceholder": "Tek kişi / 2–5 / 6–20 / 20+",
+      "subtitle": "İlk kurulum sırasında yakalandı. Temsilciler iş planlarken bunları okur."
+    }
+  },
+  "sidebar": {
+    "settings": "Ayarlar",
+    "createPage": "Sayfa oluştur",
+    "newPage": "Yeni sayfa",
+    "newAgent": "Yeni Temsilci",
+    "newTask": "Yeni Görev",
+    "archive": "Arşiv",
+    "trash": "Çöp Kutusu",
+    "search": "Ara",
+    "agents": "Aracılar",
+    "tasks": "Görevler",
+    "missions": "Misyonlar",
+    "drawerData": "Veri",
+    "drawerAgents": "Ekip",
+    "drawerTasks": "Görevler",
+    "goHome": "Ana Sayfaya Git",
+    "brandWord": "",
+    "refresh": "Kenar Çubuğunu Yenile",
+    "refreshDescription": "Kenar Çubuğunu Yenile (veri klasörünü yeniden oku)",
+    "collapseSidebar": "Kenar Çubuğunu Daralt",
+    "expandSidebar": "Kenar Çubuğunu Genişlet",
+    "resizeHandle": "Kenar Çubuğunu Yeniden Boyutlandır — sıfırlamak için çift tıklayın",
+    "resetWidth": "Genişliği sıfırlamak için çift tıklayın",
+    "refreshedNoChanges": "Yenilendi — değişiklik yok.",
+    "refreshedWithChanges": "Yenilendi — {{added}} eklendi, {{removed}} kaldırıldı.",
+    "refreshFailed": "Yenileme başarısız oldu.",
+    "searchPlaceholder": "Dosyaları ara…",
+    "searchSearching": "Aranıyor…",
+    "searchNoResults": "“{{query}}” ile eşleşen dosya bulunamadı"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Durum çubuğu",
+      "askAiAriaLabel": "Bu sayfayı düzenlemek için yapay zekaya sor",
+      "askAiPlaceholder": "Bu sayfa nasıl düzenlenir?",
+      "sendHint": "↵ göndermek için"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Sunucu durumu — ayrıntılar için tıklayın",
+      "checking": "Sunucu durumu kontrol ediliyor…",
+      "allRunning": "Tüm sistemler çalışıyor",
+      "appNotResponding": "Uygulama sunucusu yanıt vermiyor",
+      "daemonDownNoProviders": "Daemon yanıt vermiyor; aracı sağlayıcıları mevcut değil",
+      "daemonDown": "Daemon yanıt vermiyor",
+      "noProviders": "Aracı sağlayıcıları mevcut değil",
+      "checkingShort": "Kontrol ediliyor…",
+      "online": "Çevrimiçi",
+      "offline": "Çevrimdışı",
+      "degraded": "Düşük Performanslı",
+      "allSystemsRunning": "Tüm Sistemler Çalışıyor",
+      "serviceDisruption": "Hizmet Kesintisi",
+      "appServer": "Uygulama Sunucusu",
+      "daemon": "Daemon",
+      "agentProviders": "Aracı Sağlayıcıları",
+      "running": "Çalışıyor",
+      "down": "Kapalı",
+      "lastSeen": "Son görülme: {{when}}",
+      "appWorking": "Sayfalar, düzenleyici, arama ve dosya yönetimi çalışıyor.",
+      "appDown": "Sayfalar, düzenleyici, arama ve kaydetme kullanılamıyor. Önbelleğe alınmış içeriği yine de okuyabilirsiniz.",
+      "daemonWorking": "Yapay zeka ajanları, zamanlanmış görevler ve web terminali çalışıyor.",
+      "daemonDownDescription": "Yapay zeka ajanları, zamanlanmış görevler ve web terminali kullanılamıyor. Sayfa düzenleme hala çalışıyor.",
+      "available": "Mevcut",
+      "noneReady": "Hiçbiri Hazır Değil",
+      "providerReady": "Hazır",
+      "providerNotLoggedIn": "Giriş yapılmadı",
+      "providerNotInstalled": "Yüklü değil",
+      "install": "Yükle",
+      "howToFix": "Nasıl düzeltilir"
+    },
+    "save": {
+      "retryTitle": "Başarısız kaydı yeniden denemek için tıklayın",
+      "retryAriaLabel": "Kaydetme başarısız oldu — yeniden denemek için tıklayın",
+      "autoSaving": "Otomatik kaydediliyor…",
+      "forceSave": "Zorla kaydet: ⌘S",
+      "editing": "Düzenleniyor — durakladığınızda otomatik kaydetme çalışacak",
+      "wordCountTitle": "Bu sayfanın kelime sayısı (markdown sözdizimi hariç)",
+      "savedJustNow": "az önce",
+      "savedNever": "asla",
+      "savedAgoSeconds": "{{n}} saniye önce",
+      "savedAgoMinutes": "{{n}} dakika önce",
+      "savedAgoHours": "{{n}} saat önce",
+      "savedAgoDays": "{{n}} gün önce",
+      "saveFailedRetry": "Kaydetme başarısız — tekrar dene",
+      "savingText": "Kaydediliyor…",
+      "savedText": "Kaydedildi",
+      "editingText": "Düzenleniyor…",
+      "savedAgo": "Kaydedildi · {{ago}}",
+      "word": "kelime",
+      "words": "kelimeler"
+    },
+    "git": {
+      "statusModified": "Değiştirildi",
+      "statusNew": "Yeni",
+      "statusAdded": "Eklendi",
+      "statusDeleted": "Silindi",
+      "statusRenamed": "Yeniden adlandırıldı",
+      "commitMessageAriaLabel": "Taahhüt mesajı"
+    },
+    "help": {
+      "menuAriaLabel": "Yardım ve topluluk menüsünü aç",
+      "menuTitle": "Yardım ve topluluk",
+      "demos": "Demolar, videolar ve rehberler",
+      "discord": "Discord'da sohbet et",
+      "discordSubtitle": "Destek ve geri bildirim",
+      "github": "GitHub'da katkıda bulun",
+      "githubSubtitle": "Kaynak, sorunlar, PR'lar",
+      "ifUseful": "Faydalı bulursanız",
+      "label": "Yardım",
+      "starsAriaLabel": "{{count}} GitHub yıldızı — Cabinet'i GitHub'da aç",
+      "starsTitle": "{{count}} GitHub yıldızı — Cabinet'i GitHub'da yıldızla",
+      "share": "Paylaş",
+      "shareSubtitle": "Davet bağlantısını kopyala ve haberi yay",
+      "shareCopied": "Harikasın, {{name}} 🩷 Gelecekteki Cabinet üyelerini aramıza kattığın için teşekkür ederiz. Bağlantı kopyalandı, sevgiyi yay!",
+      "shareFailed": "Bağlantı kopyalanamadı",
+      "friend": "arkadaş"
+    },
+    "git2": {
+      "allCommitted": "Hepsi taahhüt edildi",
+      "uncommittedFile": "{{count}} taahhüt edilmemiş dosya",
+      "uncommittedFiles": "{{count}} taahhüt edilmemiş dosya",
+      "uncommittedFilesAria": "{{count}} taahhüt edilmemiş dosya — listeyi görmek için tıklayın",
+      "uncommittedFileTip": "Taahhüt edilmemiş dosyayı görmek için tıklayın",
+      "uncommittedFilesTip": "Taahhüt edilmemiş dosyaları görmek için tıklayın",
+      "uncommittedFilesHeading": "{{count}} taahhüt edilmemiş dosya",
+      "uncommittedFilesHeadingPlural": "{{count}} taahhüt edilmemiş dosya",
+      "truncatedHint": "Yalnızca ilk {{count}} dosya gösteriliyor — tam listeyi görmek için `git status` komutunu çalıştırın.",
+      "commitDefault": "{{count}} dosyayı güncelle",
+      "commitDefaultPlural": "{{count}} dosyayı güncelle",
+      "committing": "Taahhüt ediliyor…",
+      "commit": "Taahhüt Et",
+      "commitFailed": "Taahhüt başarısız oldu",
+      "sync": "Eşitle",
+      "syncTitle": "GitHub'dan en sonu çek ve yenile",
+      "syncTitleWithLast": "GitHub'dan en sonu çek ve yenile. Son eşitleme {{when}}.",
+      "syncAriaLabel": "GitHub'dan en son değişiklikleri çek ve yenile",
+      "syncAriaLabelWithLast": "GitHub'dan en son değişiklikleri çek ve yenile. Son eşitleme {{when}}.",
+      "terminal": "Terminal",
+      "openTerminal": "Terminali aç",
+      "newTerminalTab": "Yeni terminal sekmesi",
+      "pulling": "Çekiliyor…",
+      "pulled": "Uzak sunucudan güncellendi",
+      "upToDate": "Güncel",
+      "pullFailed": "Çekme başarısız"
+    },
+    "update2": {
+      "updateAvailable": "{{version}} güncellemesi mevcut",
+      "updateAvailableTip": "Cabinet {{version}} sürümü mevcut"
+    },
+    "common": {
+      "dismiss": "Kapat",
+      "close": "Kapat",
+      "openSettings": "Yüklenen güncellemeyi incelemek için Ayarlar'ı açın"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Güncellemeyi tamamlamak için yeniden başlat"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Bu görevi orijinal istemden yeniden başlat",
+      "markAsDone": "Bu görevi tamamlandı olarak işaretle",
+      "viewAriaLabel": "Görev görünümü",
+      "terminal": "Terminal",
+      "transcript": "Döküm",
+      "details": "Detaylar",
+      "transcriptTitle": "Claude Code yerel oturum JSONL",
+      "transcriptHint": "~/.claude/projects/<slug>/<session>.jsonl dosyasını okur",
+      "back": "Geri",
+      "copyPrompt": "Orijinal istemi kopyala",
+      "gracefulExit": "CLI'yi düzgünce kapat (PTY'ye /exit yazar)",
+      "sendSigterm": "Çalışan PTY sürecine SIGTERM gönder",
+      "moreActions": "Diğer eylemler",
+      "ptyMode": "Terminal (PTY) modunda çalışıyor",
+      "compactContext": "Önceki dönüşleri bir özete daraltarak bağlam penceresini boşalt",
+      "noSummary": "Henüz özet yok.",
+      "sessionEnded": "Oturum sona erdi — aynı terminalde devam etmek için yazın.",
+      "terminalLive": "Terminal aktif. Bir sonraki isteminiz bu dönüş bittikten sonra sıraya alınır."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Cabinet turuna hoş geldiniz",
+    "skip": "Atla",
+    "skipAriaLabel": "Turu atla",
+    "back": "Geri",
+    "next": "İleri",
+    "writeFirstTask": "İlk görevinizi yazın",
+    "goToSlide": "{{n}} numaralı slayta git",
+    "starterTask": "Hedeflerimi ve burada neyi başarmak istediğimi konuşalım, sonra da yeni bir Hakkında sayfasına kaydedelim.",
+    "savingTo": "Kaydediliyor: ",
+    "introTitle": "İşte <accent>Cabinet</accent>'iniz.",
+    "introSubtitle": "Yapay zeka ekibiniz. Bilgi tabanınız. Tek bir yerde.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Son ve devam eden görevler",
+    "hide": "Görevler panelini gizle",
+    "show": "Görevler panelini göster",
+    "empty": "Görev yok",
+    "itemRunning": "{{title}} · devam ediyor · {{when}}",
+    "itemNeedsReply": "{{title}} · yanıt bekliyor",
+    "itemFailed": "{{title}} · başarısız oldu · {{when}}",
+    "itemDone": "{{title}} · tamamlandı · {{when}}",
+    "itemArchived": "{{title}} · arşivlendi",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} devam ediyor — görevler panelini göster"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Ana Sayfa",
+      "agents": "Ajanlar",
+      "tasks": "Görevler",
+      "ai": "AI",
+      "menu": "Menü",
+      "primaryAriaLabel": "Birincil"
+    },
+    "returnTo": {
+      "task": "Görev",
+      "tasks": "Görevler",
+      "agent": "Aracı",
+      "agents": "Aracılar",
+      "cabinet": "Cabinet",
+      "home": "Ana Sayfa",
+      "settings": "Ayarlar",
+      "registry": "Kayıt Defteri",
+      "back": "Geri",
+      "backTo": "{{label}}'a Geri Dön"
+    },
+    "theme": {
+      "defaultHeader": "Varsayılan",
+      "dark": "Koyu",
+      "darkThemes": "Koyu Temalar",
+      "lightThemes": "Açık Temalar"
+    },
+    "update": {
+      "restartTitle": "Güncellemeyi tamamlamak için Cabinet'i yeniden başlatın.",
+      "availableTitle": "Cabinet {{version}} sürümü mevcut.",
+      "updatesTitle": "Cabinet güncellemeleri",
+      "description": "Cabinet güncellemeleri otomatik olarak kontrol eder. Ürün hala deneysel aşamadayken, güncellemeleri yüklemeden önce verilerinizin bir kopyasını saklayın.",
+      "later": "Daha Sonra",
+      "releaseNotes": "Sürüm notları"
+    },
+    "daemon": {
+      "fixHintElectron": "Aracı arka plan programını yeniden başlatmak için Cabinet'i kapatıp tekrar açın.",
+      "fixHintDev": "Aracı arka plan programını tekrar çalıştırmak için `npm run dev:daemon` komutunu (veya `npm run dev:all` komutunu yeniden) çalıştırın.",
+      "notResponding": "Aracı arka plan programı yanıt vermiyor.",
+      "willFail": "Geri gelene kadar aracılar, işler ve yapay zeka istekleri başarısız olacaktır. {{fixHint}}"
+    }
+  }
+}

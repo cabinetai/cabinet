@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Vytvořit agenta",
+      "avatar": "Avatar",
+      "namePlaceholder": "Marketingový agent",
+      "rolePlaceholder": "Specialista na obsah",
+      "department": "Oddělení",
+      "specialist": "Specialista",
+      "departmentLead": "Vedoucí oddělení",
+      "provider": "Poskytovatel",
+      "runtime": "Běhové prostředí",
+      "promptPlaceholder": "Jste marketingový agent pro…",
+      "addAgentTitle": "Přidat agenta do týmu",
+      "addAgentDescription": "Vyberte specialistu z knihovny. Po přidání můžete upravit jeho jméno, roli a instrukce.",
+      "createFromScratchTitle": "Vytvořit od začátku",
+      "createFromScratchDescription": "Vytvořte nového agenta s vlastní identitou, rolí a instrukcemi.",
+      "searchLibraryPlaceholder": "Hledat v knihovně",
+      "errorLoadLibrary": "Nepodařilo se načíst knihovnu agentů.",
+      "errorAddAgent": "Nepodařilo se přidat tohoto agenta."
+    },
+    "metric": {
+      "name": "Název metriky",
+      "namePlaceholder": "reddit_replies",
+      "target": "Cíl",
+      "targetPlaceholder": "odpovědí/týden",
+      "floor": "Minimum",
+      "period": "Období",
+      "daily": "Denně",
+      "weekly": "Týdně",
+      "monthly": "Měsíčně"
+    },
+    "workspace": {
+      "promise": "Příslib",
+      "orgChart": "Organizační schéma",
+      "jobDetails": "Podrobnosti o práci",
+      "heartbeat": "Stav",
+      "workspace": "Pracovní prostor",
+      "editAgent": "Upravit agenta",
+      "instructions": "Instrukce",
+      "instructionsPlaceholder": "Napište markdown pro instrukce tohoto agenta.",
+      "newAgent": "Nový agent",
+      "routines": "Rutiny",
+      "browseLibrary": "Procházet knihovnu agentů",
+      "editYourOwn": "Upravit vlastního agenta",
+      "editorPlaceholder": "Editor",
+      "productAgentPlaceholder": "Agent pro psaní produktů",
+      "instructionsBodyPlaceholder": "Definujte, jak má tento agent fungovat v rámci Cabinetu a KB.",
+      "perAgentPrompts": "Opakované výzvy pro každého agenta",
+      "runNow": "Spustit nyní",
+      "delete": "Smazat",
+      "viewOrgChart": "Zobrazit tento tým jako organizační schéma (otevře se na celou obrazovku)",
+      "hideIntro": "Skrýt tento úvod",
+      "sharedAcrossCabinets": "Sdíleno napříč všemi cabinety",
+      "expandSchedule": "Rozbalit plán",
+      "heartbeatsOnAgentPage": "Heartbeaty se konfigurují na stránce každého agenta",
+      "exitFullscreen": "Ukončit celou obrazovku",
+      "refresh": "Obnovit",
+      "editHeartbeat": "Upravit heartbeat",
+      "newRoutine": "Nová rutina",
+      "configureHeartbeat": "Konfigurovat heartbeat",
+      "openOrgChart": "Otevřít organizační schéma",
+      "pickAnAgent": "Vybrat agenta",
+      "dismiss": "Zavřít",
+      "lockedHeartbeatTip": "Tento agent je zastaven. Spusťte jej na záložce Agenti, abyste povolili heartbeat.",
+      "lockedRoutineTip": "Tento agent je zastaven. Spusťte jej na záložce Agenti, abyste povolili jeho rutiny.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Kliknutím vypnete.",
+      "loadError": "Nepodařilo se načíst tohoto agenta.",
+      "retry": "Zkusit znovu",
+      "color": "Barva",
+      "customColor": "Vlastní barva",
+      "preset": "Předvolba",
+      "editIconColor": "Upravit ikonu, barvu nebo avatara",
+      "sharedAcrossCabinetsHint": "Sdíleno napříč všemi kabinety — úpravy se projeví všude",
+      "inbox": "Doručená pošta",
+      "conversations": "Konverzace",
+      "recentWork": "Nedávná práce",
+      "schedule": "Plán",
+      "heartbeat": "Tep",
+      "runNow": "Spustit nyní",
+      "editRoutine": "Upravit rutinu",
+      "addRoutine": "Přidat rutinu",
+      "details": "Podrobnosti",
+      "editingGlobalAgent": "Úprava globálního agenta",
+      "displayName": "Zobrazované jméno",
+      "role": "Role",
+      "department": "Oddělení",
+      "type": "Typ",
+      "workspace": "Pracovní prostor",
+      "tags": "Štítky",
+      "openSkillsSettings": "Otevřít Nastavení → Dovednosti",
+      "notInCatalog": "Nenalezeno v katalogu — kliknutím odeberte",
+      "recommendedForRole": "Doporučeno pro tuto roli — kliknutím připojte",
+      "promise": "Příslib",
+      "saved": "Uloženo",
+      "iconLabel": "Ikona"
+    },
+    "missionControl": {
+      "gallery": "Galerie",
+      "newAgent": "Nový agent",
+      "allGoals": "Všechny cíle",
+      "noGoals": "Žádní agenti nemají nastavené cíle.",
+      "fromScratch": "Od začátku",
+      "describeIt": "Popište to",
+      "import": "Importovat",
+      "closeDialog": "Zavřít dialog",
+      "describeYourAgent": "Popište svého agenta",
+      "describePlaceholder": "Potřebuji agenta, který monitoruje Hacker News pro příspěvky související s GPU a píše promyšlené komentáře odkazující na naše blogové příspěvky…"
+    },
+    "pulseStrip": {
+      "agents": "Agenti",
+      "running": "Běží",
+      "goals": "Cíle",
+      "alerts": "Upozornění",
+      "cost": "Cena",
+      "runningPlays": "Spuštěné rutiny",
+      "noRunning": "Momentálně neběží žádní agenti.",
+      "costBreakdown": "Rozpis nákladů",
+      "noUsage": "Zatím žádné využití API.",
+      "totalEstimated": "Celkový odhad"
+    },
+    "routine": {
+      "runNowTitle": "Spustit tuto rutinu nyní (jednorázově, mimo plán)",
+      "deletePermanently": "Trvale smazat tuto rutinu",
+      "promptPlaceholder": "Co by měla tato rutina dělat? Např. shrnout včerejší aktivitu…",
+      "jobName": "Název úlohy",
+      "jobNamePlaceholder": "Týdenní strategický přehled",
+      "jobId": "ID úlohy",
+      "schedule": "Plán",
+      "model": "Model",
+      "enabled": "Povoleno"
+    }
+  },
+  "registry": {
+    "loading": "Načítání z registru…",
+    "readyToImport": "Připraveno k importu tohoto cabinetu?",
+    "organization": "Organizace",
+    "agents": "Agenti",
+    "scheduledJobs": "Naplánované úlohy",
+    "about": "O",
+    "cabinetName": "Název cabinetu",
+    "cabinetNamePlaceholder": "Název cabinetu…",
+    "searchPlaceholder": "Hledat cabienty…",
+    "noResults": "Žádné cabienty neodpovídají vašemu hledání."
+  },
+  "tasksBoard": {
+    "title": "Úkoly",
+    "manualTooltip": "Manuální — úkoly, které jste spustili přímo",
+    "jobsTooltip": "Úlohy — plánovaná opakovaná spuštění",
+    "heartbeatTooltip": "Srdeční tep — samostatně řízená spuštění agentů",
+    "clearSelection": "Zrušit výběr (Esc)",
+    "createTask": "Vytvořit novou úlohu",
+    "moreNewTypes": "Další typy nových položek",
+    "newTask": "Nová úloha",
+    "newRoutine": "Nová rutina",
+    "viewKanban": "Kanban",
+    "viewList": "Seznam",
+    "viewSchedule": "Plán",
+    "viewKanbanHint": "Zobrazení nástěnky — úlohy seskupené do Doručené / Na vás / Probíhá / Právě dokončeno / Archiv",
+    "viewListHint": "Plochý seznam všech úloh, nejnovější aktivita jako první",
+    "viewScheduleHint": "Kalendář plánovaných rutin a nadcházejících spuštění",
+    "filterByAgent": "Filtrovat podle agenta: {{name}}",
+    "noToDeleteTitle": "Žádné úlohy k odstranění",
+    "noToDeleteFiltered": "Nic neodpovídá filtru {{filter}}. Vymažte filtr, vyberte jiné zobrazení nebo vytvořte novou úlohu.",
+    "noToDeleteEmpty": "Na nástěnce zatím nejsou žádné úlohy. Vytvořte ji pomocí tlačítka + Nová úloha.",
+    "gotIt": "Rozumím",
+    "deleteCountTitle": "Smazat {{count}} úlohu?",
+    "deleteCountTitlePlural": "Smazat {{count}} úloh?",
+    "deleteBody": "Tímto trvale odstraníte metadata konverzací, přepisy a artefakty pro každou aktuálně zobrazenou úlohu. Tuto akci nelze vrátit zpět.",
+    "deleteBodyFiltered": "Tímto trvale odstraníte metadata konverzací, přepisy a artefakty pro každou úlohu aktuálně zobrazenou aktivními filtry. Tuto akci nelze vrátit zpět.",
+    "deleteConfirm": "Smazat {{count}}",
+    "deleteAllShown": "Smazat všechny {{count}} zobrazené úlohy",
+    "deleteAllShownPlural": "Smazat všechny {{count}} zobrazené úlohy",
+    "nothingToDelete": "V tomto zobrazení není nic k odstranění",
+    "deleteAllAria": "Smazat všechny zobrazené úlohy",
+    "noTasksAria": "V tomto zobrazení nejsou žádné úlohy",
+    "filterTrigger": "filtr {{trigger}}",
+    "filterTriggerAndAgent": "filtr {{trigger}} a vybraný agent",
+    "filterSelectedAgent": "filtr vybraného agenta"
+  },
+  "runtime": {
+    "noProvider": "Není vybrán žádný poskytovatel",
+    "modeAriaLabel": "Režim běhu",
+    "nativeTranscriptTitle": "Nativní přepis Cabinetu — strukturovaný JSON stream, artefakty, souhrn, kompletní UX",
+    "ptyWarningTitle": "Vyžaduje API klíč OpenAI. Není k dispozici pro účty Codex s plánem ChatGPT — výběr tohoto modelu selže s chybou 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Nativní",
+    "terminal": "Terminál",
+    "terminalTitle": "Spustit CLI v živé PTY terminálové relaci (experimentální režim pro hackery)",
+    "providers": "Poskytovatelé",
+    "modelCol": "Model",
+    "auto": "Auto",
+    "ready": "Připraveno",
+    "loginRequired": "Přihlásit se",
+    "notInstalled": "Nenainstalováno",
+    "notAvailable": "Není k dispozici",
+    "defaultLabel": "Výchozí",
+    "noProvidersAvailable": "Žádní poskytovatelé k dispozici",
+    "appDefault": "Výchozí pro aplikaci",
+    "selectAppDefault": "Vybrat výchozí pro aplikaci",
+    "defaultModel": "Výchozí model",
+    "selectedModelLabel": "Vybraný model",
+    "loadingProviders": "Načítání poskytovatelů...",
+    "loadingAvailableProviders": "Načítání dostupných poskytovatelů…",
+    "triggerSummary": "Model: {{model}} · Náročnost: {{effort}} · přes {{provider}}",
+    "triggerSystemDefault": "Model úlohy — používá systémové výchozí (kliknutím vyberte)",
+    "clickToLaunch": "Kliknutím spustíte {{name}} v PTY terminálu"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Agenti běží s plným přístupem.",
+    "backUp": "Pravidelně zálohujte svá data.",
+    "betaSoftware": "Beta software. Věci se mohou pokazit.",
+    "iAccept": "Přečetl(a) jsem a souhlasím"
+  },
+  "skillAdd": {
+    "addSkill": "Přidat dovednost",
+    "auditTooltip": "Výsledek externích auditů skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Data auditu skills.sh nejsou pro tuto dovednost k dispozici",
+    "preview": "Náhled"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Tým AI",
+      "aiTeams": "Týmy AI",
+      "routines": "Rutiny"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Upravit konfiguraci agenta",
+    "exportBundle": "Exportovat balíček agenta",
+    "goals": "Cíle",
+    "workspace": "Pracovní prostor"
+  },
+  "scheduleRow": {
+    "deleteQ": "Smazat?",
+    "confirmDelete": "Potvrdit smazání",
+    "cancelDelete": "Zrušit smazání",
+    "runNow": "Spustit nyní"
+  },
+  "apiKeys": {
+    "addKey": "Přidat klíč",
+    "edit": "Upravit",
+    "remove": "Odebrat",
+    "newApiKey": "Nový API klíč"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Aktualizace Cabinetu",
+    "dataDirectory": "Datový adresář",
+    "backups": "Zálohy"
+  },
+  "kanban": {
+    "stopAllInLane": "Zastavit všechny běžící úkoly v tomto pruhu",
+    "restartAllInLane": "Restartovat všechny úkoly v tomto pruhu",
+    "newTask": "Nový úkol",
+    "collapseColumn": "Sbalit sloupec",
+    "kill": "Ukončit",
+    "laneInbox": "Doručené",
+    "laneInboxHint": "Koncept — čeká na spuštění",
+    "laneNeeds": "Na řadě jste vy",
+    "laneNeedsHint": "Agent položil otázku nebo potřebuje schválení",
+    "laneRunning": "Běží",
+    "laneRunningHint": "Agenti právě pracují",
+    "laneDone": "Právě dokončeno",
+    "laneDoneHint": "Dokončeno v poslední hodině",
+    "laneArchive": "Archiv",
+    "laneArchiveHint": "Starší a uznané"
+  },
+  "terminalTabs": {
+    "newTab": "Nová záložka terminálu",
+    "closeTab": "Zavřít terminál"
+  },
+  "newTaskButton": {
+    "createNew": "Vytvořit nové…",
+    "newTask": "Nový úkol",
+    "newRoutine": "Nová rutina"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Týdenní strategický souhrn",
+    "schedule": "Rozvrh",
+    "jobId": "ID úlohy",
+    "enabled": "Povoleno — spustit podle tohoto rozvrhu"
+  },
+  "editIdentity": {
+    "title": "Upravit agenta",
+    "displayName": "Zobrazované jméno",
+    "color": "Barva",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Spustit všechny agenty",
+    "startAllSubtitle": "Aktivovat heartbeaty a cron úlohy",
+    "stopAll": "Zastavit všechny agenty",
+    "stopAllSubtitle": "Pozastavit heartbeaty a cron úlohy"
+  },
+  "skillLibrary": {
+    "readOnly": "Pouze pro čtení — nelze upravovat z Cabinetu",
+    "noUpstream": "Vytvořeno přímo v tomto cabinetu — není zaznamenán žádný upstream git zdroj",
+    "executableWarning": "Balíček obsahuje spustitelné skripty — zkontrolujte před schválením",
+    "skills": "Dovednosti",
+    "imported": "Importováno",
+    "importing": "Importuji…",
+    "import": "Importovat"
+  },
+  "embedPopover": {
+    "placeholder": "Vložte odkaz (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify nebo jakoukoli URL)",
+    "notValidUrl": "Není platná URL",
+    "anyUrlWorks": "Funguje jakákoli veřejná URL.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Libovolná URL adresa iframe"
+  },
+  "rowActions": {
+    "stop": "Zastavit",
+    "stopHint": "Zastavit toto spuštění nyní (odešle SIGTERM)",
+    "restart": "Restartovat",
+    "restartHint": "Spustit znovu z původní výzvy",
+    "runHint": "Spustit tento úkol nyní"
+  },
+  "schedulesPanel": {
+    "title": "Naplánované úlohy",
+    "noJobs": "Zatím nejsou nakonfigurovány žádné úlohy Cabinet.",
+    "heartbeats": "Srdeční tepy",
+    "noHeartbeats": "Zatím nejsou nakonfigurovány žádné srdeční tepy."
+  },
+  "scheduleTab": {
+    "explainer1": "Vše, co váš tým dělá tento týden, v jednom kalendáři. Růžová je srdeční tep, zelená je rutina. Kliknutím na libovolnou položku ji upravíte.",
+    "explainer2": "Použijte tuto záložku k odhalení konfliktů, nalezení klidných období nebo jen k rychlému přehledu o vytíženosti týmu.",
+    "aboutAria": "O rozvrhu",
+    "modeDay": "Den",
+    "modeWeek": "Týden",
+    "modeMonth": "Měsíc"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Oddálit",
+    "zoomIn": "Přiblížit",
+    "resetView": "Obnovit zobrazení",
+    "syntaxError": "Chyba syntaxe diagramu"
+  },
+  "helpPage": {
+    "keyboard": "Klávesnice",
+    "skills": "Dovednosti",
+    "apiKeys": "API klíče",
+    "mcpServers": "Servery MCP",
+    "title": "Nápověda",
+    "howTo": "Jak na to",
+    "heading": "Zjistěte, jak funguje Cabinet",
+    "subheading": "Krátké ukázky, návody a náhledy pro maximální využití Cabinet.",
+    "ctaWatchTour": "Podívat se na prohlídku",
+    "ctaWatchDemo": "Podívat se na ukázku",
+    "ctaCheatSheet": "Otevřít tahák",
+    "ctaComingSoon": "Již brzy",
+    "discordHeading": "Nenašli jste, co hledáte?",
+    "discordSubheading": "Jsme na Discordu — přijďte pozdravit, zeptat se, sdílet, co tvoříte.",
+    "discordCta": "Připojit se na Discord",
+    "items": {
+      "tour": {
+        "title": "Seznamte se se svým <accent>Cabinetem</accent>.",
+        "description": "Váš AI tým. Vaše znalostní báze. Vše na jednom místě."
+      },
+      "agents": {
+        "title": "Váš <accent>AI tým</accent>.",
+        "description": "Najměte vedoucí a specialisty. Seskupte je do oddělení. Nechte je vzájemně si přidělovat práci."
+      },
+      "tasks": {
+        "title": "<accent>Nástěnka úkolů</accent>.",
+        "description": "Zobrazení Kanban, seznam a plán. Filtrujte podle agenta nebo stavu. Zvolte dobu běhu pro každý úkol."
+      },
+      "knowledge": {
+        "title": "Vaše <accent>znalostní báze</accent>.",
+        "description": "Markdown, CSV, PDF, kód, poznámkové bloky, mermaid, obrázky, zvuk — vše se zobrazuje přímo. Vaše data zůstávají na vašem stroji; jsou vaše, ne naše."
+      },
+      "cabinets": {
+        "title": "Tým <accent>AI týmů</accent>.",
+        "description": "Cabinety se vnořují do Cabinetů. Každý je vlastním AI týmem s vlastními daty, agenty a rozsahem viditelnosti — a mohou spolupracovat nahoru i dolů po stromu."
+      },
+      "routines": {
+        "title": "<accent>Rutiny</accent> a plány.",
+        "description": "Spusťte úkol denně v 9 ráno, týdně v pátek, nebo jednou příští pondělí. Cron, kalendář nebo přirozený jazyk."
+      },
+      "conversations": {
+        "title": "Konverzace a <accent>schválení</accent>.",
+        "description": "Agenti navrhují akce — spustit úkol, naplánovat práci — a vy je schválíte, než se cokoli spustí."
+      },
+      "themes": {
+        "title": "Udělejte si to <accent>po svém</accent>.",
+        "description": "Vyberte si z vybrané sady světlých a tmavých témat — Paper, Slate, Claude, Ink a další."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — přineste si vlastní AI.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — přineste si libovolné poskytovatele, za které již platíte. Vyberte výchozí, nebo přepsat pro každý úkol."
+      },
+      "shortcuts": {
+        "title": "<accent>Klávesové</accent> zkratky.",
+        "description": "Každá zkratka Cabinetu na jedné prohledávatelné kartě. Stiskněte ? odkudkoli pro opětovné otevření. Filtrujte podle názvu nebo klávesy — pro navigaci, úpravy, úkoly, panely a příkazy s lomítkem."
+      },
+      "skills": {
+        "title": "<accent>Dovednosti</accent> pro vaše agenty.",
+        "description": "Instalovatelné dovednosti agentů — příručky, které model použije pro úkol. Instalujte z GitHubu nebo skills.sh, připojte k personě, nebo @-zmiňte v libovolném editoru pro jednorázové spuštění."
+      },
+      "apiKeysItem": {
+        "title": "<accent>API klíče</accent> pro vaše nástroje.",
+        "description": "Připojte svůj účet OpenAI, Anthropic nebo GitHub jednou — každý agent a dovednost v Cabinetu jej použije. Platíte si vlastní účty, používáte vlastní kvótu, bez prostředníka."
+      },
+      "integrations": {
+        "title": "<accent>MCP servery</accent> a integrace.",
+        "description": "MCP servery, Slack, Telegram, Gmail a Calendar OAuth — připojte se jednou a Cabinet se postará o tokeny. Již brzy."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Klávesové zkratky",
+    "filterPlaceholder": "Filtrovat…",
+    "close": "Zavřít"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Živý terminál",
+    "runningHeartbeat": "Spouštění srdečního tepu…",
+    "memory": "Paměť",
+    "recentActivity": "Nedávná aktivita"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Váš avatar",
+    "preset": "Předvolba",
+    "useInitials": "Použít iniciály jako záložní",
+    "custom": "Vlastní"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Byly zjištěny lokální změny kódu aplikace"
+  },
+  "logsPanel": {
+    "classifiedError": "Klasifikovaná chyba",
+    "session": "Relace",
+    "noEvents": "Zatím žádné události.",
+    "noTranscript": "Zatím žádný přepis."
+  },
+  "conversationResult": {
+    "prompt": "Výzva",
+    "result": "Výsledek",
+    "noSummary": "Žádný souhrn nebyl zachycen."
+  },
+  "scheduleRowPlus": {
+    "delete": "Smazat"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Připojit soubory"
+  },
+  "demos": {
+    "aiTeam": "Tým AI",
+    "specialist": "Specialista",
+    "legal": "Právní",
+    "global": "Globální",
+    "editor": "Editor",
+    "slashMenu": "Menu s lomítkem"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · DATA",
+    "headlineSentence": "Váš <accent>jediný zdroj</accent> pravdy.",
+    "paragraphPrefix": "Markdown, PDF, tabulky, prezentace, obrázky, video, audio, propojená úložiště, vložené webové aplikace, Dokumenty Google. Zmiňte cokoli z toho pomocí ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Jedno místo pro všechno — abyste vy a váš tým AI četli, upravovali a dodávali z ",
+    "sameFiles": "stejných souborů",
+    "secondParagraphSuffix": ", ne kopie kopií.",
+    "mockTitle": "Hilin Cabinet"
+  },
+  "slideData": {
+    "thailandRootLabel": "Cesta do Thajska",
+    "thailandCaption": "Zobrazte všechny své soubory na jednom místě.",
+    "videoTitle": "Noční trh.mp4",
+    "taxRootLabel": "Daně 2026",
+    "taxCaption": "Daně 2026 — živá webová kalkulačka, vložená přímo do vašeho cabinetu.",
+    "calculatorTitle": "Kalkulačka",
+    "liveAppBadge": "Živá aplikace",
+    "taxEstimateLabel": "Odhad daně 2026",
+    "income": "Příjem",
+    "deductions": "Odpočty",
+    "taxBracket": "Daňové pásmo",
+    "estimatedTax": "Odhadovaná daň",
+    "healthRootLabel": "Zdraví",
+    "healthCaption": "Vitamíny a laboratoře — tabulka, která působí jako stránka.",
+    "csvTitle": "Denní vitamíny.csv",
+    "csvColVitamin": "Vitamin",
+    "csvColDose": "Dávka",
+    "csvColTime": "Čas",
+    "csvColDone": "Hotovo",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Kódové základny — propojte libovolné Git repo, prohledávatelné vašimi agenty.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · ÚKOLY",
+    "typedCommand": "Spusťte 10 úkolů, každý napíše píseň, uložte do @Songs/",
+    "headlineSentence": "Jste připraveni <accent>začít</accent>?",
+    "paragraphPrefix": "Napište úkol. Spusťte jeden, spusťte deset, naplánujte je navždy. Zmiňte stránky s ",
+    "paragraphSuffix": ", uložte výstup kamkoli chcete. Nyní jste režisérem vy.",
+    "savingFolder": "Skladby/"
+  },
+  "slideAgents": {
+    "persona": "Persona",
+    "heartbeat": "Srdeční tep",
+    "jobs": "Úlohy",
+    "aiTeam": "Tým AI",
+    "otherWriter": "Textař",
+    "otherOrganizer": "Organizátor",
+    "idle": "nečinný",
+    "researchAnalyst": "Výzkumný analytik",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "aktivní",
+    "personaBody": "„Důsledný analytik. Cituje zdroje. Upozorňuje na protichůdná tvrzení.“",
+    "heartbeatBody": "Skenuje @Market Research každých 15 min",
+    "jobsBody": "Po 9:00 · Týdenní přehled konkurence",
+    "slideNum": "02 · AGENTI",
+    "paragraphPrefix": "Každý agent má ",
+    "personaWord": "personu",
+    "paragraphMiddle": ", svůj vlastní ",
+    "scheduleWord": "rozvrh",
+    "paragraphMiddle2": ", a ",
+    "memoryWord": "paměť",
+    "paragraphSuffix": ". Vaši AI agenti odvedou práci, 24/7. Buďte člověkem — o zbytek se postarají oni.",
+    "aiTeamSentence": "Váš <accent>AI tým</accent>."
+  },
+  "startWork": {
+    "close": "Zavřít",
+    "selectAgent": "Vybrat agenta",
+    "titleNow": "Co je potřeba udělat?",
+    "titleRecurring": "Nastavit opakovanou rutinu",
+    "titleHeartbeat": "Probudit tohoto agenta podle rozvrhu",
+    "titleEdit": "Upravit úkol",
+    "submitStart": "Spustit",
+    "submitAddInbox": "Přidat do Doručené pošty",
+    "submitSaveEdit": "Uložit změny",
+    "submitCreateRoutine": "Vytvořit rutinu",
+    "submitSaveHeartbeat": "Uložit srdeční tep",
+    "saving": "Ukládání…",
+    "current": "aktuální",
+    "modeInboxLabel": "→ Doručená pošta",
+    "modeInboxHint": "Uložit do Doručené pošty — spusťte, až budete připraveni",
+    "modeNowLabel": "Spustit hned",
+    "modeNowHint": "Spustit tuto konverzaci ihned",
+    "modeRecurringLabel": "Podle plánu",
+    "modeRecurringHint": "Spustit tento prompt podle plánu",
+    "modeHeartbeatLabel": "Tep",
+    "modeHeartbeatHint": "Probudit agenta v jeho vlastním rytmu",
+    "agentFallback": "Agent",
+    "failedToStart": "Nepodařilo se spustit",
+    "failedToSave": "Nepodařilo se uložit změny",
+    "failedToSaveHeartbeat": "Nepodařilo se uložit tep"
+  },
+  "googleDoc": {
+    "noUrl": "Není nastavena URL Google",
+    "anyoneWithLink": "Kdokoli s odkazem",
+    "publishedToWeb": "Zveřejněno na webu"
+  },
+  "feedback": {
+    "close": "Zavřít",
+    "rolePlaceholder": "např. nezávislý vývojář, PM v SaaS, student designu, kutil…",
+    "joinDiscord": "Připojit se k Discordu",
+    "header": "Rychlá kontrola od Hily",
+    "howGoing": "Jak se zatím daří?",
+    "starsCount": "{{n}} hvězda",
+    "starsCountPlural": "{{n}} hvězd",
+    "likeCabinet": "Líbí se vám Cabinet?",
+    "starTooltipUnknown": "Označte Cabinet hvězdičkou na GitHubu — pokud je pro vás užitečný, hvězdička opravdu pomůže",
+    "starTooltipWithCount": "{{count}} hvězd na GitHubu — klikněte pro přidání vaší",
+    "starLabel": "Označit hvězdičkou",
+    "backgroundLabel": "Jaké je vaše zázemí?",
+    "optional": "(volitelné)",
+    "discordCta": "Chcete mluvit přímo, nebo se setkat s ostatními členy Cabinetu?",
+    "maybeLater": "Možná později",
+    "send": "Odeslat",
+    "thanksTitle": "Díky!",
+    "thanksBody": "Vaše zpětná vazba určuje další vývoj.",
+    "copy2Lead": "Cabinet jste otevřeli už několikrát. Děkujeme! Cabinet je open source a teprve začíná, takže to, co zde řeknete, skutečně ovlivní, co se bude vyvíjet dál.",
+    "copy2Q1": "Co jste se dnes v Cabinetu snažili dělat?",
+    "copy2Q1Hint": "Stačí jedna věta. Proč jste jej otevřeli, ne co byste si přáli, aby uměl.",
+    "copy2Q2": "Když jste to chtěli dělat naposledy, co jste místo Cabinetu použili?",
+    "copy2Q2Hint": "Jakýkoli nástroj, aplikace nebo dokument, dokonce i tužka a papír.",
+    "copy6Lead": "Jste zpět, a to je nejdůležitější signál. Chci slyšet o nedostatcích, než na ně zapomenete.",
+    "copy6Q1": "Co jste se dnes v Cabinetu snažili dělat?",
+    "copy6Q1Hint": "Stačí jedna věta.",
+    "copy6Q2": "Co je ta jedna věc, kvůli které jste tento týden málem přestali používat Cabinet?",
+    "copy6Q2Hint": "Co vás nejvíce štvalo. Buďte konkrétní. „X bylo matoucí“ je lepší než „UX“."
+  },
+  "apiKeysSection": {
+    "cancel": "Zrušit",
+    "pasteHere": "vložit sem",
+    "pasteNewValue": "vložit novou hodnotu"
+  },
+  "storageBackend": {
+    "title": "Backend úložiště",
+    "migrationFailed": "Migrace selhala"
+  },
+  "linkRepo": {
+    "title": "Načíst znalosti",
+    "intro": "Nasměrujte Cabinet na libovolnou složku ve vašem počítači. Cabinet vytvoří symbolický odkaz, takže obsah složky se objeví ve vaší znalostní bázi a bude k dispozici AI agentům jako kontext. Původní složka není nikdy přesunuta ani zkopírována.",
+    "symlinkNote": "Tím se vytvoří symbolický odkaz — soubory zůstanou na svém místě.",
+    "autoDetectPlaceholder": "Automaticky detekovat z git remote (volitelné)",
+    "shortSummaryPlaceholder": "Volitelný krátký souhrn pro agenty"
+  },
+  "recentTasks": {
+    "ptyMode": "Režim terminálu (PTY)",
+    "revealOlder": "Zobrazit více starších úkolů",
+    "showOlder": "Zobrazit starší"
+  },
+  "treeNode": {
+    "openCabinet": "Otevřít zobrazení Cabinetu",
+    "pageTitlePlaceholder": "Název stránky…",
+    "rename": "Přejmenovat",
+    "openBadge": "Otevřít",
+    "sectionAdd": "Přidat k této položce",
+    "sectionThis": "Tato položka",
+    "addSubPage": "Přidat podstránku",
+    "newFolder": "Nová složka",
+    "createFile": "Vytvořit nový soubor…",
+    "connectKnowledge": "Připojit znalosti…",
+    "symlinkTag": "Symbolický odkaz",
+    "importFile": "Importovat soubor…",
+    "importFolder": "Importovat složku…",
+    "createCabinet": "Vytvořit Cabinet zde",
+    "editSymlink": "Upravit symbolický odkaz…",
+    "settings": "Nastavení…",
+    "moveTo": "Přesunout do…",
+    "copyRelativePath": "Kopírovat relativní cestu",
+    "copyFullPath": "Kopírovat úplnou cestu",
+    "openInFinder": "Otevřít ve Finderu",
+    "delete": "Odstranit",
+    "unlink": "Zrušit propojení",
+    "folderNamePlaceholder": "Název složky",
+    "creating": "Vytváří se…",
+    "create": "Vytvořit",
+    "addSubPageTitle": "Přidat podstránku k „{{name}}“",
+    "newFolderTitle": "Nová složka v „{{name}}“"
+  },
+  "newFile": {
+    "title": "Vytvořit nový soubor",
+    "subtitle": "Vyberte typ souboru. Cabinet jej otevře v editoru, jakmile bude připraven.",
+    "groupNative": "Upravit v Cabinetu",
+    "groupOffice": "Office (prázdný — upravit externě)",
+    "groupGoogle": "Google (propojeno)",
+    "namePlaceholder": "Název souboru",
+    "create": "Vytvořit",
+    "creating": "Vytváří se…",
+    "googleUrlLabel": "URL Google (volitelné)",
+    "googleUrlPlaceholder": "Vložte sdílený odkaz Google, nebo ponechte prázdné pro pozdější přidání",
+    "officeNote": "Cabinet zobrazuje soubory Office pouze pro čtení. Pro úpravy v desktopové aplikaci použijte „Otevřít ve Finderu“.",
+    "types": {
+      "markdown": "Stránka Markdown",
+      "markdownDesc": "Poznámky s formátovaným textem, upravitelné v Cabinetu",
+      "code": "Soubor kódu",
+      "codeDesc": "Jakýkoli zdrojový/textový soubor — vyberte příponu",
+      "mermaid": "Diagram Mermaid",
+      "mermaidDesc": "Vývojové diagramy a schémata jako kód",
+      "csv": "Tabulka CSV",
+      "csvDesc": "Data tabulky oddělená čárkami",
+      "docx": "Dokument Word",
+      "docxDesc": "Prázdný .docx",
+      "xlsx": "Tabulka Excel",
+      "xlsxDesc": "Prázdný .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Prázdný .pptx",
+      "gdoc": "Dokument Google",
+      "gdocDesc": "Vložit Dokument Google",
+      "gsheet": "Tabulka Google",
+      "gsheetDesc": "Vložit Tabulku Google",
+      "gslides": "Prezentace Google",
+      "gslidesDesc": "Vložit Prezentace Google"
+    },
+    "codeExtLabel": "Přípona",
+    "googleTag": "Google",
+    "extHint": "Stačí zadat název — Cabinet přidá příponu {{ext}}.",
+    "createFailed": "Soubor se nepodařilo vytvořit."
+  },
+  "fileSettings": {
+    "googleTitle": "Nastavení vložení Google",
+    "googleKindLabel": "Typ",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Sdílení dokumentu musí být nastaveno na „Kdokoli s odkazem“ nebo „Publikováno na web“, aby se vložení načetlo.",
+    "openLink": "Otevřít v Google",
+    "googleKinds": {
+      "docs": "Dokumenty",
+      "sheets": "Tabulky",
+      "slides": "Prezentace",
+      "forms": "Formuláře",
+      "drive": "Disk"
+    },
+    "appTitle": "Nastavení webové aplikace",
+    "modeLabel": "Jak se má otevřít?",
+    "modeWebsite": "Zobrazení stránky",
+    "modeWebsiteDesc": "Otevře se přímo s viditelným postranním panelem a panelem AI.",
+    "modeApp": "Webová aplikace",
+    "modeAppDesc": "Otevře se na celou obrazovku; postranní panel a panel AI se automaticky sbalí.",
+    "convertNote": "Toto přepíná soubor značky .app ve složce. Vaše soubory se nemění.",
+    "save": "Uložit",
+    "saving": "Ukládání…",
+    "cancel": "Zrušit",
+    "saveFailed": "Nepodařilo se uložit nastavení."
+  },
+  "editSymlink": {
+    "title": "Upravit symlink",
+    "intro": "Tato položka znalostní báze je symbolický odkaz na složku jinde ve vašem počítači.",
+    "kbPathLabel": "Cesta znalostní báze",
+    "targetLabel": "Odkazuje na (na disku)",
+    "brokenWarning": "Cílová složka již neexistuje. Nasměrujte ji na platnou složku níže.",
+    "repointLabel": "Nasměrovat na novou složku",
+    "repointHint": "Cabinet nahradí odkaz, aby směřoval sem. Soubory se nikdy nepřesouvají.",
+    "browse": "Procházet",
+    "nameLabel": "Název",
+    "descriptionLabel": "Popis",
+    "save": "Uložit",
+    "saving": "Ukládání…",
+    "copyTarget": "Kopírovat cílovou cestu",
+    "saveFailed": "Nepodařilo se aktualizovat symlink."
+  },
+  "importFolder": {
+    "importing": "Importuji složku…",
+    "failed": "Import složky se nezdařil: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Načítání úkolů"
+  },
+  "agentList": {
+    "agentLibrary": "Knihovna agentů",
+    "newAgent": "Nový agent"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Váš tým",
+    "lead": "Vedoucí",
+    "specialist": "Specialista",
+    "tasks": "Úkoly",
+    "todo": "K vyřízení",
+    "doing": "Probíhá",
+    "done": "Hotovo",
+    "anythingGoes": "Cokoli",
+    "marketing": "Marketing",
+    "product": "Produkt",
+    "research": "Výzkum",
+    "design": "Design",
+    "routines": "Rutiny",
+    "dailyReview": "Denní přehled",
+    "weeklyDigest": "Týdenní souhrn",
+    "conversation": "Konverzace",
+    "userQuery": "Naplánovat 2týdenní cestu do Thajska…",
+    "agentReply": "Vyšlu knihovníka a editora.",
+    "pendingAction": "Čekající akce",
+    "approve": "Schválit",
+    "decline": "Odmítnout",
+    "themes": "Motivy",
+    "providers": "Poskytovatelé",
+    "comingSoon": "Již brzy"
+  },
+  "agentLive": {
+    "dismiss": "Zavřít",
+    "paused": "Agent je pozastaven"
+  },
+  "conversationLive": {
+    "liveOutput": "Živý výstup",
+    "waitingFirstChunk": "Čekám na první část výstupu…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Použít ikonu místo toho"
+  },
+  "pendingActions": {
+    "rejectAll": "Odmítnout všechny čekající akce",
+    "approveAll": "Schválit a odeslat všechny akce, které nemají žádné tvrdé blokátory"
+  },
+  "aiPanel": {
+    "clearSessions": "Vymazat všechny relace",
+    "dismiss": "Zavřít"
+  },
+  "schedulerPlus": {
+    "restartAll": "Restartovat všechny agenty",
+    "restartSubtitle": "Zastavit a znovu aktivovat všechny plány"
+  },
+  "csvViewer": {
+    "downloadCsv": "Stáhnout CSV",
+    "deleteRow": "Smazat řádek"
+  },
+  "resizableImage": {
+    "resizeLeft": "Změnit velikost zleva",
+    "resizeRight": "Změnit velikost zprava"
+  },
+  "folderIndex": {
+    "listView": "Zobrazení seznamu",
+    "galleryView": "Zobrazení galerie"
+  },
+  "linkPopover": {
+    "openLink": "Otevřít odkaz",
+    "removeLink": "Odebrat odkaz"
+  },
+  "officeChrome": {
+    "openInFinder": "Otevřít ve Finderu",
+    "downloadOriginal": "Stáhnout originál"
+  },
+  "sourceViewer": {
+    "copyContents": "Kopírovat obsah souboru",
+    "downloadFile": "Stáhnout soubor"
+  },
+  "versionHistory": {
+    "title": "Historie verzí"
+  },
+  "demoModal": {
+    "closeDemo": "Zavřít demo",
+    "close": "Zavřít"
+  },
+  "demosPlus": {
+    "anything": "Cokoli",
+    "yours": "Vaše",
+    "install": "Nainstalovat",
+    "attach": "Připojit"
+  },
+  "narrowViewport": {
+    "dismiss": "Zavřít nápovědu pro úzké zobrazení",
+    "dismissTitle": "Zavřít do další relace",
+    "hintPrefix": "Cabinet funguje nejlépe při ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " šířce. Některá rozhraní se při užších šířkách stísní."
+  },
+  "agentCard": {
+    "runHeartbeat": "Spustit kontrolu aktivity"
+  },
+  "schedulePicker": {
+    "frequency": "Frekvence",
+    "onDay": "V den",
+    "modeInterval": "Interval",
+    "modeDaily": "Denně",
+    "modeWeekdays": "Všední dny",
+    "modeWeekly": "Týdně",
+    "modeMonthly": "Měsíčně",
+    "modeCustom": "Vlastní",
+    "parse": "Analyzovat",
+    "showCron": "Zobrazit cron výraz",
+    "hideCron": "Skrýt cron výraz",
+    "weekdayMo": "Po",
+    "weekdayTu": "Út",
+    "weekdayWe": "St",
+    "weekdayTh": "Čt",
+    "weekdayFr": "Pá",
+    "weekdaySa": "So",
+    "weekdaySu": "Ne"
+  },
+  "slackPanel": {
+    "createChannel": "Vytvořit kanál",
+    "thread": "Vlákno"
+  },
+  "uninstall": {
+    "title": "Odinstalovat Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Zásuvky Cabinetu",
+    "pageTitlePlaceholder": "Název stránky…"
+  },
+  "skillAddPlus": {
+    "cancel": "Zrušit"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Auditní data pro tuto dovednost nejsou k dispozici ze skills.sh",
+    "searchPlaceholder": "Hledat na skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Obnovit",
+    "noSkills": "Zatím žádné dovednosti."
+  },
+  "taskDetail": {
+    "close": "Zavřít (Esc)",
+    "muteTask": "Ztlumit tento úkol — jeho dokončené spuštění jde přímo do archivu",
+    "unmuteTask": "Zrušit ztlumení tohoto úkolu — jeho dokončené spuštění se znovu objeví v sekci Právě dokončeno"
+  },
+  "rowActionsPlus": {
+    "edit": "Upravit",
+    "editHint": "Upravit tento uložený koncept před spuštěním",
+    "delete": "Smazat",
+    "deleteHint": "Smazat trvale — nelze vrátit zpět"
+  },
+  "taskCard": {
+    "ptyMode": "Běží v režimu terminálu (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "Zavřít"
+  },
+  "terminalExited": {
+    "openDetails": "Zobrazit strukturované detaily (výzva, artefakty, tahy)",
+    "reconnect": "Znovu se připojit k démonovi a streamovat nezpracovaný PTY záznam"
+  },
+  "terminalTabsPlus": {
+    "resize": "Změnit velikost panelu terminálu"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Zobrazit všechny agenty",
+    "noRecentActivity": "Žádná nedávná aktivita",
+    "noAgents": "Žádní agenti",
+    "noAgentsConfigured": "Pro tento cabinet zatím nejsou nakonfigurováni žádní agenti.",
+    "cabinetScope": "Rozsah cabinetu:",
+    "depthDropdownHeader": "Rozsah cabinetu",
+    "depthOwnLabel": "Pouze tento cabinet",
+    "depthOwnShort": "Vlastní",
+    "depthOwnDesc": "Stránky, agenti a úkoly pouze z tohoto cabinetu.",
+    "depthChildren1Label": "Zahrnout přímé potomky",
+    "depthChildren1Desc": "Přidat jednu úroveň pod-cabinetů.",
+    "depthChildren2Label": "Zahrnout dvě úrovně cabinetů",
+    "depthChildren2Desc": "Přidat dvě úrovně pod-cabinetů.",
+    "depthAllLabel": "Zahrnout všechny potomky",
+    "depthAllShort": "Všechny",
+    "depthAllDesc": "Zahrnout celý podstrom.",
+    "scopeTooltip": "Rozsah cabinetu: {{label}}. Kliknutím změníte."
+  },
+  "composerExtras": {
+    "skillAttached": "Dovednost — připojeno pouze k tomuto spuštění",
+    "pageTitlePlaceholder": "Název stránky…",
+    "active": "Aktivní — probudit agenta podle tohoto plánu",
+    "pickCliPty": "Vyberte CLI ke spuštění v PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Upravit pomocí AI",
+    "jupyterLab": "Kopírovat: jupyter lab <path>",
+    "exitApp": "Ukončit aplikaci"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI účty",
+    "aiTeams": "AI týmy"
+  },
+  "whatsNew": {
+    "dismiss": "Zavřít",
+    "headerPrefix": "Co je nového ve v",
+    "readFull": "Přečíst si úplné poznámky k vydání"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Rozumím a chci pokračovat."
+  },
+  "daemonHealth": {
+    "dismiss": "Zavřít"
+  },
+  "tinyExtras": {
+    "light": "Světlý",
+    "home": "Domů",
+    "workspaceGallery": "Galerie pracovních prostorů",
+    "savingTo": "Ukládání do",
+    "comingSoon": "Již brzy",
+    "deleteSkill": "Smazat dovednost",
+    "skillsOffered": "Nabízené dovednosti:",
+    "allAgents": "Všichni agenti",
+    "noTranscript": "Přepis nenalezen",
+    "noDiff": "Rozdíl není k dispozici.",
+    "headsUp": "Upozornění:",
+    "back": "Zpět",
+    "editYourAvatar": "Upravit avatara",
+    "openFullTaskViewer": "Otevřít plné zobrazení úkolu",
+    "close": "Zavřít",
+    "copyToClipboard": "Kopírovat do schránky",
+    "starOnGithub": "Dejte hvězdičku Cabinetu na GitHubu",
+    "helpMoreFind": "Pomozte více lidem najít komunitu",
+    "joinDiscord": "Připojte se na Discord",
+    "chatWithBuilders": "Chatujte s tvůrci Cabinetu",
+    "joinWaitlist": "Připojte se na čekací listinu Cabinet Cloud",
+    "emailPlaceholder": "vy@společnost.cz",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Přidat do Doručené pošty",
+    "runTaskNow": "Spustit úkol nyní",
+    "search": "Hledat",
+    "aiPanel": "Panel AI",
+    "drawers": "Zásuvky"
+  },
+  "dataLocations": {
+    "title": "Kde žijí vaše data",
+    "whyThisMatters": "Proč je to důležité",
+    "location": "Umístění",
+    "contains": "Obsahuje",
+    "network": "Síť",
+    "revealInFinder": "Zobrazit ve správci souborů",
+    "stored": "Uloženo",
+    "resetOnboarding": "Resetovat úvodní nastavení"
+  },
+  "rooms": {
+    "switcherTitle": "Přepnout místnost",
+    "switchRoom": "Místnosti",
+    "loading": "Načítání…",
+    "defaultTag": "Domů",
+    "openInNewWindow": "Otevřít v novém okně",
+    "opensBrowserWindow": "Otevře nové okno prohlížeče",
+    "customizeRoom": "Upravit místnost",
+    "addRoom": "Přidat místnost…",
+    "editTitle": "Upravit místnost",
+    "editSubtitle": "Nastavte název, ikonu, barvu a téma této místnosti.",
+    "nameLabel": "Zobrazované jméno",
+    "slugHint": "Název složky na disku zůstává {{slug}}. Přejmenování složky je samostatná, pokročilá akce.",
+    "iconLabel": "Ikona",
+    "colorLabel": "Barva",
+    "colorAuto": "Automaticky",
+    "themeLabel": "Motiv",
+    "themeGlobal": "Použít globální výchozí",
+    "editFailed": "Nepodařilo se uložit místnost. Zkuste to prosím znovu.",
+    "deleteRoom": "Smazat místnost…",
+    "deleteLastRoomDisabledHint": "Nemůžete smazat svou poslední místnost.",
+    "deleteTitle": "Smazat tuto místnost?",
+    "deleteSubtitle": "Tato místnost a vše v ní bude přesunuto do koše.",
+    "deleteWarningIntro": "Přesunutím místnosti do koše se také odstraní:",
+    "deleteWarningPages": "Stránky a soubory v této místnosti",
+    "deleteWarningAgents": "Agenti, konverzace a paměť vázané na tuto místnost",
+    "deleteWarningJobs": "Naplánované úlohy a rutiny v této místnosti",
+    "deleteWarningChat": "Historie týmového chatu pro tuto místnost",
+    "deleteWarningSearch": "Index vyhledávání místnosti (automaticky znovu vytvořen při obnovení)",
+    "deleteRecoveryNote": "Obnova: místnost je přesunuta do data/.trash/ — obnovte ji přesunutím složky zpět do data/.",
+    "deleteConfirmLabel": "Napište {{slug}} pro potvrzení",
+    "deleteConfirmButton": "Smazat místnost",
+    "deleting": "Maže se…",
+    "deleteFailed": "Nepodařilo se smazat místnost. Zkuste to prosím znovu."
+  },
+  "common": {
+    "actions": {
+      "save": "Uložit",
+      "cancel": "Zrušit",
+      "delete": "Smazat",
+      "confirm": "Potvrdit",
+      "close": "Zavřít",
+      "open": "Otevřít",
+      "back": "Zpět",
+      "next": "Další",
+      "done": "Hotovo"
+    },
+    "nav": {
+      "goBack": "Jít zpět",
+      "goForward": "Jít vpřed"
+    },
+    "aiPanel": {
+      "open": "Otevřít panel AI",
+      "close": "Zavřít panel AI"
+    },
+    "states": {
+      "loading": "Načítání…",
+      "saving": "Ukládání…",
+      "saved": "Uloženo",
+      "error": "Něco se pokazilo"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Nová stránka",
+      "title": "Vytvořit novou stránku",
+      "placeholder": "Název stránky…",
+      "create": "Vytvořit",
+      "creating": "Vytváření…"
+    },
+    "newCabinet": {
+      "trigger": "Nový Cabinet",
+      "title": "Vytvořit nový Cabinet",
+      "subtitle": "Cabinet je pracovní prostor s vlastními agenty, úlohami a znalostmi.",
+      "importFromRegistry": "Importovat z Registru",
+      "nameLabel": "Název Cabinetu",
+      "namePlaceholder": "např. Můj startup, Marketingový tým, Výzkumná laboratoř…",
+      "selectAgents": "Vybrat agenty",
+      "selectedCount": "Vybráno {{count}}",
+      "createCabinet": "Vytvořit Cabinet",
+      "creating": "Vytváření…",
+      "createFailed": "Nepodařilo se vytvořit cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Exportovat stránku",
+      "copyMarkdown": "Kopírovat Markdown",
+      "copyForLlms": "Kopírovat pro LLM",
+      "copyAsHtml": "Kopírovat jako HTML",
+      "downloadMarkdown": "Stáhnout .md",
+      "downloadPdf": "Stáhnout PDF",
+      "copiedForLlmToast": "Zkopírováno {{size}} Markdownu pro LLM"
+    },
+    "toolbar": {
+      "heading1": "Nadpis 1",
+      "heading2": "Nadpis 2",
+      "heading3": "Nadpis 3",
+      "bold": "Tučné",
+      "italic": "Kurzíva",
+      "underline": "Podtržené",
+      "strikethrough": "Přeškrtnuté",
+      "inlineCode": "Vložený kód",
+      "link": "Odkaz",
+      "textColor": "Barva textu",
+      "highlight": "Zvýraznění",
+      "background": "Pozadí",
+      "bulletList": "Seznam s odrážkami",
+      "orderedList": "Číslovaný seznam",
+      "blockquote": "Citace",
+      "checklist": "Kontrolní seznam",
+      "codeBlock": "Blok kódu",
+      "divider": "Oddělovač",
+      "alignLeft": "Zarovnat doleva",
+      "alignCenter": "Zarovnat na střed",
+      "alignRight": "Zarovnat doprava",
+      "justify": "Zarovnat do bloku",
+      "align": "Zarovnat",
+      "table": {
+        "selectCellText": "Vybrat text buňky",
+        "addRowAbove": "Přidat řádek nad",
+        "addRowBelow": "Přidat řádek pod",
+        "moveRowUp": "Přesunout řádek nahoru",
+        "moveRowDown": "Přesunout řádek dolů",
+        "deleteRow": "Smazat řádek",
+        "addColumnBefore": "Přidat sloupec před",
+        "addColumnAfter": "Přidat sloupec za",
+        "moveColumnLeft": "Přesunout sloupec doleva",
+        "moveColumnRight": "Přesunout sloupec doprava",
+        "deleteColumn": "Smazat sloupec",
+        "toggleHeaderRow": "Přepnout řádek záhlaví",
+        "toggleHeaderColumn": "Přepnout sloupec záhlaví",
+        "deleteTable": "Smazat tabulku"
+      },
+      "superscript": "Horní index",
+      "subscript": "Dolní index",
+      "insertImage": "Vložit obrázek",
+      "insertVideo": "Vložit video",
+      "embed": "Vložit",
+      "undo": "Zpět",
+      "redo": "Znovu",
+      "switchToLtr": "Přepnout na LTR",
+      "switchToRtl": "Přepnout na RTL",
+      "scrollLeft": "Posunout panel nástrojů doleva",
+      "scrollRight": "Posunout panel nástrojů doprava",
+      "markdown": "Markdown",
+      "preview": "Náhled"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Název Cabinetu…",
+      "renameWarning": "Názvy Cabinetů nelze později přejmenovat (prozatím). Zvolte uvážlivě."
+    },
+    "templates": {
+      "header": "Začít ze šablony",
+      "browseAll": "Procházet vše →"
+    },
+    "quickActions": {
+      "shuffle": "Zobrazit jiné návrhy",
+      "launch10Songs": "Spustit 10 editorů pro psaní písní",
+      "dailyReview9am": "Denní přehled v 9:00",
+      "weeklyReview": "Týdenní přehled příští pondělí",
+      "thailandTrip": "Naplánovat mou cestu do Thajska",
+      "physicsApp": "Vytvořit mi aplikaci pro studium fyziky",
+      "summariseRecent": "Shrnout mou nedávnou práci",
+      "recruiterReply": "Navrhnout odpověď náboráři",
+      "mapArticles": "Zmapovat propojení článků",
+      "physicsCourse": "Vytvořit šestimodulový kurz fyziky",
+      "shortStory": "Nastínit krátký příběh",
+      "hourlyStandup": "Hodinové připomenutí stand-upu",
+      "researchPhone": "Prozkoumat můj další telefon",
+      "translateToSpanish": "Přeložit tento cabinet do španělštiny",
+      "refactorNotes": "Přepracovat můj systém pro psaní poznámek",
+      "birthdayParty": "Naplánovat narozeninovou oslavu",
+      "boardUpdate": "Navrhnout aktualizaci pro představenstvo",
+      "customerInterviews": "Simulovat 5 zákaznických rozhovorů"
+    },
+    "goodMorning": "Dobré ráno",
+    "goodAfternoon": "Dobré odpoledne",
+    "goodEvening": "Dobrý večer",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Chci vytvořit...",
+    "composerDaemonDown": "Agent daemon offline — restartujte pro odeslání"
+  },
+  "onboarding": {
+    "launchHeading": "Spusťte svůj <accent>Cabinet</accent>",
+    "intro": {
+      "tagline1": "Vaše znalostní báze.",
+      "tagline2": "Váš AI tým.",
+      "getStarted": "Začínáme"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Kancelář",
+        "study": "Pracovna",
+        "lab": "Laboratoř",
+        "library": "Knihovna",
+        "kitchen": "Kuchyně",
+        "family": "Rodina",
+        "dining": "Jídelna",
+        "studio": "Studio"
+      }
+    },
+    "welcome": {
+      "paragraph": "Váš Domov je jen váš. V něm si nastavíte místnosti pro různé části vašeho života: práci, druhý mozek, výzkum, rodinu. A každá místnost má skříně: vaše poznámky, vaše soubory a tým AI, který tiše pracuje na pozadí.",
+      "namePrompt": "Jak se jmenujete?",
+      "heading": "Vítejte <accent>doma</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Vítejte zpět",
+      "headingNamed": "Vítejte zpět v {{cabinet}}",
+      "subtitle": "Našli jsme zde existující cabinet. Pojďme dokončit jeho nastavení.",
+      "continue": "Pokračovat"
+    },
+    "verify": {
+      "passed": "Prošlo",
+      "notInstalled": "Nenainstalováno",
+      "authRequired": "Vyžadována autorizace",
+      "paymentRequired": "Vyžadována platba",
+      "quotaExceeded": "Kvóta / limit požadavků",
+      "error": "Chyba"
+    },
+    "providerStatus": {
+      "ready": "Připraveno",
+      "loginRequired": "Vyžadováno přihlášení",
+      "notInstalled": "Nenainstalováno"
+    },
+    "actions": {
+      "back": "Zpět",
+      "next": "Další",
+      "continue": "Pokračovat",
+      "skip": "Přeskočit",
+      "finish": "Dokončit",
+      "complete": "Dokončit nastavení",
+      "copyToClipboard": "Kopírovat do schránky"
+    },
+    "cabinetCreated": {
+      "continue": "Pokračovat v nastavení",
+      "heading": "Váš cabinet byl vytvořen",
+      "subtitle": "Vše je nastaveno a připraveno k použití.",
+      "agentsReady_one": "{{count}} agent připraven k práci",
+      "agentsReady_other": "{{count}} agenti připraveni k práci",
+      "scheduledJobs_one": "{{count}} naplánovaná úloha",
+      "scheduledJobs_other": "{{count}} naplánované úlohy",
+      "subCabinets_one": "{{count}} pod-cabinet",
+      "subCabinets_other": "{{count}} pod-cabinety",
+      "agentsReady": "{{count}} agenti připraveni k práci",
+      "scheduledJobs": "{{count}} naplánované úlohy",
+      "subCabinets": "{{count}} pod-cabinety"
+    },
+    "cloud": {
+      "alreadyOnList": "Jste již na seznamu — ozveme se.",
+      "aside": "Cabinet Cloud již brzy. Stejný produkt, bez starostí se samoobslužným hostingem.",
+      "description": "Otevřete svůj Cabinet z jakéhokoli zařízení, zatímco vaši AI agenti pracují — navrhují, zkoumají, organizují — i když je váš notebook zavřený.",
+      "error": "Něco se pokazilo. Zkontrolujte e-mail a zkuste to znovu.",
+      "joinWaitlist": "Připojit se k čekací listině",
+      "onList": "Jste na seznamu. Až se Cabinet Cloud spustí, pošleme vám e-mail.",
+      "sending": "Odesílám…",
+      "title": "Váš Cabinet, kdekoli. Váš AI tým, vždy online.",
+      "waitlistSubtitle": "Připojte se odkudkoli. Váš AI tým pracuje 24/7."
+    },
+    "discord": {
+      "aside": "Pokud chcete nové funkce jako první a preferujete „pojďte si popovídat“ před „prosím, odešlete ticket“, toto je vaše místnost.",
+      "description": "Zde se zpětná vazba mění ve funkce, snímky obrazovky v debaty a někdo obvykle najde okrajový případ dříve, než najde vás.",
+      "joinBadge": "Připojit se",
+      "title": "Na Discordu se dějí ty správné podivnosti."
+    },
+    "github": {
+      "aside": "Cabinet je open source. Pokud se vám líbí naše vize, pomozte nám ji šířit.",
+      "description": "Hvězdička na GitHubu pomůže více lidem objevit Cabinet a připojit se ke komunitě.",
+      "starsLabel": "{{stars}} hvězdiček na GitHubu",
+      "title": "Pomozte komunitě Cabinet růst"
+    },
+    "launch": {
+      "beforeYouLaunch": "Před spuštěním",
+      "defaultCabinetName": "Váš Cabinet",
+      "defaultDescription": "Znalostní báze + AI tým",
+      "knowledgeBaseLabel": "Znalostní báze",
+      "aiTeamLabel": "Tým AI",
+      "launchCabinet": "Spustit Cabinet",
+      "settingUp": "Nastavuji...",
+      "disclaimerAccess": "<strong>Agenti běží s plným přístupem.</strong> Cabinet používá <flag>--dangerously-skip-permissions</flag> (Claude Code) a ekvivalentní příznaky u jiných poskytovatelů. To je totožné se spouštěním těchto nástrojů CLI z vašeho vlastního terminálu. Jakékoli servery MCP nebo nástroje, které jste nakonfigurovali, mohou být agenty automaticky vyvolány.",
+      "disclaimerBackup": "<strong>Pravidelně zálohujte svá data.</strong> Agenti mohou číst, zapisovat a mazat soubory napříč vaší KB a propojenými repozitáři. Cabinet nenese odpovědnost za ztrátu dat. Jste zodpovědní za poskytovatele AI, které si vyberete, a jejich podmínky služby.",
+      "disclaimerBeta": "<strong>Beta software. Věci se mohou rozbít.</strong> Dodáváme rychle. Zásadní změny mohou přijít bez upozornění.",
+      "legalNotice": "Pokračováním souhlasíte s našimi <terms>Podmínkami</terms> a <privacy>Zásadami ochrany osobních údajů</privacy>. Cabinet je <oss>open-source projekt</oss>.",
+      "keepInTouch": "Zůstaňte v kontaktu. Cabinet je open source a vyvíjí se otevřeně, a rádi bychom věděli, co dál stavět. Žádný spam, slibujeme."
+    },
+    "provider": {
+      "agentType": "Agent {{type}}",
+      "close": "Zavřít",
+      "comingSoon": "Již brzy",
+      "guide": "Průvodce",
+      "heading": "Poskytovatel agenta",
+      "moreModels": "Více AI",
+      "install": "Instalovat",
+      "logIn": "Přihlásit se",
+      "openTerminalButton": "Otevřít terminál",
+      "openTerminalDetail": "K provedení dalších kroků budete potřebovat terminál.",
+      "openTerminalError": "Terminál se nepodařilo otevřít automaticky. Otevřete systémový terminál ručně.",
+      "openTerminalTitle": "Otevřít terminál",
+      "recheck": "Znovu zkontrolovat poskytovatele",
+      "rerunVerify": "Znovu spustit ověření",
+      "runVerify": "Spustit ověření",
+      "setupTitle": "Nastavení {{name}}",
+      "skipForNow": "Prozatím přeskočit",
+      "subtitle": "Cabinet potřebuje AI CLI pro napájení vašich agentů.",
+      "verifyExplanation": "Ověření spustí bezhlavou výzvu poskytovatele od začátku do konce a klasifikuje jakékoli selhání, abyste věděli, který krok je třeba znovu navštívit.",
+      "verifying": "Ověřuji…",
+      "failedAtStep": "Selhalo v kroku: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "K čemu je tento Cabinet? Každá místnost má svůj vlastní AI tým.",
+      "heading": "Vyberte <accent>místnost</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Co je Cabinet?",
+      "body": "Cabinet je zaměřený pracovní prostor pro jednu oblast vašeho života nebo práce. Obsahuje vaše soubory, poznámky, nástroje, agenty a úkoly, takže váš tým AI má kontext, který potřebuje k efektivní pomoci.",
+      "examplesLabel": "Jak lidé používají Cabinet",
+      "example1": "váš startup",
+      "example2": "repozitář GitHub",
+      "example3": "vaše marketingová práce",
+      "example4": "klientský projekt",
+      "example5": "vaše osobní znalostní báze"
+    },
+    "access": {
+      "heading": "K čemu má {{name}} přístup?",
+      "subtitle": "Vyberte znalosti a nástroje, které může tento agent používat. Můžete to kdykoli změnit.",
+      "defaultAgent": "váš agent",
+      "files": "Soubory a znalosti",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Servery MCP",
+      "plugins": "Pluginy",
+      "skills": "Dovednosti",
+      "placeholderNote": "Přístup můžete doladit později v nastavení agenta."
+    },
+    "heartbeat": {
+      "heading": "Měl by {{name}} běžet pravidelně?",
+      "subtitle": "Pravidelný běh umožňuje agentovi hlásit se a pracovat samostatně podle plánu.",
+      "off": "Vypnuto",
+      "offHint": "Běží jen na vyžádání. Doporučeno pro začátek.",
+      "daily": "Denně",
+      "dailyHint": "Hlásí se jednou denně.",
+      "weekly": "Týdně",
+      "weeklyHint": "Hlásí se jednou týdně.",
+      "tokenNote": "Upozornění: Pravidelný běh spouští agenta automaticky, což spotřebovává AI tokeny (a vaši kvótu u poskytovatele) při každém spuštění. Můžete to kdykoli změnit nebo vypnout."
+    },
+    "firstTask": {
+      "heading": "Zadejte svůj první úkol",
+      "subtitle": "Úkoly jsou způsob, jak zadáváte práci pro {{name}}. Napište jeden teď a objeví se ve vašem cabinetu, připravený ke spuštění.",
+      "label": "Co by měl {{name}} udělat jako první?",
+      "placeholder": "např. Navrhněte uvítací e-mail pro nové zákazníky",
+      "example1": "Shrňte mé nejnovější poznámky",
+      "example2": "Navrhněte projektový plán",
+      "example3": "Prozkoumejte naše 3 hlavní konkurenty",
+      "note": "Můžete to nechat prázdné a úkoly přidat později. Nic se nespustí, dokud nepřipojíte poskytovatele AI."
+    },
+    "rail": {
+      "untitled": "Váš Cabinet",
+      "dataCaption": "Zde najdete všechny soubory a poznámky vašeho projektu.",
+      "teamEmpty": "Zatím žádní agenti.",
+      "teamCaption": "Váš AI tým pracuje zde.",
+      "tasksEmpty": "Zatím žádné úkoly.",
+      "tasksCaption": "Práce, kterou zadáte svému týmu, se zobrazí zde.",
+      "assignedTo": "Přiřazeno k {{name}}",
+      "you": "Vy"
+    },
+    "rooms": {
+      "office": {
+        "label": "Kancelář",
+        "tagline": "Provozujte firmu, startup nebo vedlejší projekt.",
+        "workspaceLabel": "Název firmy nebo projektu",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Co děláte?",
+        "descriptionPlaceholder": "Tvoříme podcast o AI startupech",
+        "departmentNoun": "Oddělení",
+        "teamSizeLabel": "Velikost týmu",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "Editor"
+        }
+      },
+      "study": {
+        "label": "Studovna",
+        "tagline": "Váš druhý mozek — psaní, poznámky, osobní asistent.",
+        "workspaceLabel": "Pojmenujte svůj cabinet",
+        "workspacePlaceholder": "Moje studovna",
+        "descriptionLabel": "S jakými oblastmi života chcete pomoci?",
+        "descriptionPlaceholder": "Psaní, třídění e-mailů, kalendář, sledování návyků",
+        "departmentNoun": "Oblast",
+        "exampleAgents": {
+          "0": "Asistent",
+          "1": "Knihovník"
+        }
+      },
+      "lab": {
+        "label": "Výzkumná laboratoř",
+        "tagline": "Akademická práce, literatura, výuka, diplomová práce.",
+        "workspaceLabel": "Název pracovního prostoru",
+        "workspacePlaceholder": "Filozofie mysli",
+        "descriptionLabel": "Jaký je váš obor nebo co zkoumáte?",
+        "descriptionPlaceholder": "Fenomenologie, vědomí, výuka Úvodu do filozofie",
+        "departmentNoun": "Oblast",
+        "exampleAgents": {
+          "0": "Vedoucí výzkumu",
+          "1": "Knihovník"
+        }
+      },
+      "family-room": {
+        "label": "Rodinný pokoj",
+        "tagline": "Domácnost, rodinný kalendář, jídla, děti.",
+        "workspaceLabel": "Název domácnosti",
+        "workspacePlaceholder": "Rodina Nguyenových",
+        "descriptionLabel": "Kdo zde žije a co všechno zvládáte?",
+        "descriptionPlaceholder": "Dva rodiče, tři děti, dvě školy, jeden pes",
+        "departmentNoun": "Oblast",
+        "teamSizeLabel": "Velikost domácnosti",
+        "exampleAgents": {
+          "0": "Správce domácnosti",
+          "1": "Plánovač"
+        }
+      },
+      "blank": {
+        "label": "Prázdná místnost",
+        "tagline": "Zatím nic. Přineste si vlastní agenty, svůj vlastní tvar.",
+        "workspaceLabel": "Pojmenujte svůj cabinet",
+        "workspacePlaceholder": "Můj cabinet",
+        "descriptionLabel": "K čemu to je?",
+        "descriptionPlaceholder": "Cokoli — nechte prázdné, pokud si ještě nejste jisti",
+        "departmentNoun": "Skupina",
+        "exampleAgents": {
+          "0": "Na vás"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Vedení",
+      "marketing": "Marketing",
+      "content": "Obsah",
+      "engineering": "Technický vývoj",
+      "product-and-design": "Produkt a design",
+      "business": "Obchod",
+      "research": "Výzkum",
+      "finance-and-ops": "Finance a provoz",
+      "personal": "Osobní",
+      "second-brain": "Druhý mozek",
+      "writing": "Psaní",
+      "tools": "Nástroje",
+      "life-admin": "Životní administrativa",
+      "from-the-office": "Z kanceláře",
+      "writing-and-notes": "Psaní a poznámky",
+      "other": "Ostatní",
+      "household": "Domácnost",
+      "admin": "Správa",
+      "money": "Peníze",
+      "product": "Produkt",
+      "design": "Design",
+      "sales": "Prodej",
+      "support": "Podpora",
+      "analytics": "Analýza",
+      "finance": "Finance",
+      "legal": "Právní",
+      "people": "Lidé"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Dobré ráno, týme! Vítejte v {{workspace}}. Pusťme se do toho.",
+        "study": "Dobré ráno. Váš druhý mozek je online — vítejte zpět v {{home}}.",
+        "lab": "Výzkumný stůl připraven — „{{workspace}}“. Do čeho se dnes pustíme?",
+        "family-room": "Domácí centrála se spouští — {{home}}. Pojďme každého dostat tam, kam potřebuje.",
+        "blank": "Čistý štít — „{{workspace}}“. Co zde chcete vybudovat, {{home}}?"
+      },
+      "assign": "{{name}}, můžeš se ujmout {{topic}}?",
+      "fallbackTopic": "co dál",
+      "office": {
+        "replies": {
+          "0": "Pracuji na tom. Přehled situace budu mít hotový do konce dne.",
+          "1": "Už rýsuji plán. Brzy ho nasdílím v #content.",
+          "2": "Nastavuji základní pracovní postupy. Zatím to vypadá dobře."
+        },
+        "topics": {
+          "0": "průzkum konkurence",
+          "1": "obsahový kalendář",
+          "2": "plán spuštění"
+        },
+        "closing": "Skvělá energie, všichni. Udělejme z tohoto silný první týden."
+      },
+      "study": {
+        "replies": {
+          "0": "Protřídím doručenou poštu a ukážu, co vás potřebuje.",
+          "1": "Kalendář je volný do 15:00 — dobrý čas na psaní.",
+          "2": "Už jsem propojil tři nové poznámky s indexem „Denní“."
+        },
+        "topics": {
+          "0": "dnešní třídění doručené pošty",
+          "1": "psaní tento týden",
+          "2": "můj seznam četby"
+        },
+        "closing": "Dobře. Dejte mi vědět, když mě budete potřebovat — jinak se vám nebudu plést do cesty."
+      },
+      "lab": {
+        "replies": {
+          "0": "Stahuji k tomu nejnovější článek — návrh shrnutí za hodinu.",
+          "1": "Poté synchronizuji bibliografii a označím duplikáty.",
+          "2": "Osnova přednášky na čtvrtek je téměř připravena k revizi."
+        },
+        "topics": {
+          "0": "literární rešerše",
+          "1": "příprava přednášky na čtvrtek",
+          "2": "seznam referencí"
+        },
+        "closing": "Informujte mě. Zkontroluji vše, co pošlete do konce dne."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Rozvrh vypadá po 4 volný. Označuji překrývající se vyzvednutí.",
+          "1": "Menu na týden je navrženo — nákupní seznam je připraven ke kontrole.",
+          "2": "Dětské aktivity synchronizovány. DnD večer v pátek stále platí."
+        },
+        "topics": {
+          "0": "dnešní rozvrh",
+          "1": "jídelní plán",
+          "2": "dětské aktivity"
+        },
+        "closing": "Díky všem. Dejte mi vědět, pokud se něco během dne změní."
+      },
+      "blank": {
+        "replies": {
+          "0": "Rozumím. Jsem připraven, kdykoli budete vy.",
+          "1": "Jsem připraven.",
+          "2": "Počkám na pokyny."
+        },
+        "topics": {
+          "0": "první věc",
+          "1": "co bude dál",
+          "2": "otevřená otázka"
+        },
+        "closing": "Až budete připraveni, řekněte nám, co dělat."
+      }
+    },
+    "team": {
+      "browseAll": "Procházet vše",
+      "browseCabinets": "Procházet kabinety",
+      "cabinetNameLabel": "Název kabinetu",
+      "cancel": "Zrušit",
+      "importButton": "Importovat",
+      "importFailed": "Import se nezdařil",
+      "importFailedConnection": "Import se nezdařil. Zkontrolujte připojení.",
+      "importTitle": "Importovat {{name}}",
+      "pickAgents": "Vyberte své agenty",
+      "required": "Povinné",
+      "subtitle": "Každý kabinet je tým AI — agenti, úkoly a sdílená znalostní báze, pracující společně.",
+      "heading": "Sestavte <accent>svůj</accent> tým",
+      "nameLabel": "Jméno agenta",
+      "namePlaceholder": "např. Editor, Výzkumník, Asistent",
+      "roleLabel": "Role",
+      "rolePlaceholder": "např. Asistent pro psaní",
+      "instructionsLabel": "Co by měl tento agent dělat?",
+      "instructionsPlaceholder": "Popište, jak by měl pomáhat. Například: Navrhovat a upravovat mé stránky, udržovat tón jasný a přátelský a navrhovat vylepšení.",
+      "agentOptionalHint": "Volitelné. Můžete to přeskočit a agenty přidat později z místnosti.",
+      "agentCount_one": "{{count}} agent",
+      "agentCount_other": "{{count}} agentů",
+      "jobCount_one": "{{count}} úloha",
+      "jobCount_other": "{{count}} úloh",
+      "subCabinetCount_one": "{{count}} podkabinet",
+      "subCabinetCount_other": "{{count}} podkabinetů",
+      "cabinetsImported_one": "{{count}} kabinet importován",
+      "cabinetsImported_other": "{{count}} kabinetů importováno",
+      "agentCount": "{{count}} agentů",
+      "cabinetsImported": "{{count}} kabinetů importováno",
+      "jobCount": "{{count}} úloh",
+      "subCabinetCount": "{{count}} podkabinetů"
+    }
+  },
+  "search": {
+    "title": "Hledat",
+    "placeholder": "Hledat stránky, agenty, úkoly…",
+    "clearQuery": "Vymazat dotaz",
+    "noCommands": "Žádné příkazy neodpovídají.",
+    "scopes": {
+      "all": "Vše",
+      "pages": "Stránky",
+      "agents": "Agenti",
+      "tasks": "Úkoly"
+    },
+    "groups": {
+      "pages": "Stránky",
+      "agents": "Agenti",
+      "tasks": "Úkoly"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Jazyk",
+      "description": "Mění jazyk a směr čtení. Stávající stránky si zachovají svůj směr nastavený pro dokument.",
+      "english": "Angličtina",
+      "hebrew": "Hebrejština",
+      "chineseSimplified": "Zjednodušená čínština",
+      "chineseTraditional": "Tradiční čínština",
+      "moreLanguages": "Další jazyky",
+      "moreLanguagesHint": "Klikněte na libovolný, abyste nám dali vědět, že byste chtěli Cabinet v tomto jazyce – upřednostníme ty nejžádanější.",
+      "comingSoon": "Již brzy",
+      "requestSubmitted": "Děkujeme! Zaznamenali jsme váš požadavek na jazyk {{language}}. Upřednostníme nejžádanější jazyky.",
+      "requestFailed": "Nepodařilo se připojit k serveru. Zkuste to prosím za chvíli znovu."
+    },
+    "appearance": {
+      "title": "Vzhled",
+      "theme": "Motiv",
+      "themeDescription": "Vyberte motiv pro rozhraní.",
+      "matchSystem": "Podle systému",
+      "matchSystemDescription": "Přepíná se automaticky s vzhledem vašeho OS.",
+      "lightThemes": "Světlé motivy",
+      "darkThemes": "Tmavé motivy",
+      "lightVariant": "Světlá varianta",
+      "darkVariant": "Tmavá varianta",
+      "sidebar": "Postranní panel",
+      "showHiddenFiles": "Zobrazit skryté soubory",
+      "sidebarDescription": "Nastavte, jak se soubory zobrazují v postranním panelu.",
+      "showHiddenFilesHint": "Zobrazit soubory a složky začínající tečkou (např. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "providers": "Poskytovatelé",
+      "skills": "Dovednosti",
+      "storage": "Úložiště",
+      "integrations": "Integrace",
+      "notifications": "Oznámení",
+      "appearance": "Vzhled",
+      "updates": "Aktualizace",
+      "about": "O aplikaci"
+    },
+    "page": {
+      "title": "Nastavení",
+      "refresh": "Obnovit",
+      "groupYou": "Vy",
+      "groupWorkspace": "Pracovní prostor",
+      "groupApp": "Aplikace"
+    },
+    "common": {
+      "copyToClipboard": "Kopírovat do schránky",
+      "categoriesAriaLabel": "Kategorie nastavení",
+      "loading": "Načítání…",
+      "connect": "Připojit",
+      "recommended": "Doporučeno"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Již brzy",
+      "hint": "Připojování externích integrací a vestavěných nástrojů bude brzy k dispozici."
+    },
+    "storage": {
+      "dataDirectory": "Datový adresář",
+      "restartRequired": "Vyžaduje restart",
+      "dataDirectoryDescription": "Veškerý obsah znalostní báze je uložen v tomto adresáři. Změna cesty vyžaduje restart.",
+      "restartHint": "Datový adresář se změní po restartování aplikace Cabinet.",
+      "currentPath": "Aktuální cesta",
+      "loadingPath": "Načítání...",
+      "changeDirectory": "Změnit adresář",
+      "directoryPlaceholder": "cesta/k/datům",
+      "browse": "Procházet",
+      "save": "Uložit",
+      "openInFinder": "Otevřít ve Finderu",
+      "envVarHint1": "Můžete také nastavit ",
+      "envVarHint2": " proměnnou prostředí, která má přednost před tímto nastavením.",
+      "failedToSave": "Uložení se nezdařilo.",
+      "failedToSaveDir": "Uložení datového adresáře se nezdařilo."
+    },
+    "updates": {
+      "checking": "Kontrola aktualizací aplikace Cabinet…"
+    },
+    "providers": {
+      "title": "Poskytovatelé agentů",
+      "defaultModel": "Výchozí model",
+      "setupGuide": "Průvodce nastavením",
+      "troubleshoot": "Odstraňování problémů s poskytovateli AI",
+      "subtitle": "Konfigurujte poskytovatele AI agentů. Agenti CLI běží přes terminál, agenti API používají přímé volání API.",
+      "defaultRuntime": "Výchozí běhové prostředí",
+      "defaultRuntimeHint": "Obecné konverzace a záložní spuštění používají tohoto poskytovatele/model/úsilí.",
+      "cliAgents": "Agenti CLI",
+      "apiAgents": "Agenti API",
+      "ready": "Připraveno",
+      "installedNotLoggedIn": "Nainstalováno, ale nepřihlášeno",
+      "notInstalled": "Nenainstalováno",
+      "emptyMatrix": "Nejsou nakonfigurováni žádní poskytovatelé. Přidejte jednoho níže."
+    },
+    "notifications": {
+      "channels": "Kanály oznámení",
+      "alertRules": "Pravidla upozornění",
+      "alwaysOn": "Vždy zapnuto",
+      "comingSoon": "Již brzy",
+      "emailPlaceholder": "vy@firma.com",
+      "channelsHint": "Nakonfigurujte, jak budete dostávat upozornění, když agenti potřebují vaši pozornost.",
+      "rulesHint": "Oznámení se spouštějí automaticky pro tyto události:",
+      "previewHint": "Push v prohlížeči, Telegram, Slack a e-mailová oznámení.",
+      "channelPushName": "Push v prohlížeči",
+      "channelPushDesc": "Okamžitá upozornění, když je karta Cabinet otevřená nebo je nainstalována PWA",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Okamžitá mobilní oznámení přes bota Telegram",
+      "channelSlackName": "Webhook Slack",
+      "channelSlackDesc": "Přeposílat upozornění na kanál Slack vašeho týmu",
+      "channelEmailName": "E-mailový souhrn",
+      "channelEmailDesc": "Dávkový souhrn upozornění a aktivity agentů",
+      "ruleAlertsEvent": "Zprávy kanálu #alerts",
+      "ruleAlertsDesc": "Jakýkoli agent, který zveřejňuje příspěvky na kanál upozornění",
+      "ruleMentionsEvent": "Zmínky @human",
+      "ruleMentionsDesc": "Když agent zmíní @human v jakémkoli kanálu",
+      "ruleFloorEvent": "Překročena spodní hranice cíle",
+      "ruleFloorDesc": "Cíl klesne pod svou minimální hranici",
+      "ruleHealthEvent": "Stav agenta se zhoršil",
+      "ruleHealthDesc": "3+ po sobě jdoucí selhání odezvy"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Verze",
+      "release": "Vydání",
+      "framework": "Framework",
+      "storage": "Úložiště",
+      "privacy": "Soukromí",
+      "telemetry": "Anonymní telemetrie používání",
+      "tagline": "Znalostní báze a OS pro startupy s prioritou AI, hostovaná svépomocí.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Lokální souborový systém",
+      "aiLabel": "AI",
+      "aiValue": "Poháněno lokálními AI CLI",
+      "philosophy": "Veškerý obsah je uložen jako markdown soubory na disku. Lidé definují záměr. Agenti vykonávají práci. Znalostní báze je sdílená paměť mezi oběma.",
+      "privacyBody": "Cabinet odesílá anonymní telemetrii používání, aby nám pomohl vylepšit produkt. Nejsou shromažďovány žádné obsahy souborů, cesty, výzvy ani tajemství.",
+      "privacyLink": "Co se shromažďuje?",
+      "telemetryEnvDisabled": "Zakázáno proměnnou prostředí CABINET_TELEMETRY_DISABLED=1.",
+      "telemetryHint": "Pouze počty událostí, verze a informace o platformě. Vypněte pro zastavení odesílání.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "Připojte se ke svému Cabinetu odkudkoli, zatímco váš AI tým pro vás pracuje 24/7. Zadejte svůj e-mail níže a dáme vám vědět, až se Cabinet Cloud otevře.",
+      "cloudAlready": "Už jste na seznamu — ozveme se vám.",
+      "cloudSuccess": "Jste na seznamu. Pošleme vám e-mail, až se Cabinet Cloud otevře.",
+      "cloudSending": "Odesílám…",
+      "cloudJoinWaitlist": "Připojit se k čekací listině",
+      "cloudError": "Něco se pokazilo. Zkontrolujte e-mail a zkuste to znovu.",
+      "connectTitle": "Připojit",
+      "connectBody": "Získejte pomoc, sdílejte zpětnou vazbu nebo jen pozdravte.",
+      "joinDiscord": "Připojte se k Discordu"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Jméno",
+      "namePlaceholder": "Jane",
+      "displayName": "Zobrazované jméno",
+      "role": "Role",
+      "rolePlaceholder": "Tvůrce",
+      "avatar": "Avatar",
+      "accentColor": "Barva akcentu",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Záložní ikona",
+      "useIconInstead": "Použít ikonu",
+      "searchAvatars": "Hledat avatary…",
+      "searchIcons": "Hledat ikony…",
+      "howAppear": "Jak se zobrazujete v konverzacích a v celé aplikaci.",
+      "youFallback": "Vy",
+      "displayNameHint": "Zobrazeno v konverzacích. Výchozí je Jméno.",
+      "iconHint": "Použito, když není nastaven obrázek avatara. Klikněte znovu pro vymazání.",
+      "tintHint": "Zabarví záložní avatar, když není nastaven žádný obrázek.",
+      "save": "Uložit",
+      "saving": "Ukládání…",
+      "saved": "Uloženo",
+      "browseAll": "Procházet vše ({{count}})",
+      "showFavorites": "Zobrazit oblíbené",
+      "showFewer": "Zobrazit méně"
+    },
+    "workspace": {
+      "title": "Pracovní prostor",
+      "name": "Název pracovního prostoru",
+      "namePlaceholder": "Můj Cabinet",
+      "description": "Popis",
+      "descriptionPlaceholder": "Co děláte?",
+      "teamSize": "Velikost týmu",
+      "teamSizePlaceholder": "Jednotlivec / 2–5 / 6–20 / 20+",
+      "subtitle": "Zaznamenáno během onboardingu. Agenti je čtou při plánování práce."
+    }
+  },
+  "sidebar": {
+    "settings": "Nastavení",
+    "createPage": "Vytvořit stránku",
+    "newPage": "Nová stránka",
+    "newAgent": "Nový Agent",
+    "newTask": "Nová úloha",
+    "archive": "Archiv",
+    "trash": "Koš",
+    "search": "Hledat",
+    "agents": "Agenti",
+    "tasks": "Úlohy",
+    "missions": "Mise",
+    "drawerData": "Data",
+    "drawerAgents": "Tým",
+    "drawerTasks": "Úlohy",
+    "goHome": "Přejít domů",
+    "brandWord": "",
+    "refresh": "Obnovit postranní panel",
+    "refreshDescription": "Obnovit postranní panel (znovu načíst datovou složku)",
+    "collapseSidebar": "Sbalit postranní panel",
+    "expandSidebar": "Rozbalit postranní panel",
+    "resizeHandle": "Změnit velikost postranního panelu — dvojklikem resetovat",
+    "resetWidth": "Dvojklikem resetovat šířku",
+    "refreshedNoChanges": "Obnoveno — žádné změny.",
+    "refreshedWithChanges": "Obnoveno — přidáno {{added}}, odebráno {{removed}}.",
+    "refreshFailed": "Obnovení selhalo.",
+    "searchPlaceholder": "Hledat soubory…",
+    "searchSearching": "Vyhledávám…",
+    "searchNoResults": "Žádné soubory neodpovídají „{{query}}“"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Stavový řádek",
+      "askAiAriaLabel": "Požádat AI o úpravu této stránky",
+      "askAiPlaceholder": "Jak upravit tuto stránku?",
+      "sendHint": "↵ odeslat"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Stav serveru — klikněte pro podrobnosti",
+      "checking": "Kontroluji stav serveru…",
+      "allRunning": "Všechny systémy fungují",
+      "appNotResponding": "Aplikační server nereaguje",
+      "daemonDownNoProviders": "Démon neodpovídá; nejsou k dispozici žádní poskytovatelé agentů",
+      "daemonDown": "Démon neodpovídá",
+      "noProviders": "Nejsou k dispozici žádní poskytovatelé agentů",
+      "checkingShort": "Kontroluji…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Snížený výkon",
+      "allSystemsRunning": "Všechny systémy běží",
+      "serviceDisruption": "Přerušení služby",
+      "appServer": "Aplikační server",
+      "daemon": "Démon",
+      "agentProviders": "Poskytovatelé agentů",
+      "running": "Běží",
+      "down": "Mimo provoz",
+      "lastSeen": "Naposledy viděn: {{when}}",
+      "appWorking": "Stránky, editor, vyhledávání a správa souborů fungují.",
+      "appDown": "Stránky, editor, vyhledávání a ukládání nejsou k dispozici. Stále můžete číst obsah z mezipaměti.",
+      "daemonWorking": "AI agenti, plánované úlohy a webový terminál fungují.",
+      "daemonDownDescription": "AI agenti, plánované úlohy a webový terminál nejsou k dispozici. Úpravy stránek stále fungují.",
+      "available": "K dispozici",
+      "noneReady": "Žádný připraven",
+      "providerReady": "Připraveno",
+      "providerNotLoggedIn": "Nepřihlášen(a)",
+      "providerNotInstalled": "Nenainstalováno",
+      "install": "Nainstalovat",
+      "howToFix": "Jak opravit"
+    },
+    "save": {
+      "retryTitle": "Kliknutím zopakujte neúspěšné uložení",
+      "retryAriaLabel": "Uložení se nezdařilo — kliknutím zopakujte",
+      "autoSaving": "Automatické ukládání…",
+      "forceSave": "Vynucené uložení: ⌘S",
+      "editing": "Úpravy — automatické ukládání se spustí, když se zastavíte",
+      "wordCountTitle": "Počet slov na této stránce (syntaxe markdown vyloučena)",
+      "savedJustNow": "právě teď",
+      "savedNever": "nikdy",
+      "savedAgoSeconds": "před {{n}}s",
+      "savedAgoMinutes": "před {{n}}m",
+      "savedAgoHours": "před {{n}}h",
+      "savedAgoDays": "před {{n}}d",
+      "saveFailedRetry": "Uložení se nezdařilo — zkuste to znovu",
+      "savingText": "Ukládání…",
+      "savedText": "Uloženo",
+      "editingText": "Úprava…",
+      "savedAgo": "Uloženo · {{ago}}",
+      "word": "slovo",
+      "words": "slov"
+    },
+    "git": {
+      "statusModified": "Upraveno",
+      "statusNew": "Nové",
+      "statusAdded": "Přidáno",
+      "statusDeleted": "Smazáno",
+      "statusRenamed": "Přejmenováno",
+      "commitMessageAriaLabel": "Zpráva commitem"
+    },
+    "help": {
+      "menuAriaLabel": "Otevřít nabídku Nápověda a komunita",
+      "menuTitle": "Nápověda a komunita",
+      "demos": "Dema, videa a průvodci",
+      "discord": "Chat na Discordu",
+      "discordSubtitle": "Podpora a zpětná vazba",
+      "github": "Přispět na GitHubu",
+      "githubSubtitle": "Zdroj, problémy, PR",
+      "ifUseful": "Pokud je to užitečné",
+      "label": "Nápověda",
+      "starsAriaLabel": "{{count}} hvězdiček na GitHubu — otevřít Cabinet na GitHubu",
+      "starsTitle": "{{count}} hvězdiček na GitHubu — označit Cabinet hvězdičkou na GitHubu",
+      "share": "Sdílet",
+      "shareSubtitle": "Zkopírovat odkaz na pozvánku a šířit dál",
+      "shareCopied": "Jste úžasní, {{name}} 🩷 Děkujeme, že přivádíte budoucí členy Cabinetu. Odkaz zkopírován, jděte a šiřte lásku!",
+      "shareFailed": "Odkaz se nepodařilo zkopírovat",
+      "friend": "přítel"
+    },
+    "git2": {
+      "allCommitted": "Vše odesláno",
+      "uncommittedFile": "{{count}} neodeslaný soubor",
+      "uncommittedFiles": "{{count}} neodeslaných souborů",
+      "uncommittedFilesAria": "{{count}} neodeslaných souborů – kliknutím zobrazíte seznam",
+      "uncommittedFileTip": "Kliknutím zobrazíte nepotvrzený soubor",
+      "uncommittedFilesTip": "Kliknutím zobrazíte nepotvrzené soubory",
+      "uncommittedFilesHeading": "{{count}} nepotvrzený soubor",
+      "uncommittedFilesHeadingPlural": "{{count}} nepotvrzené soubory",
+      "truncatedHint": "Zobrazeno pouze prvních {{count}} souborů — pro úplný seznam spusťte `git status`.",
+      "commitDefault": "Aktualizovat {{count}} soubor",
+      "commitDefaultPlural": "Aktualizovat {{count}} soubory",
+      "committing": "Potvrzování…",
+      "commit": "Potvrdit",
+      "commitFailed": "Potvrzení selhalo",
+      "sync": "Synchronizovat",
+      "syncTitle": "Stáhnout nejnovější z GitHubu a obnovit",
+      "syncTitleWithLast": "Stáhnout nejnovější z GitHubu a obnovit. Naposledy synchronizováno {{when}}.",
+      "syncAriaLabel": "Stáhnout nejnovější změny z GitHubu a obnovit",
+      "syncAriaLabelWithLast": "Stáhnout nejnovější změny z GitHubu a obnovit. Naposledy synchronizováno {{when}}.",
+      "terminal": "Terminál",
+      "openTerminal": "Otevřít terminál",
+      "newTerminalTab": "Nová záložka terminálu",
+      "pulling": "Stahuji…",
+      "pulled": "Aktualizováno ze vzdáleného",
+      "upToDate": "Aktuální",
+      "pullFailed": "Stažení selhalo"
+    },
+    "update2": {
+      "updateAvailable": "Aktualizace {{version}} je k dispozici",
+      "updateAvailableTip": "Cabinet {{version}} je k dispozici"
+    },
+    "common": {
+      "dismiss": "Zavřít",
+      "close": "Zavřít",
+      "openSettings": "Otevřít Nastavení pro kontrolu nainstalované aktualizace"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Restartujte pro dokončení aktualizace"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Restartovat tento úkol z původní výzvy",
+      "markAsDone": "Označit tento úkol jako hotový",
+      "viewAriaLabel": "Zobrazení úkolu",
+      "terminal": "Terminál",
+      "transcript": "Přepis",
+      "details": "Podrobnosti",
+      "transcriptTitle": "Claude Code nativní relace JSONL",
+      "transcriptHint": "Čte ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Zpět",
+      "copyPrompt": "Zkopírovat původní výzvu",
+      "gracefulExit": "Elegantně zavřít CLI (zapíše /exit do PTY)",
+      "sendSigterm": "Odeslat SIGTERM běžícímu procesu PTY",
+      "moreActions": "Další akce",
+      "ptyMode": "Běží v režimu terminálu (PTY)",
+      "compactContext": "Sbalit předchozí tahy do souhrnu pro uvolnění kontextového okna",
+      "noSummary": "Zatím žádný souhrn.",
+      "sessionEnded": "Relace ukončena — pište pro pokračování ve stejném terminálu.",
+      "terminalLive": "Terminál aktivní. Vaše další výzva se zařadí po dokončení tohoto tahu."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Prohlídka Cabinet",
+    "skip": "Přeskočit",
+    "skipAriaLabel": "Přeskočit prohlídku",
+    "back": "Zpět",
+    "next": "Další",
+    "writeFirstTask": "Napište svůj první úkol",
+    "goToSlide": "Přejít na snímek {{n}}",
+    "starterTask": "Pojďme probrat mé cíle a čeho zde chci dosáhnout, a pak to zachytit na nové stránce O aplikaci.",
+    "savingTo": "Ukládám do ",
+    "introTitle": "Seznamte se s <accent>Cabinet</accent>.",
+    "introSubtitle": "Váš AI tým. Vaše znalostní báze. Jedno místo.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Nedávné a běžící úkoly",
+    "hide": "Skrýt panel úkolů",
+    "show": "Zobrazit panel úkolů",
+    "empty": "Žádné úkoly",
+    "itemRunning": "{{title}} · běží · {{when}}",
+    "itemNeedsReply": "{{title}} · čeká na odpověď",
+    "itemFailed": "{{title}} · selhalo · {{when}}",
+    "itemDone": "{{title}} · hotovo · {{when}}",
+    "itemArchived": "{{title}} · archivováno",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} běží — zobrazit panel úkolů"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Domů",
+      "agents": "Agenti",
+      "tasks": "Úkoly",
+      "ai": "AI",
+      "menu": "Menu",
+      "primaryAriaLabel": "Primární"
+    },
+    "returnTo": {
+      "task": "Úkol",
+      "tasks": "Úkoly",
+      "agent": "Agent",
+      "agents": "Agenti",
+      "cabinet": "Cabinet",
+      "home": "Domů",
+      "settings": "Nastavení",
+      "registry": "Registr",
+      "back": "Zpět",
+      "backTo": "Zpět na {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Výchozí",
+      "dark": "Tmavý",
+      "darkThemes": "Tmavá témata",
+      "lightThemes": "Světlá témata"
+    },
+    "update": {
+      "restartTitle": "Restartujte Cabinet pro dokončení aktualizace",
+      "availableTitle": "Je k dispozici Cabinet {{version}}",
+      "updatesTitle": "Aktualizace Cabinet",
+      "description": "Cabinet automaticky kontroluje nové verze. Jelikož je produkt stále experimentální, uchovejte si kopii svých dat před instalací aktualizací.",
+      "later": "Později",
+      "releaseNotes": "Poznámky k vydání"
+    },
+    "daemon": {
+      "fixHintElectron": "Ukončete a znovu spusťte Cabinet pro restart démona agentů.",
+      "fixHintDev": "Spusťte `npm run dev:daemon` (nebo restartujte `npm run dev:all`) pro obnovení démona agentů.",
+      "notResponding": "Démon agentů nereaguje.",
+      "willFail": "Agenti, úlohy a požadavky AI selžou, dokud nebude opět funkční. {{fixHint}}"
+    }
+  }
+}

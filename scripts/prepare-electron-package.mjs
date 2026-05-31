@@ -18,6 +18,8 @@ const stagedSeedDir = path.join(standaloneDir, ".seed");
 const bundledNodeBinaryPath = path.join(standaloneBinDir, "node");
 const rootNodePtyDir = path.join(projectRoot, "node_modules", "node-pty");
 const dataDir = path.join(projectRoot, "data");
+const resourcesDir = path.join(projectRoot, "resources");
+const agentLibraryDir = path.join(projectRoot, "src", "lib", "agents", "library");
 
 const STANDALONE_PRUNE_PATHS = [
   ".agents",
@@ -51,7 +53,6 @@ const STANDALONE_PRUNE_PATHS = [
   "next.config.ts",
   "package-lock.json",
   "postcss.config.mjs",
-  "run-agent.sh",
   "skills-lock.json",
   "tsconfig.json",
   "tsconfig.tsbuildinfo",
@@ -60,7 +61,7 @@ const STANDALONE_PRUNE_PATHS = [
 const SERVER_PRUNE_PATHS = [
   path.join("server", "cabinet-daemon.ts"),
   path.join("server", "db.ts"),
-  path.join("server", "terminal-server.ts"),
+  path.join("server", "pty"),
   path.join("server", "cabinet-daemon.cjs"),
   path.join("server", "migrations"),
 ];
@@ -88,6 +89,14 @@ async function copyDirectory(fromPath, toPath) {
   await fs.cp(fromPath, toPath, { recursive: true, force: true });
 }
 
+async function copyFileIfExists(fromPath, toPath) {
+  if (!(await pathExists(fromPath))) {
+    return;
+  }
+  await fs.mkdir(path.dirname(toPath), { recursive: true });
+  await fs.copyFile(fromPath, toPath);
+}
+
 async function copyFile(fromPath, toPath) {
   await fs.mkdir(path.dirname(toPath), { recursive: true });
   await fs.copyFile(fromPath, toPath);
@@ -103,6 +112,17 @@ async function bundleDaemon() {
     platform: "node",
     target: "node20",
     external: ["better-sqlite3", "node-pty"],
+    // CJS bundles emit `var import_meta = {}; import_meta.url` which is
+    // undefined at runtime. createRequire(undefined) and fileURLToPath(undefined)
+    // both crash the daemon at startup (v0.4.0/v0.4.1 Electron bug). Polyfill
+    // by declaring a top-level helper in a banner and rewriting all
+    // `import.meta.url` references to point at it.
+    banner: {
+      js: "var __cabinet_self_url = require('url').pathToFileURL(__filename).href;",
+    },
+    define: {
+      "import.meta.url": "__cabinet_self_url",
+    },
     logLevel: "silent",
   });
 }
@@ -144,24 +164,25 @@ async function stageBundledNodeRuntime() {
 async function stageSeedContent() {
   await removePath(stagedSeedDir);
 
-  // Default pages
+  // Default pages — seed from resources/ (canonical location). data/ is local
+  // runtime state and isn't tracked in git, so it's not present in CI checkouts.
   await Promise.all([
-    copyDirectory(path.join(dataDir, "example-cabinet-carousel-factory"), path.join(stagedSeedDir, "example-cabinet-carousel-factory")),
-    copyDirectory(path.join(dataDir, "getting-started"), path.join(stagedSeedDir, "getting-started")),
-    copyFile(path.join(dataDir, "index.md"), path.join(stagedSeedDir, "index.md")),
-    copyFile(path.join(dataDir, "CLAUDE.md"), path.join(stagedSeedDir, "CLAUDE.md")),
+    copyDirectory(path.join(resourcesDir, "getting-started"), path.join(stagedSeedDir, "getting-started")),
+    copyDirectory(path.join(resourcesDir, "example-cabinet-carousel-factory"), path.join(stagedSeedDir, "example-cabinet-carousel-factory")),
+    copyFileIfExists(path.join(resourcesDir, "index.md"), path.join(stagedSeedDir, "index.md")),
+    copyFileIfExists(path.join(resourcesDir, "CLAUDE.md"), path.join(stagedSeedDir, "CLAUDE.md")),
   ]);
 
   // Agent library templates
   await copyDirectory(
-    path.join(dataDir, ".agents", ".library"),
+    agentLibraryDir,
     path.join(stagedSeedDir, ".agents", ".library")
   );
 
-  // Playbook catalog
-  if (await pathExists(path.join(dataDir, ".playbooks", "catalog"))) {
+  // Playbook catalog — also moved to resources/
+  if (await pathExists(path.join(resourcesDir, ".playbooks", "catalog"))) {
     await copyDirectory(
-      path.join(dataDir, ".playbooks", "catalog"),
+      path.join(resourcesDir, ".playbooks", "catalog"),
       path.join(stagedSeedDir, ".playbooks", "catalog")
     );
   }

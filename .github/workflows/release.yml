@@ -40,15 +40,53 @@ jobs:
       - name: Build web app
         run: npm run build
 
-      - name: Create GitHub release
+      - name: Create GitHub draft release
         uses: softprops/action-gh-release@v2
         with:
+          draft: true
           files: |
             cabinet-release.json
 
-  publish-cli:
+  publish-cabinetai:
     runs-on: ubuntu-latest
     needs: release-assets
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: cabinetai
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # OIDC trusted-publishing *auth* requires npm >= 11.5.1; Node 22 ships
+      # npm 10.x (which only does OIDC provenance, not auth → unauthenticated
+      # PUT → 404). Upgrade before publishing.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      # Auth via npm trusted publishing (OIDC). Requires the cabinetai package
+      # on npmjs.com to have this repo + workflow registered as a trusted
+      # publisher. No NPM_TOKEN secret needed.
+      - name: Publish cabinetai
+        run: npm publish --access public --provenance
+
+  publish-cli:
+    runs-on: ubuntu-latest
+    needs: publish-cabinetai
     permissions:
       contents: read
       id-token: write
@@ -65,51 +103,10 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      # OIDC trusted-publishing auth requires npm >= 11.5.1 (see publish-cabinetai).
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      # Auth via npm trusted publishing (OIDC). Same setup as cabinetai.
       - name: Publish create-cabinet
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  electron-macos:
-    runs-on: macos-latest
-    needs: release-assets
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Import Apple Developer certificate
-        if: ${{ env.APPLE_CERTIFICATE != '' }}
-        env:
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-        run: |
-          CERT_PATH="$RUNNER_TEMP/certificate.p12"
-          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
-          echo "$APPLE_CERTIFICATE" | base64 --decode > "$CERT_PATH"
-          security create-keychain -p "" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "" "$KEYCHAIN_PATH"
-          security import "$CERT_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple: -k "" "$KEYCHAIN_PATH"
-          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
-
-      - name: Build and publish Electron app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
-        run: npm run build && npm run electron:prep && npx electron-forge publish
-
-      - name: Clean up keychain
-        if: always()
-        run: security delete-keychain "$RUNNER_TEMP/build.keychain-db" 2>/dev/null || true

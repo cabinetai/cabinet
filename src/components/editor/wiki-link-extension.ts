@@ -1,5 +1,6 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
 import { InputRule } from "@tiptap/core";
+import { slugifyPageName } from "@/lib/markdown/wiki-links";
 
 export const WikiLink = Mark.create({
   name: "wikiLink",
@@ -28,10 +29,7 @@ export const WikiLink = Mark.create({
 
   renderHTML({ HTMLAttributes }) {
     const pageName = HTMLAttributes["data-page-name"] || "";
-    const slug = pageName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+    const slug = slugifyPageName(pageName);
 
     return [
       "a",

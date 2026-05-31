@@ -5,6 +5,7 @@ import { Send, GripHorizontal, Hash, Plus, MessageCircle, ArrowLeft } from "luci
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { SlackMessage } from "@/types/agents";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentMention {
   slug: string;
@@ -124,6 +125,7 @@ interface SlackPanelProps {
 }
 
 export function SlackPanel({ height: initialHeight = 200, onOpenFile }: SlackPanelProps) {
+  const { t } = useLocale();
   const [messages, setMessages] = useState<SlackMessage[]>([]);
   const [channels, setChannels] = useState<string[]>([]);
   const [respondingAgents, setRespondingAgents] = useState<RespondingAgent[]>([]);
@@ -410,7 +412,7 @@ export function SlackPanel({ height: initialHeight = 200, onOpenFile }: SlackPan
           <button
             onClick={() => setShowNewChannel(true)}
             className="text-[11px] px-1.5 py-0.5 text-muted-foreground/40 hover:text-muted-foreground transition-colors shrink-0"
-            title="Create channel"
+            title={t("slackPanel:createChannel")}
           >
             <Plus className="h-3 w-3" />
           </button>
@@ -430,7 +432,7 @@ export function SlackPanel({ height: initialHeight = 200, onOpenFile }: SlackPan
               >
                 <ArrowLeft className="h-3.5 w-3.5 text-muted-foreground" />
               </button>
-              <span className="text-[11px] font-medium text-muted-foreground">Thread</span>
+              <span className="text-[11px] font-medium text-muted-foreground">{t("slackPanel:thread")}</span>
               {parent && (
                 <span className="text-[11px] text-muted-foreground/50 truncate">
                   — {parent.displayName || parent.agent}: {parent.content.slice(0, 60)}

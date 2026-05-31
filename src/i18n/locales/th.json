@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "สร้างเอเจนต์",
+      "avatar": "อวตาร",
+      "namePlaceholder": "เอเจนต์การตลาด",
+      "rolePlaceholder": "ผู้เชี่ยวชาญด้านเนื้อหา",
+      "department": "แผนก",
+      "specialist": "ผู้เชี่ยวชาญ",
+      "departmentLead": "หัวหน้าแผนก",
+      "provider": "ผู้ให้บริการ",
+      "runtime": "รันไทม์",
+      "promptPlaceholder": "คุณคือเอเจนต์การตลาดสำหรับ…",
+      "addAgentTitle": "เพิ่มเอเจนต์เข้าสู่ทีมของคุณ",
+      "addAgentDescription": "เลือกผู้เชี่ยวชาญจากไลบรารี คุณสามารถแก้ไขชื่อ บทบาท และคำแนะนำได้หลังจากเพิ่มแล้ว",
+      "createFromScratchTitle": "สร้างจากศูนย์",
+      "createFromScratchDescription": "สร้างเอเจนต์ใหม่พร้อมข้อมูลระบุตัวตน บทบาท และคำแนะนำของตัวเอง",
+      "searchLibraryPlaceholder": "ค้นหาในไลบรารี",
+      "errorLoadLibrary": "ไม่สามารถโหลดไลบรารีเอเจนต์ได้",
+      "errorAddAgent": "ไม่สามารถเพิ่มเอเจนต์นี้ได้"
+    },
+    "metric": {
+      "name": "ชื่อเมตริก",
+      "namePlaceholder": "คำตอบ Reddit",
+      "target": "เป้าหมาย",
+      "targetPlaceholder": "การตอบกลับ/สัปดาห์",
+      "floor": "ขั้นต่ำ",
+      "period": "ช่วงเวลา",
+      "daily": "รายวัน",
+      "weekly": "รายสัปดาห์",
+      "monthly": "รายเดือน"
+    },
+    "workspace": {
+      "promise": "คำมั่นสัญญา",
+      "orgChart": "ผังองค์กร",
+      "jobDetails": "รายละเอียดงาน",
+      "heartbeat": "สัญญาณชีพ",
+      "workspace": "พื้นที่ทำงาน",
+      "editAgent": "แก้ไขเอเจนต์",
+      "instructions": "คำแนะนำ",
+      "instructionsPlaceholder": "เขียนมาร์กดาวน์สำหรับคำแนะนำของเอเจนต์นี้",
+      "newAgent": "เอเจนต์ใหม่",
+      "routines": "กิจวัตร",
+      "browseLibrary": "เรียกดูไลบรารีเอเจนต์",
+      "editYourOwn": "แก้ไขเอเจนต์ของคุณเอง",
+      "editorPlaceholder": "ตัวแก้ไข",
+      "productAgentPlaceholder": "เอเจนต์เขียนผลิตภัณฑ์",
+      "instructionsBodyPlaceholder": "กำหนดวิธีการทำงานของเอเจนต์นี้ภายใน Cabinet และ KB",
+      "perAgentPrompts": "ข้อความแจ้งเตือนที่เกิดซ้ำต่อเอเจนต์",
+      "runNow": "เรียกใช้เดี๋ยวนี้",
+      "delete": "ลบ",
+      "viewOrgChart": "ดูทีมนี้ในรูปแบบผังองค์กร (เปิดแบบเต็มหน้าจอ)",
+      "hideIntro": "ซ่อนบทนำนี้",
+      "sharedAcrossCabinets": "แชร์ในทุก Cabinet",
+      "expandSchedule": "ขยายกำหนดการ",
+      "heartbeatsOnAgentPage": "Heartbeat ถูกกำหนดค่าไว้ในหน้าของเอเจนต์แต่ละตัว",
+      "exitFullscreen": "ออกจากโหมดเต็มหน้าจอ",
+      "refresh": "รีเฟรช",
+      "editHeartbeat": "แก้ไข Heartbeat",
+      "newRoutine": "กิจวัตรใหม่",
+      "configureHeartbeat": "กำหนดค่า Heartbeat",
+      "openOrgChart": "เปิดผังองค์กร",
+      "pickAnAgent": "เลือก Agent",
+      "dismiss": "ปิด",
+      "lockedHeartbeatTip": "Agent นี้หยุดทำงานอยู่ เริ่มทำงานบนแท็บ Agents เพื่อเปิดใช้งาน Heartbeat",
+      "lockedRoutineTip": "Agent นี้หยุดทำงานอยู่ เริ่มทำงานบนแท็บ Agents เพื่อเปิดใช้งานกิจวัตร",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "คลิกเพื่อปิด",
+      "loadError": "ไม่สามารถโหลด Agent นี้ได้",
+      "retry": "ลองอีกครั้ง",
+      "color": "สี",
+      "customColor": "สีที่กำหนดเอง",
+      "preset": "ค่าที่ตั้งไว้ล่วงหน้า",
+      "editIconColor": "แก้ไขไอคอน สี หรืออวาตาร์",
+      "sharedAcrossCabinetsHint": "แชร์ในทุก Cabinet — การแก้ไขจะมีผลทุกที่",
+      "inbox": "กล่องขาเข้า",
+      "conversations": "การสนทนา",
+      "recentWork": "งานล่าสุด",
+      "schedule": "กำหนดการ",
+      "heartbeat": "สัญญาณชีพ",
+      "runNow": "เรียกใช้เดี๋ยวนี้",
+      "editRoutine": "แก้ไขกิจวัตร",
+      "addRoutine": "เพิ่มกิจวัตร",
+      "details": "รายละเอียด",
+      "editingGlobalAgent": "กำลังแก้ไข Agent ทั่วโลก",
+      "displayName": "ชื่อที่แสดง",
+      "role": "บทบาท",
+      "department": "แผนก",
+      "type": "ประเภท",
+      "workspace": "พื้นที่ทำงาน",
+      "tags": "แท็ก",
+      "openSkillsSettings": "เปิดการตั้งค่า → ทักษะ",
+      "notInCatalog": "ไม่พบในแค็ตตาล็อก — คลิกเพื่อลบ",
+      "recommendedForRole": "แนะนำสำหรับบทบาทนี้ — คลิกเพื่อแนบ",
+      "promise": "คำมั่นสัญญา",
+      "saved": "บันทึกแล้ว",
+      "iconLabel": "ไอคอน"
+    },
+    "missionControl": {
+      "gallery": "แกลเลอรี",
+      "newAgent": "Agent ใหม่",
+      "allGoals": "เป้าหมายทั้งหมด",
+      "noGoals": "ไม่มี Agent ใดที่กำหนดเป้าหมายไว้",
+      "fromScratch": "เริ่มต้นใหม่",
+      "describeIt": "อธิบาย",
+      "import": "นำเข้า",
+      "closeDialog": "ปิดกล่องโต้ตอบ",
+      "describeYourAgent": "อธิบาย Agent ของคุณ",
+      "describePlaceholder": "ฉันต้องการเอเจนต์ที่คอยตรวจสอบ Hacker News สำหรับโพสต์ที่เกี่ยวข้องกับ GPU และเขียนความคิดเห็นที่น่าสนใจพร้อมลิงก์ไปยังบล็อกโพสต์ของเรา…"
+    },
+    "pulseStrip": {
+      "agents": "เอเจนต์",
+      "running": "กำลังทำงาน",
+      "goals": "เป้าหมาย",
+      "alerts": "การแจ้งเตือน",
+      "cost": "ค่าใช้จ่าย",
+      "runningPlays": "เพลย์ที่กำลังทำงาน",
+      "noRunning": "ไม่มีเอเจนต์กำลังทำงานอยู่ในขณะนี้",
+      "costBreakdown": "รายละเอียดค่าใช้จ่าย",
+      "noUsage": "ยังไม่มีการใช้งาน API",
+      "totalEstimated": "ประมาณการทั้งหมด"
+    },
+    "routine": {
+      "runNowTitle": "เรียกใช้กิจวัตรนี้เดี๋ยวนี้ (ครั้งเดียว, นอกกำหนดการ)",
+      "deletePermanently": "ลบกิจวัตรนี้อย่างถาวร",
+      "promptPlaceholder": "กิจวัตรนี้ควรทำอะไร? เช่น สรุปกิจกรรมเมื่อวานนี้…",
+      "jobName": "ชื่องาน",
+      "jobNamePlaceholder": "สรุปกลยุทธ์ประจำสัปดาห์",
+      "jobId": "รหัสงาน",
+      "schedule": "กำหนดการ",
+      "model": "โมเดล",
+      "enabled": "เปิดใช้งาน"
+    }
+  },
+  "registry": {
+    "loading": "กำลังโหลดจากรีจิสทรี…",
+    "readyToImport": "พร้อมที่จะนำเข้า Cabinet นี้หรือไม่?",
+    "organization": "องค์กร",
+    "agents": "เอเจนต์",
+    "scheduledJobs": "งานตามกำหนดการ",
+    "about": "เกี่ยวกับ",
+    "cabinetName": "ชื่อ Cabinet",
+    "cabinetNamePlaceholder": "ชื่อ Cabinet…",
+    "searchPlaceholder": "ค้นหา Cabinet…",
+    "noResults": "ไม่มี Cabinet ตรงกับการค้นหาของคุณ"
+  },
+  "tasksBoard": {
+    "title": "งาน",
+    "manualTooltip": "ด้วยตนเอง — งานที่คุณเริ่มโดยตรง",
+    "jobsTooltip": "งาน — การเรียกใช้ซ้ำตามกำหนดการ",
+    "heartbeatTooltip": "Heartbeat — การเรียกใช้เอเจนต์ที่สั่งการด้วยตนเอง",
+    "clearSelection": "ล้างการเลือก (Esc)",
+    "createTask": "สร้างงานใหม่",
+    "moreNewTypes": "ประเภทรายการใหม่เพิ่มเติม",
+    "newTask": "งานใหม่",
+    "newRoutine": "กิจวัตรใหม่",
+    "viewKanban": "คัมบัง",
+    "viewList": "รายการ",
+    "viewSchedule": "กำหนดการ",
+    "viewKanbanHint": "มุมมองบอร์ด — งานที่จัดกลุ่มเป็น กล่องขาเข้า / ตาคุณ / กำลังทำงาน / เพิ่งเสร็จสิ้น / คลัง",
+    "viewListHint": "รายการงานทั้งหมดแบบเรียบ, กิจกรรมล่าสุดขึ้นก่อน",
+    "viewScheduleHint": "ปฏิทินของกิจวัตรตามกำหนดการและการเรียกใช้ที่กำลังจะมาถึง",
+    "filterByAgent": "กรองตามเอเจนต์: {{name}}",
+    "noToDeleteTitle": "ไม่มีงานให้ลบ",
+    "noToDeleteFiltered": "ไม่มีรายการใดตรงกับ {{filter}} ล้างตัวกรอง, เลือกมุมมองอื่น หรือสร้างงานใหม่",
+    "noToDeleteEmpty": "ยังไม่มีงานบนบอร์ด สร้างงานใหม่ด้วยปุ่ม + New Task",
+    "gotIt": "รับทราบ",
+    "deleteCountTitle": "ลบ {{count}} งาน?",
+    "deleteCountTitlePlural": "ลบ {{count}} งาน?",
+    "deleteBody": "การดำเนินการนี้จะลบข้อมูลเมตาการสนทนา บันทึกการสนทนา และสิ่งประดิษฐ์ทั้งหมดสำหรับทุกงานที่แสดงอยู่ถาวร ไม่สามารถยกเลิกได้",
+    "deleteBodyFiltered": "การดำเนินการนี้จะลบข้อมูลเมตาการสนทนา บันทึกการสนทนา และสิ่งประดิษฐ์ทั้งหมดสำหรับทุกงานที่แสดงอยู่ตามตัวกรองที่ใช้งานอยู่ถาวร ไม่สามารถยกเลิกได้",
+    "deleteConfirm": "ลบ {{count}}",
+    "deleteAllShown": "ลบงานที่แสดงอยู่ทั้งหมด {{count}} งาน",
+    "deleteAllShownPlural": "ลบงานที่แสดงอยู่ทั้งหมด {{count}} งาน",
+    "nothingToDelete": "ไม่มีอะไรให้ลบในมุมมองนี้",
+    "deleteAllAria": "ลบงานที่แสดงอยู่ทั้งหมด",
+    "noTasksAria": "ไม่มีงานในมุมมองนี้",
+    "filterTrigger": "ตัวกรอง {{trigger}}",
+    "filterTriggerAndAgent": "ตัวกรอง {{trigger}} และเอเจนต์ที่เลือก",
+    "filterSelectedAgent": "ตัวกรองเอเจนต์ที่เลือก"
+  },
+  "runtime": {
+    "noProvider": "ไม่ได้เลือกผู้ให้บริการ",
+    "modeAriaLabel": "โหมดรันไทม์",
+    "nativeTranscriptTitle": "บันทึกการสนทนาแบบเนทีฟของ Cabinet — สตรีม JSON แบบมีโครงสร้าง, สิ่งประดิษฐ์, สรุป, ประสบการณ์ผู้ใช้เต็มรูปแบบ",
+    "ptyWarningTitle": "ต้องใช้คีย์ OpenAI API ไม่สามารถใช้งานได้กับบัญชี Codex แผน ChatGPT — การเลือกโมเดลนี้จะล้มเหลวพร้อมข้อความ 'model not supported when using Codex with a ChatGPT account'",
+    "native": "เนทีฟ",
+    "terminal": "เทอร์มินัล",
+    "terminalTitle": "รัน CLI ในเซสชันเทอร์มินัล PTY แบบสด (โหมดแฮกเกอร์ทดลอง)",
+    "providers": "ผู้ให้บริการ",
+    "modelCol": "โมเดล",
+    "auto": "อัตโนมัติ",
+    "ready": "พร้อมใช้งาน",
+    "loginRequired": "เข้าสู่ระบบ",
+    "notInstalled": "ไม่ได้ติดตั้ง",
+    "notAvailable": "ไม่พร้อมใช้งาน",
+    "defaultLabel": "ค่าเริ่มต้น",
+    "noProvidersAvailable": "ไม่มีผู้ให้บริการที่พร้อมใช้งาน",
+    "appDefault": "ค่าเริ่มต้นของแอป",
+    "selectAppDefault": "เลือกค่าเริ่มต้นของแอป",
+    "defaultModel": "โมเดลเริ่มต้น",
+    "selectedModelLabel": "โมเดลที่เลือก",
+    "loadingProviders": "กำลังโหลดผู้ให้บริการ...",
+    "loadingAvailableProviders": "กำลังโหลดผู้ให้บริการที่พร้อมใช้งาน…",
+    "triggerSummary": "โมเดล: {{model}} · ความพยายาม: {{effort}} · ผ่าน {{provider}}",
+    "triggerSystemDefault": "โมเดลงาน — ใช้ค่าเริ่มต้นของระบบ (คลิกเพื่อเลือก)",
+    "clickToLaunch": "คลิกเพื่อเปิด {{name}} ในเทอร์มินัล PTY"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "เอเจนต์ทำงานด้วยสิทธิ์การเข้าถึงเต็มรูปแบบ",
+    "backUp": "สำรองข้อมูลของคุณเป็นประจำ",
+    "betaSoftware": "ซอฟต์แวร์รุ่นเบต้า อาจเกิดข้อผิดพลาดได้",
+    "iAccept": "ฉันได้อ่านและยอมรับแล้ว"
+  },
+  "skillAdd": {
+    "addSkill": "เพิ่มทักษะ",
+    "auditTooltip": "ผลลัพธ์จากการตรวจสอบภายนอกของ skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "ข้อมูลการตรวจสอบ skills.sh ไม่พร้อมใช้งานสำหรับทักษะนี้",
+    "preview": "ดูตัวอย่าง"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "ทีม AI",
+      "aiTeams": "ทีม AI",
+      "routines": "กิจวัตร"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "แก้ไขการตั้งค่าเอเจนต์",
+    "exportBundle": "ส่งออกชุดเอเจนต์",
+    "goals": "เป้าหมาย",
+    "workspace": "พื้นที่ทำงาน"
+  },
+  "scheduleRow": {
+    "deleteQ": "ลบ?",
+    "confirmDelete": "ยืนยันการลบ",
+    "cancelDelete": "ยกเลิกการลบ",
+    "runNow": "เรียกใช้เดี๋ยวนี้"
+  },
+  "apiKeys": {
+    "addKey": "เพิ่มคีย์",
+    "edit": "แก้ไข",
+    "remove": "นำออก",
+    "newApiKey": "คีย์ API ใหม่"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "อัปเดต Cabinet",
+    "dataDirectory": "ไดเรกทอรีข้อมูล",
+    "backups": "ข้อมูลสำรอง"
+  },
+  "kanban": {
+    "stopAllInLane": "หยุดงานทั้งหมดในเลนนี้",
+    "restartAllInLane": "เริ่มงานทั้งหมดในเลนนี้ใหม่",
+    "newTask": "งานใหม่",
+    "collapseColumn": "ยุบคอลัมน์",
+    "kill": "หยุด",
+    "laneInbox": "กล่องขาเข้า",
+    "laneInboxHint": "ฉบับร่าง — รอคุณเริ่ม",
+    "laneNeeds": "ถึงตาคุณ",
+    "laneNeedsHint": "เอเจนต์ถามคำถามหรือต้องการการอนุมัติ",
+    "laneRunning": "กำลังทำงาน",
+    "laneRunningHint": "เอเจนต์กำลังทำงานอยู่",
+    "laneDone": "เพิ่งเสร็จสิ้น",
+    "laneDoneHint": "เสร็จสิ้นในชั่วโมงที่ผ่านมา",
+    "laneArchive": "เก็บถาวร",
+    "laneArchiveHint": "เก่ากว่าและรับทราบแล้ว"
+  },
+  "terminalTabs": {
+    "newTab": "แท็บเทอร์มินัลใหม่",
+    "closeTab": "ปิดเทอร์มินัล"
+  },
+  "newTaskButton": {
+    "createNew": "สร้างใหม่…",
+    "newTask": "งานใหม่",
+    "newRoutine": "กิจวัตรใหม่"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "สรุปกลยุทธ์ประจำสัปดาห์",
+    "schedule": "กำหนดเวลา",
+    "jobId": "รหัสงาน",
+    "enabled": "เปิดใช้งาน — ทำงานตามกำหนดเวลานี้"
+  },
+  "editIdentity": {
+    "title": "แก้ไขเอเจนต์",
+    "displayName": "ชื่อที่แสดง",
+    "color": "สี",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "เริ่มเอเจนต์ทั้งหมด",
+    "startAllSubtitle": "เปิดใช้งาน Heartbeat และ Cron Job",
+    "stopAll": "หยุดเอเจนต์ทั้งหมด",
+    "stopAllSubtitle": "หยุด Heartbeat และ Cron Job ชั่วคราว"
+  },
+  "skillLibrary": {
+    "readOnly": "อ่านอย่างเดียว — ไม่สามารถแก้ไขจาก Cabinet ได้",
+    "noUpstream": "สร้างโดยตรงใน Cabinet นี้ — ไม่มีแหล่งที่มาของ Git ต้นน้ำบันทึกไว้",
+    "executableWarning": "ชุดรวมมีสคริปต์ที่เรียกใช้งานได้ — ตรวจสอบก่อนอนุมัติ",
+    "skills": "ทักษะ",
+    "imported": "นำเข้าแล้ว",
+    "importing": "กำลังนำเข้า…",
+    "import": "นำเข้า"
+  },
+  "embedPopover": {
+    "placeholder": "วางลิงก์ (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify หรือ URL ใดก็ได้)",
+    "notValidUrl": "ไม่ใช่ URL ที่ถูกต้อง",
+    "anyUrlWorks": "ใช้ได้กับ URL สาธารณะทุกประเภท",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "URL iframe ใดก็ได้"
+  },
+  "rowActions": {
+    "stop": "หยุด",
+    "stopHint": "หยุดการทำงานนี้ทันที (ส่ง SIGTERM)",
+    "restart": "เริ่มใหม่",
+    "restartHint": "เรียกใช้ใหม่จากพร้อมต์เดิม",
+    "runHint": "เริ่มงานนี้ทันที"
+  },
+  "schedulesPanel": {
+    "title": "งานที่กำหนดเวลา",
+    "noJobs": "ยังไม่ได้กำหนดงาน Cabinet",
+    "heartbeats": "Heartbeat",
+    "noHeartbeats": "ยังไม่ได้กำหนด Heartbeat"
+  },
+  "scheduleTab": {
+    "explainer1": "ทุกสิ่งที่ทีมของคุณทำในสัปดาห์นี้ บนปฏิทินเดียว สีชมพูคือ Heartbeat สีเขียวคืองานประจำ คลิกที่รายการใดก็ได้เพื่อแก้ไข",
+    "explainer2": "ใช้แท็บนี้เพื่อดูความขัดแย้ง ค้นหาช่วงเวลาที่ว่าง หรือดูภาพรวมว่าทีมยุ่งแค่ไหน",
+    "aboutAria": "เกี่ยวกับตารางเวลา",
+    "modeDay": "วัน",
+    "modeWeek": "สัปดาห์",
+    "modeMonth": "เดือน"
+  },
+  "mermaidViewer": {
+    "zoomOut": "ย่อ",
+    "zoomIn": "ขยาย",
+    "resetView": "รีเซ็ตมุมมอง",
+    "syntaxError": "ข้อผิดพลาดไวยากรณ์ไดอะแกรม"
+  },
+  "helpPage": {
+    "keyboard": "แป้นพิมพ์",
+    "skills": "ทักษะ",
+    "apiKeys": "คีย์ API",
+    "mcpServers": "เซิร์ฟเวอร์ MCP",
+    "title": "ความช่วยเหลือ",
+    "howTo": "วิธีการ",
+    "heading": "เรียนรู้วิธีการทำงานของ Cabinet",
+    "subheading": "การสาธิตสั้นๆ คำแนะนำ และตัวอย่างเพื่อใช้ Cabinet ให้เกิดประโยชน์สูงสุด",
+    "ctaWatchTour": "ชมการแนะนำ",
+    "ctaWatchDemo": "ชมการสาธิต",
+    "ctaCheatSheet": "เปิดคู่มือลัด",
+    "ctaComingSoon": "เร็วๆ นี้",
+    "discordHeading": "ไม่พบสิ่งที่คุณกำลังมองหาใช่ไหม?",
+    "discordSubheading": "เราอยู่ใน Discord — มาทักทาย ถามคำถาม และแบ่งปันสิ่งที่คุณสร้าง",
+    "discordCta": "เข้าร่วม Discord",
+    "items": {
+      "tour": {
+        "title": "พบกับ <accent>Cabinet</accent> ของคุณ",
+        "description": "ทีม AI ของคุณ ฐานความรู้ของคุณ ในที่เดียว"
+      },
+      "agents": {
+        "title": "<accent>ทีม AI</accent> ของคุณ",
+        "description": "จ้างหัวหน้าและผู้เชี่ยวชาญ จัดกลุ่มเป็นแผนก ให้พวกเขามอบหมายงานให้กันและกัน"
+      },
+      "tasks": {
+        "title": "<accent>กระดานงาน</accent>",
+        "description": "มุมมอง Kanban, รายการ และกำหนดการ กรองตามเอเจนต์หรือสถานะ เลือกระยะเวลาทำงานสำหรับแต่ละงาน"
+      },
+      "knowledge": {
+        "title": "<accent>ฐานความรู้</accent> ของคุณ",
+        "description": "Markdown, CSV, PDF, โค้ด, โน้ตบุ๊ก, Mermaid, รูปภาพ, เสียง — ทุกอย่างแสดงผลแบบอินไลน์ ข้อมูลของคุณจะอยู่บนเครื่องของคุณ เป็นของคุณ ไม่ใช่ของเรา"
+      },
+      "cabinets": {
+        "title": "ทีมของ <accent>ทีม AI</accent>",
+        "description": "Cabinets ซ้อนกันภายใน Cabinets แต่ละอันเป็นทีม AI ของตัวเอง พร้อมข้อมูล เอเจนต์ และขอบเขตการมองเห็นของตัวเอง — และสามารถทำงานร่วมกันได้ทั้งบนและล่างของโครงสร้าง"
+      },
+      "routines": {
+        "title": "<accent>กิจวัตร</accent> และกำหนดการ",
+        "description": "รันงานทุกวันเวลา 9 โมงเช้า, ทุกสัปดาห์ในวันศุกร์, หรือครั้งเดียวในวันจันทร์หน้า Cron, ปฏิทิน, หรือภาษาธรรมชาติ"
+      },
+      "conversations": {
+        "title": "การสนทนา และ <accent>การอนุมัติ</accent>",
+        "description": "เอเจนต์เสนอการกระทำ — เช่น เริ่มงาน, กำหนดเวลาทำงาน — และคุณอนุมัติก่อนที่สิ่งใดจะทำงาน"
+      },
+      "themes": {
+        "title": "ทำให้เป็น <accent>ของคุณ</accent>",
+        "description": "เลือกจากชุดธีมสว่างและมืดที่คัดสรรมา — Paper, Slate, Claude, Ink และอื่นๆ"
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — นำ AI ของคุณมาเอง",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — นำผู้ให้บริการที่คุณจ่ายเงินอยู่แล้วมาใช้ เลือกค่าเริ่มต้น หรือกำหนดใหม่สำหรับแต่ละงาน"
+      },
+      "shortcuts": {
+        "title": "<accent>ทางลัดแป้นพิมพ์</accent>",
+        "description": "ทางลัด Cabinet ทุกรายการบนการ์ดที่ค้นหาได้ กด ? จากที่ใดก็ได้เพื่อเปิดใหม่ กรองตามชื่อหรือคีย์ — ใช้สำหรับการนำทาง, การแก้ไข, งาน, แผง และคำสั่งสแลช"
+      },
+      "skills": {
+        "title": "<accent>ทักษะ</accent> สำหรับเอเจนต์ของคุณ",
+        "description": "ทักษะเอเจนต์ที่ติดตั้งได้ — คู่มือที่โมเดลดึงมาใช้สำหรับงาน ติดตั้งจาก GitHub หรือ skills.sh แนบกับบุคลิก หรือ @-mention ในคอมโพเซอร์ใดก็ได้สำหรับการรันครั้งเดียว"
+      },
+      "apiKeysItem": {
+        "title": "<accent>คีย์ API</accent> สำหรับเครื่องมือของคุณ",
+        "description": "เชื่อมต่อบัญชี OpenAI, Anthropic หรือ GitHub ของคุณเพียงครั้งเดียว — เอเจนต์และทักษะทุกรายการใน Cabinet จะใช้มัน คุณชำระค่าใช้จ่ายเอง ใช้โควตาของคุณเอง ไม่มีคนกลาง"
+      },
+      "integrations": {
+        "title": "<accent>เซิร์ฟเวอร์ MCP</accent> และการผสานรวม",
+        "description": "เซิร์ฟเวอร์ MCP, Slack, Telegram, Gmail และ Calendar OAuth — เชื่อมต่อเพียงครั้งเดียวและ Cabinet จะจัดการโทเค็น เร็วๆ นี้"
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "ทางลัดแป้นพิมพ์",
+    "filterPlaceholder": "กรอง…",
+    "close": "ปิด"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "เทอร์มินัลสด",
+    "runningHeartbeat": "กำลังรัน Heartbeat…",
+    "memory": "หน่วยความจำ",
+    "recentActivity": "กิจกรรมล่าสุด"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "อวตารของคุณ",
+    "preset": "ค่าที่ตั้งไว้ล่วงหน้า",
+    "useInitials": "ใช้ตัวย่อสำรอง",
+    "custom": "กำหนดเอง"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "ตรวจพบการเปลี่ยนแปลงโค้ดแอปในเครื่อง"
+  },
+  "logsPanel": {
+    "classifiedError": "ข้อผิดพลาดที่จัดประเภทแล้ว",
+    "session": "เซสชัน",
+    "noEvents": "ยังไม่มีกิจกรรม",
+    "noTranscript": "ยังไม่มีบันทึก"
+  },
+  "conversationResult": {
+    "prompt": "พร้อมท์",
+    "result": "ผลลัพธ์",
+    "noSummary": "ไม่มีสรุปที่บันทึกไว้"
+  },
+  "scheduleRowPlus": {
+    "delete": "ลบ"
+  },
+  "attachmentPicker": {
+    "attachFiles": "แนบไฟล์"
+  },
+  "demos": {
+    "aiTeam": "ทีม AI",
+    "specialist": "ผู้เชี่ยวชาญ",
+    "legal": "กฎหมาย",
+    "global": "ทั่วโลก",
+    "editor": "บรรณาธิการ",
+    "slashMenu": "เมนูสแลช"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · ข้อมูล",
+    "headlineSentence": "<accent>แหล่งข้อมูลเดียว</accent>ของคุณ",
+    "paragraphPrefix": "Markdown, PDF, สเปรดชีต, สไลด์, รูปภาพ, วิดีโอ, เสียง, ที่เก็บข้อมูลที่เชื่อมโยง, เว็บแอปที่ฝังตัว, Google Docs. อ้างถึงสิ่งเหล่านี้ได้ด้วย ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "ทุกสิ่งรวมอยู่ในที่เดียว — เพื่อให้คุณและทีม AI ของคุณอ่าน แก้ไข และส่งมอบจาก",
+    "sameFiles": "ไฟล์เดียวกัน",
+    "secondParagraphSuffix": " ไม่ใช่สำเนาของสำเนา",
+    "mockTitle": "Cabinet ของ Jane"
+  },
+  "slideData": {
+    "thailandRootLabel": "ทริปประเทศไทย",
+    "thailandCaption": "ดูไฟล์ทั้งหมดของคุณในที่เดียว",
+    "videoTitle": "ตลาดกลางคืน.mp4",
+    "taxRootLabel": "ภาษี 2026",
+    "taxCaption": "ภาษี 2026 — เว็บแอปเครื่องคิดเลขแบบเรียลไทม์ ฝังอยู่ใน cabinet ของคุณ",
+    "calculatorTitle": "เครื่องคิดเลข",
+    "liveAppBadge": "แอปสด",
+    "taxEstimateLabel": "ประมาณการภาษีปี 2026",
+    "income": "รายได้",
+    "deductions": "การหักลดหย่อน",
+    "taxBracket": "ช่วงภาษี",
+    "estimatedTax": "ภาษีโดยประมาณ",
+    "healthRootLabel": "สุขภาพ",
+    "healthCaption": "วิตามินและผลแล็บ — สเปรดชีตที่ให้ความรู้สึกเหมือนหน้ากระดาษ",
+    "csvTitle": "วิตามินประจำวัน.csv",
+    "csvColVitamin": "วิตามิน",
+    "csvColDose": "ปริมาณ",
+    "csvColTime": "เวลา",
+    "csvColDone": "เสร็จสิ้น",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "ฐานโค้ด — เชื่อมโยงที่เก็บ Git ใดก็ได้ ที่เอเจนต์ของคุณสามารถค้นหาได้",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · งาน",
+    "typedCommand": "เรียกใช้งาน 10 งาน แต่ละงานเขียนเพลง บันทึกไปที่ @Songs/",
+    "headlineSentence": "พร้อมที่จะ<accent>เริ่มต้น</accent>แล้วหรือยัง?",
+    "paragraphPrefix": "เขียนงาน. เรียกใช้หนึ่งงาน, สิบงาน, หรือกำหนดเวลาตลอดไป. อ้างถึงหน้าต่างๆ ด้วย ",
+    "paragraphSuffix": " บันทึกผลลัพธ์ได้ทุกที่ที่คุณต้องการ. ตอนนี้คุณคือผู้กำกับแล้ว.",
+    "savingFolder": "เพลง/"
+  },
+  "slideAgents": {
+    "persona": "บุคลิก",
+    "heartbeat": "จังหวะการทำงาน",
+    "jobs": "งาน",
+    "aiTeam": "ทีม AI",
+    "otherWriter": "นักเขียน",
+    "otherOrganizer": "ผู้จัดระเบียบ",
+    "idle": "ว่าง",
+    "researchAnalyst": "นักวิเคราะห์วิจัย",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "ใช้งานอยู่",
+    "personaBody": "นักวิเคราะห์ที่ละเอียดรอบคอบ อ้างอิงแหล่งที่มา ระบุข้อขัดแย้ง",
+    "heartbeatBody": "สแกน @Market Research ทุก 15 นาที",
+    "jobsBody": "จันทร์ 9:00 น. · สรุปคู่แข่งรายสัปดาห์",
+    "slideNum": "02 · เอเจนต์",
+    "paragraphPrefix": "เอเจนต์แต่ละตัวมี",
+    "personaWord": "บุคลิก",
+    "paragraphMiddle": ", ของตัวเอง",
+    "scheduleWord": "ตารางเวลา",
+    "paragraphMiddle2": ", และมี",
+    "memoryWord": "หน่วยความจำ",
+    "paragraphSuffix": ". เอเจนต์ AI ของคุณจะทำงานให้เสร็จตลอด 24 ชั่วโมงทุกวัน คุณไปใช้ชีวิตได้เลย — พวกเขาจะจัดการส่วนที่เหลือเอง",
+    "aiTeamSentence": "ทีม <accent>AI</accent> ของคุณ"
+  },
+  "startWork": {
+    "close": "ปิด",
+    "selectAgent": "เลือกเอเจนต์",
+    "titleNow": "ต้องทำอะไรบ้าง?",
+    "titleRecurring": "ตั้งค่ากิจวัตรประจำ",
+    "titleHeartbeat": "ปลุกเอเจนต์นี้ตามตารางเวลา",
+    "titleEdit": "แก้ไขงาน",
+    "submitStart": "เริ่ม",
+    "submitAddInbox": "เพิ่มลงในกล่องขาเข้า",
+    "submitSaveEdit": "บันทึกการเปลี่ยนแปลง",
+    "submitCreateRoutine": "สร้างกิจวัตร",
+    "submitSaveHeartbeat": "บันทึกจังหวะการทำงาน",
+    "saving": "กำลังบันทึก…",
+    "current": "ปัจจุบัน",
+    "modeInboxLabel": "→ กล่องขาเข้า",
+    "modeInboxHint": "บันทึกลงในกล่องขาเข้า — เริ่มเมื่อคุณพร้อม",
+    "modeNowLabel": "เรียกใช้ตอนนี้",
+    "modeNowHint": "เริ่มการสนทนานี้ทันที",
+    "modeRecurringLabel": "ตามตารางเวลา",
+    "modeRecurringHint": "เรียกใช้พร้อมต์นี้ตามตารางเวลา",
+    "modeHeartbeatLabel": "จังหวะการทำงาน",
+    "modeHeartbeatHint": "ปลุกเอเจนต์ตามจังหวะของตัวเอง",
+    "agentFallback": "เอเจนต์",
+    "failedToStart": "เริ่มต้นไม่สำเร็จ",
+    "failedToSave": "บันทึกการเปลี่ยนแปลงไม่สำเร็จ",
+    "failedToSaveHeartbeat": "บันทึกจังหวะการทำงานไม่สำเร็จ"
+  },
+  "googleDoc": {
+    "noUrl": "ไม่ได้ตั้งค่า URL ของ Google",
+    "anyoneWithLink": "ทุกคนที่มีลิงก์",
+    "publishedToWeb": "เผยแพร่บนเว็บ"
+  },
+  "feedback": {
+    "close": "ปิด",
+    "rolePlaceholder": "เช่น นักพัฒนาอิสระ, PM ที่ SaaS, นักเรียนออกแบบ, ผู้ที่ชื่นชอบ…",
+    "joinDiscord": "เข้าร่วม Discord",
+    "header": "ตรวจสอบด่วนจาก Jane",
+    "howGoing": "เป็นอย่างไรบ้าง?",
+    "starsCount": "{{n}} ดาว",
+    "starsCountPlural": "{{n}} ดาว",
+    "likeCabinet": "ชอบ Cabinet ไหม?",
+    "starTooltipUnknown": "ให้ดาว Cabinet บน GitHub — ถ้ามีประโยชน์กับคุณ การให้ดาวช่วยได้มาก",
+    "starTooltipWithCount": "{{count}} ดาวบน GitHub — คลิกเพื่อเพิ่มของคุณ",
+    "starLabel": "ให้ดาว",
+    "backgroundLabel": "คุณมีพื้นเพอย่างไร?",
+    "optional": "(ไม่บังคับ)",
+    "discordCta": "ต้องการพูดคุยโดยตรง หรือพบปะสมาชิก Cabinet คนอื่น ๆ ไหม?",
+    "maybeLater": "อาจจะภายหลัง",
+    "send": "ส่ง",
+    "thanksTitle": "ขอบคุณ!",
+    "thanksBody": "ความคิดเห็นของคุณกำหนดสิ่งที่จะพัฒนาต่อไป",
+    "copy2Lead": "คุณเปิด Cabinet มาสองสามครั้งแล้ว ขอบคุณ! Cabinet เป็นโอเพนซอร์สและเพิ่งเริ่มต้น ดังนั้นสิ่งที่คุณพูดที่นี่จะเปลี่ยนแปลงสิ่งที่จะพัฒนาต่อไป",
+    "copy2Q1": "วันนี้คุณพยายามทำอะไรใน Cabinet?",
+    "copy2Q1Hint": "หนึ่งประโยคก็พอ สิ่งที่คุณเปิดใช้งาน ไม่ใช่สิ่งที่คุณอยากให้มันทำได้",
+    "copy2Q2": "ครั้งสุดท้ายที่คุณต้องการทำสิ่งนั้น คุณใช้อะไรแทน Cabinet?",
+    "copy2Q2Hint": "เครื่องมือ, แอป, หรือเอกสารใด ๆ แม้แต่ปากกาและกระดาษ",
+    "copy6Lead": "คุณกลับมาแล้ว และนั่นคือสัญญาณที่สำคัญที่สุด ฉันอยากฟังเกี่ยวกับข้อบกพร่องก่อนที่คุณจะลืมมัน",
+    "copy6Q1": "วันนี้คุณพยายามทำอะไรใน Cabinet?",
+    "copy6Q1Hint": "หนึ่งประโยคก็พอ",
+    "copy6Q2": "อะไรคือสิ่งหนึ่งที่เกือบทำให้คุณหยุดใช้ Cabinet ในสัปดาห์นี้?",
+    "copy6Q2Hint": "สิ่งที่รบกวนคุณมากที่สุด ระบุให้ชัดเจน \"X ทำให้สับสน\" ดีกว่า \"UX\""
+  },
+  "apiKeysSection": {
+    "cancel": "ยกเลิก",
+    "pasteHere": "วางที่นี่",
+    "pasteNewValue": "วางค่าใหม่"
+  },
+  "storageBackend": {
+    "title": "แบ็กเอนด์ที่เก็บข้อมูล",
+    "migrationFailed": "การย้ายข้อมูลล้มเหลว"
+  },
+  "linkRepo": {
+    "title": "โหลดความรู้",
+    "intro": "ชี้ Cabinet ไปยังโฟลเดอร์ใดก็ได้บนเครื่องของคุณ Cabinet จะสร้าง symlink เพื่อให้เนื้อหาในโฟลเดอร์ปรากฏในฐานความรู้ของคุณ และพร้อมใช้งานสำหรับเอเจนต์ AI ในฐานะบริบท โฟลเดอร์ต้นฉบับจะไม่ถูกย้ายหรือคัดลอก",
+    "symlinkNote": "นี่เป็นการสร้างลิงก์เชิงสัญลักษณ์ — ไฟล์จะยังคงอยู่ที่เดิม",
+    "autoDetectPlaceholder": "ตรวจจับอัตโนมัติจาก git remote (ไม่บังคับ)",
+    "shortSummaryPlaceholder": "สรุปสั้น ๆ สำหรับเอเจนต์ (ไม่บังคับ)"
+  },
+  "recentTasks": {
+    "ptyMode": "โหมดเทอร์มินัล (PTY)",
+    "revealOlder": "แสดงงานเก่าเพิ่มเติม",
+    "showOlder": "แสดงเก่ากว่า"
+  },
+  "treeNode": {
+    "openCabinet": "เปิดมุมมอง Cabinet",
+    "pageTitlePlaceholder": "ชื่อหน้า…",
+    "rename": "เปลี่ยนชื่อ",
+    "openBadge": "เปิด",
+    "sectionAdd": "เพิ่มไปยังรายการนี้",
+    "sectionThis": "รายการนี้",
+    "addSubPage": "เพิ่มหน้าย่อย",
+    "newFolder": "โฟลเดอร์ใหม่",
+    "createFile": "สร้างไฟล์ใหม่…",
+    "connectKnowledge": "เชื่อมต่อความรู้…",
+    "symlinkTag": "Symlink",
+    "importFile": "นำเข้าไฟล์…",
+    "importFolder": "นำเข้าโฟลเดอร์…",
+    "createCabinet": "สร้าง Cabinet ที่นี่",
+    "editSymlink": "แก้ไข Symlink…",
+    "settings": "การตั้งค่า…",
+    "moveTo": "ย้ายไปที่…",
+    "copyRelativePath": "คัดลอกพาธสัมพัทธ์",
+    "copyFullPath": "คัดลอกพาธเต็ม",
+    "openInFinder": "เปิดใน Finder",
+    "delete": "ลบ",
+    "unlink": "เลิกเชื่อมโยง",
+    "folderNamePlaceholder": "ชื่อโฟลเดอร์",
+    "creating": "กำลังสร้าง…",
+    "create": "สร้าง",
+    "addSubPageTitle": "เพิ่มหน้าย่อยไปยัง “{{name}}”",
+    "newFolderTitle": "โฟลเดอร์ใหม่ใน “{{name}}”"
+  },
+  "newFile": {
+    "title": "สร้างไฟล์ใหม่",
+    "subtitle": "เลือกประเภทไฟล์ Cabinet จะเปิดไฟล์นั้นในตัวแก้ไขเมื่อพร้อมใช้งาน",
+    "groupNative": "แก้ไขใน Cabinet",
+    "groupOffice": "Office (ว่างเปล่า — แก้ไขภายนอก)",
+    "groupGoogle": "Google (เชื่อมโยงแล้ว)",
+    "namePlaceholder": "ชื่อไฟล์",
+    "create": "สร้าง",
+    "creating": "กำลังสร้าง…",
+    "googleUrlLabel": "URL ของ Google (ไม่บังคับ)",
+    "googleUrlPlaceholder": "วางลิงก์ Google ที่แชร์ได้ หรือเว้นว่างไว้เพื่อเพิ่มภายหลัง",
+    "officeNote": "Cabinet แสดงไฟล์ Office แบบอ่านอย่างเดียว ใช้ “เปิดใน Finder” เพื่อแก้ไขในแอปเดสก์ท็อป",
+    "types": {
+      "markdown": "หน้า Markdown",
+      "markdownDesc": "บันทึกข้อความแบบ Rich Text แก้ไขได้ใน Cabinet",
+      "code": "ไฟล์โค้ด",
+      "codeDesc": "ไฟล์ต้นฉบับ/ข้อความใดๆ — เลือกนามสกุลไฟล์",
+      "mermaid": "แผนภาพ Mermaid",
+      "mermaidDesc": "ผังงานและแผนภาพในรูปแบบโค้ด",
+      "csv": "ตาราง CSV",
+      "csvDesc": "ข้อมูลสเปรดชีตที่คั่นด้วยจุลภาค",
+      "docx": "เอกสาร Word",
+      "docxDesc": ".docx เปล่า",
+      "xlsx": "สเปรดชีต Excel",
+      "xlsxDesc": ".xlsx เปล่า",
+      "pptx": "PowerPoint",
+      "pptxDesc": ".pptx เปล่า",
+      "gdoc": "Google Doc",
+      "gdocDesc": "ฝัง Google Doc",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "ฝัง Google Sheet",
+      "gslides": "Google Slides",
+      "gslidesDesc": "ฝัง Google Slides"
+    },
+    "codeExtLabel": "นามสกุลไฟล์",
+    "googleTag": "Google",
+    "extHint": "เพียงพิมพ์ชื่อ — Cabinet จะเพิ่มนามสกุลไฟล์ {{ext}}",
+    "createFailed": "ไม่สามารถสร้างไฟล์ได้"
+  },
+  "fileSettings": {
+    "googleTitle": "การตั้งค่าการฝัง Google",
+    "googleKindLabel": "ประเภท",
+    "googleUrlLabel": "URL ของ Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "การแชร์เอกสารต้องเป็น “ทุกคนที่มีลิงก์” หรือ “เผยแพร่สู่เว็บ” เพื่อให้การฝังโหลดได้",
+    "openLink": "เปิดใน Google",
+    "googleKinds": {
+      "docs": "Docs",
+      "sheets": "Sheets",
+      "slides": "Slides",
+      "forms": "Forms",
+      "drive": "Drive"
+    },
+    "appTitle": "การตั้งค่าเว็บแอป",
+    "modeLabel": "ควรเปิดสิ่งนี้อย่างไร?",
+    "modeWebsite": "มุมมองหน้า",
+    "modeWebsiteDesc": "เปิดแบบอินไลน์โดยแสดงแถบด้านข้างและแผง AI",
+    "modeApp": "เว็บแอป",
+    "modeAppDesc": "เปิดแบบเต็มหน้าจอ; แถบด้านข้างและแผง AI จะยุบอัตโนมัติ",
+    "convertNote": "นี่เป็นการสลับไฟล์เครื่องหมาย .app ในโฟลเดอร์ ไฟล์ของคุณไม่เปลี่ยนแปลง",
+    "save": "บันทึก",
+    "saving": "กำลังบันทึก…",
+    "cancel": "ยกเลิก",
+    "saveFailed": "ไม่สามารถบันทึกการตั้งค่าได้"
+  },
+  "editSymlink": {
+    "title": "แก้ไข Symlink",
+    "intro": "รายการฐานความรู้นี้เป็นลิงก์สัญลักษณ์ไปยังโฟลเดอร์อื่นบนเครื่องของคุณ",
+    "kbPathLabel": "เส้นทางฐานความรู้",
+    "targetLabel": "ลิงก์ไปยัง (บนดิสก์)",
+    "brokenWarning": "โฟลเดอร์เป้าหมายไม่มีอยู่แล้ว โปรดชี้ไปยังโฟลเดอร์ที่ถูกต้องด้านล่าง",
+    "repointLabel": "ชี้ไปยังโฟลเดอร์ใหม่",
+    "repointHint": "Cabinet จะแทนที่ลิงก์ให้ชี้มาที่นี่ ไฟล์จะไม่ถูกย้าย",
+    "browse": "เรียกดู",
+    "nameLabel": "ชื่อ",
+    "descriptionLabel": "คำอธิบาย",
+    "save": "บันทึก",
+    "saving": "กำลังบันทึก…",
+    "copyTarget": "คัดลอกเส้นทางเป้าหมาย",
+    "saveFailed": "ไม่สามารถอัปเดต symlink ได้"
+  },
+  "importFolder": {
+    "importing": "กำลังนำเข้าโฟลเดอร์…",
+    "failed": "การนำเข้าโฟลเดอร์ล้มเหลว: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "กำลังโหลดงาน"
+  },
+  "agentList": {
+    "agentLibrary": "คลังเอเจนต์",
+    "newAgent": "เอเจนต์ใหม่"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "ทีมของคุณ",
+    "lead": "หัวหน้า",
+    "specialist": "ผู้เชี่ยวชาญ",
+    "tasks": "งาน",
+    "todo": "สิ่งที่ต้องทำ",
+    "doing": "กำลังทำ",
+    "done": "เสร็จสิ้น",
+    "anythingGoes": "อะไรก็ได้",
+    "marketing": "การตลาด",
+    "product": "ผลิตภัณฑ์",
+    "research": "วิจัย",
+    "design": "ออกแบบ",
+    "routines": "กิจวัตร",
+    "dailyReview": "ทบทวนประจำวัน",
+    "weeklyDigest": "สรุปประจำสัปดาห์",
+    "conversation": "การสนทนา",
+    "userQuery": "วางแผนทริปไทย 2 สัปดาห์…",
+    "agentReply": "ฉันจะส่งบรรณารักษ์และบรรณาธิการไป",
+    "pendingAction": "การดำเนินการที่รอดำเนินการ",
+    "approve": "อนุมัติ",
+    "decline": "ปฏิเสธ",
+    "themes": "ธีม",
+    "providers": "ผู้ให้บริการ",
+    "comingSoon": "เร็วๆ นี้"
+  },
+  "agentLive": {
+    "dismiss": "ปิด",
+    "paused": "เอเจนต์หยุดชั่วคราว"
+  },
+  "conversationLive": {
+    "liveOutput": "ผลลัพธ์สด",
+    "waitingFirstChunk": "กำลังรอส่วนผลลัพธ์แรก…"
+  },
+  "editIdentityPlus": {
+    "avatar": "รูปโปรไฟล์",
+    "useIconInstead": "ใช้ไอคอนแทน"
+  },
+  "pendingActions": {
+    "rejectAll": "ปฏิเสธทุกการดำเนินการที่รอดำเนินการ",
+    "approveAll": "อนุมัติและดำเนินการทุกการกระทำที่ไม่มีอุปสรรคสำคัญ"
+  },
+  "aiPanel": {
+    "clearSessions": "ล้างทุกเซสชัน",
+    "dismiss": "ปิด"
+  },
+  "schedulerPlus": {
+    "restartAll": "รีสตาร์ทเอเจนต์ทั้งหมด",
+    "restartSubtitle": "หยุดแล้วเปิดใช้งานกำหนดการทั้งหมดอีกครั้ง"
+  },
+  "csvViewer": {
+    "downloadCsv": "ดาวน์โหลด CSV",
+    "deleteRow": "ลบแถว"
+  },
+  "resizableImage": {
+    "resizeLeft": "ปรับขนาดจากซ้าย",
+    "resizeRight": "ปรับขนาดจากขวา"
+  },
+  "folderIndex": {
+    "listView": "มุมมองรายการ",
+    "galleryView": "มุมมองแกลเลอรี"
+  },
+  "linkPopover": {
+    "openLink": "เปิดลิงก์",
+    "removeLink": "ลบลิงก์"
+  },
+  "officeChrome": {
+    "openInFinder": "เปิดใน Finder",
+    "downloadOriginal": "ดาวน์โหลดต้นฉบับ"
+  },
+  "sourceViewer": {
+    "copyContents": "คัดลอกเนื้อหาไฟล์",
+    "downloadFile": "ดาวน์โหลดไฟล์"
+  },
+  "versionHistory": {
+    "title": "ประวัติเวอร์ชัน"
+  },
+  "demoModal": {
+    "closeDemo": "ปิดเดโม",
+    "close": "ปิด"
+  },
+  "demosPlus": {
+    "anything": "อะไรก็ได้",
+    "yours": "ของคุณ",
+    "install": "ติดตั้ง",
+    "attach": "แนบ"
+  },
+  "narrowViewport": {
+    "dismiss": "ปิดคำแนะนำมุมมองแคบ",
+    "dismissTitle": "ปิดจนกว่าจะถึงเซสชันถัดไป",
+    "hintPrefix": "Cabinet ทำงานได้ดีที่สุดเมื่อ",
+    "hintWidth": "≥960 พิกเซล",
+    "hintSuffix": " กว้าง พื้นที่บางส่วนอาจคับแคบเมื่อความกว้างน้อยลง"
+  },
+  "agentCard": {
+    "runHeartbeat": "เรียกใช้ Heartbeat"
+  },
+  "schedulePicker": {
+    "frequency": "ความถี่",
+    "onDay": "ในวัน",
+    "modeInterval": "ช่วงเวลา",
+    "modeDaily": "รายวัน",
+    "modeWeekdays": "วันธรรมดา",
+    "modeWeekly": "รายสัปดาห์",
+    "modeMonthly": "รายเดือน",
+    "modeCustom": "กำหนดเอง",
+    "parse": "แยกวิเคราะห์",
+    "showCron": "แสดงนิพจน์ cron",
+    "hideCron": "ซ่อนนิพจน์ cron",
+    "weekdayMo": "จ.",
+    "weekdayTu": "อ.",
+    "weekdayWe": "พ.",
+    "weekdayTh": "พฤ.",
+    "weekdayFr": "ศ.",
+    "weekdaySa": "ส.",
+    "weekdaySu": "อา."
+  },
+  "slackPanel": {
+    "createChannel": "สร้างช่อง",
+    "thread": "เธรด"
+  },
+  "uninstall": {
+    "title": "ถอนการติดตั้ง Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "ลิ้นชัก Cabinet",
+    "pageTitlePlaceholder": "ชื่อหน้า…"
+  },
+  "skillAddPlus": {
+    "cancel": "ยกเลิก"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "ข้อมูลการตรวจสอบไม่พร้อมใช้งานจาก skills.sh สำหรับทักษะนี้",
+    "searchPlaceholder": "ค้นหา skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "รีเฟรช",
+    "noSkills": "ยังไม่มีทักษะ"
+  },
+  "taskDetail": {
+    "close": "ปิด (Esc)",
+    "muteTask": "ปิดเสียงงานนี้ — งานที่เสร็จแล้วจะถูกย้ายไปที่คลังทันที",
+    "unmuteTask": "เปิดเสียงงานนี้ — งานที่เสร็จแล้วจะกลับมาแสดงใน \"เพิ่งเสร็จสิ้น\""
+  },
+  "rowActionsPlus": {
+    "edit": "แก้ไข",
+    "editHint": "แก้ไขฉบับร่างที่บันทึกไว้นี้ก่อนที่จะเริ่ม",
+    "delete": "ลบ",
+    "deleteHint": "ลบอย่างถาวร — ไม่สามารถเลิกทำได้"
+  },
+  "taskCard": {
+    "ptyMode": "กำลังทำงานในโหมดเทอร์มินัล (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "ปิดทิ้ง"
+  },
+  "terminalExited": {
+    "openDetails": "เปิดรายละเอียดแบบมีโครงสร้าง (พร้อมต์, อาร์ติแฟกต์, เทิร์น)",
+    "reconnect": "เชื่อมต่อกับ daemon ใหม่และสตรีมการเล่นซ้ำ PTY ดิบ"
+  },
+  "terminalTabsPlus": {
+    "resize": "ปรับขนาดแผงเทอร์มินัล"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "แสดงเอเจนต์ทั้งหมด",
+    "noRecentActivity": "ไม่มีกิจกรรมล่าสุด",
+    "noAgents": "ไม่มีเอเจนต์",
+    "noAgentsConfigured": "ยังไม่ได้กำหนดค่าเอเจนต์สำหรับ cabinet นี้",
+    "cabinetScope": "ขอบเขต Cabinet:",
+    "depthDropdownHeader": "ขอบเขต Cabinet",
+    "depthOwnLabel": "เฉพาะ cabinet นี้เท่านั้น",
+    "depthOwnShort": "เฉพาะ",
+    "depthOwnDesc": "หน้า, เอเจนต์ และงานจาก cabinet นี้เท่านั้น",
+    "depthChildren1Label": "รวมลูกโดยตรง",
+    "depthChildren1Desc": "เพิ่ม sub-cabinet หนึ่งระดับ",
+    "depthChildren2Label": "รวม cabinet สองระดับ",
+    "depthChildren2Desc": "เพิ่ม sub-cabinet สองระดับ",
+    "depthAllLabel": "รวมลูกหลานทั้งหมด",
+    "depthAllShort": "ทั้งหมด",
+    "depthAllDesc": "รวมซับทรีทั้งหมด",
+    "scopeTooltip": "ขอบเขต Cabinet: {{label}} คลิกเพื่อเปลี่ยน"
+  },
+  "composerExtras": {
+    "skillAttached": "สกิล — แนบกับการรันนี้เท่านั้น",
+    "pageTitlePlaceholder": "ชื่อหน้า…",
+    "active": "เปิดใช้งาน — ปลุกเอเจนต์ตามกำหนดเวลานี้",
+    "pickCliPty": "เลือก CLI เพื่อสร้างใน PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "แก้ไขด้วย AI",
+    "jupyterLab": "คัดลอก: jupyter lab <path>",
+    "exitApp": "ออกจากแอป"
+  },
+  "demosExtras": {
+    "aiAccounts": "บัญชี AI",
+    "aiTeams": "ทีม AI"
+  },
+  "whatsNew": {
+    "dismiss": "ปิด",
+    "headerPrefix": "มีอะไรใหม่ใน v",
+    "readFull": "อ่านบันทึกการเผยแพร่ฉบับเต็ม"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "ฉันเข้าใจและต้องการดำเนินการต่อ"
+  },
+  "daemonHealth": {
+    "dismiss": "ปิด"
+  },
+  "tinyExtras": {
+    "light": "สว่าง",
+    "home": "หน้าหลัก",
+    "workspaceGallery": "แกลเลอรีพื้นที่ทำงาน",
+    "savingTo": "กำลังบันทึกไปที่",
+    "comingSoon": "เร็วๆ นี้",
+    "deleteSkill": "ลบสกิล",
+    "skillsOffered": "สกิลที่นำเสนอ:",
+    "allAgents": "เอเจนต์ทั้งหมด",
+    "noTranscript": "ไม่พบสคริปต์",
+    "noDiff": "ไม่มีส่วนต่างให้ใช้งาน",
+    "headsUp": "โปรดทราบ:",
+    "back": "ย้อนกลับ",
+    "editYourAvatar": "แก้ไขอวตารของคุณ",
+    "openFullTaskViewer": "เปิดตัวแสดงงานแบบเต็ม",
+    "close": "ปิด",
+    "copyToClipboard": "คัดลอกไปยังคลิปบอร์ด",
+    "starOnGithub": "กดดาวให้ Cabinet บน GitHub",
+    "helpMoreFind": "ช่วยให้ผู้คนค้นพบชุมชนมากขึ้น",
+    "joinDiscord": "เข้าร่วม Discord",
+    "chatWithBuilders": "พูดคุยกับผู้พัฒนา Cabinet",
+    "joinWaitlist": "เข้าร่วมรายชื่อรอ Cabinet Cloud",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "เพิ่มไปยังกล่องขาเข้า",
+    "runTaskNow": "เรียกใช้งานตอนนี้",
+    "search": "ค้นหา",
+    "aiPanel": "แผง AI",
+    "drawers": "ลิ้นชัก"
+  },
+  "dataLocations": {
+    "title": "ที่เก็บข้อมูลของคุณ",
+    "whyThisMatters": "ทำไมสิ่งนี้ถึงสำคัญ",
+    "location": "ตำแหน่ง",
+    "contains": "ประกอบด้วย",
+    "network": "เครือข่าย",
+    "revealInFinder": "แสดงในตัวจัดการไฟล์",
+    "stored": "จัดเก็บแล้ว",
+    "resetOnboarding": "รีเซ็ตการเริ่มต้นใช้งาน"
+  },
+  "rooms": {
+    "switcherTitle": "สลับห้อง",
+    "switchRoom": "ห้อง",
+    "loading": "กำลังโหลด…",
+    "defaultTag": "หน้าหลัก",
+    "openInNewWindow": "เปิดในหน้าต่างใหม่",
+    "opensBrowserWindow": "เปิดหน้าต่างเบราว์เซอร์ใหม่",
+    "customizeRoom": "แก้ไขห้อง",
+    "addRoom": "เพิ่มห้อง…",
+    "editTitle": "แก้ไขห้อง",
+    "editSubtitle": "ตั้งชื่อ ไอคอน สี และธีมของห้องนี้",
+    "nameLabel": "ชื่อที่แสดง",
+    "slugHint": "ชื่อโฟลเดอร์บนดิสก์จะยังคงเป็น {{slug}} การเปลี่ยนชื่อโฟลเดอร์เป็นการดำเนินการขั้นสูงที่แยกต่างหาก",
+    "iconLabel": "ไอคอน",
+    "colorLabel": "สี",
+    "colorAuto": "อัตโนมัติ",
+    "themeLabel": "ธีม",
+    "themeGlobal": "ใช้ค่าเริ่มต้นทั่วโลก",
+    "editFailed": "ไม่สามารถบันทึกห้องได้ โปรดลองอีกครั้ง",
+    "deleteRoom": "ลบห้อง…",
+    "deleteLastRoomDisabledHint": "คุณไม่สามารถลบห้องสุดท้ายของคุณได้",
+    "deleteTitle": "ลบห้องนี้หรือไม่?",
+    "deleteSubtitle": "ห้องนี้และทุกสิ่งที่อยู่ภายในจะถูกย้ายไปยังถังขยะ",
+    "deleteWarningIntro": "การย้ายห้องไปยังถังขยะจะลบสิ่งต่อไปนี้ด้วย:",
+    "deleteWarningPages": "หน้าและไฟล์ภายในห้องนี้",
+    "deleteWarningAgents": "เอเจนต์ การสนทนา และหน่วยความจำที่กำหนดขอบเขตไว้สำหรับห้องนี้",
+    "deleteWarningJobs": "งานที่กำหนดเวลาและกิจวัตรในห้องนี้",
+    "deleteWarningChat": "ประวัติการแชทของทีมสำหรับห้องนี้",
+    "deleteWarningSearch": "ดัชนีการค้นหาของห้อง (สร้างใหม่โดยอัตโนมัติหากกู้คืน)",
+    "deleteRecoveryNote": "การกู้คืน: ห้องถูกย้ายไปที่ data/.trash/ — กู้คืนโดยย้ายโฟลเดอร์กลับไปที่ data/.",
+    "deleteConfirmLabel": "พิมพ์ {{slug}} เพื่อยืนยัน",
+    "deleteConfirmButton": "ลบห้อง",
+    "deleting": "กำลังลบ…",
+    "deleteFailed": "ไม่สามารถลบห้องได้ โปรดลองอีกครั้ง"
+  },
+  "common": {
+    "actions": {
+      "save": "บันทึก",
+      "cancel": "ยกเลิก",
+      "delete": "ลบ",
+      "confirm": "ยืนยัน",
+      "close": "ปิด",
+      "open": "เปิด",
+      "back": "ย้อนกลับ",
+      "next": "ถัดไป",
+      "done": "เสร็จสิ้น"
+    },
+    "nav": {
+      "goBack": "ย้อนกลับ",
+      "goForward": "ไปข้างหน้า"
+    },
+    "aiPanel": {
+      "open": "เปิดแผง AI",
+      "close": "ปิดแผง AI"
+    },
+    "states": {
+      "loading": "กำลังโหลด…",
+      "saving": "กำลังบันทึก…",
+      "saved": "บันทึกแล้ว",
+      "error": "เกิดข้อผิดพลาด"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "หน้าใหม่",
+      "title": "สร้างหน้าใหม่",
+      "placeholder": "ชื่อหน้า…",
+      "create": "สร้าง",
+      "creating": "กำลังสร้าง…"
+    },
+    "newCabinet": {
+      "trigger": "Cabinet ใหม่",
+      "title": "สร้าง Cabinet ใหม่",
+      "subtitle": "Cabinet คือพื้นที่ทำงานที่มีเอเจนต์ งาน และความรู้เป็นของตัวเอง",
+      "importFromRegistry": "นำเข้าจาก Registry",
+      "nameLabel": "ชื่อ Cabinet",
+      "namePlaceholder": "เช่น My Startup, Marketing Team, Research Lab…",
+      "selectAgents": "เลือกเอเจนต์",
+      "selectedCount": "เลือกแล้ว {{count}} รายการ",
+      "createCabinet": "สร้าง Cabinet",
+      "creating": "กำลังสร้าง…",
+      "createFailed": "ไม่สามารถสร้าง Cabinet ได้"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "ส่งออกหน้า",
+      "copyMarkdown": "คัดลอก Markdown",
+      "copyForLlms": "คัดลอกสำหรับ LLMs",
+      "copyAsHtml": "คัดลอกเป็น HTML",
+      "downloadMarkdown": "ดาวน์โหลด .md",
+      "downloadPdf": "ดาวน์โหลด PDF",
+      "copiedForLlmToast": "คัดลอก Markdown ขนาด {{size}} สำหรับ LLM แล้ว"
+    },
+    "toolbar": {
+      "heading1": "หัวเรื่อง 1",
+      "heading2": "หัวเรื่อง 2",
+      "heading3": "หัวเรื่อง 3",
+      "bold": "ตัวหนา",
+      "italic": "ตัวเอียง",
+      "underline": "ขีดเส้นใต้",
+      "strikethrough": "ขีดทับ",
+      "inlineCode": "โค้ดในบรรทัด",
+      "link": "ลิงก์",
+      "textColor": "สีข้อความ",
+      "highlight": "ไฮไลต์",
+      "background": "พื้นหลัง",
+      "bulletList": "รายการหัวข้อย่อย",
+      "orderedList": "รายการลำดับเลข",
+      "blockquote": "บล็อกคำพูด",
+      "checklist": "รายการตรวจสอบ",
+      "codeBlock": "บล็อกโค้ด",
+      "divider": "เส้นแบ่ง",
+      "alignLeft": "จัดชิดซ้าย",
+      "alignCenter": "จัดกึ่งกลาง",
+      "alignRight": "จัดชิดขวา",
+      "justify": "จัดเต็มแนว",
+      "align": "จัดแนว",
+      "table": {
+        "selectCellText": "เลือกข้อความในเซลล์",
+        "addRowAbove": "เพิ่มแถวด้านบน",
+        "addRowBelow": "เพิ่มแถวด้านล่าง",
+        "moveRowUp": "ย้ายแถวขึ้น",
+        "moveRowDown": "ย้ายแถวลง",
+        "deleteRow": "ลบแถว",
+        "addColumnBefore": "เพิ่มคอลัมน์ก่อนหน้า",
+        "addColumnAfter": "เพิ่มคอลัมน์ถัดไป",
+        "moveColumnLeft": "ย้ายคอลัมน์ซ้าย",
+        "moveColumnRight": "ย้ายคอลัมน์ขวา",
+        "deleteColumn": "ลบคอลัมน์",
+        "toggleHeaderRow": "สลับแถวส่วนหัว",
+        "toggleHeaderColumn": "สลับคอลัมน์ส่วนหัว",
+        "deleteTable": "ลบตาราง"
+      },
+      "superscript": "ตัวยก",
+      "subscript": "ตัวห้อย",
+      "insertImage": "แทรกรูปภาพ",
+      "insertVideo": "แทรกวิดีโอ",
+      "embed": "ฝัง",
+      "undo": "เลิกทำ",
+      "redo": "ทำซ้ำ",
+      "switchToLtr": "สลับเป็นซ้ายไปขวา",
+      "switchToRtl": "สลับเป็นขวาไปซ้าย",
+      "scrollLeft": "เลื่อนแถบเครื่องมือไปซ้าย",
+      "scrollRight": "เลื่อนแถบเครื่องมือไปขวา",
+      "markdown": "Markdown",
+      "preview": "แสดงตัวอย่าง"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "ชื่อ Cabinet…",
+      "renameWarning": "ชื่อ Cabinet ไม่สามารถเปลี่ยนชื่อได้ในภายหลัง (สำหรับตอนนี้) โปรดเลือกอย่างรอบคอบ"
+    },
+    "templates": {
+      "header": "เริ่มจากเทมเพลต",
+      "browseAll": "เรียกดูทั้งหมด →"
+    },
+    "quickActions": {
+      "shuffle": "แสดงคำแนะนำอื่น ๆ",
+      "launch10Songs": "เปิดโปรแกรมแก้ไขการแต่งเพลง 10 รายการ",
+      "dailyReview9am": "ตรวจสอบรายวันเวลา 9 โมงเช้า",
+      "weeklyReview": "ตรวจสอบรายสัปดาห์วันจันทร์หน้า",
+      "thailandTrip": "วางแผนทริปประเทศไทยของฉัน",
+      "physicsApp": "สร้างแอปเรียนฟิสิกส์ให้ฉัน",
+      "summariseRecent": "สรุปงานล่าสุดของฉัน",
+      "recruiterReply": "ร่างการตอบกลับผู้สรรหา",
+      "mapArticles": "เชื่อมโยงบทความ",
+      "physicsCourse": "สร้างคอร์สฟิสิกส์ 6 โมดูล",
+      "shortStory": "ร่างโครงเรื่องสั้น",
+      "hourlyStandup": "แจ้งเตือนการประชุมสั้นๆ รายชั่วโมง",
+      "researchPhone": "ค้นคว้าโทรศัพท์เครื่องถัดไปของฉัน",
+      "translateToSpanish": "แปล Cabinet นี้เป็นภาษาสเปน",
+      "refactorNotes": "ปรับโครงสร้างระบบจดบันทึกของฉัน",
+      "birthdayParty": "วางแผนงานเลี้ยงวันเกิด",
+      "boardUpdate": "ร่างการอัปเดตคณะกรรมการ",
+      "customerInterviews": "จำลองการสัมภาษณ์ลูกค้า 5 ครั้ง"
+    },
+    "goodMorning": "สวัสดีตอนเช้า",
+    "goodAfternoon": "สวัสดีตอนบ่าย",
+    "goodEvening": "สวัสดีตอนเย็น",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "ฉันต้องการสร้าง...",
+    "composerDaemonDown": "Agent daemon ออฟไลน์ — รีสตาร์ทเพื่อส่ง"
+  },
+  "onboarding": {
+    "launchHeading": "เริ่มต้น <accent>Cabinet</accent> ของคุณ",
+    "intro": {
+      "tagline1": "ฐานความรู้ของคุณ",
+      "tagline2": "ทีม AI ของคุณ",
+      "getStarted": "เริ่มต้นใช้งาน"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "ออฟฟิศ",
+        "study": "ห้องทำงาน",
+        "lab": "ห้องแล็บ",
+        "library": "ห้องสมุด",
+        "kitchen": "ห้องครัว",
+        "family": "พื้นที่ครอบครัว",
+        "dining": "ห้องอาหาร",
+        "studio": "สตูดิโอ"
+      }
+    },
+    "welcome": {
+      "paragraph": "ในหน้าหลัก คุณสามารถจัดห้องสำหรับส่วนต่างๆ ของชีวิตคุณได้ เช่น งาน, สมองที่สอง, การวิจัย, ครอบครัว และทุกห้องมีตู้เก็บของ (cabinets) สำหรับโน้ต, ไฟล์ และทีม AI ที่ทำงานเบื้องหลังอย่างเงียบๆ",
+      "namePrompt": "คุณชื่ออะไร?",
+      "heading": "ยินดีต้อนรับกลับ<accent>บ้าน</accent>"
+    },
+    "welcomeBack": {
+      "heading": "ยินดีต้อนรับกลับ",
+      "headingNamed": "ยินดีต้อนรับกลับสู่ {{cabinet}}",
+      "subtitle": "เราพบ cabinet ที่มีอยู่แล้วที่นี่ มาตั้งค่าให้เสร็จกันเถอะ",
+      "continue": "ดำเนินการต่อ"
+    },
+    "verify": {
+      "passed": "ผ่านแล้ว",
+      "notInstalled": "ยังไม่ได้ติดตั้ง",
+      "authRequired": "ต้องยืนยันตัวตน",
+      "paymentRequired": "ต้องชำระเงิน",
+      "quotaExceeded": "เกินโควตา / จำกัดอัตรา",
+      "error": "ข้อผิดพลาด"
+    },
+    "providerStatus": {
+      "ready": "พร้อมใช้งาน",
+      "loginRequired": "ต้องเข้าสู่ระบบ",
+      "notInstalled": "ยังไม่ได้ติดตั้ง"
+    },
+    "actions": {
+      "back": "ย้อนกลับ",
+      "next": "ถัดไป",
+      "continue": "ดำเนินการต่อ",
+      "skip": "ข้าม",
+      "finish": "เสร็จสิ้น",
+      "complete": "ตั้งค่าให้เสร็จสมบูรณ์",
+      "copyToClipboard": "คัดลอกไปยังคลิปบอร์ด"
+    },
+    "cabinetCreated": {
+      "continue": "ดำเนินการตั้งค่าต่อ",
+      "heading": "Cabinet ของคุณถูกสร้างแล้ว",
+      "subtitle": "ทุกอย่างพร้อมใช้งานแล้ว",
+      "agentsReady_one": "มีเอเจนต์ {{count}} ตัวพร้อมทำงาน",
+      "agentsReady_other": "มีเอเจนต์ {{count}} ตัวพร้อมทำงาน",
+      "scheduledJobs_one": "มีงานที่กำหนดเวลาไว้ {{count}} งาน",
+      "scheduledJobs_other": "มีงานที่กำหนดเวลาไว้ {{count}} งาน",
+      "subCabinets_one": "มีซับ-Cabinet {{count}} แห่ง",
+      "subCabinets_other": "มีซับ-Cabinet {{count}} แห่ง",
+      "agentsReady": "มีเอเจนต์ {{count}} ตัวพร้อมทำงาน",
+      "scheduledJobs": "มีงานที่กำหนดเวลาไว้ {{count}} งาน",
+      "subCabinets": "มีซับ-Cabinet {{count}} แห่ง"
+    },
+    "cloud": {
+      "alreadyOnList": "คุณอยู่ในรายชื่อแล้ว — เราจะติดต่อกลับไป",
+      "aside": "Cabinet Cloud กำลังจะมาถึงเร็วๆ นี้ ผลิตภัณฑ์เดียวกัน แต่ไม่ต้องยุ่งยากกับการโฮสต์เอง",
+      "description": "เปิด Cabinet ของคุณจากอุปกรณ์ใดก็ได้ ในขณะที่เอเจนต์ AI ของคุณยังคงทำงานต่อไป — ร่าง, ค้นคว้า, จัดระเบียบ — แม้ในขณะที่แล็ปท็อปของคุณปิดอยู่",
+      "error": "เกิดข้อผิดพลาดบางอย่าง โปรดตรวจสอบอีเมลและลองอีกครั้ง",
+      "joinWaitlist": "เข้าร่วมรายชื่อรอ",
+      "onList": "คุณอยู่ในรายชื่อแล้ว เราจะส่งอีเมลแจ้งเมื่อ Cabinet Cloud เปิดให้บริการ",
+      "sending": "กำลังส่ง…",
+      "title": "Cabinet ของคุณ ทุกที่ ทีม AI ของคุณ พร้อมเสมอ",
+      "waitlistSubtitle": "เชื่อมต่อได้จากทุกที่ ทีม AI ของคุณทำงานตลอด 24 ชั่วโมงทุกวัน"
+    },
+    "discord": {
+      "aside": "หากคุณต้องการฟีเจอร์ใหม่ก่อนใคร และชอบ 'มาคุยกัน' มากกว่า 'โปรดส่งตั๋ว' ห้องนี้คือสำหรับคุณ",
+      "description": "ที่นี่คือที่ที่ความคิดเห็นกลายเป็นฟีเจอร์, ภาพหน้าจอเปลี่ยนเป็นการถกเถียง, และมักจะมีคนพบข้อผิดพลาดที่คาดไม่ถึงก่อนที่คุณจะเจอ",
+      "joinBadge": "เข้าร่วม",
+      "title": "Discord คือที่ที่ความแปลกใหม่ดีๆ เกิดขึ้น"
+    },
+    "github": {
+      "aside": "Cabinet เป็นโอเพนซอร์ส หากคุณชอบวิสัยทัศน์ของเรา โปรดช่วยเราเผยแพร่",
+      "description": "การให้ดาวบน GitHub ช่วยให้ผู้คนจำนวนมากขึ้นค้นพบ Cabinet และเข้าร่วมชุมชน",
+      "starsLabel": "{{stars}} ดาวบน GitHub",
+      "title": "ช่วยให้ชุมชน Cabinet เติบโต"
+    },
+    "launch": {
+      "beforeYouLaunch": "ก่อนเริ่มใช้งาน",
+      "defaultCabinetName": "Cabinet ของคุณ",
+      "defaultDescription": "ฐานความรู้ + ทีม AI",
+      "knowledgeBaseLabel": "ฐานความรู้",
+      "aiTeamLabel": "ทีม AI",
+      "launchCabinet": "เริ่มใช้งาน Cabinet",
+      "settingUp": "กำลังตั้งค่า...",
+      "disclaimerAccess": "<strong>เอเจนต์ทำงานด้วยสิทธิ์เข้าถึงเต็มรูปแบบ</strong> Cabinet ใช้ <flag>--dangerously-skip-permissions</flag> (Claude Code) และแฟล็กที่เทียบเท่าในผู้ให้บริการรายอื่น ซึ่งเหมือนกับการรันเครื่องมือ CLI เหล่านี้จากเทอร์มินัลของคุณเอง เซิร์ฟเวอร์ MCP หรือเครื่องมือใดๆ ที่คุณกำหนดค่าไว้อาจถูกเรียกใช้โดยเอเจนต์โดยอัตโนมัติ",
+      "disclaimerBackup": "<strong>สำรองข้อมูลของคุณเป็นประจำ</strong> เอเจนต์สามารถอ่าน เขียน และลบไฟล์ใน KB และรีโพที่เชื่อมโยงของคุณได้ Cabinet ไม่รับผิดชอบต่อการสูญหายของข้อมูล คุณมีหน้าที่รับผิดชอบต่อผู้ให้บริการ AI ที่คุณเลือกและข้อกำหนดในการให้บริการของพวกเขา",
+      "disclaimerBeta": "<strong>ซอฟต์แวร์เบต้า อาจเกิดข้อผิดพลาดได้</strong> เราพัฒนาอย่างรวดเร็ว การเปลี่ยนแปลงที่ส่งผลกระทบอาจเกิดขึ้นได้โดยไม่ต้องแจ้งให้ทราบล่วงหน้า",
+      "legalNotice": "การดำเนินการต่อแสดงว่าคุณยอมรับ <terms>ข้อกำหนด</terms> และ <privacy>ความเป็นส่วนตัว</privacy> ของเรา Cabinet เป็น <oss>โครงการโอเพนซอร์ส</oss>",
+      "keepInTouch": "ติดตามข่าวสาร Cabinet เป็นโอเพนซอร์สและพัฒนาแบบเปิดเผย เราอยากรู้ว่าควรสร้างอะไรต่อไป ไม่มีสแปม เราสัญญา"
+    },
+    "provider": {
+      "agentType": "เอเจนต์ {{type}}",
+      "close": "ปิด",
+      "comingSoon": "เร็วๆ นี้",
+      "guide": "คู่มือ",
+      "heading": "ผู้ให้บริการเอเจนต์",
+      "moreModels": "AI เพิ่มเติม",
+      "install": "ติดตั้ง",
+      "logIn": "เข้าสู่ระบบ",
+      "openTerminalButton": "เปิดเทอร์มินัล",
+      "openTerminalDetail": "คุณจะต้องใช้เทอร์มินัลเพื่อดำเนินการขั้นตอนต่อไป",
+      "openTerminalError": "ไม่สามารถเปิดเทอร์มินัลได้โดยอัตโนมัติ โปรดเปิดเทอร์มินัลของระบบด้วยตนเอง",
+      "openTerminalTitle": "เปิดเทอร์มินัล",
+      "recheck": "ตรวจสอบผู้ให้บริการใหม่",
+      "rerunVerify": "เรียกใช้การตรวจสอบใหม่",
+      "runVerify": "เรียกใช้การตรวจสอบ",
+      "setupTitle": "การตั้งค่า {{name}}",
+      "skipForNow": "ข้ามไปก่อน",
+      "subtitle": "Cabinet ต้องการ AI CLI เพื่อขับเคลื่อนเอเจนต์ของคุณ",
+      "verifyExplanation": "การตรวจสอบจะรันพรอมต์แบบ Headless ของผู้ให้บริการแบบครบวงจรและจำแนกความล้มเหลวใดๆ เพื่อให้คุณทราบว่าต้องกลับไปแก้ไขขั้นตอนใด",
+      "verifying": "กำลังตรวจสอบ…",
+      "failedAtStep": "ล้มเหลวที่ขั้นตอน: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Cabinet นี้มีไว้สำหรับอะไร? แต่ละห้องมาพร้อมกับทีม AI ของตัวเอง",
+      "heading": "เลือก <accent>ห้อง</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet คืออะไร?",
+      "body": "Cabinet คือพื้นที่ทำงานที่เน้นเฉพาะด้านสำหรับชีวิตหรืองานของคุณ ซึ่งเก็บไฟล์ โน้ต เครื่องมือ เอเจนต์ และงานของคุณ เพื่อให้ทีม AI ของคุณมีบริบทที่จำเป็นในการช่วยเหลือได้อย่างแท้จริง",
+      "examplesLabel": "ผู้คนใช้ Cabinet อย่างไร",
+      "example1": "สตาร์ทอัพของคุณ",
+      "example2": "รีโพ GitHub",
+      "example3": "งานการตลาดของคุณ",
+      "example4": "โปรเจกต์ลูกค้า",
+      "example5": "ฐานความรู้ส่วนตัวของคุณ"
+    },
+    "access": {
+      "heading": "{{name}} เข้าถึงอะไรได้บ้าง?",
+      "subtitle": "เลือกความรู้และเครื่องมือที่เอเจนต์นี้สามารถใช้ได้ คุณสามารถเปลี่ยนได้ตลอดเวลา",
+      "defaultAgent": "เอเจนต์ของคุณ",
+      "files": "ไฟล์และความรู้",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "เซิร์ฟเวอร์ MCP",
+      "plugins": "ปลั๊กอิน",
+      "skills": "ทักษะ",
+      "placeholderNote": "คุณสามารถปรับแต่งการเข้าถึงได้ภายหลังในการตั้งค่าของเอเจนต์"
+    },
+    "heartbeat": {
+      "heading": "{{name}} ควรทำงานแบบ Heartbeat หรือไม่?",
+      "subtitle": "Heartbeat ช่วยให้เอเจนต์ตรวจสอบและทำงานได้เองตามกำหนดเวลา",
+      "off": "ปิด",
+      "offHint": "ทำงานเมื่อคุณสั่งเท่านั้น แนะนำสำหรับการเริ่มต้น",
+      "daily": "รายวัน",
+      "dailyHint": "ตรวจสอบวันละครั้ง",
+      "weekly": "รายสัปดาห์",
+      "weeklyHint": "ตรวจสอบสัปดาห์ละครั้ง",
+      "tokenNote": "ข้อควรทราบ: Heartbeat จะเรียกใช้เอเจนต์โดยอัตโนมัติ ซึ่งจะใช้โทเค็น AI (และโควตาผู้ให้บริการของคุณ) ทุกครั้งที่ทำงาน คุณสามารถเปลี่ยนหรือปิดได้ตลอดเวลา"
+    },
+    "firstTask": {
+      "heading": "สร้างงานแรกของคุณ",
+      "subtitle": "งานคือวิธีที่คุณมอบหมายงานให้ {{name}} เขียนตอนนี้ แล้วงานจะไปอยู่ใน Cabinet ของคุณ พร้อมทำงาน",
+      "label": "{{name}} ควรทำอะไรก่อน?",
+      "placeholder": "เช่น ร่างอีเมลต้อนรับสำหรับลูกค้าใหม่",
+      "example1": "สรุปโน้ตล่าสุดของฉัน",
+      "example2": "ร่างแผนโครงการ",
+      "example3": "วิจัยคู่แข่ง 3 อันดับแรกของเรา",
+      "note": "คุณสามารถเว้นว่างไว้และเพิ่มงานภายหลังได้ จะไม่มีอะไรทำงานจนกว่าคุณจะเชื่อมต่อผู้ให้บริการ AI"
+    },
+    "rail": {
+      "untitled": "Cabinet ของคุณ",
+      "dataCaption": "ไฟล์และบันทึกทั้งหมดของโปรเจกต์ของคุณอยู่ที่นี่",
+      "teamEmpty": "ยังไม่มีเอเจนต์",
+      "teamCaption": "ทีม AI ของคุณทำงานที่นี่",
+      "tasksEmpty": "ยังไม่มีงาน",
+      "tasksCaption": "งานที่คุณมอบหมายให้ทีมจะแสดงที่นี่",
+      "assignedTo": "มอบหมายให้ {{name}}",
+      "you": "คุณ"
+    },
+    "rooms": {
+      "office": {
+        "label": "ออฟฟิศ",
+        "tagline": "บริหารธุรกิจ, สตาร์ทอัพ หรือโปรเจกต์เสริม",
+        "workspaceLabel": "ชื่อบริษัทหรือโปรเจกต์",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "คุณทำอะไร?",
+        "descriptionPlaceholder": "เราทำพอดแคสต์เกี่ยวกับสตาร์ทอัพ AI",
+        "departmentNoun": "แผนก",
+        "teamSizeLabel": "ขนาดทีม",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "บรรณาธิการ"
+        }
+      },
+      "study": {
+        "label": "ห้องทำงาน",
+        "tagline": "สมองที่สองของคุณ — การเขียน, บันทึก, ผู้ช่วยส่วนตัว",
+        "workspaceLabel": "ตั้งชื่อ Cabinet ของคุณ",
+        "workspacePlaceholder": "ห้องทำงานของฉัน",
+        "descriptionLabel": "คุณต้องการความช่วยเหลือด้านใดในชีวิต?",
+        "descriptionPlaceholder": "การเขียน, จัดการอีเมล, ปฏิทิน, ติดตามนิสัย",
+        "departmentNoun": "หมวดหมู่",
+        "exampleAgents": {
+          "0": "ผู้ช่วย",
+          "1": "บรรณารักษ์"
+        }
+      },
+      "lab": {
+        "label": "ห้องปฏิบัติการวิจัย",
+        "tagline": "งานวิชาการ, วรรณกรรม, การสอน, วิทยานิพนธ์",
+        "workspaceLabel": "ชื่อพื้นที่ทำงาน",
+        "workspacePlaceholder": "ปรัชญาจิต",
+        "descriptionLabel": "สาขาของคุณคืออะไร หรือคุณกำลังวิจัยเรื่องอะไร?",
+        "descriptionPlaceholder": "ปรากฏการณ์วิทยา, จิตสำนึก, การสอนปรัชญาเบื้องต้น",
+        "departmentNoun": "หมวดหมู่",
+        "exampleAgents": {
+          "0": "หัวหน้าฝ่ายวิจัย",
+          "1": "บรรณารักษ์"
+        }
+      },
+      "family-room": {
+        "label": "ห้องครอบครัว",
+        "tagline": "งานบ้าน, ปฏิทินครอบครัว, อาหาร, เด็ก",
+        "workspaceLabel": "ชื่อครัวเรือน",
+        "workspacePlaceholder": "ครอบครัวเหงียน",
+        "descriptionLabel": "ใครอาศัยอยู่ที่นี่ และคุณจัดการอะไรบ้าง?",
+        "descriptionPlaceholder": "พ่อแม่สองคน, ลูกสามคน, โรงเรียนสองแห่ง, สุนัขหนึ่งตัว",
+        "departmentNoun": "พื้นที่",
+        "teamSizeLabel": "ขนาดครัวเรือน",
+        "exampleAgents": {
+          "0": "ผู้จัดการบ้าน",
+          "1": "แพลนเนอร์"
+        }
+      },
+      "blank": {
+        "label": "ห้องเปล่า",
+        "tagline": "ยังไม่มีอะไร นำเอเจนต์ของคุณมาเอง กำหนดรูปแบบของคุณเอง",
+        "workspaceLabel": "ตั้งชื่อ Cabinet ของคุณ",
+        "workspacePlaceholder": "Cabinet ของฉัน",
+        "descriptionLabel": "ใช้สำหรับอะไร?",
+        "descriptionPlaceholder": "อะไรก็ได้ — เว้นว่างไว้หากยังไม่แน่ใจ",
+        "departmentNoun": "กลุ่ม",
+        "exampleAgents": {
+          "0": "แล้วแต่คุณ"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "ฝ่ายบริหาร",
+      "marketing": "การตลาด",
+      "content": "เนื้อหา",
+      "engineering": "วิศวกรรม",
+      "product-and-design": "ผลิตภัณฑ์และการออกแบบ",
+      "business": "ธุรกิจ",
+      "research": "วิจัย",
+      "finance-and-ops": "การเงินและการดำเนินงาน",
+      "personal": "ส่วนตัว",
+      "second-brain": "สมองที่สอง",
+      "writing": "การเขียน",
+      "tools": "เครื่องมือ",
+      "life-admin": "การจัดการชีวิต",
+      "from-the-office": "จากสำนักงาน",
+      "writing-and-notes": "การเขียนและบันทึก",
+      "other": "อื่นๆ",
+      "household": "ครัวเรือน",
+      "admin": "ธุรการ",
+      "money": "การเงิน",
+      "product": "ผลิตภัณฑ์",
+      "design": "การออกแบบ",
+      "sales": "การขาย",
+      "support": "ฝ่ายสนับสนุน",
+      "analytics": "การวิเคราะห์",
+      "finance": "การเงิน",
+      "legal": "กฎหมาย",
+      "people": "บุคลากร"
+    },
+    "demo": {
+      "greeting": {
+        "office": "อรุณสวัสดิ์ทีม! ยินดีต้อนรับสู่ {{workspace}} มาเริ่มงานกันเลย",
+        "study": "อรุณสวัสดิ์ สมองที่สองของคุณออนไลน์แล้ว — ยินดีต้อนรับกลับสู่ {{home}}",
+        "lab": "โต๊ะวิจัยพร้อมแล้ว — \"{{workspace}}\" วันนี้เราจะเจาะลึกเรื่องอะไร?",
+        "family-room": "สำนักงานใหญ่ประจำบ้านกำลังเริ่มทำงาน — {{home}} มาจัดสรรให้ทุกคนไปอยู่ในที่ที่ควรอยู่กันเถอะ",
+        "blank": "กระดานเปล่า — \"{{workspace}}\" คุณต้องการสร้างอะไรที่นี่, {{home}}?"
+      },
+      "assign": "{{name}} คุณช่วยจัดการ{{topic}}ได้ไหม?",
+      "fallbackTopic": "อะไรต่อไป",
+      "office": {
+        "replies": {
+          "0": "กำลังดำเนินการ จะเตรียมภาพรวมให้พร้อมภายในสิ้นวัน",
+          "1": "กำลังร่างแผนอยู่ จะแชร์ใน #content เร็วๆ นี้",
+          "2": "กำลังตั้งค่าเวิร์กโฟลว์พื้นฐานอยู่ ดูดีทีเดียว"
+        },
+        "topics": {
+          "0": "วิจัยคู่แข่ง",
+          "1": "ปฏิทินเนื้อหา",
+          "2": "แผนการเปิดตัว"
+        },
+        "closing": "เยี่ยมมากทุกคน มาทำให้สัปดาห์แรกนี้แข็งแกร่งกันเถอะ"
+      },
+      "study": {
+        "replies": {
+          "0": "จะคัดแยกกล่องขาเข้าและแจ้งเรื่องที่ต้องให้คุณดู",
+          "1": "ตารางงานว่างถึงบ่าย 3 โมง — เป็นช่วงเวลาที่ดีสำหรับการเขียน",
+          "2": "ฉันได้เชื่อมโยงบันทึกใหม่สามรายการเข้ากับดัชนี 'Daily' แล้ว"
+        },
+        "topics": {
+          "0": "การคัดแยกกล่องขาเข้าวันนี้",
+          "1": "งานเขียนสัปดาห์นี้",
+          "2": "รายการอ่านของฉัน"
+        },
+        "closing": "ดี แจ้งฉันเมื่อมีอะไรที่ต้องการฉัน — ไม่อย่างนั้นฉันจะไม่รบกวน"
+      },
+      "lab": {
+        "replies": {
+          "0": "กำลังดึงเอกสารล่าสุดอยู่ — จะร่างสรุปให้เสร็จภายในหนึ่งชั่วโมง",
+          "1": "จะซิงค์บรรณานุกรมหลังจากนี้และทำเครื่องหมายรายการที่ซ้ำกัน",
+          "2": "โครงร่างการบรรยายสำหรับวันพฤหัสบดีเกือบพร้อมสำหรับการตรวจสอบแล้ว"
+        },
+        "topics": {
+          "0": "การทบทวนวรรณกรรม",
+          "1": "การเตรียมการบรรยายวันพฤหัสบดี",
+          "2": "รายการอ้างอิง"
+        },
+        "closing": "แจ้งความคืบหน้าให้ฉันทราบ ฉันจะตรวจสอบสิ่งที่คุณส่งมาภายในสิ้นวัน"
+      },
+      "family-room": {
+        "replies": {
+          "0": "ตารางงานว่างหลัง 4 โมง กำลังทำเครื่องหมายการส่งมอบที่ทับซ้อนกัน",
+          "1": "ร่างเมนูสำหรับสัปดาห์แล้ว — รายการของชำพร้อมให้ตรวจสอบแล้ว",
+          "2": "กิจกรรมของเด็กๆ ซิงค์แล้ว คืน DnD ยังคงมีในวันศุกร์"
+        },
+        "topics": {
+          "0": "ตารางงานวันนี้",
+          "1": "แผนมื้ออาหาร",
+          "2": "กิจกรรมของเด็กๆ"
+        },
+        "closing": "ขอบคุณทุกคน แจ้งฉันหากมีอะไรเปลี่ยนแปลงระหว่างวัน"
+      },
+      "blank": {
+        "replies": {
+          "0": "รับทราบ พร้อมเสมอเมื่อคุณพร้อม",
+          "1": "เตรียมพร้อม",
+          "2": "ฉันจะรอคำสั่ง"
+        },
+        "topics": {
+          "0": "สิ่งแรก",
+          "1": "อะไรต่อไป",
+          "2": "คำถามที่ยังเปิดอยู่"
+        },
+        "closing": "เมื่อคุณพร้อม บอกเราว่าต้องทำอะไร"
+      }
+    },
+    "team": {
+      "browseAll": "เรียกดูทั้งหมด",
+      "browseCabinets": "เรียกดู Cabinet",
+      "cabinetNameLabel": "ชื่อ Cabinet",
+      "cancel": "ยกเลิก",
+      "importButton": "นำเข้า",
+      "importFailed": "นำเข้าล้มเหลว",
+      "importFailedConnection": "นำเข้าล้มเหลว ตรวจสอบการเชื่อมต่อของคุณ",
+      "importTitle": "นำเข้า {{name}}",
+      "pickAgents": "เลือกเอเจนต์ของคุณ",
+      "required": "จำเป็น",
+      "subtitle": "แต่ละ Cabinet คือทีม AI — เอเจนต์ งาน และฐานความรู้ที่ใช้ร่วมกัน ทำงานร่วมกันเป็นหนึ่งเดียว",
+      "heading": "สร้างทีม<accent>ของคุณ</accent>",
+      "nameLabel": "ชื่อเอเจนต์",
+      "namePlaceholder": "เช่น บรรณาธิการ, นักวิจัย, ผู้ช่วย",
+      "roleLabel": "บทบาท",
+      "rolePlaceholder": "เช่น ผู้ช่วยเขียน",
+      "instructionsLabel": "เอเจนต์นี้ควรทำอะไร?",
+      "instructionsPlaceholder": "อธิบายว่าควรช่วยอย่างไร เช่น ร่างและแก้ไขหน้าเว็บของฉัน รักษาโทนเสียงให้ชัดเจนและเป็นมิตร และแนะนำการปรับปรุง",
+      "agentOptionalHint": "ไม่บังคับ คุณสามารถข้ามขั้นตอนนี้และเพิ่มเอเจนต์ในภายหลังได้จากภายในห้อง",
+      "agentCount_one": "เอเจนต์ {{count}} ตัว",
+      "agentCount_other": "เอเจนต์ {{count}} ตัว",
+      "jobCount_one": "{{count}} งาน",
+      "jobCount_other": "{{count}} งาน",
+      "subCabinetCount_one": "{{count}} ตู้ย่อย",
+      "subCabinetCount_other": "{{count}} ตู้ย่อย",
+      "cabinetsImported_one": "นำเข้าตู้แล้ว {{count}} ตู้",
+      "cabinetsImported_other": "นำเข้าตู้แล้ว {{count}} ตู้",
+      "agentCount": "{{count}} เอเจนต์",
+      "cabinetsImported": "นำเข้าตู้แล้ว {{count}} ตู้",
+      "jobCount": "{{count}} งาน",
+      "subCabinetCount": "{{count}} ตู้ย่อย"
+    }
+  },
+  "search": {
+    "title": "ค้นหา",
+    "placeholder": "ค้นหาหน้า, เอเจนต์, งาน…",
+    "clearQuery": "ล้างการค้นหา",
+    "noCommands": "ไม่มีคำสั่งใดตรงกัน",
+    "scopes": {
+      "all": "ทั้งหมด",
+      "pages": "หน้า",
+      "agents": "เอเจนต์",
+      "tasks": "งาน"
+    },
+    "groups": {
+      "pages": "หน้า",
+      "agents": "เอเจนต์",
+      "tasks": "งาน"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "ภาษา",
+      "description": "เปลี่ยนภาษาและทิศทางการอ่าน หน้าที่มีอยู่แล้วจะคงทิศทางตามเอกสารเดิม",
+      "english": "อังกฤษ",
+      "hebrew": "ฮีบรู",
+      "chineseSimplified": "จีนตัวย่อ",
+      "chineseTraditional": "จีนตัวเต็ม",
+      "moreLanguages": "ภาษาเพิ่มเติม",
+      "moreLanguagesHint": "คลิกเพื่อแจ้งให้เราทราบว่าคุณต้องการ Cabinet ในภาษานั้นๆ — เราจะให้ความสำคัญกับภาษาที่มีผู้ร้องขอมากที่สุด",
+      "comingSoon": "เร็วๆ นี้",
+      "requestSubmitted": "ขอบคุณ! เราได้รับคำขอของคุณสำหรับ {{language}} แล้ว เราจะให้ความสำคัญกับภาษาที่มีผู้ร้องขอมากที่สุด",
+      "requestFailed": "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ โปรดลองอีกครั้งในภายหลัง"
+    },
+    "appearance": {
+      "title": "รูปลักษณ์",
+      "theme": "ธีม",
+      "themeDescription": "เลือกธีมสำหรับอินเทอร์เฟซ",
+      "matchSystem": "ใช้ตามระบบ",
+      "matchSystemDescription": "สลับอัตโนมัติตามลักษณะของ OS",
+      "lightThemes": "ธีมสว่าง",
+      "darkThemes": "ธีมมืด",
+      "lightVariant": "รูปแบบสว่าง",
+      "darkVariant": "รูปแบบมืด",
+      "sidebar": "แถบด้านข้าง",
+      "showHiddenFiles": "แสดงไฟล์ที่ซ่อนอยู่",
+      "sidebarDescription": "กำหนดวิธีการแสดงไฟล์ในแถบด้านข้าง",
+      "showHiddenFilesHint": "แสดงไฟล์และโฟลเดอร์ที่ขึ้นต้นด้วยจุด (เช่น .env, .git)"
+    },
+    "tabs": {
+      "profile": "โปรไฟล์",
+      "providers": "ผู้ให้บริการ",
+      "skills": "ทักษะ",
+      "storage": "ที่เก็บข้อมูล",
+      "integrations": "การผสานรวม",
+      "notifications": "การแจ้งเตือน",
+      "appearance": "ลักษณะที่ปรากฏ",
+      "updates": "การอัปเดต",
+      "about": "เกี่ยวกับ"
+    },
+    "page": {
+      "title": "การตั้งค่า",
+      "refresh": "รีเฟรช",
+      "groupYou": "คุณ",
+      "groupWorkspace": "พื้นที่ทำงาน",
+      "groupApp": "แอป"
+    },
+    "common": {
+      "copyToClipboard": "คัดลอกไปยังคลิปบอร์ด",
+      "categoriesAriaLabel": "หมวดหมู่การตั้งค่า",
+      "loading": "กำลังโหลด…",
+      "connect": "เชื่อมต่อ",
+      "recommended": "แนะนำ"
+    },
+    "integrationsPreview": {
+      "comingSoon": "เร็วๆ นี้",
+      "hint": "การเชื่อมต่อการผสานรวมภายนอกและเครื่องมือในตัวกำลังจะมาถึง"
+    },
+    "storage": {
+      "dataDirectory": "ไดเรกทอรีข้อมูล",
+      "restartRequired": "ต้องรีสตาร์ท",
+      "dataDirectoryDescription": "เนื้อหา Knowledge Base ทั้งหมดจะถูกเก็บไว้ในไดเรกทอรีนี้ การเปลี่ยนเส้นทางต้องรีสตาร์ท",
+      "restartHint": "ไดเรกทอรีข้อมูลจะเปลี่ยนหลังจากคุณรีสตาร์ท Cabinet",
+      "currentPath": "เส้นทางปัจจุบัน",
+      "loadingPath": "กำลังโหลด...",
+      "changeDirectory": "เปลี่ยนไดเรกทอรี",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "เรียกดู",
+      "save": "บันทึก",
+      "openInFinder": "เปิดใน Finder",
+      "envVarHint1": "คุณยังสามารถตั้งค่า",
+      "envVarHint2": " ตัวแปรสภาพแวดล้อม ซึ่งจะมีความสำคัญเหนือกว่าการตั้งค่านี้",
+      "failedToSave": "บันทึกไม่สำเร็จ",
+      "failedToSaveDir": "บันทึกไดเรกทอรีข้อมูลไม่สำเร็จ"
+    },
+    "updates": {
+      "checking": "กำลังตรวจสอบการอัปเดต Cabinet…"
+    },
+    "providers": {
+      "title": "ผู้ให้บริการ Agent",
+      "defaultModel": "โมเดลเริ่มต้น",
+      "setupGuide": "คู่มือการตั้งค่า",
+      "troubleshoot": "แก้ไขปัญหาผู้ให้บริการ AI",
+      "subtitle": "กำหนดค่าผู้ให้บริการ AI agent. CLI agent ทำงานผ่านเทอร์มินัล, API agent ใช้การเรียก API โดยตรง",
+      "defaultRuntime": "รันไทม์เริ่มต้น",
+      "defaultRuntimeHint": "การสนทนาทั่วไปและการทำงานสำรองใช้ผู้ให้บริการ/โมเดล/ความพยายามนี้",
+      "cliAgents": "CLI Agent",
+      "apiAgents": "API Agent",
+      "ready": "พร้อมใช้งาน",
+      "installedNotLoggedIn": "ติดตั้งแล้วแต่ยังไม่ได้เข้าสู่ระบบ",
+      "notInstalled": "ยังไม่ได้ติดตั้ง",
+      "emptyMatrix": "ยังไม่ได้กำหนดค่าผู้ให้บริการ. เพิ่มด้านล่าง"
+    },
+    "notifications": {
+      "channels": "ช่องทางการแจ้งเตือน",
+      "alertRules": "กฎการแจ้งเตือน",
+      "alwaysOn": "เปิดตลอดเวลา",
+      "comingSoon": "เร็วๆ นี้",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "กำหนดค่าวิธีการรับการแจ้งเตือนเมื่อ agent ต้องการความสนใจของคุณ",
+      "rulesHint": "การแจ้งเตือนจะถูกเรียกใช้โดยอัตโนมัติสำหรับเหตุการณ์เหล่านี้:",
+      "previewHint": "การแจ้งเตือนแบบพุชของเบราว์เซอร์, Telegram, Slack และอีเมล",
+      "channelPushName": "การแจ้งเตือนแบบพุชของเบราว์เซอร์",
+      "channelPushDesc": "การแจ้งเตือนทันทีเมื่อแท็บ Cabinet เปิดอยู่หรือติดตั้ง PWA แล้ว",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "การแจ้งเตือนบนมือถือทันทีผ่านบอท Telegram",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "ส่งต่อการแจ้งเตือนไปยังช่อง Slack ของทีมคุณ",
+      "channelEmailName": "สรุปอีเมล",
+      "channelEmailDesc": "สรุปแบบรวมของการแจ้งเตือนและกิจกรรมของ agent",
+      "ruleAlertsEvent": "ข้อความในช่อง #alerts",
+      "ruleAlertsDesc": "agent ใดๆ ที่โพสต์ไปยังช่องการแจ้งเตือน",
+      "ruleMentionsEvent": "การกล่าวถึง @human",
+      "ruleMentionsDesc": "เมื่อ agent กล่าวถึง @human ในช่องทางใดๆ",
+      "ruleFloorEvent": "เป้าหมายต่ำกว่าเกณฑ์",
+      "ruleFloorDesc": "เป้าหมายลดลงต่ำกว่าเกณฑ์ขั้นต่ำ",
+      "ruleHealthEvent": "สถานะ agent ลดลง",
+      "ruleHealthDesc": "การล้มเหลวของ heartbeat 3 ครั้งติดต่อกันขึ้นไป"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "เวอร์ชัน",
+      "release": "รุ่น",
+      "framework": "เฟรมเวิร์ก",
+      "storage": "พื้นที่เก็บข้อมูล",
+      "privacy": "ความเป็นส่วนตัว",
+      "telemetry": "ข้อมูล telemetry การใช้งานแบบไม่ระบุตัวตน",
+      "tagline": "ฐานความรู้ที่โฮสต์ด้วยตนเองโดยมี AI เป็นหลัก และระบบปฏิบัติการสำหรับสตาร์ทอัพ",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "ระบบไฟล์ในเครื่อง",
+      "aiLabel": "AI",
+      "aiValue": "ขับเคลื่อนโดย CLI AI ในเครื่อง",
+      "philosophy": "เนื้อหาทั้งหมดจัดเก็บในรูปแบบไฟล์ markdown บนดิสก์. มนุษย์กำหนดเจตนา. Agent ทำงาน. ฐานความรู้คือหน่วยความจำที่ใช้ร่วมกันระหว่างทั้งสองฝ่าย.",
+      "privacyBody": "Cabinet ส่งข้อมูล telemetry การใช้งานแบบไม่ระบุตัวตนเพื่อช่วยเราปรับปรุงผลิตภัณฑ์. ไม่มีการรวบรวมเนื้อหาไฟล์, พาธ, พร้อมต์ หรือข้อมูลลับใดๆ",
+      "privacyLink": "มีการรวบรวมอะไรบ้าง?",
+      "telemetryEnvDisabled": "ถูกปิดใช้งานโดย CABINET_TELEMETRY_DISABLED=1 (ตัวแปรสภาพแวดล้อม)",
+      "telemetryHint": "เฉพาะจำนวนเหตุการณ์, เวอร์ชัน และข้อมูลแพลตฟอร์มเท่านั้น ปิดเพื่อหยุดส่ง",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "เชื่อมต่อ Cabinet ของคุณได้จากทุกที่ ในขณะที่ทีม AI ของคุณทำงานให้คุณตลอด 24 ชั่วโมงทุกวัน กรอกอีเมลของคุณด้านล่าง แล้วเราจะแจ้งให้คุณทราบเมื่อ Cabinet Cloud เปิดให้บริการ",
+      "cloudAlready": "คุณอยู่ในรายชื่อแล้ว — เราจะติดต่อกลับไป",
+      "cloudSuccess": "คุณอยู่ในรายชื่อแล้ว เราจะส่งอีเมลแจ้งคุณเมื่อ Cabinet Cloud เปิดให้บริการ",
+      "cloudSending": "กำลังส่ง…",
+      "cloudJoinWaitlist": "เข้าร่วมรายชื่อรอ",
+      "cloudError": "เกิดข้อผิดพลาด โปรดตรวจสอบอีเมลและลองอีกครั้ง",
+      "connectTitle": "เชื่อมต่อ",
+      "connectBody": "รับความช่วยเหลือ, แบ่งปันความคิดเห็น หรือแค่ทักทาย",
+      "joinDiscord": "เข้าร่วม Discord"
+    },
+    "profile": {
+      "title": "โปรไฟล์",
+      "name": "ชื่อ",
+      "namePlaceholder": "Jane",
+      "displayName": "ชื่อที่แสดง",
+      "role": "บทบาท",
+      "rolePlaceholder": "ผู้สร้าง",
+      "avatar": "รูปโปรไฟล์",
+      "accentColor": "สีเน้น",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "ไอคอนสำรอง",
+      "useIconInstead": "ใช้ไอคอนแทน",
+      "searchAvatars": "ค้นหารูปโปรไฟล์…",
+      "searchIcons": "ค้นหาไอคอน…",
+      "howAppear": "วิธีที่คุณปรากฏในการสนทนาและทั่วทั้งแอป",
+      "youFallback": "คุณ",
+      "displayNameHint": "แสดงในการสนทนา ค่าเริ่มต้นคือชื่อ",
+      "iconHint": "ใช้เมื่อไม่มีการตั้งค่ารูปโปรไฟล์ คลิกอีกครั้งเพื่อล้าง",
+      "tintHint": "ปรับสีไอคอนสำรองเมื่อไม่มีการตั้งค่ารูปภาพ",
+      "save": "บันทึก",
+      "saving": "กำลังบันทึก…",
+      "saved": "บันทึกแล้ว",
+      "browseAll": "เรียกดูทั้งหมด ({{count}})",
+      "showFavorites": "แสดงรายการโปรด",
+      "showFewer": "แสดงน้อยลง"
+    },
+    "workspace": {
+      "title": "พื้นที่ทำงาน",
+      "name": "ชื่อพื้นที่ทำงาน",
+      "namePlaceholder": "Cabinet ของฉัน",
+      "description": "คำอธิบาย",
+      "descriptionPlaceholder": "คุณทำอะไร?",
+      "teamSize": "ขนาดทีม",
+      "teamSizePlaceholder": "คนเดียว / 2–5 / 6–20 / 20+",
+      "subtitle": "บันทึกระหว่างการเริ่มต้นใช้งาน เอเจนต์จะอ่านข้อมูลเหล่านี้เมื่อวางแผนงาน"
+    }
+  },
+  "sidebar": {
+    "settings": "การตั้งค่า",
+    "createPage": "สร้างหน้า",
+    "newPage": "หน้าใหม่",
+    "newAgent": "เอเจนต์ใหม่",
+    "newTask": "งานใหม่",
+    "archive": "เก็บถาวร",
+    "trash": "ถังขยะ",
+    "search": "ค้นหา",
+    "agents": "เอเจนต์",
+    "tasks": "งาน",
+    "missions": "ภารกิจ",
+    "drawerData": "ข้อมูล",
+    "drawerAgents": "ทีม",
+    "drawerTasks": "งาน",
+    "goHome": "ไปหน้าหลัก",
+    "brandWord": "",
+    "refresh": "รีเฟรชแถบด้านข้าง",
+    "refreshDescription": "รีเฟรชแถบด้านข้าง (อ่านโฟลเดอร์ข้อมูลใหม่)",
+    "collapseSidebar": "ยุบแถบด้านข้าง",
+    "expandSidebar": "ขยายแถบด้านข้าง",
+    "resizeHandle": "ปรับขนาดแถบด้านข้าง — ดับเบิลคลิกเพื่อรีเซ็ต",
+    "resetWidth": "ดับเบิลคลิกเพื่อรีเซ็ตความกว้าง",
+    "refreshedNoChanges": "รีเฟรชแล้ว — ไม่มีการเปลี่ยนแปลง",
+    "refreshedWithChanges": "รีเฟรชแล้ว — เพิ่ม {{added}} รายการ, ลบ {{removed}} รายการ",
+    "refreshFailed": "รีเฟรชไม่สำเร็จ",
+    "searchPlaceholder": "ค้นหาไฟล์…",
+    "searchSearching": "กำลังค้นหา…",
+    "searchNoResults": "ไม่พบไฟล์ที่ตรงกับ “{{query}}”"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "แถบสถานะ",
+      "askAiAriaLabel": "ให้ AI แก้ไขหน้านี้",
+      "askAiPlaceholder": "จะแก้ไขหน้านี้ได้อย่างไร?",
+      "sendHint": "↵ เพื่อส่ง"
+    },
+    "server": {
+      "serverStatusAriaLabel": "สถานะเซิร์ฟเวอร์ — คลิกเพื่อดูรายละเอียด",
+      "checking": "กำลังตรวจสอบสถานะเซิร์ฟเวอร์…",
+      "allRunning": "ทุกระบบทำงานปกติ",
+      "appNotResponding": "เซิร์ฟเวอร์แอปไม่ตอบสนอง",
+      "daemonDownNoProviders": "Daemon ไม่ตอบสนอง; ไม่มีผู้ให้บริการเอเจนต์",
+      "daemonDown": "Daemon ไม่ตอบสนอง",
+      "noProviders": "ไม่มีผู้ให้บริการเอเจนต์",
+      "checkingShort": "กำลังตรวจสอบ…",
+      "online": "ออนไลน์",
+      "offline": "ออฟไลน์",
+      "degraded": "ประสิทธิภาพลดลง",
+      "allSystemsRunning": "ทุกระบบทำงานปกติ",
+      "serviceDisruption": "บริการขัดข้อง",
+      "appServer": "เซิร์ฟเวอร์แอป",
+      "daemon": "เดมอน",
+      "agentProviders": "ผู้ให้บริการเอเจนต์",
+      "running": "ทำงานปกติ",
+      "down": "ไม่ทำงาน",
+      "lastSeen": "เห็นล่าสุด: {{when}}",
+      "appWorking": "หน้า, ตัวแก้ไข, การค้นหา และการจัดการไฟล์ทำงานปกติ",
+      "appDown": "หน้า, ตัวแก้ไข, การค้นหา และการบันทึกไม่พร้อมใช้งาน คุณยังคงอ่านเนื้อหาที่แคชไว้ได้",
+      "daemonWorking": "เอเจนต์ AI, งานที่กำหนดเวลาไว้ และเว็บเทอร์มินัลกำลังทำงาน",
+      "daemonDownDescription": "เอเจนต์ AI, งานที่กำหนดเวลาไว้ และเว็บเทอร์มินัลไม่พร้อมใช้งาน การแก้ไขหน้ายังคงใช้งานได้",
+      "available": "พร้อมใช้งาน",
+      "noneReady": "ไม่มีพร้อม",
+      "providerReady": "พร้อม",
+      "providerNotLoggedIn": "ไม่ได้เข้าสู่ระบบ",
+      "providerNotInstalled": "ไม่ได้ติดตั้ง",
+      "install": "ติดตั้ง",
+      "howToFix": "วิธีแก้ไข"
+    },
+    "save": {
+      "retryTitle": "คลิกเพื่อลองบันทึกที่ล้มเหลวอีกครั้ง",
+      "retryAriaLabel": "บันทึกล้มเหลว — คลิกเพื่อลองอีกครั้ง",
+      "autoSaving": "กำลังบันทึกอัตโนมัติ…",
+      "forceSave": "บังคับบันทึก: ⌘S",
+      "editing": "กำลังแก้ไข — จะบันทึกอัตโนมัติเมื่อคุณหยุดชั่วคราว",
+      "wordCountTitle": "จำนวนคำสำหรับหน้านี้ (ไม่รวมไวยากรณ์ Markdown)",
+      "savedJustNow": "เมื่อสักครู่",
+      "savedNever": "ไม่เคย",
+      "savedAgoSeconds": "{{n}} วินาทีที่แล้ว",
+      "savedAgoMinutes": "{{n}} นาทีที่แล้ว",
+      "savedAgoHours": "{{n}} ชั่วโมงที่แล้ว",
+      "savedAgoDays": "{{n}} วันที่แล้ว",
+      "saveFailedRetry": "บันทึกไม่สำเร็จ — ลองอีกครั้ง",
+      "savingText": "กำลังบันทึก…",
+      "savedText": "บันทึกแล้ว",
+      "editingText": "กำลังแก้ไข…",
+      "savedAgo": "บันทึกแล้ว · {{ago}}",
+      "word": "คำ",
+      "words": "คำ"
+    },
+    "git": {
+      "statusModified": "แก้ไขแล้ว",
+      "statusNew": "ใหม่",
+      "statusAdded": "เพิ่มแล้ว",
+      "statusDeleted": "ลบแล้ว",
+      "statusRenamed": "เปลี่ยนชื่อแล้ว",
+      "commitMessageAriaLabel": "ข้อความคอมมิต"
+    },
+    "help": {
+      "menuAriaLabel": "เปิดเมนูช่วยเหลือและชุมชน",
+      "menuTitle": "ช่วยเหลือและชุมชน",
+      "demos": "ตัวอย่าง, วิดีโอ และคู่มือ",
+      "discord": "แชทบน Discord",
+      "discordSubtitle": "การสนับสนุนและข้อเสนอแนะ",
+      "github": "ร่วมสนับสนุนบน GitHub",
+      "githubSubtitle": "ซอร์สโค้ด, ปัญหา, PRs",
+      "ifUseful": "หากคุณพบว่ามีประโยชน์",
+      "label": "ช่วยเหลือ",
+      "starsAriaLabel": "{{count}} ดาวบน GitHub — เปิด Cabinet บน GitHub",
+      "starsTitle": "{{count}} ดาวบน GitHub — ให้ดาว Cabinet บน GitHub",
+      "share": "แชร์",
+      "shareSubtitle": "คัดลอกลิงก์เชิญและบอกต่อ",
+      "shareCopied": "คุณยอดเยี่ยมมาก, {{name}} 🩷 ขอบคุณที่พาเพื่อนสมาชิก Cabinet ในอนาคตมาร่วมทีม คัดลอกลิงก์แล้ว ไปแบ่งปันความรักกันเลย!",
+      "shareFailed": "ไม่สามารถคัดลอกลิงก์ได้",
+      "friend": "เพื่อน"
+    },
+    "git2": {
+      "allCommitted": "คอมมิตทั้งหมดแล้ว",
+      "uncommittedFile": "{{count}} ไฟล์ที่ยังไม่ได้คอมมิต",
+      "uncommittedFiles": "{{count}} ไฟล์ที่ยังไม่ได้คอมมิต",
+      "uncommittedFilesAria": "{{count}} ไฟล์ที่ยังไม่ได้คอมมิต — คลิกเพื่อดูรายการ",
+      "uncommittedFileTip": "คลิกเพื่อดูไฟล์ที่ยังไม่ได้คอมมิต",
+      "uncommittedFilesTip": "คลิกเพื่อดูไฟล์ที่ยังไม่ได้คอมมิต",
+      "uncommittedFilesHeading": "{{count}} ไฟล์ที่ยังไม่ได้คอมมิต",
+      "uncommittedFilesHeadingPlural": "{{count}} ไฟล์ที่ยังไม่ได้คอมมิต",
+      "truncatedHint": "แสดงเพียง {{count}} ไฟล์แรก — รัน `git status` เพื่อดูรายการทั้งหมด",
+      "commitDefault": "อัปเดต {{count}} ไฟล์",
+      "commitDefaultPlural": "อัปเดต {{count}} ไฟล์",
+      "committing": "กำลังคอมมิต…",
+      "commit": "คอมมิต",
+      "commitFailed": "คอมมิตล้มเหลว",
+      "sync": "ซิงค์",
+      "syncTitle": "ดึงข้อมูลล่าสุดจาก GitHub และรีเฟรช",
+      "syncTitleWithLast": "ดึงข้อมูลล่าสุดจาก GitHub และรีเฟรช ซิงค์ล่าสุดเมื่อ {{when}}",
+      "syncAriaLabel": "ดึงการเปลี่ยนแปลงล่าสุดจาก GitHub และรีเฟรช",
+      "syncAriaLabelWithLast": "ดึงการเปลี่ยนแปลงล่าสุดจาก GitHub และรีเฟรช ซิงค์ล่าสุดเมื่อ {{when}}",
+      "terminal": "เทอร์มินัล",
+      "openTerminal": "เปิดเทอร์มินัล",
+      "newTerminalTab": "แท็บเทอร์มินัลใหม่",
+      "pulling": "กำลังดึง…",
+      "pulled": "อัปเดตจากระยะไกลแล้ว",
+      "upToDate": "เป็นปัจจุบันแล้ว",
+      "pullFailed": "ดึงข้อมูลไม่สำเร็จ"
+    },
+    "update2": {
+      "updateAvailable": "อัปเดต {{version}} พร้อมใช้งาน",
+      "updateAvailableTip": "Cabinet {{version}} พร้อมใช้งาน"
+    },
+    "common": {
+      "dismiss": "ปิด",
+      "close": "ปิด",
+      "openSettings": "เปิดการตั้งค่าเพื่อตรวจสอบการอัปเดตที่ติดตั้งแล้ว"
+    },
+    "misc": {
+      "restartToFinishUpdate": "รีสตาร์ทเพื่อสิ้นสุดการอัปเดต"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "เริ่มงานนี้ใหม่จากพร้อมต์เดิม",
+      "markAsDone": "ทำเครื่องหมายว่างานนี้เสร็จสิ้น",
+      "viewAriaLabel": "มุมมองงาน",
+      "terminal": "เทอร์มินัล",
+      "transcript": "บันทึกการสนทนา",
+      "details": "รายละเอียด",
+      "transcriptTitle": "Claude โค้ด เซสชันแบบเนทีฟ JSONL",
+      "transcriptHint": "อ่าน ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "ย้อนกลับ",
+      "copyPrompt": "คัดลอกพร้อมต์ต้นฉบับ",
+      "gracefulExit": "ปิด CLI อย่างนุ่มนวล (เขียน /exit ไปยัง PTY)",
+      "sendSigterm": "ส่ง SIGTERM ไปยังกระบวนการ PTY ที่กำลังทำงาน",
+      "moreActions": "การดำเนินการเพิ่มเติม",
+      "ptyMode": "กำลังทำงานในโหมดเทอร์มินัล (PTY)",
+      "compactContext": "ยุบการสนทนาก่อนหน้าให้เป็นสรุปเพื่อเพิ่มพื้นที่หน้าต่างบริบท",
+      "noSummary": "ยังไม่มีสรุป",
+      "sessionEnded": "เซสชันสิ้นสุดแล้ว — พิมพ์เพื่อดำเนินการต่อในเทอร์มินัลเดิม",
+      "terminalLive": "เทอร์มินัลทำงานอยู่ พร้อมต์ถัดไปของคุณจะเข้าคิวหลังจากรอบนี้เสร็จสิ้น"
+    }
+  },
+  "tour": {
+    "ariaLabel": "พบกับทัวร์ Cabinet ของคุณ",
+    "skip": "ข้าม",
+    "skipAriaLabel": "ข้ามทัวร์",
+    "back": "ย้อนกลับ",
+    "next": "ถัดไป",
+    "writeFirstTask": "เขียนงานแรกของคุณ",
+    "goToSlide": "ไปที่สไลด์ {{n}}",
+    "starterTask": "มาคุยเรื่องเป้าหมายและสิ่งที่ฉันต้องการทำให้สำเร็จที่นี่ แล้วบันทึกไว้ในหน้า About ใหม่",
+    "savingTo": "กำลังบันทึกไปที่ ",
+    "introTitle": "พบกับ <accent>Cabinet</accent> ของคุณ",
+    "introSubtitle": "ทีม AI ของคุณ ฐานความรู้ของคุณ ในที่เดียว",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "งานล่าสุดและงานที่กำลังดำเนินการ",
+    "hide": "ซ่อนแถบงาน",
+    "show": "แสดงแถบงาน",
+    "empty": "ไม่มีงาน",
+    "itemRunning": "{{title}} · กำลังดำเนินการ · {{when}}",
+    "itemNeedsReply": "{{title}} · ต้องการการตอบกลับ",
+    "itemFailed": "{{title}} · ล้มเหลว · {{when}}",
+    "itemDone": "{{title}} · เสร็จสิ้น · {{when}}",
+    "itemArchived": "{{title}} · เก็บถาวรแล้ว",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} กำลังดำเนินการ — แสดงแถบงาน"
+  },
+  "chrome": {
+    "nav": {
+      "home": "หน้าหลัก",
+      "agents": "เอเจนต์",
+      "tasks": "งาน",
+      "ai": "AI",
+      "menu": "เมนู",
+      "primaryAriaLabel": "หลัก"
+    },
+    "returnTo": {
+      "task": "งาน",
+      "tasks": "งาน",
+      "agent": "เอเจนต์",
+      "agents": "เอเจนต์",
+      "cabinet": "Cabinet",
+      "home": "หน้าหลัก",
+      "settings": "การตั้งค่า",
+      "registry": "ทะเบียน",
+      "back": "กลับ",
+      "backTo": "กลับไปที่ {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "ค่าเริ่มต้น",
+      "dark": "มืด",
+      "darkThemes": "ธีมสีเข้ม",
+      "lightThemes": "ธีมสีอ่อน"
+    },
+    "update": {
+      "restartTitle": "รีสตาร์ท Cabinet เพื่อเสร็จสิ้นการอัปเดต",
+      "availableTitle": "Cabinet {{version}} พร้อมใช้งานแล้ว",
+      "updatesTitle": "การอัปเดต Cabinet",
+      "description": "Cabinet ตรวจสอบการเผยแพร่เวอร์ชันใหม่โดยอัตโนมัติ ในขณะที่ผลิตภัณฑ์ยังอยู่ในช่วงทดลอง โปรดสำรองข้อมูลของคุณก่อนติดตั้งการอัปเดต",
+      "later": "ภายหลัง",
+      "releaseNotes": "บันทึกประจำรุ่น"
+    },
+    "daemon": {
+      "fixHintElectron": "ออกและเปิด Cabinet ใหม่เพื่อรีสตาร์ท agent daemon",
+      "fixHintDev": "เรียกใช้ `npm run dev:daemon` (หรือรีสตาร์ท `npm run dev:all`) เพื่อให้ agent daemon กลับมาทำงาน",
+      "notResponding": "agent daemon ไม่ตอบสนอง",
+      "willFail": "Agents, งาน และคำขอ AI จะล้มเหลว จนกว่าจะกลับมาทำงาน {{fixHint}}"
+    }
+  }
+}

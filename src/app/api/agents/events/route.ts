@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listPersonas } from "@/lib/agents/persona-manager";
+import { listAllPersonas } from "@/lib/agents/persona-manager";
 import { getGoalState } from "@/lib/agents/goal-manager";
 import { getMessages } from "@/lib/agents/slack-manager";
 import { getRespondingAgents } from "@/app/api/agents/slack/route";
@@ -56,9 +56,9 @@ export async function GET() {
 
         try {
           // Gather current state
-          const personas = await listPersonas();
+          const personas = await listAllPersonas();
           const registered = personas
-            .filter((persona) => persona.active && !!persona.heartbeat)
+            .filter((persona) => persona.active && persona.heartbeatEnabled && !!persona.heartbeat)
             .map((persona) => persona.slug);
           const runningCounts = await getRunningConversationCounts();
 
@@ -75,70 +75,100 @@ export async function GET() {
 
           send("agent_status", agentStatuses);
 
-          // Conversation completion notifications
-          const completedNotifications = drainConversationNotifications();
-          if (completedNotifications.length > 0) {
-            const enriched = completedNotifications.map((n) => {
-              const persona = personas.find((p) => p.slug === n.agentSlug);
+          // Conversation start + completion notifications
+          const drained = drainConversationNotifications();
+          if (drained.length > 0) {
+            const enriched = drained.map((n) => {
+              const persona = personas.find(
+                (p) =>
+                  p.slug === n.agentSlug &&
+                  (typeof n.cabinetPath !== "string" ||
+                    !n.cabinetPath ||
+                    p.cabinetPath === n.cabinetPath)
+              ) || personas.find((p) => p.slug === n.agentSlug);
               return {
                 ...n,
                 agentName: persona?.name || n.agentSlug,
                 agentEmoji: persona?.emoji || "🤖",
               };
             });
-            send("conversation_completed", enriched);
-          }
 
-          // Goal progress (only for agents with goals)
-          const goalUpdates: { slug: string; goals: Record<string, { current: number; target: number }> }[] = [];
-          for (const p of personas) {
-            if (p.goals && p.goals.length > 0) {
-              const state = await getGoalState(p.slug);
-              const goals: Record<string, { current: number; target: number }> = {};
-              for (const g of p.goals) {
-                const s = state[g.metric];
-                goals[g.metric] = {
-                  current: s?.current ?? g.current ?? 0,
-                  target: g.target,
-                };
-              }
-              goalUpdates.push({ slug: p.slug, goals });
+            const started = enriched.filter((n) => n.status === "running");
+            const terminal = enriched.filter(
+              (n) => n.status === "completed" || n.status === "failed"
+            );
+
+            if (started.length > 0) {
+              send("conversation_started", started);
+            }
+
+            if (terminal.length > 0) {
+              send("conversation_completed", terminal);
+
+              // Agent just finished — it may have written KB files anywhere in
+              // the tree. The shallow fs.stat diff at the bottom of this tick
+              // only catches top-level mtime changes, so a file written into
+              // e.g. data/have-fun/voldemort/ doesn't trip it. Force a
+              // tree_changed so the sidebar refetches without F5.
+              send("tree_changed", { reason: "conversation_completed" });
+              lastDataVersion = await getDataDirVersion();
             }
           }
+
+          // Goal progress (only for agents with goals) — parallelize reads.
+          const personasWithGoals = personas.filter(
+            (p) => p.goals && p.goals.length > 0
+          );
+          const goalStates = await Promise.all(
+            personasWithGoals.map((p) => getGoalState(p.slug))
+          );
+          const goalUpdates = personasWithGoals.map((p, i) => {
+            const state = goalStates[i];
+            const goals: Record<string, { current: number; target: number }> = {};
+            for (const g of p.goals!) {
+              const s = state[g.metric];
+              goals[g.metric] = {
+                current: s?.current ?? g.current ?? 0,
+                target: g.target,
+              };
+            }
+            return { slug: p.slug, goals };
+          });
           if (goalUpdates.length > 0) {
             send("goal_update", goalUpdates);
           }
 
-          // New Slack messages (check for new messages per channel)
+          // New Slack messages — fetch all channels in parallel and reuse the
+          // message list for both the count diff and the @human preview.
           const channels = ["general", "marketing", "engineering", "operations", "alerts"];
-          const newSlackCounts: Record<string, number> = {};
-          for (const ch of channels) {
-            try {
-              const msgs = await getMessages(ch, 1);
-              newSlackCounts[ch] = msgs.length > 0 ? msgs.length : 0;
-            } catch {
-              newSlackCounts[ch] = 0;
-            }
-          }
-
-          // Detect if any channel has new messages
-          for (const ch of channels) {
-            if (lastSlackCounts[ch] !== undefined && newSlackCounts[ch] > lastSlackCounts[ch]) {
-              // Include latest message content for @human detection
+          const slackResults = await Promise.all(
+            channels.map(async (ch) => {
               try {
-                const latestMsgs = await getMessages(ch, 1);
-                const latest = latestMsgs[latestMsgs.length - 1];
-                const hasHumanMention = latest?.content?.includes("@human") || latest?.mentions?.includes("human");
-                send("slack_activity", {
-                  channel: ch,
-                  hasHumanMention,
-                  agentName: latest?.displayName || latest?.agent,
-                  agentEmoji: latest?.emoji,
-                  preview: latest?.content?.slice(0, 120),
-                });
+                return { ch, msgs: await getMessages(ch, 1) };
               } catch {
-                send("slack_activity", { channel: ch });
+                return { ch, msgs: [] };
               }
+            })
+          );
+          const newSlackCounts: Record<string, number> = {};
+          for (const { ch, msgs } of slackResults) {
+            const count = msgs.length > 0 ? msgs.length : 0;
+            newSlackCounts[ch] = count;
+            if (
+              lastSlackCounts[ch] !== undefined &&
+              count > lastSlackCounts[ch]
+            ) {
+              const latest = msgs[msgs.length - 1];
+              const hasHumanMention =
+                latest?.content?.includes("@human") ||
+                latest?.mentions?.includes("human");
+              send("slack_activity", {
+                channel: ch,
+                hasHumanMention,
+                agentName: latest?.displayName || latest?.agent,
+                agentEmoji: latest?.emoji,
+                preview: latest?.content?.slice(0, 120),
+              });
             }
           }
           lastSlackCounts = newSlackCounts;

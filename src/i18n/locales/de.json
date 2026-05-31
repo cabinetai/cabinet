@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Agent erstellen",
+      "avatar": "Avatar",
+      "namePlaceholder": "Marketing-Agent",
+      "rolePlaceholder": "Content-Spezialist",
+      "department": "Abteilung",
+      "specialist": "Spezialist",
+      "departmentLead": "Abteilungsleiter",
+      "provider": "Anbieter",
+      "runtime": "Laufzeit",
+      "promptPlaceholder": "Sie sind ein Marketing-Agent für…",
+      "addAgentTitle": "Agent zum Team hinzufügen",
+      "addAgentDescription": "Wählen Sie einen Spezialisten aus der Bibliothek. Name, Rolle und Anweisungen können nach dem Hinzufügen bearbeitet werden.",
+      "createFromScratchTitle": "Neu erstellen",
+      "createFromScratchDescription": "Erstelle einen neuen Agenten mit eigener Identität, Rolle und Anweisungen.",
+      "searchLibraryPlaceholder": "Bibliothek durchsuchen",
+      "errorLoadLibrary": "Agentenbibliothek konnte nicht geladen werden.",
+      "errorAddAgent": "Dieser Agent konnte nicht hinzugefügt werden."
+    },
+    "metric": {
+      "name": "Metrikname",
+      "namePlaceholder": "reddit_replies",
+      "target": "Ziel",
+      "targetPlaceholder": "Antworten/Woche",
+      "floor": "Untergrenze",
+      "period": "Zeitraum",
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "monthly": "Monatlich"
+    },
+    "workspace": {
+      "promise": "Versprechen",
+      "orgChart": "Organigramm",
+      "jobDetails": "Jobdetails",
+      "heartbeat": "Taktsignal",
+      "workspace": "Arbeitsbereich",
+      "editAgent": "Agent bearbeiten",
+      "instructions": "Anweisungen",
+      "instructionsPlaceholder": "Schreiben Sie Markdown für die Anweisungen dieses Agenten.",
+      "newAgent": "Neuer Agent",
+      "routines": "Routinen",
+      "browseLibrary": "Agentenbibliothek durchsuchen",
+      "editYourOwn": "Eigenen Agenten bearbeiten",
+      "editorPlaceholder": "Editor",
+      "productAgentPlaceholder": "Produkttext-Agent",
+      "instructionsBodyPlaceholder": "Definieren Sie, wie dieser Agent in Cabinet und der KB arbeiten soll.",
+      "perAgentPrompts": "Wiederkehrende Prompts pro Agent",
+      "runNow": "Jetzt ausführen",
+      "delete": "Löschen",
+      "viewOrgChart": "Dieses Team als Organigramm anzeigen (öffnet Vollbild)",
+      "hideIntro": "Diese Einführung ausblenden",
+      "sharedAcrossCabinets": "Für alle Cabinets freigegeben",
+      "expandSchedule": "Zeitplan erweitern",
+      "heartbeatsOnAgentPage": "Heartbeats werden auf der Seite jedes Agenten konfiguriert.",
+      "exitFullscreen": "Vollbild verlassen",
+      "refresh": "Aktualisieren",
+      "editHeartbeat": "Heartbeat bearbeiten",
+      "newRoutine": "Neue Routine",
+      "configureHeartbeat": "Heartbeat konfigurieren",
+      "openOrgChart": "Organigramm öffnen",
+      "pickAnAgent": "Agent auswählen",
+      "dismiss": "Schließen",
+      "lockedHeartbeatTip": "Dieser Agent ist gestoppt. Starten Sie ihn auf dem Tab „Agenten“, um den Heartbeat zu aktivieren.",
+      "lockedRoutineTip": "Dieser Agent ist gestoppt. Starten Sie ihn auf dem Tab „Agenten“, um seine Routinen zu aktivieren.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Klicken zum Deaktivieren.",
+      "loadError": "Dieser Agent konnte nicht geladen werden.",
+      "retry": "Wiederholen",
+      "color": "Farbe",
+      "customColor": "Benutzerdefinierte Farbe",
+      "preset": "Voreinstellung",
+      "editIconColor": "Symbol, Farbe oder Avatar bearbeiten",
+      "sharedAcrossCabinetsHint": "Wird in allen Cabinets geteilt — Änderungen gelten überall",
+      "inbox": "Posteingang",
+      "conversations": "Unterhaltungen",
+      "recentWork": "Letzte Arbeiten",
+      "schedule": "Zeitplan",
+      "heartbeat": "Taktsignal",
+      "runNow": "Jetzt ausführen",
+      "editRoutine": "Routine bearbeiten",
+      "addRoutine": "Routine hinzufügen",
+      "details": "Details",
+      "editingGlobalAgent": "Globalen Agenten bearbeiten",
+      "displayName": "Anzeigename",
+      "role": "Rolle",
+      "department": "Abteilung",
+      "type": "Typ",
+      "workspace": "Arbeitsbereich",
+      "tags": "Tags",
+      "openSkillsSettings": "Einstellungen → Fähigkeiten öffnen",
+      "notInCatalog": "Nicht im Katalog gefunden — zum Entfernen klicken",
+      "recommendedForRole": "Für diese Rolle empfohlen — zum Zuweisen klicken",
+      "promise": "Versprechen",
+      "saved": "Gespeichert",
+      "iconLabel": "Symbol"
+    },
+    "missionControl": {
+      "gallery": "Galerie",
+      "newAgent": "Neuer Agent",
+      "allGoals": "Alle Ziele",
+      "noGoals": "Keine Agenten haben Ziele konfiguriert.",
+      "fromScratch": "Neu erstellen",
+      "describeIt": "Beschreiben",
+      "import": "Importieren",
+      "closeDialog": "Dialog schließen",
+      "describeYourAgent": "Beschreiben Sie Ihren Agenten",
+      "describePlaceholder": "Ich brauche einen Agenten, der Hacker News nach GPU-bezogenen Beiträgen überwacht und durchdachte Kommentare mit Links zu unseren Blogbeiträgen verfasst…"
+    },
+    "pulseStrip": {
+      "agents": "Agenten",
+      "running": "Aktiv",
+      "goals": "Ziele",
+      "alerts": "Benachrichtigungen",
+      "cost": "Kosten",
+      "runningPlays": "Laufende Abläufe",
+      "noRunning": "Derzeit sind keine Agenten aktiv.",
+      "costBreakdown": "Kostenaufschlüsselung",
+      "noUsage": "Noch keine API-Nutzung.",
+      "totalEstimated": "Geschätzt gesamt"
+    },
+    "routine": {
+      "runNowTitle": "Diese Routine jetzt ausführen (einmalig, außerhalb des Zeitplans)",
+      "deletePermanently": "Diese Routine dauerhaft löschen",
+      "promptPlaceholder": "Was soll diese Routine tun? z.B. Die gestrige Aktivität zusammenfassen…",
+      "jobName": "Jobname",
+      "jobNamePlaceholder": "Wöchentliche Strategiezusammenfassung",
+      "jobId": "Job-ID",
+      "schedule": "Zeitplan",
+      "model": "Modell",
+      "enabled": "Aktiviert"
+    }
+  },
+  "registry": {
+    "loading": "Wird aus dem Register geladen…",
+    "readyToImport": "Bereit, dieses Cabinet zu importieren?",
+    "organization": "Organisation",
+    "agents": "Agenten",
+    "scheduledJobs": "Geplante Jobs",
+    "about": "Über",
+    "cabinetName": "Cabinet-Name",
+    "cabinetNamePlaceholder": "Cabinet-Name…",
+    "searchPlaceholder": "Cabinets suchen…",
+    "noResults": "Keine Cabinets entsprechen Ihrer Suche."
+  },
+  "tasksBoard": {
+    "title": "Aufgaben",
+    "manualTooltip": "Manuell — direkt gestartete Aufgaben",
+    "jobsTooltip": "Jobs — geplante wiederkehrende Ausführungen",
+    "heartbeatTooltip": "Heartbeat — selbstgesteuerte Agentenläufe",
+    "clearSelection": "Auswahl aufheben (Esc)",
+    "createTask": "Neue Aufgabe erstellen",
+    "moreNewTypes": "Weitere neue Elementtypen",
+    "newTask": "Neue Aufgabe",
+    "newRoutine": "Neue Routine",
+    "viewKanban": "Kanban",
+    "viewList": "Liste",
+    "viewSchedule": "Zeitplan",
+    "viewKanbanHint": "Board-Ansicht — Aufgaben gruppiert nach Posteingang / An der Reihe / Aktiv / Gerade abgeschlossen / Archiv",
+    "viewListHint": "Flache Liste aller Aufgaben, neueste Aktivität zuerst",
+    "viewScheduleHint": "Kalender der geplanten Routinen und anstehenden Ausführungen",
+    "filterByAgent": "Nach Agent filtern: {{name}}",
+    "noToDeleteTitle": "Keine Aufgaben zum Löschen",
+    "noToDeleteFiltered": "Nichts entspricht {{filter}}. Filter löschen, eine andere Ansicht wählen oder eine neue Aufgabe erstellen.",
+    "noToDeleteEmpty": "Es sind noch keine Aufgaben auf dem Board. Erstellen Sie eine mit der Schaltfläche „+ Neue Aufgabe“.",
+    "gotIt": "Verstanden",
+    "deleteCountTitle": "{{count}} Aufgabe löschen?",
+    "deleteCountTitlePlural": "{{count}} Aufgaben löschen?",
+    "deleteBody": "Dies entfernt dauerhaft Konversationsmetadaten, Transkripte und Artefakte für jede aktuell angezeigte Aufgabe. Dies kann nicht rückgängig gemacht werden.",
+    "deleteBodyFiltered": "Dies entfernt dauerhaft Konversationsmetadaten, Transkripte und Artefakte für jede aktuell durch die aktiven Filter angezeigte Aufgabe. Dies kann nicht rückgängig gemacht werden.",
+    "deleteConfirm": "{{count}} löschen",
+    "deleteAllShown": "Alle {{count}} angezeigte Aufgabe löschen",
+    "deleteAllShownPlural": "Alle {{count}} angezeigten Aufgaben löschen",
+    "nothingToDelete": "Nichts in dieser Ansicht zu löschen",
+    "deleteAllAria": "Alle angezeigten Aufgaben löschen",
+    "noTasksAria": "Keine Aufgaben in dieser Ansicht",
+    "filterTrigger": "der {{trigger}}-Filter",
+    "filterTriggerAndAgent": "der {{trigger}}-Filter und der ausgewählte Agent",
+    "filterSelectedAgent": "der ausgewählte Agentenfilter"
+  },
+  "runtime": {
+    "noProvider": "Kein Anbieter ausgewählt",
+    "modeAriaLabel": "Laufzeitmodus",
+    "nativeTranscriptTitle": "Cabinets natives Transkript – strukturierter JSON-Stream, Artefakte, Zusammenfassung, die vollständige UX",
+    "ptyWarningTitle": "Erfordert einen OpenAI API-Schlüssel. Nicht verfügbar für Codex-Konten mit ChatGPT-Plan – die Auswahl dieses Modells schlägt fehl mit 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Nativ",
+    "terminal": "Terminal",
+    "terminalTitle": "Führt die CLI in einer Live-PTY-Terminalsitzung aus (experimenteller Hacker-Modus)",
+    "providers": "Anbieter",
+    "modelCol": "Modell",
+    "auto": "Automatisch",
+    "ready": "Bereit",
+    "loginRequired": "Anmelden",
+    "notInstalled": "Nicht installiert",
+    "notAvailable": "Nicht verfügbar",
+    "defaultLabel": "Standard",
+    "noProvidersAvailable": "Keine Anbieter verfügbar",
+    "appDefault": "App-Standard",
+    "selectAppDefault": "App-Standard auswählen",
+    "defaultModel": "Standardmodell",
+    "selectedModelLabel": "Ausgewähltes Modell",
+    "loadingProviders": "Anbieter werden geladen...",
+    "loadingAvailableProviders": "Verfügbare Anbieter werden geladen…",
+    "triggerSummary": "Modell: {{model}} · Aufwand: {{effort}} · via {{provider}}",
+    "triggerSystemDefault": "Aufgabenmodell – verwendet Systemstandard (zum Auswählen klicken)",
+    "clickToLaunch": "Klicken, um {{name}} in einem PTY-Terminal zu starten"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Agenten laufen mit vollem Zugriff.",
+    "backUp": "Sichern Sie Ihre Daten regelmäßig.",
+    "betaSoftware": "Beta-Software. Es können Fehler auftreten.",
+    "iAccept": "Ich habe gelesen und akzeptiere"
+  },
+  "skillAdd": {
+    "addSkill": "Fähigkeit hinzufügen",
+    "auditTooltip": "Ergebnis externer Audits von skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "skills.sh Auditdaten sind für diese Fähigkeit nicht verfügbar",
+    "preview": "Vorschau"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "KI-Team",
+      "aiTeams": "KI-Teams",
+      "routines": "Routinen"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Agentenkonfiguration bearbeiten",
+    "exportBundle": "Agenten-Bundle exportieren",
+    "goals": "Ziele",
+    "workspace": "Arbeitsbereich"
+  },
+  "scheduleRow": {
+    "deleteQ": "Löschen?",
+    "confirmDelete": "Löschen bestätigen",
+    "cancelDelete": "Löschen abbrechen",
+    "runNow": "Jetzt ausführen"
+  },
+  "apiKeys": {
+    "addKey": "Schlüssel hinzufügen",
+    "edit": "Bearbeiten",
+    "remove": "Entfernen",
+    "newApiKey": "Neuer API-Schlüssel"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet-Updates",
+    "dataDirectory": "Datenverzeichnis",
+    "backups": "Sicherungen"
+  },
+  "kanban": {
+    "stopAllInLane": "Alle laufenden Aufgaben in dieser Spalte stoppen",
+    "restartAllInLane": "Alle Aufgaben in dieser Spalte neu starten",
+    "newTask": "Neue Aufgabe",
+    "collapseColumn": "Spalte einklappen",
+    "kill": "Beenden",
+    "laneInbox": "Posteingang",
+    "laneInboxHint": "Entwurf — wartet auf Ihren Start",
+    "laneNeeds": "Sie sind dran",
+    "laneNeedsHint": "Agent hat eine Frage gestellt oder benötigt Genehmigung",
+    "laneRunning": "Läuft",
+    "laneRunningHint": "Agenten arbeiten gerade",
+    "laneDone": "Gerade beendet",
+    "laneDoneHint": "In der letzten Stunde abgeschlossen",
+    "laneArchive": "Archiv",
+    "laneArchiveHint": "Älter und bestätigt"
+  },
+  "terminalTabs": {
+    "newTab": "Neuer Terminal-Tab",
+    "closeTab": "Terminal schließen"
+  },
+  "newTaskButton": {
+    "createNew": "Neu erstellen…",
+    "newTask": "Neue Aufgabe",
+    "newRoutine": "Neue Routine"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Wöchentliche Strategie-Zusammenfassung",
+    "schedule": "Zeitplan",
+    "jobId": "Job-ID",
+    "enabled": "Aktiviert — nach diesem Zeitplan ausführen"
+  },
+  "editIdentity": {
+    "title": "Agent bearbeiten",
+    "displayName": "Anzeigename",
+    "color": "Farbe",
+    "hexPlaceholder": "#Hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Alle Agenten starten",
+    "startAllSubtitle": "Heartbeats und Cron-Jobs aktivieren",
+    "stopAll": "Alle Agenten stoppen",
+    "stopAllSubtitle": "Heartbeats und Cron-Jobs pausieren"
+  },
+  "skillLibrary": {
+    "readOnly": "Schreibgeschützt – kann nicht in Cabinet bearbeitet werden",
+    "noUpstream": "Direkt in diesem Cabinet erstellt – keine Upstream-Git-Quelle erfasst",
+    "executableWarning": "Bundle enthält ausführbare Skripte – vor Genehmigung prüfen",
+    "skills": "Fähigkeiten",
+    "imported": "Importiert",
+    "importing": "Importiere…",
+    "import": "Importieren"
+  },
+  "embedPopover": {
+    "placeholder": "Link einfügen (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify oder beliebige URL)",
+    "notValidUrl": "Keine gültige URL",
+    "anyUrlWorks": "Jede öffentliche URL funktioniert.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Beliebige iFrame-URL"
+  },
+  "rowActions": {
+    "stop": "Stoppen",
+    "stopHint": "Diesen Lauf jetzt stoppen (sendet SIGTERM)",
+    "restart": "Neustarten",
+    "restartHint": "Erneut vom ursprünglichen Prompt ausführen",
+    "runHint": "Diese Aufgabe jetzt starten"
+  },
+  "schedulesPanel": {
+    "title": "Geplante Jobs",
+    "noJobs": "Noch keine Cabinet-Jobs konfiguriert.",
+    "heartbeats": "Taktsignale",
+    "noHeartbeats": "Noch keine Heartbeats konfiguriert."
+  },
+  "scheduleTab": {
+    "explainer1": "Alles, was Ihr Team diese Woche tut, in einem Kalender. Rosa ist ein Heartbeat, Grün ist eine Routine. Klicken Sie auf eine beliebige Kachel, um sie zu bearbeiten.",
+    "explainer2": "Verwenden Sie diesen Tab, um Konflikte zu erkennen, ruhige Phasen zu finden oder einfach auf einen Blick zu sehen, wie beschäftigt das Team ist.",
+    "aboutAria": "Über den Zeitplan",
+    "modeDay": "Tag",
+    "modeWeek": "Woche",
+    "modeMonth": "Monat"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Verkleinern",
+    "zoomIn": "Vergrößern",
+    "resetView": "Ansicht zurücksetzen",
+    "syntaxError": "Diagramm-Syntaxfehler"
+  },
+  "helpPage": {
+    "keyboard": "Tastatur",
+    "skills": "Fähigkeiten",
+    "apiKeys": "API-Schlüssel",
+    "mcpServers": "MCP-Server",
+    "title": "Hilfe",
+    "howTo": "Anleitungen",
+    "heading": "Erfahren Sie, wie Cabinet funktioniert",
+    "subheading": "Kurze Demos, Anleitungen und Vorschauen, um das Beste aus Cabinet herauszuholen.",
+    "ctaWatchTour": "Tour ansehen",
+    "ctaWatchDemo": "Demo ansehen",
+    "ctaCheatSheet": "Spickzettel öffnen",
+    "ctaComingSoon": "Demnächst verfügbar",
+    "discordHeading": "Nicht gefunden, wonach Sie suchen?",
+    "discordSubheading": "Wir sind auf Discord – sagen Sie Hallo, stellen Sie Fragen, teilen Sie, was Sie entwickeln.",
+    "discordCta": "Discord beitreten",
+    "items": {
+      "tour": {
+        "title": "Entdecken Sie Ihr <accent>Cabinet</accent>.",
+        "description": "Ihr KI-Team. Ihre Wissensdatenbank. Alles an einem Ort."
+      },
+      "agents": {
+        "title": "Ihr <accent>KI-Team</accent>.",
+        "description": "Stellen Sie Leads und Spezialisten ein. Gruppieren Sie sie in Abteilungen. Lassen Sie sie Aufgaben untereinander verteilen."
+      },
+      "tasks": {
+        "title": "Das <accent>Aufgabenboard</accent>.",
+        "description": "Kanban-, Listen- und Zeitplanansichten. Filtern nach Agent oder Status. Laufzeit pro Aufgabe festlegen."
+      },
+      "knowledge": {
+        "title": "Ihre <accent>Wissensdatenbank</accent>.",
+        "description": "Markdown, CSV, PDF, Code, Notebooks, Mermaid, Bilder, Audio – alles wird inline gerendert. Ihre Daten bleiben auf Ihrem Gerät; sie gehören Ihnen, nicht uns."
+      },
+      "cabinets": {
+        "title": "Ein Team von <accent>KI-Teams</accent>.",
+        "description": "Cabinets verschachteln sich in Cabinets. Jedes ist ein eigenes KI-Team mit eigenen Daten, Agenten und Sichtbarkeitsbereich – und sie können im Baum auf- und abwärts zusammenarbeiten."
+      },
+      "routines": {
+        "title": "<accent>Routinen</accent> & Zeitpläne.",
+        "description": "Führen Sie eine Aufgabe täglich um 9 Uhr, wöchentlich am Freitag oder einmal nächsten Montag aus. Cron, Kalender oder natürliche Sprache."
+      },
+      "conversations": {
+        "title": "Konversationen & <accent>Genehmigungen</accent>.",
+        "description": "Agenten schlagen Aktionen vor – eine Aufgabe starten, einen Job planen – und Sie genehmigen, bevor etwas ausgeführt wird."
+      },
+      "themes": {
+        "title": "Machen Sie es <accent>zu Ihrem</accent>.",
+        "description": "Wählen Sie aus einer kuratierten Auswahl an hellen und dunklen Themes – Paper, Slate, Claude, Ink und mehr."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> – bringen Sie Ihre eigene KI mit.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor – bringen Sie die Anbieter mit, für die Sie bereits bezahlen. Wählen Sie eine Standardeinstellung oder überschreiben Sie pro Aufgabe."
+      },
+      "shortcuts": {
+        "title": "<accent>Tastenkombinationen</accent>.",
+        "description": "Jede Cabinet-Tastenkombination auf einer durchsuchbaren Karte. Drücken Sie ? von überall, um sie wieder zu öffnen. Filtern nach Name oder Taste – für Navigation, Bearbeitung, Aufgaben, Panels und Slash-Befehle."
+      },
+      "skills": {
+        "title": "<accent>Fähigkeiten</accent> für Ihre Agenten.",
+        "description": "Installierbare Agenten-Fähigkeiten – Playbooks, die das Modell für eine Aufgabe heranzieht. Installieren Sie von GitHub oder skills.sh, hängen Sie sie an eine Persona an oder erwähnen Sie eine in einem beliebigen Composer für einen einmaligen Lauf."
+      },
+      "apiKeysItem": {
+        "title": "<accent>API-Schlüssel</accent> für Ihre Tools.",
+        "description": "Verbinden Sie Ihr OpenAI-, Anthropic- oder GitHub-Konto einmal – jeder Agent und jede Fähigkeit in Cabinet wird es nutzen. Sie zahlen Ihre eigenen Rechnungen, nutzen Ihr eigenes Kontingent, kein Mittelsmann."
+      },
+      "integrations": {
+        "title": "<accent>MCP-Server</accent> & Integrationen.",
+        "description": "MCP-Server, Slack, Telegram, Gmail und Kalender-OAuth – einmal verbinden und Cabinet verwaltet die Tokens. Demnächst verfügbar."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Tastenkombinationen",
+    "filterPlaceholder": "Filtern…",
+    "close": "Schließen"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Live-Terminal",
+    "runningHeartbeat": "Heartbeat läuft…",
+    "memory": "Speicher",
+    "recentActivity": "Letzte Aktivitäten"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Ihr Avatar",
+    "preset": "Voreinstellung",
+    "useInitials": "Initialen als Fallback verwenden",
+    "custom": "Benutzerdefiniert"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Lokale App-Code-Änderungen erkannt"
+  },
+  "logsPanel": {
+    "classifiedError": "Klassifizierter Fehler",
+    "session": "Sitzung",
+    "noEvents": "Noch keine Ereignisse.",
+    "noTranscript": "Noch kein Transkript."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "Ergebnis",
+    "noSummary": "Keine Zusammenfassung erfasst."
+  },
+  "scheduleRowPlus": {
+    "delete": "Löschen"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Dateien anhängen"
+  },
+  "demos": {
+    "aiTeam": "KI-Team",
+    "specialist": "Spezialist",
+    "legal": "Recht",
+    "global": "Global",
+    "editor": "Editor",
+    "slashMenu": "Slash-Menü"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · DATEN",
+    "headlineSentence": "Ihre <accent>einzige Quelle</accent> der Wahrheit.",
+    "paragraphPrefix": "Markdown, PDFs, Tabellen, Präsentationen, Bilder, Videos, Audio, verknüpfte Repos, eingebettete Web-Apps, Google Docs. Erwähnen Sie alles davon mit ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Ein Ort für alles – damit Sie und Ihr KI-Team von den ",
+    "sameFiles": "gleichen Dateien",
+    "secondParagraphSuffix": ", nicht von Kopien von Kopien, lesen, bearbeiten und veröffentlichen.",
+    "mockTitle": "Janes Cabinet"
+  },
+  "slideData": {
+    "thailandRootLabel": "Thailand-Reise",
+    "thailandCaption": "Alle Ihre Dateien an einem Ort anzeigen.",
+    "videoTitle": "Nachtmarkt.mp4",
+    "taxRootLabel": "Steuer 2026",
+    "taxCaption": "Steuer 2026 – eine Live-Rechner-Web-App, direkt in Ihrem cabinet eingebettet.",
+    "calculatorTitle": "Rechner",
+    "liveAppBadge": "Live-App",
+    "taxEstimateLabel": "Steuerschätzung 2026",
+    "income": "Einkommen",
+    "deductions": "Abzüge",
+    "taxBracket": "Steuerstufe",
+    "estimatedTax": "Geschätzte Steuer",
+    "healthRootLabel": "Gesundheit",
+    "healthCaption": "Vitamine & Labor – eine Tabelle, die sich wie eine Seite anfühlt.",
+    "csvTitle": "Tägliche Vitamine.csv",
+    "csvColVitamin": "Vitamin",
+    "csvColDose": "Dosis",
+    "csvColTime": "Zeit",
+    "csvColDone": "Fertig",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Codebasen – verknüpfen Sie jedes Git-Repo, durchsuchbar von Ihren Agenten.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · AUFGABEN",
+    "typedCommand": "10 Aufgaben ausführen, jede schreibt ein Lied, speichern unter @Songs/",
+    "headlineSentence": "Bereit zum <accent>Start</accent>?",
+    "paragraphPrefix": "Eine Aufgabe schreiben. Eine ausführen, zehn ausführen, für immer planen. Seiten erwähnen mit ",
+    "paragraphSuffix": ", Ausgabe speichern, wo immer Sie möchten. Sie sind jetzt der Regisseur.",
+    "savingFolder": "Lieder/"
+  },
+  "slideAgents": {
+    "persona": "Persona",
+    "heartbeat": "Taktgeber",
+    "jobs": "Aufgaben",
+    "aiTeam": "KI-Team",
+    "otherWriter": "Texter",
+    "otherOrganizer": "Organisator",
+    "idle": "inaktiv",
+    "researchAnalyst": "Rechercheanalyst",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "aktiv",
+    "personaBody": "„Strenger Analyst. Zitiert Quellen. Markiert widersprüchliche Behauptungen.“",
+    "heartbeatBody": "Scannt @Marktforschung alle 15 Min.",
+    "jobsBody": "Mo 9:00 · Wöchentlicher Konkurrenz-Digest",
+    "slideNum": "02 · AGENTEN",
+    "paragraphPrefix": "Jeder Agent hat eine ",
+    "personaWord": "Persona",
+    "paragraphMiddle": ", einen eigenen ",
+    "scheduleWord": "Zeitplan",
+    "paragraphMiddle2": ", und ein ",
+    "memoryWord": "Gedächtnis",
+    "paragraphSuffix": ". Ihre KI-Agenten erledigen die Arbeit, rund um die Uhr. Seien Sie Mensch – den Rest erledigen sie.",
+    "aiTeamSentence": "Ihr <accent>KI-Team</accent>."
+  },
+  "startWork": {
+    "close": "Schließen",
+    "selectAgent": "Agent auswählen",
+    "titleNow": "Was muss erledigt werden?",
+    "titleRecurring": "Eine wiederkehrende Routine einrichten",
+    "titleHeartbeat": "Diesen Agenten nach Zeitplan aktivieren",
+    "titleEdit": "Aufgabe bearbeiten",
+    "submitStart": "Starten",
+    "submitAddInbox": "Zum Posteingang hinzufügen",
+    "submitSaveEdit": "Änderungen speichern",
+    "submitCreateRoutine": "Routine erstellen",
+    "submitSaveHeartbeat": "Taktgeber speichern",
+    "saving": "Wird gespeichert…",
+    "current": "aktuell",
+    "modeInboxLabel": "→ Posteingang",
+    "modeInboxHint": "Im Posteingang speichern – starten, wenn Sie bereit sind",
+    "modeNowLabel": "Jetzt ausführen",
+    "modeNowHint": "Diese Konversation sofort starten",
+    "modeRecurringLabel": "Nach Zeitplan",
+    "modeRecurringHint": "Diesen Prompt nach Zeitplan ausführen",
+    "modeHeartbeatLabel": "Taktgeber",
+    "modeHeartbeatHint": "Den Agenten in seinem eigenen Rhythmus aktivieren",
+    "agentFallback": "Agent",
+    "failedToStart": "Start fehlgeschlagen",
+    "failedToSave": "Änderungen konnten nicht gespeichert werden",
+    "failedToSaveHeartbeat": "Taktgeber konnte nicht gespeichert werden"
+  },
+  "googleDoc": {
+    "noUrl": "Keine Google-URL festgelegt",
+    "anyoneWithLink": "Jeder mit dem Link",
+    "publishedToWeb": "Im Web veröffentlicht"
+  },
+  "feedback": {
+    "close": "Schließen",
+    "rolePlaceholder": "z.B. Indie-Hacker, PM bei einem SaaS, Designstudent, Hobbyist…",
+    "joinDiscord": "Discord beitreten",
+    "header": "Kurzer Check-in von Jane",
+    "howGoing": "Wie läuft es bisher?",
+    "starsCount": "{{n}} Stern",
+    "starsCountPlural": "{{n}} Sterne",
+    "likeCabinet": "Gefällt Ihnen Cabinet?",
+    "starTooltipUnknown": "Cabinet auf GitHub mit Stern versehen – wenn es Ihnen nützlich ist, hilft ein Stern wirklich",
+    "starTooltipWithCount": "{{count}} GitHub-Sterne – klicken, um Ihren hinzuzufügen",
+    "starLabel": "Mit Stern versehen",
+    "backgroundLabel": "Was ist Ihr Hintergrund?",
+    "optional": "(optional)",
+    "discordCta": "Möchten Sie direkt sprechen oder sich mit anderen Cabinet-Mitgliedern austauschen?",
+    "maybeLater": "Vielleicht später",
+    "send": "Senden",
+    "thanksTitle": "Danke!",
+    "thanksBody": "Ihr Feedback bestimmt, was als Nächstes entwickelt wird.",
+    "copy2Lead": "Sie haben Cabinet ein paar Mal geöffnet. Vielen Dank! Cabinet ist Open Source und noch ganz am Anfang, daher beeinflusst Ihr Feedback hier tatsächlich, was als Nächstes entwickelt wird.",
+    "copy2Q1": "Was wollten Sie heute in Cabinet tun?",
+    "copy2Q1Hint": "Ein Satz genügt. Wofür Sie es geöffnet haben, nicht was Sie sich gewünscht hätten.",
+    "copy2Q2": "Als Sie das letzte Mal so etwas tun wollten, was haben Sie anstelle von Cabinet genutzt?",
+    "copy2Q2Hint": "Jedes Tool, jede App oder jedes Dokument, sogar Stift und Papier.",
+    "copy6Lead": "Sie sind zurück, und das ist das wichtigste Signal. Ich möchte von den Schwachstellen hören, bevor Sie sie vergessen.",
+    "copy6Q1": "Was wollten Sie heute in Cabinet tun?",
+    "copy6Q1Hint": "Ein Satz genügt.",
+    "copy6Q2": "Was war das Eine, das Sie diese Woche fast dazu gebracht hätte, Cabinet nicht mehr zu nutzen?",
+    "copy6Q2Hint": "Das, was Sie am meisten gestört hat. Seien Sie spezifisch. „X war verwirrend“ ist besser als „die UX“."
+  },
+  "apiKeysSection": {
+    "cancel": "Abbrechen",
+    "pasteHere": "hier einfügen",
+    "pasteNewValue": "neuen Wert einfügen"
+  },
+  "storageBackend": {
+    "title": "Speicher-Backend",
+    "migrationFailed": "Migration fehlgeschlagen"
+  },
+  "linkRepo": {
+    "title": "Wissen laden",
+    "intro": "Verknüpfen Sie Cabinet mit einem beliebigen Ordner auf Ihrem Computer. Cabinet erstellt einen Symlink, sodass der Inhalt des Ordners in Ihrer Wissensdatenbank erscheint und KI-Agenten als Kontext zur Verfügung steht. Der ursprüngliche Ordner wird niemals verschoben oder kopiert.",
+    "symlinkNote": "Dies erstellt einen symbolischen Link – die Dateien bleiben, wo sie sind.",
+    "autoDetectPlaceholder": "Automatisch von Git-Remote erkennen (optional)",
+    "shortSummaryPlaceholder": "Optionale Kurzzusammenfassung für Agenten"
+  },
+  "recentTasks": {
+    "ptyMode": "Terminal (PTY)-Modus",
+    "revealOlder": "Weitere ältere Aufgaben anzeigen",
+    "showOlder": "Ältere anzeigen"
+  },
+  "treeNode": {
+    "openCabinet": "Cabinet-Ansicht öffnen",
+    "pageTitlePlaceholder": "Seitentitel…",
+    "rename": "Umbenennen",
+    "openBadge": "Öffnen",
+    "sectionAdd": "Zu diesem Element hinzufügen",
+    "sectionThis": "Dieses Element",
+    "addSubPage": "Unterseite hinzufügen",
+    "newFolder": "Neuer Ordner",
+    "createFile": "Neue Datei erstellen…",
+    "connectKnowledge": "Wissen verbinden…",
+    "symlinkTag": "Symlink",
+    "importFile": "Datei importieren…",
+    "importFolder": "Ordner importieren…",
+    "createCabinet": "Cabinet hier erstellen",
+    "editSymlink": "Symlink bearbeiten…",
+    "settings": "Einstellungen…",
+    "moveTo": "Verschieben nach…",
+    "copyRelativePath": "Relativen Pfad kopieren",
+    "copyFullPath": "Vollständigen Pfad kopieren",
+    "openInFinder": "Im Finder öffnen",
+    "delete": "Löschen",
+    "unlink": "Verknüpfung aufheben",
+    "folderNamePlaceholder": "Ordnername",
+    "creating": "Wird erstellt…",
+    "create": "Erstellen",
+    "addSubPageTitle": "Unterseite zu „{{name}}“ hinzufügen",
+    "newFolderTitle": "Neuer Ordner in „{{name}}“"
+  },
+  "newFile": {
+    "title": "Neue Datei erstellen",
+    "subtitle": "Wählen Sie einen Dateityp. Cabinet öffnet sie im Editor, sobald sie bereit ist.",
+    "groupNative": "In Cabinet bearbeiten",
+    "groupOffice": "Office (leer — extern bearbeiten)",
+    "groupGoogle": "Google (verknüpft)",
+    "namePlaceholder": "Dateiname",
+    "create": "Erstellen",
+    "creating": "Wird erstellt…",
+    "googleUrlLabel": "Google-URL (optional)",
+    "googleUrlPlaceholder": "Fügen Sie einen teilbaren Google-Link ein oder lassen Sie das Feld leer, um ihn später hinzuzufügen.",
+    "officeNote": "Cabinet zeigt Office-Dateien schreibgeschützt an. Verwenden Sie „Im Finder öffnen“, um sie in der Desktop-App zu bearbeiten.",
+    "types": {
+      "markdown": "Markdown-Seite",
+      "markdownDesc": "Rich-Text-Notizen, in Cabinet bearbeitbar",
+      "code": "Codedatei",
+      "codeDesc": "Beliebige Quell-/Textdatei — Erweiterung wählen",
+      "mermaid": "Mermaid-Diagramm",
+      "mermaidDesc": "Flussdiagramme und Diagramme als Code",
+      "csv": "CSV-Tabelle",
+      "csvDesc": "Kommagetrennte Tabellendaten",
+      "docx": "Word-Dokument",
+      "docxDesc": "Leeres .docx",
+      "xlsx": "Excel-Tabelle",
+      "xlsxDesc": "Leeres .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Leeres .pptx",
+      "gdoc": "Google Doc",
+      "gdocDesc": "Google Doc einbetten",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "Google Sheet einbetten",
+      "gslides": "Google Slides",
+      "gslidesDesc": "Google Slides einbetten"
+    },
+    "codeExtLabel": "Erweiterung",
+    "googleTag": "Google",
+    "extHint": "Geben Sie einfach den Namen ein — Cabinet fügt die Erweiterung {{ext}} hinzu.",
+    "createFailed": "Datei konnte nicht erstellt werden."
+  },
+  "fileSettings": {
+    "googleTitle": "Google Einbettungseinstellungen",
+    "googleKindLabel": "Typ",
+    "googleUrlLabel": "Google-URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Die Freigabe des Dokuments muss „Jeder mit dem Link“ oder „Im Web veröffentlicht“ sein, damit die Einbettung geladen wird.",
+    "openLink": "In Google öffnen",
+    "googleKinds": {
+      "docs": "Docs",
+      "sheets": "Sheets",
+      "slides": "Slides",
+      "forms": "Forms",
+      "drive": "Laufwerk"
+    },
+    "appTitle": "Web-App-Einstellungen",
+    "modeLabel": "Wie soll dies geöffnet werden?",
+    "modeWebsite": "Seitenansicht",
+    "modeWebsiteDesc": "Öffnet inline mit sichtbarer Seitenleiste und KI-Panel.",
+    "modeApp": "Web-App",
+    "modeAppDesc": "Öffnet im Vollbildmodus; Seitenleiste und KI-Panel werden automatisch ausgeblendet.",
+    "convertNote": "Dies schaltet die .app-Markerdatei im Ordner um. Ihre Dateien werden nicht geändert.",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "saveFailed": "Einstellungen konnten nicht gespeichert werden."
+  },
+  "editSymlink": {
+    "title": "Symlink bearbeiten",
+    "intro": "Dieser Wissensdatenbank-Eintrag ist ein symbolischer Link zu einem Ordner an anderer Stelle auf Ihrem Computer.",
+    "kbPathLabel": "Wissensdatenbank-Pfad",
+    "targetLabel": "Verknüpft mit (auf Festplatte)",
+    "brokenWarning": "Der Zielordner existiert nicht mehr. Verknüpfen Sie ihn unten neu mit einem gültigen Ordner.",
+    "repointLabel": "Auf neuen Ordner verweisen",
+    "repointHint": "Cabinet wird den Link hierher umleiten. Dateien werden niemals verschoben.",
+    "browse": "Durchsuchen",
+    "nameLabel": "Name",
+    "descriptionLabel": "Beschreibung",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "copyTarget": "Zielpfad kopieren",
+    "saveFailed": "Der Symlink konnte nicht aktualisiert werden."
+  },
+  "importFolder": {
+    "importing": "Ordner wird importiert…",
+    "failed": "Ordnerimport fehlgeschlagen: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Aufgaben werden geladen"
+  },
+  "agentList": {
+    "agentLibrary": "Agenten-Bibliothek",
+    "newAgent": "Neuer Agent"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Ihr Team",
+    "lead": "Leitung",
+    "specialist": "Spezialist",
+    "tasks": "Aufgaben",
+    "todo": "Aufgaben",
+    "doing": "In Bearbeitung",
+    "done": "Erledigt",
+    "anythingGoes": "Alles geht",
+    "marketing": "Marketing",
+    "product": "Produkt",
+    "research": "Forschung",
+    "design": "Design",
+    "routines": "Routinen",
+    "dailyReview": "Tagesrückblick",
+    "weeklyDigest": "Wochenübersicht",
+    "conversation": "Konversation",
+    "userQuery": "Zweiwöchige Thailandreise planen…",
+    "agentReply": "Ich beauftrage den Bibliothekar und den Redakteur.",
+    "pendingAction": "Ausstehende Aktion",
+    "approve": "Genehmigen",
+    "decline": "Ablehnen",
+    "themes": "Designs",
+    "providers": "Anbieter",
+    "comingSoon": "Demnächst"
+  },
+  "agentLive": {
+    "dismiss": "Schließen",
+    "paused": "Agent ist pausiert"
+  },
+  "conversationLive": {
+    "liveOutput": "Live-Ausgabe",
+    "waitingFirstChunk": "Warte auf den ersten Ausgabe-Chunk…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Stattdessen Symbol verwenden"
+  },
+  "pendingActions": {
+    "rejectAll": "Alle ausstehenden Aktionen ablehnen",
+    "approveAll": "Alle Aktionen genehmigen und ausführen, die keine harten Blocker haben"
+  },
+  "aiPanel": {
+    "clearSessions": "Alle Sitzungen löschen",
+    "dismiss": "Schließen"
+  },
+  "schedulerPlus": {
+    "restartAll": "Alle Agenten neu starten",
+    "restartSubtitle": "Alle Zeitpläne stoppen und dann reaktivieren"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSV herunterladen",
+    "deleteRow": "Zeile löschen"
+  },
+  "resizableImage": {
+    "resizeLeft": "Größe von links anpassen",
+    "resizeRight": "Größe von rechts anpassen"
+  },
+  "folderIndex": {
+    "listView": "Listenansicht",
+    "galleryView": "Galerieansicht"
+  },
+  "linkPopover": {
+    "openLink": "Link öffnen",
+    "removeLink": "Link entfernen"
+  },
+  "officeChrome": {
+    "openInFinder": "In Finder öffnen",
+    "downloadOriginal": "Original herunterladen"
+  },
+  "sourceViewer": {
+    "copyContents": "Dateiinhalte kopieren",
+    "downloadFile": "Datei herunterladen"
+  },
+  "versionHistory": {
+    "title": "Versionsverlauf"
+  },
+  "demoModal": {
+    "closeDemo": "Demo schließen",
+    "close": "Schließen"
+  },
+  "demosPlus": {
+    "anything": "Beliebiges",
+    "yours": "Ihre",
+    "install": "Installieren",
+    "attach": "Anhängen"
+  },
+  "narrowViewport": {
+    "dismiss": "Hinweis zu schmalem Ansichtsfenster ausblenden",
+    "dismissTitle": "Bis zur nächsten Sitzung ausblenden",
+    "hintPrefix": "Cabinet funktioniert am besten bei ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " Breite. Einige Oberflächen werden bei geringerer Breite eingeengt."
+  },
+  "agentCard": {
+    "runHeartbeat": "Heartbeat ausführen"
+  },
+  "schedulePicker": {
+    "frequency": "Häufigkeit",
+    "onDay": "Am Tag",
+    "modeInterval": "Intervall",
+    "modeDaily": "Täglich",
+    "modeWeekdays": "Wochentags",
+    "modeWeekly": "Wöchentlich",
+    "modeMonthly": "Monatlich",
+    "modeCustom": "Benutzerdefiniert",
+    "parse": "Parsen",
+    "showCron": "Cron-Ausdruck anzeigen",
+    "hideCron": "Cron-Ausdruck ausblenden",
+    "weekdayMo": "Mo",
+    "weekdayTu": "Di",
+    "weekdayWe": "Mi",
+    "weekdayTh": "Do",
+    "weekdayFr": "Fr",
+    "weekdaySa": "Sa",
+    "weekdaySu": "So"
+  },
+  "slackPanel": {
+    "createChannel": "Kanal erstellen",
+    "thread": "Thread"
+  },
+  "uninstall": {
+    "title": "Cabinet deinstallieren"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet-Schubladen",
+    "pageTitlePlaceholder": "Seitentitel…"
+  },
+  "skillAddPlus": {
+    "cancel": "Abbrechen"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Audit-Daten für diese Fähigkeit von skills.sh nicht verfügbar",
+    "searchPlaceholder": "skills.sh durchsuchen"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Aktualisieren",
+    "noSkills": "Noch keine Fähigkeiten."
+  },
+  "taskDetail": {
+    "close": "Schließen (Esc)",
+    "muteTask": "Diese Aufgabe stummschalten – erledigte Ausführungen gehen direkt ins Archiv",
+    "unmuteTask": "Diese Aufgabe nicht mehr stummschalten – erledigte Ausführungen erscheinen wieder unter „Gerade erledigt“"
+  },
+  "rowActionsPlus": {
+    "edit": "Bearbeiten",
+    "editHint": "Diesen gespeicherten Entwurf bearbeiten, bevor er startet",
+    "delete": "Löschen",
+    "deleteHint": "Endgültig löschen — dies kann nicht rückgängig gemacht werden"
+  },
+  "taskCard": {
+    "ptyMode": "Wird im Terminal-Modus (PTY) ausgeführt"
+  },
+  "undoToast": {
+    "dismiss": "Ausblenden"
+  },
+  "terminalExited": {
+    "openDetails": "Strukturierte Details öffnen (Prompt, Artefakte, Züge)",
+    "reconnect": "Mit dem Daemon neu verbinden und die rohe PTY-Wiedergabe streamen"
+  },
+  "terminalTabsPlus": {
+    "resize": "Terminalbereich anpassen"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Alle Agenten anzeigen",
+    "noRecentActivity": "Keine aktuelle Aktivität",
+    "noAgents": "Keine Agenten",
+    "noAgentsConfigured": "Für dieses Cabinet sind noch keine Agenten konfiguriert.",
+    "cabinetScope": "Cabinet-Umfang:",
+    "depthDropdownHeader": "Cabinet-Umfang",
+    "depthOwnLabel": "Nur dieses Cabinet",
+    "depthOwnShort": "Eigene",
+    "depthOwnDesc": "Seiten, Agenten und Aufgaben nur aus diesem Cabinet.",
+    "depthChildren1Label": "Direkte Unter-Cabinets einschließen",
+    "depthChildren1Desc": "Eine Ebene von Unter-Cabinets hinzufügen.",
+    "depthChildren2Label": "Zwei Cabinet-Ebenen einschließen",
+    "depthChildren2Desc": "Zwei Ebenen von Unter-Cabinets hinzufügen.",
+    "depthAllLabel": "Alle Nachfolger einschließen",
+    "depthAllShort": "Alle",
+    "depthAllDesc": "Den gesamten Unterbaum einschließen.",
+    "scopeTooltip": "Cabinet-Umfang: {{label}}. Klicken zum Ändern."
+  },
+  "composerExtras": {
+    "skillAttached": "Skill — nur an diesen Lauf angehängt",
+    "pageTitlePlaceholder": "Seitentitel…",
+    "active": "Aktiv — Agenten nach diesem Zeitplan wecken",
+    "pickCliPty": "Wählen Sie eine CLI, die in einem PTY gestartet werden soll:"
+  },
+  "editorExtras": {
+    "editWithAi": "Mit KI bearbeiten",
+    "jupyterLab": "Kopieren: jupyter lab <path>",
+    "exitApp": "App beenden"
+  },
+  "demosExtras": {
+    "aiAccounts": "KI-Konten",
+    "aiTeams": "KI-Teams"
+  },
+  "whatsNew": {
+    "dismiss": "Schließen",
+    "headerPrefix": "Neu in v",
+    "readFull": "Vollständige Versionshinweise lesen"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Ich verstehe und möchte fortfahren."
+  },
+  "daemonHealth": {
+    "dismiss": "Schließen"
+  },
+  "tinyExtras": {
+    "light": "Hell",
+    "home": "Startseite",
+    "workspaceGallery": "Workspace-Galerie",
+    "savingTo": "Wird gespeichert in",
+    "comingSoon": "Demnächst verfügbar",
+    "deleteSkill": "Skill löschen",
+    "skillsOffered": "Angebotene Skills:",
+    "allAgents": "Alle Agenten",
+    "noTranscript": "Kein Transkript gefunden",
+    "noDiff": "Kein Diff verfügbar.",
+    "headsUp": "Hinweis:",
+    "back": "Zurück",
+    "editYourAvatar": "Avatar bearbeiten",
+    "openFullTaskViewer": "Vollständige Aufgabenansicht öffnen",
+    "close": "Schließen",
+    "copyToClipboard": "In Zwischenablage kopieren",
+    "starOnGithub": "Cabinet auf GitHub mit Stern versehen",
+    "helpMoreFind": "Hilf mehr Menschen, die Community zu finden",
+    "joinDiscord": "Dem Discord beitreten",
+    "chatWithBuilders": "Chatte mit den Entwicklern von Cabinet",
+    "joinWaitlist": "Der Cabinet Cloud-Warteliste beitreten",
+    "emailPlaceholder": "du@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Zum Posteingang hinzufügen",
+    "runTaskNow": "Aufgabe jetzt ausführen",
+    "search": "Suchen",
+    "aiPanel": "KI-Panel",
+    "drawers": "Schubladen"
+  },
+  "dataLocations": {
+    "title": "Wo deine Daten gespeichert sind",
+    "whyThisMatters": "Warum das wichtig ist",
+    "location": "Speicherort",
+    "contains": "Enthält",
+    "network": "Netzwerk",
+    "revealInFinder": "Im Dateimanager anzeigen",
+    "stored": "Gespeichert",
+    "resetOnboarding": "Onboarding zurücksetzen"
+  },
+  "rooms": {
+    "switcherTitle": "Raum wechseln",
+    "switchRoom": "Räume",
+    "loading": "Wird geladen…",
+    "defaultTag": "Startseite",
+    "openInNewWindow": "In neuem Fenster öffnen",
+    "opensBrowserWindow": "Öffnet ein neues Browserfenster",
+    "customizeRoom": "Raum bearbeiten",
+    "addRoom": "Raum hinzufügen…",
+    "editTitle": "Raum bearbeiten",
+    "editSubtitle": "Name, Symbol, Farbe und Design dieses Raums festlegen.",
+    "nameLabel": "Anzeigename",
+    "slugHint": "Der Ordnername auf der Festplatte bleibt {{slug}}. Das Umbenennen des Ordners ist eine separate, erweiterte Aktion.",
+    "iconLabel": "Symbol",
+    "colorLabel": "Farbe",
+    "colorAuto": "Auto",
+    "themeLabel": "Design",
+    "themeGlobal": "Globalen Standard verwenden",
+    "editFailed": "Der Raum konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+    "deleteRoom": "Raum löschen…",
+    "deleteLastRoomDisabledHint": "Sie können Ihren letzten Raum nicht löschen.",
+    "deleteTitle": "Diesen Raum löschen?",
+    "deleteSubtitle": "Dieser Raum und alles darin wird in den Papierkorb verschoben.",
+    "deleteWarningIntro": "Das Verschieben des Raums in den Papierkorb entfernt auch:",
+    "deleteWarningPages": "Seiten und Dateien in diesem Raum",
+    "deleteWarningAgents": "Agenten, Konversationen und Speicher, die diesem Raum zugeordnet sind",
+    "deleteWarningJobs": "Geplante Aufgaben und Routinen in diesem Raum",
+    "deleteWarningChat": "Team-Chat-Verlauf für diesen Raum",
+    "deleteWarningSearch": "Der Suchindex des Raums (wird bei Wiederherstellung automatisch neu erstellt)",
+    "deleteRecoveryNote": "Wiederherstellung: Der Raum wird nach data/.trash/ verschoben – stellen Sie ihn wieder her, indem Sie den Ordner zurück nach data/ verschieben.",
+    "deleteConfirmLabel": "Geben Sie {{slug}} zur Bestätigung ein",
+    "deleteConfirmButton": "Raum löschen",
+    "deleting": "Wird gelöscht…",
+    "deleteFailed": "Der Raum konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+  },
+  "common": {
+    "actions": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "confirm": "Bestätigen",
+      "close": "Schließen",
+      "open": "Öffnen",
+      "back": "Zurück",
+      "next": "Weiter",
+      "done": "Fertig"
+    },
+    "nav": {
+      "goBack": "Zurück",
+      "goForward": "Vorwärts"
+    },
+    "aiPanel": {
+      "open": "KI-Panel öffnen",
+      "close": "KI-Panel schließen"
+    },
+    "states": {
+      "loading": "Lädt…",
+      "saving": "Speichert…",
+      "saved": "Gespeichert",
+      "error": "Es ist ein Fehler aufgetreten"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Neue Seite",
+      "title": "Neue Seite erstellen",
+      "placeholder": "Seitentitel…",
+      "create": "Erstellen",
+      "creating": "Wird erstellt…"
+    },
+    "newCabinet": {
+      "trigger": "Neues Cabinet",
+      "title": "Neues Cabinet erstellen",
+      "subtitle": "Ein Cabinet ist ein Arbeitsbereich mit eigenen Agenten, Aufgaben und Wissen.",
+      "importFromRegistry": "Aus Registrierung importieren",
+      "nameLabel": "Cabinet-Name",
+      "namePlaceholder": "z.B. Mein Startup, Marketing-Team, Forschungslabor…",
+      "selectAgents": "Agenten auswählen",
+      "selectedCount": "{{count}} ausgewählt",
+      "createCabinet": "Cabinet erstellen",
+      "creating": "Wird erstellt…",
+      "createFailed": "Fehler beim Erstellen des Cabinets"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Seite exportieren",
+      "copyMarkdown": "Markdown kopieren",
+      "copyForLlms": "Für LLMs kopieren",
+      "copyAsHtml": "Als HTML kopieren",
+      "downloadMarkdown": ".md herunterladen",
+      "downloadPdf": "PDF herunterladen",
+      "copiedForLlmToast": "{{size}} Markdown für LLM kopiert"
+    },
+    "toolbar": {
+      "heading1": "Überschrift 1",
+      "heading2": "Überschrift 2",
+      "heading3": "Überschrift 3",
+      "bold": "Fett",
+      "italic": "Kursiv",
+      "underline": "Unterstrichen",
+      "strikethrough": "Durchgestrichen",
+      "inlineCode": "Inline-Code",
+      "link": "Link",
+      "textColor": "Textfarbe",
+      "highlight": "Hervorheben",
+      "background": "Hintergrund",
+      "bulletList": "Aufzählungsliste",
+      "orderedList": "Nummerierte Liste",
+      "blockquote": "Zitat",
+      "checklist": "Checkliste",
+      "codeBlock": "Codeblock",
+      "divider": "Trennlinie",
+      "alignLeft": "Linksbündig",
+      "alignCenter": "Zentriert",
+      "alignRight": "Rechtsbündig",
+      "justify": "Blocksatz",
+      "align": "Ausrichten",
+      "table": {
+        "selectCellText": "Zellentext auswählen",
+        "addRowAbove": "Zeile darüber einfügen",
+        "addRowBelow": "Zeile darunter einfügen",
+        "moveRowUp": "Zeile nach oben verschieben",
+        "moveRowDown": "Zeile nach unten verschieben",
+        "deleteRow": "Zeile löschen",
+        "addColumnBefore": "Spalte davor einfügen",
+        "addColumnAfter": "Spalte danach einfügen",
+        "moveColumnLeft": "Spalte nach links verschieben",
+        "moveColumnRight": "Spalte nach rechts verschieben",
+        "deleteColumn": "Spalte löschen",
+        "toggleHeaderRow": "Kopfzeile umschalten",
+        "toggleHeaderColumn": "Kopfspalte umschalten",
+        "deleteTable": "Tabelle löschen"
+      },
+      "superscript": "Hochgestellt",
+      "subscript": "Tiefgestellt",
+      "insertImage": "Bild einfügen",
+      "insertVideo": "Video einfügen",
+      "embed": "Einbetten",
+      "undo": "Rückgängig",
+      "redo": "Wiederherstellen",
+      "switchToLtr": "Zu LTR wechseln",
+      "switchToRtl": "Zu RTL wechseln",
+      "scrollLeft": "Symbolleiste nach links scrollen",
+      "scrollRight": "Symbolleiste nach rechts scrollen",
+      "markdown": "Markdown",
+      "preview": "Vorschau"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet-Name…",
+      "renameWarning": "Cabinet-Namen können (vorerst) später nicht umbenannt werden. Wählen Sie mit Bedacht."
+    },
+    "templates": {
+      "header": "Aus Vorlage starten",
+      "browseAll": "Alle durchsuchen →"
+    },
+    "quickActions": {
+      "shuffle": "Andere Vorschläge anzeigen",
+      "launch10Songs": "10 Songwriting-Editoren starten",
+      "dailyReview9am": "Tägliche Überprüfung um 9 Uhr",
+      "weeklyReview": "Wöchentliche Überprüfung nächsten Montag",
+      "thailandTrip": "Meine Thailandreise planen",
+      "physicsApp": "Eine Physik-Lern-App für mich erstellen",
+      "summariseRecent": "Meine aktuelle Arbeit zusammenfassen",
+      "recruiterReply": "Eine Antwort an einen Personalvermittler entwerfen",
+      "mapArticles": "Artikelverbindungen abbilden",
+      "physicsCourse": "Einen 6-Modul-Physikkurs erstellen",
+      "shortStory": "Eine Kurzgeschichte skizzieren",
+      "hourlyStandup": "Stündlicher Stand-up-Hinweis",
+      "researchPhone": "Mein nächstes Telefon recherchieren",
+      "translateToSpanish": "Dieses Cabinet ins Spanische übersetzen",
+      "refactorNotes": "Mein Notizsystem refaktorisieren",
+      "birthdayParty": "Eine Geburtstagsfeier planen",
+      "boardUpdate": "Ein Vorstands-Update entwerfen",
+      "customerInterviews": "5 Kundeninterviews simulieren"
+    },
+    "goodMorning": "Guten Morgen",
+    "goodAfternoon": "Guten Tag",
+    "goodEvening": "Guten Abend",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Ich möchte erstellen...",
+    "composerDaemonDown": "Agent-Daemon offline — zum Senden neu starten"
+  },
+  "onboarding": {
+    "launchHeading": "Starten Sie Ihr <accent>Cabinet</accent>",
+    "intro": {
+      "tagline1": "Ihre Wissensdatenbank.",
+      "tagline2": "Ihr KI-Team.",
+      "getStarted": "Los geht's"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Büro",
+        "study": "Arbeitszimmer",
+        "lab": "Labor",
+        "library": "Bibliothek",
+        "kitchen": "Küche",
+        "family": "Familie",
+        "dining": "Esszimmer",
+        "studio": "Studio"
+      }
+    },
+    "welcome": {
+      "paragraph": "Ihr Home gehört Ihnen. Darin richten Sie Räume für verschiedene Lebensbereiche ein: Arbeit, zweites Gehirn, Forschung, Familie. Und jeder Raum hat Cabinets: Ihre Notizen, Ihre Dateien und ein KI-Team, das im Hintergrund leise Dinge erledigt.",
+      "namePrompt": "Wie ist Ihr Name?",
+      "heading": "Willkommen <accent>zu Hause</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Willkommen zurück",
+      "headingNamed": "Willkommen zurück bei {{cabinet}}",
+      "subtitle": "Wir haben hier ein bestehendes Cabinet gefunden. Lassen Sie uns die Einrichtung abschließen.",
+      "continue": "Weiter"
+    },
+    "verify": {
+      "passed": "Bestanden",
+      "notInstalled": "Nicht installiert",
+      "authRequired": "Authentifizierung erforderlich",
+      "paymentRequired": "Zahlung erforderlich",
+      "quotaExceeded": "Kontingent / Ratenlimit",
+      "error": "Fehler"
+    },
+    "providerStatus": {
+      "ready": "Bereit",
+      "loginRequired": "Anmeldung erforderlich",
+      "notInstalled": "Nicht installiert"
+    },
+    "actions": {
+      "back": "Zurück",
+      "next": "Weiter",
+      "continue": "Weiter",
+      "skip": "Überspringen",
+      "finish": "Abschließen",
+      "complete": "Einrichtung abschließen",
+      "copyToClipboard": "In Zwischenablage kopieren"
+    },
+    "cabinetCreated": {
+      "continue": "Einrichtung fortsetzen",
+      "heading": "Ihr Cabinet wurde erstellt",
+      "subtitle": "Alles ist eingerichtet und bereit.",
+      "agentsReady_one": "{{count}} Agent bereit zur Arbeit",
+      "agentsReady_other": "{{count}} Agenten einsatzbereit",
+      "scheduledJobs_one": "{{count}} geplanter Job",
+      "scheduledJobs_other": "{{count}} geplante Jobs",
+      "subCabinets_one": "{{count}} Unter-Cabinet",
+      "subCabinets_other": "{{count}} Unter-Cabinets",
+      "agentsReady": "{{count}} Agenten einsatzbereit",
+      "scheduledJobs": "{{count}} geplante Jobs",
+      "subCabinets": "{{count}} Unter-Cabinets"
+    },
+    "cloud": {
+      "alreadyOnList": "Sie sind bereits auf der Liste – wir melden uns.",
+      "aside": "Cabinet Cloud kommt bald. Gleiches Produkt, kein Aufwand für Selbsthosting.",
+      "description": "Öffnen Sie Ihr Cabinet von jedem Gerät aus, während Ihre KI-Agenten weiterarbeiten – entwerfen, recherchieren, organisieren – selbst wenn Ihr Laptop geschlossen ist.",
+      "error": "Etwas ist schiefgelaufen. Überprüfen Sie die E-Mail und versuchen Sie es erneut.",
+      "joinWaitlist": "Warteliste beitreten",
+      "onList": "Sie sind auf der Liste. Wir benachrichtigen Sie per E-Mail, wenn Cabinet Cloud startet.",
+      "sending": "Sende…",
+      "title": "Ihr Cabinet, überall. Ihr KI-Team, immer aktiv.",
+      "waitlistSubtitle": "Von überall verbinden. Ihr KI-Team arbeitet rund um die Uhr."
+    },
+    "discord": {
+      "aside": "Wenn Sie neue Funktionen zuerst möchten und lieber chatten als ein Ticket einreichen, ist dies Ihr Raum.",
+      "description": "Hier wird Feedback zu Funktionen, Screenshots zu Debatten, und jemand findet meist den Grenzfall, bevor er Sie findet.",
+      "joinBadge": "Beitreten",
+      "title": "Auf Discord wird es auf gute Weise seltsam."
+    },
+    "github": {
+      "aside": "Cabinet ist Open Source. Wenn Ihnen die Vision gefällt, helfen Sie uns, sie zu verbreiten.",
+      "description": "Ein GitHub-Stern hilft mehr Menschen, Cabinet zu entdecken und der Community beizutreten.",
+      "starsLabel": "{{stars}} GitHub-Sterne",
+      "title": "Helfen Sie der Cabinet-Community zu wachsen"
+    },
+    "launch": {
+      "beforeYouLaunch": "Vor dem Start",
+      "defaultCabinetName": "Ihr Cabinet",
+      "defaultDescription": "Wissensdatenbank + KI-Team",
+      "knowledgeBaseLabel": "Wissensdatenbank",
+      "aiTeamLabel": "KI-Team",
+      "launchCabinet": "Cabinet starten",
+      "settingUp": "Einrichtung läuft...",
+      "disclaimerAccess": "<strong>Agenten laufen mit vollem Zugriff.</strong> Cabinet verwendet <flag>--dangerously-skip-permissions</flag> (Claude Code) und äquivalente Flags bei anderen Anbietern. Dies ist identisch mit dem Ausführen dieser CLI-Tools von Ihrem eigenen Terminal. Alle von Ihnen konfigurierten MCP-Server oder -Tools können automatisch von Agenten aufgerufen werden.",
+      "disclaimerBackup": "<strong>Sichern Sie Ihre Daten regelmäßig.</strong> Agenten können Dateien in Ihrer KB und verknüpften Repos lesen, schreiben und löschen. Cabinet ist nicht verantwortlich für Datenverlust. Sie sind verantwortlich für die von Ihnen gewählten KI-Anbieter und deren Nutzungsbedingungen.",
+      "disclaimerBeta": "<strong>Beta-Software. Es kann zu Fehlern kommen.</strong> Wir liefern schnell. Breaking Changes können ohne Vorankündigung erfolgen.",
+      "legalNotice": "Durch die Fortsetzung stimmen Sie unseren <terms>Nutzungsbedingungen</terms> und <privacy>Datenschutzbestimmungen</privacy> zu. Cabinet ist ein <oss>Open-Source-Projekt</oss>.",
+      "keepInTouch": "Bleiben Sie auf dem Laufenden. Cabinet ist Open Source und wird offen entwickelt, und wir würden gerne erfahren, was wir als Nächstes entwickeln sollen. Kein Spam, versprochen."
+    },
+    "provider": {
+      "agentType": "{{type}}-Agent",
+      "close": "Schließen",
+      "comingSoon": "Demnächst",
+      "guide": "Anleitung",
+      "heading": "Agent-Anbieter",
+      "moreModels": "Weitere KIs",
+      "install": "Installieren",
+      "logIn": "Anmelden",
+      "openTerminalButton": "Terminal öffnen",
+      "openTerminalDetail": "Sie benötigen ein Terminal, um die nächsten Schritte auszuführen.",
+      "openTerminalError": "Terminal konnte nicht automatisch geöffnet werden. Öffnen Sie Ihr Systemterminal manuell.",
+      "openTerminalTitle": "Ein Terminal öffnen",
+      "recheck": "Anbieter erneut prüfen",
+      "rerunVerify": "Überprüfung erneut ausführen",
+      "runVerify": "Überprüfung ausführen",
+      "setupTitle": "{{name}} Setup",
+      "skipForNow": "Jetzt überspringen",
+      "subtitle": "Cabinet benötigt eine KI-CLI, um Ihre Agenten zu betreiben.",
+      "verifyExplanation": "Überprüfen führt den Headless-Prompt des Anbieters End-to-End aus und klassifiziert Fehler, damit Sie wissen, welcher Schritt zu überarbeiten ist.",
+      "verifying": "Wird überprüft…",
+      "failedAtStep": "Fehler bei Schritt: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Wofür ist dieses Cabinet? Jeder Raum verfügt über ein eigenes KI-Team.",
+      "heading": "Wählen Sie einen <accent>Raum</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Was ist ein Cabinet?",
+      "body": "Ein Cabinet ist ein fokussierter Arbeitsbereich für einen Bereich Ihres Lebens oder Ihrer Arbeit. Es enthält Ihre Dateien, Notizen, Tools, Agenten und Aufgaben, damit Ihr KI-Team den Kontext hat, den es wirklich braucht, um zu helfen.",
+      "examplesLabel": "Wie Menschen Cabinet nutzen",
+      "example1": "Ihr Startup",
+      "example2": "ein GitHub-Repo",
+      "example3": "Ihre Marketingarbeit",
+      "example4": "ein Kundenprojekt",
+      "example5": "Ihre persönliche Wissensdatenbank"
+    },
+    "access": {
+      "heading": "Worauf kann {{name}} zugreifen?",
+      "subtitle": "Wählen Sie das Wissen und die Tools aus, die dieser Agent verwenden kann. Sie können dies jederzeit ändern.",
+      "defaultAgent": "Ihr Agent",
+      "files": "Dateien & Wissen",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP-Server",
+      "plugins": "Plugins",
+      "skills": "Skills",
+      "placeholderNote": "Den Zugriff können Sie später in den Agenten-Einstellungen anpassen."
+    },
+    "heartbeat": {
+      "heading": "Soll {{name}} mit einem Heartbeat laufen?",
+      "subtitle": "Ein Heartbeat lässt den Agenten regelmäßig selbstständig arbeiten.",
+      "off": "Aus",
+      "offHint": "Läuft nur auf Anfrage. Zum Start empfohlen.",
+      "daily": "Täglich",
+      "dailyHint": "Prüft einmal täglich.",
+      "weekly": "Wöchentlich",
+      "weeklyHint": "Prüft einmal wöchentlich.",
+      "tokenNote": "Achtung: Ein Heartbeat führt den Agenten automatisch aus, was bei jeder Aktivierung KI-Tokens (und Ihr Provider-Kontingent) verbraucht. Sie können dies jederzeit ändern oder deaktivieren."
+    },
+    "firstTask": {
+      "heading": "Erste Aufgabe einreichen",
+      "subtitle": "Aufgaben sind, wie Sie {{name}} Arbeit übergeben. Schreiben Sie jetzt eine, und sie landet in Ihrem Cabinet, bereit zur Ausführung.",
+      "label": "Was soll {{name}} zuerst tun?",
+      "placeholder": "z.B. Entwurf einer Willkommens-E-Mail für Neukunden",
+      "example1": "Meine neuesten Notizen zusammenfassen",
+      "example2": "Einen Projektplan entwerfen",
+      "example3": "Unsere Top 3 Wettbewerber recherchieren",
+      "note": "Sie können dies leer lassen und Aufgaben später hinzufügen. Nichts läuft, bis Sie einen KI-Provider verbinden."
+    },
+    "rail": {
+      "untitled": "Ihr Cabinet",
+      "dataCaption": "Alle Dateien und Notizen Ihres Projekts befinden sich hier.",
+      "teamEmpty": "Noch keine Agenten.",
+      "teamCaption": "Ihr KI-Team arbeitet hier.",
+      "tasksEmpty": "Noch keine Aufgaben.",
+      "tasksCaption": "Arbeit, die Sie Ihrem Team übergeben, erscheint hier.",
+      "assignedTo": "Zugewiesen an {{name}}",
+      "you": "Sie"
+    },
+    "rooms": {
+      "office": {
+        "label": "Das Büro",
+        "tagline": "Führen Sie ein Unternehmen, Startup oder Nebenprojekt.",
+        "workspaceLabel": "Firmen- oder Projektname",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Was machen Sie?",
+        "descriptionPlaceholder": "Wir erstellen einen Podcast über KI-Startups",
+        "departmentNoun": "Abteilung",
+        "teamSizeLabel": "Teamgröße",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "Redakteur"
+        }
+      },
+      "study": {
+        "label": "Lernbereich",
+        "tagline": "Dein zweites Gehirn – Schreiben, Notizen, persönlicher Assistent.",
+        "workspaceLabel": "Benenne dein Cabinet",
+        "workspacePlaceholder": "Mein Lernbereich",
+        "descriptionLabel": "In welchen Lebensbereichen möchtest du Unterstützung?",
+        "descriptionPlaceholder": "Schreiben, E-Mail-Triage, Kalender, Gewohnheits-Tracking",
+        "departmentNoun": "Bereich",
+        "exampleAgents": {
+          "0": "Assistent",
+          "1": "Bibliothekar"
+        }
+      },
+      "lab": {
+        "label": "Forschungslabor",
+        "tagline": "Akademische Arbeit, Literatur, Lehre, Abschlussarbeit.",
+        "workspaceLabel": "Name des Arbeitsbereichs",
+        "workspacePlaceholder": "Philosophie des Geistes",
+        "descriptionLabel": "Was ist dein Fachgebiet oder woran forschst du?",
+        "descriptionPlaceholder": "Phänomenologie, Bewusstsein, Einführung in die Philosophie lehren",
+        "departmentNoun": "Bereich",
+        "exampleAgents": {
+          "0": "Forschungsleiter",
+          "1": "Bibliothekar"
+        }
+      },
+      "family-room": {
+        "label": "Familienbereich",
+        "tagline": "Haushalt, Familienkalender, Mahlzeiten, Kinder.",
+        "workspaceLabel": "Name des Haushalts",
+        "workspacePlaceholder": "Familie Nguyen",
+        "descriptionLabel": "Wer lebt hier und was managt ihr alles?",
+        "descriptionPlaceholder": "Zwei Eltern, drei Kinder, zwei Schulen, ein Hund",
+        "departmentNoun": "Bereich",
+        "teamSizeLabel": "Haushaltsgröße",
+        "exampleAgents": {
+          "0": "Haushaltsmanager",
+          "1": "Planer"
+        }
+      },
+      "blank": {
+        "label": "Leerer Bereich",
+        "tagline": "Noch nichts. Bringe deine eigenen Agenten, deine eigene Form mit.",
+        "workspaceLabel": "Benenne dein Cabinet",
+        "workspacePlaceholder": "Mein Cabinet",
+        "descriptionLabel": "Wofür ist es?",
+        "descriptionPlaceholder": "Alles – leer lassen, wenn du noch nicht sicher bist",
+        "departmentNoun": "Gruppe",
+        "exampleAgents": {
+          "0": "Deine Entscheidung"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Führung",
+      "marketing": "Marketing",
+      "content": "Inhalt",
+      "engineering": "Entwicklung",
+      "product-and-design": "Produkt & Design",
+      "business": "Geschäft",
+      "research": "Forschung",
+      "finance-and-ops": "Finanzen & Betrieb",
+      "personal": "Persönlich",
+      "second-brain": "Zweites Gehirn",
+      "writing": "Schreiben",
+      "tools": "Tools",
+      "life-admin": "Alltagsorganisation",
+      "from-the-office": "Aus dem Büro",
+      "writing-and-notes": "Schreiben & Notizen",
+      "other": "Sonstiges",
+      "household": "Haushalt",
+      "admin": "Verwaltung",
+      "money": "Geld",
+      "product": "Produkt",
+      "design": "Design",
+      "sales": "Vertrieb",
+      "support": "Support",
+      "analytics": "Analysen",
+      "finance": "Finanzen",
+      "legal": "Rechtliches",
+      "people": "Mitarbeiter"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Guten Morgen, Team! Willkommen bei {{workspace}}. Lasst uns direkt loslegen.",
+        "study": "Morgen. Dein zweites Gehirn ist online — willkommen zurück bei {{home}}.",
+        "lab": "Forschungsdesk bereit — „{{workspace}}“. Was nehmen wir uns heute vor?",
+        "family-room": "Home HQ startet — {{home}}. Bringen wir alle dorthin, wo sie sein müssen.",
+        "blank": "Leere Seite — „{{workspace}}“. Was möchtest du hier aufbauen, {{home}}?"
+      },
+      "assign": "{{name}}, kannst du dich um {{topic}} kümmern?",
+      "fallbackTopic": "was als Nächstes ansteht",
+      "office": {
+        "replies": {
+          "0": "Ist in Arbeit. Eine Marktübersicht habe ich bis Ende des Tages fertig.",
+          "1": "Entwerfe bereits einen Plan. Teile ihn gleich in #content.",
+          "2": "Richte gerade die grundlegenden Workflows ein. Sieht bisher gut aus."
+        },
+        "topics": {
+          "0": "Wettbewerbsanalyse",
+          "1": "den Redaktionsplan",
+          "2": "den Launch-Plan"
+        },
+        "closing": "Tolle Energie, alle zusammen. Lasst uns eine starke erste Woche daraus machen."
+      },
+      "study": {
+        "replies": {
+          "0": "Ich sichte den Posteingang und melde mich, wenn etwas dich braucht.",
+          "1": "Kalender ist bis 15 Uhr frei — gutes Zeitfenster zum Schreiben.",
+          "2": "Ich habe bereits drei neue Notizen mit dem 'Tages'-Index verknüpft."
+        },
+        "topics": {
+          "0": "heutige Posteingangs-Sichtung",
+          "1": "das Schreiben dieser Woche",
+          "2": "meine Leseliste"
+        },
+        "closing": "Gut. Gib mir Bescheid, wenn etwas mich braucht — ansonsten halte ich mich raus."
+      },
+      "lab": {
+        "replies": {
+          "0": "Ziehe gerade das neueste Paper dazu — Entwurf der Zusammenfassung in einer Stunde.",
+          "1": "Ich synchronisiere danach die Bibliografie und markiere Duplikate.",
+          "2": "Die Gliederung der Vorlesung für Donnerstag ist fast bereit zur Überprüfung."
+        },
+        "topics": {
+          "0": "die Literaturübersicht",
+          "1": "die Vorlesungsvorbereitung für Donnerstag",
+          "2": "die Referenzliste"
+        },
+        "closing": "Halte mich auf dem Laufenden. Ich überprüfe alles, was du bis Ende des Tages schickst."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Terminplan ist nach 16 Uhr frei. Markiere überlappende Abholungen.",
+          "1": "Menü für die Woche entworfen — Einkaufsliste ist bereit zur Überprüfung.",
+          "2": "Kinderaktivitäten synchronisiert. DnD-Abend findet am Freitag statt."
+        },
+        "topics": {
+          "0": "heutiger Zeitplan",
+          "1": "der Speiseplan",
+          "2": "die Kinderaktivitäten"
+        },
+        "closing": "Danke euch allen. Gebt Bescheid, wenn sich tagsüber etwas ändert."
+      },
+      "blank": {
+        "replies": {
+          "0": "Verstanden. Bin bereit, wann immer du es bist.",
+          "1": "Bereit.",
+          "2": "Ich warte auf Anweisungen."
+        },
+        "topics": {
+          "0": "das Erste",
+          "1": "das Nächste",
+          "2": "die offene Frage"
+        },
+        "closing": "Wann immer du bereit bist, sag uns, was zu tun ist."
+      }
+    },
+    "team": {
+      "browseAll": "Alle anzeigen",
+      "browseCabinets": "Cabinets durchsuchen",
+      "cabinetNameLabel": "Cabinet-Name",
+      "cancel": "Abbrechen",
+      "importButton": "Importieren",
+      "importFailed": "Import fehlgeschlagen",
+      "importFailedConnection": "Import fehlgeschlagen. Überprüfen Sie Ihre Verbindung.",
+      "importTitle": "Importieren {{name}}",
+      "pickAgents": "Wählen Sie Ihre Agenten",
+      "required": "Erforderlich",
+      "subtitle": "Jedes Cabinet ist ein KI-Team – Agenten, Aufgaben und eine gemeinsame Wissensbasis, die als Einheit zusammenarbeiten.",
+      "heading": "Erstellen Sie <accent>Ihr</accent> Team",
+      "nameLabel": "Agentenname",
+      "namePlaceholder": "z.B. Redakteur, Rechercheur, Assistent",
+      "roleLabel": "Rolle",
+      "rolePlaceholder": "z.B. Schreibassistent",
+      "instructionsLabel": "Was soll dieser Agent tun?",
+      "instructionsPlaceholder": "Beschreiben Sie, wie er helfen soll. Zum Beispiel: Meine Seiten entwerfen und bearbeiten, den Ton klar und freundlich halten und Verbesserungen vorschlagen.",
+      "agentOptionalHint": "Optional. Sie können dies überspringen und Agenten später im Raum hinzufügen.",
+      "agentCount_one": "{{count}} Agent",
+      "agentCount_other": "{{count}} Agenten",
+      "jobCount_one": "{{count}} Job",
+      "jobCount_other": "{{count}} Jobs",
+      "subCabinetCount_one": "{{count}} Unter-Cabinet",
+      "subCabinetCount_other": "{{count}} Unter-Cabinets",
+      "cabinetsImported_one": "{{count}} Cabinet importiert",
+      "cabinetsImported_other": "{{count}} Cabinets importiert",
+      "agentCount": "{{count}} Agenten",
+      "cabinetsImported": "{{count}} Cabinets importiert",
+      "jobCount": "{{count}} Jobs",
+      "subCabinetCount": "{{count}} Unter-Cabinets"
+    }
+  },
+  "search": {
+    "title": "Suchen",
+    "placeholder": "Seiten, Agenten, Aufgaben suchen…",
+    "clearQuery": "Suchanfrage löschen",
+    "noCommands": "Keine Befehle gefunden.",
+    "scopes": {
+      "all": "Alle",
+      "pages": "Seiten",
+      "agents": "Agenten",
+      "tasks": "Aufgaben"
+    },
+    "groups": {
+      "pages": "Seiten",
+      "agents": "Agenten",
+      "tasks": "Aufgaben"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Sprache",
+      "description": "Ändert Sprache und Leserichtung. Bestehende Seiten behalten ihre dokumentenspezifische Richtung bei.",
+      "english": "Englisch",
+      "hebrew": "עברית",
+      "chineseSimplified": "简体中文",
+      "chineseTraditional": "Traditionelles Chinesisch",
+      "moreLanguages": "Weitere Sprachen",
+      "moreLanguagesHint": "Klicken Sie auf eine Sprache, um uns mitzuteilen, dass Sie Cabinet in dieser Sprache wünschen – wir priorisieren die am häufigsten angefragten.",
+      "comingSoon": "Demnächst verfügbar",
+      "requestSubmitted": "Danke! Wir haben Ihre Anfrage für {{language}} notiert. Wir priorisieren die am häufigsten angefragten Sprachen.",
+      "requestFailed": "Server nicht erreichbar. Bitte versuchen Sie es in Kürze erneut."
+    },
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "theme": "Design",
+      "themeDescription": "Wählen Sie ein Design für die Benutzeroberfläche.",
+      "matchSystem": "System anpassen",
+      "matchSystemDescription": "Automatisch mit dem Erscheinungsbild des Betriebssystems wechseln.",
+      "lightThemes": "Helle Designs",
+      "darkThemes": "Dunkle Designs",
+      "lightVariant": "Helle Variante",
+      "darkVariant": "Dunkle Variante",
+      "sidebar": "Seitenleiste",
+      "showHiddenFiles": "Versteckte Dateien anzeigen",
+      "sidebarDescription": "Konfigurieren, wie Dateien in der Seitenleiste angezeigt werden.",
+      "showHiddenFilesHint": "Dateien und Ordner anzeigen, die mit einem Punkt beginnen (z. B. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "providers": "Anbieter",
+      "skills": "Fähigkeiten",
+      "storage": "Speicher",
+      "integrations": "Integrationen",
+      "notifications": "Benachrichtigungen",
+      "appearance": "Erscheinungsbild",
+      "updates": "Updates",
+      "about": "Über"
+    },
+    "page": {
+      "title": "Einstellungen",
+      "refresh": "Aktualisieren",
+      "groupYou": "Sie",
+      "groupWorkspace": "Arbeitsbereich",
+      "groupApp": "App"
+    },
+    "common": {
+      "copyToClipboard": "In Zwischenablage kopieren",
+      "categoriesAriaLabel": "Einstellungskategorien",
+      "loading": "Lädt…",
+      "connect": "Verbinden",
+      "recommended": "Empfohlen"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Demnächst verfügbar",
+      "hint": "Die Anbindung externer Integrationen und integrierter Tools kommt bald."
+    },
+    "storage": {
+      "dataDirectory": "Datenverzeichnis",
+      "restartRequired": "Neustart erforderlich",
+      "dataDirectoryDescription": "Alle Inhalte der Wissensdatenbank werden in diesem Verzeichnis gespeichert. Eine Änderung des Pfads erfordert einen Neustart.",
+      "restartHint": "Das Datenverzeichnis wird nach dem Neustart von Cabinet geändert.",
+      "currentPath": "Aktueller Pfad",
+      "loadingPath": "Lädt...",
+      "changeDirectory": "Verzeichnis ändern",
+      "directoryPlaceholder": "/pfad/zu/daten",
+      "browse": "Durchsuchen",
+      "save": "Speichern",
+      "openInFinder": "Im Finder öffnen",
+      "envVarHint1": "Sie können auch die ",
+      "envVarHint2": " Umgebungsvariable festlegen, die Vorrang vor dieser Einstellung hat.",
+      "failedToSave": "Speichern fehlgeschlagen.",
+      "failedToSaveDir": "Speichern des Datenverzeichnisses fehlgeschlagen."
+    },
+    "updates": {
+      "checking": "Sucht nach Cabinet-Updates…"
+    },
+    "providers": {
+      "title": "Agenten-Anbieter",
+      "defaultModel": "Standardmodell",
+      "setupGuide": "Einrichtungsanleitung",
+      "troubleshoot": "Fehlerbehebung für KI-Anbieter",
+      "subtitle": "KI-Agent-Anbieter konfigurieren. CLI-Agenten laufen über das Terminal, API-Agenten nutzen direkte API-Aufrufe.",
+      "defaultRuntime": "Standard-Laufzeit",
+      "defaultRuntimeHint": "Allgemeine Unterhaltungen und Fallback-Läufe nutzen diesen Anbieter/Modell/Aufwand.",
+      "cliAgents": "CLI-Agenten",
+      "apiAgents": "API-Agenten",
+      "ready": "Bereit",
+      "installedNotLoggedIn": "Installiert, aber nicht angemeldet",
+      "notInstalled": "Nicht installiert",
+      "emptyMatrix": "Keine Anbieter konfiguriert. Fügen Sie unten einen hinzu."
+    },
+    "notifications": {
+      "channels": "Benachrichtigungskanäle",
+      "alertRules": "Alarmregeln",
+      "alwaysOn": "Immer aktiv",
+      "comingSoon": "Demnächst verfügbar",
+      "emailPlaceholder": "du@firma.com",
+      "channelsHint": "Konfigurieren Sie, wie Sie Benachrichtigungen erhalten, wenn Agenten Ihre Aufmerksamkeit benötigen.",
+      "rulesHint": "Benachrichtigungen werden für diese Ereignisse automatisch ausgelöst:",
+      "previewHint": "Browser-Push-, Telegram-, Slack- und E-Mail-Benachrichtigungen.",
+      "channelPushName": "Browser-Push",
+      "channelPushDesc": "Sofortige Benachrichtigungen, wenn der Cabinet-Tab geöffnet oder die PWA installiert ist",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Sofortige mobile Benachrichtigungen über den Telegram-Bot",
+      "channelSlackName": "Slack-Webhook",
+      "channelSlackDesc": "Benachrichtigungen an den Slack-Kanal Ihres Teams weiterleiten",
+      "channelEmailName": "E-Mail-Zusammenfassung",
+      "channelEmailDesc": "Gebündelte Zusammenfassung von Benachrichtigungen und Agentenaktivitäten",
+      "ruleAlertsEvent": "#alerts-Kanalnachrichten",
+      "ruleAlertsDesc": "Jeder Agent, der im alerts-Kanal postet",
+      "ruleMentionsEvent": "@human-Erwähnungen",
+      "ruleMentionsDesc": "Wenn ein Agent @human in einem beliebigen Kanal erwähnt",
+      "ruleFloorEvent": "Zieluntergrenze unterschritten",
+      "ruleFloorDesc": "Ein Ziel fällt unter seinen Mindestschwellenwert",
+      "ruleHealthEvent": "Agentenstatus verschlechtert",
+      "ruleHealthDesc": "3+ aufeinanderfolgende Heartbeat-Fehler"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Version",
+      "release": "Release",
+      "framework": "Framework",
+      "storage": "Speicher",
+      "privacy": "Datenschutz",
+      "telemetry": "Anonyme Nutzungs-Telemetrie",
+      "tagline": "KI-basierte, selbst gehostete Wissensdatenbank und Startup-OS.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Lokales Dateisystem",
+      "aiLabel": "KI",
+      "aiValue": "Betrieben durch lokale KI-CLIs",
+      "philosophy": "Alle Inhalte liegen als Markdown-Dateien auf der Festplatte vor. Menschen definieren die Absicht. Agenten erledigen die Arbeit. Die Wissensdatenbank ist das gemeinsame Gedächtnis beider.",
+      "privacyBody": "Cabinet sendet anonyme Nutzungs-Telemetrie, um uns bei der Produktverbesserung zu helfen. Es werden keine Dateiinhalte, Pfade, Prompts oder Geheimnisse gesammelt.",
+      "privacyLink": "Was wird gesammelt?",
+      "telemetryEnvDisabled": "Deaktiviert durch CABINET_TELEMETRY_DISABLED=1 (Umgebungsvariable).",
+      "telemetryHint": "Nur Ereigniszahlen, Versionen und Plattforminformationen. Deaktivieren, um das Senden zu beenden.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "Verbinden Sie sich von überall mit Ihrem Cabinet, während Ihr KI-Team rund um die Uhr für Sie arbeitet. Geben Sie unten Ihre E-Mail-Adresse ein, und wir benachrichtigen Sie, sobald Cabinet Cloud verfügbar ist.",
+      "cloudAlready": "Sie stehen bereits auf der Liste – wir melden uns bei Ihnen.",
+      "cloudSuccess": "Sie stehen auf der Liste. Wir benachrichtigen Sie per E-Mail, sobald Cabinet Cloud verfügbar ist.",
+      "cloudSending": "Senden…",
+      "cloudJoinWaitlist": "Warteliste beitreten",
+      "cloudError": "Etwas ist schiefgelaufen. Überprüfen Sie die E-Mail und versuchen Sie es erneut.",
+      "connectTitle": "Verbinden",
+      "connectBody": "Hilfe erhalten, Feedback teilen oder einfach Hallo sagen.",
+      "joinDiscord": "Dem Discord beitreten"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Name",
+      "namePlaceholder": "Jane",
+      "displayName": "Anzeigename",
+      "role": "Rolle",
+      "rolePlaceholder": "Entwickler",
+      "avatar": "Avatar",
+      "accentColor": "Akzentfarbe",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Fallback-Symbol",
+      "useIconInstead": "Symbol stattdessen verwenden",
+      "searchAvatars": "Avatare suchen…",
+      "searchIcons": "Symbole suchen…",
+      "howAppear": "So erscheinen Sie in Unterhaltungen und in der gesamten App.",
+      "youFallback": "Sie",
+      "displayNameHint": "Wird in Unterhaltungen angezeigt. Standardmäßig der Name.",
+      "iconHint": "Wird verwendet, wenn kein Avatar-Bild festgelegt ist. Erneut klicken, um zu löschen.",
+      "tintHint": "Färbt den Fallback-Avatar, wenn kein Bild festgelegt ist.",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert",
+      "browseAll": "Alle durchsuchen ({{count}})",
+      "showFavorites": "Favoriten anzeigen",
+      "showFewer": "Weniger anzeigen"
+    },
+    "workspace": {
+      "title": "Arbeitsbereich",
+      "name": "Name des Arbeitsbereichs",
+      "namePlaceholder": "Mein Cabinet",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Was tun Sie?",
+      "teamSize": "Teamgröße",
+      "teamSizePlaceholder": "Solo / 2–5 / 6–20 / 20+",
+      "subtitle": "Während des Onboardings erfasst. Agenten lesen diese Informationen bei der Arbeitsplanung."
+    }
+  },
+  "sidebar": {
+    "settings": "Einstellungen",
+    "createPage": "Seite erstellen",
+    "newPage": "Neue Seite",
+    "newAgent": "Neuer Agent",
+    "newTask": "Neue Aufgabe",
+    "archive": "Archiv",
+    "trash": "Papierkorb",
+    "search": "Suche",
+    "agents": "Agenten",
+    "tasks": "Aufgaben",
+    "missions": "Missionen",
+    "drawerData": "Daten",
+    "drawerAgents": "Team",
+    "drawerTasks": "Aufgaben",
+    "goHome": "Zur Startseite",
+    "brandWord": "",
+    "refresh": "Seitenleiste aktualisieren",
+    "refreshDescription": "Seitenleiste aktualisieren (Datenordner neu einlesen)",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "expandSidebar": "Seitenleiste ausklappen",
+    "resizeHandle": "Seitenleiste anpassen — Doppelklick zum Zurücksetzen",
+    "resetWidth": "Doppelklick zum Zurücksetzen der Breite",
+    "refreshedNoChanges": "Aktualisiert — keine Änderungen.",
+    "refreshedWithChanges": "Aktualisiert — {{added}} hinzugefügt, {{removed}} entfernt.",
+    "refreshFailed": "Aktualisierung fehlgeschlagen.",
+    "searchPlaceholder": "Dateien suchen…",
+    "searchSearching": "Wird gesucht…",
+    "searchNoResults": "Keine Dateien gefunden für „{{query}}“"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Statusleiste",
+      "askAiAriaLabel": "KI bitten, diese Seite zu bearbeiten",
+      "askAiPlaceholder": "Wie bearbeite ich diese Seite?",
+      "sendHint": "↵ zum Senden"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Serverstatus — für Details klicken",
+      "checking": "Serverstatus wird geprüft…",
+      "allRunning": "Alle Systeme laufen",
+      "appNotResponding": "App-Server antwortet nicht",
+      "daemonDownNoProviders": "Daemon antwortet nicht; keine Agenten-Provider verfügbar",
+      "daemonDown": "Daemon antwortet nicht",
+      "noProviders": "Keine Agenten-Provider verfügbar",
+      "checkingShort": "Wird geprüft…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Eingeschränkt",
+      "allSystemsRunning": "Alle Systeme laufen",
+      "serviceDisruption": "Dienstunterbrechung",
+      "appServer": "App-Server",
+      "daemon": "Daemon",
+      "agentProviders": "Agenten-Provider",
+      "running": "Läuft",
+      "down": "Ausgefallen",
+      "lastSeen": "Zuletzt gesehen: {{when}}",
+      "appWorking": "Seiten, Editor, Suche und Dateiverwaltung funktionieren.",
+      "appDown": "Seiten, Editor, Suche und Speichern sind nicht verfügbar. Sie können zwischengespeicherte Inhalte weiterhin lesen.",
+      "daemonWorking": "KI-Agenten, geplante Aufgaben und das Webterminal funktionieren.",
+      "daemonDownDescription": "KI-Agenten, geplante Aufgaben und das Webterminal sind nicht verfügbar. Seitenbearbeitung funktioniert weiterhin.",
+      "available": "Verfügbar",
+      "noneReady": "Keine bereit",
+      "providerReady": "Bereit",
+      "providerNotLoggedIn": "Nicht angemeldet",
+      "providerNotInstalled": "Nicht installiert",
+      "install": "Installieren",
+      "howToFix": "So beheben Sie das Problem"
+    },
+    "save": {
+      "retryTitle": "Klicken, um fehlgeschlagenes Speichern zu wiederholen",
+      "retryAriaLabel": "Speichern fehlgeschlagen — klicken, um es erneut zu versuchen",
+      "autoSaving": "Automatisches Speichern…",
+      "forceSave": "Speichern erzwingen: ⌘S",
+      "editing": "Bearbeiten — automatisches Speichern läuft, wenn Sie pausieren",
+      "wordCountTitle": "Wortanzahl für diese Seite (Markdown-Syntax ausgeschlossen)",
+      "savedJustNow": "gerade eben",
+      "savedNever": "nie",
+      "savedAgoSeconds": "vor {{n}}s",
+      "savedAgoMinutes": "vor {{n}}m",
+      "savedAgoHours": "vor {{n}}h",
+      "savedAgoDays": "vor {{n}}T",
+      "saveFailedRetry": "Speichern fehlgeschlagen – erneut versuchen",
+      "savingText": "Wird gespeichert…",
+      "savedText": "Gespeichert",
+      "editingText": "Wird bearbeitet…",
+      "savedAgo": "Gespeichert · {{ago}}",
+      "word": "Wort",
+      "words": "Wörter"
+    },
+    "git": {
+      "statusModified": "Geändert",
+      "statusNew": "Neu",
+      "statusAdded": "Hinzugefügt",
+      "statusDeleted": "Gelöscht",
+      "statusRenamed": "Umbenannt",
+      "commitMessageAriaLabel": "Commit-Nachricht"
+    },
+    "help": {
+      "menuAriaLabel": "Hilfe- & Community-Menü öffnen",
+      "menuTitle": "Hilfe & Community",
+      "demos": "Demos, Videos und Anleitungen",
+      "discord": "Im Discord chatten",
+      "discordSubtitle": "Support und Feedback",
+      "github": "Auf GitHub mitwirken",
+      "githubSubtitle": "Quellcode, Issues, PRs",
+      "ifUseful": "Wenn Sie es nützlich finden",
+      "label": "Hilfe",
+      "starsAriaLabel": "{{count}} GitHub-Sterne — Cabinet auf GitHub öffnen",
+      "starsTitle": "{{count}} GitHub-Sterne — Cabinet auf GitHub mit Stern versehen",
+      "share": "Teilen",
+      "shareSubtitle": "Einladungslink kopieren & weitersagen",
+      "shareCopied": "Du bist großartig, {{name}} 🩷 Vielen Dank, dass du zukünftige Cabinet-Mitglieder an Bord holst. Link kopiert, verbreite die Liebe!",
+      "shareFailed": "Link konnte nicht kopiert werden",
+      "friend": "Freund"
+    },
+    "git2": {
+      "allCommitted": "Alles committed",
+      "uncommittedFile": "{{count}} uncommittede Datei",
+      "uncommittedFiles": "{{count}} uncommittede Dateien",
+      "uncommittedFilesAria": "{{count}} uncommittede Datei — klicken, um die Liste anzuzeigen",
+      "uncommittedFileTip": "Nicht übernommene Datei anzeigen",
+      "uncommittedFilesTip": "Nicht übernommene Dateien anzeigen",
+      "uncommittedFilesHeading": "{{count}} nicht übernommene Datei",
+      "uncommittedFilesHeadingPlural": "{{count}} nicht übernommene Dateien",
+      "truncatedHint": "Nur die ersten {{count}} Dateien angezeigt — `git status` für die vollständige Liste ausführen.",
+      "commitDefault": "{{count}} Datei aktualisieren",
+      "commitDefaultPlural": "{{count}} Dateien aktualisieren",
+      "committing": "Übertrage…",
+      "commit": "Übertragen",
+      "commitFailed": "Übertragung fehlgeschlagen",
+      "sync": "Synchronisieren",
+      "syncTitle": "Neueste von GitHub abrufen & aktualisieren",
+      "syncTitleWithLast": "Neueste von GitHub abrufen & aktualisieren. Zuletzt synchronisiert {{when}}.",
+      "syncAriaLabel": "Neueste Änderungen von GitHub abrufen und aktualisieren",
+      "syncAriaLabelWithLast": "Neueste Änderungen von GitHub abrufen und aktualisieren. Zuletzt synchronisiert {{when}}.",
+      "terminal": "Terminal",
+      "openTerminal": "Terminal öffnen",
+      "newTerminalTab": "Neuer Terminal-Tab",
+      "pulling": "Wird abgerufen…",
+      "pulled": "Vom Remote aktualisiert",
+      "upToDate": "Aktuell",
+      "pullFailed": "Abrufen fehlgeschlagen"
+    },
+    "update2": {
+      "updateAvailable": "Update {{version}} verfügbar",
+      "updateAvailableTip": "Cabinet {{version}} ist verfügbar"
+    },
+    "common": {
+      "dismiss": "Schließen",
+      "close": "Schließen",
+      "openSettings": "Einstellungen öffnen, um das installierte Update zu überprüfen"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Neustart zum Abschließen des Updates"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Diese Aufgabe vom ursprünglichen Prompt neu starten",
+      "markAsDone": "Diese Aufgabe als erledigt markieren",
+      "viewAriaLabel": "Aufgabenansicht",
+      "terminal": "Terminal",
+      "transcript": "Transkript",
+      "details": "Details",
+      "transcriptTitle": "Claude Code native Sitzung JSONL",
+      "transcriptHint": "Liest ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Zurück",
+      "copyPrompt": "Ursprünglichen Prompt kopieren",
+      "gracefulExit": "CLI ordnungsgemäß schließen (schreibt /exit an das PTY)",
+      "sendSigterm": "SIGTERM an den laufenden PTY-Prozess senden",
+      "moreActions": "Weitere Aktionen",
+      "ptyMode": "Im Terminal- (PTY-) Modus ausgeführt",
+      "compactContext": "Vorherige Runden zu einer Zusammenfassung komprimieren, um das Kontextfenster freizugeben",
+      "noSummary": "Noch keine Zusammenfassung.",
+      "sessionEnded": "Sitzung beendet — tippen, um im selben Terminal fortzufahren.",
+      "terminalLive": "Terminal aktiv. Ihr nächster Prompt wird nach Abschluss dieser Runde in die Warteschlange gestellt."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Ihre Cabinet-Tour",
+    "skip": "Überspringen",
+    "skipAriaLabel": "Tour überspringen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "writeFirstTask": "Ihre erste Aufgabe schreiben",
+    "goToSlide": "Gehe zu Folie {{n}}",
+    "starterTask": "Besprechen wir meine Ziele und Vorhaben und halten sie auf einer neuen Über-Seite fest.",
+    "savingTo": "Wird gespeichert in ",
+    "introTitle": "Lernen Sie Ihr <accent>Cabinet</accent> kennen.",
+    "introSubtitle": "Ihr KI-Team. Ihre Wissensdatenbank. Ein Ort.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Aktuelle und laufende Aufgaben",
+    "hide": "Aufgabenleiste ausblenden",
+    "show": "Aufgabenleiste anzeigen",
+    "empty": "Keine Aufgaben",
+    "itemRunning": "{{title}} · läuft · {{when}}",
+    "itemNeedsReply": "{{title}} · Antwort erforderlich",
+    "itemFailed": "{{title}} · fehlgeschlagen · {{when}}",
+    "itemDone": "{{title}} · erledigt · {{when}}",
+    "itemArchived": "{{title}} · archiviert",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} läuft — Aufgabenleiste anzeigen"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Startseite",
+      "agents": "Agenten",
+      "tasks": "Aufgaben",
+      "ai": "KI",
+      "menu": "Menü",
+      "primaryAriaLabel": "Primär"
+    },
+    "returnTo": {
+      "task": "Aufgabe",
+      "tasks": "Aufgaben",
+      "agent": "Agent",
+      "agents": "Agenten",
+      "cabinet": "Cabinet",
+      "home": "Startseite",
+      "settings": "Einstellungen",
+      "registry": "Registrierung",
+      "back": "Zurück",
+      "backTo": "Zurück zu {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Standard",
+      "dark": "Dunkel",
+      "darkThemes": "Dunkle Designs",
+      "lightThemes": "Helle Designs"
+    },
+    "update": {
+      "restartTitle": "Cabinet neu starten, um das Update abzuschließen",
+      "availableTitle": "Cabinet {{version}} ist verfügbar",
+      "updatesTitle": "Cabinet-Updates",
+      "description": "Cabinet sucht automatisch nach neuen Versionen. Da das Produkt noch experimentell ist, sichern Sie Ihre Daten, bevor Sie Updates installieren.",
+      "later": "Später",
+      "releaseNotes": "Versionshinweise"
+    },
+    "daemon": {
+      "fixHintElectron": "Cabinet beenden und neu starten, um den Agent-Daemon neu zu starten.",
+      "fixHintDev": "`npm run dev:daemon` ausführen (oder `npm run dev:all` neu starten), um den Agent-Daemon wieder zu starten.",
+      "notResponding": "Der Agent-Daemon antwortet nicht.",
+      "willFail": "Agenten, Aufträge und KI-Anfragen schlagen fehl, bis er wieder läuft. {{fixHint}}"
+    }
+  }
+}

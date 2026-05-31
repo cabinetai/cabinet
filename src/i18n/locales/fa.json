@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "ایجاد عامل",
+      "avatar": "آواتار",
+      "namePlaceholder": "عامل بازاریابی",
+      "rolePlaceholder": "متخصص محتوا",
+      "department": "دپارتمان",
+      "specialist": "متخصص",
+      "departmentLead": "سرپرست دپارتمان",
+      "provider": "ارائه‌دهنده",
+      "runtime": "زمان اجرا",
+      "promptPlaceholder": "شما یک عامل بازاریابی برای…",
+      "addAgentTitle": "افزودن عامل به تیم شما",
+      "addAgentDescription": "یک متخصص از کتابخانه انتخاب کنید. می‌توانید نام، نقش و دستورالعمل‌های آن را پس از افزودن ویرایش کنید.",
+      "createFromScratchTitle": "ساخت از ابتدا",
+      "createFromScratchDescription": "یک عامل جدید با هویت، نقش و دستورالعمل‌های خودش بسازید.",
+      "searchLibraryPlaceholder": "جستجو در کتابخانه",
+      "errorLoadLibrary": "کتابخانه عامل بارگذاری نشد.",
+      "errorAddAgent": "این عامل قابل افزودن نبود."
+    },
+    "metric": {
+      "name": "نام معیار",
+      "namePlaceholder": "reddit_replies",
+      "target": "هدف",
+      "targetPlaceholder": "پاسخ/هفته",
+      "floor": "کف",
+      "period": "دوره",
+      "daily": "روزانه",
+      "weekly": "هفتگی",
+      "monthly": "ماهانه"
+    },
+    "workspace": {
+      "promise": "تعهد",
+      "orgChart": "چارت سازمانی",
+      "jobDetails": "جزئیات شغل",
+      "heartbeat": "ضربان",
+      "workspace": "فضای کاری",
+      "editAgent": "ویرایش عامل",
+      "instructions": "دستورالعمل‌ها",
+      "instructionsPlaceholder": "دستورالعمل‌های این عامل را با فرمت مارک‌داون بنویسید.",
+      "newAgent": "عامل جدید",
+      "routines": "روال‌ها",
+      "browseLibrary": "مرور کتابخانه عامل",
+      "editYourOwn": "ویرایش عامل خود",
+      "editorPlaceholder": "ویرایشگر",
+      "productAgentPlaceholder": "عامل نگارش محصول",
+      "instructionsBodyPlaceholder": "نحوه عملکرد این عامل را در Cabinet و KB تعریف کنید.",
+      "perAgentPrompts": "اعلان‌های تکرارشونده برای هر عامل",
+      "runNow": "اکنون اجرا کن",
+      "delete": "حذف",
+      "viewOrgChart": "این تیم را به صورت چارت سازمانی مشاهده کنید (تمام‌صفحه باز می‌شود)",
+      "hideIntro": "پنهان کردن این مقدمه",
+      "sharedAcrossCabinets": "مشترک در تمام کابینت‌ها",
+      "expandSchedule": "گسترش برنامه",
+      "heartbeatsOnAgentPage": "ضربان‌ها در صفحه هر عامل پیکربندی می‌شوند.",
+      "exitFullscreen": "خروج از تمام‌صفحه",
+      "refresh": "تازه‌سازی",
+      "editHeartbeat": "ویرایش ضربان",
+      "newRoutine": "روال جدید",
+      "configureHeartbeat": "پیکربندی ضربان",
+      "openOrgChart": "باز کردن چارت سازمانی",
+      "pickAnAgent": "انتخاب یک عامل",
+      "dismiss": "بستن",
+      "lockedHeartbeatTip": "این عامل متوقف شده است. آن را در تب عوامل راه‌اندازی کنید تا ضربان فعال شود.",
+      "lockedRoutineTip": "این عامل متوقف شده است. آن را در تب عوامل راه‌اندازی کنید تا روال‌های آن فعال شوند.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "برای خاموش کردن کلیک کنید.",
+      "loadError": "بارگذاری این عامل ممکن نشد.",
+      "retry": "تلاش مجدد",
+      "color": "رنگ",
+      "customColor": "رنگ سفارشی",
+      "preset": "پیش‌تنظیم",
+      "editIconColor": "ویرایش نماد، رنگ یا آواتار",
+      "sharedAcrossCabinetsHint": "مشترک در تمام Cabinetها — ویرایش‌ها در همه جا اعمال می‌شوند",
+      "inbox": "صندوق ورودی",
+      "conversations": "گفتگوها",
+      "recentWork": "کارهای اخیر",
+      "schedule": "زمان‌بندی",
+      "heartbeat": "ضربان",
+      "runNow": "اکنون اجرا کن",
+      "editRoutine": "ویرایش روال",
+      "addRoutine": "افزودن روال",
+      "details": "جزئیات",
+      "editingGlobalAgent": "ویرایش عامل سراسری",
+      "displayName": "نام نمایشی",
+      "role": "نقش",
+      "department": "دپارتمان",
+      "type": "نوع",
+      "workspace": "فضای کاری",
+      "tags": "برچسب‌ها",
+      "openSkillsSettings": "باز کردن تنظیمات ← مهارت‌ها",
+      "notInCatalog": "در کاتالوگ یافت نشد — برای حذف کلیک کنید",
+      "recommendedForRole": "توصیه شده برای این نقش — برای پیوست کردن کلیک کنید",
+      "promise": "تعهد",
+      "saved": "ذخیره شد",
+      "iconLabel": "نماد"
+    },
+    "missionControl": {
+      "gallery": "گالری",
+      "newAgent": "عامل جدید",
+      "allGoals": "همه اهداف",
+      "noGoals": "هیچ عاملی اهدافی پیکربندی نکرده است.",
+      "fromScratch": "از ابتدا",
+      "describeIt": "آن را توصیف کنید",
+      "import": "وارد کردن",
+      "closeDialog": "بستن گفتگو",
+      "describeYourAgent": "عامل خود را توصیف کنید",
+      "describePlaceholder": "من به عاملی نیاز دارم که هکر نیوز را برای پست‌های مرتبط با GPU رصد کند و نظرات متفکرانه‌ای با لینک به پست‌های وبلاگ ما بنویسد…"
+    },
+    "pulseStrip": {
+      "agents": "عامل‌ها",
+      "running": "در حال اجرا",
+      "goals": "اهداف",
+      "alerts": "هشدارها",
+      "cost": "هزینه",
+      "runningPlays": "اجراهای فعال",
+      "noRunning": "در حال حاضر هیچ عاملی در حال اجرا نیست.",
+      "costBreakdown": "تفکیک هزینه",
+      "noUsage": "هنوز استفاده‌ای از API نشده است.",
+      "totalEstimated": "کل تخمینی"
+    },
+    "routine": {
+      "runNowTitle": "این روال را اکنون اجرا کن (یک‌بار، خارج از برنامه)",
+      "deletePermanently": "این روال را برای همیشه حذف کن",
+      "promptPlaceholder": "این روال چه کاری باید انجام دهد؟ مثلاً: فعالیت دیروز را خلاصه کن…",
+      "jobName": "نام کار",
+      "jobNamePlaceholder": "خلاصه استراتژی هفتگی",
+      "jobId": "شناسه کار",
+      "schedule": "زمان‌بندی",
+      "model": "مدل",
+      "enabled": "فعال"
+    }
+  },
+  "registry": {
+    "loading": "در حال بارگذاری از رجیستری…",
+    "readyToImport": "آماده برای وارد کردن این Cabinet هستید؟",
+    "organization": "سازمان",
+    "agents": "عامل‌ها",
+    "scheduledJobs": "کارهای زمان‌بندی شده",
+    "about": "درباره",
+    "cabinetName": "نام Cabinet",
+    "cabinetNamePlaceholder": "نام Cabinet…",
+    "searchPlaceholder": "جستجوی Cabinet‌ها…",
+    "noResults": "هیچ Cabinetی با جستجوی شما مطابقت ندارد."
+  },
+  "tasksBoard": {
+    "title": "وظایف",
+    "manualTooltip": "دستی — وظایفی که مستقیماً راه‌اندازی کرده‌اید",
+    "jobsTooltip": "کارها — اجراهای تکراری زمان‌بندی شده",
+    "heartbeatTooltip": "ضربان قلب — اجراهای عامل خودگردان",
+    "clearSelection": "پاک کردن انتخاب (Esc)",
+    "createTask": "ایجاد وظیفه جدید",
+    "moreNewTypes": "انواع آیتم‌های جدید بیشتر",
+    "newTask": "وظیفه جدید",
+    "newRoutine": "روال جدید",
+    "viewKanban": "کانبان",
+    "viewList": "فهرست",
+    "viewSchedule": "زمان‌بندی",
+    "viewKanbanHint": "نمای برد — وظایف گروه‌بندی شده در صندوق ورودی / نوبت شما / در حال اجرا / تازه تمام شده / آرشیو",
+    "viewListHint": "فهرست مسطح از هر وظیفه، جدیدترین فعالیت ابتدا",
+    "viewScheduleHint": "تقویم روال‌های زمان‌بندی شده و اجراهای آتی",
+    "filterByAgent": "فیلتر بر اساس عامل: {{name}}",
+    "noToDeleteTitle": "هیچ وظیفه‌ای برای حذف وجود ندارد",
+    "noToDeleteFiltered": "چیزی با {{filter}} مطابقت ندارد. فیلتر را پاک کنید، نمای دیگری انتخاب کنید، یا وظیفه جدیدی ایجاد کنید.",
+    "noToDeleteEmpty": "هنوز هیچ تسکی در برد وجود ندارد. با دکمه «+ تسک جدید» یکی ایجاد کنید.",
+    "gotIt": "متوجه شدم",
+    "deleteCountTitle": "آیا {{count}} تسک حذف شود؟",
+    "deleteCountTitlePlural": "آیا {{count}} تسک حذف شوند؟",
+    "deleteBody": "این کار به طور دائم فراداده مکالمه، رونوشت‌ها و مصنوعات را برای هر تسک نمایش‌داده‌شده حذف می‌کند. این عمل قابل بازگشت نیست.",
+    "deleteBodyFiltered": "این کار به طور دائم فراداده مکالمه، رونوشت‌ها و مصنوعات را برای هر تسک نمایش‌داده‌شده توسط فیلترهای فعال حذف می‌کند. این عمل قابل بازگشت نیست.",
+    "deleteConfirm": "حذف {{count}}",
+    "deleteAllShown": "حذف همه {{count}} تسک نمایش‌داده‌شده",
+    "deleteAllShownPlural": "حذف همه {{count}} تسک‌های نمایش‌داده‌شده",
+    "nothingToDelete": "چیزی برای حذف در این نما وجود ندارد",
+    "deleteAllAria": "حذف همه تسک‌های نمایش‌داده‌شده",
+    "noTasksAria": "هیچ تسکی در این نما وجود ندارد",
+    "filterTrigger": "فیلتر {{trigger}}",
+    "filterTriggerAndAgent": "فیلتر {{trigger}} و عامل انتخاب‌شده",
+    "filterSelectedAgent": "فیلتر عامل انتخاب‌شده"
+  },
+  "runtime": {
+    "noProvider": "هیچ ارائه‌دهنده‌ای انتخاب نشده است",
+    "modeAriaLabel": "حالت اجرا",
+    "nativeTranscriptTitle": "رونوشت بومی Cabinet — جریان JSON ساختاریافته، مصنوعات، خلاصه، تجربه کاربری کامل",
+    "ptyWarningTitle": "نیاز به کلید API OpenAI دارد. در حساب‌های Codex با طرح ChatGPT در دسترس نیست — انتخاب این مدل با خطای 'model not supported when using Codex with a ChatGPT account' مواجه خواهد شد.",
+    "native": "بومی",
+    "terminal": "ترمینال",
+    "terminalTitle": "اجرای CLI در یک جلسه ترمینال PTY زنده (حالت آزمایشی هکر)",
+    "providers": "ارائه‌دهندگان",
+    "modelCol": "مدل",
+    "auto": "خودکار",
+    "ready": "آماده",
+    "loginRequired": "ورود",
+    "notInstalled": "نصب نشده",
+    "notAvailable": "در دسترس نیست",
+    "defaultLabel": "پیش‌فرض",
+    "noProvidersAvailable": "هیچ ارائه‌دهنده‌ای در دسترس نیست",
+    "appDefault": "پیش‌فرض برنامه",
+    "selectAppDefault": "انتخاب پیش‌فرض برنامه",
+    "defaultModel": "مدل پیش‌فرض",
+    "selectedModelLabel": "مدل انتخاب‌شده",
+    "loadingProviders": "در حال بارگذاری ارائه‌دهندگان...",
+    "loadingAvailableProviders": "در حال بارگذاری ارائه‌دهندگان موجود…",
+    "triggerSummary": "مدل: {{model}} · تلاش: {{effort}} · از طریق {{provider}}",
+    "triggerSystemDefault": "مدل تسک — استفاده از پیش‌فرض سیستم (برای انتخاب کلیک کنید)",
+    "clickToLaunch": "برای راه‌اندازی {{name}} در یک ترمینال PTY کلیک کنید"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "عامل‌ها با دسترسی کامل اجرا می‌شوند.",
+    "backUp": "به طور منظم از داده‌های خود پشتیبان بگیرید.",
+    "betaSoftware": "نرم‌افزار بتا. ممکن است مشکلاتی پیش بیاید.",
+    "iAccept": "خواندم و می‌پذیرم"
+  },
+  "skillAdd": {
+    "addSkill": "افزودن مهارت",
+    "auditTooltip": "نتیجه ممیزی‌های خارجی skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "داده‌های ممیزی skills.sh برای این مهارت در دسترس نیست",
+    "preview": "پیش‌نمایش"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "تیم هوش مصنوعی",
+      "aiTeams": "تیم‌های هوش مصنوعی",
+      "routines": "روال‌ها"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "ویرایش پیکربندی عامل",
+    "exportBundle": "خروجی گرفتن از بسته عامل",
+    "goals": "اهداف",
+    "workspace": "فضای کاری"
+  },
+  "scheduleRow": {
+    "deleteQ": "حذف شود؟",
+    "confirmDelete": "تأیید حذف",
+    "cancelDelete": "لغو حذف",
+    "runNow": "اکنون اجرا کن"
+  },
+  "apiKeys": {
+    "addKey": "افزودن کلید",
+    "edit": "ویرایش",
+    "remove": "حذف",
+    "newApiKey": "کلید API جدید"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "به‌روزرسانی‌های Cabinet",
+    "dataDirectory": "پوشه داده",
+    "backups": "پشتیبان‌گیری‌ها"
+  },
+  "kanban": {
+    "stopAllInLane": "توقف همه وظایف در حال اجرا در این مسیر",
+    "restartAllInLane": "راه‌اندازی مجدد همه وظایف در این مسیر",
+    "newTask": "وظیفه جدید",
+    "collapseColumn": "جمع کردن ستون",
+    "kill": "پایان دادن",
+    "laneInbox": "صندوق ورودی",
+    "laneInboxHint": "پیش‌نویس شده — منتظر شروع شما",
+    "laneNeeds": "نوبت شما",
+    "laneNeedsHint": "عامل سؤالی پرسیده یا نیاز به تأیید دارد",
+    "laneRunning": "در حال اجرا",
+    "laneRunningHint": "عامل‌ها در حال کار هستند",
+    "laneDone": "همین الان تمام شد",
+    "laneDoneHint": "در ساعت گذشته تکمیل شد",
+    "laneArchive": "بایگانی",
+    "laneArchiveHint": "قدیمی‌تر و تأیید شده"
+  },
+  "terminalTabs": {
+    "newTab": "برگه ترمینال جدید",
+    "closeTab": "بستن ترمینال"
+  },
+  "newTaskButton": {
+    "createNew": "ایجاد جدید…",
+    "newTask": "وظیفه جدید",
+    "newRoutine": "روال جدید"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "خلاصه استراتژی هفتگی",
+    "schedule": "زمان‌بندی",
+    "jobId": "شناسه کار",
+    "enabled": "فعال — طبق این زمان‌بندی اجرا شود"
+  },
+  "editIdentity": {
+    "title": "ویرایش عامل",
+    "displayName": "نام نمایشی",
+    "color": "رنگ",
+    "hexPlaceholder": "#هگز"
+  },
+  "cabinetScheduler": {
+    "startAll": "شروع همه عامل‌ها",
+    "startAllSubtitle": "فعال کردن ضربان‌ها و وظایف زمان‌بندی‌شده",
+    "stopAll": "توقف همه عامل‌ها",
+    "stopAllSubtitle": "مکث ضربان‌ها و وظایف زمان‌بندی‌شده"
+  },
+  "skillLibrary": {
+    "readOnly": "فقط خواندنی — از Cabinet قابل ویرایش نیست",
+    "noUpstream": "مستقیماً در این کابینت ایجاد شده است — منبع گیت بالادستی ثبت نشده است",
+    "executableWarning": "بسته شامل اسکریپت‌های اجرایی است — قبل از تأیید بررسی کنید",
+    "skills": "مهارت‌ها",
+    "imported": "وارد شده",
+    "importing": "در حال وارد کردن…",
+    "import": "وارد کردن"
+  },
+  "embedPopover": {
+    "placeholder": "پیوند را بچسبانید (یوتیوب، X، ویمئو، لوم، تیک‌تاک، فیس‌بوک، اینستاگرام، اسپاتیفای، یا هر نشانی وب دیگر)",
+    "notValidUrl": "نشانی وب معتبر نیست",
+    "anyUrlWorks": "هر نشانی وب عمومی کار می‌کند.",
+    "facebook": "فیس‌بوک",
+    "instagram": "اینستاگرام",
+    "spotify": "اسپاتیفای",
+    "anyIframe": "هر نشانی وب iframe"
+  },
+  "rowActions": {
+    "stop": "توقف",
+    "stopHint": "این اجرا را اکنون متوقف کن (SIGTERM ارسال می‌کند)",
+    "restart": "راه‌اندازی مجدد",
+    "restartHint": "دوباره از اعلان اصلی اجرا کن",
+    "runHint": "این وظیفه را اکنون شروع کن"
+  },
+  "schedulesPanel": {
+    "title": "وظایف زمان‌بندی‌شده",
+    "noJobs": "هیچ وظیفه کابینت هنوز پیکربندی نشده است.",
+    "heartbeats": "ضربان‌ها",
+    "noHeartbeats": "هیچ ضربانی هنوز پیکربندی نشده است."
+  },
+  "scheduleTab": {
+    "explainer1": "هر آنچه تیم شما این هفته انجام می‌دهد، در یک تقویم. صورتی یک ضربان است، سبز یک روال. برای ویرایش، روی هر کپسول کلیک کنید.",
+    "explainer2": "از این برگه برای شناسایی تداخل‌ها، یافتن زمان‌های آرام، یا فقط در یک نگاه دیدن میزان مشغله تیم استفاده کنید.",
+    "aboutAria": "درباره برنامه",
+    "modeDay": "روز",
+    "modeWeek": "هفته",
+    "modeMonth": "ماه"
+  },
+  "mermaidViewer": {
+    "zoomOut": "کوچک‌نمایی",
+    "zoomIn": "بزرگ‌نمایی",
+    "resetView": "بازنشانی نما",
+    "syntaxError": "خطای نحوی نمودار"
+  },
+  "helpPage": {
+    "keyboard": "صفحه‌کلید",
+    "skills": "مهارت‌ها",
+    "apiKeys": "کلیدهای API",
+    "mcpServers": "سرورهای MCP",
+    "title": "راهنما",
+    "howTo": "چگونه",
+    "heading": "نحوه کار Cabinet را بیاموزید",
+    "subheading": "دموهای کوتاه، راهنماها و پیش‌نمایش‌ها برای بهره‌برداری حداکثری از Cabinet.",
+    "ctaWatchTour": "تماشا تور",
+    "ctaWatchDemo": "تماشا دمو",
+    "ctaCheatSheet": "باز کردن برگه تقلب",
+    "ctaComingSoon": "به زودی",
+    "discordHeading": "چیزی که دنبالش بودید را پیدا نکردید؟",
+    "discordSubheading": "ما در دیسکورد هستیم — بیایید سلام کنید، سوال بپرسید، و آنچه می‌سازید را به اشتراک بگذارید.",
+    "discordCta": "به دیسکورد بپیوندید",
+    "items": {
+      "tour": {
+        "title": "با <accent>Cabinet</accent> خود آشنا شوید.",
+        "description": "تیم هوش مصنوعی شما. پایگاه دانش شما. در یک مکان."
+      },
+      "agents": {
+        "title": "<accent>تیم هوش مصنوعی</accent> شما.",
+        "description": "رهبران و متخصصان را استخدام کنید. آنها را در دپارتمان‌ها گروه‌بندی کنید. اجازه دهید کارها را به یکدیگر محول کنند."
+      },
+      "tasks": {
+        "title": "<accent>تخته وظایف</accent>.",
+        "description": "نماهای کانبان، لیست و زمان‌بندی. بر اساس عامل یا وضعیت فیلتر کنید. یک زمان اجرا برای هر وظیفه انتخاب کنید."
+      },
+      "knowledge": {
+        "title": "<accent>پایگاه دانش</accent> شما.",
+        "description": "مارک‌داون، CSV، PDF، کد، نوت‌بوک‌ها، مرمد، تصاویر، صدا — همه چیز به صورت درون‌خطی رندر می‌شود. داده‌های شما روی دستگاه شما می‌ماند؛ مال شماست، نه ما."
+      },
+      "cabinets": {
+        "title": "تیمی از <accent>تیم‌های هوش مصنوعی</accent>.",
+        "description": "Cabinetها درون Cabinetهای دیگر قرار می‌گیرند. هر یک تیم هوش مصنوعی مستقل خود را با داده‌ها، عامل‌ها و دامنه دید خود دارد — و می‌توانند در طول ساختار درختی با یکدیگر همکاری کنند."
+      },
+      "routines": {
+        "title": "<accent>روال‌ها</accent> و زمان‌بندی‌ها.",
+        "description": "یک وظیفه را روزانه ساعت ۹ صبح، هفتگی در جمعه، یا یک بار دوشنبه آینده اجرا کنید. کرون، تقویم، یا زبان طبیعی."
+      },
+      "conversations": {
+        "title": "مکالمات و <accent>تاییدها</accent>.",
+        "description": "عامل‌ها اقداماتی را پیشنهاد می‌کنند — راه‌اندازی یک وظیفه، زمان‌بندی یک کار — و شما قبل از اجرای هر چیزی آن را تأیید می‌کنید."
+      },
+      "themes": {
+        "title": "آن را <accent>مال خود</accent> کنید.",
+        "description": "از مجموعه‌ای منتخب از تم‌های روشن و تاریک انتخاب کنید — Paper, Slate, Claude, Ink, و موارد دیگر."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — هوش مصنوعی خود را بیاورید.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — هر ارائه‌دهنده‌ای که قبلاً برای آن هزینه پرداخت می‌کنید را بیاورید. یک پیش‌فرض انتخاب کنید، یا برای هر وظیفه آن را لغو کنید."
+      },
+      "shortcuts": {
+        "title": "میانبرهای <accent>صفحه‌کلید</accent>.",
+        "description": "هر میانبر Cabinet روی یک کارت قابل جستجو. از هر کجا ? را فشار دهید تا دوباره باز شود. بر اساس نام یا کلید فیلتر کنید — برای ناوبری، ویرایش، وظایف، پنل‌ها و دستورات اسلش."
+      },
+      "skills": {
+        "title": "<accent>مهارت‌ها</accent> برای عامل‌های شما.",
+        "description": "مهارت‌های قابل نصب عامل — راهنماهایی که مدل برای یک وظیفه استفاده می‌کند. از GitHub یا skills.sh نصب کنید، به یک شخصیت متصل کنید، یا در هر ویرایشگری برای یک بار اجرا آن را @-mention کنید."
+      },
+      "apiKeysItem": {
+        "title": "<accent>کلیدهای API</accent> برای ابزارهای شما.",
+        "description": "حساب OpenAI, Anthropic, یا GitHub خود را یک بار وصل کنید — هر عامل و مهارتی در Cabinet از آن استفاده خواهد کرد. شما صورت‌حساب‌های خود را پرداخت می‌کنید، از سهمیه خود استفاده می‌کنید، بدون واسطه."
+      },
+      "integrations": {
+        "title": "سرورهای <accent>MCP</accent> و یکپارچه‌سازی‌ها.",
+        "description": "سرورهای MCP, Slack, Telegram, Gmail, و Calendar OAuth — یک بار متصل شوید و Cabinet توکن‌ها را مدیریت می‌کند. به زودی."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "میانبرهای صفحه‌کلید",
+    "filterPlaceholder": "فیلتر…",
+    "close": "بستن"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "ترمینال زنده",
+    "runningHeartbeat": "ضربان در حال اجرا…",
+    "memory": "حافظه",
+    "recentActivity": "فعالیت‌های اخیر"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "آواتار شما",
+    "preset": "پیش‌تنظیم",
+    "useInitials": "استفاده از حروف اول به عنوان جایگزین",
+    "custom": "سفارشی"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "تغییرات کد برنامه محلی شناسایی شد"
+  },
+  "logsPanel": {
+    "classifiedError": "خطای طبقه‌بندی شده",
+    "session": "نشست",
+    "noEvents": "هنوز رویدادی وجود ندارد.",
+    "noTranscript": "هنوز رونوشتی وجود ندارد."
+  },
+  "conversationResult": {
+    "prompt": "اعلان",
+    "result": "نتیجه",
+    "noSummary": "خلاصه‌ای ثبت نشده است."
+  },
+  "scheduleRowPlus": {
+    "delete": "حذف"
+  },
+  "attachmentPicker": {
+    "attachFiles": "پیوست کردن فایل‌ها"
+  },
+  "demos": {
+    "aiTeam": "تیم هوش مصنوعی",
+    "specialist": "متخصص",
+    "legal": "حقوقی",
+    "global": "جهانی",
+    "editor": "ویرایشگر",
+    "slashMenu": "منوی اسلش"
+  },
+  "slideDataCopy": {
+    "slideNum": "۰۱ · داده",
+    "headlineSentence": "تنها <accent>منبع</accent> حقیقت شما.",
+    "paragraphPrefix": "مارک‌داون، پی‌دی‌اف، صفحات گسترده، اسلایدها، تصاویر، ویدئو، صدا، مخازن پیوند شده، برنامه‌های وب جاسازی شده، گوگل داکس. هر یک از آن‌ها را با ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "یک مکان برای همه چیز — تا شما و تیم هوش مصنوعی‌تان از ",
+    "sameFiles": "همان فایل‌ها",
+    "secondParagraphSuffix": "، نه کپی از کپی‌ها.",
+    "mockTitle": "کابینت هیلا"
+  },
+  "slideData": {
+    "thailandRootLabel": "سفر تایلند",
+    "thailandCaption": "همه فایل‌های خود را در یک مکان مشاهده کنید.",
+    "videoTitle": "بازار شب.mp4",
+    "taxRootLabel": "مالیات ۲۰۲۶",
+    "taxCaption": "مالیات ۲۰۲۶ — یک برنامه وب ماشین‌حساب زنده، که مستقیماً در cabinet شما جاسازی شده است.",
+    "calculatorTitle": "ماشین‌حساب",
+    "liveAppBadge": "برنامه زنده",
+    "taxEstimateLabel": "تخمین مالیات ۲۰۲۶",
+    "income": "درآمد",
+    "deductions": "کسورات",
+    "taxBracket": "پله مالیاتی",
+    "estimatedTax": "مالیات تخمینی",
+    "healthRootLabel": "سلامت",
+    "healthCaption": "ویتامین‌ها و آزمایش‌ها — یک صفحه گسترده که شبیه یک صفحه است.",
+    "csvTitle": "ویتامین‌های روزانه.csv",
+    "csvColVitamin": "ویتامین",
+    "csvColDose": "دوز",
+    "csvColTime": "زمان",
+    "csvColDone": "انجام شد",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "پایگاه‌های کد — هر مخزن گیت را پیوند دهید، قابل جستجو توسط عامل‌های شما.",
+    "schemaTitle": "طرح‌واره.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "۰۳ · وظایف",
+    "typedCommand": "۱۰ وظیفه را اجرا کنید، هر کدام یک آهنگ بنویسند، در @Songs/ ذخیره کنید",
+    "headlineSentence": "آماده <accent>شروع</accent> هستید؟",
+    "paragraphPrefix": "یک وظیفه بنویسید. یکی را اجرا کنید، ده تا را اجرا کنید، برای همیشه زمان‌بندی کنید. صفحات را با ",
+    "paragraphSuffix": "، خروجی را هر کجا که می‌خواهید ذخیره کنید. شما اکنون کارگردان هستید.",
+    "savingFolder": "آهنگ‌ها/"
+  },
+  "slideAgents": {
+    "persona": "پرسونا",
+    "heartbeat": "ضربان",
+    "jobs": "کارها",
+    "aiTeam": "تیم هوش مصنوعی",
+    "otherWriter": "نویسنده",
+    "otherOrganizer": "سازمان‌دهنده",
+    "idle": "بیکار",
+    "researchAnalyst": "تحلیلگر پژوهش",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "فعال",
+    "personaBody": "«تحلیلگر دقیق. منابع را ذکر می‌کند. ادعاهای متناقض را مشخص می‌کند.»",
+    "heartbeatBody": "هر ۱۵ دقیقه @Market Research را بررسی می‌کند",
+    "jobsBody": "دوشنبه ۹:۰۰ · خلاصه هفتگی رقبا",
+    "slideNum": "۰۲ · عامل‌ها",
+    "paragraphPrefix": "هر عامل یک ",
+    "personaWord": "شخصیت",
+    "paragraphMiddle": "، یک ",
+    "scheduleWord": "برنامه",
+    "paragraphMiddle2": "، و یک ",
+    "memoryWord": "حافظه",
+    "paragraphSuffix": ". عامل‌های هوش مصنوعی شما کارها را ۲۴/۷ انجام می‌دهند. شما انسان باشید — آن‌ها بقیه کارها را انجام می‌دهند.",
+    "aiTeamSentence": "تیم <accent>هوش مصنوعی</accent> شما."
+  },
+  "startWork": {
+    "close": "بستن",
+    "selectAgent": "انتخاب عامل",
+    "titleNow": "چه کاری باید انجام شود؟",
+    "titleRecurring": "یک روال تکراری تنظیم کنید",
+    "titleHeartbeat": "این عامل را طبق برنامه بیدار کنید",
+    "titleEdit": "ویرایش وظیفه",
+    "submitStart": "شروع",
+    "submitAddInbox": "افزودن به صندوق ورودی",
+    "submitSaveEdit": "ذخیره تغییرات",
+    "submitCreateRoutine": "ایجاد روال",
+    "submitSaveHeartbeat": "ذخیره ضربان",
+    "saving": "در حال ذخیره…",
+    "current": "فعلی",
+    "modeInboxLabel": "← صندوق ورودی",
+    "modeInboxHint": "ذخیره در صندوق ورودی — هر وقت آماده بودید شروع کنید",
+    "modeNowLabel": "اکنون اجرا کن",
+    "modeNowHint": "این گفتگو را بلافاصله شروع کنید",
+    "modeRecurringLabel": "طبق برنامه",
+    "modeRecurringHint": "این دستور را طبق برنامه اجرا کنید",
+    "modeHeartbeatLabel": "ضربان",
+    "modeHeartbeatHint": "عامل را با ریتم خودش بیدار کنید",
+    "agentFallback": "عامل",
+    "failedToStart": "شروع نشد",
+    "failedToSave": "ذخیره تغییرات ناموفق بود",
+    "failedToSaveHeartbeat": "ذخیره ضربان ناموفق بود"
+  },
+  "googleDoc": {
+    "noUrl": "آدرس Google تنظیم نشده است",
+    "anyoneWithLink": "هر کسی با لینک",
+    "publishedToWeb": "در وب منتشر شد"
+  },
+  "feedback": {
+    "close": "بستن",
+    "rolePlaceholder": "مثلاً: توسعه‌دهنده مستقل، مدیر محصول SaaS، دانشجوی طراحی، علاقه‌مند...",
+    "joinDiscord": "به دیسکورد بپیوندید",
+    "header": "یک پیام کوتاه از هیلا",
+    "howGoing": "تا اینجا چطور پیش رفته؟",
+    "starsCount": "{{n}} ستاره",
+    "starsCountPlural": "{{n}} ستاره",
+    "likeCabinet": "Cabinet را دوست دارید؟",
+    "starTooltipUnknown": "Cabinet را در گیت‌هاب ستاره‌دار کنید — اگر برایتان مفید است، یک ستاره واقعاً کمک می‌کند",
+    "starTooltipWithCount": "{{count}} ستاره گیت‌هاب — برای افزودن ستاره خود کلیک کنید",
+    "starLabel": "ستاره‌دار کردن",
+    "backgroundLabel": "پیشینه شما چیست؟",
+    "optional": "(اختیاری)",
+    "discordCta": "می‌خواهید مستقیماً صحبت کنید، یا با سایر اعضای Cabinet معاشرت کنید؟",
+    "maybeLater": "شاید بعداً",
+    "send": "ارسال",
+    "thanksTitle": "ممنون!",
+    "thanksBody": "بازخورد شما آینده توسعه را شکل می‌دهد.",
+    "copy2Lead": "شما Cabinet را چند بار باز کرده‌اید. ممنون! Cabinet متن‌باز است و تازه شروع به کار کرده، بنابراین آنچه اینجا می‌گویید واقعاً تغییر می‌دهد که در آینده چه چیزی ساخته شود.",
+    "copy2Q1": "امروز در Cabinet قصد انجام چه کاری را داشتید؟",
+    "copy2Q1Hint": "یک جمله کافی است. آنچه برایش باز کردید، نه آنچه آرزو داشتید بتواند انجام دهد.",
+    "copy2Q2": "آخرین باری که می‌خواستید آن کار را انجام دهید، به جای Cabinet از چه چیزی استفاده کردید؟",
+    "copy2Q2Hint": "هر ابزار، برنامه، یا سند، حتی قلم و کاغذ.",
+    "copy6Lead": "شما برگشته‌اید، و این مهم‌ترین نشانه است. می‌خواهم قبل از اینکه مشکلات را فراموش کنید، درباره آن‌ها بشنوم.",
+    "copy6Q1": "امروز در Cabinet قصد انجام چه کاری را داشتید؟",
+    "copy6Q1Hint": "یک جمله کافی است.",
+    "copy6Q2": "تنها چیزی که این هفته تقریباً باعث شد استفاده از Cabinet را متوقف کنید، چه بود؟",
+    "copy6Q2Hint": "چیزی که بیشتر از همه شما را آزار داد. دقیق باشید. «X گیج‌کننده بود» بهتر از «تجربه کاربری» است."
+  },
+  "apiKeysSection": {
+    "cancel": "لغو",
+    "pasteHere": "اینجا بچسبانید",
+    "pasteNewValue": "مقدار جدید را بچسبانید"
+  },
+  "storageBackend": {
+    "title": "بک‌اند ذخیره‌سازی",
+    "migrationFailed": "انتقال ناموفق بود"
+  },
+  "linkRepo": {
+    "title": "بارگذاری دانش",
+    "intro": "Cabinet را به هر پوشه‌ای در دستگاه خود اشاره دهید. Cabinet یک پیوند نمادین ایجاد می‌کند تا محتویات پوشه در پایگاه دانش شما ظاهر شود و به عنوان زمینه برای عوامل هوش مصنوعی در دسترس باشد. پوشه اصلی هرگز جابجا یا کپی نمی‌شود.",
+    "symlinkNote": "این یک پیوند نمادین ایجاد می‌کند — فایل‌ها در جای خود باقی می‌مانند.",
+    "autoDetectPlaceholder": "تشخیص خودکار از ریموت گیت (اختیاری)",
+    "shortSummaryPlaceholder": "خلاصه کوتاه اختیاری برای عامل‌ها"
+  },
+  "recentTasks": {
+    "ptyMode": "حالت ترمینال (PTY)",
+    "revealOlder": "نمایش کارهای قدیمی‌تر بیشتر",
+    "showOlder": "نمایش قدیمی‌تر"
+  },
+  "treeNode": {
+    "openCabinet": "باز کردن نمای Cabinet",
+    "pageTitlePlaceholder": "عنوان صفحه...",
+    "rename": "تغییر نام",
+    "openBadge": "باز کردن",
+    "sectionAdd": "افزودن به این مورد",
+    "sectionThis": "این مورد",
+    "addSubPage": "افزودن زیرصفحه",
+    "newFolder": "پوشه جدید",
+    "createFile": "ایجاد فایل جدید…",
+    "connectKnowledge": "اتصال دانش…",
+    "symlinkTag": "پیوند نمادین",
+    "importFile": "وارد کردن فایل…",
+    "importFolder": "وارد کردن پوشه…",
+    "createCabinet": "ایجاد Cabinet در اینجا",
+    "editSymlink": "ویرایش پیوند نمادین…",
+    "settings": "تنظیمات…",
+    "moveTo": "انتقال به…",
+    "copyRelativePath": "کپی مسیر نسبی",
+    "copyFullPath": "کپی مسیر کامل",
+    "openInFinder": "باز کردن در Finder",
+    "delete": "حذف",
+    "unlink": "لغو پیوند",
+    "folderNamePlaceholder": "نام پوشه",
+    "creating": "در حال ایجاد…",
+    "create": "ایجاد",
+    "addSubPageTitle": "افزودن زیرصفحه به «{{name}}»",
+    "newFolderTitle": "پوشه جدید در «{{name}}»"
+  },
+  "newFile": {
+    "title": "ایجاد فایل جدید",
+    "subtitle": "یک نوع فایل را انتخاب کنید. Cabinet پس از آماده شدن آن را در ویرایشگر باز می‌کند.",
+    "groupNative": "ویرایش در Cabinet",
+    "groupOffice": "آفیس (خالی — ویرایش خارجی)",
+    "groupGoogle": "گوگل (پیوند شده)",
+    "namePlaceholder": "نام فایل",
+    "create": "ایجاد",
+    "creating": "در حال ایجاد…",
+    "googleUrlLabel": "URL گوگل (اختیاری)",
+    "googleUrlPlaceholder": "یک پیوند قابل اشتراک‌گذاری گوگل را بچسبانید، یا برای افزودن بعدی خالی بگذارید.",
+    "officeNote": "Cabinet فایل‌های آفیس را فقط خواندنی نمایش می‌دهد. برای ویرایش در برنامه دسکتاپ از «باز کردن در Finder» استفاده کنید.",
+    "types": {
+      "markdown": "صفحه Markdown",
+      "markdownDesc": "یادداشت‌های متنی غنی، قابل ویرایش در Cabinet",
+      "code": "فایل کد",
+      "codeDesc": "هر فایل منبع/متنی — پسوند را انتخاب کنید",
+      "mermaid": "نمودار Mermaid",
+      "mermaidDesc": "فلوچارت‌ها و نمودارها به صورت کد",
+      "csv": "جدول CSV",
+      "csvDesc": "داده‌های صفحه گسترده با جداکننده کاما",
+      "docx": "سند Word",
+      "docxDesc": ".docx خالی",
+      "xlsx": "صفحه گسترده Excel",
+      "xlsxDesc": ".xlsx خالی",
+      "pptx": "پاورپوینت",
+      "pptxDesc": ".pptx خالی",
+      "gdoc": "سند Google",
+      "gdocDesc": "جاسازی یک سند Google",
+      "gsheet": "برگ Google",
+      "gsheetDesc": "جاسازی یک برگ Google",
+      "gslides": "اسلایدهای Google",
+      "gslidesDesc": "جاسازی اسلایدهای Google"
+    },
+    "codeExtLabel": "پسوند",
+    "googleTag": "گوگل",
+    "extHint": "فقط نام را تایپ کنید — Cabinet پسوند {{ext}} را اضافه می‌کند.",
+    "createFailed": "فایل ایجاد نشد."
+  },
+  "fileSettings": {
+    "googleTitle": "تنظیمات جاسازی گوگل",
+    "googleKindLabel": "نوع",
+    "googleUrlLabel": "نشانی اینترنتی گوگل",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "برای بارگذاری جاسازی، اشتراک‌گذاری سند باید «هر کسی با پیوند» یا «منتشر شده در وب» باشد.",
+    "openLink": "باز کردن در گوگل",
+    "googleKinds": {
+      "docs": "اسناد",
+      "sheets": "برگه‌ها",
+      "slides": "اسلایدها",
+      "forms": "فرم‌ها",
+      "drive": "درایو"
+    },
+    "appTitle": "تنظیمات برنامه وب",
+    "modeLabel": "این چگونه باز شود؟",
+    "modeWebsite": "نمای صفحه",
+    "modeWebsiteDesc": "به صورت درون‌خطی با نوار کناری و پنل هوش مصنوعی قابل مشاهده باز می‌شود.",
+    "modeApp": "برنامه وب",
+    "modeAppDesc": "تمام‌صفحه باز می‌شود؛ نوار کناری و پنل هوش مصنوعی به طور خودکار جمع می‌شوند.",
+    "convertNote": "این فایل نشانگر .app را در پوشه تغییر وضعیت می‌دهد. فایل‌های شما تغییر نمی‌کنند.",
+    "save": "ذخیره",
+    "saving": "در حال ذخیره…",
+    "cancel": "لغو",
+    "saveFailed": "تنظیمات ذخیره نشد."
+  },
+  "editSymlink": {
+    "title": "ویرایش پیوند نمادین",
+    "intro": "این ورودی پایگاه دانش یک پیوند نمادین به پوشه‌ای در جای دیگری از دستگاه شما است.",
+    "kbPathLabel": "مسیر پایگاه دانش",
+    "targetLabel": "پیوند به (روی دیسک)",
+    "brokenWarning": "پوشه هدف دیگر وجود ندارد. آن را به یک پوشه معتبر در زیر مجدداً اشاره دهید.",
+    "repointLabel": "مسیر را به پوشه جدید تغییر دهید",
+    "repointHint": "Cabinet لینک را برای اشاره به اینجا جایگزین می‌کند. فایل‌ها هرگز جابجا نمی‌شوند.",
+    "browse": "مرور",
+    "nameLabel": "نام",
+    "descriptionLabel": "توضیحات",
+    "save": "ذخیره",
+    "saving": "در حال ذخیره…",
+    "copyTarget": "کپی کردن مسیر هدف",
+    "saveFailed": "امکان به‌روزرسانی سیم‌لینک وجود نداشت."
+  },
+  "importFolder": {
+    "importing": "در حال وارد کردن پوشه…",
+    "failed": "وارد کردن پوشه ناموفق بود: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "در حال بارگذاری وظایف"
+  },
+  "agentList": {
+    "agentLibrary": "کتابخانه عامل‌ها",
+    "newAgent": "عامل جدید"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "تیم شما",
+    "lead": "رهبر",
+    "specialist": "متخصص",
+    "tasks": "وظایف",
+    "todo": "انجام‌دادنی",
+    "doing": "در حال انجام",
+    "done": "انجام شده",
+    "anythingGoes": "هر چیزی مجاز است",
+    "marketing": "بازاریابی",
+    "product": "محصول",
+    "research": "تحقیق",
+    "design": "طراحی",
+    "routines": "روتین‌ها",
+    "dailyReview": "بازبینی روزانه",
+    "weeklyDigest": "خلاصه هفتگی",
+    "conversation": "گفتگو",
+    "userQuery": "برنامه‌ریزی سفر ۲ هفته‌ای تایلند…",
+    "agentReply": "کتابدار و ویرایشگر را اعزام خواهم کرد.",
+    "pendingAction": "اقدام در انتظار",
+    "approve": "تایید",
+    "decline": "رد کردن",
+    "themes": "قالب‌ها",
+    "providers": "ارائه‌دهندگان",
+    "comingSoon": "به زودی"
+  },
+  "agentLive": {
+    "dismiss": "رد کردن",
+    "paused": "عامل متوقف است"
+  },
+  "conversationLive": {
+    "liveOutput": "خروجی زنده",
+    "waitingFirstChunk": "در انتظار اولین بخش خروجی…"
+  },
+  "editIdentityPlus": {
+    "avatar": "آواتار",
+    "useIconInstead": "به جای آن از آیکون استفاده کنید"
+  },
+  "pendingActions": {
+    "rejectAll": "رد کردن تمام اقدامات در انتظار",
+    "approveAll": "تایید و اعزام تمام اقداماتی که مانع جدی ندارند"
+  },
+  "aiPanel": {
+    "clearSessions": "پاک کردن تمام نشست‌ها",
+    "dismiss": "رد کردن"
+  },
+  "schedulerPlus": {
+    "restartAll": "راه‌اندازی مجدد تمام عامل‌ها",
+    "restartSubtitle": "توقف و سپس فعال‌سازی مجدد تمام برنامه‌ها"
+  },
+  "csvViewer": {
+    "downloadCsv": "دانلود CSV",
+    "deleteRow": "حذف سطر"
+  },
+  "resizableImage": {
+    "resizeLeft": "تغییر اندازه از چپ",
+    "resizeRight": "تغییر اندازه از راست"
+  },
+  "folderIndex": {
+    "listView": "نمای فهرست",
+    "galleryView": "نمای گالری"
+  },
+  "linkPopover": {
+    "openLink": "باز کردن پیوند",
+    "removeLink": "حذف پیوند"
+  },
+  "officeChrome": {
+    "openInFinder": "باز کردن در Finder",
+    "downloadOriginal": "دانلود نسخه اصلی"
+  },
+  "sourceViewer": {
+    "copyContents": "کپی محتویات فایل",
+    "downloadFile": "دانلود فایل"
+  },
+  "versionHistory": {
+    "title": "تاریخچه نسخه‌ها"
+  },
+  "demoModal": {
+    "closeDemo": "بستن نسخه نمایشی",
+    "close": "بستن"
+  },
+  "demosPlus": {
+    "anything": "هر چیزی",
+    "yours": "شما",
+    "install": "نصب",
+    "attach": "پیوست کردن"
+  },
+  "narrowViewport": {
+    "dismiss": "رد کردن راهنمای نمای باریک",
+    "dismissTitle": "رد کردن تا جلسه بعدی",
+    "hintPrefix": "Cabinet در ",
+    "hintWidth": "≥۹۶۰ پیکسل",
+    "hintSuffix": " عرض بهترین عملکرد را دارد. برخی بخش‌ها در عرض‌های کمتر فشرده می‌شوند."
+  },
+  "agentCard": {
+    "runHeartbeat": "اجرای پایش"
+  },
+  "schedulePicker": {
+    "frequency": "تکرار",
+    "onDay": "در روز",
+    "modeInterval": "بازه",
+    "modeDaily": "روزانه",
+    "modeWeekdays": "روزهای هفته",
+    "modeWeekly": "هفتگی",
+    "modeMonthly": "ماهانه",
+    "modeCustom": "سفارشی",
+    "parse": "تجزیه",
+    "showCron": "نمایش عبارت cron",
+    "hideCron": "پنهان کردن عبارت cron",
+    "weekdayMo": "د",
+    "weekdayTu": "س",
+    "weekdayWe": "چ",
+    "weekdayTh": "پ",
+    "weekdayFr": "ج",
+    "weekdaySa": "ش",
+    "weekdaySu": "ی"
+  },
+  "slackPanel": {
+    "createChannel": "ایجاد کانال",
+    "thread": "موضوع"
+  },
+  "uninstall": {
+    "title": "حذف نصب Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "کشوی‌های Cabinet",
+    "pageTitlePlaceholder": "عنوان صفحه…"
+  },
+  "skillAddPlus": {
+    "cancel": "لغو"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "داده‌های حسابرسی برای این مهارت از skills.sh در دسترس نیست",
+    "searchPlaceholder": "جستجو در skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "تازه‌سازی",
+    "noSkills": "هنوز مهارتی وجود ندارد."
+  },
+  "taskDetail": {
+    "close": "بستن (Esc)",
+    "muteTask": "این وظیفه را بی‌صدا کنید — اجراهای تکمیل شده آن مستقیماً به آرشیو می‌روند",
+    "unmuteTask": "این وظیفه را از بی‌صدا خارج کنید — اجراهای تکمیل شده آن در Just Finished دوباره ظاهر می‌شوند"
+  },
+  "rowActionsPlus": {
+    "edit": "ویرایش",
+    "editHint": "این پیش‌نویس ذخیره‌شده را قبل از شروع ویرایش کنید",
+    "delete": "حذف",
+    "deleteHint": "حذف دائمی — این عمل قابل بازگشت نیست"
+  },
+  "taskCard": {
+    "ptyMode": "در حال اجرا در حالت ترمینال (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "رد کردن"
+  },
+  "terminalExited": {
+    "openDetails": "باز کردن جزئیات ساختاریافته (پرامپت، آرتیفکت‌ها، نوبت‌ها)",
+    "reconnect": "اتصال مجدد به دیمون و پخش مجدد PTY خام"
+  },
+  "terminalTabsPlus": {
+    "resize": "تغییر اندازه پنل ترمینال"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "نمایش همه عامل‌ها",
+    "noRecentActivity": "فعالیت اخیر وجود ندارد",
+    "noAgents": "هیچ عاملی وجود ندارد",
+    "noAgentsConfigured": "هنوز عاملی برای این Cabinet پیکربندی نشده است.",
+    "cabinetScope": "محدوده Cabinet:",
+    "depthDropdownHeader": "محدوده Cabinet",
+    "depthOwnLabel": "فقط این Cabinet",
+    "depthOwnShort": "خود",
+    "depthOwnDesc": "صفحات، عامل‌ها و وظایف فقط از این Cabinet.",
+    "depthChildren1Label": "شامل فرزندان مستقیم",
+    "depthChildren1Desc": "یک سطح از زیر-Cabinetها را اضافه کنید.",
+    "depthChildren2Label": "شامل دو سطح Cabinet",
+    "depthChildren2Desc": "دو سطح از زیر-Cabinetها را اضافه کنید.",
+    "depthAllLabel": "شامل همه نوادگان",
+    "depthAllShort": "همه",
+    "depthAllDesc": "شامل کل زیردرخت.",
+    "scopeTooltip": "محدوده Cabinet: {{label}}. برای تغییر کلیک کنید."
+  },
+  "composerExtras": {
+    "skillAttached": "مهارت — فقط به این اجرا متصل است",
+    "pageTitlePlaceholder": "عنوان صفحه…",
+    "active": "فعال — عامل را در این برنامه بیدار کنید",
+    "pickCliPty": "یک CLI برای اجرا در PTY انتخاب کنید:"
+  },
+  "editorExtras": {
+    "editWithAi": "ویرایش با هوش مصنوعی",
+    "jupyterLab": "کپی: jupyter lab <path>",
+    "exitApp": "خروج از برنامه"
+  },
+  "demosExtras": {
+    "aiAccounts": "حساب‌های هوش مصنوعی",
+    "aiTeams": "تیم‌های هوش مصنوعی"
+  },
+  "whatsNew": {
+    "dismiss": "رد کردن",
+    "headerPrefix": "جدید در نسخه v",
+    "readFull": "مشاهده یادداشت‌های کامل انتشار"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "متوجه شدم و می‌خواهم ادامه دهم."
+  },
+  "daemonHealth": {
+    "dismiss": "رد کردن"
+  },
+  "tinyExtras": {
+    "light": "روشن",
+    "home": "خانه",
+    "workspaceGallery": "گالری فضای کاری",
+    "savingTo": "در حال ذخیره در",
+    "comingSoon": "به زودی",
+    "deleteSkill": "حذف مهارت",
+    "skillsOffered": "مهارت‌های ارائه شده:",
+    "allAgents": "همه عامل‌ها",
+    "noTranscript": "رونوشتی یافت نشد",
+    "noDiff": "تفاوتی در دسترس نیست.",
+    "headsUp": "توجه:",
+    "back": "بازگشت",
+    "editYourAvatar": "ویرایش آواتار شما",
+    "openFullTaskViewer": "باز کردن نمایشگر کامل وظیفه",
+    "close": "بستن",
+    "copyToClipboard": "کپی در کلیپ‌بورد",
+    "starOnGithub": "Cabinet را در گیت‌هاب ستاره‌دار کنید",
+    "helpMoreFind": "به افراد بیشتری کمک کنید تا انجمن را پیدا کنند",
+    "joinDiscord": "به دیسکورد بپیوندید",
+    "chatWithBuilders": "با سازندگان Cabinet گفتگو کنید",
+    "joinWaitlist": "به لیست انتظار Cabinet Cloud بپیوندید",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "افزودن به صندوق ورودی",
+    "runTaskNow": "اکنون اجرا کن",
+    "search": "جستجو",
+    "aiPanel": "پنل هوش مصنوعی",
+    "drawers": "کشاب‌ها"
+  },
+  "dataLocations": {
+    "title": "محل ذخیره داده‌های شما",
+    "whyThisMatters": "چرا این مهم است",
+    "location": "مکان",
+    "contains": "شامل",
+    "network": "شبکه",
+    "revealInFinder": "نمایش در فایل منیجر",
+    "stored": "ذخیره شده",
+    "resetOnboarding": "بازنشانی راهنمای شروع"
+  },
+  "rooms": {
+    "switcherTitle": "تغییر اتاق",
+    "switchRoom": "اتاق‌ها",
+    "loading": "در حال بارگذاری…",
+    "defaultTag": "خانه",
+    "openInNewWindow": "باز کردن در پنجره جدید",
+    "opensBrowserWindow": "یک پنجره مرورگر جدید باز می‌کند",
+    "customizeRoom": "ویرایش اتاق",
+    "addRoom": "افزودن اتاق…",
+    "editTitle": "ویرایش اتاق",
+    "editSubtitle": "نام، آیکون، رنگ و تم این اتاق را تنظیم کنید.",
+    "nameLabel": "نام نمایشی",
+    "slugHint": "نام پوشه روی دیسک به صورت {{slug}} باقی می‌ماند. تغییر نام پوشه یک اقدام جداگانه و پیشرفته است.",
+    "iconLabel": "آیکون",
+    "colorLabel": "رنگ",
+    "colorAuto": "خودکار",
+    "themeLabel": "تم",
+    "themeGlobal": "استفاده از پیش‌فرض سراسری",
+    "editFailed": "امکان ذخیره اتاق وجود نداشت. لطفاً دوباره تلاش کنید.",
+    "deleteRoom": "حذف اتاق…",
+    "deleteLastRoomDisabledHint": "نمی‌توانید آخرین اتاق خود را حذف کنید.",
+    "deleteTitle": "این اتاق حذف شود؟",
+    "deleteSubtitle": "این اتاق و هر آنچه در آن است به سطل زباله منتقل خواهد شد.",
+    "deleteWarningIntro": "انتقال اتاق به سطل زباله همچنین موارد زیر را حذف می‌کند:",
+    "deleteWarningPages": "صفحات و فایل‌های داخل این اتاق",
+    "deleteWarningAgents": "عامل‌ها، مکالمات و حافظه محدود به این اتاق",
+    "deleteWarningJobs": "کارهای زمان‌بندی شده و روال‌ها در این اتاق",
+    "deleteWarningChat": "تاریخچه چت تیمی برای این اتاق",
+    "deleteWarningSearch": "فهرست جستجوی اتاق (در صورت بازیابی به صورت خودکار بازسازی می‌شود)",
+    "deleteRecoveryNote": "بازیابی: اتاق به data/.trash/ منتقل می‌شود — آن را با انتقال پوشه به data/ بازیابی کنید.",
+    "deleteConfirmLabel": "{{slug}} را برای تأیید تایپ کنید",
+    "deleteConfirmButton": "حذف اتاق",
+    "deleting": "در حال حذف…",
+    "deleteFailed": "اتاق حذف نشد. لطفاً دوباره تلاش کنید."
+  },
+  "common": {
+    "actions": {
+      "save": "ذخیره",
+      "cancel": "لغو",
+      "delete": "حذف",
+      "confirm": "تأیید",
+      "close": "بستن",
+      "open": "باز",
+      "back": "بازگشت",
+      "next": "بعدی",
+      "done": "انجام شد"
+    },
+    "nav": {
+      "goBack": "بازگشت",
+      "goForward": "به جلو"
+    },
+    "aiPanel": {
+      "open": "باز کردن پنل هوش مصنوعی",
+      "close": "بستن پنل هوش مصنوعی"
+    },
+    "states": {
+      "loading": "در حال بارگذاری…",
+      "saving": "در حال ذخیره…",
+      "saved": "ذخیره شد",
+      "error": "مشکلی پیش آمد"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "صفحه جدید",
+      "title": "ایجاد صفحه جدید",
+      "placeholder": "عنوان صفحه…",
+      "create": "ایجاد",
+      "creating": "در حال ایجاد…"
+    },
+    "newCabinet": {
+      "trigger": "Cabinet جدید",
+      "title": "ایجاد Cabinet جدید",
+      "subtitle": "یک cabinet یک فضای کاری با عوامل، وظایف و دانش مخصوص به خود است.",
+      "importFromRegistry": "وارد کردن از رجیستری",
+      "nameLabel": "نام Cabinet",
+      "namePlaceholder": "مثلاً: استارتاپ من، تیم بازاریابی، آزمایشگاه تحقیقاتی…",
+      "selectAgents": "انتخاب عامل‌ها",
+      "selectedCount": "{{count}} انتخاب شده",
+      "createCabinet": "ایجاد Cabinet",
+      "creating": "در حال ایجاد…",
+      "createFailed": "خطا در ایجاد cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "برون‌بری صفحه",
+      "copyMarkdown": "کپی Markdown",
+      "copyForLlms": "کپی برای LLMها",
+      "copyAsHtml": "کپی به صورت HTML",
+      "downloadMarkdown": "دانلود .md",
+      "downloadPdf": "دانلود PDF",
+      "copiedForLlmToast": "{{size}} از Markdown برای LLM کپی شد"
+    },
+    "toolbar": {
+      "heading1": "عنوان ۱",
+      "heading2": "عنوان ۲",
+      "heading3": "عنوان ۳",
+      "bold": "پررنگ",
+      "italic": "کج",
+      "underline": "زیرخط",
+      "strikethrough": "خط‌خورده",
+      "inlineCode": "کد درون‌خطی",
+      "link": "پیوند",
+      "textColor": "رنگ متن",
+      "highlight": "برجسته کردن",
+      "background": "پس‌زمینه",
+      "bulletList": "فهرست گلوله‌ای",
+      "orderedList": "فهرست شماره‌دار",
+      "blockquote": "نقل قول بلوکی",
+      "checklist": "فهرست بررسی",
+      "codeBlock": "بلوک کد",
+      "divider": "جداکننده",
+      "alignLeft": "تراز چپ",
+      "alignCenter": "تراز وسط",
+      "alignRight": "تراز راست",
+      "justify": "تراز کامل",
+      "align": "تراز",
+      "table": {
+        "selectCellText": "انتخاب متن سلول",
+        "addRowAbove": "افزودن ردیف در بالا",
+        "addRowBelow": "افزودن ردیف در پایین",
+        "moveRowUp": "انتقال ردیف به بالا",
+        "moveRowDown": "انتقال ردیف به پایین",
+        "deleteRow": "حذف ردیف",
+        "addColumnBefore": "افزودن ستون در قبل",
+        "addColumnAfter": "افزودن ستون در بعد",
+        "moveColumnLeft": "انتقال ستون به چپ",
+        "moveColumnRight": "انتقال ستون به راست",
+        "deleteColumn": "حذف ستون",
+        "toggleHeaderRow": "نمایش/پنهان‌سازی ردیف سربرگ",
+        "toggleHeaderColumn": "نمایش/پنهان‌سازی ستون سربرگ",
+        "deleteTable": "حذف جدول"
+      },
+      "superscript": "بالانویس",
+      "subscript": "زیرنویس",
+      "insertImage": "درج تصویر",
+      "insertVideo": "درج ویدئو",
+      "embed": "جاسازی",
+      "undo": "واگرد",
+      "redo": "بازانجام",
+      "switchToLtr": "تغییر به چپ به راست",
+      "switchToRtl": "تغییر به راست به چپ",
+      "scrollLeft": "پیمایش نوار ابزار به چپ",
+      "scrollRight": "پیمایش نوار ابزار به راست",
+      "markdown": "مارک‌داون",
+      "preview": "پیش‌نمایش"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "نام Cabinet…",
+      "renameWarning": "نام‌های Cabinet را نمی‌توان بعداً تغییر داد (فعلاً). عاقلانه انتخاب کنید."
+    },
+    "templates": {
+      "header": "شروع از یک الگو",
+      "browseAll": "مشاهده همه →"
+    },
+    "quickActions": {
+      "shuffle": "نمایش پیشنهادهای متفاوت",
+      "launch10Songs": "راه‌اندازی ۱۰ ویرایشگر ترانه‌سرایی",
+      "dailyReview9am": "بازبینی روزانه ساعت ۹ صبح",
+      "weeklyReview": "بازبینی هفتگی دوشنبه آینده",
+      "thailandTrip": "برنامه‌ریزی سفرم به تایلند",
+      "physicsApp": "برایم یک اپلیکیشن مطالعه فیزیک بساز",
+      "summariseRecent": "خلاصه‌سازی کار اخیرم",
+      "recruiterReply": "پیش‌نویس پاسخ به استخدام‌کننده",
+      "mapArticles": "ترسیم ارتباطات مقاله",
+      "physicsCourse": "راه‌اندازی یک دوره فیزیک ۶ ماژولی",
+      "shortStory": "طرح کلی یک داستان کوتاه",
+      "hourlyStandup": "یادآوری استندآپ ساعتی",
+      "researchPhone": "تحقیق درباره گوشی بعدی‌ام",
+      "translateToSpanish": "ترجمه این cabinet به اسپانیایی",
+      "refactorNotes": "بازسازی سیستم یادداشت‌برداری‌ام",
+      "birthdayParty": "برنامه‌ریزی یک جشن تولد",
+      "boardUpdate": "پیش‌نویس به‌روزرسانی هیئت مدیره",
+      "customerInterviews": "شبیه‌سازی ۵ مصاحبه با مشتری"
+    },
+    "goodMorning": "صبح بخیر",
+    "goodAfternoon": "بعدازظهر بخیر",
+    "goodEvening": "عصر بخیر",
+    "greetingWithName": "{{greeting}}، {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "می‌خواهم ایجاد کنم...",
+    "composerDaemonDown": "دیمون عامل آفلاین است — برای ارسال مجدداً راه‌اندازی کنید"
+  },
+  "onboarding": {
+    "launchHeading": "<accent>Cabinet</accent> خود را شروع کنید",
+    "intro": {
+      "tagline1": "پایگاه دانش شما.",
+      "tagline2": "تیم هوش مصنوعی شما.",
+      "getStarted": "شروع کنید"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "دفتر",
+        "study": "مطالعه",
+        "lab": "آزمایشگاه",
+        "library": "کتابخانه",
+        "kitchen": "آشپزخانه",
+        "family": "خانواده",
+        "dining": "غذاخوری",
+        "studio": "استودیو"
+      }
+    },
+    "welcome": {
+      "paragraph": "خانه شما، متعلق به شماست. در آن، اتاق‌هایی برای بخش‌های مختلف زندگی‌تان تنظیم می‌کنید: کار، مغز دوم، تحقیق، خانواده. و هر اتاق کابینت‌هایی دارد: یادداشت‌های شما، فایل‌های شما، و یک تیم هوش مصنوعی که بی‌سروصدا کارها را در پس‌زمینه انجام می‌دهد.",
+      "namePrompt": "نام شما چیست؟",
+      "heading": "به <accent>خانه</accent> خوش آمدید"
+    },
+    "welcomeBack": {
+      "heading": "خوش آمدید",
+      "headingNamed": "به {{cabinet}} خوش آمدید",
+      "subtitle": "یک کابینت موجود در اینجا پیدا کردیم. بیایید راه‌اندازی آن را کامل کنیم.",
+      "continue": "ادامه"
+    },
+    "verify": {
+      "passed": "موفق",
+      "notInstalled": "نصب نشده",
+      "authRequired": "نیاز به احراز هویت",
+      "paymentRequired": "نیاز به پرداخت",
+      "quotaExceeded": "محدودیت سهمیه / نرخ",
+      "error": "خطا"
+    },
+    "providerStatus": {
+      "ready": "آماده",
+      "loginRequired": "نیاز به ورود",
+      "notInstalled": "نصب نشده"
+    },
+    "actions": {
+      "back": "بازگشت",
+      "next": "بعدی",
+      "continue": "ادامه",
+      "skip": "رد کردن",
+      "finish": "پایان",
+      "complete": "تکمیل راه‌اندازی",
+      "copyToClipboard": "کپی در کلیپ‌بورد"
+    },
+    "cabinetCreated": {
+      "continue": "ادامه تنظیمات",
+      "heading": "Cabinet شما ایجاد شد",
+      "subtitle": "همه چیز آماده و مهیاست.",
+      "agentsReady_one": "{{count}} عامل آماده به کار",
+      "agentsReady_other": "{{count}} عامل آماده به کار",
+      "scheduledJobs_one": "{{count}} کار برنامه‌ریزی‌شده",
+      "scheduledJobs_other": "{{count}} کار برنامه‌ریزی‌شده",
+      "subCabinets_one": "{{count}} زیر-Cabinet",
+      "subCabinets_other": "{{count}} زیر-Cabinet",
+      "agentsReady": "{{count}} عامل آماده به کار",
+      "scheduledJobs": "{{count}} کار برنامه‌ریزی‌شده",
+      "subCabinets": "{{count}} زیر-Cabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "شما قبلاً در لیست هستید — با شما در تماس خواهیم بود.",
+      "aside": "Cabinet Cloud به زودی عرضه می‌شود. همان محصول، بدون نیاز به زیرساخت خودمیزبانی.",
+      "description": "Cabinet خود را از هر دستگاهی باز کنید در حالی که عوامل هوش مصنوعی شما به کار خود ادامه می‌دهند — پیش‌نویس‌نویسی، تحقیق، سازماندهی — حتی زمانی که لپ‌تاپ شما بسته است.",
+      "error": "مشکلی پیش آمد. ایمیل را بررسی کرده و دوباره تلاش کنید.",
+      "joinWaitlist": "پیوستن به لیست انتظار",
+      "onList": "شما در لیست هستید. زمانی که Cabinet Cloud راه‌اندازی شود، به شما ایمیل خواهیم زد.",
+      "sending": "در حال ارسال…",
+      "title": "Cabinet شما، در هر کجا. تیم هوش مصنوعی شما، همیشه فعال.",
+      "waitlistSubtitle": "از هر کجا متصل شوید. تیم هوش مصنوعی شما ۲۴/۷ کار می‌کند."
+    },
+    "discord": {
+      "aside": "اگر می‌خواهید ابتدا به ویژگی‌های جدید دسترسی داشته باشید و «گفتگو» را به «ارسال تیکت» ترجیح می‌دهید، این اتاق شماست.",
+      "description": "اینجا جایی است که بازخوردها به ویژگی‌ها تبدیل می‌شوند، اسکرین‌شات‌ها به بحث‌ها می‌انجامند، و معمولاً کسی مورد خاص را قبل از اینکه شما را پیدا کند، کشف می‌کند.",
+      "joinBadge": "پیوستن",
+      "title": "دیسکورد جایی است که اتفاقات عجیب و خوب رخ می‌دهد."
+    },
+    "github": {
+      "aside": "Cabinet متن‌باز است. اگر چشم‌انداز را دوست دارید، به ما در انتشار آن کمک کنید.",
+      "description": "یک ستاره گیت‌هاب به افراد بیشتری کمک می‌کند تا Cabinet را کشف کرده و به جامعه بپیوندند.",
+      "starsLabel": "{{stars}} ستاره گیت‌هاب",
+      "title": "به رشد جامعه Cabinet کمک کنید"
+    },
+    "launch": {
+      "beforeYouLaunch": "قبل از راه‌اندازی",
+      "defaultCabinetName": "Cabinet شما",
+      "defaultDescription": "پایگاه دانش + تیم هوش مصنوعی",
+      "knowledgeBaseLabel": "پایگاه دانش",
+      "aiTeamLabel": "تیم هوش مصنوعی",
+      "launchCabinet": "راه‌اندازی Cabinet",
+      "settingUp": "در حال راه‌اندازی...",
+      "disclaimerAccess": "<strong>عامل‌ها با دسترسی کامل اجرا می‌شوند.</strong> Cabinet از <flag>--dangerously-skip-permissions</flag> (Claude Code) و پرچم‌های معادل در سایر ارائه‌دهندگان استفاده می‌کند. این دقیقاً مشابه اجرای این ابزارهای CLI از ترمینال خودتان است. هر سرور MCP یا ابزاری که پیکربندی کرده‌اید ممکن است به‌طور خودکار توسط عامل‌ها فراخوانی شود.",
+      "disclaimerBackup": "<strong>به‌طور منظم از داده‌های خود پشتیبان بگیرید.</strong> عامل‌ها می‌توانند فایل‌ها را در سراسر پایگاه دانش و مخازن مرتبط شما بخوانند، بنویسند و حذف کنند. Cabinet مسئولیتی در قبال از دست رفتن داده‌ها ندارد. شما مسئول ارائه‌دهندگان هوش مصنوعی که انتخاب می‌کنید و شرایط خدمات آن‌ها هستید.",
+      "disclaimerBeta": "<strong>نرم‌افزار بتا. ممکن است مشکلاتی پیش بیاید.</strong> ما سریع منتشر می‌کنیم. تغییرات مخرب ممکن است بدون اطلاع قبلی اعمال شوند.",
+      "legalNotice": "با ادامه دادن، شما با <terms>شرایط</terms> و <privacy>حریم خصوصی</privacy> ما موافقت می‌کنید. Cabinet یک <oss>پروژه متن‌باز</oss> است.",
+      "keepInTouch": "با ما در ارتباط باشید. Cabinet متن‌باز است و به صورت عمومی توسعه می‌یابد، و ما مشتاقیم بدانیم چه چیزی را در آینده بسازیم. بدون هرزنامه، قول می‌دهیم."
+    },
+    "provider": {
+      "agentType": "عامل {{type}}",
+      "close": "بستن",
+      "comingSoon": "به زودی",
+      "guide": "راهنما",
+      "heading": "ارائه‌دهنده عامل",
+      "moreModels": "هوش‌های مصنوعی بیشتر",
+      "install": "نصب",
+      "logIn": "ورود",
+      "openTerminalButton": "باز کردن ترمینال",
+      "openTerminalDetail": "برای اجرای مراحل بعدی به یک ترمینال نیاز دارید.",
+      "openTerminalError": "امکان باز کردن خودکار ترمینال وجود نداشت. ترمینال سیستم خود را به صورت دستی باز کنید.",
+      "openTerminalTitle": "یک ترمینال باز کنید",
+      "recheck": "بررسی مجدد ارائه‌دهندگان",
+      "rerunVerify": "اجرای مجدد تأیید",
+      "runVerify": "اجرای تأیید",
+      "setupTitle": "راه‌اندازی {{name}}",
+      "skipForNow": "فعلاً رد کن",
+      "subtitle": "Cabinet برای قدرت بخشیدن به عامل‌های شما به یک AI CLI نیاز دارد.",
+      "verifyExplanation": "تأیید، پرامپت بدون رابط کاربری ارائه‌دهنده را به صورت سرتاسری اجرا می‌کند و هر گونه خطا را طبقه‌بندی می‌کند تا بدانید کدام مرحله را باید دوباره بررسی کنید.",
+      "verifying": "در حال تأیید…",
+      "failedAtStep": "در مرحله: <strong>{{step}}</strong> شکست خورد"
+    },
+    "roomSetup": {
+      "subtitle": "این cabinet برای چیست؟ هر اتاق با تیم هوش مصنوعی خود همراه است.",
+      "heading": "یک <accent>اتاق</accent> انتخاب کنید"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet چیست؟",
+      "body": "Cabinet یک فضای کاری متمرکز برای یک حوزه از زندگی یا کار شماست. این فضا فایل‌ها، یادداشت‌ها، ابزارها، عامل‌ها و وظایف شما را در خود جای می‌دهد تا تیم هوش مصنوعی شما زمینه لازم برای کمک واقعی را داشته باشد.",
+      "examplesLabel": "نحوه استفاده افراد از Cabinet",
+      "example1": "استارتاپ شما",
+      "example2": "یک مخزن GitHub",
+      "example3": "کار بازاریابی شما",
+      "example4": "یک پروژه مشتری",
+      "example5": "پایگاه دانش شخصی شما"
+    },
+    "access": {
+      "heading": "{{name}} به چه چیزی دسترسی دارد؟",
+      "subtitle": "دانش و ابزارهایی که این عامل می‌تواند استفاده کند را انتخاب کنید. می‌توانید این را هر زمان تغییر دهید.",
+      "defaultAgent": "عامل شما",
+      "files": "فایل‌ها و دانش",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "سرورهای MCP",
+      "plugins": "افزونه‌ها",
+      "skills": "مهارت‌ها",
+      "placeholderNote": "می‌توانید دسترسی را بعداً در تنظیمات عامل تنظیم دقیق کنید."
+    },
+    "heartbeat": {
+      "heading": "آیا {{name}} باید با ضربان قلب اجرا شود؟",
+      "subtitle": "ضربان قلب به عامل اجازه می‌دهد تا طبق یک برنامه زمانی، خودکار بررسی و کار کند.",
+      "off": "خاموش",
+      "offHint": "فقط زمانی که شما درخواست کنید اجرا می‌شود. برای شروع توصیه می‌شود.",
+      "daily": "روزانه",
+      "dailyHint": "روزی یک بار بررسی می‌کند.",
+      "weekly": "هفتگی",
+      "weeklyHint": "هفته‌ای یک بار بررسی می‌کند.",
+      "tokenNote": "توجه: ضربان قلب عامل را به صورت خودکار اجرا می‌کند، که هر بار که فعال می‌شود از توکن‌های هوش مصنوعی (و سهمیه ارائه‌دهنده شما) استفاده می‌کند. می‌توانید این را هر زمان تغییر دهید یا خاموش کنید."
+    },
+    "firstTask": {
+      "heading": "اولین وظیفه خود را ثبت کنید",
+      "subtitle": "وظایف روشی هستند که شما کار را به {{name}} می‌سپارید. اکنون یکی بنویسید و آن در Cabinet شما قرار می‌گیرد، آماده اجرا.",
+      "label": "{{name}} ابتدا چه کاری باید انجام دهد؟",
+      "placeholder": "مثلاً پیش‌نویس یک ایمیل خوش‌آمدگویی برای مشتریان جدید",
+      "example1": "آخرین یادداشت‌های من را خلاصه کن",
+      "example2": "پیش‌نویس یک برنامه پروژه",
+      "example3": "۳ رقیب برتر ما را تحقیق کن",
+      "note": "می‌توانید این را خالی بگذارید و وظایف را بعداً اضافه کنید. هیچ چیز اجرا نمی‌شود تا زمانی که یک ارائه‌دهنده هوش مصنوعی را متصل کنید."
+    },
+    "rail": {
+      "untitled": "Cabinet شما",
+      "dataCaption": "تمام فایل‌ها و یادداشت‌های پروژه شما اینجا قرار دارند.",
+      "teamEmpty": "هنوز عاملی وجود ندارد.",
+      "teamCaption": "تیم هوش مصنوعی شما اینجا کار می‌کند.",
+      "tasksEmpty": "هنوز وظیفه‌ای وجود ندارد.",
+      "tasksCaption": "کاری که به تیم خود می‌سپارید اینجا نمایش داده می‌شود.",
+      "assignedTo": "اختصاص داده شده به {{name}}",
+      "you": "شما"
+    },
+    "rooms": {
+      "office": {
+        "label": "دفتر کار",
+        "tagline": "یک کسب‌وکار، استارتاپ یا پروژه جانبی را مدیریت کنید.",
+        "workspaceLabel": "نام شرکت یا پروژه",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "چه کاری انجام می‌دهید؟",
+        "descriptionPlaceholder": "ما یک پادکست درباره استارتاپ‌های هوش مصنوعی می‌سازیم.",
+        "departmentNoun": "بخش",
+        "teamSizeLabel": "اندازه تیم",
+        "exampleAgents": {
+          "0": "مدیر عامل",
+          "1": "ویرایشگر"
+        }
+      },
+      "study": {
+        "label": "مطالعه",
+        "tagline": "مغز دوم شما — نوشتن، یادداشت‌ها، دستیار شخصی.",
+        "workspaceLabel": "کابینت خود را نام‌گذاری کنید",
+        "workspacePlaceholder": "مطالعه من",
+        "descriptionLabel": "در چه زمینه‌هایی از زندگی به کمک نیاز دارید؟",
+        "descriptionPlaceholder": "نوشتن، مدیریت ایمیل، تقویم، ردیابی عادت‌ها",
+        "departmentNoun": "حوزه",
+        "exampleAgents": {
+          "0": "دستیار",
+          "1": "کتابدار"
+        }
+      },
+      "lab": {
+        "label": "آزمایشگاه تحقیقاتی",
+        "tagline": "کار آکادمیک، ادبیات، تدریس، پایان‌نامه.",
+        "workspaceLabel": "نام فضای کاری",
+        "workspacePlaceholder": "فلسفه ذهن",
+        "descriptionLabel": "حوزه شما چیست یا در مورد چه چیزی تحقیق می‌کنید؟",
+        "descriptionPlaceholder": "پدیدارشناسی، آگاهی، تدریس مقدمه‌ای بر فلسفه",
+        "departmentNoun": "حوزه",
+        "exampleAgents": {
+          "0": "مسئول تحقیق",
+          "1": "کتابدار"
+        }
+      },
+      "family-room": {
+        "label": "اتاق خانواده",
+        "tagline": "خانه، تقویم خانواده، وعده‌های غذایی، بچه‌ها.",
+        "workspaceLabel": "نام خانواده",
+        "workspacePlaceholder": "The Nguyen Family",
+        "descriptionLabel": "چه کسانی اینجا زندگی می‌کنند و چه کارهایی را مدیریت می‌کنید؟",
+        "descriptionPlaceholder": "دو والد، سه فرزند، دو مدرسه، یک سگ",
+        "departmentNoun": "حوزه",
+        "teamSizeLabel": "تعداد اعضای خانواده",
+        "exampleAgents": {
+          "0": "مدیر خانه",
+          "1": "برنامه‌ریز"
+        }
+      },
+      "blank": {
+        "label": "اتاق خالی",
+        "tagline": "هنوز چیزی نیست. عامل‌های خودتان را بیاورید، شکل خودتان را بسازید.",
+        "workspaceLabel": "نام کابینت خود را بگذارید",
+        "workspacePlaceholder": "کابینت من",
+        "descriptionLabel": "برای چیست؟",
+        "descriptionPlaceholder": "هر چیزی — اگر هنوز مطمئن نیستید، خالی بگذارید",
+        "departmentNoun": "گروه",
+        "exampleAgents": {
+          "0": "به انتخاب شما"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "رهبری",
+      "marketing": "بازاریابی",
+      "content": "محتوا",
+      "engineering": "مهندسی",
+      "product-and-design": "محصول و طراحی",
+      "business": "کسب‌وکار",
+      "research": "تحقیق",
+      "finance-and-ops": "مالی و عملیات",
+      "personal": "شخصی",
+      "second-brain": "مغز دوم",
+      "writing": "نوشتن",
+      "tools": "ابزارها",
+      "life-admin": "مدیریت زندگی",
+      "from-the-office": "از دفتر",
+      "writing-and-notes": "نوشتن و یادداشت‌ها",
+      "other": "سایر",
+      "household": "خانوار",
+      "admin": "مدیریت",
+      "money": "پول",
+      "product": "محصول",
+      "design": "طراحی",
+      "sales": "فروش",
+      "support": "پشتیبانی",
+      "analytics": "تحلیل",
+      "finance": "مالی",
+      "legal": "حقوقی",
+      "people": "افراد"
+    },
+    "demo": {
+      "greeting": {
+        "office": "صبح بخیر تیم! به {{workspace}} خوش آمدید. بیایید کار را شروع کنیم.",
+        "study": "صبح بخیر. مغز دوم شما آنلاین است — به {{home}} خوش آمدید.",
+        "lab": "میز تحقیق آماده است — «{{workspace}}». امروز به چه چیزی می‌پردازیم؟",
+        "family-room": "مرکز فرماندهی خانه در حال راه‌اندازی است — {{home}}. بیایید همه را به جایی که باید باشند برسانیم.",
+        "blank": "صفحه سفید — «{{workspace}}». اینجا چه چیزی می‌خواهید بسازید، {{home}}؟"
+      },
+      "assign": "{{name}}، می‌توانی مسئولیت {{topic}} را بر عهده بگیری؟",
+      "fallbackTopic": "بعدی چیست",
+      "office": {
+        "replies": {
+          "0": "انجامش می‌دهم. یک نمای کلی از وضعیت را تا پایان روز آماده خواهم کرد.",
+          "1": "در حال تدوین یک برنامه هستم. به زودی در #content به اشتراک می‌گذارم.",
+          "2": "در حال راه‌اندازی گردش‌کارهای اساسی هستم. تا اینجا خوب پیش می‌رود."
+        },
+        "topics": {
+          "0": "تحقیق رقبا",
+          "1": "تقویم محتوا",
+          "2": "برنامه راه‌اندازی"
+        },
+        "closing": "انرژی عالی از همه. بیایید این هفته اول را قوی شروع کنیم."
+      },
+      "study": {
+        "replies": {
+          "0": "صندوق ورودی را اولویت‌بندی می‌کنم و موارد نیازمند شما را مشخص می‌کنم.",
+          "1": "تقویم تا ساعت ۳ بعدازظهر خالی است — فرصت خوبی برای نوشتن است.",
+          "2": "سه یادداشت جدید را به فهرست 'روزانه' پیوند داده‌ام."
+        },
+        "topics": {
+          "0": "اولویت‌بندی صندوق ورودی امروز",
+          "1": "نوشته‌های این هفته",
+          "2": "فهرست مطالعه من"
+        },
+        "closing": "خوب است. اگر چیزی نیاز به من داشت، خبرم کنید — در غیر این صورت، مزاحم شما نمی‌شوم."
+      },
+      "lab": {
+        "replies": {
+          "0": "در حال دریافت جدیدترین مقاله در این مورد هستم — پیش‌نویس خلاصه در یک ساعت آماده می‌شود.",
+          "1": "بعد از این، کتاب‌شناسی را همگام‌سازی می‌کنم و موارد تکراری را علامت می‌زنم.",
+          "2": "طرح کلی سخنرانی پنجشنبه تقریباً آماده بازبینی است."
+        },
+        "topics": {
+          "0": "مرور ادبیات",
+          "1": "آماده‌سازی سخنرانی پنجشنبه",
+          "2": "فهرست منابع"
+        },
+        "closing": "در جریانم بگذارید. هر چیزی را که تا پایان روز ارسال کنید، بازبینی می‌کنم."
+      },
+      "family-room": {
+        "replies": {
+          "0": "برنامه بعد از ساعت ۴ خالی است. موارد تحویل همپوشان را علامت می‌زنم.",
+          "1": "منوی هفته تهیه شد — فهرست خرید آماده بازبینی است.",
+          "2": "فعالیت‌های بچه‌ها همگام‌سازی شد. شب DnD برای جمعه همچنان پابرجاست."
+        },
+        "topics": {
+          "0": "برنامه امروز",
+          "1": "برنامه غذایی",
+          "2": "فعالیت‌های بچه‌ها"
+        },
+        "closing": "ممنون از همه. اگر چیزی در طول روز تغییر کرد، خبرم کنید."
+      },
+      "blank": {
+        "replies": {
+          "0": "متوجه شدم. هر وقت آماده بودید، من هم آماده‌ام.",
+          "1": "آماده‌باش.",
+          "2": "منتظر دستورالعمل هستم."
+        },
+        "topics": {
+          "0": "اولین چیز",
+          "1": "مورد بعدی",
+          "2": "سوال باز"
+        },
+        "closing": "هر وقت آماده بودید، به ما بگویید چه کاری انجام دهیم."
+      }
+    },
+    "team": {
+      "browseAll": "مرور همه",
+      "browseCabinets": "مرور cabinetها",
+      "cabinetNameLabel": "نام Cabinet",
+      "cancel": "لغو",
+      "importButton": "وارد کردن",
+      "importFailed": "وارد کردن ناموفق بود",
+      "importFailedConnection": "وارد کردن ناموفق بود. اتصال خود را بررسی کنید.",
+      "importTitle": "وارد کردن {{name}}",
+      "pickAgents": "عامل‌های خود را انتخاب کنید",
+      "required": "الزامی",
+      "subtitle": "هر cabinet یک تیم هوش مصنوعی است — عامل‌ها، وظایف و یک پایگاه دانش مشترک که با هم به عنوان یک واحد کار می‌کنند.",
+      "heading": "تیم <accent>خود</accent> را بسازید",
+      "nameLabel": "نام عامل",
+      "namePlaceholder": "مثلاً: ویرایشگر، پژوهشگر، دستیار",
+      "roleLabel": "نقش",
+      "rolePlaceholder": "مثلاً: دستیار نویسندگی",
+      "instructionsLabel": "این عامل چه کاری باید انجام دهد؟",
+      "instructionsPlaceholder": "توضیح دهید چگونه باید کمک کند. مثلاً: صفحات من را پیش‌نویس و ویرایش کند، لحن را واضح و دوستانه نگه دارد و بهبودها را پیشنهاد دهد.",
+      "agentOptionalHint": "اختیاری. می‌توانید از این مرحله صرف‌نظر کنید و عامل‌ها را بعداً از داخل اتاق اضافه کنید.",
+      "agentCount_one": "{{count}} عامل",
+      "agentCount_other": "{{count}} عامل",
+      "jobCount_one": "{{count}} کار",
+      "jobCount_other": "{{count}} کار",
+      "subCabinetCount_one": "{{count}} زیر-cabinet",
+      "subCabinetCount_other": "{{count}} زیر-cabinet",
+      "cabinetsImported_one": "{{count}} کابینت وارد شد",
+      "cabinetsImported_other": "{{count}} کابینت وارد شدند",
+      "agentCount": "{{count}} عامل",
+      "cabinetsImported": "{{count}} کابینت وارد شدند",
+      "jobCount": "{{count}} کار",
+      "subCabinetCount": "{{count}} زیرکابینت"
+    }
+  },
+  "search": {
+    "title": "جستجو",
+    "placeholder": "جستجوی صفحات، عامل‌ها، وظایف…",
+    "clearQuery": "پاک کردن جستجو",
+    "noCommands": "هیچ فرمانی مطابقت ندارد.",
+    "scopes": {
+      "all": "همه",
+      "pages": "صفحات",
+      "agents": "عامل‌ها",
+      "tasks": "وظایف"
+    },
+    "groups": {
+      "pages": "صفحات",
+      "agents": "عامل‌ها",
+      "tasks": "وظایف"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "زبان",
+      "description": "زبان و جهت خواندن را تغییر می‌دهد. صفحات موجود جهت هر سند خود را حفظ می‌کنند.",
+      "english": "انگلیسی",
+      "hebrew": "عبری",
+      "chineseSimplified": "چینی ساده‌شده",
+      "chineseTraditional": "چینی سنتی",
+      "moreLanguages": "زبان‌های بیشتر",
+      "moreLanguagesHint": "روی هر کدام کلیک کنید تا به ما بگویید که Cabinet را به آن زبان می‌خواهید — ما به پرتقاضاترین‌ها اولویت می‌دهیم.",
+      "comingSoon": "به زودی",
+      "requestSubmitted": "متشکریم! درخواست شما برای {{language}} ثبت شد. ما به پرتقاضاترین زبان‌ها اولویت می‌دهیم.",
+      "requestFailed": "امکان اتصال به سرور وجود نداشت. لطفاً لحظاتی دیگر دوباره امتحان کنید."
+    },
+    "appearance": {
+      "title": "ظاهر",
+      "theme": "پوسته",
+      "themeDescription": "یک پوسته برای رابط کاربری انتخاب کنید.",
+      "matchSystem": "مطابق با سیستم",
+      "matchSystemDescription": "به‌طور خودکار با ظاهر سیستم‌عامل شما تغییر می‌کند.",
+      "lightThemes": "تم‌های روشن",
+      "darkThemes": "تم‌های تیره",
+      "lightVariant": "حالت روشن",
+      "darkVariant": "حالت تیره",
+      "sidebar": "نوار کناری",
+      "showHiddenFiles": "نمایش فایل‌های مخفی",
+      "sidebarDescription": "نحوه نمایش فایل‌ها در نوار کناری را پیکربندی کنید.",
+      "showHiddenFilesHint": "نمایش فایل‌ها و پوشه‌هایی که با نقطه شروع می‌شوند (مانند .env، .git)"
+    },
+    "tabs": {
+      "profile": "پروفایل",
+      "providers": "ارائه‌دهندگان",
+      "skills": "مهارت‌ها",
+      "storage": "فضای ذخیره‌سازی",
+      "integrations": "یکپارچه‌سازی‌ها",
+      "notifications": "اعلان‌ها",
+      "appearance": "ظاهر",
+      "updates": "به‌روزرسانی‌ها",
+      "about": "درباره"
+    },
+    "page": {
+      "title": "تنظیمات",
+      "refresh": "تازه‌سازی",
+      "groupYou": "شما",
+      "groupWorkspace": "فضای کاری",
+      "groupApp": "برنامه"
+    },
+    "common": {
+      "copyToClipboard": "کپی در کلیپ‌بورد",
+      "categoriesAriaLabel": "دسته‌بندی‌های تنظیمات",
+      "loading": "در حال بارگذاری…",
+      "connect": "اتصال",
+      "recommended": "توصیه شده"
+    },
+    "integrationsPreview": {
+      "comingSoon": "به زودی",
+      "hint": "اتصال یکپارچه‌سازی‌های خارجی و ابزارهای داخلی در دست اقدام است."
+    },
+    "storage": {
+      "dataDirectory": "دایرکتوری داده",
+      "restartRequired": "نیاز به راه‌اندازی مجدد",
+      "dataDirectoryDescription": "تمام محتوای پایگاه دانش در این دایرکتوری ذخیره می‌شود. تغییر مسیر نیاز به راه‌اندازی مجدد دارد.",
+      "restartHint": "دایرکتوری داده پس از راه‌اندازی مجدد Cabinet تغییر خواهد کرد.",
+      "currentPath": "مسیر فعلی",
+      "loadingPath": "در حال بارگذاری...",
+      "changeDirectory": "تغییر دایرکتوری",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "مرور",
+      "save": "ذخیره",
+      "openInFinder": "باز کردن در Finder",
+      "envVarHint1": "همچنین می‌توانید متغیر ",
+      "envVarHint2": " محیطی را تنظیم کنید که بر این تنظیم اولویت دارد.",
+      "failedToSave": "ذخیره نشد.",
+      "failedToSaveDir": "ذخیره دایرکتوری داده با شکست مواجه شد."
+    },
+    "updates": {
+      "checking": "در حال بررسی به‌روزرسانی‌های Cabinet…"
+    },
+    "providers": {
+      "title": "ارائه‌دهندگان عامل",
+      "defaultModel": "مدل پیش‌فرض",
+      "setupGuide": "راهنمای راه‌اندازی",
+      "troubleshoot": "عیب‌یابی ارائه‌دهندگان هوش مصنوعی",
+      "subtitle": "ارائه‌دهندگان عامل هوش مصنوعی را پیکربندی کنید. عوامل CLI از طریق ترمینال اجرا می‌شوند، عوامل API از فراخوانی‌های مستقیم API استفاده می‌کنند.",
+      "defaultRuntime": "زمان اجرای پیش‌فرض",
+      "defaultRuntimeHint": "مکالمات عمومی و اجراهای بازگشتی از این ارائه‌دهنده/مدل/تلاش استفاده می‌کنند.",
+      "cliAgents": "عوامل CLI",
+      "apiAgents": "عوامل API",
+      "ready": "آماده",
+      "installedNotLoggedIn": "نصب شده اما وارد نشده",
+      "notInstalled": "نصب نشده",
+      "emptyMatrix": "هیچ ارائه‌دهنده‌ای پیکربندی نشده است. یکی در زیر اضافه کنید."
+    },
+    "notifications": {
+      "channels": "کانال‌های اعلان",
+      "alertRules": "قوانین هشدار",
+      "alwaysOn": "همیشه روشن",
+      "comingSoon": "به زودی",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "نحوه دریافت هشدارها را هنگامی که عوامل به توجه شما نیاز دارند، پیکربندی کنید.",
+      "rulesHint": "اعلان‌ها به طور خودکار برای این رویدادها فعال می‌شوند:",
+      "previewHint": "اعلان‌های مرورگر، تلگرام، اسلک و ایمیل.",
+      "channelPushName": "پوش مرورگر",
+      "channelPushDesc": "هشدارهای فوری هنگام باز بودن تب Cabinet یا نصب PWA",
+      "channelTelegramName": "تلگرام",
+      "channelTelegramDesc": "اعلان‌های فوری موبایل از طریق ربات تلگرام",
+      "channelSlackName": "وب‌هوک اسلک",
+      "channelSlackDesc": "ارسال هشدارها به کانال اسلک تیم شما",
+      "channelEmailName": "خلاصه ایمیل",
+      "channelEmailDesc": "خلاصه دسته‌بندی شده از هشدارها و فعالیت عامل",
+      "ruleAlertsEvent": "پیام‌های کانال #alerts",
+      "ruleAlertsDesc": "هر عاملی که در کانال هشدارها پست می‌کند",
+      "ruleMentionsEvent": "اشاره‌های @human",
+      "ruleMentionsDesc": "هنگامی که یک عامل در هر کانالی به @human اشاره می‌کند",
+      "ruleFloorEvent": "کف هدف نقض شد",
+      "ruleFloorDesc": "یک هدف به زیر حداقل آستانه خود می‌رسد",
+      "ruleHealthEvent": "سلامت عامل کاهش یافت",
+      "ruleHealthDesc": "۳+ شکست متوالی ضربان قلب"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "نسخه",
+      "release": "انتشار",
+      "framework": "چارچوب",
+      "storage": "ذخیره‌سازی",
+      "privacy": "حریم خصوصی",
+      "telemetry": "تله‌متری استفاده ناشناس",
+      "tagline": "پایگاه دانش و سیستم عامل استارتاپی خودمیزبان با اولویت هوش مصنوعی.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "سیستم فایل محلی",
+      "aiLabel": "هوش مصنوعی",
+      "aiValue": "قدرت گرفته از CLIهای هوش مصنوعی محلی",
+      "philosophy": "تمام محتوا به صورت فایل‌های مارک‌داون روی دیسک ذخیره می‌شود. انسان‌ها قصد را تعریف می‌کنند. عوامل کار را انجام می‌دهند. پایگاه دانش حافظه مشترک بین هر دو است.",
+      "privacyBody": "Cabinet تله‌متری استفاده ناشناس را برای کمک به بهبود محصول ارسال می‌کند. هیچ محتوای فایل، مسیر، اعلان یا راز جمع‌آوری نمی‌شود.",
+      "privacyLink": "چه چیزی جمع‌آوری می‌شود؟",
+      "telemetryEnvDisabled": "غیرفعال شده توسط CABINET_TELEMETRY_DISABLED=1 (متغیر محیطی).",
+      "telemetryHint": "فقط تعداد رویدادها، نسخه‌ها و اطلاعات پلتفرم. برای توقف ارسال، آن را خاموش کنید.",
+      "cabinetCloud": "ابر کابینت",
+      "cloudBody": "از هر کجا به Cabinet خود متصل شوید، در حالی که تیم هوش مصنوعی شما ۲۴/۷ برای شما کار می‌کند. ایمیل خود را در زیر وارد کنید و ما به شما اطلاع خواهیم داد که Cabinet Cloud راه‌اندازی شود.",
+      "cloudAlready": "شما قبلاً در لیست هستید — با شما در تماس خواهیم بود.",
+      "cloudSuccess": "شما در لیست هستید. هنگامی که Cabinet Cloud راه‌اندازی شود، به شما ایمیل خواهیم زد.",
+      "cloudSending": "در حال ارسال…",
+      "cloudJoinWaitlist": "پیوستن به لیست انتظار",
+      "cloudError": "مشکلی پیش آمد. ایمیل را بررسی کرده و دوباره تلاش کنید.",
+      "connectTitle": "اتصال",
+      "connectBody": "راهنمایی بگیرید، بازخورد دهید، یا فقط سلام کنید.",
+      "joinDiscord": "به دیسکورد بپیوندید"
+    },
+    "profile": {
+      "title": "پروفایل",
+      "name": "نام",
+      "namePlaceholder": "Jane",
+      "displayName": "نام نمایشی",
+      "role": "نقش",
+      "rolePlaceholder": "سازنده",
+      "avatar": "آواتار",
+      "accentColor": "رنگ برجسته",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "آیکون جایگزین",
+      "useIconInstead": "به جای آن از آیکون استفاده کنید",
+      "searchAvatars": "جستجوی آواتارها…",
+      "searchIcons": "جستجوی آیکون‌ها…",
+      "howAppear": "نحوه نمایش شما در مکالمات و سراسر برنامه.",
+      "youFallback": "شما",
+      "displayNameHint": "در مکالمات نمایش داده می‌شود. پیش‌فرض: نام.",
+      "iconHint": "هنگامی که تصویر آواتار تنظیم نشده باشد، استفاده می‌شود. برای پاک کردن دوباره کلیک کنید.",
+      "tintHint": "رنگ آواتار جایگزین را هنگامی که تصویری تنظیم نشده باشد، تغییر می‌دهد.",
+      "save": "ذخیره",
+      "saving": "در حال ذخیره…",
+      "saved": "ذخیره شد",
+      "browseAll": "مشاهده همه ({{count}})",
+      "showFavorites": "نمایش موارد دلخواه",
+      "showFewer": "نمایش کمتر"
+    },
+    "workspace": {
+      "title": "فضای کاری",
+      "name": "نام فضای کاری",
+      "namePlaceholder": "Cabinet من",
+      "description": "توضیحات",
+      "descriptionPlaceholder": "چه کاری انجام می‌دهید؟",
+      "teamSize": "اندازه تیم",
+      "teamSizePlaceholder": "انفرادی / ۲-۵ / ۶-۲۰ / ۲۰+",
+      "subtitle": "در طول راه‌اندازی اولیه ثبت شده است. عامل‌ها هنگام برنامه‌ریزی کار، این موارد را می‌خوانند."
+    }
+  },
+  "sidebar": {
+    "settings": "تنظیمات",
+    "createPage": "ایجاد صفحه",
+    "newPage": "صفحه جدید",
+    "newAgent": "عامل جدید",
+    "newTask": "وظیفه جدید",
+    "archive": "بایگانی",
+    "trash": "زباله‌دان",
+    "search": "جستجو",
+    "agents": "عامل‌ها",
+    "tasks": "وظایف",
+    "missions": "ماموریت‌ها",
+    "drawerData": "داده‌ها",
+    "drawerAgents": "تیم",
+    "drawerTasks": "وظایف",
+    "goHome": "رفتن به خانه",
+    "brandWord": "",
+    "refresh": "تازه‌سازی نوار کناری",
+    "refreshDescription": "تازه‌سازی نوار کناری (بازخوانی پوشه داده)",
+    "collapseSidebar": "جمع کردن نوار کناری",
+    "expandSidebar": "باز کردن نوار کناری",
+    "resizeHandle": "تغییر اندازه نوار کناری — برای بازنشانی، دوبار کلیک کنید",
+    "resetWidth": "برای بازنشانی عرض، دوبار کلیک کنید",
+    "refreshedNoChanges": "تازه‌سازی شد — بدون تغییر.",
+    "refreshedWithChanges": "تازه‌سازی شد — {{added}} اضافه شد، {{removed}} حذف شد.",
+    "refreshFailed": "تازه‌سازی ناموفق بود.",
+    "searchPlaceholder": "جستجوی فایل‌ها…",
+    "searchSearching": "در حال جستجو…",
+    "searchNoResults": "هیچ فایلی با «{{query}}» مطابقت ندارد"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "نوار وضعیت",
+      "askAiAriaLabel": "از هوش مصنوعی بخواهید این صفحه را ویرایش کند",
+      "askAiPlaceholder": "چگونه این صفحه را ویرایش کنم؟",
+      "sendHint": "↵ برای ارسال"
+    },
+    "server": {
+      "serverStatusAriaLabel": "وضعیت سرور — برای جزئیات کلیک کنید",
+      "checking": "در حال بررسی وضعیت سرور…",
+      "allRunning": "همه سیستم‌ها فعال هستند",
+      "appNotResponding": "سرور برنامه پاسخگو نیست",
+      "daemonDownNoProviders": "دیمن پاسخگو نیست؛ هیچ ارائه‌دهنده عاملی در دسترس نیست",
+      "daemonDown": "دیمن پاسخگو نیست",
+      "noProviders": "هیچ ارائه‌دهنده عاملی در دسترس نیست",
+      "checkingShort": "در حال بررسی…",
+      "online": "آنلاین",
+      "offline": "آفلاین",
+      "degraded": "کاهش یافته",
+      "allSystemsRunning": "همه سیستم‌ها فعال",
+      "serviceDisruption": "اختلال در سرویس",
+      "appServer": "سرور برنامه",
+      "daemon": "دیمن",
+      "agentProviders": "ارائه‌دهندگان عامل",
+      "running": "فعال",
+      "down": "غیرفعال",
+      "lastSeen": "آخرین مشاهده: {{when}}",
+      "appWorking": "صفحات، ویرایشگر، جستجو و مدیریت فایل فعال هستند.",
+      "appDown": "صفحات، ویرایشگر، جستجو و ذخیره‌سازی در دسترس نیستند. همچنان می‌توانید محتوای کش‌شده را بخوانید.",
+      "daemonWorking": "عامل‌های هوش مصنوعی، کارهای زمان‌بندی‌شده و ترمینال وب فعال هستند.",
+      "daemonDownDescription": "عامل‌های هوش مصنوعی، کارهای زمان‌بندی‌شده و ترمینال وب در دسترس نیستند. ویرایش صفحه همچنان کار می‌کند.",
+      "available": "در دسترس",
+      "noneReady": "هیچ‌کدام آماده نیستند",
+      "providerReady": "آماده",
+      "providerNotLoggedIn": "وارد نشده‌اید",
+      "providerNotInstalled": "نصب نشده",
+      "install": "نصب",
+      "howToFix": "نحوه رفع مشکل"
+    },
+    "save": {
+      "retryTitle": "برای تلاش مجدد ذخیره ناموفق کلیک کنید",
+      "retryAriaLabel": "ذخیره ناموفق بود — برای تلاش مجدد کلیک کنید",
+      "autoSaving": "در حال ذخیره خودکار…",
+      "forceSave": "ذخیره اجباری: ⌘S",
+      "editing": "در حال ویرایش — ذخیره خودکار هنگام توقف شما اجرا می‌شود",
+      "wordCountTitle": "تعداد کلمات این صفحه (بدون احتساب سینتکس مارک‌داون)",
+      "savedJustNow": "همین الان",
+      "savedNever": "هرگز",
+      "savedAgoSeconds": "{{n}} ثانیه پیش",
+      "savedAgoMinutes": "{{n}} دقیقه پیش",
+      "savedAgoHours": "{{n}} ساعت پیش",
+      "savedAgoDays": "{{n}} روز پیش",
+      "saveFailedRetry": "ذخیره نشد — دوباره تلاش کنید",
+      "savingText": "در حال ذخیره…",
+      "savedText": "ذخیره شد",
+      "editingText": "در حال ویرایش…",
+      "savedAgo": "ذخیره شد · {{ago}}",
+      "word": "کلمه",
+      "words": "کلمات"
+    },
+    "git": {
+      "statusModified": "اصلاح شده",
+      "statusNew": "جدید",
+      "statusAdded": "اضافه شده",
+      "statusDeleted": "حذف شده",
+      "statusRenamed": "تغییر نام داده شده",
+      "commitMessageAriaLabel": "پیام کامیت"
+    },
+    "help": {
+      "menuAriaLabel": "باز کردن منوی راهنما و انجمن",
+      "menuTitle": "راهنما و انجمن",
+      "demos": "دموها، ویدئوها و راهنماها",
+      "discord": "گفتگو در Discord",
+      "discordSubtitle": "پشتیبانی و بازخورد",
+      "github": "مشارکت در GitHub",
+      "githubSubtitle": "سورس، مشکلات، درخواست‌های پول",
+      "ifUseful": "اگر مفید یافتید",
+      "label": "راهنما",
+      "starsAriaLabel": "{{count}} ستاره GitHub — Cabinet را در GitHub باز کنید",
+      "starsTitle": "{{count}} ستاره GitHub — به Cabinet در GitHub ستاره دهید",
+      "share": "اشتراک‌گذاری",
+      "shareSubtitle": "کپی کردن لینک دعوت و اطلاع‌رسانی",
+      "shareCopied": "شما فوق‌العاده‌اید، {{name}} 🩷 از شما برای آوردن اعضای آینده Cabinet سپاسگزاریم. لینک کپی شد، بروید و عشق را به اشتراک بگذارید!",
+      "shareFailed": "امکان کپی لینک وجود نداشت",
+      "friend": "دوست"
+    },
+    "git2": {
+      "allCommitted": "همه کامیت شده‌اند",
+      "uncommittedFile": "{{count}} فایل کامیت نشده",
+      "uncommittedFiles": "{{count}} فایل کامیت نشده",
+      "uncommittedFilesAria": "{{count}} فایل(ها)ی کامیت نشده — برای مشاهده لیست کلیک کنید",
+      "uncommittedFileTip": "برای دیدن فایل commit نشده کلیک کنید",
+      "uncommittedFilesTip": "برای دیدن فایل‌های commit نشده کلیک کنید",
+      "uncommittedFilesHeading": "{{count}} فایل commit نشده",
+      "uncommittedFilesHeadingPlural": "{{count}} فایل commit نشده",
+      "truncatedHint": "فقط {{count}} فایل اول نمایش داده شده است — برای مشاهده لیست کامل، `git status` را اجرا کنید.",
+      "commitDefault": "به‌روزرسانی {{count}} فایل",
+      "commitDefaultPlural": "به‌روزرسانی {{count}} فایل",
+      "committing": "در حال commit کردن…",
+      "commit": "کامیت",
+      "commitFailed": "Commit ناموفق بود",
+      "sync": "همگام‌سازی",
+      "syncTitle": "دریافت آخرین تغییرات از GitHub و تازه‌سازی",
+      "syncTitleWithLast": "دریافت آخرین تغییرات از GitHub و تازه‌سازی. آخرین همگام‌سازی: {{when}}.",
+      "syncAriaLabel": "دریافت آخرین تغییرات از GitHub و تازه‌سازی",
+      "syncAriaLabelWithLast": "دریافت آخرین تغییرات از GitHub و تازه‌سازی. آخرین همگام‌سازی: {{when}}.",
+      "terminal": "ترمینال",
+      "openTerminal": "باز کردن ترمینال",
+      "newTerminalTab": "تب جدید ترمینال",
+      "pulling": "در حال دریافت…",
+      "pulled": "از راه دور به‌روز شد",
+      "upToDate": "به‌روز است",
+      "pullFailed": "دریافت ناموفق"
+    },
+    "update2": {
+      "updateAvailable": "به‌روزرسانی {{version}} موجود است",
+      "updateAvailableTip": "Cabinet {{version}} موجود است"
+    },
+    "common": {
+      "dismiss": "رد کردن",
+      "close": "بستن",
+      "openSettings": "برای بررسی به‌روزرسانی نصب شده، تنظیمات را باز کنید"
+    },
+    "misc": {
+      "restartToFinishUpdate": "برای اتمام به‌روزرسانی، راه‌اندازی مجدد کنید"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "این وظیفه را از اعلان اولیه مجدداً شروع کنید",
+      "markAsDone": "این وظیفه را به عنوان انجام شده علامت‌گذاری کنید",
+      "viewAriaLabel": "نمای وظیفه",
+      "terminal": "ترمینال",
+      "transcript": "رونوشت",
+      "details": "جزئیات",
+      "transcriptTitle": "جلسه بومی Claude Code JSONL",
+      "transcriptHint": "از ~/.claude/projects/<slug>/<session>.jsonl می‌خواند",
+      "back": "بازگشت",
+      "copyPrompt": "کپی کردن اعلان اولیه",
+      "gracefulExit": "بستن آرام CLI (با نوشتن /exit در PTY)",
+      "sendSigterm": "ارسال SIGTERM به فرآیند PTY در حال اجرا",
+      "moreActions": "اقدامات بیشتر",
+      "ptyMode": "در حال اجرا در حالت ترمینال (PTY)",
+      "compactContext": "فشرده‌سازی نوبت‌های قبلی به یک خلاصه برای آزاد کردن پنجره زمینه",
+      "noSummary": "هنوز خلاصه‌ای وجود ندارد.",
+      "sessionEnded": "جلسه پایان یافت — برای ادامه در همین ترمینال تایپ کنید.",
+      "terminalLive": "ترمینال فعال است. اعلان بعدی شما پس از اتمام این نوبت در صف قرار می‌گیرد."
+    }
+  },
+  "tour": {
+    "ariaLabel": "با تور Cabinet خود آشنا شوید",
+    "skip": "رد کردن",
+    "skipAriaLabel": "رد کردن تور",
+    "back": "بازگشت",
+    "next": "بعدی",
+    "writeFirstTask": "اولین وظیفه خود را بنویسید",
+    "goToSlide": "رفتن به اسلاید {{n}}",
+    "starterTask": "بیایید درباره اهدافم و آنچه می‌خواهم اینجا به دست آورم صحبت کنیم، سپس آن را در یک صفحه «درباره» جدید ثبت کنیم.",
+    "savingTo": "در حال ذخیره در ",
+    "introTitle": "با <accent>Cabinet</accent> خود آشنا شوید.",
+    "introSubtitle": "تیم هوش مصنوعی شما. پایگاه دانش شما. یک مکان.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "کارهای اخیر و در حال اجرا",
+    "hide": "پنهان کردن نوار کارها",
+    "show": "نمایش نوار کارها",
+    "empty": "کاری نیست.",
+    "itemRunning": "{{title}} · در حال اجرا · {{when}}",
+    "itemNeedsReply": "{{title}} · نیاز به پاسخ",
+    "itemFailed": "{{title}} · ناموفق · {{when}}",
+    "itemDone": "{{title}} · انجام شد · {{when}}",
+    "itemArchived": "{{title}} · بایگانی شده",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} در حال اجرا — نمایش نوار کارها"
+  },
+  "chrome": {
+    "nav": {
+      "home": "خانه",
+      "agents": "عامل‌ها",
+      "tasks": "وظایف",
+      "ai": "AI",
+      "menu": "منو",
+      "primaryAriaLabel": "اصلی"
+    },
+    "returnTo": {
+      "task": "وظیفه",
+      "tasks": "وظایف",
+      "agent": "عامل",
+      "agents": "عامل‌ها",
+      "cabinet": "Cabinet",
+      "home": "خانه",
+      "settings": "تنظیمات",
+      "registry": "رجیستری",
+      "back": "بازگشت",
+      "backTo": "بازگشت به {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "پیش‌فرض",
+      "dark": "تیره",
+      "darkThemes": "پوسته‌های تیره",
+      "lightThemes": "پوسته‌های روشن"
+    },
+    "update": {
+      "restartTitle": "برای اتمام به‌روزرسانی، Cabinet را راه‌اندازی مجدد کنید",
+      "availableTitle": "Cabinet {{version}} در دسترس است",
+      "updatesTitle": "به‌روزرسانی‌های Cabinet",
+      "description": "Cabinet به‌طور خودکار به‌روزرسانی‌ها را بررسی می‌کند. از آنجا که محصول هنوز آزمایشی است، قبل از نصب به‌روزرسانی‌ها، یک کپی از داده‌های خود نگه دارید.",
+      "later": "بعداً",
+      "releaseNotes": "یادداشت‌های انتشار"
+    },
+    "daemon": {
+      "fixHintElectron": "برای راه‌اندازی مجدد دیمون عامل، Cabinet را ببندید و دوباره اجرا کنید.",
+      "fixHintDev": "برای راه‌اندازی مجدد دیمون عامل، `npm run dev:daemon` (یا `npm run dev:all` را مجدداً راه‌اندازی کنید) را اجرا کنید.",
+      "notResponding": "دیمون عامل پاسخگو نیست.",
+      "willFail": "عامل‌ها، وظایف و درخواست‌های هوش مصنوعی تا زمانی که دوباره فعال شود، با شکست مواجه خواهند شد. {{fixHint}}"
+    }
+  }
+}

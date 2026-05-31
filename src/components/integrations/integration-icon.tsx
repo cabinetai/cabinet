@@ -10,6 +10,10 @@ const integrationMeta: Record<string, { label: string; color: string; bg: string
   "gmail":            { label: "Gmail",             color: "#EA4335", bg: "bg-[#EA4335]/10", icon: "✉️" },
   "gcp":              { label: "Google Cloud",      color: "#4285F4", bg: "bg-[#4285F4]/10", icon: "☁️" },
   "gemini":           { label: "Gemini",            color: "#886FBF", bg: "bg-[#886FBF]/10", icon: "✨" },
+  "google-workspace": { label: "Google Workspace",  color: "#4285F4", bg: "bg-[#4285F4]/10", icon: "🗂" },
+
+  // Chat platforms
+  "discord":  { label: "Discord",  color: "#5865F2", bg: "bg-[#5865F2]/10", icon: "🎮" },
 
   // Social platforms
   "linkedin":   { label: "LinkedIn",    color: "#0A66C2", bg: "bg-[#0A66C2]/10", icon: "in" },

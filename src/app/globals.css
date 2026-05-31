@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "katex/dist/katex.min.css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -10,6 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-serif: var(--font-logo-rtl), Cardo, Georgia, ui-serif, serif;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -67,7 +69,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.4 0 0);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -81,7 +83,7 @@
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.4 0 0);
   --terminal-bg: color-mix(in oklch, var(--card) 94%, black 6%);
   --terminal-fg: var(--foreground);
   --terminal-cursor: var(--primary);
@@ -148,6 +150,11 @@
   html {
     @apply font-sans;
   }
+  /* Audit #101: focus rings were barely visible in light theme at ring/50.
+     Use full-opacity ring on :focus-visible for consistent keyboard nav. */
+  :focus-visible {
+    outline-color: var(--ring);
+  }
 }
 
 /* Custom theme font overrides — outside @layer so they beat Tailwind utilities */
@@ -164,6 +171,34 @@ html[data-custom-theme] .tiptap h2,
 html[data-custom-theme] .tiptap h3,
 html[data-custom-theme] .tiptap h4 {
   font-family: var(--font-heading-theme, var(--font-theme)) !important;
+}
+
+/* CJK fallback — appends Noto Sans SC / TC after the active theme font so
+   Chinese glyphs render correctly across all themes. Browsers cascade
+   font-family per character, so Latin keeps the theme's look and CJK chars
+   resolve to Noto Sans. The font itself is loaded on demand by
+   `loadCjkFonts()` in src/lib/themes.ts when the locale changes. */
+html:lang(zh-CN),
+html:lang(zh-CN) body,
+html[lang^="zh-Hans"],
+html[lang^="zh-Hans"] body {
+  font-family: var(--font-theme, var(--font-sans)), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+html:lang(zh-CN) h1, html:lang(zh-CN) h2, html:lang(zh-CN) h3, html:lang(zh-CN) h4,
+html:lang(zh-CN) .tiptap h1, html:lang(zh-CN) .tiptap h2, html:lang(zh-CN) .tiptap h3, html:lang(zh-CN) .tiptap h4,
+html[lang^="zh-Hans"] h1, html[lang^="zh-Hans"] h2, html[lang^="zh-Hans"] h3, html[lang^="zh-Hans"] h4 {
+  font-family: var(--font-heading-theme, var(--font-theme, var(--font-sans))), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+html:lang(zh-TW),
+html:lang(zh-TW) body,
+html[lang^="zh-Hant"],
+html[lang^="zh-Hant"] body {
+  font-family: var(--font-theme, var(--font-sans)), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif !important;
+}
+html:lang(zh-TW) h1, html:lang(zh-TW) h2, html:lang(zh-TW) h3, html:lang(zh-TW) h4,
+html:lang(zh-TW) .tiptap h1, html:lang(zh-TW) .tiptap h2, html:lang(zh-TW) .tiptap h3, html:lang(zh-TW) .tiptap h4,
+html[lang^="zh-Hant"] h1, html[lang^="zh-Hant"] h2, html[lang^="zh-Hant"] h3, html[lang^="zh-Hant"] h4 {
+  font-family: var(--font-heading-theme, var(--font-theme, var(--font-sans))), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif !important;
 }
 /* Cloud sway animation (from runcabinet.com) */
 @keyframes waitlist-cloud-sway {
@@ -190,6 +225,60 @@ html[data-custom-theme] .tiptap h4 {
   }
 }
 
+/* Agent card glow for running status */
+@keyframes cabinet-card-glow {
+  0%, 100% { box-shadow: 0 0 8px -2px rgba(16,185,129,0.15); }
+  50% { box-shadow: 0 0 16px -2px rgba(16,185,129,0.3); }
+}
+.animate-cabinet-card-glow {
+  animation: cabinet-card-glow 2s ease-in-out infinite;
+}
+
+/* Sidebar tree-node blink — used when focusPath() scrolls-to a row.
+   Fades a violet wash in/out twice, then returns to the row's normal
+   (selected) background. The wash is tuned to read clearly on both
+   light and dark themes. */
+@keyframes cabinet-tree-blink {
+  0%, 100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+  25%, 70% {
+    background-color: rgba(139, 92, 246, 0.28);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.35);
+  }
+}
+.cabinet-tree-blink {
+  animation: cabinet-tree-blink 1.4s ease-in-out;
+}
+
+/* One-shot ring pulse for the agent header master Switch — fired when a
+   user clicks a locked child Switch to point them at the toggle they need. */
+@keyframes cabinet-master-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+  60% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+.cabinet-master-pulse {
+  animation: cabinet-master-pulse 700ms ease-out;
+}
+
+/* Status-bar "tasks running" dot — a double-thump heartbeat with a rest
+   beat, so it reads as a live pulse rather than a plain fade. */
+@keyframes cabinet-task-heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%      { transform: scale(1.4); }
+  28%      { transform: scale(1); }
+  42%      { transform: scale(1.28); }
+  56%      { transform: scale(1); }
+}
+.cabinet-task-heartbeat {
+  animation: cabinet-task-heartbeat 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cabinet-task-heartbeat { animation: none; }
+}
+
 /* Body serif — Source Serif 4, beats theme overrides */
 html[data-custom-theme] .font-body-serif,
 .font-body-serif {
@@ -206,12 +295,99 @@ html[data-custom-theme] .font-logo,
   font-family: var(--font-logo), Georgia, serif !important;
 }
 
+/* RTL override: Cardo for the `cabinet` logo + any .font-logo surface
+   when the UI is in Hebrew. Cardo carries a calligraphic Latin italic
+   that pairs better with Hebrew chrome than Instrument Serif. */
+html[dir="rtl"] h1.font-logo,
+html[dir="rtl"] h2.font-logo,
+html[dir="rtl"] h3.font-logo,
+html[dir="rtl"] h4.font-logo,
+html[dir="rtl"] span.font-logo,
+html[dir="rtl"] .font-logo {
+  font-family: var(--font-logo-rtl), Cardo, Georgia, serif !important;
+}
+
+/* The `cabinet` wordmark opts out of the RTL Cardo swap above: it stays
+   in the English Instrument Serif logo face in every locale (including
+   Hebrew) so the brand reads identically everywhere. Higher specificity
+   than the `html[dir="rtl"] span.font-logo` rule, so it wins in RTL. */
+.brand-en,
+html[dir="rtl"] span.brand-en,
+html[dir="rtl"] .brand-en {
+  font-family: var(--font-logo), Georgia, serif !important;
+}
+
+/* UI font — forces the theme's *body* font onto an element that would
+   otherwise inherit the theme heading font (h1–h4). Lets chrome titles
+   (Team / Tasks page headers) match the breadcrumb leaf, which is a
+   <span> and so already renders in the body font. Mirrors the
+   `.font-logo` override pattern: class selector + !important beats the
+   `html[data-custom-theme] h1` and CJK `html:lang() h1` overrides. */
+html[data-custom-theme] h1.font-ui,
+html[data-custom-theme] h2.font-ui,
+html:lang(zh-CN) h1.font-ui, html:lang(zh-CN) h2.font-ui,
+html[lang^="zh-Hans"] h1.font-ui, html[lang^="zh-Hans"] h2.font-ui,
+.font-ui {
+  font-family: var(--font-theme, var(--font-sans)) !important;
+}
+html:lang(zh-CN) h1.font-ui, html:lang(zh-CN) h2.font-ui,
+html[lang^="zh-Hans"] h1.font-ui, html[lang^="zh-Hans"] h2.font-ui {
+  font-family: var(--font-theme, var(--font-sans)), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+html:lang(zh-TW) h1.font-ui, html:lang(zh-TW) h2.font-ui,
+html[lang^="zh-Hant"] h1.font-ui, html[lang^="zh-Hant"] h2.font-ui {
+  font-family: var(--font-theme, var(--font-sans)), "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif !important;
+}
+
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* Always-visible thin scrollbar for cards that scroll. Themed via tokens so it
+   adapts to light/dark + custom themes. Use on vertical scroll regions where
+   the user should know there's more content below the fold. */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklch, var(--muted-foreground) 30%, transparent);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklch, var(--muted-foreground) 55%, transparent);
+}
+
+.editor-toolbar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 10%, transparent) transparent;
+}
+.editor-toolbar-scroll::-webkit-scrollbar {
+  height: 1px;
+  width: 1px;
+}
+.editor-toolbar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.editor-toolbar-scroll::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklch, var(--muted-foreground) 10%, transparent);
+  border-radius: 999px;
+}
+.editor-toolbar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklch, var(--muted-foreground) 25%, transparent);
 }
 
 /* Tiptap Editor Styles */
@@ -262,9 +438,35 @@ html[data-custom-theme] .font-logo,
   line-height: 1.65;
 }
 
+/* Per-block automatic direction inference.
+
+   Each paragraph, heading, list item, blockquote, table cell, and
+   description-list term picks its own reading direction based on its
+   first strong directional character. The browser implements this
+   natively via Unicode Bidi paragraph algorithm P3 (`unicode-bidi:
+   plaintext`) — no JS, no markdown pollution.
+
+   `text-align: start` makes the alignment follow the inferred
+   direction: a Hebrew paragraph right-aligns, an English paragraph
+   left-aligns, even when they share the same parent doc with the
+   opposite `dir`. Mixed-language docs "just work" without the user
+   toggling RTL per block. */
+.tiptap :where(p, h1, h2, h3, h4, h5, h6, li, blockquote, td, th, dd, dt, figcaption),
+.registry-prose :where(p, h1, h2, h3, h4, h5, h6, li, blockquote, td, th, dd, dt, figcaption) {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* The inline indent lives on the <li>, not the <ul>/<ol>. Each list item
+   carries `dir="auto"` (AutoDirection), so putting `padding-inline-start`
+   on the item makes its outside marker resolve to the item's own
+   direction — a Hebrew item's bullet/number sits on the right, an English
+   item's on the left, even within the same list. Padding on the container
+   would instead follow the container's direction (LTR), pinning every
+   marker left regardless of the text. */
 .tiptap ul,
 .tiptap ol {
-  padding-left: 1.5rem;
+  padding-inline-start: 0;
   margin-bottom: 0.75rem;
 }
 
@@ -277,8 +479,23 @@ html[data-custom-theme] .font-logo,
 }
 
 .tiptap li {
+  padding-inline-start: 1.5rem;
   margin-bottom: 0.25rem;
   line-height: 1.65;
+}
+
+/* In an explicitly RTL document every list item is RTL — bullet/number on
+   the right, text right-aligned — even when the item starts with a Latin
+   word (a URL, a brand). Per-item `dir="auto"` plus the inherited
+   `unicode-bidi: plaintext` would otherwise resolve such an item LTR and
+   pin its marker left, mismatched against the RTL column. `isolate` (not
+   `plaintext`) makes the base direction come from `direction: rtl` while
+   the bidi algorithm still orders embedded Latin runs correctly. LTR
+   documents keep per-item auto, so a Hebrew list there still flips itself. */
+.tiptap[dir="rtl"] li,
+.tiptap[dir="rtl"] li > p {
+  direction: rtl;
+  unicode-bidi: isolate;
 }
 
 .tiptap li p {
@@ -286,8 +503,8 @@ html[data-custom-theme] .font-logo,
 }
 
 .tiptap blockquote {
-  border-left: 2px solid var(--border);
-  padding-left: 1rem;
+  border-inline-start: 2px solid var(--border);
+  padding-inline-start: 1rem;
   margin: 1rem 0;
   color: var(--muted-foreground);
 }
@@ -337,7 +554,7 @@ html[data-custom-theme] .font-logo,
 .tiptap p.is-editor-empty:first-child::before {
   color: var(--muted-foreground);
   content: attr(data-placeholder);
-  float: left;
+  float: inline-start;
   height: 0;
   pointer-events: none;
   opacity: 0.5;
@@ -359,19 +576,33 @@ html[data-custom-theme] .font-logo,
   text-decoration: underline;
 }
 
+.editor-mention {
+  @apply inline-flex items-center rounded-full bg-primary/10 px-1.5 py-0 text-[0.85em] font-medium text-primary ring-1 ring-primary/20 select-none cursor-default;
+}
+
 /* Table styles */
 .tiptap table {
   border-collapse: collapse;
   width: 100%;
   margin: 1rem 0;
   font-size: 0.875rem;
+  table-layout: fixed;
+}
+
+.tiptap .tableWrapper {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.tiptap .tableWrapper table {
+  margin: 0;
 }
 
 .tiptap th,
 .tiptap td {
   border: 1px solid var(--border);
   padding: 0.5rem 0.75rem;
-  text-align: left;
+  text-align: start;
   vertical-align: top;
 }
 
@@ -389,16 +620,47 @@ html[data-custom-theme] .font-logo,
   background: var(--muted);
 }
 
+.tiptap .selectedCell {
+  position: relative;
+}
+
+.tiptap .selectedCell::after {
+  background: color-mix(in oklch, var(--primary) 18%, transparent);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.tiptap .column-resize-handle {
+  background-color: var(--primary);
+  bottom: -1px;
+  pointer-events: none;
+  position: absolute;
+  inset-inline-end: -2px;
+  top: 0;
+  width: 3px;
+}
+
+.tiptap.resize-cursor {
+  cursor: col-resize;
+}
+
 /* Checklist/Task list styles */
 .tiptap .task-list {
   list-style: none;
-  padding-left: 0;
+  padding-inline-start: 0;
 }
 
 .tiptap .task-list li {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
+  /* No list marker here — the checkbox is the marker. Cancel the inline
+     indent that .tiptap li adds; dir="auto" on the item still flips the
+     flex order so the checkbox leads on the correct side. */
+  padding-inline-start: 0;
 }
 
 .tiptap .task-list li label {
@@ -444,7 +706,7 @@ html[data-custom-theme] .font-logo,
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   margin: 1rem 0;
-  border-left: 3px solid;
+  border-inline-start: 3px solid;
 }
 
 .tiptap .callout-info {
@@ -465,6 +727,74 @@ html[data-custom-theme] .font-logo,
 .tiptap .callout-error {
   background: color-mix(in oklch, oklch(0.6 0.2 25) 8%, transparent);
   border-color: oklch(0.6 0.2 25);
+}
+
+/* Resizable image wrapper */
+.tiptap .resizable-image {
+  position: relative;
+}
+.tiptap .resizable-image[data-align="left"] { margin-left: 0; margin-right: auto; }
+.tiptap .resizable-image[data-align="right"] { margin-left: auto; margin-right: 0; }
+.tiptap .resizable-image[data-align="center"] { margin-left: auto; margin-right: auto; }
+
+/* Embed blocks */
+.tiptap [data-embed="true"] {
+  margin: 1rem 0;
+}
+.tiptap [data-embed="true"] iframe {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+.tiptap [data-embed="true"] video {
+  width: 100%;
+  border-radius: 0.5rem;
+  background: black;
+}
+
+/* Drag handle */
+#cabinet-drag-handle {
+  font-family: var(--font-sans);
+}
+#cabinet-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* KaTeX sizing tweaks inside editor */
+.tiptap .katex {
+  font-size: 1em;
+}
+.tiptap [data-type="inline-math"],
+.tiptap [data-type="inlineMath"] {
+  display: inline-block;
+  padding: 0 0.1rem;
+  border-radius: 0.2rem;
+  background: color-mix(in oklch, var(--primary) 6%, transparent);
+  cursor: pointer;
+}
+.tiptap [data-type="inline-math"]:hover,
+.tiptap [data-type="inlineMath"]:hover {
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
+}
+
+/* Text-align utility (TextAlign extension renders inline style attr,
+   but also add a fallback for older content) */
+.tiptap [style*="text-align: center"] { text-align: center; }
+.tiptap [style*="text-align: right"] { text-align: right; }
+.tiptap [style*="text-align: justify"] { text-align: justify; }
+
+/* Emoji-mart picker theming (matches popover) */
+em-emoji-picker {
+  --background-rgb: 255, 255, 255;
+  --border-radius: 0.5rem;
+  height: 340px;
+  max-width: 340px;
+}
+.dark em-emoji-picker {
+  --background-rgb: 32, 32, 32;
+  --rgb-background: 32, 32, 32;
+  --rgb-color: 232, 232, 232;
+  --rgb-input: 45, 45, 45;
 }
 
 /* Code syntax highlighting */
@@ -547,6 +877,435 @@ html[data-custom-theme] .font-logo,
 .electron-desktop header [role="button"] {
   -webkit-app-region: no-drag;
 }
-.electron-desktop .sidebar-header {
+/* The macOS traffic lights sit at the window's *physical* top-left
+   (trafficLightPosition x:16,y:18, ≈80px wide) and do NOT mirror with
+   `dir` — they are OS chrome. `--traffic-clearance` is the single token
+   that reserves room for them; it is non-zero only in LTR desktop builds
+   (in RTL the lights fall on the physical-left, handled by the
+   `main > :first-child` rule below, so the token stays 0 there).
+
+   The app shell is `flex [Sidebar][main]`, so what sits in the top-left
+   corner depends on `dir` AND whether the sidebar is collapsed:
+     • LTR, sidebar expanded — the sidebar occupies the corner; its header
+       clears the lights (`.sidebar-header`).
+     • LTR, sidebar collapsed — the sidebar is 0-width, so the MAIN column
+       slides under the lights. The clearance is folded into
+       `--sidebar-toggle-offset` (see app-shell), which every section's top
+       bar already honours, and the floating expand toggle is nudged past
+       the lights (see sidebar.tsx).
+     • RTL — the flex row flips: the MAIN column is under the lights in
+       both states, so the clearance lives on `main > :first-child`'s
+       physical-left (independent of the inline-start toggle offset). */
+html:not([dir="rtl"]).electron-desktop {
+  --traffic-clearance: 80px;
+}
+html:not([dir="rtl"]).electron-desktop .sidebar-header {
+  padding-left: var(--traffic-clearance);
+}
+html[dir="rtl"].electron-desktop main > :first-child {
   padding-left: 80px;
+}
+
+/* ── GitHub stars burst animation ── */
+@keyframes cabinet-star-burst {
+  0%   { transform: translate(-50%, -50%) translate(0px, 0px) scale(1.6); opacity: 1; }
+  60%  { opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) translate(var(--sb-x, 20px), var(--sb-y, 0px)) scale(0); opacity: 0; }
+}
+
+/* ── Onboarding provider guide slide-in (RTL-aware via inline --bp-slide-from) ── */
+@keyframes onboarding-guide-slide-in {
+  from { transform: translateX(var(--guide-slide-from, 24px)); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* ── Onboarding tour animations ── */
+@keyframes cabinet-tour-fade-up {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+/* Seamless horizontal marquee (onboarding suggestion tags). The track holds
+   the list twice, so translating by -50% loops without a visible jump. */
+@keyframes cabinet-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes cabinet-tour-fade-in {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes cabinet-tour-pop-in {
+  0%   { opacity: 0; transform: scale(0.85); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes cabinet-tour-icon-pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%      { transform: scale(1.25); filter: brightness(1.3); }
+}
+@keyframes cabinet-tour-mention-float {
+  0%   { opacity: 0; transform: translate(-50%, 12px) scale(0.9); }
+  30%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  80%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -6px) scale(0.95); }
+}
+@keyframes cabinet-tour-agent-lift {
+  0%   { transform: translateY(0) scale(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  100% { transform: translateY(-4px) scale(1.03); box-shadow: 0 18px 40px -12px rgba(0,0,0,0.35); }
+}
+@keyframes cabinet-tour-callout-in {
+  0%   { opacity: 0; transform: translateX(10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes cabinet-tour-typing {
+  0%   { width: 0; }
+  100% { width: 100%; }
+}
+@keyframes cabinet-tour-caret-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+@keyframes cabinet-tour-heartbeat-dot {
+  0%, 100% { transform: scale(1);   opacity: 0.9; }
+  50%      { transform: scale(1.6); opacity: 0.4; }
+}
+@keyframes cabinet-tour-stream-bar {
+  0%   { width: 10%; opacity: 0.4; }
+  100% { width: 100%; opacity: 0.9; }
+}
+@keyframes cabinet-tour-cursor-pointer {
+  0%   { opacity: 0; transform: translate(180px, 270px) scale(0.85); }
+  15%  { opacity: 1; transform: translate(180px, 270px) scale(1); }
+  60%  { opacity: 1; transform: translate(var(--cursor-target-x, 40px), var(--cursor-target-y, 60px)) scale(1); }
+  70%  { transform: translate(var(--cursor-target-x, 40px), var(--cursor-target-y, 60px)) scale(0.8); }
+  80%  { transform: translate(var(--cursor-target-x, 40px), var(--cursor-target-y, 60px)) scale(1.05); }
+  100% { opacity: 1; transform: translate(var(--cursor-target-x, 40px), var(--cursor-target-y, 60px)) scale(1); }
+}
+@keyframes cabinet-tour-click-ripple {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+  25%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); }
+}
+/* Intro slide: amber Archive glyph pops oversized, holds, then shrinks
+   + fades so the Cabinet shell can materialize behind it. */
+@keyframes cabinet-tour-icon-intro {
+  0%   { opacity: 0; transform: scale(0.45); }
+  22%  { opacity: 1; transform: scale(2.8); }
+  50%  { opacity: 1; transform: scale(2.8); }
+  80%  { opacity: 0.95; transform: scale(0.95); }
+  100% { opacity: 0; transform: scale(0.6); }
+}
+.cabinet-tour-no-scrollbar::-webkit-scrollbar { display: none; }
+.cabinet-tour-no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cabinet-tour-animated,
+  .cabinet-tour-animated * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ── Registry prose (markdown viewer in registry detail About section) ── */
+.registry-prose {
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--prose-body, #6b5b4e);
+}
+.registry-prose h1,
+.registry-prose h2,
+.registry-prose h3,
+.registry-prose h4 {
+  color: var(--prose-heading, #3b2f2f);
+  font-weight: 700;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+.registry-prose h1 { font-size: 1.3rem; }
+.registry-prose h2 { font-size: 1.05rem; letter-spacing: -0.01em; }
+.registry-prose h3 { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.registry-prose p { margin-top: 0; margin-bottom: 1em; }
+.registry-prose ul {
+  list-style-type: disc;
+  padding-inline-start: 1.4em;
+  margin-bottom: 1em;
+}
+.registry-prose ol {
+  list-style-type: decimal;
+  padding-inline-start: 1.4em;
+  margin-bottom: 1em;
+}
+.registry-prose li {
+  margin-bottom: 0.4em;
+  padding-inline-start: 0.15em;
+}
+.registry-prose ul li::marker { color: var(--prose-link, #8b5e3c); }
+.registry-prose code {
+  font-size: 0.8125rem;
+  font-family: var(--font-mono, monospace);
+  background: var(--prose-code-bg, #f3ede4);
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  color: var(--prose-heading, #3b2f2f);
+}
+.registry-prose pre {
+  background: var(--prose-code-bg, #f3ede4);
+  border: 1px solid var(--prose-border, #e8ddd0);
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  margin-bottom: 0.75em;
+}
+.registry-prose pre code { background: none; padding: 0; }
+.registry-prose a {
+  color: var(--prose-link, #8b5e3c);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.registry-prose hr {
+  border: none;
+  border-top: 1px solid var(--prose-border, #e8ddd0);
+  margin: 1.5em 0;
+}
+.registry-prose blockquote {
+  border-inline-start: 3px solid var(--prose-border, #e8ddd0);
+  padding-inline-start: 1em;
+  margin-inline-start: 0;
+  color: var(--prose-body, #6b5b4e);
+  opacity: 0.8;
+}
+.registry-prose > *:first-child { margin-top: 0; }
+.registry-prose > *:last-child { margin-bottom: 0; }
+
+/* ─── Tilt card hover treatment ───
+   Pairs with <TiltCard> in src/components/ui/tilt-card.tsx.
+   Each instance can override --accent inline (on TiltCard) to get a
+   domain-tinted glow; the inline value is inherited into .fancy-card. */
+.fancy-card {
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.fancy-card:hover {
+  box-shadow:
+    0 22px 56px color-mix(in srgb, var(--foreground) 22%, transparent),
+    0 4px 12px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+/* Carousel container that lets card hover-glow bleed outside the strip
+   while still hard-clipping the horizontally-scrolling content. */
+.tilt-carousel {
+  overflow-x: clip;
+  overflow-y: visible;
+  overflow-clip-margin: 120px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fancy-card { transition: none; }
+  .fancy-card:hover { box-shadow: none; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Audit #044: era-theme signature surfaces.
+
+   These overrides activate only when [data-custom-theme] matches the era,
+   so they don't affect the default look. Each block targets the era's
+   *recognisable* element (Win 95 bevels, XP Luna pills, Apple Aqua
+   highlights, Matrix grid) — the bar set by the audit was "museum-grade
+   homage", not "tinted normal app".
+
+   Scoping notes:
+   - The buttons rule uses :where() to avoid bumping specificity past
+     theme-agnostic component overrides.
+   - We exclude inputs that look like buttons (avatar bubbles, list rows)
+     by requiring an explicit <button> tag with a class containing "rounded".
+   ────────────────────────────────────────────────────────────────────── */
+
+/* ─── Windows 95 ─────────────────────────────────────────────── */
+html[data-custom-theme="win95"] {
+  /* Snap, don't ease — Win 95 had no transitions. */
+  --win95-snap: 0ms;
+}
+html[data-custom-theme="win95"] :where(button:not([data-no-bevel])) {
+  border-radius: 0 !important;
+  box-shadow:
+    inset -1px -1px 0 #000,
+    inset 1px 1px 0 #fff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+  transition-duration: 0ms !important;
+}
+html[data-custom-theme="win95"] :where(button:not([data-no-bevel])):active {
+  /* Press-in: invert the bevel. */
+  box-shadow:
+    inset 1px 1px 0 #000,
+    inset -1px -1px 0 #fff,
+    inset 2px 2px 0 #808080,
+    inset -2px -2px 0 #dfdfdf;
+}
+/* Title-bar style on dialog headers (Settings page heading, modal headers). */
+html[data-custom-theme="win95"] :where(h1, h2):first-child {
+  background: linear-gradient(to right, #00007b 0%, #1084d0 100%);
+  color: #fff !important;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 0;
+}
+html[data-custom-theme="win95"] body,
+html[data-custom-theme="win95"] {
+  font-size: 12px;
+}
+
+/* ─── Windows XP ─────────────────────────────────────────────── */
+html[data-custom-theme="winxp"] :where(button:not([data-no-bevel])) {
+  border-radius: 6px !important;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--primary) 88%, white 12%) 0%,
+    var(--primary) 50%,
+    color-mix(in srgb, var(--primary) 80%, black 8%) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 1px 0 rgba(0, 0, 0, 0.3);
+}
+html[data-custom-theme="winxp"] :where(button:not([data-no-bevel])):hover {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--primary) 80%, white 20%) 0%,
+    var(--primary) 50%,
+    color-mix(in srgb, var(--primary) 75%, black 12%) 100%
+  );
+}
+
+/* ─── Apple (macOS Aqua-flavored) ────────────────────────────── */
+html[data-custom-theme="apple"] :where(button:not([data-no-bevel])) {
+  border-radius: 9999px !important;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--primary) 70%, white 30%) 0%,
+    var(--primary) 55%,
+    color-mix(in srgb, var(--primary) 85%, black 8%) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.18);
+}
+html[data-custom-theme="apple"] :where(button:not([data-no-bevel])):hover {
+  filter: brightness(1.05);
+}
+
+/* ─── Matrix (green grid backdrop) ──────────────────────────── */
+html[data-custom-theme="matrix"] body {
+  background-image:
+    linear-gradient(rgba(0, 255, 65, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+}
+html[data-custom-theme="matrix"] :where(button:not([data-no-bevel])) {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ─── Cyber (neon outline) ──────────────────────────────────── */
+html[data-custom-theme="cyber"] :where(button:not([data-no-bevel])):hover {
+  box-shadow: 0 0 0 1px var(--primary), 0 0 12px color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+/* Reduced motion: no extra animations on era themes either. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-custom-theme="matrix"] body {
+    background-image: none;
+  }
+}
+
+/* Tour data slide — 3-column grid at md+ (sidebar / viewer / copy). */
+@media (min-width: 768px) {
+  .cabinet-tour-data-grid {
+    grid-template-columns: 280px 340px 1fr;
+  }
+}
+
+/* ─── AI Editor drawer (mobile overlay) ─────────────────────────
+   Desktop open/close is a width push handled inline in ai-panel.tsx
+   (the panel is a flex sibling, so the tween reflows the main UI).
+   These cover the mobile full-screen overlay only. */
+@keyframes ai-drawer-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes ai-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.ai-drawer-anim-up {
+  animation: ai-drawer-slide-up 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.ai-scrim-anim {
+  animation: ai-scrim-in 220ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-drawer-anim-up,
+  .ai-scrim-anim { animation: none; }
+}
+
+/* Bidi-aware text. Each block resolves its own direction from its first
+   strong character (unicode-bidi: plaintext === per-paragraph dir="auto"),
+   so a Hebrew paragraph reads RTL and an English/code one reads LTR within
+   the same message regardless of the UI locale. text-align: start follows
+   the resolved direction. Code stays LTR and isolated so Hebrew comments
+   or prose around it don't reorder the source. */
+.rtl-aware,
+.rtl-aware p,
+.rtl-aware li,
+.rtl-aware h1,
+.rtl-aware h2,
+.rtl-aware h3,
+.rtl-aware h4,
+.rtl-aware h5,
+.rtl-aware h6,
+.rtl-aware blockquote,
+.rtl-aware td,
+.rtl-aware th,
+.rtl-aware dd,
+.rtl-aware dt {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+.rtl-aware pre,
+.rtl-aware pre code,
+.rtl-aware kbd {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: left;
+}
+/* Same per-item marker logic as the editor's .tiptap lists: the inline
+   indent rides on the <li> (which carries dir="auto"), not the container,
+   so a Hebrew item's bullet/number lands on the right. Overrides the
+   container padding the prose/typography plugin sets on <ul>/<ol>. */
+.rtl-aware ul,
+.rtl-aware ol {
+  padding-inline-start: 0;
+}
+.rtl-aware li {
+  padding-inline-start: 1.5rem;
+}
+.rtl-aware ul[data-type="taskList"] li,
+.rtl-aware li[data-type="taskItem"] {
+  padding-inline-start: 0;
+}
+
+/* ── In-page find (Cmd+F) match highlighting ── */
+.ProseMirror .find-match {
+  background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+  border-radius: 2px;
+}
+.ProseMirror .find-match--current {
+  background-color: color-mix(in srgb, var(--primary) 52%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 68%, transparent);
 }

@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Skapa agent",
+      "avatar": "Avatar",
+      "namePlaceholder": "Marknadsföringsagent",
+      "rolePlaceholder": "Innehållsspecialist",
+      "department": "Avdelning",
+      "specialist": "Specialist",
+      "departmentLead": "Avdelningschef",
+      "provider": "Leverantör",
+      "runtime": "Körtid",
+      "promptPlaceholder": "Du är en marknadsföringsagent för…",
+      "addAgentTitle": "Lägg till en agent i ditt team",
+      "addAgentDescription": "Välj en specialist från biblioteket. Du kan redigera dess namn, roll och instruktioner efter att den har lagts till.",
+      "createFromScratchTitle": "Skapa från grunden",
+      "createFromScratchDescription": "Bygg en ny agent med egen identitet, roll och instruktioner.",
+      "searchLibraryPlaceholder": "Sök i biblioteket",
+      "errorLoadLibrary": "Kunde inte ladda agentbiblioteket.",
+      "errorAddAgent": "Kunde inte lägga till denna agent."
+    },
+    "metric": {
+      "name": "Mätvärdesnamn",
+      "namePlaceholder": "reddit_svar",
+      "target": "Mål",
+      "targetPlaceholder": "svar/vecka",
+      "floor": "Minimivärde",
+      "period": "Period",
+      "daily": "Dagligen",
+      "weekly": "Veckovis",
+      "monthly": "Månatligen"
+    },
+    "workspace": {
+      "promise": "Löfte",
+      "orgChart": "Organisationsschema",
+      "jobDetails": "Jobbdetaljer",
+      "heartbeat": "Puls",
+      "workspace": "Arbetsyta",
+      "editAgent": "Redigera agent",
+      "instructions": "Instruktioner",
+      "instructionsPlaceholder": "Skriv markdown för denna agents instruktioner.",
+      "newAgent": "Ny agent",
+      "routines": "Rutiner",
+      "browseLibrary": "Bläddra i agentbiblioteket",
+      "editYourOwn": "Redigera din egen agent",
+      "editorPlaceholder": "Redigerare",
+      "productAgentPlaceholder": "Produkttextagent",
+      "instructionsBodyPlaceholder": "Definiera hur denna agent ska fungera i Cabinet och KB:n.",
+      "perAgentPrompts": "Agentspecifika återkommande prompter",
+      "runNow": "Kör nu",
+      "delete": "Ta bort",
+      "viewOrgChart": "Visa detta team som ett organisationsschema (öppnas i helskärm)",
+      "hideIntro": "Dölj denna introduktion",
+      "sharedAcrossCabinets": "Delas mellan alla cabinets",
+      "expandSchedule": "Utöka schema",
+      "heartbeatsOnAgentPage": "Heartbeats konfigureras på varje agents sida",
+      "exitFullscreen": "Avsluta helskärm",
+      "refresh": "Uppdatera",
+      "editHeartbeat": "Redigera heartbeat",
+      "newRoutine": "Ny rutin",
+      "configureHeartbeat": "Konfigurera heartbeat",
+      "openOrgChart": "Öppna organisationsschema",
+      "pickAnAgent": "Välj en agent",
+      "dismiss": "Stäng",
+      "lockedHeartbeatTip": "Denna agent är stoppad. Starta den på fliken Agenter för att aktivera heartbeat.",
+      "lockedRoutineTip": "Denna agent är stoppad. Starta den på fliken Agenter för att aktivera dess rutiner.",
+      "avatar": "arbetsyta.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Klicka för att stänga av.",
+      "loadError": "Kunde inte läsa in denna agent.",
+      "retry": "Försök igen",
+      "color": "Färg",
+      "customColor": "Anpassad färg",
+      "preset": "Förinställning",
+      "editIconColor": "Redigera ikon, färg eller avatar",
+      "sharedAcrossCabinetsHint": "Delas mellan alla cabinets — ändringar gäller överallt",
+      "inbox": "Inkorg",
+      "conversations": "Konversationer",
+      "recentWork": "Senaste arbetet",
+      "schedule": "Schema",
+      "heartbeat": "Puls",
+      "runNow": "Kör nu",
+      "editRoutine": "Redigera rutin",
+      "addRoutine": "Lägg till rutin",
+      "details": "Detaljer",
+      "editingGlobalAgent": "Redigerar global agent",
+      "displayName": "Visningsnamn",
+      "role": "Roll",
+      "department": "Avdelning",
+      "type": "Typ",
+      "workspace": "Arbetsyta",
+      "tags": "Taggar",
+      "openSkillsSettings": "Öppna Inställningar → Färdigheter",
+      "notInCatalog": "Hittades inte i katalogen — klicka för att ta bort",
+      "recommendedForRole": "Rekommenderas för denna roll — klicka för att bifoga",
+      "promise": "Löfte",
+      "saved": "Sparat",
+      "iconLabel": "Ikon"
+    },
+    "missionControl": {
+      "gallery": "Galleri",
+      "newAgent": "Ny agent",
+      "allGoals": "Alla mål",
+      "noGoals": "Inga agenter har mål konfigurerade.",
+      "fromScratch": "Från grunden",
+      "describeIt": "Beskriv den",
+      "import": "Importera",
+      "closeDialog": "Stäng dialogruta",
+      "describeYourAgent": "Beskriv din agent",
+      "describePlaceholder": "Jag behöver en agent som övervakar Hacker News för GPU-relaterade inlägg och skriver genomtänkta kommentarer som länkar till våra blogginlägg…"
+    },
+    "pulseStrip": {
+      "agents": "Agenter",
+      "running": "Körs",
+      "goals": "Mål",
+      "alerts": "Aviseringar",
+      "cost": "Kostnad",
+      "runningPlays": "Aktiva spel",
+      "noRunning": "Inga agenter körs för närvarande.",
+      "costBreakdown": "Kostnadsfördelning",
+      "noUsage": "Ingen API-användning ännu.",
+      "totalEstimated": "Totalt uppskattat"
+    },
+    "routine": {
+      "runNowTitle": "Kör denna rutin nu (engångskörning, utanför schemat)",
+      "deletePermanently": "Ta bort denna rutin permanent",
+      "promptPlaceholder": "Vad ska denna rutin göra? t.ex. Sammanfatta gårdagens aktivitet…",
+      "jobName": "Jobbnamn",
+      "jobNamePlaceholder": "Veckovis strategisammanfattning",
+      "jobId": "Jobb-ID",
+      "schedule": "Schema",
+      "model": "Modell",
+      "enabled": "Aktiverad"
+    }
+  },
+  "registry": {
+    "loading": "Laddar från register…",
+    "readyToImport": "Redo att importera detta cabinet?",
+    "organization": "Organisation",
+    "agents": "Agenter",
+    "scheduledJobs": "Schemalagda jobb",
+    "about": "Om",
+    "cabinetName": "Cabinet-namn",
+    "cabinetNamePlaceholder": "Cabinet-namn…",
+    "searchPlaceholder": "Sök cabinets…",
+    "noResults": "Inga cabinets matchar din sökning."
+  },
+  "tasksBoard": {
+    "title": "Uppgifter",
+    "manualTooltip": "Manuell — uppgifter du startade direkt",
+    "jobsTooltip": "Jobb — schemalagda återkommande körningar",
+    "heartbeatTooltip": "Puls — självstyrda agentkörningar",
+    "clearSelection": "Rensa markering (Esc)",
+    "createTask": "Skapa en ny uppgift",
+    "moreNewTypes": "Fler nya objekttyper",
+    "newTask": "Ny uppgift",
+    "newRoutine": "Ny rutin",
+    "viewKanban": "Kanban",
+    "viewList": "Lista",
+    "viewSchedule": "Schema",
+    "viewKanbanHint": "Tavlevy — uppgifter grupperade i Inkorg / Din tur / Pågående / Nyss klar / Arkiv",
+    "viewListHint": "Platt lista över alla uppgifter, nyaste aktivitet först",
+    "viewScheduleHint": "Kalender över schemalagda rutiner och kommande körningar",
+    "filterByAgent": "Filtrera efter agent: {{name}}",
+    "noToDeleteTitle": "Inga uppgifter att radera",
+    "noToDeleteFiltered": "Inget matchar {{filter}}. Rensa filtret, välj en annan vy, eller skapa en ny uppgift.",
+    "noToDeleteEmpty": "Det finns inga uppgifter på tavlan än. Skapa en med knappen + Ny uppgift.",
+    "gotIt": "Förstått",
+    "deleteCountTitle": "Radera {{count}} uppgift?",
+    "deleteCountTitlePlural": "Radera {{count}} uppgifter?",
+    "deleteBody": "Detta raderar permanent konversationsmetadata, transkript och artefakter för varje uppgift som visas just nu. Detta kan inte ångras.",
+    "deleteBodyFiltered": "Detta raderar permanent konversationsmetadata, transkript och artefakter för varje uppgift som visas just nu av de aktiva filtren. Detta kan inte ångras.",
+    "deleteConfirm": "Radera {{count}}",
+    "deleteAllShown": "Radera alla {{count}} visade uppgifter",
+    "deleteAllShownPlural": "Radera alla {{count}} visade uppgifter",
+    "nothingToDelete": "Inget att radera i den här vyn",
+    "deleteAllAria": "Radera alla visade uppgifter",
+    "noTasksAria": "Inga uppgifter i den här vyn",
+    "filterTrigger": "{{trigger}}-filtret",
+    "filterTriggerAndAgent": "{{trigger}}-filtret och vald agent",
+    "filterSelectedAgent": "Filtret för vald agent"
+  },
+  "runtime": {
+    "noProvider": "Ingen leverantör vald",
+    "modeAriaLabel": "Körningsläge",
+    "nativeTranscriptTitle": "Cabinets inbyggda transkript – strukturerad JSON-ström, artefakter, sammanfattning, hela användarupplevelsen",
+    "ptyWarningTitle": "Kräver en OpenAI API-nyckel. Inte tillgänglig för Codex-konton med ChatGPT-plan – att välja denna modell kommer att misslyckas med 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Inbyggd",
+    "terminal": "Terminal",
+    "terminalTitle": "Kör CLI:n i en live PTY-terminalsession (experimentellt hackarläge)",
+    "providers": "Leverantörer",
+    "modelCol": "Modell",
+    "auto": "Auto",
+    "ready": "Klar",
+    "loginRequired": "Logga in",
+    "notInstalled": "Inte installerad",
+    "notAvailable": "Inte tillgänglig",
+    "defaultLabel": "Standard",
+    "noProvidersAvailable": "Inga leverantörer tillgängliga",
+    "appDefault": "Appstandard",
+    "selectAppDefault": "Välj appstandard",
+    "defaultModel": "Standardmodell",
+    "selectedModelLabel": "Vald modell",
+    "loadingProviders": "Laddar leverantörer...",
+    "loadingAvailableProviders": "Laddar tillgängliga leverantörer…",
+    "triggerSummary": "Modell: {{model}} · Ansträngning: {{effort}} · via {{provider}}",
+    "triggerSystemDefault": "Uppgiftsmodell – använder systemstandard (klicka för att välja)",
+    "clickToLaunch": "Klicka för att starta {{name}} i en PTY-terminal"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Agenter körs med full åtkomst.",
+    "backUp": "Säkerhetskopiera din data regelbundet.",
+    "betaSoftware": "Beta-programvara. Saker kan gå sönder.",
+    "iAccept": "Jag har läst och jag accepterar"
+  },
+  "skillAdd": {
+    "addSkill": "Lägg till färdighet",
+    "auditTooltip": "Resultat från skills.sh:s externa granskningar (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "skills.sh granskningsdata är inte tillgänglig för denna färdighet",
+    "preview": "Förhandsgranska"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "AI-team",
+      "aiTeams": "AI-team",
+      "routines": "Rutiner"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Redigera agentkonfiguration",
+    "exportBundle": "Exportera agentpaket",
+    "goals": "Mål",
+    "workspace": "Arbetsyta"
+  },
+  "scheduleRow": {
+    "deleteQ": "Ta bort?",
+    "confirmDelete": "Bekräfta borttagning",
+    "cancelDelete": "Avbryt borttagning",
+    "runNow": "Kör nu"
+  },
+  "apiKeys": {
+    "addKey": "Lägg till nyckel",
+    "edit": "Redigera",
+    "remove": "Ta bort",
+    "newApiKey": "Ny API-nyckel"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet-uppdateringar",
+    "dataDirectory": "Datakatalog",
+    "backups": "Säkerhetskopior"
+  },
+  "kanban": {
+    "stopAllInLane": "Stoppa alla pågående uppgifter i den här banan",
+    "restartAllInLane": "Starta om alla uppgifter i den här banan",
+    "newTask": "Ny uppgift",
+    "collapseColumn": "Fäll ihop kolumn",
+    "kill": "Avsluta",
+    "laneInbox": "Inkorg",
+    "laneInboxHint": "Utkast – väntar på att du ska starta",
+    "laneNeeds": "Din tur",
+    "laneNeedsHint": "Agenten ställde en fråga eller behöver godkännande",
+    "laneRunning": "Körs",
+    "laneRunningHint": "Agenter arbetar just nu",
+    "laneDone": "Nyss klar",
+    "laneDoneHint": "Slutförda under den senaste timmen",
+    "laneArchive": "Arkiv",
+    "laneArchiveHint": "Äldre och bekräftade"
+  },
+  "terminalTabs": {
+    "newTab": "Ny terminalflik",
+    "closeTab": "Stäng terminal"
+  },
+  "newTaskButton": {
+    "createNew": "Skapa ny…",
+    "newTask": "Ny uppgift",
+    "newRoutine": "Ny rutin"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Veckostrategisammanfattning",
+    "schedule": "Schema",
+    "jobId": "Jobb-ID",
+    "enabled": "Aktiverad — körs enligt detta schema"
+  },
+  "editIdentity": {
+    "title": "Redigera agent",
+    "displayName": "Visningsnamn",
+    "color": "Färg",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Starta alla agenter",
+    "startAllSubtitle": "Aktivera heartbeats och cron-jobb",
+    "stopAll": "Stoppa alla agenter",
+    "stopAllSubtitle": "Pausa heartbeats och cron-jobb"
+  },
+  "skillLibrary": {
+    "readOnly": "Skrivskyddad — kan inte redigeras från Cabinet",
+    "noUpstream": "Skapad direkt i detta cabinet — ingen överordnad git-källa registrerad",
+    "executableWarning": "Paketet innehåller körbara skript — granska innan godkännande",
+    "skills": "Färdigheter",
+    "imported": "Importerad",
+    "importing": "Importerar…",
+    "import": "Importera"
+  },
+  "embedPopover": {
+    "placeholder": "Klistra in en länk (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, eller valfri URL)",
+    "notValidUrl": "Inte en giltig URL",
+    "anyUrlWorks": "Valfri offentlig URL fungerar.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Valfri iframe-URL"
+  },
+  "rowActions": {
+    "stop": "Stoppa",
+    "stopHint": "Stoppa denna körning nu (skickar SIGTERM)",
+    "restart": "Starta om",
+    "restartHint": "Kör igen från den ursprungliga prompten",
+    "runHint": "Starta denna uppgift nu"
+  },
+  "schedulesPanel": {
+    "title": "Schemalagda jobb",
+    "noJobs": "Inga Cabinet-jobb har konfigurerats än.",
+    "heartbeats": "Pulsslag",
+    "noHeartbeats": "Inga pulsslag har konfigurerats än."
+  },
+  "scheduleTab": {
+    "explainer1": "Allt ditt team gör denna vecka, i en kalender. Rosa är ett pulsslag, grönt är en rutin. Klicka på valfri ruta för att redigera.",
+    "explainer2": "Använd denna flik för att upptäcka konflikter, hitta lugna perioder eller bara snabbt se hur upptaget teamet är.",
+    "aboutAria": "Om schemat",
+    "modeDay": "Dag",
+    "modeWeek": "Vecka",
+    "modeMonth": "Månad"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Zooma ut",
+    "zoomIn": "Zooma in",
+    "resetView": "Återställ vy",
+    "syntaxError": "Diagramsyntaxfel"
+  },
+  "helpPage": {
+    "keyboard": "Tangentbord",
+    "skills": "Färdigheter",
+    "apiKeys": "API-nycklar",
+    "mcpServers": "MCP-servrar",
+    "title": "Hjälp",
+    "howTo": "Så här gör du",
+    "heading": "Lär dig hur Cabinet fungerar",
+    "subheading": "Korta demonstrationer, genomgångar och förhandsvisningar för att få ut det mesta av Cabinet.",
+    "ctaWatchTour": "Se rundturen",
+    "ctaWatchDemo": "Se demonstrationen",
+    "ctaCheatSheet": "Öppna fusklapp",
+    "ctaComingSoon": "Kommer snart",
+    "discordHeading": "Hittade du inte vad du letar efter?",
+    "discordSubheading": "Vi finns på Discord — kom och säg hej, ställ frågor, dela vad du bygger.",
+    "discordCta": "Gå med i Discord",
+    "items": {
+      "tour": {
+        "title": "Möt din <accent>Cabinet</accent>.",
+        "description": "Ditt AI-team. Din kunskapsbas. En plats."
+      },
+      "agents": {
+        "title": "Ditt <accent>AI-team</accent>.",
+        "description": "Anställ ledare och specialister. Gruppera dem i avdelningar. Låt dem fördela arbete sinsemellan."
+      },
+      "tasks": {
+        "title": "<accent>Uppgiftstavlan</accent>.",
+        "description": "Kanban-, lista- och schemavyer. Filtrera efter agent eller status. Välj en körtid per uppgift."
+      },
+      "knowledge": {
+        "title": "Din <accent>kunskapsbas</accent>.",
+        "description": "Markdown, CSV, PDF, kod, anteckningsböcker, mermaid, bilder, ljud — allt renderas direkt. Din data stannar på din maskin; den är din, inte vår."
+      },
+      "cabinets": {
+        "title": "Ett team av <accent>AI-team</accent>.",
+        "description": "Cabinets kapslas inuti cabinets. Varje är sitt eget AI-team med egen data, agenter och synlighetsomfång — och de kan samarbeta upp och ner i trädet."
+      },
+      "routines": {
+        "title": "<accent>Rutiner</accent> & scheman.",
+        "description": "Kör en uppgift dagligen kl. 9, veckovis på fredagar, eller en gång nästa måndag. Cron, kalender eller naturligt språk."
+      },
+      "conversations": {
+        "title": "Konversationer & <accent>godkännanden</accent>.",
+        "description": "Agenter föreslår åtgärder — starta en uppgift, schemalägg ett jobb — och du godkänner innan något körs."
+      },
+      "themes": {
+        "title": "Gör det <accent>till ditt</accent>.",
+        "description": "Välj från ett kurerat urval av ljusa och mörka teman — Paper, Slate, Claude, Ink och fler."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — ta med din egen AI.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — ta med de leverantörer du redan betalar för. Välj en standard, eller åsidosätt per uppgift."
+      },
+      "shortcuts": {
+        "title": "<accent>Tangentbords</accent>genvägar.",
+        "description": "Alla Cabinet-genvägar på ett sökbart kort. Tryck på ? var som helst för att öppna den igen. Filtrera efter namn eller tangent — gäller för navigering, redigering, uppgifter, paneler och snedstreckskommandon."
+      },
+      "skills": {
+        "title": "<accent>Färdigheter</accent> för dina agenter.",
+        "description": "Installerbara Agentfärdigheter — handböcker som modellen använder för en uppgift. Installera från GitHub eller skills.sh, koppla till en persona, eller @-nämn en i valfri kompositör för en engångskörning."
+      },
+      "apiKeysItem": {
+        "title": "<accent>API-nycklar</accent> för dina verktyg.",
+        "description": "Anslut ditt OpenAI-, Anthropic- eller GitHub-konto en gång — varje agent och färdighet i Cabinet kommer att använda det. Du betalar dina egna räkningar, använder din egen kvot, ingen mellanhand."
+      },
+      "integrations": {
+        "title": "<accent>MCP-servrar</accent> & integrationer.",
+        "description": "MCP-servrar, Slack, Telegram, Gmail och Kalender OAuth — anslut en gång och Cabinet hanterar token. Kommer snart."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Tangentbordsgenvägar",
+    "filterPlaceholder": "Filtrera…",
+    "close": "Stäng"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Live-terminal",
+    "runningHeartbeat": "Kör pulsslag…",
+    "memory": "Minne",
+    "recentActivity": "Senaste aktivitet"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Din avatar",
+    "preset": "Förinställning",
+    "useInitials": "Använd initialer som reserv",
+    "custom": "Anpassad"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Lokala app-kodändringar upptäcktes"
+  },
+  "logsPanel": {
+    "classifiedError": "Klassificerat fel",
+    "session": "Session",
+    "noEvents": "Inga händelser ännu.",
+    "noTranscript": "Inget transkript ännu."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "Resultat",
+    "noSummary": "Ingen sammanfattning har fångats."
+  },
+  "scheduleRowPlus": {
+    "delete": "Ta bort"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Bifoga filer"
+  },
+  "demos": {
+    "aiTeam": "AI-team",
+    "specialist": "Specialist",
+    "legal": "Juridik",
+    "global": "Global",
+    "editor": "Redigerare",
+    "slashMenu": "Snedstrecksmeny"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · DATA",
+    "headlineSentence": "Din <accent>enda källa</accent> till sanning.",
+    "paragraphPrefix": "Markdown, PDF:er, kalkylblad, presentationer, bilder, video, ljud, länkade repos, inbäddade webbappar, Google Docs. Nämn något av det med ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "En plats för allt — så att du och ditt AI-team läser, redigerar och levererar från ",
+    "sameFiles": "samma filer",
+    "secondParagraphSuffix": ", inte kopior av kopior.",
+    "mockTitle": "Janes Cabinet"
+  },
+  "slideData": {
+    "thailandRootLabel": "Thailandresa",
+    "thailandCaption": "Visa alla dina filer på ett ställe.",
+    "videoTitle": "Nattmarknad.mp4",
+    "taxRootLabel": "Skatt 2026",
+    "taxCaption": "Skatt 2026 — en live kalkylator-webbapp, inbäddad direkt i ditt cabinet.",
+    "calculatorTitle": "Kalkylator",
+    "liveAppBadge": "Live-app",
+    "taxEstimateLabel": "Beräknad skatt 2026",
+    "income": "Inkomst",
+    "deductions": "Avdrag",
+    "taxBracket": "Skatteklass",
+    "estimatedTax": "Beräknad skatt",
+    "healthRootLabel": "Hälsa",
+    "healthCaption": "Vitaminer & lab — ett kalkylblad som känns som en sida.",
+    "csvTitle": "Dagliga vitaminer.csv",
+    "csvColVitamin": "Vitamin",
+    "csvColDose": "Dos",
+    "csvColTime": "Tid",
+    "csvColDone": "Klar",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Kodbaser — länka valfritt Git-repo, sökbart av dina agenter.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · UPPGIFTER",
+    "typedCommand": "Kör 10 uppgifter, var och en skriver en låt, spara till @Låtar/",
+    "headlineSentence": "Redo att <accent>starta</accent>?",
+    "paragraphPrefix": "Skriv en uppgift. Kör en, kör tio, schemalägg dem för alltid. Nämn sidor med ",
+    "paragraphSuffix": ", spara utdata var du vill. Du är regissören nu.",
+    "savingFolder": "Låtar/"
+  },
+  "slideAgents": {
+    "persona": "Persona",
+    "heartbeat": "Puls",
+    "jobs": "Jobb",
+    "aiTeam": "AI-team",
+    "otherWriter": "Skribent",
+    "otherOrganizer": "Organisatör",
+    "idle": "inaktiv",
+    "researchAnalyst": "Forskningsanalytiker",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "aktiv",
+    "personaBody": "\"Noggrann analytiker. Citerar källor. Flaggar motstridiga påståenden.\"",
+    "heartbeatBody": "Skannar @Marknadsundersökning var 15:e min",
+    "jobsBody": "Mån 9:00 · Veckovis konkurrentsammanfattning",
+    "slideNum": "02 · AGENTER",
+    "paragraphPrefix": "Varje agent har en ",
+    "personaWord": "persona",
+    "paragraphMiddle": ", ett eget ",
+    "scheduleWord": "schema",
+    "paragraphMiddle2": ", och ett ",
+    "memoryWord": "minne",
+    "paragraphSuffix": ". Dina AI-agenter får jobbet gjort, dygnet runt. Var människa – de sköter resten.",
+    "aiTeamSentence": "Ditt <accent>AI-team</accent>."
+  },
+  "startWork": {
+    "close": "Stäng",
+    "selectAgent": "Välj agent",
+    "titleNow": "Vad behöver göras?",
+    "titleRecurring": "Ställ in en återkommande rutin",
+    "titleHeartbeat": "Väck denna agent enligt ett schema",
+    "titleEdit": "Redigera uppgift",
+    "submitStart": "Starta",
+    "submitAddInbox": "Lägg till i inkorgen",
+    "submitSaveEdit": "Spara ändringar",
+    "submitCreateRoutine": "Skapa rutin",
+    "submitSaveHeartbeat": "Spara puls",
+    "saving": "Sparar…",
+    "current": "aktuell",
+    "modeInboxLabel": "→ Inkorg",
+    "modeInboxHint": "Spara till inkorgen — starta när du är redo",
+    "modeNowLabel": "Kör nu",
+    "modeNowHint": "Starta denna konversation direkt",
+    "modeRecurringLabel": "Enligt schema",
+    "modeRecurringHint": "Kör denna prompt enligt schema",
+    "modeHeartbeatLabel": "Puls",
+    "modeHeartbeatHint": "Väck agenten i sin egen takt",
+    "agentFallback": "Agent",
+    "failedToStart": "Kunde inte starta",
+    "failedToSave": "Kunde inte spara ändringar",
+    "failedToSaveHeartbeat": "Kunde inte spara puls"
+  },
+  "googleDoc": {
+    "noUrl": "Ingen Google-URL angiven",
+    "anyoneWithLink": "Alla med länken",
+    "publishedToWeb": "Publicerad på webben"
+  },
+  "feedback": {
+    "close": "Stäng",
+    "rolePlaceholder": "t.ex. indieutvecklare, PM på ett SaaS, designstudent, hobbyist…",
+    "joinDiscord": "Gå med i Discord",
+    "header": "Snabb avstämning från Jane",
+    "howGoing": "Hur går det hittills?",
+    "starsCount": "{{n}} stjärna",
+    "starsCountPlural": "{{n}} stjärnor",
+    "likeCabinet": "Gillar du Cabinet?",
+    "starTooltipUnknown": "Stjärnmärk Cabinet på GitHub — om det är användbart för dig, hjälper en stjärna verkligen",
+    "starTooltipWithCount": "{{count}} GitHub-stjärnor — klicka för att lägga till din",
+    "starLabel": "Stjärnmärk",
+    "backgroundLabel": "Vad är din bakgrund?",
+    "optional": "(valfritt)",
+    "discordCta": "Vill du prata direkt, eller umgås med andra Cabinet-medlemmar?",
+    "maybeLater": "Kanske senare",
+    "send": "Skicka",
+    "thanksTitle": "Tack!",
+    "thanksBody": "Din feedback formar vad som byggs härnäst.",
+    "copy2Lead": "Du har öppnat Cabinet ett par gånger. Tack! Cabinet är öppen källkod och har precis börjat, så det du säger här påverkar faktiskt vad som byggs härnäst.",
+    "copy2Q1": "Vad försökte du göra i Cabinet idag?",
+    "copy2Q1Hint": "En mening räcker. Vad du öppnade den för, inte vad du önskade den kunde göra.",
+    "copy2Q2": "Förra gången du ville göra det, vad använde du istället för Cabinet?",
+    "copy2Q2Hint": "Valfritt verktyg, app eller dokument, även penna och papper.",
+    "copy6Lead": "Du är tillbaka, och det är signalen som betyder mest. Jag vill höra om bristerna innan du glömmer dem.",
+    "copy6Q1": "Vad försökte du göra i Cabinet idag?",
+    "copy6Q1Hint": "En mening räcker.",
+    "copy6Q2": "Vad är det enda som nästan fick dig att sluta använda Cabinet den här veckan?",
+    "copy6Q2Hint": "Det som irriterade dig mest. Var specifik. \"X var förvirrande\" är bättre än \"UX:en\"."
+  },
+  "apiKeysSection": {
+    "cancel": "Avbryt",
+    "pasteHere": "klistra in här",
+    "pasteNewValue": "klistra in nytt värde"
+  },
+  "storageBackend": {
+    "title": "Lagrings-backend",
+    "migrationFailed": "Migrering misslyckades"
+  },
+  "linkRepo": {
+    "title": "Ladda kunskap",
+    "intro": "Peka Cabinet mot valfri mapp på din dator. Cabinet skapar en symlänk så att mappens innehåll visas i din kunskapsbas och är tillgängligt för AI-agenter som kontext. Den ursprungliga mappen flyttas eller kopieras aldrig.",
+    "symlinkNote": "Detta skapar en symbolisk länk – filerna stannar där de är.",
+    "autoDetectPlaceholder": "Auto-detektera från git remote (valfritt)",
+    "shortSummaryPlaceholder": "Valfri kort sammanfattning för agenter"
+  },
+  "recentTasks": {
+    "ptyMode": "Terminal (PTY)-läge",
+    "revealOlder": "Visa fler äldre uppgifter",
+    "showOlder": "Visa äldre"
+  },
+  "treeNode": {
+    "openCabinet": "Öppna cabinet-vy",
+    "pageTitlePlaceholder": "Sidtitel…",
+    "rename": "Byt namn",
+    "openBadge": "Öppna",
+    "sectionAdd": "Lägg till i detta objekt",
+    "sectionThis": "Detta objekt",
+    "addSubPage": "Lägg till undersida",
+    "newFolder": "Ny mapp",
+    "createFile": "Skapa ny fil…",
+    "connectKnowledge": "Anslut kunskap…",
+    "symlinkTag": "Symlänk",
+    "importFile": "Importera fil…",
+    "importFolder": "Importera mapp…",
+    "createCabinet": "Skapa Cabinet här",
+    "editSymlink": "Redigera symlänk…",
+    "settings": "Inställningar…",
+    "moveTo": "Flytta till…",
+    "copyRelativePath": "Kopiera relativ sökväg",
+    "copyFullPath": "Kopiera fullständig sökväg",
+    "openInFinder": "Öppna i Finder",
+    "delete": "Ta bort",
+    "unlink": "Koppla bort",
+    "folderNamePlaceholder": "Mappnamn",
+    "creating": "Skapar…",
+    "create": "Skapa",
+    "addSubPageTitle": "Lägg till undersida till ”{{name}}”",
+    "newFolderTitle": "Ny mapp i ”{{name}}”"
+  },
+  "newFile": {
+    "title": "Skapa ny fil",
+    "subtitle": "Välj en filtyp. Cabinet öppnar den i redigeraren när den är klar.",
+    "groupNative": "Redigera i Cabinet",
+    "groupOffice": "Office (tom — redigera externt)",
+    "groupGoogle": "Google (länkad)",
+    "namePlaceholder": "Filnamn",
+    "create": "Skapa",
+    "creating": "Skapar…",
+    "googleUrlLabel": "Google-URL (valfritt)",
+    "googleUrlPlaceholder": "Klistra in en delbar Google-länk, eller lämna tomt för att lägga till senare",
+    "officeNote": "Cabinet visar Office-filer skrivskyddade. Använd ”Öppna i Finder” för att redigera i skrivbordsappen.",
+    "types": {
+      "markdown": "Markdown-sida",
+      "markdownDesc": "Riktextanteckningar, redigerbara i Cabinet",
+      "code": "Kodfil",
+      "codeDesc": "Valfri käll-/textfil — välj filändelse",
+      "mermaid": "Mermaid-diagram",
+      "mermaidDesc": "Flödesscheman och diagram som kod",
+      "csv": "CSV-tabell",
+      "csvDesc": "Kommaseparerad kalkylbladsdata",
+      "docx": "Word-dokument",
+      "docxDesc": "Tom .docx",
+      "xlsx": "Excel-kalkylblad",
+      "xlsxDesc": "Tom .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Tom .pptx",
+      "gdoc": "Google-dokument",
+      "gdocDesc": "Bädda in ett Google-dokument",
+      "gsheet": "Google-kalkylblad",
+      "gsheetDesc": "Bädda in ett Google-kalkylblad",
+      "gslides": "Google Presentationer",
+      "gslidesDesc": "Bädda in Google Presentationer"
+    },
+    "codeExtLabel": "Filändelse",
+    "googleTag": "Google",
+    "extHint": "Skriv bara namnet — Cabinet lägger till filändelsen {{ext}}.",
+    "createFailed": "Kunde inte skapa filen."
+  },
+  "fileSettings": {
+    "googleTitle": "Inställningar för Google-inbäddning",
+    "googleKindLabel": "Typ",
+    "googleUrlLabel": "Google-URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Dokumentets delningsinställningar måste vara ”Alla med länken” eller ”Publicerad på webben” för att inbäddningen ska laddas.",
+    "openLink": "Öppna i Google",
+    "googleKinds": {
+      "docs": "Dokument",
+      "sheets": "Kalkylblad",
+      "slides": "Presentationer",
+      "forms": "Formulär",
+      "drive": "Enhet"
+    },
+    "appTitle": "Webbappinställningar",
+    "modeLabel": "Hur ska detta öppnas?",
+    "modeWebsite": "Sidvy",
+    "modeWebsiteDesc": "Öppnas infogad med sidofältet och AI-panelen synliga.",
+    "modeApp": "Webbapp",
+    "modeAppDesc": "Öppnas i helskärm; sidofältet och AI-panelen fälls ihop automatiskt.",
+    "convertNote": "Detta växlar .app-markeringsfilen i mappen. Dina filer ändras inte.",
+    "save": "Spara",
+    "saving": "Sparar…",
+    "cancel": "Avbryt",
+    "saveFailed": "Kunde inte spara inställningar."
+  },
+  "editSymlink": {
+    "title": "Redigera symlänk",
+    "intro": "Denna kunskapsbaspost är en symbolisk länk till en mapp någon annanstans på din dator.",
+    "kbPathLabel": "Kunskapsbasens sökväg",
+    "targetLabel": "Länkar till (på disk)",
+    "brokenWarning": "Målmappen finns inte längre. Peka om den till en giltig mapp nedan.",
+    "repointLabel": "Peka om till en ny mapp",
+    "repointHint": "Cabinet kommer att ersätta länken för att peka hit. Filer flyttas aldrig.",
+    "browse": "Bläddra",
+    "nameLabel": "Namn",
+    "descriptionLabel": "Beskrivning",
+    "save": "Spara",
+    "saving": "Sparar…",
+    "copyTarget": "Kopiera målsökväg",
+    "saveFailed": "Kunde inte uppdatera symlänken."
+  },
+  "importFolder": {
+    "importing": "Importerar mapp…",
+    "failed": "Mappimport misslyckades: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Laddar uppgifter"
+  },
+  "agentList": {
+    "agentLibrary": "Agentbibliotek",
+    "newAgent": "Ny agent"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Ditt team",
+    "lead": "Ledare",
+    "specialist": "Specialist",
+    "tasks": "Uppgifter",
+    "todo": "Att göra",
+    "doing": "Pågående",
+    "done": "Klart",
+    "anythingGoes": "Allt är tillåtet",
+    "marketing": "Marknadsföring",
+    "product": "Produkt",
+    "research": "Forskning",
+    "design": "Design",
+    "routines": "Rutiner",
+    "dailyReview": "Daglig genomgång",
+    "weeklyDigest": "Veckosammanfattning",
+    "conversation": "Konversation",
+    "userQuery": "Planera en 2-veckors Thailandsresa…",
+    "agentReply": "Jag skickar ut bibliotekarien och redaktören.",
+    "pendingAction": "Väntande åtgärd",
+    "approve": "Godkänn",
+    "decline": "Avböj",
+    "themes": "Teman",
+    "providers": "Leverantörer",
+    "comingSoon": "Kommer snart"
+  },
+  "agentLive": {
+    "dismiss": "Avfärda",
+    "paused": "Agenten är pausad"
+  },
+  "conversationLive": {
+    "liveOutput": "Liveutdata",
+    "waitingFirstChunk": "Väntar på den första utdatadelen…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Använd ikon istället"
+  },
+  "pendingActions": {
+    "rejectAll": "Avvisa alla väntande åtgärder",
+    "approveAll": "Godkänn och skicka ut alla åtgärder som inte har några hårda blockeringar"
+  },
+  "aiPanel": {
+    "clearSessions": "Rensa alla sessioner",
+    "dismiss": "Avfärda"
+  },
+  "schedulerPlus": {
+    "restartAll": "Starta om alla agenter",
+    "restartSubtitle": "Stoppa och återaktivera alla scheman"
+  },
+  "csvViewer": {
+    "downloadCsv": "Ladda ner CSV",
+    "deleteRow": "Ta bort rad"
+  },
+  "resizableImage": {
+    "resizeLeft": "Ändra storlek från vänster",
+    "resizeRight": "Ändra storlek från höger"
+  },
+  "folderIndex": {
+    "listView": "Listvy",
+    "galleryView": "Gallerivy"
+  },
+  "linkPopover": {
+    "openLink": "Öppna länk",
+    "removeLink": "Ta bort länk"
+  },
+  "officeChrome": {
+    "openInFinder": "Öppna i Finder",
+    "downloadOriginal": "Ladda ner original"
+  },
+  "sourceViewer": {
+    "copyContents": "Kopiera filinnehåll",
+    "downloadFile": "Ladda ner fil"
+  },
+  "versionHistory": {
+    "title": "Versionshistorik"
+  },
+  "demoModal": {
+    "closeDemo": "Stäng demo",
+    "close": "Stäng"
+  },
+  "demosPlus": {
+    "anything": "Vad som helst",
+    "yours": "Dina",
+    "install": "Installera",
+    "attach": "Bifoga"
+  },
+  "narrowViewport": {
+    "dismiss": "Avfärda tips om smal vyport",
+    "dismissTitle": "Avfärda till nästa session",
+    "hintPrefix": "Cabinet fungerar bäst vid ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " bredd. Vissa ytor blir trånga vid smalare bredder."
+  },
+  "agentCard": {
+    "runHeartbeat": "Kör heartbeat"
+  },
+  "schedulePicker": {
+    "frequency": "Frekvens",
+    "onDay": "På dag",
+    "modeInterval": "Intervall",
+    "modeDaily": "Dagligen",
+    "modeWeekdays": "Vardagar",
+    "modeWeekly": "Veckovis",
+    "modeMonthly": "Månatligen",
+    "modeCustom": "Anpassad",
+    "parse": "Tolka",
+    "showCron": "Visa cron-uttryck",
+    "hideCron": "Dölj cron-uttryck",
+    "weekdayMo": "Må",
+    "weekdayTu": "Ti",
+    "weekdayWe": "On",
+    "weekdayTh": "To",
+    "weekdayFr": "Fr",
+    "weekdaySa": "Lö",
+    "weekdaySu": "Sö"
+  },
+  "slackPanel": {
+    "createChannel": "Skapa kanal",
+    "thread": "Tråd"
+  },
+  "uninstall": {
+    "title": "Avinstallera Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet-lådor",
+    "pageTitlePlaceholder": "Sidtitel…"
+  },
+  "skillAddPlus": {
+    "cancel": "Avbryt"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Granskningsdata är inte tillgänglig från skills.sh för denna färdighet",
+    "searchPlaceholder": "Sök på skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Uppdatera",
+    "noSkills": "Inga färdigheter ännu."
+  },
+  "taskDetail": {
+    "close": "Stäng (Esc)",
+    "muteTask": "Tysta denna uppgift — dess slutförda körningar går direkt till Arkiv",
+    "unmuteTask": "Slå på ljudet för denna uppgift — dess slutförda körningar återkommer i Nyligen klart"
+  },
+  "rowActionsPlus": {
+    "edit": "Redigera",
+    "editHint": "Redigera detta sparade utkast innan det startar",
+    "delete": "Ta bort",
+    "deleteHint": "Ta bort permanent – detta kan inte ångras"
+  },
+  "taskCard": {
+    "ptyMode": "Körs i terminal (PTY)-läge"
+  },
+  "undoToast": {
+    "dismiss": "Avfärda"
+  },
+  "terminalExited": {
+    "openDetails": "Öppna strukturerade detaljer (prompt, artefakter, turer)",
+    "reconnect": "Återanslut till daemonen och strömma rå PTY-uppspelning"
+  },
+  "terminalTabsPlus": {
+    "resize": "Ändra storlek på terminalpanelen"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Visa alla agenter",
+    "noRecentActivity": "Ingen nylig aktivitet",
+    "noAgents": "Inga agenter",
+    "noAgentsConfigured": "Inga agenter har konfigurerats för detta cabinet ännu.",
+    "cabinetScope": "Cabinet-omfång:",
+    "depthDropdownHeader": "Cabinet-omfång",
+    "depthOwnLabel": "Endast detta cabinet",
+    "depthOwnShort": "Eget",
+    "depthOwnDesc": "Sidor, agenter och uppgifter endast från detta cabinet.",
+    "depthChildren1Label": "Inkludera direkta underordnade",
+    "depthChildren1Desc": "Lägg till en nivå av under-cabinets.",
+    "depthChildren2Label": "Inkludera två cabinet-nivåer",
+    "depthChildren2Desc": "Lägg till två nivåer av under-cabinets.",
+    "depthAllLabel": "Inkludera alla underordnade",
+    "depthAllShort": "Alla",
+    "depthAllDesc": "Inkludera hela underträdet.",
+    "scopeTooltip": "Cabinet-omfång: {{label}}. Klicka för att ändra."
+  },
+  "composerExtras": {
+    "skillAttached": "Färdighet — endast kopplad till denna körning",
+    "pageTitlePlaceholder": "Sidtitel…",
+    "active": "Aktiv — väck agenten enligt detta schema",
+    "pickCliPty": "Välj en CLI att starta i en PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Redigera med AI",
+    "jupyterLab": "Kopiera: jupyter lab <path>",
+    "exitApp": "Avsluta app"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI-konton",
+    "aiTeams": "AI-team"
+  },
+  "whatsNew": {
+    "dismiss": "Stäng",
+    "headerPrefix": "Nyheter i v",
+    "readFull": "Läs fullständiga versionsanteckningar"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Jag förstår och vill fortsätta."
+  },
+  "daemonHealth": {
+    "dismiss": "Avfärda"
+  },
+  "tinyExtras": {
+    "light": "Ljus",
+    "home": "Hem",
+    "workspaceGallery": "Arbetsytegalleri",
+    "savingTo": "Sparar till",
+    "comingSoon": "Kommer snart",
+    "deleteSkill": "Ta bort färdighet",
+    "skillsOffered": "Färdigheter som erbjuds:",
+    "allAgents": "Alla agenter",
+    "noTranscript": "Ingen transkription hittades",
+    "noDiff": "Ingen diff tillgänglig.",
+    "headsUp": "Obs:",
+    "back": "Tillbaka",
+    "editYourAvatar": "Redigera din avatar",
+    "openFullTaskViewer": "Öppna fullständig uppgiftsvy",
+    "close": "Stäng",
+    "copyToClipboard": "Kopiera till urklipp",
+    "starOnGithub": "Stjärnmärk Cabinet på GitHub",
+    "helpMoreFind": "Hjälp fler att hitta gemenskapen",
+    "joinDiscord": "Gå med i Discord",
+    "chatWithBuilders": "Chatta med personerna som bygger Cabinet",
+    "joinWaitlist": "Gå med i väntelistan för Cabinet Cloud",
+    "emailPlaceholder": "du@företag.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Lägg till i inkorgen",
+    "runTaskNow": "Kör uppgift nu",
+    "search": "Sök",
+    "aiPanel": "AI-panel",
+    "drawers": "Lådor"
+  },
+  "dataLocations": {
+    "title": "Där din data finns",
+    "whyThisMatters": "Varför detta är viktigt",
+    "location": "Plats",
+    "contains": "Innehåller",
+    "network": "Nätverk",
+    "revealInFinder": "Visa i filhanteraren",
+    "stored": "Lagrad",
+    "resetOnboarding": "Återställ introduktion"
+  },
+  "rooms": {
+    "switcherTitle": "Byt rum",
+    "switchRoom": "Rum",
+    "loading": "Laddar…",
+    "defaultTag": "Hem",
+    "openInNewWindow": "Öppna i nytt fönster",
+    "opensBrowserWindow": "Öppnar ett nytt webbläsarfönster",
+    "customizeRoom": "Redigera rum",
+    "addRoom": "Lägg till rum…",
+    "editTitle": "Redigera rum",
+    "editSubtitle": "Ange detta rums namn, ikon, färg och tema.",
+    "nameLabel": "Visningsnamn",
+    "slugHint": "Mappnamnet på disken förblir {{slug}}. Att byta namn på mappen är en separat, avancerad åtgärd.",
+    "iconLabel": "Ikon",
+    "colorLabel": "Färg",
+    "colorAuto": "Auto",
+    "themeLabel": "Tema",
+    "themeGlobal": "Använd global standard",
+    "editFailed": "Kunde inte spara rummet. Försök igen.",
+    "deleteRoom": "Ta bort rum…",
+    "deleteLastRoomDisabledHint": "Du kan inte ta bort ditt sista rum.",
+    "deleteTitle": "Ta bort detta rum?",
+    "deleteSubtitle": "Detta rum och allt däri kommer att flyttas till papperskorgen.",
+    "deleteWarningIntro": "Att flytta rummet till papperskorgen tar även bort:",
+    "deleteWarningPages": "Sidor och filer i detta rum",
+    "deleteWarningAgents": "Agenter, konversationer och minne kopplat till detta rum",
+    "deleteWarningJobs": "Schemalagda jobb och rutiner i detta rum",
+    "deleteWarningChat": "Teamchatt-historik för detta rum",
+    "deleteWarningSearch": "Rummets sökindex (återuppbyggs automatiskt om det återställs)",
+    "deleteRecoveryNote": "Återställning: rummet flyttas till data/.trash/ — återställ det genom att flytta tillbaka mappen till data/.",
+    "deleteConfirmLabel": "Skriv {{slug}} för att bekräfta",
+    "deleteConfirmButton": "Ta bort rum",
+    "deleting": "Tar bort…",
+    "deleteFailed": "Kunde inte ta bort rummet. Försök igen."
+  },
+  "common": {
+    "actions": {
+      "save": "Spara",
+      "cancel": "Avbryt",
+      "delete": "Ta bort",
+      "confirm": "Bekräfta",
+      "close": "Stäng",
+      "open": "Öppna",
+      "back": "Tillbaka",
+      "next": "Nästa",
+      "done": "Klar"
+    },
+    "nav": {
+      "goBack": "Gå tillbaka",
+      "goForward": "Gå framåt"
+    },
+    "aiPanel": {
+      "open": "Öppna AI-panelen",
+      "close": "Stäng AI-panelen"
+    },
+    "states": {
+      "loading": "Laddar…",
+      "saving": "Sparar…",
+      "saved": "Sparat",
+      "error": "Något gick fel"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Ny sida",
+      "title": "Skapa ny sida",
+      "placeholder": "Sidtitel…",
+      "create": "Skapa",
+      "creating": "Skapar…"
+    },
+    "newCabinet": {
+      "trigger": "Nytt Cabinet",
+      "title": "Skapa nytt Cabinet",
+      "subtitle": "Ett Cabinet är en arbetsyta med egna agenter, jobb och kunskap.",
+      "importFromRegistry": "Importera från Registry",
+      "nameLabel": "Cabinet-namn",
+      "namePlaceholder": "t.ex. Mitt Startup, Marknadsteam, Forskarlabb…",
+      "selectAgents": "Välj agenter",
+      "selectedCount": "{{count}} valda",
+      "createCabinet": "Skapa Cabinet",
+      "creating": "Skapar…",
+      "createFailed": "Kunde inte skapa cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Exportera sida",
+      "copyMarkdown": "Kopiera Markdown",
+      "copyForLlms": "Kopiera för LLM:er",
+      "copyAsHtml": "Kopiera som HTML",
+      "downloadMarkdown": "Ladda ner .md",
+      "downloadPdf": "Ladda ner PDF",
+      "copiedForLlmToast": "Kopierade {{size}} Markdown för LLM"
+    },
+    "toolbar": {
+      "heading1": "Rubrik 1",
+      "heading2": "Rubrik 2",
+      "heading3": "Rubrik 3",
+      "bold": "Fet",
+      "italic": "Kursiv",
+      "underline": "Understrykning",
+      "strikethrough": "Genomstrykning",
+      "inlineCode": "Inline-kod",
+      "link": "Länk",
+      "textColor": "Textfärg",
+      "highlight": "Markeringsfärg",
+      "background": "Bakgrundsfärg",
+      "bulletList": "Punktlista",
+      "orderedList": "Numrerad lista",
+      "blockquote": "Citatblock",
+      "checklist": "Checklista",
+      "codeBlock": "Kodblock",
+      "divider": "Avdelare",
+      "alignLeft": "Vänsterjustera",
+      "alignCenter": "Centrera",
+      "alignRight": "Högerjustera",
+      "justify": "Blockjustera",
+      "align": "Justera",
+      "table": {
+        "selectCellText": "Markera celltext",
+        "addRowAbove": "Lägg till rad ovanför",
+        "addRowBelow": "Lägg till rad nedanför",
+        "moveRowUp": "Flytta rad uppåt",
+        "moveRowDown": "Flytta rad nedåt",
+        "deleteRow": "Ta bort rad",
+        "addColumnBefore": "Lägg till kolumn före",
+        "addColumnAfter": "Lägg till kolumn efter",
+        "moveColumnLeft": "Flytta kolumn vänster",
+        "moveColumnRight": "Flytta kolumn höger",
+        "deleteColumn": "Ta bort kolumn",
+        "toggleHeaderRow": "Växla rubrikrad",
+        "toggleHeaderColumn": "Växla rubrikkolumn",
+        "deleteTable": "Ta bort tabell"
+      },
+      "superscript": "Upphöjd text",
+      "subscript": "Nedsänkt text",
+      "insertImage": "Infoga bild",
+      "insertVideo": "Infoga video",
+      "embed": "Bädda in",
+      "undo": "Ångra",
+      "redo": "Gör om",
+      "switchToLtr": "Växla till LTR",
+      "switchToRtl": "Växla till RTL",
+      "scrollLeft": "Rulla verktygsfält vänster",
+      "scrollRight": "Rulla verktygsfält höger",
+      "markdown": "Markdown",
+      "preview": "Förhandsgranska"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet-namn…",
+      "renameWarning": "Cabinet-namn kan inte döpas om senare (än så länge). Välj klokt."
+    },
+    "templates": {
+      "header": "Börja från en mall",
+      "browseAll": "Visa alla →"
+    },
+    "quickActions": {
+      "shuffle": "Visa olika förslag",
+      "launch10Songs": "Starta 10 redigerare för låtskrivning",
+      "dailyReview9am": "Daglig genomgång kl. 9",
+      "weeklyReview": "Veckogenomgång nästa måndag",
+      "thailandTrip": "Planera min Thailandresa",
+      "physicsApp": "Skapa en app för fysikstudier",
+      "summariseRecent": "Sammanfatta mitt senaste arbete",
+      "recruiterReply": "Utkast till rekryterarsvar",
+      "mapArticles": "Koppla artikelkopplingar",
+      "physicsCourse": "Skapa en fysikkurs med 6 moduler",
+      "shortStory": "Skissera en novell",
+      "hourlyStandup": "Timvis stand-up-påminnelse",
+      "researchPhone": "Undersök min nästa telefon",
+      "translateToSpanish": "Översätt detta cabinet till spanska",
+      "refactorNotes": "Strukturera om mitt anteckningssystem",
+      "birthdayParty": "Planera en födelsedagsfest",
+      "boardUpdate": "Utkast till styrelseuppdatering",
+      "customerInterviews": "Simulera 5 kundintervjuer"
+    },
+    "goodMorning": "God morgon",
+    "goodAfternoon": "God eftermiddag",
+    "goodEvening": "God kväll",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Jag vill skapa...",
+    "composerDaemonDown": "Agent-daemon offline — starta om för att skicka"
+  },
+  "onboarding": {
+    "launchHeading": "Starta ditt <accent>Cabinet</accent>",
+    "intro": {
+      "tagline1": "Din kunskapsbas.",
+      "tagline2": "Ditt AI-team.",
+      "getStarted": "Kom igång"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Kontor",
+        "study": "Arbetsrum",
+        "lab": "Lab",
+        "library": "Bibliotek",
+        "kitchen": "Kök",
+        "family": "Familj",
+        "dining": "Matplats",
+        "studio": "Studio"
+      }
+    },
+    "welcome": {
+      "paragraph": "Ditt Hem är ditt eget. Här skapar du rum för olika delar av ditt liv: arbete, 'second brain', forskning, familj. Och varje rum har skåp: dina anteckningar, dina filer och ett AI-team som tyst arbetar i bakgrunden.",
+      "namePrompt": "Vad heter du?",
+      "heading": "Välkommen <accent>hem</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Välkommen tillbaka",
+      "headingNamed": "Välkommen tillbaka till {{cabinet}}",
+      "subtitle": "Vi hittade ett befintligt cabinet här. Låt oss slutföra installationen.",
+      "continue": "Fortsätt"
+    },
+    "verify": {
+      "passed": "Godkänd",
+      "notInstalled": "Ej installerad",
+      "authRequired": "Autentisering krävs",
+      "paymentRequired": "Betalning krävs",
+      "quotaExceeded": "Kvota / hastighetsbegränsning",
+      "error": "Fel"
+    },
+    "providerStatus": {
+      "ready": "Klar",
+      "loginRequired": "Inloggning krävs",
+      "notInstalled": "Ej installerad"
+    },
+    "actions": {
+      "back": "Tillbaka",
+      "next": "Nästa",
+      "continue": "Fortsätt",
+      "skip": "Hoppa över",
+      "finish": "Slutför",
+      "complete": "Slutför installationen",
+      "copyToClipboard": "Kopiera till urklipp"
+    },
+    "cabinetCreated": {
+      "continue": "Fortsätt installationen",
+      "heading": "Din cabinet har skapats",
+      "subtitle": "Allt är klart och redo att användas.",
+      "agentsReady_one": "{{count}} agent redo att arbeta",
+      "agentsReady_other": "{{count}} agenter redo att arbeta",
+      "scheduledJobs_one": "{{count}} schemalagt jobb",
+      "scheduledJobs_other": "{{count}} schemalagda jobb",
+      "subCabinets_one": "{{count}} under-cabinet",
+      "subCabinets_other": "{{count}} under-cabinets",
+      "agentsReady": "{{count}} agenter redo att arbeta",
+      "scheduledJobs": "{{count}} schemalagda jobb",
+      "subCabinets": "{{count}} under-cabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "Du är redan på listan – vi hör av oss.",
+      "aside": "Cabinet Cloud kommer snart. Samma produkt, utan krånglet med egen hosting.",
+      "description": "Öppna ditt Cabinet från vilken enhet som helst medan dina AI-agenter fortsätter att arbeta – utkast, research, organisering – även när din laptop är stängd.",
+      "error": "Något gick fel. Kontrollera e-postadressen och försök igen.",
+      "joinWaitlist": "Gå med i väntelistan",
+      "onList": "Du är på listan. Vi mejlar dig när Cabinet Cloud öppnar.",
+      "sending": "Skickar…",
+      "title": "Ditt Cabinet, överallt. Ditt AI-team, alltid på.",
+      "waitlistSubtitle": "Anslut varifrån som helst. Ditt AI-team arbetar dygnet runt."
+    },
+    "discord": {
+      "aside": "Om du vill ha nya funktioner först och föredrar 'kom och chatta' framför 'vänligen skicka in ett ärende', är detta ditt rum.",
+      "description": "Här blir feedback till funktioner, skärmdumpar till debatter, och någon hittar oftast gränsfallet innan det hittar dig.",
+      "joinBadge": "Gå med",
+      "title": "Discord är där det roliga och oväntade händer."
+    },
+    "github": {
+      "aside": "Cabinet är öppen källkod. Om du gillar visionen, hjälp oss att sprida ordet.",
+      "description": "En GitHub-stjärna hjälper fler att upptäcka Cabinet och gå med i gemenskapen.",
+      "starsLabel": "{{stars}} GitHub-stjärnor",
+      "title": "Hjälp Cabinet-gemenskapen att växa"
+    },
+    "launch": {
+      "beforeYouLaunch": "Innan du startar",
+      "defaultCabinetName": "Ditt Cabinet",
+      "defaultDescription": "Kunskapsbas + AI-team",
+      "knowledgeBaseLabel": "Kunskapsbas",
+      "aiTeamLabel": "AI-team",
+      "launchCabinet": "Starta Cabinet",
+      "settingUp": "Ställer in...",
+      "disclaimerAccess": "<strong>Agenter körs med full åtkomst.</strong> Cabinet använder <flag>--dangerously-skip-permissions</flag> (Claude Code) och motsvarande flaggor hos andra leverantörer. Detta är identiskt med att köra dessa CLI-verktyg från din egen terminal. Alla MCP-servrar eller verktyg du har konfigurerat kan anropas automatiskt av agenter.",
+      "disclaimerBackup": "<strong>Säkerhetskopiera din data regelbundet.</strong> Agenter kan läsa, skriva och radera filer i din KB och länkade repos. Cabinet ansvarar inte för dataförlust. Du ansvarar för de AI-leverantörer du väljer och deras användarvillkor.",
+      "disclaimerBeta": "<strong>Beta-programvara. Saker kan gå sönder.</strong> Vi levererar snabbt. Brytande ändringar kan införas utan förvarning.",
+      "legalNotice": "Genom att fortsätta godkänner du våra <terms>Villkor</terms> och <privacy>Integritetspolicy</privacy>. Cabinet är ett <oss>öppen källkod-projekt</oss>.",
+      "keepInTouch": "Håll mig uppdaterad. Cabinet är öppen källkod och utvecklas öppet, och vi vill gärna veta vad vi ska bygga härnäst. Ingen spam, vi lovar."
+    },
+    "provider": {
+      "agentType": "{{type}}-agent",
+      "close": "Stäng",
+      "comingSoon": "Kommer snart",
+      "guide": "Guide",
+      "heading": "Agentleverantör",
+      "moreModels": "Fler AI:er",
+      "install": "Installera",
+      "logIn": "Logga in",
+      "openTerminalButton": "Öppna terminal",
+      "openTerminalDetail": "Du behöver en terminal för att köra nästa steg.",
+      "openTerminalError": "Kunde inte öppna terminalen automatiskt. Öppna din systemterminal manuellt.",
+      "openTerminalTitle": "Öppna en terminal",
+      "recheck": "Kontrollera leverantörer igen",
+      "rerunVerify": "Kör verifiering igen",
+      "runVerify": "Kör verifiering",
+      "setupTitle": "{{name}}-inställningar",
+      "skipForNow": "Hoppa över för nu",
+      "subtitle": "Cabinet behöver en AI CLI för att driva dina agenter.",
+      "verifyExplanation": "Verifiering kör leverantörens headless-prompt från början till slut och klassificerar eventuella fel så att du vet vilket steg du ska återbesöka.",
+      "verifying": "Verifierar…",
+      "failedAtStep": "Misslyckades vid steg: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Vad är detta kabinett till för? Varje rum har ett eget AI-team.",
+      "heading": "Välj ett <accent>rum</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Vad är ett Cabinet?",
+      "body": "Ett Cabinet är en fokuserad arbetsyta för ett område i ditt liv eller arbete. Det innehåller dina filer, anteckningar, verktyg, agenter och uppgifter, så ditt AI-team har det sammanhang det behöver för att verkligen hjälpa till.",
+      "examplesLabel": "Hur människor använder Cabinet",
+      "example1": "din startup",
+      "example2": "ett GitHub-repo",
+      "example3": "ditt marknadsföringsarbete",
+      "example4": "ett klientprojekt",
+      "example5": "din personliga kunskapsbas"
+    },
+    "access": {
+      "heading": "Vad kan {{name}} komma åt?",
+      "subtitle": "Välj vilken kunskap och vilka verktyg denna agent kan använda. Du kan ändra detta när som helst.",
+      "defaultAgent": "din agent",
+      "files": "Filer & kunskap",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP-servrar",
+      "plugins": "Tillägg",
+      "skills": "Färdigheter",
+      "placeholderNote": "Du kan finjustera åtkomst senare i agentens inställningar."
+    },
+    "heartbeat": {
+      "heading": "Ska {{name}} köras regelbundet?",
+      "subtitle": "En regelbunden körning låter agenten kontrollera och arbeta självständigt enligt ett schema.",
+      "off": "Av",
+      "offHint": "Körs endast när du ber om det. Rekommenderas att börja med.",
+      "daily": "Dagligen",
+      "dailyHint": "Kontrollerar en gång om dagen.",
+      "weekly": "Veckovis",
+      "weeklyHint": "Kontrollerar en gång i veckan.",
+      "tokenNote": "Obs: en regelbunden körning kör agenten automatiskt, vilket använder AI-tokens (och din leverantörskvot) varje gång den aktiveras. Du kan ändra eller stänga av detta när som helst."
+    },
+    "firstTask": {
+      "heading": "Skapa din första uppgift",
+      "subtitle": "Uppgifter är hur du ger arbete till {{name}}. Skriv en nu så hamnar den i ditt Cabinet, redo att köras.",
+      "label": "Vad ska {{name}} göra först?",
+      "placeholder": "t.ex. Skriv ett välkomstmejl för nya kunder",
+      "example1": "Sammanfatta mina senaste anteckningar",
+      "example2": "Skapa en projektplan",
+      "example3": "Undersök våra 3 främsta konkurrenter",
+      "note": "Du kan lämna detta tomt och lägga till uppgifter senare. Ingenting körs förrän du ansluter en AI-leverantör."
+    },
+    "rail": {
+      "untitled": "Ditt Cabinet",
+      "dataCaption": "Alla dina projekts filer och anteckningar finns här.",
+      "teamEmpty": "Inga agenter ännu.",
+      "teamCaption": "Ditt AI-team arbetar här.",
+      "tasksEmpty": "Inga uppgifter ännu.",
+      "tasksCaption": "Arbete du ger till ditt team visas här.",
+      "assignedTo": "Tilldelad {{name}}",
+      "you": "Du"
+    },
+    "rooms": {
+      "office": {
+        "label": "Kontoret",
+        "tagline": "Driv ett företag, en startup eller ett sidoprojekt.",
+        "workspaceLabel": "Företags- eller projektnamn",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Vad gör ni?",
+        "descriptionPlaceholder": "Vi gör en podcast om AI-startups",
+        "departmentNoun": "Avdelning",
+        "teamSizeLabel": "Teamstorlek",
+        "exampleAgents": {
+          "0": "VD",
+          "1": "Redaktör"
+        }
+      },
+      "study": {
+        "label": "Studie",
+        "tagline": "Din andra hjärna — skrivande, anteckningar, personlig assistent.",
+        "workspaceLabel": "Namnge ditt cabinet",
+        "workspacePlaceholder": "Min Studie",
+        "descriptionLabel": "Vilka livsområden vill du ha hjälp med?",
+        "descriptionPlaceholder": "Skrivande, e-postsortering, kalender, vanespårning",
+        "departmentNoun": "Område",
+        "exampleAgents": {
+          "0": "Assistent",
+          "1": "Bibliotekarie"
+        }
+      },
+      "lab": {
+        "label": "Forskningslabb",
+        "tagline": "Akademiskt arbete, litteratur, undervisning, avhandling.",
+        "workspaceLabel": "Arbetsytans namn",
+        "workspacePlaceholder": "Medvetandefilosofi",
+        "descriptionLabel": "Vad är ditt område eller vad forskar du om?",
+        "descriptionPlaceholder": "Fenomenologi, medvetande, undervisning i Introduktion till filosofi",
+        "departmentNoun": "Område",
+        "exampleAgents": {
+          "0": "Forskningsledare",
+          "1": "Bibliotekarie"
+        }
+      },
+      "family-room": {
+        "label": "Familjerum",
+        "tagline": "Hushåll, familjekalender, måltider, barn.",
+        "workspaceLabel": "Hushållsnamn",
+        "workspacePlaceholder": "Familjen Nguyen",
+        "descriptionLabel": "Vem bor här och vad jonglerar ni med?",
+        "descriptionPlaceholder": "Två föräldrar, tre barn, två skolor, en hund",
+        "departmentNoun": "Område",
+        "teamSizeLabel": "Hushållsstorlek",
+        "exampleAgents": {
+          "0": "Hemansvarig",
+          "1": "Planerare"
+        }
+      },
+      "blank": {
+        "label": "Tomt rum",
+        "tagline": "Inget än. Ta med egna agenter, din egen form.",
+        "workspaceLabel": "Namnge ditt cabinet",
+        "workspacePlaceholder": "Mitt Cabinet",
+        "descriptionLabel": "Vad är det till för?",
+        "descriptionPlaceholder": "Vad som helst — lämna tomt om du inte är säker än",
+        "departmentNoun": "Grupp",
+        "exampleAgents": {
+          "0": "Ditt val"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Ledarskap",
+      "marketing": "Marknadsföring",
+      "content": "Innehåll",
+      "engineering": "Teknik",
+      "product-and-design": "Produkt & Design",
+      "business": "Affärer",
+      "research": "Forskning",
+      "finance-and-ops": "Ekonomi & Drift",
+      "personal": "Personligt",
+      "second-brain": "Andra hjärnan",
+      "writing": "Skrivande",
+      "tools": "Verktyg",
+      "life-admin": "Livsadministration",
+      "from-the-office": "Från kontoret",
+      "writing-and-notes": "Skrivande & anteckningar",
+      "other": "Övrigt",
+      "household": "Hushåll",
+      "admin": "Administration",
+      "money": "Pengar",
+      "product": "Produkt",
+      "design": "Design",
+      "sales": "Försäljning",
+      "support": "Support",
+      "analytics": "Analys",
+      "finance": "Ekonomi",
+      "legal": "Juridik",
+      "people": "Personal"
+    },
+    "demo": {
+      "greeting": {
+        "office": "God morgon team! Välkommen till {{workspace}}. Nu kör vi igång direkt.",
+        "study": "God morgon. Din andra hjärna är online — välkommen tillbaka till {{home}}.",
+        "lab": "Forskardesken är redo — \"{{workspace}}\". Vad ska vi gräva i idag?",
+        "family-room": "Hemmakontoret startar — {{home}}. Låt oss få alla dit de behöver vara.",
+        "blank": "Tomt blad — \"{{workspace}}\". Vad vill du bygga här, {{home}}?"
+      },
+      "assign": "{{name}}, kan du ta dig an {{topic}}?",
+      "fallbackTopic": "vad är nästa",
+      "office": {
+        "replies": {
+          "0": "Fixar. Jag har en översikt klar i slutet av dagen.",
+          "1": "Håller redan på att utarbeta en plan. Jag delar den i #content snart.",
+          "2": "Ställer in de grundläggande arbetsflödena nu. Ser bra ut hittills."
+        },
+        "topics": {
+          "0": "konkurrentanalys",
+          "1": "innehållskalendern",
+          "2": "lanseringsplanen"
+        },
+        "closing": "Bra energi alla. Låt oss göra detta till en stark första vecka."
+      },
+      "study": {
+        "replies": {
+          "0": "Jag sorterar inkorgen och lyfter fram det som är viktigt för dig.",
+          "1": "Kalendern ser tom ut fram till kl. 15 — bra tillfälle för skrivande.",
+          "2": "Jag har redan länkat tre nya anteckningar till 'Daglig'-indexet."
+        },
+        "topics": {
+          "0": "dagens inkorgssortering",
+          "1": "veckans skrivande",
+          "2": "min läslista"
+        },
+        "closing": "Bra. Pinga mig om något behöver mig — annars håller jag mig undan."
+      },
+      "lab": {
+        "replies": {
+          "0": "Hämtar den senaste artikeln om detta nu — utkast till sammanfattning om en timme.",
+          "1": "Jag synkar bibliografin efter detta och flaggar dubbletter.",
+          "2": "Föreläsningsöversikten för torsdag är nästan redo för granskning."
+        },
+        "topics": {
+          "0": "litteraturöversikten",
+          "1": "Torsdagens föreläsningsförberedelser",
+          "2": "referenslistan"
+        },
+        "closing": "Håll mig uppdaterad. Jag granskar allt du skickar in före dagens slut."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Schemat ser klart ut efter 16. Markerade överlappande lämningar.",
+          "1": "Meny utkastad för veckan — inköpslistan är redo att granskas.",
+          "2": "Barnens aktiviteter synkade. DnD-kvällen är fortfarande på fredag."
+        },
+        "topics": {
+          "0": "dagens schema",
+          "1": "matplanen",
+          "2": "barnens aktiviteter"
+        },
+        "closing": "Tack alla. Pinga mig om något ändras under dagen."
+      },
+      "blank": {
+        "replies": {
+          "0": "Fattar. Redo när du är.",
+          "1": "Står redo.",
+          "2": "Jag väntar på instruktioner."
+        },
+        "topics": {
+          "0": "det första",
+          "1": "nästa sak",
+          "2": "den öppna frågan"
+        },
+        "closing": "När du är redo, säg vad vi ska göra."
+      }
+    },
+    "team": {
+      "browseAll": "Bläddra bland alla",
+      "browseCabinets": "Bläddra bland kabinett",
+      "cabinetNameLabel": "Kabinettnamn",
+      "cancel": "Avbryt",
+      "importButton": "Importera",
+      "importFailed": "Import misslyckades",
+      "importFailedConnection": "Import misslyckades. Kontrollera din anslutning.",
+      "importTitle": "Importera {{name}}",
+      "pickAgents": "Välj dina agenter",
+      "required": "Krävs",
+      "subtitle": "Varje kabinett är ett AI-team — agenter, uppgifter och en delad kunskapsbas som samarbetar.",
+      "heading": "Bygg <accent>ditt</accent> team",
+      "nameLabel": "Agentnamn",
+      "namePlaceholder": "t.ex. Redaktör, Forskare, Assistent",
+      "roleLabel": "Roll",
+      "rolePlaceholder": "t.ex. Skrivassistent",
+      "instructionsLabel": "Vad ska denna agent göra?",
+      "instructionsPlaceholder": "Beskriv hur den ska hjälpa. Till exempel: Utkasta och redigera mina sidor, håll tonen klar och vänlig, och föreslå förbättringar.",
+      "agentOptionalHint": "Valfritt. Du kan hoppa över detta och lägga till agenter senare inifrån rummet.",
+      "agentCount_one": "{{count}} agent",
+      "agentCount_other": "{{count}} agenter",
+      "jobCount_one": "{{count}} uppgift",
+      "jobCount_other": "{{count}} uppgifter",
+      "subCabinetCount_one": "{{count}} underkabinett",
+      "subCabinetCount_other": "{{count}} underkabinett",
+      "cabinetsImported_one": "{{count}} kabinett importerat",
+      "cabinetsImported_other": "{{count}} kabinett importerade",
+      "agentCount": "{{count}} agenter",
+      "cabinetsImported": "{{count}} kabinett importerade",
+      "jobCount": "{{count}} uppgifter",
+      "subCabinetCount": "{{count}} underkabinett"
+    }
+  },
+  "search": {
+    "title": "Sök",
+    "placeholder": "Sök sidor, agenter, uppgifter…",
+    "clearQuery": "Rensa sökning",
+    "noCommands": "Inga kommandon matchar.",
+    "scopes": {
+      "all": "Alla",
+      "pages": "Sidor",
+      "agents": "Agenter",
+      "tasks": "Uppgifter"
+    },
+    "groups": {
+      "pages": "Sidor",
+      "agents": "Agenter",
+      "tasks": "Uppgifter"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Språk",
+      "description": "Ändrar språk och läsriktning. Befintliga sidor behåller sin dokumentbaserade riktning.",
+      "english": "Engelska",
+      "hebrew": "Hebreiska",
+      "chineseSimplified": "Förenklad kinesiska",
+      "chineseTraditional": "Traditionell kinesiska",
+      "moreLanguages": "Fler språk",
+      "moreLanguagesHint": "Klicka på valfritt språk för att berätta att du vill ha Cabinet på det språket – vi prioriterar de mest efterfrågade.",
+      "comingSoon": "Kommer snart",
+      "requestSubmitted": "Tack! Vi har noterat din förfrågan för {{language}}. Vi prioriterar de mest efterfrågade språken.",
+      "requestFailed": "Kunde inte nå servern. Försök igen om en stund."
+    },
+    "appearance": {
+      "title": "Utseende",
+      "theme": "Tema",
+      "themeDescription": "Välj ett tema för gränssnittet.",
+      "matchSystem": "Matcha system",
+      "matchSystemDescription": "Växla automatiskt med ditt operativsystems utseende.",
+      "lightThemes": "Ljusa teman",
+      "darkThemes": "Mörka teman",
+      "lightVariant": "Ljus variant",
+      "darkVariant": "Mörk variant",
+      "sidebar": "Sidopanel",
+      "showHiddenFiles": "Visa dolda filer",
+      "sidebarDescription": "Konfigurera hur filer visas i sidopanelen.",
+      "showHiddenFilesHint": "Visa filer och mappar som börjar med en punkt (t.ex. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "providers": "Leverantörer",
+      "skills": "Färdigheter",
+      "storage": "Lagring",
+      "integrations": "Integrationer",
+      "notifications": "Meddelanden",
+      "appearance": "Utseende",
+      "updates": "Uppdateringar",
+      "about": "Om"
+    },
+    "page": {
+      "title": "Inställningar",
+      "refresh": "Uppdatera",
+      "groupYou": "Du",
+      "groupWorkspace": "Arbetsyta",
+      "groupApp": "App"
+    },
+    "common": {
+      "copyToClipboard": "Kopiera till urklipp",
+      "categoriesAriaLabel": "Inställningskategorier",
+      "loading": "Laddar…",
+      "connect": "Anslut",
+      "recommended": "Rekommenderas"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Kommer snart",
+      "hint": "Anslutning av externa integrationer och inbyggda verktyg är på gång."
+    },
+    "storage": {
+      "dataDirectory": "Datakatalog",
+      "restartRequired": "Omstart krävs",
+      "dataDirectoryDescription": "Allt innehåll i kunskapsbasen lagras i denna katalog. Att ändra sökvägen kräver en omstart.",
+      "restartHint": "Datakatalogen ändras efter att du startat om Cabinet.",
+      "currentPath": "Aktuell sökväg",
+      "loadingPath": "Laddar...",
+      "changeDirectory": "Ändra katalog",
+      "directoryPlaceholder": "/sökväg/till/data",
+      "browse": "Bläddra",
+      "save": "Spara",
+      "openInFinder": "Öppna i Finder",
+      "envVarHint1": "Du kan också ställa in ",
+      "envVarHint2": " miljövariabeln, som prioriteras över denna inställning.",
+      "failedToSave": "Kunde inte spara.",
+      "failedToSaveDir": "Kunde inte spara datakatalog."
+    },
+    "updates": {
+      "checking": "Söker efter uppdateringar för Cabinet…"
+    },
+    "providers": {
+      "title": "Agentleverantörer",
+      "defaultModel": "Standardmodell",
+      "setupGuide": "Installationsguide",
+      "troubleshoot": "Felsök AI-leverantörer",
+      "subtitle": "Konfigurera AI-agentleverantörer. CLI-agenter körs via terminal, API-agenter använder direkta API-anrop.",
+      "defaultRuntime": "Standardkörtid",
+      "defaultRuntimeHint": "Allmänna konversationer och reservkörningar använder denna leverantör/modell/insats.",
+      "cliAgents": "CLI-agenter",
+      "apiAgents": "API-agenter",
+      "ready": "Klar",
+      "installedNotLoggedIn": "Installerad men inte inloggad",
+      "notInstalled": "Inte installerad",
+      "emptyMatrix": "Inga leverantörer är konfigurerade. Lägg till en nedan."
+    },
+    "notifications": {
+      "channels": "Meddelandekanaler",
+      "alertRules": "Varningsregler",
+      "alwaysOn": "Alltid på",
+      "comingSoon": "Kommer snart",
+      "emailPlaceholder": "du@företag.com",
+      "channelsHint": "Konfigurera hur du får aviseringar när agenter behöver din uppmärksamhet.",
+      "rulesHint": "Aviseringar utlöses automatiskt för dessa händelser:",
+      "previewHint": "Webbläsarpush, Telegram, Slack och e-postaviseringar.",
+      "channelPushName": "Webbläsarpush",
+      "channelPushDesc": "Omedelbara aviseringar när Cabinet-fliken är öppen eller PWA är installerad",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Omedelbara mobilaviseringar via Telegram-bot",
+      "channelSlackName": "Slack-webhook",
+      "channelSlackDesc": "Vidarebefordra aviseringar till ditt teams Slack-kanal",
+      "channelEmailName": "E-postsammanfattning",
+      "channelEmailDesc": "Samlad sammanfattning av aviseringar och agentaktivitet",
+      "ruleAlertsEvent": "#alerts-kanalmeddelanden",
+      "ruleAlertsDesc": "Alla agenter som postar till alerts-kanalen",
+      "ruleMentionsEvent": "@human-omnämningar",
+      "ruleMentionsDesc": "När en agent nämner @human i någon kanal",
+      "ruleFloorEvent": "Målgräns underskriden",
+      "ruleFloorDesc": "Ett mål sjunker under sin minimitröskel",
+      "ruleHealthEvent": "Agenthälsa försämrad",
+      "ruleHealthDesc": "3+ påföljande hjärtslagsfel"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Version",
+      "release": "Utgåva",
+      "framework": "Ramverk",
+      "storage": "Lagring",
+      "privacy": "Integritet",
+      "telemetry": "Anonym användningstelemetri",
+      "tagline": "AI-driven, självhostad kunskapsbas och startup-OS.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Lokalt filsystem",
+      "aiLabel": "AI",
+      "aiValue": "Drivs av lokala AI CLI:er",
+      "philosophy": "Allt innehåll lagras som markdown-filer på disken. Människor definierar avsikt. Agenter utför arbetet. Kunskapsbasen är det delade minnet mellan båda.",
+      "privacyBody": "Cabinet skickar anonym användningstelemetri för att hjälpa oss förbättra produkten. Inga filinnehåll, sökvägar, prompter eller hemligheter samlas in.",
+      "privacyLink": "Vad samlas in?",
+      "telemetryEnvDisabled": "Inaktiverad av CABINET_TELEMETRY_DISABLED=1 (miljövariabel).",
+      "telemetryHint": "Endast antal händelser, versioner och plattformsinformation. Stäng av för att sluta skicka.",
+      "cabinetCloud": "Cabinet Moln",
+      "cloudBody": "Anslut till ditt Cabinet var som helst, medan ditt AI-team arbetar dygnet runt för dig. Ange din e-postadress nedan så meddelar vi dig när Cabinet Cloud öppnar.",
+      "cloudAlready": "Du är redan med på listan – vi hör av oss.",
+      "cloudSuccess": "Du är med på listan. Vi mejlar dig när Cabinet Cloud öppnar.",
+      "cloudSending": "Skickar…",
+      "cloudJoinWaitlist": "Gå med i väntelistan",
+      "cloudError": "Något gick fel. Kontrollera e-postadressen och försök igen.",
+      "connectTitle": "Anslut",
+      "connectBody": "Få hjälp, ge feedback eller bara säg hej.",
+      "joinDiscord": "Gå med i Discord"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Namn",
+      "namePlaceholder": "Jane",
+      "displayName": "Visningsnamn",
+      "role": "Roll",
+      "rolePlaceholder": "Byggare",
+      "avatar": "Avatar",
+      "accentColor": "Accentfärg",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Reservikon",
+      "useIconInstead": "Använd ikon istället",
+      "searchAvatars": "Sök avatarer…",
+      "searchIcons": "Sök ikoner…",
+      "howAppear": "Hur du visas i konversationer och i appen.",
+      "youFallback": "Du",
+      "displayNameHint": "Visas i konversationer. Standard är Namn.",
+      "iconHint": "Används när ingen avatarbild är inställd. Klicka igen för att rensa.",
+      "tintHint": "Färgar reservavataren när ingen bild är inställd.",
+      "save": "Spara",
+      "saving": "Sparar…",
+      "saved": "Sparat",
+      "browseAll": "Bläddra alla ({{count}})",
+      "showFavorites": "Visa favoriter",
+      "showFewer": "Visa färre"
+    },
+    "workspace": {
+      "title": "Arbetsyta",
+      "name": "Namn på arbetsyta",
+      "namePlaceholder": "Mitt Cabinet",
+      "description": "Beskrivning",
+      "descriptionPlaceholder": "Vad gör du?",
+      "teamSize": "Teamstorlek",
+      "teamSizePlaceholder": "Ensam / 2–5 / 6–20 / 20+",
+      "subtitle": "Fångas under introduktionen. Agenter läser detta när de planerar arbete."
+    }
+  },
+  "sidebar": {
+    "settings": "Inställningar",
+    "createPage": "Skapa sida",
+    "newPage": "Ny sida",
+    "newAgent": "Ny Agent",
+    "newTask": "Ny uppgift",
+    "archive": "Arkiv",
+    "trash": "Papperskorg",
+    "search": "Sök",
+    "agents": "Agenter",
+    "tasks": "Uppgifter",
+    "missions": "Uppdrag",
+    "drawerData": "Data",
+    "drawerAgents": "Team",
+    "drawerTasks": "Uppgifter",
+    "goHome": "Gå till startsidan",
+    "brandWord": "",
+    "refresh": "Uppdatera sidopanel",
+    "refreshDescription": "Uppdatera sidopanel (läs om datamapp)",
+    "collapseSidebar": "Fäll ihop sidopanel",
+    "expandSidebar": "Fäll ut sidopanel",
+    "resizeHandle": "Ändra storlek på sidopanel — dubbelklicka för att återställa",
+    "resetWidth": "Dubbelklicka för att återställa bredd",
+    "refreshedNoChanges": "Uppdaterad — inga ändringar.",
+    "refreshedWithChanges": "Uppdaterad — {{added}} tillagda, {{removed}} borttagna.",
+    "refreshFailed": "Uppdatering misslyckades.",
+    "searchPlaceholder": "Sök filer…",
+    "searchSearching": "Söker…",
+    "searchNoResults": "Inga filer matchar ”{{query}}”"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Statusfält",
+      "askAiAriaLabel": "Be AI att redigera den här sidan",
+      "askAiPlaceholder": "Hur redigerar jag den här sidan?",
+      "sendHint": "↵ för att skicka"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Serverstatus — klicka för detaljer",
+      "checking": "Kontrollerar serverstatus…",
+      "allRunning": "Alla system körs",
+      "appNotResponding": "Appservern svarar inte",
+      "daemonDownNoProviders": "Daemon svarar inte; inga agentleverantörer tillgängliga",
+      "daemonDown": "Daemon svarar inte",
+      "noProviders": "Inga agentleverantörer tillgängliga",
+      "checkingShort": "Kontrollerar…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Nedsatt",
+      "allSystemsRunning": "Alla system körs",
+      "serviceDisruption": "Tjänststörning",
+      "appServer": "Appserver",
+      "daemon": "Daemon",
+      "agentProviders": "Agentleverantörer",
+      "running": "Körs",
+      "down": "Nere",
+      "lastSeen": "Senast sedd: {{when}}",
+      "appWorking": "Sidor, redigerare, sökning och filhantering fungerar.",
+      "appDown": "Sidor, redigerare, sökning och sparande är otillgängliga. Du kan fortfarande läsa cachelagrat innehåll.",
+      "daemonWorking": "AI-agenter, schemalagda jobb och webbterminalen fungerar.",
+      "daemonDownDescription": "AI-agenter, schemalagda jobb och webbterminalen är otillgängliga. Sidredigering fungerar fortfarande.",
+      "available": "Tillgänglig",
+      "noneReady": "Inga redo",
+      "providerReady": "Redo",
+      "providerNotLoggedIn": "Inte inloggad",
+      "providerNotInstalled": "Inte installerad",
+      "install": "Installera",
+      "howToFix": "Så här åtgärdar du"
+    },
+    "save": {
+      "retryTitle": "Klicka för att försöka spara igen",
+      "retryAriaLabel": "Spara misslyckades — klicka för att försöka igen",
+      "autoSaving": "Sparar automatiskt…",
+      "forceSave": "Tvinga spara: ⌘S",
+      "editing": "Redigerar — autospara körs när du pausar",
+      "wordCountTitle": "Antal ord på denna sida (markdown-syntax exkluderad)",
+      "savedJustNow": "nyss",
+      "savedNever": "aldrig",
+      "savedAgoSeconds": "{{n}}s sedan",
+      "savedAgoMinutes": "{{n}}m sedan",
+      "savedAgoHours": "{{n}}h sedan",
+      "savedAgoDays": "{{n}}d sedan",
+      "saveFailedRetry": "Spara misslyckades — försök igen",
+      "savingText": "Sparar…",
+      "savedText": "Sparat",
+      "editingText": "Redigerar…",
+      "savedAgo": "Sparat · {{ago}}",
+      "word": "ord",
+      "words": "ord"
+    },
+    "git": {
+      "statusModified": "Ändrad",
+      "statusNew": "Ny",
+      "statusAdded": "Tillagd",
+      "statusDeleted": "Borttagen",
+      "statusRenamed": "Omdöpt",
+      "commitMessageAriaLabel": "Commit-meddelande"
+    },
+    "help": {
+      "menuAriaLabel": "Öppna hjälp- och communitymeny",
+      "menuTitle": "Hjälp och community",
+      "demos": "Demos, videor och guider",
+      "discord": "Chatta på Discord",
+      "discordSubtitle": "Support och feedback",
+      "github": "Bidra på GitHub",
+      "githubSubtitle": "Källkod, ärenden, PR:ar",
+      "ifUseful": "Om du tycker den är användbar",
+      "label": "Hjälp",
+      "starsAriaLabel": "{{count}} GitHub-stjärnor — öppna Cabinet på GitHub",
+      "starsTitle": "{{count}} GitHub-stjärnor — stjärnmärk Cabinet på GitHub",
+      "share": "Dela",
+      "shareSubtitle": "Kopiera en inbjudningslänk och sprid ordet",
+      "shareCopied": "Du är fantastisk, {{name}} 🩷 Tack för att du tar ombord framtida Cabinet-medlemmar. Länk kopierad, sprid kärleken!",
+      "shareFailed": "Kunde inte kopiera länken",
+      "friend": "vän"
+    },
+    "git2": {
+      "allCommitted": "Allt committat",
+      "uncommittedFile": "{{count}} o-committad fil",
+      "uncommittedFiles": "{{count}} o-committade filer",
+      "uncommittedFilesAria": "{{count}} o-committad fil(er) — klicka för att se listan",
+      "uncommittedFileTip": "Klicka för att se okommitterad fil",
+      "uncommittedFilesTip": "Klicka för att se okommitterade filer",
+      "uncommittedFilesHeading": "{{count}} okommitterad fil",
+      "uncommittedFilesHeadingPlural": "{{count}} okommitterade filer",
+      "truncatedHint": "Endast de första {{count}} filerna visas — kör `git status` för hela listan.",
+      "commitDefault": "Uppdatera {{count}} fil",
+      "commitDefaultPlural": "Uppdatera {{count}} filer",
+      "committing": "Kommitterar…",
+      "commit": "Kommiter",
+      "commitFailed": "Kommiter misslyckades",
+      "sync": "Synka",
+      "syncTitle": "Hämta senaste från GitHub & uppdatera",
+      "syncTitleWithLast": "Hämta senaste från GitHub & uppdatera. Senast synkad {{when}}.",
+      "syncAriaLabel": "Hämta senaste ändringarna från GitHub och uppdatera",
+      "syncAriaLabelWithLast": "Hämta senaste ändringarna från GitHub och uppdatera. Senast synkad {{when}}.",
+      "terminal": "Terminal",
+      "openTerminal": "Öppna terminal",
+      "newTerminalTab": "Ny terminalflik",
+      "pulling": "Hämtar…",
+      "pulled": "Uppdaterad från fjärr",
+      "upToDate": "Aktuell",
+      "pullFailed": "Hämtning misslyckades"
+    },
+    "update2": {
+      "updateAvailable": "Uppdatering {{version}} tillgänglig",
+      "updateAvailableTip": "Cabinet {{version}} är tillgänglig"
+    },
+    "common": {
+      "dismiss": "Avfärda",
+      "close": "Stäng",
+      "openSettings": "Öppna Inställningar för att granska den installerade uppdateringen"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Starta om för att slutföra uppdatering"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Starta om denna uppgift från den ursprungliga prompten",
+      "markAsDone": "Markera denna uppgift som klar",
+      "viewAriaLabel": "Uppgiftsvy",
+      "terminal": "Terminal",
+      "transcript": "Transkription",
+      "details": "Detaljer",
+      "transcriptTitle": "Claude Code-sessions-JSONL",
+      "transcriptHint": "Läser ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Tillbaka",
+      "copyPrompt": "Kopiera ursprunglig prompt",
+      "gracefulExit": "Stäng CLI:n elegant (skriver /exit till PTY)",
+      "sendSigterm": "Skicka SIGTERM till den körande PTY-processen",
+      "moreActions": "Fler åtgärder",
+      "ptyMode": "Körs i terminal (PTY)-läge",
+      "compactContext": "Komprimera tidigare omgångar till en sammanfattning för att frigöra kontextfönster",
+      "noSummary": "Ingen sammanfattning än.",
+      "sessionEnded": "Sessionen avslutad — skriv för att fortsätta i samma terminal.",
+      "terminalLive": "Terminalen är aktiv. Din nästa prompt köas efter att denna omgång är klar."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Din Cabinet-rundtur",
+    "skip": "Hoppa över",
+    "skipAriaLabel": "Hoppa över rundtur",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "writeFirstTask": "Skriv din första uppgift",
+    "goToSlide": "Gå till bild {{n}}",
+    "starterTask": "Låt oss prata igenom mina mål och vad jag vill uppnå här, och sedan fånga det på en ny Om-sida.",
+    "savingTo": "Sparar till ",
+    "introTitle": "Möt ditt <accent>Cabinet</accent>.",
+    "introSubtitle": "Ditt AI-team. Din kunskapsbas. En plats.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Senaste och pågående uppgifter",
+    "hide": "Dölj uppgiftsfält",
+    "show": "Visa uppgiftsfält",
+    "empty": "Inga uppgifter",
+    "itemRunning": "{{title}} · körs · {{when}}",
+    "itemNeedsReply": "{{title}} · behöver svar",
+    "itemFailed": "{{title}} · misslyckades · {{when}}",
+    "itemDone": "{{title}} · klar · {{when}}",
+    "itemArchived": "{{title}} · arkiverad",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} körs — visa uppgiftsfält"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Hem",
+      "agents": "Agenter",
+      "tasks": "Uppgifter",
+      "ai": "AI",
+      "menu": "Meny",
+      "primaryAriaLabel": "Primär"
+    },
+    "returnTo": {
+      "task": "Uppgift",
+      "tasks": "Uppgifter",
+      "agent": "Agent",
+      "agents": "Agenter",
+      "cabinet": "Cabinet",
+      "home": "Hem",
+      "settings": "Inställningar",
+      "registry": "Register",
+      "back": "Tillbaka",
+      "backTo": "Tillbaka till {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Standard",
+      "dark": "Mörk",
+      "darkThemes": "Mörka teman",
+      "lightThemes": "Ljusa teman"
+    },
+    "update": {
+      "restartTitle": "Starta om Cabinet för att slutföra uppdateringen",
+      "availableTitle": "Cabinet {{version}} är tillgänglig",
+      "updatesTitle": "Cabinet-uppdateringar",
+      "description": "Cabinet söker automatiskt efter nya versioner. Eftersom produkten fortfarande är experimentell, spara en kopia av din data innan du installerar uppdateringar.",
+      "later": "Senare",
+      "releaseNotes": "Versionsinformation"
+    },
+    "daemon": {
+      "fixHintElectron": "Avsluta och starta om Cabinet för att starta om agent-demonen.",
+      "fixHintDev": "Kör `npm run dev:daemon` (eller starta om `npm run dev:all`) för att få igång agent-demonen igen.",
+      "notResponding": "Agent-demonen svarar inte.",
+      "willFail": "Agenter, jobb och AI-förfrågningar kommer att misslyckas tills den är igång igen. {{fixHint}}"
+    }
+  }
+}

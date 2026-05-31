@@ -3,7 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { Code2, Save, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeaderActions } from "@/components/layout/header-actions";
+import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { useLocale } from "@/i18n/use-locale";
 
 interface CsvViewerProps {
   path: string;
@@ -67,7 +68,8 @@ function rowsToCsv(rows: string[][]): string {
     .join("\n");
 }
 
-export function CsvViewer({ path, title }: CsvViewerProps) {
+export function CsvViewer({ path }: CsvViewerProps) {
+  const { t } = useLocale();
   const [rows, setRows] = useState<string[][]>([]);
   const [rawText, setRawText] = useState("");
   const [sourceMode, setSourceMode] = useState(false);
@@ -155,51 +157,41 @@ export function CsvViewer({ path, title }: CsvViewerProps) {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Toolbar */}
-      <div
-        className="flex items-center justify-between border-b border-border px-4 py-2 bg-background/80 backdrop-blur-sm transition-[padding] duration-200"
-        style={{ paddingLeft: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
+      <ViewerToolbar
+        path={path}
+        badge={`CSV${rows.length > 0 ? ` (${rows.length - 1} rows)` : ""}`}
       >
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium">{title}</span>
-          <span className="text-xs text-muted-foreground/50 bg-muted px-1.5 py-0.5 rounded">
-            CSV {rows.length > 0 && `(${rows.length - 1} rows)`}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          {dirty && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 gap-1.5 text-xs"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              <Save className="h-3.5 w-3.5" />
-              {saving ? "Saving..." : "Save"}
-            </Button>
-          )}
-          <button
-            onClick={toggleSource}
-            className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] rounded-md transition-colors border border-border ${
-              sourceMode
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent"
-            }`}
+        {dirty && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 gap-1.5 text-xs"
+            onClick={handleSave}
+            disabled={saving}
           >
-            <Code2 className="h-3 w-3" />
-            {sourceMode ? "Table" : "Source"}
-          </button>
-          <button
-            onClick={() => window.open(csvUrl, "_blank")}
-            className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-            title="Download CSV"
-          >
-            <Download className="h-4 w-4" />
-          </button>
-          <HeaderActions />
-        </div>
-      </div>
+            <Save className="h-3.5 w-3.5" />
+            {saving ? "Saving..." : "Save"}
+          </Button>
+        )}
+        <button
+          onClick={toggleSource}
+          className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] rounded-md transition-colors border border-border ${
+            sourceMode
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-accent"
+          }`}
+        >
+          <Code2 className="h-3 w-3" />
+          {sourceMode ? "Table" : "Source"}
+        </button>
+        <button
+          onClick={() => window.open(csvUrl, "_blank")}
+          className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+          title={t("csvViewer:downloadCsv")}
+        >
+          <Download className="h-4 w-4" />
+        </button>
+      </ViewerToolbar>
 
       {sourceMode ? (
         <div className="flex-1 overflow-y-auto p-4">
@@ -266,7 +258,7 @@ export function CsvViewer({ path, title }: CsvViewerProps) {
                       <button
                         className="hidden group-hover:inline text-red-400 hover:text-red-300 text-[10px]"
                         onClick={() => deleteRow(r)}
-                        title="Delete row"
+                        title={t("csvViewer:deleteRow")}
                       >
                         ×
                       </button>

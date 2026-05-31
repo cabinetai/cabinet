@@ -13,8 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
+import { useLocale } from "@/i18n/use-locale";
 
-export function NewPageDialog() {
+export function NewPageDialog({ parentPath = "" }: { parentPath?: string } = {}) {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [creating, setCreating] = useState(false);
@@ -25,15 +27,12 @@ export function NewPageDialog() {
     if (!title.trim()) return;
     setCreating(true);
     try {
-      // Create at root level or under the currently selected directory
-      const parentPath = "";
+      // Create inside the current cabinet/folder (`parentPath`), not at the
+      // data-dir (home) root. createPage builds the full path and selects it,
+      // so we navigate to whatever it actually created.
       await createPage(parentPath, title.trim());
-      const slug = title
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
-      loadPage(slug);
+      const created = useTreeStore.getState().selectedPath;
+      if (created) loadPage(created);
       setTitle("");
       setOpen(false);
     } catch (error) {
@@ -47,14 +46,15 @@ export function NewPageDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         data-new-page-trigger
-        className="flex items-center gap-2 w-full text-sm px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+        title={t("dialogs:newPage.trigger")}
+        className="flex min-w-0 items-center gap-1.5 w-full text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
       >
-        <Plus className="h-4 w-4" />
-        New Page
+        <Plus className="h-4 w-4 shrink-0" />
+        <span className="min-w-0 truncate">{t("dialogs:newPage.trigger")}</span>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create New Page</DialogTitle>
+          <DialogTitle>{t("dialogs:newPage.title")}</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -64,13 +64,13 @@ export function NewPageDialog() {
           className="flex gap-2"
         >
           <Input
-            placeholder="Page title..."
+            placeholder={t("dialogs:newPage.placeholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             autoFocus
           />
           <Button type="submit" disabled={!title.trim() || creating}>
-            {creating ? "Creating..." : "Create"}
+            {creating ? t("dialogs:newPage.creating") : t("dialogs:newPage.create")}
           </Button>
         </form>
       </DialogContent>

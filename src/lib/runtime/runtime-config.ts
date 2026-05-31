@@ -18,20 +18,31 @@ function normalizeOrigin(value: string | undefined): string | null {
   return trimmed.replace(/\/+$/, "");
 }
 
+type RuntimePortsState = {
+  app?: {
+    port?: number;
+    origin?: string;
+    pid?: number;
+    updatedAt?: string;
+  };
+  daemon?: {
+    port?: number;
+    origin?: string;
+    wsOrigin?: string;
+    pid?: number;
+    updatedAt?: string;
+  };
+};
+
 function defaultElectronDataDir(): string {
-  if (process.platform === "darwin") {
-    return path.join(os.homedir(), "Library", "Application Support", "Cabinet");
+  // User-visible defaults: Cabinet stores user-owned content (cabinets, docs,
+  // conversations), so we put it where users can find and back it up — not in
+  // hidden app-data dirs. macOS/Windows → ~/Documents/Cabinet, Linux → ~/Cabinet
+  // (Linux distros vary on whether ~/Documents exists; home-root is safer).
+  if (process.platform === "darwin" || process.platform === "win32") {
+    return path.join(os.homedir(), "Documents", "Cabinet");
   }
-  if (process.platform === "win32") {
-    return path.join(
-      process.env.APPDATA || path.join(os.homedir(), "AppData", "Roaming"),
-      "Cabinet"
-    );
-  }
-  return path.join(
-    process.env.XDG_DATA_HOME || path.join(os.homedir(), ".local", "share"),
-    "cabinet"
-  );
+  return path.join(os.homedir(), "Cabinet");
 }
 
 export function getCabinetRuntime(): "source" | "electron" {
@@ -77,26 +88,63 @@ export function getManagedDataDir(): string {
   return path.join(PROJECT_ROOT, "data");
 }
 
+function getRuntimePortsPath(): string {
+  return path.join(getManagedDataDir(), ".cabinet-state", "runtime-ports.json");
+}
+
+function readRuntimePorts(): RuntimePortsState {
+  try {
+    const raw = fs.readFileSync(getRuntimePortsPath(), "utf-8");
+    const parsed = JSON.parse(raw) as RuntimePortsState;
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
 export function getAppPort(): number {
-  return parsePort(process.env.CABINET_APP_PORT || process.env.PORT, 3000);
+  const runtimePort = readRuntimePorts().app?.port;
+  return parsePort(
+    process.env.CABINET_APP_PORT || process.env.PORT,
+    typeof runtimePort === "number" && Number.isFinite(runtimePort)
+      ? runtimePort
+      : 4000
+  );
 }
 
 export function getDaemonPort(): number {
-  return parsePort(process.env.CABINET_DAEMON_PORT, 3001);
+  const runtimePort = readRuntimePorts().daemon?.port;
+  return parsePort(
+    process.env.CABINET_DAEMON_PORT,
+    typeof runtimePort === "number" && Number.isFinite(runtimePort)
+      ? runtimePort
+      : 4100
+  );
 }
 
 export function getAppOrigin(): string {
-  return normalizeOrigin(process.env.CABINET_APP_ORIGIN) || `http://127.0.0.1:${getAppPort()}`;
+  const runtimeOrigin = normalizeOrigin(readRuntimePorts().app?.origin);
+  return (
+    normalizeOrigin(process.env.CABINET_APP_ORIGIN) ||
+    runtimeOrigin ||
+    `http://127.0.0.1:${getAppPort()}`
+  );
 }
 
 export function getPublicDaemonOrigin(): string {
+  const runtimeOrigin = normalizeOrigin(readRuntimePorts().daemon?.origin);
   return (
     normalizeOrigin(process.env.CABINET_PUBLIC_DAEMON_ORIGIN) ||
+    runtimeOrigin ||
     `http://127.0.0.1:${getDaemonPort()}`
   );
 }
 
 export function getPublicDaemonWsOrigin(): string {
+  const runtimeWsOrigin = normalizeOrigin(readRuntimePorts().daemon?.wsOrigin);
+  if (runtimeWsOrigin) {
+    return runtimeWsOrigin;
+  }
   const origin = getPublicDaemonOrigin();
   if (origin.startsWith("ws://") || origin.startsWith("wss://")) {
     return origin;
@@ -107,8 +155,48 @@ export function getPublicDaemonWsOrigin(): string {
   return origin.replace(/^http:/, "ws:");
 }
 
+/**
+ * Browser-visible daemon WS origin: explicit public override wins; otherwise
+ * use the request host with the daemon port so LAN/remote browsers connect to
+ * the same hostname they reached the app on.
+ */
+export function getPublicDaemonWsOriginForRequest(
+  request: { headers: Headers } | null | undefined
+): string {
+  const explicit = normalizeOrigin(process.env.CABINET_PUBLIC_DAEMON_ORIGIN);
+  if (explicit) {
+    if (explicit.startsWith("ws://") || explicit.startsWith("wss://")) return explicit;
+    if (explicit.startsWith("https://")) return explicit.replace(/^https:/, "wss:");
+    if (explicit.startsWith("http://")) return explicit.replace(/^http:/, "ws:");
+    // Scheme-less value (e.g. "cabinet.example.com") would be rejected by the
+    // browser's WebSocket constructor. Treat as malformed and fall through
+    // to Host-derived defaulting below.
+  }
+
+  const rawHost = request?.headers.get("host")?.trim();
+  if (rawHost) {
+    try {
+      const proto = request?.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+      // Use new URL() so IPv6 hosts like "[::1]:4000" parse correctly.
+      const url = new URL(`${proto === "https" ? "https" : "http"}://${rawHost}`);
+      url.protocol = proto === "https" ? "wss:" : "ws:";
+      url.port = String(getDaemonPort());
+      url.pathname = "";
+      return url.origin;
+    } catch {
+      // Malformed Host — fall through to loopback fallback.
+    }
+  }
+
+  return getPublicDaemonWsOrigin();
+}
+
 export function getDaemonUrl(): string {
-  return normalizeOrigin(process.env.CABINET_DAEMON_URL) || getPublicDaemonOrigin();
+  return (
+    normalizeOrigin(process.env.CABINET_DAEMON_URL) ||
+    normalizeOrigin(readRuntimePorts().daemon?.origin) ||
+    getPublicDaemonOrigin()
+  );
 }
 
 export function getReleaseManifestUrl(): string {

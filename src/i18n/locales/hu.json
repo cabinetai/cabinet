@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Ügynök létrehozása",
+      "avatar": "Avatár",
+      "namePlaceholder": "Marketingügynök",
+      "rolePlaceholder": "Tartalomspecialista",
+      "department": "Osztály",
+      "specialist": "Specialista",
+      "departmentLead": "Osztályvezető",
+      "provider": "Szolgáltató",
+      "runtime": "Futtatás",
+      "promptPlaceholder": "Ön egy marketingügynök a következőhöz:…",
+      "addAgentTitle": "Ügynök hozzáadása a csapatához",
+      "addAgentDescription": "Válasszon egy specialistát a könyvtárból. Hozzáadás után szerkesztheti a nevét, szerepét és utasításait.",
+      "createFromScratchTitle": "Létrehozás a nulláról",
+      "createFromScratchDescription": "Hozzon létre egy új ügynököt saját identitással, szerepkörrel és utasításokkal.",
+      "searchLibraryPlaceholder": "Keresés a könyvtárban",
+      "errorLoadLibrary": "Nem sikerült betölteni az ügynökkönyvtárat.",
+      "errorAddAgent": "Nem sikerült hozzáadni ezt az ügynököt."
+    },
+    "metric": {
+      "name": "Metrika neve",
+      "namePlaceholder": "reddit válaszok",
+      "target": "Cél",
+      "targetPlaceholder": "válasz/hét",
+      "floor": "Minimum",
+      "period": "Időszak",
+      "daily": "Napi",
+      "weekly": "Heti",
+      "monthly": "Havi"
+    },
+    "workspace": {
+      "promise": "Vállalás",
+      "orgChart": "Szervezeti ábra",
+      "jobDetails": "Munkaköri részletek",
+      "heartbeat": "Élő állapot",
+      "workspace": "Munkaterület",
+      "editAgent": "Ügynök szerkesztése",
+      "instructions": "Utasítások",
+      "instructionsPlaceholder": "Írjon markdown formátumú utasításokat ehhez az ügynökhöz.",
+      "newAgent": "Új ügynök",
+      "routines": "Rutinfeladatok",
+      "browseLibrary": "Ügynök könyvtár böngészése",
+      "editYourOwn": "Saját ügynök szerkesztése",
+      "editorPlaceholder": "Szerkesztő",
+      "productAgentPlaceholder": "Termékíró ügynök",
+      "instructionsBodyPlaceholder": "Határozza meg, hogyan működjön ez az ügynök a Cabinetben és a tudásbázisban.",
+      "perAgentPrompts": "Ügynökönkénti ismétlődő promptok",
+      "runNow": "Futtatás most",
+      "delete": "Törlés",
+      "viewOrgChart": "Csapat megtekintése szervezeti ábraként (teljes képernyőn nyílik meg)",
+      "hideIntro": "Bevezető elrejtése",
+      "sharedAcrossCabinets": "Minden cabinet között megosztva",
+      "expandSchedule": "Ütemezés kibontása",
+      "heartbeatsOnAgentPage": "A szívverések minden ügynök oldalán konfigurálhatók.",
+      "exitFullscreen": "Kilépés a teljes képernyőből",
+      "refresh": "Frissítés",
+      "editHeartbeat": "Szívverés szerkesztése",
+      "newRoutine": "Új rutin",
+      "configureHeartbeat": "Szívverés konfigurálása",
+      "openOrgChart": "Szervezeti ábra megnyitása",
+      "pickAnAgent": "Válasszon ügynököt",
+      "dismiss": "Elvetés",
+      "lockedHeartbeatTip": "Ez az ügynök leállt. Indítsa el az Ügynökök lapon a szívverés engedélyezéséhez.",
+      "lockedRoutineTip": "Ez az ügynök leállt. Indítsa el az Ügynökök lapon a rutinfeladatok engedélyezéséhez.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Kattintson a kikapcsoláshoz.",
+      "loadError": "Nem sikerült betölteni ezt az ügynököt.",
+      "retry": "Újrapróbálkozás",
+      "color": "Szín",
+      "customColor": "Egyéni szín",
+      "preset": "Előbeállítás",
+      "editIconColor": "Ikon, szín vagy avatár szerkesztése",
+      "sharedAcrossCabinetsHint": "Megosztva az összes kabinet között — a szerkesztések mindenhol érvényesülnek",
+      "inbox": "Bejövő",
+      "conversations": "Beszélgetések",
+      "recentWork": "Legutóbbi tevékenység",
+      "schedule": "Ütemezés",
+      "heartbeat": "Szívverés",
+      "runNow": "Futtatás most",
+      "editRoutine": "Rutinszerkesztés",
+      "addRoutine": "Rutin hozzáadása",
+      "details": "Részletek",
+      "editingGlobalAgent": "Globális ügynök szerkesztése",
+      "displayName": "Megjelenítési név",
+      "role": "Szerepkör",
+      "department": "Osztály",
+      "type": "Típus",
+      "workspace": "Munkaterület",
+      "tags": "Címkék",
+      "openSkillsSettings": "Beállítások megnyitása → Készségek",
+      "notInCatalog": "Nem található a katalógusban — kattintson az eltávolításhoz",
+      "recommendedForRole": "Ajánlott ehhez a szerepkörhöz — kattintson a csatoláshoz",
+      "promise": "Ígéret",
+      "saved": "Mentve",
+      "iconLabel": "Ikon"
+    },
+    "missionControl": {
+      "gallery": "Galéria",
+      "newAgent": "Új ügynök",
+      "allGoals": "Összes cél",
+      "noGoals": "Nincs konfigurált cél egyetlen ügynökhöz sem.",
+      "fromScratch": "Nulláról",
+      "describeIt": "Leírás",
+      "import": "Importálás",
+      "closeDialog": "Párbeszéd bezárása",
+      "describeYourAgent": "Írja le az ügynökét",
+      "describePlaceholder": "Szükségem van egy ügynökre, amely figyeli a Hacker News-t a GPU-val kapcsolatos posztokért, és átgondolt kommenteket ír, amelyek a blogbejegyzéseinkre mutatnak…"
+    },
+    "pulseStrip": {
+      "agents": "Ügynökök",
+      "running": "Fut",
+      "goals": "Célok",
+      "alerts": "Riasztások",
+      "cost": "Költség",
+      "runningPlays": "Futó rutinok",
+      "noRunning": "Jelenleg nincs futó ügynök.",
+      "costBreakdown": "Költségbontás",
+      "noUsage": "Még nincs API-használat.",
+      "totalEstimated": "Összes becsült"
+    },
+    "routine": {
+      "runNowTitle": "Futtassa ezt a rutint most (egyszeri, ütemezésen kívül)",
+      "deletePermanently": "Véglegesen törli ezt a rutint",
+      "promptPlaceholder": "Mit tegyen ez a rutin? pl. Összefoglalja a tegnapi tevékenységet…",
+      "jobName": "Feladat neve",
+      "jobNamePlaceholder": "Heti stratégiai összefoglaló",
+      "jobId": "Feladat azonosítója",
+      "schedule": "Ütemezés",
+      "model": "Modell",
+      "enabled": "Engedélyezve"
+    }
+  },
+  "registry": {
+    "loading": "Betöltés a nyilvántartásból…",
+    "readyToImport": "Készen áll a cabinet importálására?",
+    "organization": "Szervezet",
+    "agents": "Ügynökök",
+    "scheduledJobs": "Ütemezett feladatok",
+    "about": "Névjegy",
+    "cabinetName": "Cabinet neve",
+    "cabinetNamePlaceholder": "Cabinet neve…",
+    "searchPlaceholder": "Cabinetek keresése…",
+    "noResults": "Nincs a keresésnek megfelelő cabinet."
+  },
+  "tasksBoard": {
+    "title": "Feladatok",
+    "manualTooltip": "Manuális — közvetlenül indított feladatok",
+    "jobsTooltip": "Feladatok — ütemezett ismétlődő futtatások",
+    "heartbeatTooltip": "Szívverés — önszabályozó ügynök futtatások",
+    "clearSelection": "Kijelölés törlése (Esc)",
+    "createTask": "Új feladat létrehozása",
+    "moreNewTypes": "További új elemtípusok",
+    "newTask": "Új feladat",
+    "newRoutine": "Új rutin",
+    "viewKanban": "Kanban",
+    "viewList": "Lista",
+    "viewSchedule": "Ütemezés",
+    "viewKanbanHint": "Tábla nézet — feladatok csoportosítva: Beérkezők / Te jössz / Fut / Épp kész / Archívum",
+    "viewListHint": "Egyszerű feladatlista, legújabb tevékenység elöl",
+    "viewScheduleHint": "Naptár: ütemezett rutinok és közelgő futtatások",
+    "filterByAgent": "Szűrés ügynök szerint: {{name}}",
+    "noToDeleteTitle": "Nincs törölhető feladat",
+    "noToDeleteFiltered": "Nincs találat a(z) {{filter}} szűrőre. Törölje a szűrőt, válasszon másik nézetet, vagy hozzon létre új feladatot.",
+    "noToDeleteEmpty": "Még nincsenek feladatok a táblán. Hozzon létre egyet az „+ Új feladat” gombbal.",
+    "gotIt": "Értem",
+    "deleteCountTitle": "{{count}} feladat törlése?",
+    "deleteCountTitlePlural": "{{count}} feladat törlése?",
+    "deleteBody": "Ez véglegesen eltávolítja a beszélgetés metaadatait, átiratait és műtermékeit minden jelenleg megjelenített feladathoz. Ez nem vonható vissza.",
+    "deleteBodyFiltered": "Ez véglegesen eltávolítja a beszélgetés metaadatait, átiratait és műtermékeit minden, az aktív szűrők által jelenleg megjelenített feladathoz. Ez nem vonható vissza.",
+    "deleteConfirm": "{{count}} törlése",
+    "deleteAllShown": "Összes {{count}} megjelenített feladat törlése",
+    "deleteAllShownPlural": "Összes {{count}} megjelenített feladat törlése",
+    "nothingToDelete": "Nincs törölhető feladat ebben a nézetben",
+    "deleteAllAria": "Összes megjelenített feladat törlése",
+    "noTasksAria": "Nincsenek feladatok ebben a nézetben",
+    "filterTrigger": "a(z) {{trigger}} szűrő",
+    "filterTriggerAndAgent": "a(z) {{trigger}} szűrő és a kiválasztott ügynök",
+    "filterSelectedAgent": "a kiválasztott ügynök szűrő"
+  },
+  "runtime": {
+    "noProvider": "Nincs szolgáltató kiválasztva",
+    "modeAriaLabel": "Futtatási mód",
+    "nativeTranscriptTitle": "A Cabinet natív átirata — strukturált JSON adatfolyam, műtermékek, összefoglaló, a teljes felhasználói élmény",
+    "ptyWarningTitle": "OpenAI API kulcs szükséges. Nem érhető el ChatGPT-előfizetéses Codex fiókokon — ennek a modellnek a kiválasztása hibát fog eredményezni: 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Natív",
+    "terminal": "Terminál",
+    "terminalTitle": "Futtassa a CLI-t egy élő PTY terminál munkamenetben (kísérleti hacker mód)",
+    "providers": "Szolgáltatók",
+    "modelCol": "Modell",
+    "auto": "Automatikus",
+    "ready": "Kész",
+    "loginRequired": "Bejelentkezés",
+    "notInstalled": "Nincs telepítve",
+    "notAvailable": "Nem elérhető",
+    "defaultLabel": "Alapértelmezett",
+    "noProvidersAvailable": "Nincsenek elérhető szolgáltatók",
+    "appDefault": "Alkalmazás alapértelmezett",
+    "selectAppDefault": "Alkalmazás alapértelmezett kiválasztása",
+    "defaultModel": "Alapértelmezett modell",
+    "selectedModelLabel": "Kiválasztott modell",
+    "loadingProviders": "Szolgáltatók betöltése...",
+    "loadingAvailableProviders": "Elérhető szolgáltatók betöltése…",
+    "triggerSummary": "Modell: {{model}} · Erőfeszítés: {{effort}} · via {{provider}}",
+    "triggerSystemDefault": "Feladatmodell — rendszer alapértelmezett használata (kattintson a kiválasztáshoz)",
+    "clickToLaunch": "Kattintson a {{name}} indításához egy PTY terminálban"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Az ügynökök teljes hozzáféréssel futnak.",
+    "backUp": "Rendszeresen készítsen biztonsági másolatot adatairól.",
+    "betaSoftware": "Béta szoftver. Hibák előfordulhatnak.",
+    "iAccept": "Elolvastam és elfogadom"
+  },
+  "skillAdd": {
+    "addSkill": "Képesség hozzáadása",
+    "auditTooltip": "Eredmény a skills.sh külső auditjaiból (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "A skills.sh audit adatai nem érhetők el ehhez a képességhez",
+    "preview": "Előnézet"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "AI csapat",
+      "aiTeams": "AI csapatok",
+      "routines": "Rutinok"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Ügynök konfiguráció szerkesztése",
+    "exportBundle": "Ügynökcsomag exportálása",
+    "goals": "Célok",
+    "workspace": "Munkaterület"
+  },
+  "scheduleRow": {
+    "deleteQ": "Törlés?",
+    "confirmDelete": "Törlés megerősítése",
+    "cancelDelete": "Törlés megszakítása",
+    "runNow": "Futtatás most"
+  },
+  "apiKeys": {
+    "addKey": "Kulcs hozzáadása",
+    "edit": "Szerkesztés",
+    "remove": "Eltávolítás",
+    "newApiKey": "Új API kulcs"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet frissítések",
+    "dataDirectory": "Adatkönyvtár",
+    "backups": "Biztonsági mentések"
+  },
+  "kanban": {
+    "stopAllInLane": "Összes futó feladat leállítása ebben a sávban",
+    "restartAllInLane": "Összes feladat újraindítása ebben a sávban",
+    "newTask": "Új feladat",
+    "collapseColumn": "Oszlop összecsukása",
+    "kill": "Leállítás",
+    "laneInbox": "Bejövő",
+    "laneInboxHint": "Piszkozat – indításra vár",
+    "laneNeeds": "Te jössz",
+    "laneNeedsHint": "Az ügynök kérdezett, vagy jóváhagyásra vár",
+    "laneRunning": "Fut",
+    "laneRunningHint": "Jelenleg dolgozó ügynökök",
+    "laneDone": "Befejezve",
+    "laneDoneHint": "Az elmúlt órában befejezve",
+    "laneArchive": "Archívum",
+    "laneArchiveHint": "Régebbi és elismert"
+  },
+  "terminalTabs": {
+    "newTab": "Új terminál lap",
+    "closeTab": "Terminál bezárása"
+  },
+  "newTaskButton": {
+    "createNew": "Új létrehozása…",
+    "newTask": "Új feladat",
+    "newRoutine": "Új rutin"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Heti stratégiai összefoglaló",
+    "schedule": "Ütemezés",
+    "jobId": "Feladat azonosító",
+    "enabled": "Engedélyezve — futtatás ezen ütemezés szerint"
+  },
+  "editIdentity": {
+    "title": "Ügynök szerkesztése",
+    "displayName": "Megjelenítési név",
+    "color": "Szín",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Összes ügynök indítása",
+    "startAllSubtitle": "Szívverések és cron feladatok aktiválása",
+    "stopAll": "Összes ügynök leállítása",
+    "stopAllSubtitle": "Szívverések és cron feladatok szüneteltetése"
+  },
+  "skillLibrary": {
+    "readOnly": "Csak olvasható — nem szerkeszthető a Cabinetből",
+    "noUpstream": "Közvetlenül ebben a cabinetben készült — nincs rögzített upstream git forrás",
+    "executableWarning": "A csomag futtatható szkripteket tartalmaz — jóváhagyás előtt ellenőrizze",
+    "skills": "Képességek",
+    "imported": "Importálva",
+    "importing": "Importálás…",
+    "import": "Importálás"
+  },
+  "embedPopover": {
+    "placeholder": "Illesszen be egy linket (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, vagy bármilyen URL)",
+    "notValidUrl": "Érvénytelen URL",
+    "anyUrlWorks": "Bármely nyilvános URL működik.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Bármilyen iframe URL"
+  },
+  "rowActions": {
+    "stop": "Leállítás",
+    "stopHint": "A futtatás azonnali leállítása (SIGTERM küldése)",
+    "restart": "Újraindítás",
+    "restartHint": "Futtatás újra az eredeti promptból",
+    "runHint": "Feladat indítása most"
+  },
+  "schedulesPanel": {
+    "title": "Ütemezett feladatok",
+    "noJobs": "Még nincsenek Cabinet feladatok konfigurálva.",
+    "heartbeats": "Élőjelzések",
+    "noHeartbeats": "Még nincsenek élőjelzések konfigurálva."
+  },
+  "scheduleTab": {
+    "explainer1": "Mindent, amit a csapatod csinál ezen a héten, egy naptárban. A rózsaszín egy élőjelzés, a zöld egy rutin. Kattints bármelyik elemre a szerkesztéshez.",
+    "explainer2": "Ezen a lapon észreveheted a konfliktusokat, megtalálhatod a nyugodt időszakokat, vagy egy pillantással láthatod, mennyire elfoglalt a csapat.",
+    "aboutAria": "Az ütemezésről",
+    "modeDay": "Nap",
+    "modeWeek": "Hét",
+    "modeMonth": "Hónap"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Kicsinyítés",
+    "zoomIn": "Nagyítás",
+    "resetView": "Nézet visszaállítása",
+    "syntaxError": "Diagram szintaktikai hiba"
+  },
+  "helpPage": {
+    "keyboard": "Billentyűzet",
+    "skills": "Készségek",
+    "apiKeys": "API kulcsok",
+    "mcpServers": "MCP szerverek",
+    "title": "Súgó",
+    "howTo": "Útmutató",
+    "heading": "Ismerje meg, hogyan működik a Cabinet",
+    "subheading": "Rövid demók, bemutatók és előzetesek a Cabinet maximális kihasználásához.",
+    "ctaWatchTour": "Nézze meg a bemutatót",
+    "ctaWatchDemo": "Nézze meg a demót",
+    "ctaCheatSheet": "Gyorssegédlet megnyitása",
+    "ctaComingSoon": "Hamarosan",
+    "discordHeading": "Nem találta, amit keresett?",
+    "discordSubheading": "Ott vagyunk a Discordon — gyere köszönj be, kérdezz, oszd meg, mit építesz.",
+    "discordCta": "Csatlakozz a Discordhoz",
+    "items": {
+      "tour": {
+        "title": "Ismerd meg a <accent>Cabinet</accent>et.",
+        "description": "Az AI csapatod. A tudásbázisod. Egy helyen."
+      },
+      "agents": {
+        "title": "Az <accent>AI csapatod</accent>.",
+        "description": "Vegyél fel vezetőket és szakértőket. Csoportosítsd őket részlegekbe. Hagyd, hogy munkát osszanak egymásnak."
+      },
+      "tasks": {
+        "title": "A <accent>feladattábla</accent>.",
+        "description": "Kanban, lista és ütemezés nézetek. Szűrés ügynök vagy állapot szerint. Válassz futásidőt feladatonként."
+      },
+      "knowledge": {
+        "title": "A <accent>tudásbázisod</accent>.",
+        "description": "Markdown, CSV, PDF, code, notebooks, mermaid, images, audio — minden beágyazva jelenik meg. Az adataid a gépeden maradnak; a tiéd, nem a miénk."
+      },
+      "cabinets": {
+        "title": "<accent>AI csapatok</accent> csapata.",
+        "description": "A Cabinetek Cabinetekbe ágyazódnak. Mindegyik saját AI csapat, saját adatokkal, ügynökökkel és láthatósági körrel — és együttműködhetnek a hierarchiában."
+      },
+      "routines": {
+        "title": "<accent>Rutinfeladatok</accent> és ütemezések.",
+        "description": "Futtass egy feladatot naponta 9 órakor, hetente pénteken, vagy egyszer jövő hétfőn. Cron, naptár vagy természetes nyelv."
+      },
+      "conversations": {
+        "title": "Beszélgetések és <accent>jóváhagyások</accent>.",
+        "description": "Az ügynökök műveleteket javasolnak — indítsanak egy feladatot, ütemezzenek egy munkát — és te jóváhagyod, mielőtt bármi elindulna."
+      },
+      "themes": {
+        "title": "Tedd <accent>a sajátoddá</accent>.",
+        "description": "Válassz a válogatott világos és sötét témák közül — Paper, Slate, Claude, Ink és még sok más."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — hozd a saját AI-dat.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — hozd azokat a szolgáltatókat, amelyekért már fizetsz. Válassz alapértelmezettet, vagy írd felül feladatonként."
+      },
+      "shortcuts": {
+        "title": "<accent>Billentyűparancsok</accent>.",
+        "description": "Minden Cabinet billentyűparancs egy kereshető kártyán. Nyomd meg a ? gombot bárhonnan az újranyitáshoz. Szűrés név vagy billentyű szerint — navigációhoz, szerkesztéshez, feladatokhoz, panelekhez és slash parancsokhoz."
+      },
+      "skills": {
+        "title": "<accent>Képességek</accent> az ügynökeidnek.",
+        "description": "Telepíthető ügynök képességek — forgatókönyvek, amelyeket a modell behúz egy feladathoz. Telepítsd GitHubról vagy skills.sh-ról, csatold egy személyiséghez, vagy @-említsd meg bármelyik szerkesztőben egyetlen futtatáshoz."
+      },
+      "apiKeysItem": {
+        "title": "<accent>API kulcsok</accent> az eszközeidhez.",
+        "description": "Csatlakoztasd az OpenAI, Anthropic vagy GitHub fiókodat egyszer — és minden ügynök és képesség a Cabinetben használni fogja. Te fizeted a saját számláidat, használod a saját kvótádat, nincs közvetítő."
+      },
+      "integrations": {
+        "title": "<accent>MCP szerverek</accent> és integrációk.",
+        "description": "MCP szerverek, Slack, Telegram, Gmail és Calendar OAuth — csatlakozz egyszer, és a Cabinet kezeli a tokeneket. Hamarosan."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Billentyűparancsok",
+    "filterPlaceholder": "Szűrés…",
+    "close": "Bezárás"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Élő terminál",
+    "runningHeartbeat": "Szívverés fut…",
+    "memory": "Memória",
+    "recentActivity": "Legutóbbi tevékenység"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Az avatarod",
+    "preset": "Előbeállítás",
+    "useInitials": "Kezdőbetűk használata",
+    "custom": "Egyéni"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Helyi alkalmazáskód-változások észlelve"
+  },
+  "logsPanel": {
+    "classifiedError": "Besorolt hiba",
+    "session": "Munkamenet",
+    "noEvents": "Még nincsenek események.",
+    "noTranscript": "Még nincs átirat."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "Eredmény",
+    "noSummary": "Nincs rögzített összefoglaló."
+  },
+  "scheduleRowPlus": {
+    "delete": "Törlés"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Fájlok csatolása"
+  },
+  "demos": {
+    "aiTeam": "AI csapat",
+    "specialist": "Specialista",
+    "legal": "Jogi",
+    "global": "Globális",
+    "editor": "Szerkesztő",
+    "slashMenu": "Perjel menü"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · ADATOK",
+    "headlineSentence": "Az igazság <accent>egyetlen forrása</accent>.",
+    "paragraphPrefix": "Markdown, PDF-ek, táblázatok, diák, képek, videók, hanganyagok, linkelt repók, beágyazott webalkalmazások, Google Docs. Bármelyikre hivatkozhatsz a ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Minden egy helyen — így te és az AI csapatod is olvas, szerkeszt és szállít a ",
+    "sameFiles": "ugyanazokból a fájlokból",
+    "secondParagraphSuffix": ", nem másolatok másolatai.",
+    "mockTitle": "Jane Cabinetje"
+  },
+  "slideData": {
+    "thailandRootLabel": "Thaiföldi utazás",
+    "thailandCaption": "Tekintse meg az összes fájlját egy helyen.",
+    "videoTitle": "Éjszakai piac.mp4",
+    "taxRootLabel": "Adó 2026",
+    "taxCaption": "Adó 2026 — egy élő számológép webalkalmazás, beágyazva közvetlenül a cabinetjébe.",
+    "calculatorTitle": "Számológép",
+    "liveAppBadge": "Élő alkalmazás",
+    "taxEstimateLabel": "2026-os adóbecslés",
+    "income": "Bevétel",
+    "deductions": "Levonások",
+    "taxBracket": "Adósáv",
+    "estimatedTax": "Becsült adó",
+    "healthRootLabel": "Egészség",
+    "healthCaption": "Vitaminok és laborok — egy táblázat, ami úgy néz ki, mint egy oldal.",
+    "csvTitle": "Napi vitaminok.csv",
+    "csvColVitamin": "Vitamin",
+    "csvColDose": "Adag",
+    "csvColTime": "Idő",
+    "csvColDone": "Kész",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Kódbázisok — linkeljen bármilyen Git repót, kereshető az ügynökei által.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · FELADATOK",
+    "typedCommand": "Futtasson 10 feladatot, mindegyik írjon egy dalt, mentse ide: @Songs/",
+    "headlineSentence": "Készen áll a <accent>kezdésre</accent>?",
+    "paragraphPrefix": "Írjon egy feladatot. Futtasson egyet, tízet, ütemezze őket örökre. Említsen oldalakat ezzel: ",
+    "paragraphSuffix": ", mentse a kimenetet, ahová csak akarja. Ön a rendező most.",
+    "savingFolder": "Dalok/"
+  },
+  "slideAgents": {
+    "persona": "Perszóna",
+    "heartbeat": "Szívverés",
+    "jobs": "Feladatok",
+    "aiTeam": "MI csapat",
+    "otherWriter": "Író",
+    "otherOrganizer": "Szervező",
+    "idle": "tétlen",
+    "researchAnalyst": "Kutató elemző",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "élő",
+    "personaBody": "„Precíz elemző. Forrásokat idéz. Jelzi az ellentmondásos állításokat.”",
+    "heartbeatBody": "15 percenként szkenneli a @Market Research-t",
+    "jobsBody": "Hétfő 9:00 · Heti versenytárs-összefoglaló",
+    "slideNum": "02 · ÜGYNÖKÖK",
+    "paragraphPrefix": "Minden ügynöknek van egy ",
+    "personaWord": "perszónája",
+    "paragraphMiddle": ", saját ",
+    "scheduleWord": "ütemezése",
+    "paragraphMiddle2": ", és egy ",
+    "memoryWord": "memóriája",
+    "paragraphSuffix": ". Az MI ügynökei elvégzik a munkát, 24/7. Légy ember – ők elintézik a többit.",
+    "aiTeamSentence": "Az Ön <accent>MI csapata</accent>."
+  },
+  "startWork": {
+    "close": "Bezárás",
+    "selectAgent": "Ügynök kiválasztása",
+    "titleNow": "Mit kell elvégezni?",
+    "titleRecurring": "Ismétlődő rutin beállítása",
+    "titleHeartbeat": "Ügynök ébresztése ütemezés szerint",
+    "titleEdit": "Feladat szerkesztése",
+    "submitStart": "Indítás",
+    "submitAddInbox": "Hozzáadás a Beérkezőkhöz",
+    "submitSaveEdit": "Változtatások mentése",
+    "submitCreateRoutine": "Rutin létrehozása",
+    "submitSaveHeartbeat": "Szívverés mentése",
+    "saving": "Mentés…",
+    "current": "aktuális",
+    "modeInboxLabel": "→ Beérkezők",
+    "modeInboxHint": "Mentés a Beérkezőkbe — indítsd, amikor készen állsz",
+    "modeNowLabel": "Futtatás most",
+    "modeNowHint": "Indítsd el ezt a beszélgetést azonnal",
+    "modeRecurringLabel": "Ütemezetten",
+    "modeRecurringHint": "Futtasd ezt a promptot ütemezetten",
+    "modeHeartbeatLabel": "Élőjel",
+    "modeHeartbeatHint": "Ébreszd fel az ügynököt a saját ritmusában",
+    "agentFallback": "Ügynök",
+    "failedToStart": "Nem sikerült elindítani",
+    "failedToSave": "Nem sikerült menteni a változtatásokat",
+    "failedToSaveHeartbeat": "Nem sikerült menteni az élőjelet"
+  },
+  "googleDoc": {
+    "noUrl": "Nincs beállítva Google URL",
+    "anyoneWithLink": "Bárki a linkkel",
+    "publishedToWeb": "Közzétéve a weben"
+  },
+  "feedback": {
+    "close": "Bezárás",
+    "rolePlaceholder": "pl. indie hacker, PM SaaS cégnél, design hallgató, hobbiista…",
+    "joinDiscord": "Csatlakozz a Discordhoz",
+    "header": "Gyors bejelentkezés Hilától",
+    "howGoing": "Hogy megy eddig?",
+    "starsCount": "{{n}} csillag",
+    "starsCountPlural": "{{n}} csillag",
+    "likeCabinet": "Tetszik a Cabinet?",
+    "starTooltipUnknown": "Csillagozd meg a Cabinetet GitHubon — ha hasznosnak találod, egy csillag sokat segít",
+    "starTooltipWithCount": "{{count}} GitHub csillag — kattints a tiéd hozzáadásához",
+    "starLabel": "Csillag",
+    "backgroundLabel": "Mi a háttered?",
+    "optional": "(opcionális)",
+    "discordCta": "Szeretnél közvetlenül beszélgetni, vagy más Cabinet tagokkal lógni?",
+    "maybeLater": "Talán később",
+    "send": "Küldés",
+    "thanksTitle": "Köszönjük!",
+    "thanksBody": "Visszajelzései alapján fejlesztünk tovább.",
+    "copy2Lead": "Néhányszor már megnyitotta a Cabinetet. Köszönjük! A Cabinet nyílt forráskódú és még csak most indul, így az itt elmondottak valóban befolyásolják a következő fejlesztéseket.",
+    "copy2Q1": "Mit próbált ma csinálni a Cabinetben?",
+    "copy2Q1Hint": "Egy mondat is elég. Miért nyitotta meg, nem pedig mit szeretett volna, ha tudna.",
+    "copy2Q2": "Amikor legutóbb ezt szerette volna csinálni, mit használt a Cabinet helyett?",
+    "copy2Q2Hint": "Bármilyen eszköz, alkalmazás vagy dokumentum, akár toll és papír is.",
+    "copy6Lead": "Visszatért, és ez a legfontosabb jelzés. Szeretném hallani a hiányosságokról, mielőtt elfelejtené őket.",
+    "copy6Q1": "Mit próbált ma csinálni a Cabinetben?",
+    "copy6Q1Hint": "Egy mondat is elég.",
+    "copy6Q2": "Mi volt az az egy dolog, ami miatt majdnem abbahagyta a Cabinet használatát ezen a héten?",
+    "copy6Q2Hint": "Ami a legjobban zavarta. Legyen konkrét. Az „X zavaró volt” jobb, mint az „a felhasználói élmény”."
+  },
+  "apiKeysSection": {
+    "cancel": "Mégse",
+    "pasteHere": "beillesztés ide",
+    "pasteNewValue": "új érték beillesztése"
+  },
+  "storageBackend": {
+    "title": "Tárolási háttérrendszer",
+    "migrationFailed": "Migráció sikertelen"
+  },
+  "linkRepo": {
+    "title": "Tudás betöltése",
+    "intro": "Mutasson a Cabinetnek egy mappára a gépén. A Cabinet szimbolikus linket hoz létre, így a mappa tartalma megjelenik a Tudásbázisában, és elérhetővé válik az AI ügynökök számára kontextusként. Az eredeti mappa soha nem kerül áthelyezésre vagy másolásra.",
+    "symlinkNote": "Ez egy szimbolikus linket hoz létre – a fájlok a helyükön maradnak.",
+    "autoDetectPlaceholder": "Automatikus észlelés git remote-ról (opcionális)",
+    "shortSummaryPlaceholder": "Opcionális rövid összefoglaló ügynököknek"
+  },
+  "recentTasks": {
+    "ptyMode": "Terminál (PTY) mód",
+    "revealOlder": "Több régebbi feladat megjelenítése",
+    "showOlder": "Régebbiek megjelenítése"
+  },
+  "treeNode": {
+    "openCabinet": "Cabinet nézet megnyitása",
+    "pageTitlePlaceholder": "Oldalcím…",
+    "rename": "Átnevezés",
+    "openBadge": "Megnyitás",
+    "sectionAdd": "Hozzáadás ehhez az elemhez",
+    "sectionThis": "Ez az elem",
+    "addSubPage": "Aloldal hozzáadása",
+    "newFolder": "Új mappa",
+    "createFile": "Új fájl létrehozása…",
+    "connectKnowledge": "Tudás csatlakoztatása…",
+    "symlinkTag": "Szimlink",
+    "importFile": "Fájl importálása…",
+    "importFolder": "Mappa importálása…",
+    "createCabinet": "Cabinet létrehozása itt",
+    "editSymlink": "Szimlink szerkesztése…",
+    "settings": "Beállítások…",
+    "moveTo": "Áthelyezés ide…",
+    "copyRelativePath": "Relatív elérési út másolása",
+    "copyFullPath": "Teljes elérési út másolása",
+    "openInFinder": "Megnyitás a Fájlkezelőben",
+    "delete": "Törlés",
+    "unlink": "Leválasztás",
+    "folderNamePlaceholder": "Mappa neve",
+    "creating": "Létrehozás…",
+    "create": "Létrehozás",
+    "addSubPageTitle": "Aloldal hozzáadása ehhez: „{{name}}”",
+    "newFolderTitle": "Új mappa itt: „{{name}}”"
+  },
+  "newFile": {
+    "title": "Új fájl létrehozása",
+    "subtitle": "Válasszon fájltípust. A Cabinet megnyitja a szerkesztőben, amint elkészült.",
+    "groupNative": "Szerkesztés a Cabinetben",
+    "groupOffice": "Office (üres – külső szerkesztés)",
+    "groupGoogle": "Google (linkelt)",
+    "namePlaceholder": "Fájlnév",
+    "create": "Létrehozás",
+    "creating": "Létrehozás…",
+    "googleUrlLabel": "Google URL (opcionális)",
+    "googleUrlPlaceholder": "Illesszen be egy megosztható Google linket, vagy hagyja üresen a későbbi hozzáadáshoz",
+    "officeNote": "A Cabinet csak olvasható módban jeleníti meg az Office fájlokat. A szerkesztéshez az asztali alkalmazásban használja a „Megnyitás Finderben” opciót.",
+    "types": {
+      "markdown": "Markdown oldal",
+      "markdownDesc": "Formázott szöveges jegyzetek, szerkeszthető a Cabinetben",
+      "code": "Kódfájl",
+      "codeDesc": "Bármilyen forrás-/szövegfájl – válassza ki a kiterjesztést",
+      "mermaid": "Mermaid diagram",
+      "mermaidDesc": "Folyamatábrák és diagramok kódként",
+      "csv": "CSV táblázat",
+      "csvDesc": "Vesszővel elválasztott táblázatadatok",
+      "docx": "Word dokumentum",
+      "docxDesc": "Üres .docx",
+      "xlsx": "Excel táblázat",
+      "xlsxDesc": "Üres .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Üres .pptx",
+      "gdoc": "Google dokumentum",
+      "gdocDesc": "Google dokumentum beágyazása",
+      "gsheet": "Google táblázat",
+      "gsheetDesc": "Google táblázat beágyazása",
+      "gslides": "Google Diák",
+      "gslidesDesc": "Google Diák beágyazása"
+    },
+    "codeExtLabel": "Kiterjesztés",
+    "googleTag": "Google",
+    "extHint": "Csak írja be a nevet – a Cabinet hozzáadja a {{ext}} kiterjesztést.",
+    "createFailed": "Nem sikerült létrehozni a fájlt."
+  },
+  "fileSettings": {
+    "googleTitle": "Google beágyazási beállítások",
+    "googleKindLabel": "Típus",
+    "googleUrlLabel": "Google URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "A dokumentum megosztási beállításának „Bárki a linkkel” vagy „Közzétéve az interneten” kell lennie ahhoz, hogy a beágyazás betöltődjön.",
+    "openLink": "Megnyitás Google-ben",
+    "googleKinds": {
+      "docs": "Dokumentumok",
+      "sheets": "Táblázatok",
+      "slides": "Diák",
+      "forms": "Űrlapok",
+      "drive": "Drive"
+    },
+    "appTitle": "Webalkalmazás beállítások",
+    "modeLabel": "Hogyan nyíljon meg?",
+    "modeWebsite": "Oldalnézet",
+    "modeWebsiteDesc": "Beágyazva nyílik meg, látható oldalsávval és AI panellel.",
+    "modeApp": "Webalkalmazás",
+    "modeAppDesc": "Teljes képernyőn nyílik meg; az oldalsáv és az AI panel automatikusan összecsukódik.",
+    "convertNote": "Ez a .app jelölőfájlt kapcsolja be/ki a mappában. A fájljai nem változnak.",
+    "save": "Mentés",
+    "saving": "Mentés…",
+    "cancel": "Mégse",
+    "saveFailed": "Nem sikerült menteni a beállításokat."
+  },
+  "editSymlink": {
+    "title": "Szimbolikus link szerkesztése",
+    "intro": "Ez a Tudásbázis bejegyzés egy szimbolikus link egy másik mappára a gépeden.",
+    "kbPathLabel": "Tudásbázis útvonal",
+    "targetLabel": "Linkel ide (lemezen)",
+    "brokenWarning": "A célmappa már nem létezik. Mutass rá egy érvényes mappára alább.",
+    "repointLabel": "Új mappára mutat",
+    "repointHint": "A Cabinet lecseréli a linket, hogy ide mutasson. A fájlok soha nem kerülnek áthelyezésre.",
+    "browse": "Tallózás",
+    "nameLabel": "Név",
+    "descriptionLabel": "Leírás",
+    "save": "Mentés",
+    "saving": "Mentés…",
+    "copyTarget": "Célútvonal másolása",
+    "saveFailed": "Nem sikerült frissíteni a szimbolikus linket."
+  },
+  "importFolder": {
+    "importing": "Mappa importálása…",
+    "failed": "Mappa importálása sikertelen: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Feladatok betöltése"
+  },
+  "agentList": {
+    "agentLibrary": "Ügynök könyvtár",
+    "newAgent": "Új ügynök"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Csapatod",
+    "lead": "Vezető",
+    "specialist": "Specialista",
+    "tasks": "Feladatok",
+    "todo": "Teendő",
+    "doing": "Folyamatban",
+    "done": "Kész",
+    "anythingGoes": "Bármi jöhet",
+    "marketing": "Marketing",
+    "product": "Termék",
+    "research": "Kutatás",
+    "design": "Tervezés",
+    "routines": "Rutinfeladatok",
+    "dailyReview": "Napi áttekintés",
+    "weeklyDigest": "Heti összefoglaló",
+    "conversation": "Beszélgetés",
+    "userQuery": "Tervezz egy 2 hetes thaiföldi utat…",
+    "agentReply": "Elküldöm a könyvtárost és a szerkesztőt.",
+    "pendingAction": "Függőben lévő művelet",
+    "approve": "Jóváhagyás",
+    "decline": "Elutasítás",
+    "themes": "Témák",
+    "providers": "Szolgáltatók",
+    "comingSoon": "Hamarosan"
+  },
+  "agentLive": {
+    "dismiss": "Elvetés",
+    "paused": "Az ügynök szünetel"
+  },
+  "conversationLive": {
+    "liveOutput": "Élő kimenet",
+    "waitingFirstChunk": "Várakozás az első kimeneti darabra…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatár",
+    "useIconInstead": "Ikon használata helyette"
+  },
+  "pendingActions": {
+    "rejectAll": "Összes függőben lévő művelet elutasítása",
+    "approveAll": "Jóváhagyás és elküldés minden olyan művelethez, amelynek nincs komoly akadálya"
+  },
+  "aiPanel": {
+    "clearSessions": "Összes munkamenet törlése",
+    "dismiss": "Elvetés"
+  },
+  "schedulerPlus": {
+    "restartAll": "Összes ügynök újraindítása",
+    "restartSubtitle": "Összes ütemezés leállítása, majd újraaktiválása"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSV letöltése",
+    "deleteRow": "Sor törlése"
+  },
+  "resizableImage": {
+    "resizeLeft": "Átméretezés balról",
+    "resizeRight": "Átméretezés jobbról"
+  },
+  "folderIndex": {
+    "listView": "Lista nézet",
+    "galleryView": "Galéria nézet"
+  },
+  "linkPopover": {
+    "openLink": "Hivatkozás megnyitása",
+    "removeLink": "Hivatkozás eltávolítása"
+  },
+  "officeChrome": {
+    "openInFinder": "Megnyitás a Finderben",
+    "downloadOriginal": "Eredeti letöltése"
+  },
+  "sourceViewer": {
+    "copyContents": "Fájl tartalmának másolása",
+    "downloadFile": "Fájl letöltése"
+  },
+  "versionHistory": {
+    "title": "Verzióelőzmények"
+  },
+  "demoModal": {
+    "closeDemo": "Demó bezárása",
+    "close": "Bezárás"
+  },
+  "demosPlus": {
+    "anything": "Bármi",
+    "yours": "Saját",
+    "install": "Telepítés",
+    "attach": "Csatolás"
+  },
+  "narrowViewport": {
+    "dismiss": "Keskeny nézetablak tipp elvetése",
+    "dismissTitle": "Elvetés a következő munkamenetig",
+    "hintPrefix": "A Cabinet a legjobb ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " széles. Néhány felület zsúfolttá válik keskenyebb szélességeknél."
+  },
+  "agentCard": {
+    "runHeartbeat": "Élőjel futtatása"
+  },
+  "schedulePicker": {
+    "frequency": "Gyakoriság",
+    "onDay": "Napon",
+    "modeInterval": "Intervallum",
+    "modeDaily": "Naponta",
+    "modeWeekdays": "Hétköznap",
+    "modeWeekly": "Hetente",
+    "modeMonthly": "Havonta",
+    "modeCustom": "Egyéni",
+    "parse": "Elemzés",
+    "showCron": "Cron kifejezés megjelenítése",
+    "hideCron": "Cron kifejezés elrejtése",
+    "weekdayMo": "H",
+    "weekdayTu": "K",
+    "weekdayWe": "Sze",
+    "weekdayTh": "Cs",
+    "weekdayFr": "P",
+    "weekdaySa": "Szo",
+    "weekdaySu": "V"
+  },
+  "slackPanel": {
+    "createChannel": "Csatorna létrehozása",
+    "thread": "Beszélgetés"
+  },
+  "uninstall": {
+    "title": "Cabinet eltávolítása"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet fiókok",
+    "pageTitlePlaceholder": "Oldalcím…"
+  },
+  "skillAddPlus": {
+    "cancel": "Mégse"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Audit adatok nem érhetők el a skills.sh-ról ehhez a képességhez",
+    "searchPlaceholder": "Keresés a skills.sh-n"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Frissítés",
+    "noSkills": "Még nincsenek képességek."
+  },
+  "taskDetail": {
+    "close": "Bezárás (Esc)",
+    "muteTask": "Feladat némítása – befejezett futásai egyből az Archívumba kerülnek",
+    "unmuteTask": "Feladat némításának feloldása – befejezett futásai újra megjelennek a Frissen Készültben"
+  },
+  "rowActionsPlus": {
+    "edit": "Szerkesztés",
+    "editHint": "Szerkesztés indítás előtt",
+    "delete": "Törlés",
+    "deleteHint": "Végleges törlés — nem vonható vissza"
+  },
+  "taskCard": {
+    "ptyMode": "Terminál (PTY) módban fut"
+  },
+  "undoToast": {
+    "dismiss": "Elvetés"
+  },
+  "terminalExited": {
+    "openDetails": "Strukturált részletek megnyitása (prompt, műtermékek, fordulatok)",
+    "reconnect": "Újracsatlakozás a démonhoz és a nyers PTY visszajátszás streamelése"
+  },
+  "terminalTabsPlus": {
+    "resize": "Terminálpanel átméretezése"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Összes ügynök megjelenítése",
+    "noRecentActivity": "Nincs friss tevékenység",
+    "noAgents": "Nincsenek ügynökök",
+    "noAgentsConfigured": "Ehhez a cabinethez még nincsenek ügynökök konfigurálva.",
+    "cabinetScope": "Cabinet hatóköre:",
+    "depthDropdownHeader": "Cabinet hatóköre",
+    "depthOwnLabel": "Csak ez a cabinet",
+    "depthOwnShort": "Saját",
+    "depthOwnDesc": "Oldalak, ügynökök és feladatok csak ebből a cabinetből.",
+    "depthChildren1Label": "Közvetlen gyermekek belefoglalása",
+    "depthChildren1Desc": "Egy szintnyi sub-cabinet hozzáadása.",
+    "depthChildren2Label": "Két cabinet szint belefoglalása",
+    "depthChildren2Desc": "Két szintnyi sub-cabinet hozzáadása.",
+    "depthAllLabel": "Összes leszármazott belefoglalása",
+    "depthAllShort": "Összes",
+    "depthAllDesc": "A teljes alágazat belefoglalása.",
+    "scopeTooltip": "Cabinet hatóköre: {{label}}. Kattintson a módosításhoz."
+  },
+  "composerExtras": {
+    "skillAttached": "Képesség — csak ehhez a futtatáshoz csatolva",
+    "pageTitlePlaceholder": "Oldalcím…",
+    "active": "Aktív — az ügynök ébresztése ezen az ütemezésen",
+    "pickCliPty": "Válasszon egy CLI-t PTY-ben való indításhoz:"
+  },
+  "editorExtras": {
+    "editWithAi": "Szerkesztés AI-val",
+    "jupyterLab": "Másolás: jupyter lab <path>",
+    "exitApp": "Kilépés az alkalmazásból"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI fiókok",
+    "aiTeams": "AI csapatok"
+  },
+  "whatsNew": {
+    "dismiss": "Elvetés",
+    "headerPrefix": "Újdonságok a v",
+    "readFull": "Teljes kiadási megjegyzések olvasása"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Értem és folytatni szeretném."
+  },
+  "daemonHealth": {
+    "dismiss": "Elvetés"
+  },
+  "tinyExtras": {
+    "light": "Világos",
+    "home": "Kezdőlap",
+    "workspaceGallery": "Munkaterület-galéria",
+    "savingTo": "Mentés ide:",
+    "comingSoon": "Hamarosan",
+    "deleteSkill": "Képesség törlése",
+    "skillsOffered": "Kínált képességek:",
+    "allAgents": "Összes ügynök",
+    "noTranscript": "Nincs átirat",
+    "noDiff": "Nincs különbség.",
+    "headsUp": "Figyelem:",
+    "back": "Vissza",
+    "editYourAvatar": "Avatar szerkesztése",
+    "openFullTaskViewer": "Teljes feladatnézet megnyitása",
+    "close": "Bezárás",
+    "copyToClipboard": "Másolás vágólapra",
+    "starOnGithub": "Csillagozza a Cabinetet a GitHubon",
+    "helpMoreFind": "Segítsen több embernek megtalálni a közösséget",
+    "joinDiscord": "Csatlakozzon a Discordhoz",
+    "chatWithBuilders": "Beszélgessen a Cabinet fejlesztőivel",
+    "joinWaitlist": "Csatlakozzon a Cabinet Cloud várólistájához",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Hozzáadás a Beérkezőkhöz",
+    "runTaskNow": "Feladat futtatása most",
+    "search": "Keresés",
+    "aiPanel": "MI panel",
+    "drawers": "Fiókok"
+  },
+  "dataLocations": {
+    "title": "Ahol az adatai élnek",
+    "whyThisMatters": "Miért fontos ez",
+    "location": "Hely",
+    "contains": "Tartalmazza",
+    "network": "Hálózat",
+    "revealInFinder": "Megnyitás fájlkezelőben",
+    "stored": "Tárolva",
+    "resetOnboarding": "Bevezetés visszaállítása"
+  },
+  "rooms": {
+    "switcherTitle": "Szoba váltása",
+    "switchRoom": "Szobák",
+    "loading": "Betöltés…",
+    "defaultTag": "Kezdőlap",
+    "openInNewWindow": "Megnyitás új ablakban",
+    "opensBrowserWindow": "Új böngészőablakot nyit meg",
+    "customizeRoom": "Szoba szerkesztése",
+    "addRoom": "Szoba hozzáadása…",
+    "editTitle": "Szoba szerkesztése",
+    "editSubtitle": "Állítsd be a szoba nevét, ikonját, színét és témáját.",
+    "nameLabel": "Megjelenítési név",
+    "slugHint": "A mappa neve a lemezen {{slug}} marad. A mappa átnevezése külön, haladó művelet.",
+    "iconLabel": "Ikon",
+    "colorLabel": "Szín",
+    "colorAuto": "Automatikus",
+    "themeLabel": "Téma",
+    "themeGlobal": "Globális alapértelmezés használata",
+    "editFailed": "Nem sikerült menteni a szobát. Kérjük, próbáld újra.",
+    "deleteRoom": "Szoba törlése…",
+    "deleteLastRoomDisabledHint": "Nem törölheted az utolsó szobádat.",
+    "deleteTitle": "Törli ezt a szobát?",
+    "deleteSubtitle": "Ez a szoba és minden benne lévő tartalom a kukába kerül.",
+    "deleteWarningIntro": "A szoba kukába helyezése a következőket is eltávolítja:",
+    "deleteWarningPages": "Oldalak és fájlok ebben a szobában",
+    "deleteWarningAgents": "Ügynökök, beszélgetések és memória ehhez a szobához",
+    "deleteWarningJobs": "Ütemezett feladatok és rutinok ebben a szobában",
+    "deleteWarningChat": "Csapatcsevegés előzményei ehhez a szobához",
+    "deleteWarningSearch": "A szoba keresési indexe (helyreállítás esetén automatikusan újraépül)",
+    "deleteRecoveryNote": "Helyreállítás: a szoba a data/.trash/ mappába került – helyezze vissza a mappát a data/ mappába a visszaállításhoz.",
+    "deleteConfirmLabel": "Írja be a(z) {{slug}} kifejezést a megerősítéshez",
+    "deleteConfirmButton": "Szoba törlése",
+    "deleting": "Törlés…",
+    "deleteFailed": "Nem sikerült törölni a szobát. Kérjük, próbálja újra."
+  },
+  "common": {
+    "actions": {
+      "save": "Mentés",
+      "cancel": "Mégse",
+      "delete": "Törlés",
+      "confirm": "Megerősítés",
+      "close": "Bezárás",
+      "open": "Megnyitás",
+      "back": "Vissza",
+      "next": "Tovább",
+      "done": "Kész"
+    },
+    "nav": {
+      "goBack": "Vissza",
+      "goForward": "Előre"
+    },
+    "aiPanel": {
+      "open": "AI panel megnyitása",
+      "close": "AI panel bezárása"
+    },
+    "states": {
+      "loading": "Betöltés…",
+      "saving": "Mentés…",
+      "saved": "Mentve",
+      "error": "Hiba történt"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Új oldal",
+      "title": "Új oldal létrehozása",
+      "placeholder": "Oldal címe…",
+      "create": "Létrehozás",
+      "creating": "Létrehozás…"
+    },
+    "newCabinet": {
+      "trigger": "Új Cabinet",
+      "title": "Új Cabinet létrehozása",
+      "subtitle": "A Cabinet egy munkaterület saját ügynökökkel, feladatokkal és tudásbázissal.",
+      "importFromRegistry": "Importálás a Registryből",
+      "nameLabel": "Fiók neve",
+      "namePlaceholder": "pl. Saját Startupom, Marketing Csapat, Kutatólabor…",
+      "selectAgents": "Ügynökök kiválasztása",
+      "selectedCount": "{{count}} kiválasztva",
+      "createCabinet": "Fiók létrehozása",
+      "creating": "Létrehozás…",
+      "createFailed": "A fiók létrehozása sikertelen."
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Oldal exportálása",
+      "copyMarkdown": "Markdown másolása",
+      "copyForLlms": "Másolás LLM-eknek",
+      "copyAsHtml": "Másolás HTML-ként",
+      "downloadMarkdown": ".md letöltése",
+      "downloadPdf": "PDF letöltése",
+      "copiedForLlmToast": "{{size}} Markdown másolva LLM-nek"
+    },
+    "toolbar": {
+      "heading1": "Címsor 1",
+      "heading2": "Címsor 2",
+      "heading3": "Címsor 3",
+      "bold": "Félkövér",
+      "italic": "Dőlt",
+      "underline": "Aláhúzott",
+      "strikethrough": "Áthúzott",
+      "inlineCode": "Beágyazott kód",
+      "link": "Hivatkozás",
+      "textColor": "Szövegszín",
+      "highlight": "Kiemelés",
+      "background": "Háttér",
+      "bulletList": "Felsorolás",
+      "orderedList": "Számozott lista",
+      "blockquote": "Idézet",
+      "checklist": "Ellenőrzőlista",
+      "codeBlock": "Kódblokk",
+      "divider": "Elválasztó",
+      "alignLeft": "Balra igazítás",
+      "alignCenter": "Középre igazítás",
+      "alignRight": "Jobbra igazítás",
+      "justify": "Sorkizárás",
+      "align": "Igazítás",
+      "table": {
+        "selectCellText": "Cella szöveg kijelölése",
+        "addRowAbove": "Sor beszúrása fölé",
+        "addRowBelow": "Sor beszúrása alá",
+        "moveRowUp": "Sor feljebb mozgatása",
+        "moveRowDown": "Sor lejjebb mozgatása",
+        "deleteRow": "Sor törlése",
+        "addColumnBefore": "Oszlop beszúrása elé",
+        "addColumnAfter": "Oszlop beszúrása után",
+        "moveColumnLeft": "Oszlop balra mozgatása",
+        "moveColumnRight": "Oszlop jobbra mozgatása",
+        "deleteColumn": "Oszlop törlése",
+        "toggleHeaderRow": "Fejlécsor váltása",
+        "toggleHeaderColumn": "Fejlécoszlop váltása",
+        "deleteTable": "Táblázat törlése"
+      },
+      "superscript": "Felső index",
+      "subscript": "Alsó index",
+      "insertImage": "Kép beszúrása",
+      "insertVideo": "Videó beszúrása",
+      "embed": "Beágyazás",
+      "undo": "Visszavonás",
+      "redo": "Ismétlés",
+      "switchToLtr": "Váltás balról jobbra",
+      "switchToRtl": "Váltás jobbról balra",
+      "scrollLeft": "Eszköztár balra görgetése",
+      "scrollRight": "Eszköztár jobbra görgetése",
+      "markdown": "Markdown",
+      "preview": "Előnézet"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Kabinet neve…",
+      "renameWarning": "A kabinetnevek később nem nevezhetők át (egyelőre). Válassz körültekintően."
+    },
+    "templates": {
+      "header": "Kezdés sablonból",
+      "browseAll": "Összes böngészése →"
+    },
+    "quickActions": {
+      "shuffle": "Más javaslatok megjelenítése",
+      "launch10Songs": "10 dalszerző szerkesztő indítása",
+      "dailyReview9am": "Napi áttekintés reggel 9-kor",
+      "weeklyReview": "Heti áttekintés jövő hétfőn",
+      "thailandTrip": "Tervezd meg a thaiföldi utamat",
+      "physicsApp": "Készíts nekem egy fizika tanuló alkalmazást",
+      "summariseRecent": "Összegezd a legutóbbi munkámat",
+      "recruiterReply": "Fogalmazz meg egy toborzói választ",
+      "mapArticles": "Térképezd fel a cikkek közötti kapcsolatokat",
+      "physicsCourse": "Indíts el egy 6 modulból álló fizika kurzust",
+      "shortStory": "Vázolj fel egy rövid történetet",
+      "hourlyStandup": "Óránkénti stand-up emlékeztető",
+      "researchPhone": "Nézz utána a következő telefonomnak",
+      "translateToSpanish": "Fordítsd le ezt a kabinetet spanyolra",
+      "refactorNotes": "Átstrukturáld a jegyzetelő rendszeremet",
+      "birthdayParty": "Tervezz egy születésnapi partit",
+      "boardUpdate": "Fogalmazz meg egy igazgatótanácsi frissítést",
+      "customerInterviews": "Szimulálj 5 ügyfélinterjút"
+    },
+    "goodMorning": "Jó reggelt",
+    "goodAfternoon": "Jó napot",
+    "goodEvening": "Jó estét",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Szeretnék létrehozni…",
+    "composerDaemonDown": "Az ügynök démon offline — indítsd újra a küldéshez"
+  },
+  "onboarding": {
+    "launchHeading": "Indítsd el a <accent>Cabinet</accent>et",
+    "intro": {
+      "tagline1": "A tudásbázisod.",
+      "tagline2": "Az AI csapatod.",
+      "getStarted": "Kezdés"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Iroda",
+        "study": "Dolgozószoba",
+        "lab": "Labor",
+        "library": "Könyvtár",
+        "kitchen": "Konyha",
+        "family": "Család",
+        "dining": "Étkező",
+        "studio": "Stúdió"
+      }
+    },
+    "welcome": {
+      "paragraph": "Az Otthonod a tiéd. Benne szobákat hozhatsz létre életed különböző területeihez: munka, második agy, kutatás, család. És minden szobában vannak szekrények: a jegyzeteid, a fájljaid és egy AI csapat, amely csendben végzi a dolgát a háttérben.",
+      "namePrompt": "Mi a neved?",
+      "heading": "Üdvözlünk <accent>itthon</accent>!"
+    },
+    "welcomeBack": {
+      "heading": "Üdv újra!",
+      "headingNamed": "Üdv újra a {{cabinet}} alkalmazásban!",
+      "subtitle": "Találtunk egy meglévő cabinetet itt. Fejezzük be a beállítást.",
+      "continue": "Folytatás"
+    },
+    "verify": {
+      "passed": "Sikeres",
+      "notInstalled": "Nincs telepítve",
+      "authRequired": "Hitelesítés szükséges",
+      "paymentRequired": "Fizetés szükséges",
+      "quotaExceeded": "Kváta/sebességkorlát",
+      "error": "Hiba"
+    },
+    "providerStatus": {
+      "ready": "Kész",
+      "loginRequired": "Bejelentkezés szükséges",
+      "notInstalled": "Nincs telepítve"
+    },
+    "actions": {
+      "back": "Vissza",
+      "next": "Tovább",
+      "continue": "Folytatás",
+      "skip": "Kihagyás",
+      "finish": "Befejezés",
+      "complete": "Beállítás befejezése",
+      "copyToClipboard": "Másolás vágólapra"
+    },
+    "cabinetCreated": {
+      "continue": "Beállítás folytatása",
+      "heading": "A Cabinet elkészült",
+      "subtitle": "Minden készen áll.",
+      "agentsReady_one": "{{count}} ügynök készen áll a munkára",
+      "agentsReady_other": "{{count}} ügynök készen áll a munkára",
+      "scheduledJobs_one": "{{count}} ütemezett feladat",
+      "scheduledJobs_other": "{{count}} ütemezett feladat",
+      "subCabinets_one": "{{count}} alkabinét",
+      "subCabinets_other": "{{count}} alkabinét",
+      "agentsReady": "{{count}} ügynök készen áll a munkára",
+      "scheduledJobs": "{{count}} ütemezett feladat",
+      "subCabinets": "{{count}} alkabinét"
+    },
+    "cloud": {
+      "alreadyOnList": "Már rajta vagy a listán – hamarosan jelentkezünk.",
+      "aside": "A Cabinet Cloud hamarosan érkezik. Ugyanaz a termék, önhosting gondok nélkül.",
+      "description": "Nyisd meg a Cabinetet bármilyen eszközről, miközben AI ügynökeid dolgoznak – vázlatokat készítenek, kutatnak, rendszereznek –, még akkor is, ha a laptopod le van csukva.",
+      "error": "Hiba történt. Ellenőrizd az e-mail címet, és próbáld újra.",
+      "joinWaitlist": "Feliratkozás várólistára",
+      "onList": "Rajta vagy a listán. E-mailben értesítünk, amint a Cabinet Cloud elérhetővé válik.",
+      "sending": "Küldés…",
+      "title": "A Cabineted, bárhol. AI csapatod, mindig aktív.",
+      "waitlistSubtitle": "Csatlakozz bárhonnan. AI csapatod 24/7-ben dolgozik."
+    },
+    "discord": {
+      "aside": "Ha elsőként szeretnél új funkciókat, és inkább beszélgetnél, mintsem hibajegyet küldenél, ez a te szobád.",
+      "description": "Itt a visszajelzések funkciókká, a képernyőfotók vitákká válnak, és valaki általában megtalálja a szélső esetet, mielőtt az téged találna meg.",
+      "joinBadge": "Csatlakozás",
+      "title": "Discordon történnek a jó furcsaságok."
+    },
+    "github": {
+      "aside": "A Cabinet nyílt forráskódú. Ha tetszik a vízió, segíts terjeszteni a hírt.",
+      "description": "Egy GitHub csillag segít, hogy többen felfedezzék a Cabinetet és csatlakozzanak a közösséghez.",
+      "starsLabel": "{{stars}} GitHub csillag",
+      "title": "Segíts a Cabinet közösségnek növekedni"
+    },
+    "launch": {
+      "beforeYouLaunch": "Indítás előtt",
+      "defaultCabinetName": "A te Cabineted",
+      "defaultDescription": "Tudásbázis + AI csapat",
+      "knowledgeBaseLabel": "Tudásbázis",
+      "aiTeamLabel": "AI csapat",
+      "launchCabinet": "Cabinet indítása",
+      "settingUp": "Beállítás...",
+      "disclaimerAccess": "<strong>Az ügynökök teljes hozzáféréssel futnak.</strong> A Cabinet a <flag>--dangerously-skip-permissions</flag> (Claude Code) és más szolgáltatók hasonló jelzőit használja. Ez megegyezik azzal, mintha ezeket a CLI eszközöket a saját terminálodból futtatnád. Bármely konfigurált MCP szerver vagy eszköz automatikusan meghívható az ügynökök által.",
+      "disclaimerBackup": "<strong>Rendszeresen készíts biztonsági másolatot az adataidról.</strong> Az ügynökök olvashatnak, írhatnak és törölhetnek fájlokat a tudásbázisodban és a kapcsolt repókban. A Cabinet nem felelős az adatvesztésért. Te vagy felelős az általad választott AI szolgáltatókért és azok szolgáltatási feltételeiért.",
+      "disclaimerBeta": "<strong>Béta szoftver. Hibák előfordulhatnak.</strong> Gyorsan szállítunk. Kompatibilitástörő változások értesítés nélkül is érkezhetnek.",
+      "legalNotice": "A folytatással elfogadod a <terms>Felhasználási feltételeinket</terms> és az <privacy>Adatvédelmi irányelveinket</privacy>. A Cabinet egy <oss>nyílt forráskódú projekt</oss>.",
+      "keepInTouch": "Maradjunk kapcsolatban. A Cabinet nyílt forráskódú és nyíltan fejlesztett, és szeretnénk megtudni, mit építsünk legközelebb. Nincs spam, ígérjük."
+    },
+    "provider": {
+      "agentType": "{{type}} ügynök",
+      "close": "Bezárás",
+      "comingSoon": "Hamarosan",
+      "guide": "Útmutató",
+      "heading": "Ügynök szolgáltató",
+      "moreModels": "További AI-k",
+      "install": "Telepítés",
+      "logIn": "Bejelentkezés",
+      "openTerminalButton": "Terminál megnyitása",
+      "openTerminalDetail": "A következő lépések futtatásához terminálra lesz szükséged.",
+      "openTerminalError": "Nem sikerült automatikusan megnyitni a terminált. Nyisd meg manuálisan a rendszerterminálodat.",
+      "openTerminalTitle": "Terminál megnyitása",
+      "recheck": "Szolgáltatók újraellenőrzése",
+      "rerunVerify": "Ellenőrzés újraindítása",
+      "runVerify": "Ellenőrzés futtatása",
+      "setupTitle": "{{name}} beállítása",
+      "skipForNow": "Kihagyás most",
+      "subtitle": "A Cabinetnek AI CLI-re van szüksége az ügynökök működtetéséhez.",
+      "verifyExplanation": "Az ellenőrzés végigfuttatja a szolgáltató fej nélküli promptját, és osztályozza az esetleges hibákat, hogy tudd, melyik lépést kell újra átnézni.",
+      "verifying": "Ellenőrzés…",
+      "failedAtStep": "Hiba a lépésnél: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Mire való ez a cabinet? Minden szobához saját AI csapat tartozik.",
+      "heading": "Válassz egy <accent>szobát</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Mi az a Cabinet?",
+      "body": "A Cabinet egy fókuszált munkaterület az életed vagy munkád egy területéhez. Tartalmazza a fájljaidat, jegyzeteidet, eszközeidet, ügynökeidet és feladataidat, így az AI csapatod rendelkezik a szükséges kontextussal a tényleges segítségnyújtáshoz.",
+      "examplesLabel": "Hogyan használják az emberek a Cabinetet",
+      "example1": "a startupod",
+      "example2": "egy GitHub repo",
+      "example3": "a marketing munkád",
+      "example4": "egy ügyfélprojekt",
+      "example5": "a személyes tudásbázisod"
+    },
+    "access": {
+      "heading": "Mihez férhet hozzá {{name}}?",
+      "subtitle": "Válassza ki, milyen tudást és eszközöket használhat ez az ügynök. Ezt bármikor megváltoztathatja.",
+      "defaultAgent": "az ügynököd",
+      "files": "Fájlok és tudás",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP szerverek",
+      "plugins": "Bővítmények",
+      "skills": "Készségek",
+      "placeholderNote": "A hozzáférést később finomhangolhatja az ügynök beállításaiban."
+    },
+    "heartbeat": {
+      "heading": "Futtassa-e {{name}} szívverés alapon?",
+      "subtitle": "A szívverés lehetővé teszi, hogy az ügynök ütemezetten bejelentkezzen és önállóan dolgozzon.",
+      "off": "Ki",
+      "offHint": "Csak akkor fut, ha kéri. Kezdésnek ajánlott.",
+      "daily": "Naponta",
+      "dailyHint": "Naponta egyszer ellenőriz.",
+      "weekly": "Hetente",
+      "weeklyHint": "Hetente egyszer ellenőriz.",
+      "tokenNote": "Figyelem: a szívverés automatikusan futtatja az ügynököt, ami minden alkalommal AI tokeneket (és a szolgáltatói kvótáját) használ fel. Ezt bármikor megváltoztathatja vagy kikapcsolhatja."
+    },
+    "firstTask": {
+      "heading": "Adja be az első feladatát",
+      "subtitle": "A feladatok segítségével adhat munkát {{name}}-nek. Írjon egyet most, és az a Cabinetjébe kerül, készen a futtatásra.",
+      "label": "Mit tegyen először {{name}}?",
+      "placeholder": "pl. Vázoljon fel egy üdvözlő e-mailt új ügyfeleknek",
+      "example1": "Összegezd a legújabb jegyzeteimet",
+      "example2": "Készíts egy projekttervet",
+      "example3": "Kutassuk fel a 3 legfőbb versenytársunkat",
+      "note": "Ezt üresen hagyhatod, és később adhatsz hozzá feladatokat. Semmi sem fut, amíg nem csatlakoztatsz egy AI szolgáltatót."
+    },
+    "rail": {
+      "untitled": "A te Cabineted",
+      "dataCaption": "Itt találhatók a projekted összes fájlja és jegyzete.",
+      "teamEmpty": "Még nincsenek ügynökök.",
+      "teamCaption": "Itt dolgozik az AI csapatod.",
+      "tasksEmpty": "Még nincsenek feladatok.",
+      "tasksCaption": "Az ide delegált feladatok itt jelennek meg.",
+      "assignedTo": "Hozzárendelve: {{name}}",
+      "you": "Te"
+    },
+    "rooms": {
+      "office": {
+        "label": "Az Iroda",
+        "tagline": "Vezessen vállalkozást, startupot vagy mellékprojektet.",
+        "workspaceLabel": "Cég vagy projekt neve",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Mivel foglalkozik?",
+        "descriptionPlaceholder": "Podcastot készítünk AI startupokról",
+        "departmentNoun": "Osztály",
+        "teamSizeLabel": "Csapatlétszám",
+        "exampleAgents": {
+          "0": "Vezérigazgató",
+          "1": "Szerkesztő"
+        }
+      },
+      "study": {
+        "label": "Dolgozószoba",
+        "tagline": "Az Ön második agya — írás, jegyzetek, személyi asszisztens.",
+        "workspaceLabel": "Nevezze el a cabinetjét",
+        "workspacePlaceholder": "Az én dolgozószobám",
+        "descriptionLabel": "Milyen életterületeken szeretne segítséget?",
+        "descriptionPlaceholder": "Írás, e-mail rendszerezés, naptár, szokáskövetés",
+        "departmentNoun": "Terület",
+        "exampleAgents": {
+          "0": "Asszisztens",
+          "1": "Könyvtáros"
+        }
+      },
+      "lab": {
+        "label": "Kutatólabor",
+        "tagline": "Akadémiai munka, irodalom, oktatás, szakdolgozat.",
+        "workspaceLabel": "Munkaterület neve",
+        "workspacePlaceholder": "Elmefilozófia",
+        "descriptionLabel": "Mi a szakterülete, vagy mit kutat?",
+        "descriptionPlaceholder": "Fenomenológia, tudat, Bevezetés a filozófiába oktatása",
+        "departmentNoun": "Terület",
+        "exampleAgents": {
+          "0": "Kutatásvezető",
+          "1": "Könyvtáros"
+        }
+      },
+      "family-room": {
+        "label": "Családi szoba",
+        "tagline": "Háztartás, családi naptár, étkezések, gyerekek.",
+        "workspaceLabel": "Háztartás neve",
+        "workspacePlaceholder": "A Nguyen család",
+        "descriptionLabel": "Kik laknak itt, és mit intéznek?",
+        "descriptionPlaceholder": "Két szülő, három gyerek, két iskola, egy kutya",
+        "departmentNoun": "Terület",
+        "teamSizeLabel": "Háztartás mérete",
+        "exampleAgents": {
+          "0": "Háztartásvezető",
+          "1": "Tervező"
+        }
+      },
+      "blank": {
+        "label": "Üres szoba",
+        "tagline": "Még semmi. Hozza saját ügynökeit, alakítsa saját ízlése szerint.",
+        "workspaceLabel": "Nevezze el a cabinetet",
+        "workspacePlaceholder": "Saját Cabinetem",
+        "descriptionLabel": "Mire való?",
+        "descriptionPlaceholder": "Bármi — hagyja üresen, ha még nem biztos benne",
+        "departmentNoun": "Csoport",
+        "exampleAgents": {
+          "0": "Ön dönti el"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Vezetés",
+      "marketing": "Marketing",
+      "content": "Tartalom",
+      "engineering": "Fejlesztés",
+      "product-and-design": "Termék és design",
+      "business": "Üzlet",
+      "research": "Kutatás",
+      "finance-and-ops": "Pénzügy és üzemeltetés",
+      "personal": "Személyes",
+      "second-brain": "Második agy",
+      "writing": "Írás",
+      "tools": "Eszközök",
+      "life-admin": "Életvitel adminisztráció",
+      "from-the-office": "Az irodából",
+      "writing-and-notes": "Írás és jegyzetek",
+      "other": "Egyéb",
+      "household": "Háztartás",
+      "admin": "Adminisztráció",
+      "money": "Pénz",
+      "product": "Termék",
+      "design": "Tervezés",
+      "sales": "Értékesítés",
+      "support": "Támogatás",
+      "analytics": "Analitika",
+      "finance": "Pénzügy",
+      "legal": "Jogi",
+      "people": "HR"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Jó reggelt csapat! Üdv a(z) {{workspace}} felületen. Vágjunk is bele!",
+        "study": "Jó reggelt. A második agyad online — üdv újra a(z) {{home}} felületen.",
+        "lab": "Kutatási asztal készen áll — „{{workspace}}”. Mibe ássuk bele magunkat ma?",
+        "family-room": "Otthoni központ indul — {{home}}. Helyezzünk mindenkit oda, ahol lennie kell.",
+        "blank": "Tiszta lap — „{{workspace}}”. Mit szeretnél itt építeni, {{home}}?"
+      },
+      "assign": "{{name}}, el tudod vállalni a(z) {{topic}} témát?",
+      "fallbackTopic": "mi a következő",
+      "office": {
+        "replies": {
+          "0": "Rendben. A nap végére elkészítek egy átfogó áttekintést.",
+          "1": "Már vázolom a tervet. Hamarosan megosztom a #content csatornán.",
+          "2": "Most állítom be az alapvető munkafolyamatokat. Eddig jól néz ki."
+        },
+        "topics": {
+          "0": "versenytárs-kutatás",
+          "1": "a tartalomnaptár",
+          "2": "az indítási terv"
+        },
+        "closing": "Remek energia, mindenki! Tegyük ezt egy erős első hétté."
+      },
+      "study": {
+        "replies": {
+          "0": "Átnézem a beérkező üzeneteket, és jelzem, ami téged igényel.",
+          "1": "A naptár 15 óráig üres — jó alkalom az írásra.",
+          "2": "Már három új jegyzetet kapcsoltam a „Napi” indexhez."
+        },
+        "topics": {
+          "0": "mai beérkező üzenetek átnézése",
+          "1": "heti írás",
+          "2": "olvasmánylistám"
+        },
+        "closing": "Rendben. Szólj, ha bármi szükség van rám — különben nem leszek útban."
+      },
+      "lab": {
+        "replies": {
+          "0": "Most húzom le a legújabb cikket erről — vázlatos összefoglaló egy órán belül.",
+          "1": "Ezután szinkronizálom a bibliográfiát és megjelölöm a duplikátumokat.",
+          "2": "A csütörtöki előadás vázlata majdnem kész az áttekintésre."
+        },
+        "topics": {
+          "0": "az irodalmi áttekintés",
+          "1": "csütörtöki előadás előkészítése",
+          "2": "a hivatkozáslista"
+        },
+        "closing": "Tarts képben. A nap végéig átnézem, amit küldesz."
+      },
+      "family-room": {
+        "replies": {
+          "0": "A menetrend 4 után tiszta. Jelölöm az átfedő leadásokat.",
+          "1": "Heti menü vázolva — a bevásárlólista készen áll az áttekintésre.",
+          "2": "Gyerekprogramok szinkronizálva. A DnD este még mindig pénteken van."
+        },
+        "topics": {
+          "0": "mai menetrend",
+          "1": "az étkezési terv",
+          "2": "a gyerekprogramok"
+        },
+        "closing": "Köszi mindenkinek. Szólj, ha bármi változik a nap folyamán."
+      },
+      "blank": {
+        "replies": {
+          "0": "Értem. Készen állok, amikor te is.",
+          "1": "Készenlétben.",
+          "2": "Várom az utasításokat."
+        },
+        "topics": {
+          "0": "az első dolog",
+          "1": "ami a következő",
+          "2": "a nyitott kérdés"
+        },
+        "closing": "Amikor készen áll, mondja el, mit tegyünk."
+      }
+    },
+    "team": {
+      "browseAll": "Összes böngészése",
+      "browseCabinets": "Cabinetek böngészése",
+      "cabinetNameLabel": "Cabinet neve",
+      "cancel": "Mégse",
+      "importButton": "Importálás",
+      "importFailed": "Importálás sikertelen",
+      "importFailedConnection": "Importálás sikertelen. Ellenőrizd a kapcsolatot.",
+      "importTitle": "{{name}} importálása",
+      "pickAgents": "Válaszd ki az ügynökeidet",
+      "required": "Kötelező",
+      "subtitle": "Minden cabinet egy AI csapat – ügynökök, feladatok és egy megosztott tudásbázis, amelyek együtt, egységként működnek.",
+      "heading": "Építsd <accent>a</accent> csapatod",
+      "nameLabel": "Ügynök neve",
+      "namePlaceholder": "pl. Szerkesztő, Kutató, Asszisztens",
+      "roleLabel": "Szerepkör",
+      "rolePlaceholder": "pl. Írássegéd",
+      "instructionsLabel": "Mit tegyen ez az ügynök?",
+      "instructionsPlaceholder": "Írd le, hogyan segítsen. Például: Fogalmazza meg és szerkessze az oldalak tartalmát, tartsa a hangnemet világosnak és barátságosnak, és javasoljon fejlesztéseket.",
+      "agentOptionalHint": "Opcionális. Ezt kihagyhatod, és később hozzáadhatsz ügynököket a szobából.",
+      "agentCount_one": "{{count}} ügynök",
+      "agentCount_other": "{{count}} ügynök",
+      "jobCount_one": "{{count}} feladat",
+      "jobCount_other": "{{count}} feladat",
+      "subCabinetCount_one": "{{count}} alkabinet",
+      "subCabinetCount_other": "{{count}} alkabinet",
+      "cabinetsImported_one": "{{count}} kabinet importálva",
+      "cabinetsImported_other": "{{count}} kabinet importálva",
+      "agentCount": "{{count}} ügynök",
+      "cabinetsImported": "{{count}} kabinet importálva",
+      "jobCount": "{{count}} feladat",
+      "subCabinetCount": "{{count}} alkabinet"
+    }
+  },
+  "search": {
+    "title": "Keresés",
+    "placeholder": "Oldalak, ügynökök, feladatok keresése…",
+    "clearQuery": "Lekérdezés törlése",
+    "noCommands": "Nincs egyező parancs.",
+    "scopes": {
+      "all": "Összes",
+      "pages": "Oldalak",
+      "agents": "Ügynökök",
+      "tasks": "Feladatok"
+    },
+    "groups": {
+      "pages": "Oldalak",
+      "agents": "Ügynökök",
+      "tasks": "Feladatok"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Nyelv",
+      "description": "Módosítja a nyelvet és az olvasási irányt. A meglévő oldalak megtartják dokumentumonkénti irányukat.",
+      "english": "Angol",
+      "hebrew": "Héber",
+      "chineseSimplified": "Egyszerűsített kínai",
+      "chineseTraditional": "Hagyományos kínai",
+      "moreLanguages": "További nyelvek",
+      "moreLanguagesHint": "Kattintson bármelyikre, hogy jelezze, szeretné a Cabinetet azon a nyelven – a leggyakrabban kért nyelveket részesítjük előnyben.",
+      "comingSoon": "Hamarosan",
+      "requestSubmitted": "Köszönjük! Jegyeztük a(z) {{language}} nyelvre vonatkozó kérését. A leggyakrabban kért nyelveket részesítjük előnyben.",
+      "requestFailed": "Nem sikerült elérni a szervert. Kérjük, próbálja újra egy pillanat múlva."
+    },
+    "appearance": {
+      "title": "Megjelenés",
+      "theme": "Téma",
+      "themeDescription": "Válasszon témát az interfészhez.",
+      "matchSystem": "Rendszerhez igazodik",
+      "matchSystemDescription": "Automatikus váltás az operációs rendszer megjelenésével.",
+      "lightThemes": "Világos témák",
+      "darkThemes": "Sötét témák",
+      "lightVariant": "Világos változat",
+      "darkVariant": "Sötét változat",
+      "sidebar": "Oldalsáv",
+      "showHiddenFiles": "Rejtett fájlok megjelenítése",
+      "sidebarDescription": "Beállítja, hogyan jelenjenek meg a fájlok az oldalsávon.",
+      "showHiddenFilesHint": "Megjeleníti a ponttal kezdődő fájlokat és mappákat (pl. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "providers": "Szolgáltatók",
+      "skills": "Képességek",
+      "storage": "Tárhely",
+      "integrations": "Integrációk",
+      "notifications": "Értesítések",
+      "appearance": "Megjelenés",
+      "updates": "Frissítések",
+      "about": "Névjegy"
+    },
+    "page": {
+      "title": "Beállítások",
+      "refresh": "Frissítés",
+      "groupYou": "Ön",
+      "groupWorkspace": "Munkaterület",
+      "groupApp": "Alkalmazás"
+    },
+    "common": {
+      "copyToClipboard": "Másolás vágólapra",
+      "categoriesAriaLabel": "Beállítási kategóriák",
+      "loading": "Betöltés…",
+      "connect": "Csatlakozás",
+      "recommended": "Ajánlott"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Hamarosan",
+      "hint": "Külső integrációk és beépített eszközök csatlakoztatása folyamatban van."
+    },
+    "storage": {
+      "dataDirectory": "Adatkönyvtár",
+      "restartRequired": "Újraindítás szükséges",
+      "dataDirectoryDescription": "Minden Tudásbázis tartalom ebben a könyvtárban tárolódik. Az útvonal módosítása újraindítást igényel.",
+      "restartHint": "Az adatkönyvtár a Cabinet újraindítása után fog megváltozni.",
+      "currentPath": "Jelenlegi útvonal",
+      "loadingPath": "Betöltés...",
+      "changeDirectory": "Könyvtár módosítása",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "Tallózás",
+      "save": "Mentés",
+      "openInFinder": "Megnyitás Finderben",
+      "envVarHint1": "Beállíthatja a(z)",
+      "envVarHint2": " környezeti változót is, amely felülírja ezt a beállítást.",
+      "failedToSave": "Mentés sikertelen.",
+      "failedToSaveDir": "Adatkönyvtár mentése sikertelen."
+    },
+    "updates": {
+      "checking": "Cabinet frissítések keresése…"
+    },
+    "providers": {
+      "title": "Ügynök szolgáltatók",
+      "defaultModel": "Alapértelmezett modell",
+      "setupGuide": "Beállítási útmutató",
+      "troubleshoot": "AI szolgáltatók hibaelhárítása",
+      "subtitle": "AI ügynök szolgáltatók konfigurálása. A CLI ügynökök terminálon keresztül futnak, az API ügynökök közvetlen API hívásokat használnak.",
+      "defaultRuntime": "Alapértelmezett futásidő",
+      "defaultRuntimeHint": "Az általános beszélgetések és a tartalék futtatások ezt a szolgáltatót/modellt/erőfeszítést használják.",
+      "cliAgents": "CLI ügynökök",
+      "apiAgents": "API ügynökök",
+      "ready": "Kész",
+      "installedNotLoggedIn": "Telepítve, de nincs bejelentkezve",
+      "notInstalled": "Nincs telepítve",
+      "emptyMatrix": "Nincsenek szolgáltatók konfigurálva. Adjon hozzá egyet alább."
+    },
+    "notifications": {
+      "channels": "Értesítési csatornák",
+      "alertRules": "Riasztási szabályok",
+      "alwaysOn": "Mindig bekapcsolva",
+      "comingSoon": "Hamarosan",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "Konfigurálja, hogyan kap értesítéseket, amikor az ügynökök figyelmet igényelnek.",
+      "rulesHint": "Az értesítések automatikusan aktiválódnak ezekre az eseményekre:",
+      "previewHint": "Böngésző push, Telegram, Slack és e-mail értesítések.",
+      "channelPushName": "Böngésző push",
+      "channelPushDesc": "Azonnali riasztások, amikor a Cabinet lap nyitva van, vagy a PWA telepítve van",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Azonnali mobil értesítések Telegram boton keresztül",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "Riasztások továbbítása a csapatod Slack csatornájára",
+      "channelEmailName": "E-mail összefoglaló",
+      "channelEmailDesc": "Kötegelt összefoglaló a riasztásokról és az ügynök tevékenységéről",
+      "ruleAlertsEvent": "#alerts csatorna üzenetek",
+      "ruleAlertsDesc": "Bármely ügynök, aki az alerts csatornára posztol",
+      "ruleMentionsEvent": "@human említések",
+      "ruleMentionsDesc": "Amikor egy ügynök megemlíti az @human-t bármely csatornán",
+      "ruleFloorEvent": "Célküszöb átlépve",
+      "ruleFloorDesc": "Egy cél a minimális küszöbértéke alá esik",
+      "ruleHealthEvent": "Ügynök állapota romlott",
+      "ruleHealthDesc": "3+ egymást követő életjel hiba"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Verzió",
+      "release": "Kiadás",
+      "framework": "Keretrendszer",
+      "storage": "Tárhely",
+      "privacy": "Adatvédelem",
+      "telemetry": "Névtelen használati telemetria",
+      "tagline": "AI-központú, saját üzemeltetésű tudásbázis és startup OS.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Helyi fájlrendszer",
+      "aiLabel": "AI",
+      "aiValue": "Helyi AI CLI-k működtetik",
+      "philosophy": "Minden tartalom markdown fájlként él a lemezen. Az emberek határozzák meg a szándékot. Az ügynökök végzik a munkát. A tudásbázis a közös memória köztük.",
+      "privacyBody": "A Cabinet névtelen használati telemetriát küld, hogy segítsen nekünk javítani a terméket. Fájltartalom, útvonalak, promptok vagy titkok nem kerülnek gyűjtésre.",
+      "privacyLink": "Miket gyűjtünk?",
+      "telemetryEnvDisabled": "Letiltva a CABINET_TELEMETRY_DISABLED=1 (környezeti változó) által.",
+      "telemetryHint": "Csak eseményszámok, verziók és platforminformációk. Kapcsolja ki a küldés leállításához.",
+      "cabinetCloud": "Cabinet Felhő",
+      "cloudBody": "Csatlakozzon Cabinetjéhez bárhonnan, miközben AI csapata éjjel-nappal dolgozik Önnek. Adja meg e-mail címét alább, és értesítjük, amint megnyílik a Cabinet Cloud.",
+      "cloudAlready": "Már rajta van a listán — felvesszük Önnel a kapcsolatot.",
+      "cloudSuccess": "Rajta van a listán. E-mailben értesítjük, amint megnyílik a Cabinet Cloud.",
+      "cloudSending": "Küldés…",
+      "cloudJoinWaitlist": "Feliratkozás várólistára",
+      "cloudError": "Valami hiba történt. Ellenőrizze az e-mail címet, és próbálja újra.",
+      "connectTitle": "Csatlakozás",
+      "connectBody": "Kérjen segítséget, ossza meg visszajelzését, vagy csak köszönjön.",
+      "joinDiscord": "Csatlakozzon a Discordhoz"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Név",
+      "namePlaceholder": "Jane",
+      "displayName": "Megjelenítési név",
+      "role": "Szerep",
+      "rolePlaceholder": "Építő",
+      "avatar": "Avatár",
+      "accentColor": "Akcentusszín",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Tartalék ikon",
+      "useIconInstead": "Ikon használata helyette",
+      "searchAvatars": "Avatarok keresése…",
+      "searchIcons": "Ikonok keresése…",
+      "howAppear": "Így jelensz meg a beszélgetésekben és az alkalmazásban.",
+      "youFallback": "Te",
+      "displayNameHint": "Beszélgetésekben jelenik meg. Alapértelmezés szerint Név.",
+      "iconHint": "Akkor használatos, ha nincs beállítva avatar kép. Kattintson újra a törléshez.",
+      "tintHint": "Színezi a tartalék avatart, ha nincs kép beállítva.",
+      "save": "Mentés",
+      "saving": "Mentés folyamatban…",
+      "saved": "Mentve",
+      "browseAll": "Összes böngészése ({{count}})",
+      "showFavorites": "Kedvencek megjelenítése",
+      "showFewer": "Kevesebb megjelenítése"
+    },
+    "workspace": {
+      "title": "Munkaterület",
+      "name": "Munkaterület neve",
+      "namePlaceholder": "Saját Cabinet",
+      "description": "Leírás",
+      "descriptionPlaceholder": "Mivel foglalkozol?",
+      "teamSize": "Csapatméret",
+      "teamSizePlaceholder": "Egyéni / 2–5 / 6–20 / 20+",
+      "subtitle": "Bevezetés során rögzítve. Az ügynökök ezeket olvassák a munka tervezésekor."
+    }
+  },
+  "sidebar": {
+    "settings": "Beállítások",
+    "createPage": "Oldal létrehozása",
+    "newPage": "Új oldal",
+    "newAgent": "Új ügynök",
+    "newTask": "Új feladat",
+    "archive": "Archívum",
+    "trash": "Kuka",
+    "search": "Keresés",
+    "agents": "Ügynökök",
+    "tasks": "Feladatok",
+    "missions": "Küldetések",
+    "drawerData": "Adatok",
+    "drawerAgents": "Csapat",
+    "drawerTasks": "Feladatok",
+    "goHome": "Főoldalra",
+    "brandWord": "",
+    "refresh": "Oldalsáv frissítése",
+    "refreshDescription": "Oldalsáv frissítése (adatmappa újraolvasása)",
+    "collapseSidebar": "Oldalsáv összecsukása",
+    "expandSidebar": "Oldalsáv kibontása",
+    "resizeHandle": "Oldalsáv átméretezése — dupla kattintás a visszaállításhoz",
+    "resetWidth": "Dupla kattintás a szélesség visszaállításához",
+    "refreshedNoChanges": "Frissítve — nincs változás.",
+    "refreshedWithChanges": "Frissítve — {{added}} hozzáadva, {{removed}} eltávolítva.",
+    "refreshFailed": "Frissítés sikertelen.",
+    "searchPlaceholder": "Fájlok keresése…",
+    "searchSearching": "Keresés...",
+    "searchNoResults": "Nincs fájl, ami megfelel a(z) „{{query}}” kifejezésnek"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Állapotsáv",
+      "askAiAriaLabel": "Kérje az AI-t az oldal szerkesztésére",
+      "askAiPlaceholder": "Hogyan szerkeszthető ez az oldal?",
+      "sendHint": "↵ küldéshez"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Szerver állapota — kattintson a részletekért",
+      "checking": "Szerver állapotának ellenőrzése…",
+      "allRunning": "Minden rendszer működik",
+      "appNotResponding": "Az alkalmazásszerver nem válaszol",
+      "daemonDownNoProviders": "A démon nem válaszol; nincs ügynök szolgáltató elérhető",
+      "daemonDown": "A démon nem válaszol",
+      "noProviders": "Nincs ügynök szolgáltató elérhető",
+      "checkingShort": "Ellenőrzés…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Korlátozott",
+      "allSystemsRunning": "Minden rendszer működik",
+      "serviceDisruption": "Szolgáltatáskimaradás",
+      "appServer": "Alkalmazásszerver",
+      "daemon": "Démon",
+      "agentProviders": "Ügynök szolgáltatók",
+      "running": "Működik",
+      "down": "Nem működik",
+      "lastSeen": "Utoljára látható: {{when}}",
+      "appWorking": "Oldalak, szerkesztő, keresés és fájlkezelés működik.",
+      "appDown": "Oldalak, szerkesztő, keresés és mentés nem elérhető. A gyorsítótárazott tartalom továbbra is olvasható.",
+      "daemonWorking": "AI ügynökök, ütemezett feladatok és a webterminál működik.",
+      "daemonDownDescription": "AI ügynökök, ütemezett feladatok és a webterminál nem elérhető. Az oldalszerkesztés továbbra is működik.",
+      "available": "Elérhető",
+      "noneReady": "Nincs kész",
+      "providerReady": "Kész",
+      "providerNotLoggedIn": "Nincs bejelentkezve",
+      "providerNotInstalled": "Nincs telepítve",
+      "install": "Telepítés",
+      "howToFix": "Javítás"
+    },
+    "save": {
+      "retryTitle": "Kattintson a sikertelen mentés újrapróbálásához",
+      "retryAriaLabel": "Mentés sikertelen — kattintson az újrapróbáláshoz",
+      "autoSaving": "Automatikus mentés…",
+      "forceSave": "Mentés kényszerítése: ⌘S",
+      "editing": "Szerkesztés — az automatikus mentés szüneteltetéskor fut le",
+      "wordCountTitle": "Szószám ehhez az oldalhoz (markdown szintaxis nélkül)",
+      "savedJustNow": "épp most",
+      "savedNever": "soha",
+      "savedAgoSeconds": "{{n}} mp. ezelőtt",
+      "savedAgoMinutes": "{{n}} p. ezelőtt",
+      "savedAgoHours": "{{n}} órája",
+      "savedAgoDays": "{{n}} napja",
+      "saveFailedRetry": "Mentés sikertelen — újrapróbálkozás",
+      "savingText": "Mentés…",
+      "savedText": "Mentve",
+      "editingText": "Szerkesztés…",
+      "savedAgo": "Mentve · {{ago}}",
+      "word": "szó",
+      "words": "szó"
+    },
+    "git": {
+      "statusModified": "Módosítva",
+      "statusNew": "Új",
+      "statusAdded": "Hozzáadva",
+      "statusDeleted": "Törölve",
+      "statusRenamed": "Átnevezve",
+      "commitMessageAriaLabel": "Commit üzenet"
+    },
+    "help": {
+      "menuAriaLabel": "Súgó és közösség menü megnyitása",
+      "menuTitle": "Súgó és közösség",
+      "demos": "Demók, videók és útmutatók",
+      "discord": "Csevegés Discordon",
+      "discordSubtitle": "Támogatás és visszajelzés",
+      "github": "Hozzájárulás GitHubon",
+      "githubSubtitle": "Forráskód, hibák, PR-ek",
+      "ifUseful": "Ha hasznosnak találja",
+      "label": "Súgó",
+      "starsAriaLabel": "{{count}} GitHub csillag – nyissa meg a Cabinetet GitHubon",
+      "starsTitle": "{{count}} GitHub csillag – csillagozza a Cabinetet GitHubon",
+      "share": "Megosztás",
+      "shareSubtitle": "Meghívó link másolása és terjesztése",
+      "shareCopied": "Nagyszerű vagy, {{name}} 🩷 Köszönjük, hogy új Cabinet tagokat hozol a fedélzetre. A link másolva, oszd meg a szeretetet!",
+      "shareFailed": "Nem sikerült a linket másolni",
+      "friend": "barát"
+    },
+    "git2": {
+      "allCommitted": "Minden commitálva",
+      "uncommittedFile": "{{count}} nem commitált fájl",
+      "uncommittedFiles": "{{count}} nem commitált fájl",
+      "uncommittedFilesAria": "{{count}} nem commitált fájl – kattintson a lista megtekintéséhez",
+      "uncommittedFileTip": "Kattintson a nem véglegesített fájl megtekintéséhez",
+      "uncommittedFilesTip": "Kattintson a nem véglegesített fájlok megtekintéséhez",
+      "uncommittedFilesHeading": "{{count}} nem véglegesített fájl",
+      "uncommittedFilesHeadingPlural": "{{count}} nem véglegesített fájl",
+      "truncatedHint": "Csak az első {{count}} fájl látható — a teljes listáért futtassa a `git status` parancsot.",
+      "commitDefault": "{{count}} fájl frissítése",
+      "commitDefaultPlural": "{{count}} fájl frissítése",
+      "committing": "Véglegesítés…",
+      "commit": "Véglegesítés",
+      "commitFailed": "Véglegesítés sikertelen",
+      "sync": "Szinkronizálás",
+      "syncTitle": "Legújabb lekérése GitHubról és frissítés",
+      "syncTitleWithLast": "Legújabb lekérése GitHubról és frissítés. Utolsó szinkronizálás: {{when}}.",
+      "syncAriaLabel": "Legújabb változások lekérése GitHubról és frissítés",
+      "syncAriaLabelWithLast": "Legújabb változások lekérése GitHubról és frissítés. Utolsó szinkronizálás: {{when}}.",
+      "terminal": "Terminál",
+      "openTerminal": "Terminál megnyitása",
+      "newTerminalTab": "Új terminálfül",
+      "pulling": "Lekérés…",
+      "pulled": "Frissítve a távoliról",
+      "upToDate": "Naprakész",
+      "pullFailed": "Lekérés sikertelen"
+    },
+    "update2": {
+      "updateAvailable": "{{version}} frissítés elérhető",
+      "updateAvailableTip": "Cabinet {{version}} elérhető"
+    },
+    "common": {
+      "dismiss": "Elvetés",
+      "close": "Bezárás",
+      "openSettings": "Nyissa meg a Beállításokat a telepített frissítés áttekintéséhez"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Újraindítás a frissítés befejezéséhez"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Feladat újraindítása az eredeti promptból",
+      "markAsDone": "Feladat készre jelölése",
+      "viewAriaLabel": "Feladatnézet",
+      "terminal": "Terminál",
+      "transcript": "Átirat",
+      "details": "Részletek",
+      "transcriptTitle": "Claude Code natív munkamenet JSONL",
+      "transcriptHint": "Beolvassa a ~/.claude/projects/<slug>/<session>.jsonl fájlt",
+      "back": "Vissza",
+      "copyPrompt": "Eredeti prompt másolása",
+      "gracefulExit": "CLI szabályos bezárása (/exit írása a PTY-ba)",
+      "sendSigterm": "SIGTERM küldése a futó PTY folyamatnak",
+      "moreActions": "További műveletek",
+      "ptyMode": "Terminál (PTY) módban fut",
+      "compactContext": "Korábbi fordulók összegzése a kontextusablak felszabadításához",
+      "noSummary": "Még nincs összefoglaló.",
+      "sessionEnded": "A munkamenet véget ért — írjon a folytatáshoz ugyanabban a terminálban.",
+      "terminalLive": "Terminál élő. Következő promptja e forduló befejezése után kerül sorra."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Ismerje meg a Cabinet bemutatóját",
+    "skip": "Kihagyás",
+    "skipAriaLabel": "Bemutató kihagyása",
+    "back": "Vissza",
+    "next": "Tovább",
+    "writeFirstTask": "Írja meg első feladatát",
+    "goToSlide": "Ugrás a(z) {{n}}. diára",
+    "starterTask": "Beszéljük át a céljaimat és azt, amit itt el szeretnék érni, majd rögzítsük egy új Névjegy oldalon.",
+    "savingTo": "Mentés ide: ",
+    "introTitle": "Ismerje meg a <accent>Cabinet</accent>-et.",
+    "introSubtitle": "Az Ön AI csapata. Az Ön tudásbázisa. Egy helyen.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Legutóbbi és futó feladatok",
+    "hide": "Feladatok sáv elrejtése",
+    "show": "Feladatok sáv megjelenítése",
+    "empty": "Nincsenek feladatok",
+    "itemRunning": "{{title}} · fut · {{when}}",
+    "itemNeedsReply": "{{title}} · válaszra vár",
+    "itemFailed": "{{title}} · sikertelen · {{when}}",
+    "itemDone": "{{title}} · kész · {{when}}",
+    "itemArchived": "{{title}} · archiválva",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} fut — feladatok sáv megjelenítése"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Kezdőlap",
+      "agents": "Ügynökök",
+      "tasks": "Feladatok",
+      "ai": "AI",
+      "menu": "Menü",
+      "primaryAriaLabel": "Elsődleges"
+    },
+    "returnTo": {
+      "task": "Feladat",
+      "tasks": "Feladatok",
+      "agent": "Ügynök",
+      "agents": "Ügynökök",
+      "cabinet": "Cabinet",
+      "home": "Kezdőlap",
+      "settings": "Beállítások",
+      "registry": "Nyilvántartás",
+      "back": "Vissza",
+      "backTo": "Vissza ide: {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Alapértelmezett",
+      "dark": "Sötét",
+      "darkThemes": "Sötét témák",
+      "lightThemes": "Világos témák"
+    },
+    "update": {
+      "restartTitle": "Indítsa újra a Cabinetet a frissítés befejezéséhez",
+      "availableTitle": "Elérhető a Cabinet {{version}}",
+      "updatesTitle": "Cabinet frissítések",
+      "description": "A Cabinet automatikusan ellenőrzi a kiadásokat. Mivel a termék még kísérleti fázisban van, készítsen biztonsági másolatot adatairól a frissítések telepítése előtt.",
+      "later": "Később",
+      "releaseNotes": "Kiadási megjegyzések"
+    },
+    "daemon": {
+      "fixHintElectron": "Lépjen ki, majd indítsa újra a Cabinetet az ügynök démon újraindításához.",
+      "fixHintDev": "Futtassa az `npm run dev:daemon` parancsot (vagy indítsa újra az `npm run dev:all` parancsot) az ügynök démon visszaállításához.",
+      "notResponding": "Az ügynök démon nem válaszol.",
+      "willFail": "Az ügynökök, feladatok és AI-kérések sikertelenek lesznek, amíg vissza nem áll. {{fixHint}}"
+    }
+  }
+}

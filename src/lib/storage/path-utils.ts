@@ -2,7 +2,7 @@ import path from "path";
 import { getManagedDataDir, isElectronRuntime, PROJECT_ROOT } from "@/lib/runtime/runtime-config";
 
 export const DATA_DIR = getManagedDataDir();
-export const CABINET_INTERNAL_DIR = path.join(DATA_DIR, ".cabinet");
+export const CABINET_INTERNAL_DIR = path.join(DATA_DIR, ".cabinet-state");
 export const ROOT_INSTALL_METADATA_PATH = path.join(PROJECT_ROOT, ".cabinet-install.json");
 export const DATA_INSTALL_METADATA_PATH = path.join(CABINET_INTERNAL_DIR, "install.json");
 export const PROJECT_RELEASE_MANIFEST_PATH = path.join(PROJECT_ROOT, "cabinet-release.json");

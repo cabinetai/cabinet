@@ -11,7 +11,14 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
     "next-env.d.ts",
+    // User data / archives / generated outputs are not app source code.
+    ".audit-shots/**",
+    "data/**",
+    "data-old*/**",
+    "old-data/**",
+    "cabinetai/dist/**",
   ]),
 ]);
 

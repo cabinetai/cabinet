@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { spawn } from "child_process";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 import { runOneShotProviderPrompt } from "@/lib/agents/provider-runtime";
-import path from "path";
+import { listConversationMetas } from "@/lib/agents/conversation-store";
 
 export async function POST() {
   try {
@@ -24,19 +24,23 @@ export async function POST() {
       gitLog = "No git history available.";
     }
 
-    // Read task board for completed tasks
+    // Pull recent conversations as the source of truth for tasks.
+    // Replaces the retired data/tasks/board.yaml reader.
     let taskInfo = "";
     try {
-      const yaml = (await import("js-yaml")).default;
-      const fs = await import("fs/promises");
-      const boardPath = path.join(DATA_DIR, "tasks", "board.yaml");
-      const raw = await fs.readFile(boardPath, "utf-8");
-      const board = yaml.load(raw) as { columns: { name: string; tasks: { title: string }[] }[] };
-      if (board?.columns) {
-        const done = board.columns.find(c => c.name === "Done");
-        const inProgress = board.columns.find(c => c.name === "In Progress");
-        taskInfo = `Done tasks: ${done?.tasks?.map(t => t.title).join(", ") || "none"}\nIn progress: ${inProgress?.tasks?.map(t => t.title).join(", ") || "none"}`;
-      }
+      const conversations = await listConversationMetas({ limit: 200 });
+      const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+      const recent = conversations.filter((c) => {
+        const ts = new Date(c.lastActivityAt ?? c.startedAt ?? 0).getTime();
+        return ts >= dayAgo;
+      });
+      const done = recent.filter((c) => c.doneAt && !c.archivedAt).map((c) => c.title);
+      const inProgress = recent
+        .filter((c) => !c.doneAt && !c.archivedAt && (c.status === "running" || c.awaitingInput))
+        .map((c) => c.title);
+      taskInfo =
+        `Done tasks: ${done.length ? done.join(", ") : "none"}\n` +
+        `In progress: ${inProgress.length ? inProgress.join(", ") : "none"}`;
     } catch {
       taskInfo = "No task data available.";
     }

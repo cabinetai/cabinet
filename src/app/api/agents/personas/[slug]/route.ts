@@ -13,6 +13,7 @@ import {
   sendMessage,
   getHeartbeatHistory,
 } from "@/lib/agents/persona-manager";
+import { getTemplateRecommendedSkills } from "@/lib/agents/library-manager";
 import { startManualHeartbeat } from "@/lib/agents/heartbeat";
 import { updateGoal, getGoalHistory } from "@/lib/agents/goal-manager";
 import { reloadDaemonSchedules } from "@/lib/agents/daemon-client";
@@ -40,21 +41,42 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     }
   }
 
-  const persona = await readPersona(slug);
+  const cabinetPath = searchParams.get("cabinetPath") || undefined;
+
+  const persona = await readPersona(slug, cabinetPath);
   if (!persona) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const memoryFiles = await listMemoryFiles(slug);
+  // Enrich `recommendedSkills` with the library template's recommendations
+  // when the agent slug matches a known template — covers the case where an
+  // agent was created before the template's `recommendedSkills` field was
+  // populated, so the on-disk persona is missing them. The persona's own
+  // entries take precedence on key collision.
+  const templateRecs = await getTemplateRecommendedSkills(slug);
+  if (templateRecs.length > 0) {
+    const personaRecs = persona.recommendedSkills ?? [];
+    const seen = new Set(personaRecs.map((r) => r.key));
+    const merged = [...personaRecs];
+    for (const rec of templateRecs) {
+      if (!seen.has(rec.key)) {
+        merged.push(rec);
+        seen.add(rec.key);
+      }
+    }
+    persona.recommendedSkills = merged;
+  }
+
+  const memoryFiles = await listMemoryFiles(slug, cabinetPath);
   const memory: Record<string, string> = {};
   for (const file of memoryFiles) {
     if (file.endsWith(".md")) {
-      memory[file] = await readMemory(slug, file);
+      memory[file] = await readMemory(slug, file, cabinetPath);
     }
   }
 
-  const inbox = await readInbox(slug);
-  const history = await getHeartbeatHistory(slug);
+  const inbox = await readInbox(slug, cabinetPath);
+  const history = await getHeartbeatHistory(slug, undefined, cabinetPath);
   const goalHistory = await getGoalHistory(slug);
 
   return NextResponse.json({ persona, memory, inbox, history, goalHistory });
@@ -63,18 +85,21 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 export async function PUT(req: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
   const body = await req.json();
+  const cabinetPath = typeof body.cabinetPath === "string" ? body.cabinetPath : undefined;
 
   // Handle different update types
   if (body.action === "toggle") {
-    const persona = await readPersona(slug);
+    const persona = await readPersona(slug, cabinetPath);
     if (!persona) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    await writePersona(slug, { active: !persona.active });
+    await writePersona(slug, { active: !persona.active }, cabinetPath);
     await reloadDaemonSchedules().catch(() => {});
     return NextResponse.json({ ok: true, active: !persona.active });
   }
 
   if (body.action === "run") {
-    const sessionId = await startManualHeartbeat(slug);
+    const scheduledAt =
+      typeof body.scheduledAt === "string" ? body.scheduledAt : undefined;
+    const sessionId = await startManualHeartbeat(slug, cabinetPath, scheduledAt);
     if (!sessionId) {
       return NextResponse.json({ ok: false, message: "Agent inactive or over budget" }, { status: 400 });
     }
@@ -82,12 +107,12 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   }
 
   if (body.action === "updateMemory") {
-    await writeMemory(slug, body.file, body.content);
+    await writeMemory(slug, body.file, body.content, cabinetPath);
     return NextResponse.json({ ok: true });
   }
 
   if (body.action === "sendMessage") {
-    await sendMessage(slug, body.to, body.message);
+    await sendMessage(slug, body.to, body.message, cabinetPath);
     return NextResponse.json({ ok: true });
   }
 
@@ -97,14 +122,15 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   }
 
   // Default: update persona
-  await writePersona(slug, body);
+  await writePersona(slug, body, cabinetPath);
   await reloadDaemonSchedules().catch(() => {});
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(_req: NextRequest, { params }: RouteParams) {
+export async function DELETE(req: NextRequest, { params }: RouteParams) {
   const { slug } = await params;
-  await deletePersona(slug);
+  const cabinetPath = req.nextUrl.searchParams.get("cabinetPath") || undefined;
+  await deletePersona(slug, cabinetPath);
   await reloadDaemonSchedules().catch(() => {});
   return NextResponse.json({ ok: true });
 }

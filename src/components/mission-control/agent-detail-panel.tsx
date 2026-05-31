@@ -35,6 +35,7 @@ import { GoalBar } from "./goal-bar";
 import { EditAgentDialog } from "./edit-agent-dialog";
 import { cronToHuman } from "@/lib/agents/cron-utils";
 import type { GoalMetric, SlackMessage } from "@/types/agents";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentDetail {
   name: string;
@@ -149,6 +150,7 @@ function getFileIcon(name: string) {
 }
 
 export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile }: AgentDetailPanelProps) {
+  const { t, dir } = useLocale();
   const [agent, setAgent] = useState<AgentDetail | null>(null);
   const [history, setHistory] = useState<HeartbeatRecord[]>([]);
   const [slackMessages, setSlackMessages] = useState<SlackMessage[]>([]);
@@ -352,7 +354,14 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
       />
 
       {/* Slide-over panel */}
-      <div className="fixed right-0 top-0 bottom-0 w-[520px] max-w-[90vw] bg-background border-l border-border z-50 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200">
+      <div
+        className={cn(
+          "fixed top-0 bottom-0 w-[520px] max-w-[90vw] bg-background border-border z-50 flex flex-col shadow-2xl animate-in duration-200",
+          dir === "rtl"
+            ? "left-0 border-r slide-in-from-left"
+            : "right-0 border-l slide-in-from-right"
+        )}
+      >
         {loading || !agent ? (
           <div className="flex-1 flex items-center justify-center">
             <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground/40" />
@@ -382,7 +391,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                     size="sm"
                     className="h-7 text-[11px] gap-1"
                     onClick={() => setEditDialogOpen(true)}
-                    title="Edit agent configuration"
+                    title={t("agentDetailPanel:editConfig")}
                   >
                     <Pencil className="h-3 w-3" />
                     Edit
@@ -405,7 +414,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                         URL.revokeObjectURL(url);
                       } catch { /* ignore */ }
                     }}
-                    title="Export agent bundle"
+                    title={t("agentDetailPanel:exportBundle")}
                   >
                     <Download className="h-3 w-3" />
                     Export
@@ -485,7 +494,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
             <div className="flex-1 overflow-y-auto">
               {/* GOALS */}
               {agent.goals.length > 0 && (
-                <Section icon={Target} title="Goals" action={
+                <Section icon={Target} title={t("agentDetailPanel:goals")} action={
                   <span className="text-[10px] text-muted-foreground/50 font-medium tabular-nums">
                     Period: {currentPeriodLabel()}
                   </span>
@@ -512,7 +521,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               )}
 
               {/* WORKSPACE */}
-              <Section icon={FolderOpen} title="Workspace" action={
+              <Section icon={FolderOpen} title={t("agentDetailPanel:workspace")} action={
                 workspace.length > 0 ? (
                   <button
                     className="text-[10px] text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
@@ -633,7 +642,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               </Section>
 
               {/* LIVE TERMINAL */}
-              <Section icon={Terminal} title="Live Terminal" action={
+              <Section icon={Terminal} title={t("agentDetailPanelPlus:liveTerminal")} action={
                 <div className="flex items-center gap-2">
                   {history.length > 0 && !runningHeartbeat && (
                     <span className="text-[10px] text-muted-foreground/50 tabular-nums">
@@ -671,7 +680,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                   <div className="rounded-lg bg-[#0a0a0a] border border-emerald-500/20 p-3 font-mono text-[11px] leading-relaxed">
                     <div className="flex items-center gap-2 text-emerald-400 mb-2">
                       <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="font-medium">Running heartbeat...</span>
+                      <span className="font-medium">{t("agentDetailPanelPlus:runningHeartbeat")}</span>
                     </div>
                     <div className="text-[#e5e5e5]/50 space-y-1">
                       <p>$ Loading persona &amp; memory...</p>
@@ -717,7 +726,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               </Section>
 
               {/* MEMORY */}
-              <Section icon={Brain} title="Memory" action={
+              <Section icon={Brain} title={t("agentDetailPanelPlus:memory")} action={
                 <button
                   className="text-[10px] text-primary/70 hover:text-primary transition-colors flex items-center gap-1"
                   onClick={() => onOpenFile?.(`/data/.agents/${slug}/.memory`)}
@@ -765,7 +774,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
               </Section>
 
               {/* RECENT ACTIVITY (interleaved heartbeats + slack messages) */}
-              <Section icon={Clock} title="Recent Activity" action={
+              <Section icon={Clock} title={t("agentDetailPanelPlus:recentActivity")} action={
                 <div className="flex items-center gap-1">
                   {(["all", "heartbeats", "messages"] as const).map((tab) => (
                     <button
@@ -860,7 +869,7 @@ export function AgentDetailPanel({ slug, onClose, onNavigateToAgent, onOpenFile 
                                     {formatDuration(h.duration)}
                                   </span>
                                   <ChevronRight className={cn(
-                                    "h-3 w-3 text-muted-foreground/30 transition-transform ml-auto",
+                                    "h-3 w-3 text-muted-foreground/30 transition-transform ms-auto",
                                     isExpanded && "rotate-90"
                                   )} />
                                 </div>
@@ -984,6 +993,7 @@ function Section({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const { t } = useLocale();
   return (
     <div className="px-5 py-4 border-b border-border/50">
       <div className="flex items-center justify-between mb-3">

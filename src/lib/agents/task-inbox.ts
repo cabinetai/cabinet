@@ -1,9 +1,9 @@
 import path from "path";
 import fs from "fs/promises";
-import { DATA_DIR } from "@/lib/storage/path-utils";
 import { fileExists, ensureDirectory } from "@/lib/storage/fs-operations";
-
-const AGENTS_DIR = path.join(DATA_DIR, ".agents");
+import { discoverCabinetPaths } from "@/lib/cabinets/discovery";
+import { normalizeCabinetPath } from "@/lib/cabinets/paths";
+import { resolveCabinetDir } from "@/lib/cabinets/server-paths";
 
 export interface AgentTask {
   id: string;
@@ -21,22 +21,26 @@ export interface AgentTask {
   updatedAt: string;
   completedAt?: string;
   result?: string;           // Completion summary
+  cabinetPath?: string;
+  linkedConversationId?: string;
+  linkedConversationCabinetPath?: string;
+  startedAt?: string;
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function taskDir(agentSlug: string): string {
-  return path.join(AGENTS_DIR, agentSlug, "tasks");
+function taskDir(agentSlug: string, cabinetPath?: string): string {
+  return path.join(resolveCabinetDir(cabinetPath), ".agents", agentSlug, "tasks");
 }
 
-async function initTaskDir(agentSlug: string): Promise<void> {
-  await ensureDirectory(taskDir(agentSlug));
+async function initTaskDir(agentSlug: string, cabinetPath?: string): Promise<void> {
+  await ensureDirectory(taskDir(agentSlug, cabinetPath));
 }
 
-function taskFilePath(agentSlug: string, taskId: string): string {
-  return path.join(taskDir(agentSlug), `${taskId}.json`);
+function taskFilePath(agentSlug: string, taskId: string, cabinetPath?: string): string {
+  return path.join(taskDir(agentSlug, cabinetPath), `${taskId}.json`);
 }
 
 // ---------------------------------------------------------------------------
@@ -46,10 +50,12 @@ function taskFilePath(agentSlug: string, taskId: string): string {
 export async function createTask(
   task: Omit<AgentTask, "id" | "createdAt" | "updatedAt" | "status">
 ): Promise<AgentTask> {
-  await initTaskDir(task.toAgent);
+  const cabinetPath = normalizeCabinetPath(task.cabinetPath, true);
+  await initTaskDir(task.toAgent, cabinetPath);
 
   const full: AgentTask = {
     ...task,
+    cabinetPath,
     id: crypto.randomUUID(),
     status: "pending",
     createdAt: new Date().toISOString(),
@@ -57,7 +63,7 @@ export async function createTask(
   };
 
   await fs.writeFile(
-    taskFilePath(task.toAgent, full.id),
+    taskFilePath(task.toAgent, full.id, cabinetPath),
     JSON.stringify(full, null, 2),
     "utf-8"
   );
@@ -71,9 +77,10 @@ export async function createTask(
 
 export async function getTasksForAgent(
   agentSlug: string,
-  statusFilter?: AgentTask["status"]
+  statusFilter?: AgentTask["status"],
+  cabinetPath?: string
 ): Promise<AgentTask[]> {
-  const dir = taskDir(agentSlug);
+  const dir = taskDir(agentSlug, cabinetPath);
   if (!(await fileExists(dir))) return [];
 
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -107,9 +114,10 @@ export async function getTasksForAgent(
 
 export async function getTask(
   agentSlug: string,
-  taskId: string
+  taskId: string,
+  cabinetPath?: string
 ): Promise<AgentTask | null> {
-  const filePath = taskFilePath(agentSlug, taskId);
+  const filePath = taskFilePath(agentSlug, taskId, cabinetPath);
   if (!(await fileExists(filePath))) return null;
 
   try {
@@ -127,9 +135,19 @@ export async function getTask(
 export async function updateTask(
   agentSlug: string,
   taskId: string,
-  updates: Partial<Pick<AgentTask, "status" | "result">>
+  updates: Partial<
+    Pick<
+      AgentTask,
+      | "status"
+      | "result"
+      | "linkedConversationId"
+      | "linkedConversationCabinetPath"
+      | "startedAt"
+    >
+  >,
+  cabinetPath?: string
 ): Promise<AgentTask | null> {
-  const task = await getTask(agentSlug, taskId);
+  const task = await getTask(agentSlug, taskId, cabinetPath);
   if (!task) return null;
 
   const updated: AgentTask = {
@@ -140,10 +158,12 @@ export async function updateTask(
 
   if (updates.status === "completed" || updates.status === "failed") {
     updated.completedAt = new Date().toISOString();
+  } else if (updates.status === "pending" || updates.status === "in_progress") {
+    delete updated.completedAt;
   }
 
   await fs.writeFile(
-    taskFilePath(agentSlug, taskId),
+    taskFilePath(agentSlug, taskId, cabinetPath),
     JSON.stringify(updated, null, 2),
     "utf-8"
   );
@@ -156,17 +176,28 @@ export async function updateTask(
 // ---------------------------------------------------------------------------
 
 export async function getAllTasks(
-  statusFilter?: AgentTask["status"]
+  statusFilter?: AgentTask["status"],
+  cabinetPath?: string
 ): Promise<AgentTask[]> {
-  if (!(await fileExists(AGENTS_DIR))) return [];
-
-  const entries = await fs.readdir(AGENTS_DIR, { withFileTypes: true });
   const allTasks: AgentTask[] = [];
+  const cabinetPaths = cabinetPath
+    ? [normalizeCabinetPath(cabinetPath, true)]
+    : await discoverCabinetPaths();
 
-  for (const entry of entries) {
-    if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-    const tasks = await getTasksForAgent(entry.name, statusFilter);
-    allTasks.push(...tasks);
+  for (const resolvedCabinetPath of cabinetPaths) {
+    const agentsDir = path.join(resolveCabinetDir(resolvedCabinetPath), ".agents");
+    if (!(await fileExists(agentsDir))) continue;
+
+    const entries = await fs.readdir(agentsDir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      const tasks = await getTasksForAgent(
+        entry.name,
+        statusFilter,
+        resolvedCabinetPath
+      );
+      allTasks.push(...tasks);
+    }
   }
 
   allTasks.sort((a, b) => {
@@ -181,7 +212,10 @@ export async function getAllTasks(
 // Get pending task count for an agent (for badges)
 // ---------------------------------------------------------------------------
 
-export async function getPendingTaskCount(agentSlug: string): Promise<number> {
-  const tasks = await getTasksForAgent(agentSlug, "pending");
+export async function getPendingTaskCount(
+  agentSlug: string,
+  cabinetPath?: string
+): Promise<number> {
+  const tasks = await getTasksForAgent(agentSlug, "pending", cabinetPath);
   return tasks.length;
 }

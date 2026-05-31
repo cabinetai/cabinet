@@ -5,6 +5,8 @@ import { History, X, GitCommit, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEditorStore } from "@/stores/editor-store";
+import { confirmDialog } from "@/lib/ui/confirm";
+import { useLocale } from "@/i18n/use-locale";
 
 interface GitLogEntry {
   hash: string;
@@ -14,6 +16,7 @@ interface GitLogEntry {
 }
 
 export function VersionHistory() {
+  const { t } = useLocale();
   const [open, setOpen] = useState(false);
   const [history, setHistory] = useState<GitLogEntry[]>([]);
   const [diff, setDiff] = useState<string | null>(null);
@@ -75,9 +78,9 @@ export function VersionHistory() {
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8"
+        className="h-7 w-7"
         onClick={() => setOpen(!open)}
-        title="Version History"
+        title={t("versionHistory:title")}
       >
         <History className="h-4 w-4" />
       </Button>
@@ -87,7 +90,7 @@ export function VersionHistory() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
               <History className="h-4 w-4" />
-              <span className="text-[13px] font-semibold">Version History</span>
+              <span className="text-[13px] font-semibold">{t("versionHistory:title")}</span>
             </div>
             <Button
               variant="ghost"
@@ -112,7 +115,13 @@ export function VersionHistory() {
                     className="h-6 text-xs gap-1"
                     onClick={async () => {
                       if (!selectedHash || !currentPath) return;
-                      if (!confirm("Restore this version? Current content will be replaced.")) return;
+                      const ok = await confirmDialog({
+                        title: "Restore this version?",
+                        message: "Current content will be replaced.",
+                        confirmText: "Restore",
+                        destructive: true,
+                      });
+                      if (!ok) return;
                       try {
                         const res = await fetch("/api/git/restore", {
                           method: "POST",

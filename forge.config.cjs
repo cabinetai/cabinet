@@ -25,7 +25,7 @@ const PACKAGER_IGNORE = [
   /^\/data(?:\/|$)/,
   /^\/\.next\/(?!standalone(?:\/|$)).*/,
   /^\/node_modules\/(?!update-electron-app(?:\/|$)|github-url-to-object(?:\/|$)|is-url(?:\/|$)|ms(?:\/|$)|electron-squirrel-startup(?:\/|$)|debug(?:\/|$)).*/,
-  /^\/(?:AI-claude-editor\.md|CLAUDE\.md|PRD\.md|PROGRESS\.md|README\.md|LICENSE\.md|package-lock\.json|eslint\.config\.mjs|forge\.config\.cjs|next\.config\.ts|next-env\.d\.ts|postcss\.config\.mjs|run-agent\.sh|skills-lock\.json|tsconfig\.json|tsconfig\.tsbuildinfo|\.env\.example|\.env\.local|\.dockerignore|\.gitignore|components\.json)$/i,
+  /^\/(?:AI-claude-editor\.md|CLAUDE\.md|PRD\.md|PROGRESS\.md|README\.md|LICENSE\.md|package-lock\.json|eslint\.config\.mjs|forge\.config\.cjs|next\.config\.ts|next-env\.d\.ts|postcss\.config\.mjs|skills-lock\.json|tsconfig\.json|tsconfig\.tsbuildinfo|\.env\.example|\.env\.local|\.dockerignore|\.gitignore|components\.json)$/i,
 ];
 
 const MACOS_LOCALES_TO_KEEP = new Set(["en.lproj", "en_GB.lproj", "he.lproj"]);
@@ -156,6 +156,9 @@ module.exports = {
     osxSign: process.env.APPLE_ID
       ? {
           identity: process.env.APPLE_SIGN_IDENTITY,
+          optionsForFile: () => ({
+            entitlements: path.join(__dirname, "electron", "entitlements.mac.plist"),
+          }),
         }
       : undefined,
     osxNotarize: process.env.APPLE_ID

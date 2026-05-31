@@ -6,6 +6,36 @@ import { INSTALL_CONFIG_PATH } from "@/lib/runtime/runtime-config";
 
 export const dynamic = "force-dynamic";
 
+function electronConfigPath(): string | null {
+  const userData = process.env.CABINET_USER_DATA?.trim();
+  if (!userData) return null;
+  return path.join(userData, "cabinet-config.json");
+}
+
+async function persistDataDir(newDir: string): Promise<void> {
+  const writeTo = async (target: string) => {
+    let config: Record<string, unknown> = {};
+    try {
+      const raw = await fs.readFile(target, "utf-8");
+      config = JSON.parse(raw);
+    } catch {
+      // File doesn't exist or is invalid — start fresh
+    }
+    config.dataDir = newDir;
+    await fs.mkdir(path.dirname(target), { recursive: true });
+    await fs.writeFile(target, JSON.stringify(config, null, 2) + "\n", "utf-8");
+  };
+
+  // Always write to PROJECT_ROOT/.cabinet-install.json (source-mode path).
+  // In Electron mode, also write to <userData>/cabinet-config.json — that's
+  // the file the Electron main process reads at boot.
+  await writeTo(INSTALL_CONFIG_PATH).catch(() => {});
+  const electronPath = electronConfigPath();
+  if (electronPath) {
+    await writeTo(electronPath);
+  }
+}
+
 /** GET — return the current data directory */
 export async function GET() {
   return NextResponse.json({ dataDir: DATA_DIR });
@@ -35,22 +65,7 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // Read existing config, merge in the new dataDir
-    let config: Record<string, unknown> = {};
-    try {
-      const raw = await fs.readFile(INSTALL_CONFIG_PATH, "utf-8");
-      config = JSON.parse(raw);
-    } catch {
-      // File doesn't exist or is invalid — start fresh
-    }
-
-    config.dataDir = resolved;
-
-    await fs.writeFile(
-      INSTALL_CONFIG_PATH,
-      JSON.stringify(config, null, 2) + "\n",
-      "utf-8"
-    );
+    await persistDataDir(resolved);
 
     return NextResponse.json({
       ok: true,

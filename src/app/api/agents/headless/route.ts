@@ -5,7 +5,14 @@ import { runOneShotProviderPrompt } from "@/lib/agents/provider-runtime";
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, workdir, providerId, captureOutput = true } = await req.json();
+    const {
+      prompt,
+      workdir,
+      providerId,
+      captureOutput = true,
+      model,
+      effort,
+    } = await req.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -21,6 +28,8 @@ export async function POST(req: NextRequest) {
       prompt,
       cwd,
       timeoutMs: 120_000,
+      model: typeof model === "string" && model.trim() ? model.trim() : undefined,
+      effort: typeof effort === "string" && effort.trim() ? effort.trim() : undefined,
     });
 
     return NextResponse.json({

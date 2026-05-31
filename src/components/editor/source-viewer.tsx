@@ -3,9 +3,10 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { ExternalLink, Download, WrapText, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeaderActions } from "@/components/layout/header-actions";
+import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
+import { useLocale } from "@/i18n/use-locale";
 
 interface SourceViewerProps {
   path: string;
@@ -41,7 +42,8 @@ function formatBadge(filename: string): string {
   return ext;
 }
 
-export function SourceViewer({ path, title }: SourceViewerProps) {
+export function SourceViewer({ path }: SourceViewerProps) {
+  const { t } = useLocale();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [wrap, setWrap] = useState(false);
@@ -93,71 +95,54 @@ export function SourceViewer({ path, title }: SourceViewerProps) {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div
-        className="flex items-center justify-between border-b border-border px-4 py-2 bg-background/80 backdrop-blur-sm transition-[padding] duration-200"
-        style={{ paddingLeft: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium">{title}</span>
-          <span className="text-xs text-muted-foreground/50 bg-muted px-1.5 py-0.5 rounded">
-            {formatBadge(filename)}
-          </span>
-          {language && (
-            <span className="text-xs text-muted-foreground/40">
-              {language}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`h-7 gap-1.5 text-xs ${wrap ? "bg-muted" : ""}`}
-            onClick={() => setWrap((v) => !v)}
-            title={wrap ? "Disable line wrap" : "Enable line wrap"}
-          >
-            <WrapText className="h-3.5 w-3.5" />
-            Wrap
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={copyToClipboard}
-            title="Copy file contents"
-          >
-            {copied
-              ? <Check className="h-3.5 w-3.5 text-green-500" />
-              : <Copy className="h-3.5 w-3.5" />}
-            {copied ? "Copied" : "Copy"}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={() => {
-              const a = document.createElement("a");
-              a.href = assetUrl;
-              a.download = filename;
-              a.click();
-            }}
-            title="Download file"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Download
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={() => window.open(assetUrl, "_blank")}
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-            Raw
-          </Button>
-          <HeaderActions />
-        </div>
-      </div>
+      <ViewerToolbar path={path} badge={formatBadge(filename)} sublabel={language || undefined}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`h-7 gap-1.5 text-xs ${wrap ? "bg-muted" : ""}`}
+          onClick={() => setWrap((v) => !v)}
+          title={wrap ? "Disable line wrap" : "Enable line wrap"}
+        >
+          <WrapText className="h-3.5 w-3.5" />
+          Wrap
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 text-xs"
+          onClick={copyToClipboard}
+          title={t("sourceViewer:copyContents")}
+        >
+          {copied
+            ? <Check className="h-3.5 w-3.5 text-green-500" />
+            : <Copy className="h-3.5 w-3.5" />}
+          {copied ? "Copied" : "Copy"}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 text-xs"
+          onClick={() => {
+            const a = document.createElement("a");
+            a.href = assetUrl;
+            a.download = filename;
+            a.click();
+          }}
+          title={t("sourceViewer:downloadFile")}
+        >
+          <Download className="h-3.5 w-3.5" />
+          Download
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 text-xs"
+          onClick={() => window.open(assetUrl, "_blank")}
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+          Raw
+        </Button>
+      </ViewerToolbar>
       <div className="flex-1 overflow-auto source-viewer-code bg-[#1e1e1e]">
         {loading ? (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">

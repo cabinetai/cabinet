@@ -2,14 +2,14 @@
 
 import { File, FolderOpen, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeaderActions } from "@/components/layout/header-actions";
+import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 
 interface FileFallbackViewerProps {
   path: string;
   title: string;
 }
 
-export function FileFallbackViewer({ path, title }: FileFallbackViewerProps) {
+export function FileFallbackViewer({ path }: FileFallbackViewerProps) {
   const assetUrl = `/api/assets/${path}`;
   const filename = path.split("/").pop() || path;
   const ext = filename.includes(".") ? filename.split(".").pop()!.toUpperCase() : "";
@@ -26,22 +26,7 @@ export function FileFallbackViewer({ path, title }: FileFallbackViewerProps) {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div
-        className="flex items-center justify-between border-b border-border px-4 py-2 bg-background/80 backdrop-blur-sm transition-[padding] duration-200"
-        style={{ paddingLeft: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium">{title}</span>
-          {ext && (
-            <span className="text-xs text-muted-foreground/50 bg-muted px-1.5 py-0.5 rounded">
-              {ext}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <HeaderActions />
-        </div>
-      </div>
+      <ViewerToolbar path={path} badge={ext || undefined} />
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center max-w-sm">
           <div className="flex size-16 items-center justify-center rounded-2xl bg-muted">

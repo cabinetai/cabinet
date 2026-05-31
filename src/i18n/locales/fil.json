@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Gumawa ng Ahente",
+      "avatar": "Avatar",
+      "namePlaceholder": "Ahente sa Marketing",
+      "rolePlaceholder": "Espesyalista sa Nilalaman",
+      "department": "Departamento",
+      "specialist": "Espesyalista",
+      "departmentLead": "Pinuno ng Departamento",
+      "provider": "Tagapagbigay",
+      "runtime": "Runtime",
+      "promptPlaceholder": "Ikaw ay isang ahente sa marketing para sa…",
+      "addAgentTitle": "Magdagdag ng ahente sa iyong team",
+      "addAgentDescription": "Pumili ng espesyalista mula sa library. Maaari mong i-edit ang pangalan, tungkulin, at mga tagubilin nito matapos itong maidagdag.",
+      "createFromScratchTitle": "Gumawa mula sa simula",
+      "createFromScratchDescription": "Bumuo ng bagong ahente na may sariling pagkakakilanlan, tungkulin, at mga tagubilin.",
+      "searchLibraryPlaceholder": "Maghanap sa library",
+      "errorLoadLibrary": "Hindi ma-load ang library ng ahente.",
+      "errorAddAgent": "Hindi maidagdag ang ahenteng ito."
+    },
+    "metric": {
+      "name": "Pangalan ng Metrik",
+      "namePlaceholder": "reddit_replies",
+      "target": "Target",
+      "targetPlaceholder": "reply/linggo",
+      "floor": "Pinakamababa",
+      "period": "Panahon",
+      "daily": "Araw-araw",
+      "weekly": "Lingguhan",
+      "monthly": "Buwanan"
+    },
+    "workspace": {
+      "promise": "Pangako",
+      "orgChart": "Tsart ng Organisasyon",
+      "jobDetails": "Mga Detalye ng Trabaho",
+      "heartbeat": "Heartbeat",
+      "workspace": "Espasyo ng Trabaho",
+      "editAgent": "I-edit ang Ahente",
+      "instructions": "Mga Tagubilin",
+      "instructionsPlaceholder": "Sumulat ng markdown para sa mga tagubilin ng ahenteng ito.",
+      "newAgent": "Bagong Ahente",
+      "routines": "Mga Routine",
+      "browseLibrary": "Mag-browse ng Library ng Ahente",
+      "editYourOwn": "I-edit ang sarili mong ahente",
+      "editorPlaceholder": "Editor",
+      "productAgentPlaceholder": "Ahente sa pagsusulat ng produkto",
+      "instructionsBodyPlaceholder": "Tukuyin kung paano dapat gumana ang ahenteng ito sa loob ng Cabinet at ng KB.",
+      "perAgentPrompts": "Mga paulit-ulit na prompt bawat ahente",
+      "runNow": "Patakbuhin ngayon",
+      "delete": "Burahin",
+      "viewOrgChart": "Tingnan ang team na ito bilang isang org chart (bubukas nang full screen)",
+      "hideIntro": "Itago ang intro na ito",
+      "sharedAcrossCabinets": "Nakabahagi sa lahat ng cabinet",
+      "expandSchedule": "Palawakin ang iskedyul",
+      "heartbeatsOnAgentPage": "Ang mga heartbeat ay naka-configure sa pahina ng bawat ahente",
+      "exitFullscreen": "Lumabas sa full screen",
+      "refresh": "I-refresh",
+      "editHeartbeat": "I-edit ang heartbeat",
+      "newRoutine": "Bagong Routine",
+      "configureHeartbeat": "I-configure ang heartbeat",
+      "openOrgChart": "Buksan ang org chart",
+      "pickAnAgent": "Pumili ng ahente",
+      "dismiss": "I-dismiss",
+      "lockedHeartbeatTip": "Ang ahenteng ito ay nakahinto. Simulan ito sa tab ng Mga Ahente para paganahin ang heartbeat.",
+      "lockedRoutineTip": "Ang ahenteng ito ay nakahinto. Simulan ito sa tab ng Mga Ahente para paganahin ang mga routine nito.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "I-click para patayin.",
+      "loadError": "Hindi ma-load ang ahenteng ito.",
+      "retry": "Subukang muli",
+      "color": "Kulay",
+      "customColor": "Pasadyang kulay",
+      "preset": "Preset",
+      "editIconColor": "I-edit ang icon, kulay, o avatar",
+      "sharedAcrossCabinetsHint": "Ibinahagi sa lahat ng cabinet — nalalapat ang mga pagbabago sa lahat ng dako",
+      "inbox": "Inbox",
+      "conversations": "Mga Pag-uusap",
+      "recentWork": "Kamakailang Gawain",
+      "schedule": "Iskedyul",
+      "heartbeat": "Pulsasyon",
+      "runNow": "Patakbuhin Ngayon",
+      "editRoutine": "I-edit ang routine",
+      "addRoutine": "Magdagdag ng routine",
+      "details": "Mga Detalye",
+      "editingGlobalAgent": "Inie-edit ang global agent",
+      "displayName": "Pangalan sa Display",
+      "role": "Tungkulin",
+      "department": "Departamento",
+      "type": "Uri",
+      "workspace": "Espasyo ng Trabaho",
+      "tags": "Mga Tag",
+      "openSkillsSettings": "Buksan ang Mga Setting → Mga Kasanayan",
+      "notInCatalog": "Hindi natagpuan sa katalogo — i-click para alisin",
+      "recommendedForRole": "Inirerekomenda para sa tungkuling ito — i-click para ikabit",
+      "promise": "Pangako",
+      "saved": "Nai-save",
+      "iconLabel": "Icon"
+    },
+    "missionControl": {
+      "gallery": "Galerya",
+      "newAgent": "Bagong Agent",
+      "allGoals": "Lahat ng Layunin",
+      "noGoals": "Walang agent na may nakakumpigurang layunin.",
+      "fromScratch": "Mula sa Simula",
+      "describeIt": "Ilarawan Ito",
+      "import": "I-import",
+      "closeDialog": "Isara ang dialog",
+      "describeYourAgent": "Ilarawan ang Iyong Agent",
+      "describePlaceholder": "Kailangan ko ng ahente na nagbabantay sa Hacker News para sa mga post na may kaugnayan sa GPU at sumusulat ng makabuluhang komento na nagli-link sa aming mga blog post…"
+    },
+    "pulseStrip": {
+      "agents": "Mga Ahente",
+      "running": "Tumatakbo",
+      "goals": "Mga Layunin",
+      "alerts": "Mga Alerto",
+      "cost": "Gastos",
+      "runningPlays": "Mga Aktibong Pagpapatakbo",
+      "noRunning": "Walang ahente na kasalukuyang tumatakbo.",
+      "costBreakdown": "Detalyadong Gastos",
+      "noUsage": "Wala pang paggamit ng API.",
+      "totalEstimated": "Kabuuang tinatayang"
+    },
+    "routine": {
+      "runNowTitle": "Patakbuhin ang routine na ito ngayon (isang beses lang, labas sa iskedyul nito)",
+      "deletePermanently": "Burahin ang routine na ito nang permanente",
+      "promptPlaceholder": "Ano ang dapat gawin ng routine na ito? Hal. I-summarize ang aktibidad kahapon…",
+      "jobName": "Pangalan ng Trabaho",
+      "jobNamePlaceholder": "Lingguhang buod ng estratehiya",
+      "jobId": "ID ng Trabaho",
+      "schedule": "Iskedyul",
+      "model": "Modelo",
+      "enabled": "Naka-enable"
+    }
+  },
+  "registry": {
+    "loading": "Naglo-load mula sa registry…",
+    "readyToImport": "Handa nang i-import ang cabinet na ito?",
+    "organization": "Organisasyon",
+    "agents": "Mga Ahente",
+    "scheduledJobs": "Mga Naka-iskedyul na Trabaho",
+    "about": "Tungkol",
+    "cabinetName": "Pangalan ng Cabinet",
+    "cabinetNamePlaceholder": "Pangalan ng Cabinet…",
+    "searchPlaceholder": "Maghanap ng mga cabinet…",
+    "noResults": "Walang cabinet na tumutugma sa iyong paghahanap."
+  },
+  "tasksBoard": {
+    "title": "Mga Gawain",
+    "manualTooltip": "Manwal — mga gawaing direkta mong inilunsad",
+    "jobsTooltip": "Mga Gawain — mga nakatakdang paulit-ulit na pagpapatakbo",
+    "heartbeatTooltip": "Heartbeat — mga pagpapatakbo ng ahente na may sariling direksyon",
+    "clearSelection": "I-clear ang pinili (Esc)",
+    "createTask": "Gumawa ng bagong gawain",
+    "moreNewTypes": "Higit pang uri ng bagong item",
+    "newTask": "Bagong Gawain",
+    "newRoutine": "Bagong Routine",
+    "viewKanban": "Kanban",
+    "viewList": "Listahan",
+    "viewSchedule": "Iskedyul",
+    "viewKanbanHint": "View ng Board — mga gawain na pinagsama-sama sa Inbox / Ikaw na / Tumatakbo / Katatapos Lang / Archive",
+    "viewListHint": "Simpleng listahan ng bawat gawain, pinakabagong aktibidad muna",
+    "viewScheduleHint": "Kalendaryo ng mga nakatakdang routine at mga paparating na pagpapatakbo",
+    "filterByAgent": "I-filter ayon sa ahente: {{name}}",
+    "noToDeleteTitle": "Walang gawaing tatanggalin",
+    "noToDeleteFiltered": "Walang tumutugma sa {{filter}}. I-clear ang filter, pumili ng ibang view, o gumawa ng bagong gawain.",
+    "noToDeleteEmpty": "Wala pang gawain sa board. Gumawa ng isa gamit ang button na + Bagong Gawain.",
+    "gotIt": "Nakuha ko",
+    "deleteCountTitle": "Tanggalin ang {{count}} gawain?",
+    "deleteCountTitlePlural": "Tanggalin ang {{count}} gawain?",
+    "deleteBody": "Permanenteng tatanggalin nito ang mga meta ng usapan, transcript, at artifact para sa bawat gawaing kasalukuyang ipinapakita. Hindi ito maaaring bawiin.",
+    "deleteBodyFiltered": "Permanenteng tatanggalin nito ang mga meta ng usapan, transcript, at artifact para sa bawat gawaing kasalukuyang ipinapakita ng mga aktibong filter. Hindi ito maaaring bawiin.",
+    "deleteConfirm": "Tanggalin ang {{count}}",
+    "deleteAllShown": "Tanggalin ang lahat ng {{count}} na ipinapakitang gawain",
+    "deleteAllShownPlural": "Tanggalin ang lahat ng {{count}} na ipinapakitang gawain",
+    "nothingToDelete": "Walang tatanggalin sa view na ito",
+    "deleteAllAria": "Tanggalin ang lahat ng ipinapakitang gawain",
+    "noTasksAria": "Walang gawain sa view na ito",
+    "filterTrigger": "ang {{trigger}} filter",
+    "filterTriggerAndAgent": "ang {{trigger}} filter at napiling ahente",
+    "filterSelectedAgent": "ang napiling filter ng ahente"
+  },
+  "runtime": {
+    "noProvider": "Walang napiling provider",
+    "modeAriaLabel": "Mode ng Pagpapatakbo",
+    "nativeTranscriptTitle": "Katutubong transkrip ng Cabinet — nakaayos na JSON stream, mga artifact, buod, ang buong UX",
+    "ptyWarningTitle": "Nangangailangan ng OpenAI API key. Hindi available sa mga ChatGPT-plan Codex account — mabibigo ang pagpili sa modelong ito na may mensaheng 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Katutubo",
+    "terminal": "Terminal",
+    "terminalTitle": "Patakbuhin ang CLI sa isang live na PTY terminal session (experimental hacker mode)",
+    "providers": "Mga Provider",
+    "modelCol": "Modelo",
+    "auto": "Auto",
+    "ready": "Handa",
+    "loginRequired": "Mag-log in",
+    "notInstalled": "Hindi naka-install",
+    "notAvailable": "Hindi available",
+    "defaultLabel": "Default",
+    "noProvidersAvailable": "Walang available na provider",
+    "appDefault": "Default ng app",
+    "selectAppDefault": "Piliin ang default ng app",
+    "defaultModel": "Default na modelo",
+    "selectedModelLabel": "Napiling Modelo",
+    "loadingProviders": "Naglo-load ng mga provider...",
+    "loadingAvailableProviders": "Naglo-load ng mga available na provider…",
+    "triggerSummary": "Modelo: {{model}} · Pagsisikap: {{effort}} · via {{provider}}",
+    "triggerSystemDefault": "Modelo ng gawain — gumagamit ng default ng system (i-click para pumili)",
+    "clickToLaunch": "I-click para ilunsad ang {{name}} sa isang PTY terminal"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Tumatakbo ang mga ahente na may buong access.",
+    "backUp": "Regular na i-back up ang iyong data.",
+    "betaSoftware": "Beta software. Maaaring magkaroon ng problema.",
+    "iAccept": "Nabasa ko at tinatanggap ko"
+  },
+  "skillAdd": {
+    "addSkill": "Magdagdag ng skill",
+    "auditTooltip": "Resulta mula sa external na audit ng skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Hindi available ang data ng audit ng skills.sh para sa skill na ito",
+    "preview": "Pagsilip"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Koponan ng AI",
+      "aiTeams": "Mga AI team",
+      "routines": "Mga Routine"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "I-edit ang konpigurasyon ng ahente",
+    "exportBundle": "I-export ang bundle ng ahente",
+    "goals": "Mga Layunin",
+    "workspace": "Espasyo ng Trabaho"
+  },
+  "scheduleRow": {
+    "deleteQ": "Burahin?",
+    "confirmDelete": "Kumpirmahin ang pagbura",
+    "cancelDelete": "Kanselahin ang pagbura",
+    "runNow": "Patakbuhin ngayon"
+  },
+  "apiKeys": {
+    "addKey": "Magdagdag ng key",
+    "edit": "I-edit",
+    "remove": "Alisin",
+    "newApiKey": "Bagong API key"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Mga Update ng Cabinet",
+    "dataDirectory": "Direktoryo ng data",
+    "backups": "Mga Backup"
+  },
+  "kanban": {
+    "stopAllInLane": "Ihinto ang lahat ng tumatakbong gawain sa lane na ito",
+    "restartAllInLane": "I-restart ang lahat ng gawain sa lane na ito",
+    "newTask": "Bagong gawain",
+    "collapseColumn": "I-collapse ang column",
+    "kill": "Patayin",
+    "laneInbox": "Inbox",
+    "laneInboxHint": "Naka-draft — naghihintay na simulan mo",
+    "laneNeeds": "Ikaw na",
+    "laneNeedsHint": "Nagtanong ang ahente o nangangailangan ng pag-apruba",
+    "laneRunning": "Tumatakbo",
+    "laneRunningHint": "Mga ahente na kasalukuyang gumagana",
+    "laneDone": "Katatapos lang",
+    "laneDoneHint": "Nakumpleto sa huling oras",
+    "laneArchive": "Arkibo",
+    "laneArchiveHint": "Mas luma at kinilala"
+  },
+  "terminalTabs": {
+    "newTab": "Bagong tab ng terminal",
+    "closeTab": "Isara ang terminal"
+  },
+  "newTaskButton": {
+    "createNew": "Gumawa ng bago…",
+    "newTask": "Bagong gawain",
+    "newRoutine": "Bagong routine"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Lingguhang buod ng estratehiya",
+    "schedule": "Iskedyul",
+    "jobId": "Job ID",
+    "enabled": "Naka-enable — tumakbo sa iskedyul na ito"
+  },
+  "editIdentity": {
+    "title": "I-edit ang ahente",
+    "displayName": "Pangalan ng display",
+    "color": "Kulay",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Simulan lahat ng ahente",
+    "startAllSubtitle": "I-activate ang heartbeats at cron jobs",
+    "stopAll": "Ihinto lahat ng ahente",
+    "stopAllSubtitle": "I-pause ang heartbeats at cron jobs"
+  },
+  "skillLibrary": {
+    "readOnly": "Read-only — hindi maaaring i-edit mula sa Cabinet",
+    "noUpstream": "Direktang nilikha sa cabinet na ito — walang naitalang upstream git source",
+    "executableWarning": "Kasama sa bundle ang mga executable script — suriin bago aprubahan",
+    "skills": "Mga Kasanayan",
+    "imported": "Na-import",
+    "importing": "Ini-import…",
+    "import": "I-import"
+  },
+  "embedPopover": {
+    "placeholder": "Idikit ang link (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, o anumang URL)",
+    "notValidUrl": "Hindi valid na URL",
+    "anyUrlWorks": "Gumagana ang anumang pampublikong URL.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Anumang URL ng iframe"
+  },
+  "rowActions": {
+    "stop": "Ihinto",
+    "stopHint": "Ihinto ang pagpapatakbo na ito ngayon (nagpapadala ng SIGTERM)",
+    "restart": "I-restart",
+    "restartHint": "Patakbuhin muli mula sa orihinal na prompt",
+    "runHint": "Simulan ang gawaing ito ngayon"
+  },
+  "schedulesPanel": {
+    "title": "Naka-iskedyul na mga trabaho",
+    "noJobs": "Walang trabaho ng Cabinet na na-configure pa.",
+    "heartbeats": "Heartbeats",
+    "noHeartbeats": "Walang heartbeats na na-configure pa."
+  },
+  "scheduleTab": {
+    "explainer1": "Lahat ng ginagawa ng iyong team ngayong linggo, sa isang kalendaryo. Ang pink ay heartbeat, ang berde ay routine. I-click ang anumang pill para i-edit ito.",
+    "explainer2": "Gamitin ang tab na ito para makita ang mga salungatan, makahanap ng mga tahimik na panahon, o makita lang sa isang sulyap kung gaano ka-abala ang team.",
+    "aboutAria": "Tungkol sa iskedyul",
+    "modeDay": "Araw",
+    "modeWeek": "Linggo",
+    "modeMonth": "Buwan"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Mag-zoom out",
+    "zoomIn": "Mag-zoom in",
+    "resetView": "I-reset ang view",
+    "syntaxError": "Error sa syntax ng diagram"
+  },
+  "helpPage": {
+    "keyboard": "Keyboard",
+    "skills": "Mga Kasanayan",
+    "apiKeys": "Mga API key",
+    "mcpServers": "Mga MCP server",
+    "title": "Tulong",
+    "howTo": "Paano Gawin",
+    "heading": "Alamin kung paano gumagana ang Cabinet",
+    "subheading": "Maikling demo, walkthrough, at preview para masulit ang Cabinet.",
+    "ctaWatchTour": "Panoorin ang tour",
+    "ctaWatchDemo": "Panoorin ang demo",
+    "ctaCheatSheet": "Buksan ang Cheat Sheet",
+    "ctaComingSoon": "Malapit na",
+    "discordHeading": "Hindi mo ba nakita ang hinahanap mo?",
+    "discordSubheading": "Nasa Discord kami — bumati, magtanong, ibahagi ang ginagawa mo.",
+    "discordCta": "Sumali sa Discord",
+    "items": {
+      "tour": {
+        "title": "Kilalanin ang iyong <accent>Cabinet</accent>.",
+        "description": "Ang iyong AI team. Ang iyong knowledge base. Isang lugar."
+      },
+      "agents": {
+        "title": "Ang iyong <accent>AI team</accent>.",
+        "description": "Mag-hire ng mga lead at espesyalista. Pangkatin sila sa mga departamento. Hayaan silang magtalaga ng trabaho sa isa't isa."
+      },
+      "tasks": {
+        "title": "Ang <accent>task board</accent>.",
+        "description": "Mga view ng Kanban, listahan, at iskedyul. I-filter ayon sa ahente o status. Pumili ng runtime bawat gawain."
+      },
+      "knowledge": {
+        "title": "Ang iyong <accent>knowledge base</accent>.",
+        "description": "Markdown, CSV, PDF, code, notebooks, mermaid, images, audio — lahat ay nagre-render nang inline. Ang iyong data ay nananatili sa iyong makina; iyo ito, hindi sa amin."
+      },
+      "cabinets": {
+        "title": "Isang team ng <accent>AI teams</accent>.",
+        "description": "Ang mga Cabinet ay nakapaloob sa loob ng mga cabinet. Bawat isa ay sarili nitong AI team na may sariling data, ahente, at saklaw ng visibility — at maaari silang magtulungan pataas at pababa sa puno."
+      },
+      "routines": {
+        "title": "<accent>Routines</accent> & iskedyul.",
+        "description": "Magpatakbo ng gawain araw-araw sa 9am, lingguhan tuwing Biyernes, o isang beses sa susunod na Lunes. Cron, kalendaryo, o natural na wika."
+      },
+      "conversations": {
+        "title": "Mga Pag-uusap & <accent>pag-apruba</accent>.",
+        "description": "Nagmumungkahi ang mga ahente ng mga aksyon — maglunsad ng gawain, mag-iskedyul ng trabaho — at ikaw ang mag-aapruba bago may tumakbo."
+      },
+      "themes": {
+        "title": "Gawin itong <accent>iyo</accent>.",
+        "description": "Pumili mula sa piniling set ng light at dark na tema — Paper, Slate, Claude, Ink, at marami pa."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — dalhin ang sarili mong AI.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — dalhin ang alinmang provider na binabayaran mo na. Pumili ng default, o i-override bawat gawain."
+      },
+      "shortcuts": {
+        "title": "Mga <accent>Keyboard</accent> shortcut.",
+        "description": "Bawat shortcut ng Cabinet sa isang searchable card. Pindutin ang ? mula saanman upang muling buksan ito. I-filter ayon sa pangalan o key — para sa navigation, pag-edit, mga gawain, panel, at slash commands."
+      },
+      "skills": {
+        "title": "<accent>Skills</accent> para sa iyong mga ahente.",
+        "description": "Installable Agent Skills — mga playbook na ginagamit ng modelo para sa isang gawain. I-install mula sa GitHub o skills.sh, ikabit sa isang persona, o i-@-mention ang isa sa anumang composer para sa isang pagtakbo."
+      },
+      "apiKeysItem": {
+        "title": "<accent>API keys</accent> para sa iyong mga tool.",
+        "description": "Isaksak ang iyong OpenAI, Anthropic, o GitHub account nang isang beses — gagamitin ito ng bawat ahente at skill sa Cabinet. Ikaw ang magbabayad ng sarili mong bill, gagamitin ang sarili mong quota, walang middleman."
+      },
+      "integrations": {
+        "title": "<accent>MCP servers</accent> & integrasyon.",
+        "description": "MCP servers, Slack, Telegram, Gmail, at Calendar OAuth — kumonekta nang isang beses at hahawakan ng Cabinet ang mga token. Malapit na."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Mga Keyboard shortcut",
+    "filterPlaceholder": "Salain…",
+    "close": "Isara"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Live Terminal",
+    "runningHeartbeat": "Tumatakbong heartbeat…",
+    "memory": "Memorya",
+    "recentActivity": "Kamakailang Aktibidad"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Ang iyong avatar",
+    "preset": "Preset",
+    "useInitials": "Gamitin ang inisyal bilang fallback",
+    "custom": "Pasadyang"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Nakita ang mga pagbabago sa lokal na app-code"
+  },
+  "logsPanel": {
+    "classifiedError": "Na-uri na error",
+    "session": "Sesyon",
+    "noEvents": "Wala pang kaganapan.",
+    "noTranscript": "Wala pang transcript."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "Resulta",
+    "noSummary": "Walang nakuhang buod."
+  },
+  "scheduleRowPlus": {
+    "delete": "Burahin"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Mag-attach ng mga file"
+  },
+  "demos": {
+    "aiTeam": "Koponan ng AI",
+    "specialist": "Espesyalista",
+    "legal": "Legal",
+    "global": "Global",
+    "editor": "Editor",
+    "slashMenu": "Slash menu"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · DATA",
+    "headlineSentence": "Ang iyong <accent>iisang pinagmulan</accent> ng katotohanan.",
+    "paragraphPrefix": "Markdown, mga PDF, mga spreadsheet, mga slide, mga imahe, video, audio, mga naka-link na repo, mga naka-embed na web app, Google Docs. Banggitin ang alinman sa mga ito gamit ang ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Isang lugar para sa lahat — para ikaw at ang iyong AI team ay magbasa, mag-edit, at mag-ship mula sa ",
+    "sameFiles": "parehong mga file",
+    "secondParagraphSuffix": ", hindi kopya ng mga kopya.",
+    "mockTitle": "Cabinet ni Jane"
+  },
+  "slideData": {
+    "thailandRootLabel": "Biyahe sa Thailand",
+    "thailandCaption": "Tingnan ang lahat ng iyong file sa isang lugar.",
+    "videoTitle": "Night market.mp4",
+    "taxRootLabel": "Buwis 2026",
+    "taxCaption": "Buwis 2026 — isang live na calculator web app, naka-embed mismo sa iyong cabinet.",
+    "calculatorTitle": "Kalkulator",
+    "liveAppBadge": "Live na app",
+    "taxEstimateLabel": "Tinatayang buwis 2026",
+    "income": "Kita",
+    "deductions": "Mga Bawas",
+    "taxBracket": "Antas ng Buwis",
+    "estimatedTax": "Tinatayang buwis",
+    "healthRootLabel": "Kalusugan",
+    "healthCaption": "Vitamins at labs — isang spreadsheet na parang isang pahina.",
+    "csvTitle": "Daily vitamins.csv",
+    "csvColVitamin": "Bitamina",
+    "csvColDose": "Dosis",
+    "csvColTime": "Oras",
+    "csvColDone": "Tapos na",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Mga Codebase — i-link ang anumang Git repo, mahahanap ng iyong mga ahente.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · MGA GAWAIN",
+    "typedCommand": "Magpatakbo ng 10 gawain, bawat isa ay sumusulat ng kanta, i-save sa @Songs/",
+    "headlineSentence": "Handa nang <accent>magsimula</accent>?",
+    "paragraphPrefix": "Sumulat ng gawain. Magpatakbo ng isa, magpatakbo ng sampu, i-iskedyul ang mga ito nang walang hanggan. Banggitin ang mga pahina gamit ang ",
+    "paragraphSuffix": ", i-save ang output saan mo man gusto. Ikaw na ang direktor ngayon.",
+    "savingFolder": "Mga Kanta/"
+  },
+  "slideAgents": {
+    "persona": "Persona",
+    "heartbeat": "Tibok",
+    "jobs": "Mga Gawain",
+    "aiTeam": "Koponan ng AI",
+    "otherWriter": "Manunulat",
+    "otherOrganizer": "Tagapag-ayos",
+    "idle": "nakatigil",
+    "researchAnalyst": "Analista ng Pananaliksik",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "aktibo",
+    "personaBody": "\"Masusing analista. Nagbibigay ng pinagmulan. Nagtatala ng magkasalungat na pahayag.\"",
+    "heartbeatBody": "Sinusuri ang @Market Research kada 15 min",
+    "jobsBody": "Lun 9:00 · Lingguhang buod ng kakumpitensya",
+    "slideNum": "02 · MGA AHENTE",
+    "paragraphPrefix": "Bawat ahente ay mayroong ",
+    "personaWord": "persona",
+    "paragraphMiddle": ", sarili nitong ",
+    "scheduleWord": "iskedyul",
+    "paragraphMiddle2": ", at isang ",
+    "memoryWord": "memorya",
+    "paragraphSuffix": ". Ang iyong mga ahente ng AI ang gagawa ng trabaho, 24/7. Maging tao ka na — sila na ang bahala sa lahat.",
+    "aiTeamSentence": "Ang iyong <accent>koponan ng AI</accent>."
+  },
+  "startWork": {
+    "close": "Isara",
+    "selectAgent": "Piliin ang ahente",
+    "titleNow": "Ano ang kailangang gawin?",
+    "titleRecurring": "Magtakda ng paulit-ulit na gawain",
+    "titleHeartbeat": "Paganahin ang ahenteng ito ayon sa iskedyul",
+    "titleEdit": "I-edit ang gawain",
+    "submitStart": "Simulan",
+    "submitAddInbox": "Idagdag sa Inbox",
+    "submitSaveEdit": "I-save ang mga pagbabago",
+    "submitCreateRoutine": "Gumawa ng gawain",
+    "submitSaveHeartbeat": "I-save ang tibok",
+    "saving": "Nagse-save…",
+    "current": "kasalukuyan",
+    "modeInboxLabel": "→ Papasok",
+    "modeInboxHint": "I-save sa Inbox — simulan kapag handa ka na",
+    "modeNowLabel": "Patakbuhin ngayon",
+    "modeNowHint": "Simulan agad ang pag-uusap na ito",
+    "modeRecurringLabel": "Naka-iskedyul",
+    "modeRecurringHint": "Patakbuhin ang prompt na ito nang naka-iskedyul",
+    "modeHeartbeatLabel": "Pulsasyon",
+    "modeHeartbeatHint": "Gisingin ang agent sa sarili nitong ritmo",
+    "agentFallback": "Ahente",
+    "failedToStart": "Nabigong magsimula",
+    "failedToSave": "Nabigong i-save ang mga pagbabago",
+    "failedToSaveHeartbeat": "Nabigong i-save ang heartbeat"
+  },
+  "googleDoc": {
+    "noUrl": "Walang nakatakdang Google URL",
+    "anyoneWithLink": "Sinuman na may link",
+    "publishedToWeb": "Nai-publish sa web"
+  },
+  "feedback": {
+    "close": "Isara",
+    "rolePlaceholder": "hal. indie hacker, PM sa isang SaaS, estudyante ng disenyo, hobbyist…",
+    "joinDiscord": "Sumali sa Discord",
+    "header": "Mabilis na pag-check-in mula kay Jane",
+    "howGoing": "Kumusta na sa ngayon?",
+    "starsCount": "{{n}} bituin",
+    "starsCountPlural": "{{n}} bituin",
+    "likeCabinet": "Gusto mo ba ang Cabinet?",
+    "starTooltipUnknown": "I-star ang Cabinet sa GitHub — kung kapaki-pakinabang ito sa iyo, malaking tulong ang isang star",
+    "starTooltipWithCount": "{{count}} GitHub stars — i-click para idagdag ang sa iyo",
+    "starLabel": "I-star",
+    "backgroundLabel": "Ano ang iyong background?",
+    "optional": "(opsyonal)",
+    "discordCta": "Gusto mo bang direktang makipag-usap, o makisama sa ibang miyembro ng Cabinet?",
+    "maybeLater": "Siguro mamaya",
+    "send": "Ipadala",
+    "thanksTitle": "Salamat!",
+    "thanksBody": "Ang iyong feedback ang humuhubog sa susunod na gagawin.",
+    "copy2Lead": "Ilang beses mo nang binuksan ang Cabinet. Salamat! Ang Cabinet ay open source at nagsisimula pa lang, kaya ang sasabihin mo rito ay talagang makakaapekto sa susunod na gagawin.",
+    "copy2Q1": "Ano ang sinusubukan mong gawin sa Cabinet ngayon?",
+    "copy2Q1Hint": "Isang pangungusap lang ay sapat na. Kung para saan mo ito binuksan, hindi kung ano ang gusto mong magawa nito.",
+    "copy2Q2": "Noong huli mong gustong gawin iyon, ano ang ginamit mo sa halip na Cabinet?",
+    "copy2Q2Hint": "Anumang tool, app, o doc, kahit panulat at papel.",
+    "copy6Lead": "Bumalik ka, at iyan ang pinakamahalagang senyales. Gusto kong marinig ang mga problema bago mo pa makalimutan.",
+    "copy6Q1": "Ano ang sinusubukan mong gawin sa Cabinet ngayon?",
+    "copy6Q1Hint": "Isang pangungusap lang ay sapat na.",
+    "copy6Q2": "Ano ang isang bagay na halos nagpatigil sa iyo sa paggamit ng Cabinet ngayong linggo?",
+    "copy6Q2Hint": "Ang bagay na pinakanakainis sa iyo. Maging tiyak. Mas maganda ang \"Nakalilito ang X\" kaysa \"ang UX\"."
+  },
+  "apiKeysSection": {
+    "cancel": "Kanselahin",
+    "pasteHere": "idikit dito",
+    "pasteNewValue": "idikit ang bagong halaga"
+  },
+  "storageBackend": {
+    "title": "Backend ng imbakan",
+    "migrationFailed": "Nabigo ang paglilipat"
+  },
+  "linkRepo": {
+    "title": "I-load ang Kaalaman",
+    "intro": "Ituro ang Cabinet sa anumang folder sa iyong makina. Gumagawa ang Cabinet ng symlink upang lumabas ang mga nilalaman ng folder sa iyong Knowledge Base at maging available sa mga AI agent bilang konteksto. Ang orihinal na folder ay hindi kailanman inililipat o kinokopya.",
+    "symlinkNote": "Lumilikha ito ng symbolic link — nananatili ang mga file kung nasaan sila.",
+    "autoDetectPlaceholder": "Auto-detect mula sa git remote (opsyonal)",
+    "shortSummaryPlaceholder": "Opsyonal na maikling buod para sa mga ahente"
+  },
+  "recentTasks": {
+    "ptyMode": "Mode ng Terminal (PTY)",
+    "revealOlder": "Ipakita ang mas marami pang lumang gawain",
+    "showOlder": "Ipakita ang mas luma"
+  },
+  "treeNode": {
+    "openCabinet": "Buksan ang view ng Cabinet",
+    "pageTitlePlaceholder": "Pamagat ng pahina…",
+    "rename": "Palitan ang pangalan",
+    "openBadge": "Buksan",
+    "sectionAdd": "Idagdag sa item na ito",
+    "sectionThis": "Item na ito",
+    "addSubPage": "Magdagdag ng Sub Page",
+    "newFolder": "Bagong Folder",
+    "createFile": "Gumawa ng Bagong File…",
+    "connectKnowledge": "Ikonekta ang Kaalaman…",
+    "symlinkTag": "Symlink",
+    "importFile": "Mag-import ng File…",
+    "importFolder": "Mag-import ng Folder…",
+    "createCabinet": "Gumawa ng Cabinet Dito",
+    "editSymlink": "I-edit ang Symlink…",
+    "settings": "Mga Setting…",
+    "moveTo": "Ilipat sa…",
+    "copyRelativePath": "Kopyahin ang Relative Path",
+    "copyFullPath": "Kopyahin ang Full Path",
+    "openInFinder": "Buksan sa Finder",
+    "delete": "Burahin",
+    "unlink": "I-unlink",
+    "folderNamePlaceholder": "Pangalan ng Folder",
+    "creating": "Ginagawa…",
+    "create": "Gumawa",
+    "addSubPageTitle": "Magdagdag ng Sub-pahina sa “{{name}}”",
+    "newFolderTitle": "Bagong Folder sa “{{name}}”"
+  },
+  "newFile": {
+    "title": "Gumawa ng Bagong File",
+    "subtitle": "Pumili ng uri ng file. Bubuksan ito ng Cabinet sa editor kapag handa na.",
+    "groupNative": "I-edit sa Cabinet",
+    "groupOffice": "Office (blangko — i-edit sa labas)",
+    "groupGoogle": "Google (naka-link)",
+    "namePlaceholder": "Pangalan ng File",
+    "create": "Gumawa",
+    "creating": "Ginagawa…",
+    "googleUrlLabel": "Google URL (opsyonal)",
+    "googleUrlPlaceholder": "Idikit ang isang naibabahaging link ng Google, o iwanang blangko para idagdag mamaya",
+    "officeNote": "Ipinapakita ng Cabinet ang mga Office file bilang read-only. Gamitin ang “Buksan sa Finder” para i-edit sa desktop app.",
+    "types": {
+      "markdown": "Pahina ng Markdown",
+      "markdownDesc": "Mga tala ng rich text, nae-edit sa Cabinet",
+      "code": "Code File",
+      "codeDesc": "Anumang source/text file — piliin ang extension",
+      "mermaid": "Mermaid Diagram",
+      "mermaidDesc": "Mga flowchart at diagram bilang code",
+      "csv": "CSV Talaan",
+      "csvDesc": "Data ng spreadsheet na pinaghihiwalay ng kuwit",
+      "docx": "Dokumento ng Word",
+      "docxDesc": "Blangko .docx",
+      "xlsx": "Excel Spreadsheet",
+      "xlsxDesc": "Blangko .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Blangko .pptx",
+      "gdoc": "Google Doc",
+      "gdocDesc": "I-embed ang Google Doc",
+      "gsheet": "Google Sheet",
+      "gsheetDesc": "I-embed ang Google Sheet",
+      "gslides": "Google Slides",
+      "gslidesDesc": "I-embed ang Google Slides"
+    },
+    "codeExtLabel": "Extension",
+    "googleTag": "Google",
+    "extHint": "I-type lang ang pangalan — Idaragdag ng Cabinet ang extension na {{ext}}.",
+    "createFailed": "Hindi malikha ang file."
+  },
+  "fileSettings": {
+    "googleTitle": "Mga Setting ng Pag-embed ng Google",
+    "googleKindLabel": "Uri",
+    "googleUrlLabel": "Google URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Ang pagbabahagi ng doc ay dapat na “Kahit sino na may link” o “Naka-publish sa web” para mag-load ang embed.",
+    "openLink": "Buksan sa Google",
+    "googleKinds": {
+      "docs": "Docs",
+      "sheets": "Sheets",
+      "slides": "Slides",
+      "forms": "Forms",
+      "drive": "Drive"
+    },
+    "appTitle": "Mga Setting ng Web App",
+    "modeLabel": "Paano ito bubuksan?",
+    "modeWebsite": "View ng pahina",
+    "modeWebsiteDesc": "Bumubukas nang inline na nakikita ang sidebar at AI panel.",
+    "modeApp": "Web App",
+    "modeAppDesc": "Bumubukas nang full-screen; awtomatikong nagko-collapse ang sidebar at AI panel.",
+    "convertNote": "Ito ay nagpapalit ng .app marker file sa folder. Hindi nababago ang iyong mga file.",
+    "save": "I-save",
+    "saving": "Nagse-save…",
+    "cancel": "Kanselahin",
+    "saveFailed": "Hindi ma-save ang mga setting."
+  },
+  "editSymlink": {
+    "title": "I-edit ang Symlink",
+    "intro": "Ang entry na ito ng Knowledge Base ay isang symbolic link sa isang folder sa ibang bahagi ng iyong makina.",
+    "kbPathLabel": "Path ng Knowledge Base",
+    "targetLabel": "Naka-link sa (sa disk)",
+    "brokenWarning": "Wala na ang target na folder. Ituro itong muli sa isang valid na folder sa ibaba.",
+    "repointLabel": "Ituro muli sa isang bagong folder",
+    "repointHint": "Papalitan ng Cabinet ang link para ituro dito. Hindi kailanman inililipat ang mga file.",
+    "browse": "Mag-browse",
+    "nameLabel": "Pangalan",
+    "descriptionLabel": "Deskripsyon",
+    "save": "I-save",
+    "saving": "Nagse-save…",
+    "copyTarget": "Kopyahin ang target path",
+    "saveFailed": "Hindi ma-update ang symlink."
+  },
+  "importFolder": {
+    "importing": "Ini-import ang folder…",
+    "failed": "Nabigo ang pag-import ng folder: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Naglo-load ng mga gawain"
+  },
+  "agentList": {
+    "agentLibrary": "Library ng Ahente",
+    "newAgent": "Bagong Ahente"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Iyong team",
+    "lead": "Lider",
+    "specialist": "Espesyalista",
+    "tasks": "Mga Gawain",
+    "todo": "Gagawin",
+    "doing": "Ginagawa",
+    "done": "Tapos na",
+    "anythingGoes": "Kahit ano",
+    "marketing": "Marketing",
+    "product": "Produkto",
+    "research": "Pananaliksik",
+    "design": "Disenyo",
+    "routines": "Mga Rutina",
+    "dailyReview": "Pang-araw-araw na pagsusuri",
+    "weeklyDigest": "Lingguhang buod",
+    "conversation": "Usapan",
+    "userQuery": "Magplano ng 2-linggong biyahe sa Thailand…",
+    "agentReply": "Ipapadala ko ang librarian at editor.",
+    "pendingAction": "Nakabinbing aksyon",
+    "approve": "Aprubahan",
+    "decline": "Tanggihan",
+    "themes": "Mga Tema",
+    "providers": "Mga Provider",
+    "comingSoon": "Malapit na"
+  },
+  "agentLive": {
+    "dismiss": "Balewalain",
+    "paused": "Naka-pause ang ahente"
+  },
+  "conversationLive": {
+    "liveOutput": "Live na Output",
+    "waitingFirstChunk": "Naghihintay sa unang bahagi ng output…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Gamitin ang icon sa halip"
+  },
+  "pendingActions": {
+    "rejectAll": "Tanggihan ang bawat nakabinbing aksyon",
+    "approveAll": "Aprubahan at ipadala ang bawat aksyon na walang matinding hadlang"
+  },
+  "aiPanel": {
+    "clearSessions": "I-clear lahat ng session",
+    "dismiss": "Balewalain"
+  },
+  "schedulerPlus": {
+    "restartAll": "I-restart lahat ng ahente",
+    "restartSubtitle": "Ihinto pagkatapos i-activate muli lahat ng iskedyul"
+  },
+  "csvViewer": {
+    "downloadCsv": "I-download ang CSV",
+    "deleteRow": "Burahin ang hilera"
+  },
+  "resizableImage": {
+    "resizeLeft": "Baguhin ang laki mula kaliwa",
+    "resizeRight": "Baguhin ang laki mula kanan"
+  },
+  "folderIndex": {
+    "listView": "View ng Listahan",
+    "galleryView": "View ng Gallery"
+  },
+  "linkPopover": {
+    "openLink": "Buksan ang link",
+    "removeLink": "Alisin ang link"
+  },
+  "officeChrome": {
+    "openInFinder": "Buksan sa Finder",
+    "downloadOriginal": "I-download ang orihinal"
+  },
+  "sourceViewer": {
+    "copyContents": "Kopyahin ang nilalaman ng file",
+    "downloadFile": "I-download ang file"
+  },
+  "versionHistory": {
+    "title": "Kasaysayan ng Bersyon"
+  },
+  "demoModal": {
+    "closeDemo": "Isara ang demo",
+    "close": "Isara"
+  },
+  "demosPlus": {
+    "anything": "Kahit ano",
+    "yours": "Iyo",
+    "install": "I-install",
+    "attach": "Ikabit"
+  },
+  "narrowViewport": {
+    "dismiss": "Balewalain ang pahiwatig ng makitid na viewport",
+    "dismissTitle": "Balewalain hanggang sa susunod na session",
+    "hintPrefix": "Ang Cabinet ay pinakamahusay sa ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " ang lapad. Ang ilang bahagi ay sumisikip sa mas makitid na lapad."
+  },
+  "agentCard": {
+    "runHeartbeat": "Patakbuhin ang heartbeat"
+  },
+  "schedulePicker": {
+    "frequency": "Dalas",
+    "onDay": "Sa araw",
+    "modeInterval": "Pagitan",
+    "modeDaily": "Araw-araw",
+    "modeWeekdays": "Mga Araw ng Trabaho",
+    "modeWeekly": "Lingguhan",
+    "modeMonthly": "Buwanan",
+    "modeCustom": "Pasadyang",
+    "parse": "Suriin",
+    "showCron": "Ipakita ang cron expression",
+    "hideCron": "Itago ang cron expression",
+    "weekdayMo": "Lun",
+    "weekdayTu": "Mar",
+    "weekdayWe": "Miy",
+    "weekdayTh": "Huw",
+    "weekdayFr": "Biy",
+    "weekdaySa": "Sab",
+    "weekdaySu": "Lin"
+  },
+  "slackPanel": {
+    "createChannel": "Gumawa ng channel",
+    "thread": "Thread"
+  },
+  "uninstall": {
+    "title": "I-uninstall ang Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Mga drawer ng Cabinet",
+    "pageTitlePlaceholder": "Pamagat ng pahina…"
+  },
+  "skillAddPlus": {
+    "cancel": "Kanselahin"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Hindi available ang data ng audit mula sa skills.sh para sa skill na ito",
+    "searchPlaceholder": "Maghanap sa skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "I-refresh",
+    "noSkills": "Wala pang skills."
+  },
+  "taskDetail": {
+    "close": "Isara (Esc)",
+    "muteTask": "I-mute ang task na ito — ang mga natapos nitong pagpapatakbo ay direktang mapupunta sa Archive",
+    "unmuteTask": "I-unmute ang task na ito — ang mga natapos nitong pagpapatakbo ay muling lilitaw sa Katatapos Lang"
+  },
+  "rowActionsPlus": {
+    "edit": "I-edit",
+    "editHint": "I-edit ang naka-save na draft na ito bago ito magsimula",
+    "delete": "Burahin",
+    "deleteHint": "Burahin nang permanente — hindi ito mababawi"
+  },
+  "taskCard": {
+    "ptyMode": "Tumatakbo sa terminal (PTY) mode"
+  },
+  "undoToast": {
+    "dismiss": "I-dismiss"
+  },
+  "terminalExited": {
+    "openDetails": "Buksan ang nakabalangkas na detalye (prompt, artifacts, turns)",
+    "reconnect": "Kumonekta muli sa daemon at i-stream ang raw PTY replay"
+  },
+  "terminalTabsPlus": {
+    "resize": "Baguhin ang laki ng panel ng terminal"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Ipakita lahat ng ahente",
+    "noRecentActivity": "Walang kamakailang aktibidad",
+    "noAgents": "Walang ahente",
+    "noAgentsConfigured": "Walang ahente na naka-configure para sa cabinet na ito.",
+    "cabinetScope": "Saklaw ng Cabinet:",
+    "depthDropdownHeader": "Saklaw ng Cabinet",
+    "depthOwnLabel": "Cabinet na ito lang",
+    "depthOwnShort": "Sarili",
+    "depthOwnDesc": "Mga pahina, ahente, at gawain mula sa cabinet na ito lang.",
+    "depthChildren1Label": "Isama ang direktang anak",
+    "depthChildren1Desc": "Magdagdag ng isang antas ng mga sub-cabinet.",
+    "depthChildren2Label": "Isama ang dalawang antas ng cabinet",
+    "depthChildren2Desc": "Magdagdag ng dalawang antas ng mga sub-cabinet.",
+    "depthAllLabel": "Isama lahat ng inapo",
+    "depthAllShort": "Lahat",
+    "depthAllDesc": "Isama ang buong sub-tree.",
+    "scopeTooltip": "Saklaw ng Cabinet: {{label}}. I-click para baguhin."
+  },
+  "composerExtras": {
+    "skillAttached": "Kasanayan — nakakabit lang sa pagtakbong ito",
+    "pageTitlePlaceholder": "Pamagat ng pahina…",
+    "active": "Aktibo — gisingin ang ahente sa iskedyul na ito",
+    "pickCliPty": "Pumili ng CLI na i-spawn sa isang PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "I-edit gamit ang AI",
+    "jupyterLab": "Kopyahin: jupyter lab <path>",
+    "exitApp": "Lumabas sa app"
+  },
+  "demosExtras": {
+    "aiAccounts": "Mga AI account",
+    "aiTeams": "Mga AI team"
+  },
+  "whatsNew": {
+    "dismiss": "Balewalain",
+    "headerPrefix": "Ano ang bago sa v",
+    "readFull": "Basahin ang buong release notes"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Naiintindihan ko at gusto kong magpatuloy."
+  },
+  "daemonHealth": {
+    "dismiss": "Isara"
+  },
+  "tinyExtras": {
+    "light": "Maliwanag",
+    "home": "Pangunahin",
+    "workspaceGallery": "Galerya ng Workspace",
+    "savingTo": "Sine-save sa",
+    "comingSoon": "Malapit na",
+    "deleteSkill": "Burahin ang kasanayan",
+    "skillsOffered": "Mga kasanayang inaalok:",
+    "allAgents": "Lahat ng ahente",
+    "noTranscript": "Walang nakitang transcript",
+    "noDiff": "Walang available na diff.",
+    "headsUp": "Paalala:",
+    "back": "Balik",
+    "editYourAvatar": "I-edit ang iyong avatar",
+    "openFullTaskViewer": "Buksan ang buong task viewer",
+    "close": "Isara",
+    "copyToClipboard": "Kopyahin sa clipboard",
+    "starOnGithub": "I-star ang Cabinet sa GitHub",
+    "helpMoreFind": "Tulungan ang mas maraming tao na mahanap ang komunidad",
+    "joinDiscord": "Sumali sa Discord",
+    "chatWithBuilders": "Makipag-chat sa mga taong bumubuo ng Cabinet",
+    "joinWaitlist": "Sumali sa waitlist ng Cabinet Cloud",
+    "emailPlaceholder": "ikaw@kumpanya.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Idagdag sa Inbox",
+    "runTaskNow": "Patakbuhin ang task ngayon",
+    "search": "Hanapin",
+    "aiPanel": "Panel ng AI",
+    "drawers": "Mga Drawer"
+  },
+  "dataLocations": {
+    "title": "Kung saan matatagpuan ang iyong data",
+    "whyThisMatters": "Bakit ito mahalaga",
+    "location": "Lokasyon",
+    "contains": "Naglalaman",
+    "network": "Network",
+    "revealInFinder": "Ipakita sa file manager",
+    "stored": "Nakatago",
+    "resetOnboarding": "I-reset ang onboarding"
+  },
+  "rooms": {
+    "switcherTitle": "Lumipat ng room",
+    "switchRoom": "Mga Room",
+    "loading": "Naglo-load…",
+    "defaultTag": "Home",
+    "openInNewWindow": "Buksan sa bagong window",
+    "opensBrowserWindow": "Magbubukas ng bagong window ng browser",
+    "customizeRoom": "I-edit ang room",
+    "addRoom": "Magdagdag ng room…",
+    "editTitle": "I-edit ang room",
+    "editSubtitle": "Itakda ang pangalan, icon, kulay, at tema ng room na ito.",
+    "nameLabel": "Pangalan ng display",
+    "slugHint": "Ang pangalan ng folder sa disk ay mananatiling {{slug}}. Ang pagpapalit ng pangalan ng folder ay isang hiwalay at advanced na aksyon.",
+    "iconLabel": "Icon",
+    "colorLabel": "Kulay",
+    "colorAuto": "Auto",
+    "themeLabel": "Tema",
+    "themeGlobal": "Gamitin ang global default",
+    "editFailed": "Hindi na-save ang room. Pakisubukan muli.",
+    "deleteRoom": "Burahin ang room…",
+    "deleteLastRoomDisabledHint": "Hindi mo maaaring burahin ang iyong huling room.",
+    "deleteTitle": "Burahin ang room na ito?",
+    "deleteSubtitle": "Ang room na ito at lahat ng nasa loob nito ay ililipat sa trash.",
+    "deleteWarningIntro": "Ang paglipat ng room sa trash ay magtatanggal din ng:",
+    "deleteWarningPages": "Mga page at file sa loob ng room na ito",
+    "deleteWarningAgents": "Mga agent, pag-uusap, at memory na sakop ng room na ito",
+    "deleteWarningJobs": "Mga naka-iskedyul na trabaho at routine sa room na ito",
+    "deleteWarningChat": "Kasaysayan ng chat ng team para sa room na ito",
+    "deleteWarningSearch": "Ang search index ng room (awtomatikong muling itatayo kung ibabalik)",
+    "deleteRecoveryNote": "Pagbawi: ang room ay inilipat sa data/.trash/ — ibalik ito sa pamamagitan ng paglipat ng folder pabalik sa data/.",
+    "deleteConfirmLabel": "I-type ang {{slug}} para kumpirmahin",
+    "deleteConfirmButton": "Burahin ang room",
+    "deleting": "Binubura…",
+    "deleteFailed": "Hindi nabura ang room. Pakisubukan muli."
+  },
+  "common": {
+    "actions": {
+      "save": "I-save",
+      "cancel": "Kanselahin",
+      "delete": "Burahin",
+      "confirm": "Kumpirmahin",
+      "close": "Isara",
+      "open": "Buksan",
+      "back": "Bumalik",
+      "next": "Susunod",
+      "done": "Tapos na"
+    },
+    "nav": {
+      "goBack": "Bumalik",
+      "goForward": "Sumulong"
+    },
+    "aiPanel": {
+      "open": "Buksan ang AI panel",
+      "close": "Isara ang AI panel"
+    },
+    "states": {
+      "loading": "Naglo-load…",
+      "saving": "Nagse-save…",
+      "saved": "Nai-save",
+      "error": "May nagkamali"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Bagong Pahina",
+      "title": "Gumawa ng Bagong Pahina",
+      "placeholder": "Pamagat ng pahina…",
+      "create": "Gumawa",
+      "creating": "Gumagawa…"
+    },
+    "newCabinet": {
+      "trigger": "Bagong Cabinet",
+      "title": "Gumawa ng Bagong Cabinet",
+      "subtitle": "Ang cabinet ay isang workspace na may sariling mga ahente, trabaho, at kaalaman.",
+      "importFromRegistry": "I-import mula sa Registry",
+      "nameLabel": "Pangalan ng Cabinet",
+      "namePlaceholder": "hal. Aking Startup, Marketing Team, Research Lab…",
+      "selectAgents": "Pumili ng mga ahente",
+      "selectedCount": "{{count}} napili",
+      "createCabinet": "Gumawa ng Cabinet",
+      "creating": "Gumagawa…",
+      "createFailed": "Nabigong gumawa ng cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "I-export ang pahina",
+      "copyMarkdown": "Kopyahin ang Markdown",
+      "copyForLlms": "Kopyahin para sa mga LLM",
+      "copyAsHtml": "Kopyahin bilang HTML",
+      "downloadMarkdown": "I-download ang .md",
+      "downloadPdf": "I-download ang PDF",
+      "copiedForLlmToast": "Nakopya ang {{size}} ng Markdown para sa LLM"
+    },
+    "toolbar": {
+      "heading1": "Pamagat 1",
+      "heading2": "Pamagat 2",
+      "heading3": "Pamagat 3",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Salungguhit",
+      "strikethrough": "Salungguhit sa Gitna",
+      "inlineCode": "Inline na code",
+      "link": "Link",
+      "textColor": "Kulay ng teksto",
+      "highlight": "I-highlight",
+      "background": "Likuran",
+      "bulletList": "Listahan na may bullet",
+      "orderedList": "Nakaayos na listahan",
+      "blockquote": "Blockquote",
+      "checklist": "Listahan ng Susuriin",
+      "codeBlock": "Bloke ng code",
+      "divider": "Panghati",
+      "alignLeft": "Pantay kaliwa",
+      "alignCenter": "Pantay gitna",
+      "alignRight": "Pantay kanan",
+      "justify": "Pantayin",
+      "align": "Pantay",
+      "table": {
+        "selectCellText": "Piliin ang teksto ng cell",
+        "addRowAbove": "Magdagdag ng row sa itaas",
+        "addRowBelow": "Magdagdag ng row sa ibaba",
+        "moveRowUp": "Ilipat ang row pataas",
+        "moveRowDown": "Ilipat ang row pababa",
+        "deleteRow": "Tanggalin ang row",
+        "addColumnBefore": "Magdagdag ng column bago",
+        "addColumnAfter": "Magdagdag ng column pagkatapos",
+        "moveColumnLeft": "Ilipat ang column sa kaliwa",
+        "moveColumnRight": "Ilipat ang column sa kanan",
+        "deleteColumn": "Tanggalin ang column",
+        "toggleHeaderRow": "I-toggle ang header row",
+        "toggleHeaderColumn": "I-toggle ang header column",
+        "deleteTable": "Tanggalin ang table"
+      },
+      "superscript": "Superscript",
+      "subscript": "Subscript",
+      "insertImage": "Maglagay ng larawan",
+      "insertVideo": "Maglagay ng video",
+      "embed": "I-embed",
+      "undo": "I-undo",
+      "redo": "I-redo",
+      "switchToLtr": "Lumipat sa LTR",
+      "switchToRtl": "Lumipat sa RTL",
+      "scrollLeft": "I-scroll ang toolbar pakaliwa",
+      "scrollRight": "I-scroll ang toolbar pakanan",
+      "markdown": "Markdown",
+      "preview": "Pagsilip"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Pangalan ng Cabinet…",
+      "renameWarning": "Hindi maaaring palitan ang pangalan ng Cabinet sa ibang pagkakataon (sa ngayon). Pumili nang matalino."
+    },
+    "templates": {
+      "header": "Magsimula sa isang template",
+      "browseAll": "Tingnan lahat →"
+    },
+    "quickActions": {
+      "shuffle": "Magpakita ng iba pang mungkahi",
+      "launch10Songs": "Ilunsad ang 10 editor ng pagsusulat ng kanta",
+      "dailyReview9am": "Pang-araw-araw na pagsusuri ng 9am",
+      "weeklyReview": "Lingguhang pagsusuri sa susunod na Lunes",
+      "thailandTrip": "Planuhin ang aking biyahe sa Thailand",
+      "physicsApp": "Gawan ako ng app sa pag-aaral ng physics",
+      "summariseRecent": "Ibuod ang aking kamakailang trabaho",
+      "recruiterReply": "Gumawa ng draft ng tugon sa recruiter",
+      "mapArticles": "I-mapa ang mga koneksyon ng artikulo",
+      "physicsCourse": "Simulan ang isang 6-module na kurso sa physics",
+      "shortStory": "Gumawa ng balangkas ng maikling kuwento",
+      "hourlyStandup": "Oras-oras na paalala sa stand-up",
+      "researchPhone": "Saliksikin ang aking susunod na telepono",
+      "translateToSpanish": "Isalin ang cabinet na ito sa Spanish",
+      "refactorNotes": "I-refactor ang aking sistema ng pagkuha ng tala",
+      "birthdayParty": "Magplano ng birthday party",
+      "boardUpdate": "Gumawa ng draft ng update sa board",
+      "customerInterviews": "I-simulate ang 5 panayam sa customer"
+    },
+    "goodMorning": "Magandang umaga",
+    "goodAfternoon": "Magandang hapon",
+    "goodEvening": "Magandang gabi",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Gusto kong gumawa ng...",
+    "composerDaemonDown": "Offline ang agent daemon — i-restart para makapagpadala"
+  },
+  "onboarding": {
+    "launchHeading": "Simulan ang iyong <accent>Cabinet</accent>",
+    "intro": {
+      "tagline1": "Ang iyong batayan ng kaalaman.",
+      "tagline2": "Ang iyong AI team.",
+      "getStarted": "Simulan"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Opisina",
+        "study": "Pag-aaral",
+        "lab": "Lab",
+        "library": "Aklatan",
+        "kitchen": "Kusina",
+        "family": "Pamilya",
+        "dining": "Kainan",
+        "studio": "Studio"
+      }
+    },
+    "welcome": {
+      "paragraph": "Ang iyong Home ay pag-aari mo. Dito, magse-set up ka ng mga silid para sa iba't ibang bahagi ng iyong buhay: trabaho, second brain, pananaliksik, pamilya. At bawat silid ay may mga cabinet: ang iyong mga tala, ang iyong mga file, at isang AI team na tahimik na gumagawa sa background.",
+      "namePrompt": "Ano ang pangalan mo?",
+      "heading": "Maligayang pagdating <accent>sa tahanan</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Maligayang pagbabalik",
+      "headingNamed": "Maligayang pagbabalik sa {{cabinet}}",
+      "subtitle": "Nakahanap kami ng kasalukuyang cabinet dito. Tapusin natin ang pag-set up nito.",
+      "continue": "Ipagpatuloy"
+    },
+    "verify": {
+      "passed": "Nakapasa",
+      "notInstalled": "Hindi naka-install",
+      "authRequired": "Kailangan ng Auth",
+      "paymentRequired": "Kailangan ng Pagbabayad",
+      "quotaExceeded": "Quota / limitasyon sa rate",
+      "error": "Error"
+    },
+    "providerStatus": {
+      "ready": "Handa na",
+      "loginRequired": "Kailangan mag-log in",
+      "notInstalled": "Hindi naka-install"
+    },
+    "actions": {
+      "back": "Balik",
+      "next": "Susunod",
+      "continue": "Ipagpatuloy",
+      "skip": "Laktawan",
+      "finish": "Tapusin",
+      "complete": "Kumpletuhin ang setup",
+      "copyToClipboard": "Kopyahin sa clipboard"
+    },
+    "cabinetCreated": {
+      "continue": "Ipagpatuloy ang pag-setup",
+      "heading": "Nalikha na ang iyong Cabinet",
+      "subtitle": "Lahat ay naka-setup at handa na.",
+      "agentsReady_one": "{{count}} ahente ang handang magtrabaho",
+      "agentsReady_other": "{{count}} ahente ang handang magtrabaho",
+      "scheduledJobs_one": "{{count}} nakatakdang trabaho",
+      "scheduledJobs_other": "{{count}} nakatakdang trabaho",
+      "subCabinets_one": "{{count}} sub-cabinet",
+      "subCabinets_other": "{{count}} sub-cabinet",
+      "agentsReady": "{{count}} ahente ang handang magtrabaho",
+      "scheduledJobs": "{{count}} nakatakdang trabaho",
+      "subCabinets": "{{count}} sub-cabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "Nasa listahan ka na — makikipag-ugnayan kami.",
+      "aside": "Malapit na ang Cabinet Cloud. Parehong produkto, walang abala sa self-hosting.",
+      "description": "Buksan ang iyong Cabinet mula sa anumang device habang patuloy na gumagana ang iyong mga AI agent — nagda-draft, nagsasaliksik, nag-oorganisa — kahit nakasara ang iyong laptop.",
+      "error": "May nagkamali. Suriin ang email at subukang muli.",
+      "joinWaitlist": "Sumali sa waitlist",
+      "onList": "Nasa listahan ka na. Ime-email ka namin kapag bukas na ang Cabinet Cloud.",
+      "sending": "Ipinapadala…",
+      "title": "Ang iyong Cabinet, kahit saan. Ang iyong AI team, laging aktibo.",
+      "waitlistSubtitle": "Kumonekta mula kahit saan. Ang iyong AI team ay gumagana 24/7."
+    },
+    "discord": {
+      "aside": "Kung gusto mo ng mga bagong feature muna at mas gusto ang 'halika' kaysa 'magsumite ng ticket,' ito ang iyong silid.",
+      "description": "Dito nagiging feature ang feedback, nagiging debate ang mga screenshot, at karaniwang may nakakahanap ng edge case bago ka pa nito matagpuan.",
+      "joinBadge": "Sumali",
+      "title": "Sa Discord nangyayari ang magandang kakaibahan."
+    },
+    "github": {
+      "aside": "Ang Cabinet ay open source. Kung gusto mo ang bisyon, tulungan kaming ipalaganap ang balita.",
+      "description": "Ang isang GitHub star ay nakakatulong upang mas maraming tao ang makatuklas sa Cabinet at sumali sa komunidad.",
+      "starsLabel": "{{stars}} GitHub stars",
+      "title": "Tulungan ang komunidad ng Cabinet na lumago"
+    },
+    "launch": {
+      "beforeYouLaunch": "Bago ka mag-launch",
+      "defaultCabinetName": "Ang iyong Cabinet",
+      "defaultDescription": "Base ng kaalaman + AI team",
+      "knowledgeBaseLabel": "Base ng Kaalaman",
+      "aiTeamLabel": "Koponan ng AI",
+      "launchCabinet": "Ilunsad ang Cabinet",
+      "settingUp": "Ina-setup...",
+      "disclaimerAccess": "<strong>Ang mga ahente ay tumatakbo nang may buong access.</strong> Gumagamit ang Cabinet ng <flag>--dangerously-skip-permissions</flag> (Claude Code) at katumbas na flags sa ibang provider. Ito ay kapareho ng pagpapatakbo ng mga CLI tool na ito mula sa iyong sariling terminal. Anumang MCP server o tool na iyong na-configure ay maaaring awtomatikong tawagin ng mga ahente.",
+      "disclaimerBackup": "<strong>Regular na i-backup ang iyong data.</strong> Maaaring magbasa, magsulat, at magtanggal ng mga file ang mga ahente sa iyong KB at mga naka-link na repo. Hindi responsable ang Cabinet sa pagkawala ng data. Ikaw ang responsable sa mga AI provider na pipiliin mo at sa kanilang mga tuntunin ng serbisyo.",
+      "disclaimerBeta": "<strong>Beta software. Maaaring magkaroon ng problema.</strong> Mabilis kaming mag-ship. Maaaring magkaroon ng breaking changes nang walang abiso.",
+      "legalNotice": "Sa pagpapatuloy, sumasang-ayon ka sa aming <terms>Mga Tuntunin</terms> at <privacy>Privacy</privacy>. Ang Cabinet ay isang <oss>open-source na proyekto</oss>.",
+      "keepInTouch": "Panatilihin akong updated. Ang Cabinet ay open source at binuo nang hayagan, at gusto naming malaman kung ano ang susunod na gagawin. Walang spam, pangako."
+    },
+    "provider": {
+      "agentType": "{{type}} ahente",
+      "close": "Isara",
+      "comingSoon": "Malapit na",
+      "guide": "Gabay",
+      "heading": "Provider ng Ahente",
+      "moreModels": "Higit pang AI",
+      "install": "I-install",
+      "logIn": "Mag-log in",
+      "openTerminalButton": "Buksan ang terminal",
+      "openTerminalDetail": "Kakailanganin mo ng terminal para patakbuhin ang mga susunod na hakbang.",
+      "openTerminalError": "Hindi awtomatikong mabuksan ang terminal. Buksan nang mano-mano ang iyong system terminal.",
+      "openTerminalTitle": "Magbukas ng terminal",
+      "recheck": "Muling suriin ang mga provider",
+      "rerunVerify": "Muling patakbuhin ang pag-verify",
+      "runVerify": "Patakbuhin ang pag-verify",
+      "setupTitle": "Setup ni {{name}}",
+      "skipForNow": "Laktawan muna",
+      "subtitle": "Kailangan ng Cabinet ng isang AI CLI para paganahin ang iyong mga ahente.",
+      "verifyExplanation": "Pinapatakbo ng pag-verify ang headless prompt ng provider mula simula hanggang dulo at kinakategorya ang anumang pagkabigo para malaman mo kung aling hakbang ang babalikan.",
+      "verifying": "Nagbe-verify…",
+      "failedAtStep": "Nabigo sa hakbang: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Para saan ang cabinet na ito? Bawat silid ay may sariling AI team.",
+      "heading": "Pumili ng <accent>silid</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Ano ang isang Cabinet?",
+      "body": "Ang Cabinet ay isang nakatutok na workspace para sa isang bahagi ng iyong buhay o trabaho. Naglalaman ito ng iyong mga file, tala, tool, agent, at gawain, para magkaroon ang iyong AI team ng kontekstong kailangan nito para makatulong talaga.",
+      "examplesLabel": "Paano ginagamit ang Cabinet",
+      "example1": "iyong startup",
+      "example2": "isang GitHub repo",
+      "example3": "iyong gawaing marketing",
+      "example4": "isang proyekto ng kliyente",
+      "example5": "iyong personal na base ng kaalaman"
+    },
+    "access": {
+      "heading": "Ano ang maaaring i-access ni {{name}}?",
+      "subtitle": "Piliin ang kaalaman at mga tool na maaaring gamitin ng agent na ito. Maaari mo itong baguhin anumang oras.",
+      "defaultAgent": "iyong agent",
+      "files": "Mga File at Kaalaman",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP servers",
+      "plugins": "Mga Plugin",
+      "skills": "Mga Kasanayan",
+      "placeholderNote": "Maaari mong i-fine-tune ang access mamaya sa mga setting ng agent."
+    },
+    "heartbeat": {
+      "heading": "Dapat bang may heartbeat si {{name}}?",
+      "subtitle": "Pinapayagan ng heartbeat ang agent na mag-check in at gumana nang mag-isa ayon sa iskedyul.",
+      "off": "Naka-off",
+      "offHint": "Tumatakbo lang kapag hiniling mo. Inirerekomenda para sa simula.",
+      "daily": "Araw-araw",
+      "dailyHint": "Nagche-check in isang beses sa isang araw.",
+      "weekly": "Lingguhan",
+      "weeklyHint": "Nagche-check in isang beses sa isang linggo.",
+      "tokenNote": "Paalala: awtomatikong pinapatakbo ng heartbeat ang agent, na gumagamit ng AI tokens (at iyong provider quota) sa bawat pagtakbo nito. Maaari mo itong baguhin o i-off anumang oras."
+    },
+    "firstTask": {
+      "heading": "Simulan ang iyong unang gawain",
+      "subtitle": "Ang mga gawain ay kung paano mo ibinibigay ang trabaho kay {{name}}. Sumulat ng isa ngayon at mapupunta ito sa iyong cabinet, handa nang tumakbo.",
+      "label": "Ano ang unang dapat gawin ni {{name}}?",
+      "placeholder": "hal. Gumawa ng welcome email para sa mga bagong customer",
+      "example1": "Ibuod ang aking pinakabagong mga tala",
+      "example2": "Gumawa ng plano ng proyekto",
+      "example3": "Saliksikin ang aming nangungunang 3 kakumpitensya",
+      "note": "Maaari mo itong iwang blangko at magdagdag ng mga gawain mamaya. Walang tatakbo hangga't hindi ka nagkokonekta ng AI provider."
+    },
+    "rail": {
+      "untitled": "Iyong Cabinet",
+      "dataCaption": "Lahat ng file at tala ng iyong proyekto ay narito.",
+      "teamEmpty": "Wala pang agent.",
+      "teamCaption": "Dito gumagana ang iyong AI team.",
+      "tasksEmpty": "Wala pang gawain.",
+      "tasksCaption": "Ang trabahong ibinibigay mo sa iyong team ay lumalabas dito.",
+      "assignedTo": "Nakatoka kay {{name}}",
+      "you": "Ikaw"
+    },
+    "rooms": {
+      "office": {
+        "label": "Ang Opisina",
+        "tagline": "Magpatakbo ng negosyo, startup, o side project.",
+        "workspaceLabel": "Pangalan ng kumpanya o proyekto",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Ano ang ginagawa mo?",
+        "descriptionPlaceholder": "Gumagawa kami ng podcast tungkol sa mga AI startup",
+        "departmentNoun": "Departamento",
+        "teamSizeLabel": "Laki ng team",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "Editor"
+        }
+      },
+      "study": {
+        "label": "Pag-aaral",
+        "tagline": "Ang iyong pangalawang utak — pagsusulat, tala, personal na assistant.",
+        "workspaceLabel": "Pangalanan ang iyong cabinet",
+        "workspacePlaceholder": "Aking Pag-aaral",
+        "descriptionLabel": "Anong mga aspeto ng buhay ang gusto mong tulungan?",
+        "descriptionPlaceholder": "Pagsusulat, pag-triage ng email, kalendaryo, pagsubaybay sa gawi",
+        "departmentNoun": "Larangan",
+        "exampleAgents": {
+          "0": "Assistant",
+          "1": "Librarian"
+        }
+      },
+      "lab": {
+        "label": "Research Lab",
+        "tagline": "Gawaing pang-akademiko, literatura, pagtuturo, tesis.",
+        "workspaceLabel": "Pangalan ng workspace",
+        "workspacePlaceholder": "Pilosopiya ng Isip",
+        "descriptionLabel": "Ano ang iyong larangan o ano ang iyong sinasaliksik?",
+        "descriptionPlaceholder": "Phenomenology, kamalayan, pagtuturo ng Intro to Philosophy",
+        "departmentNoun": "Larangan",
+        "exampleAgents": {
+          "0": "Research Lead",
+          "1": "Librarian"
+        }
+      },
+      "family-room": {
+        "label": "Silid-Pamilya",
+        "tagline": "Sambahayan, kalendaryo ng pamilya, pagkain, mga bata.",
+        "workspaceLabel": "Pangalan ng Sambahayan",
+        "workspacePlaceholder": "Ang Pamilya Nguyen",
+        "descriptionLabel": "Sino ang nakatira dito at ano ang iyong pinagsasabay-sabay?",
+        "descriptionPlaceholder": "Dalawang magulang, tatlong anak, dalawang paaralan, isang aso",
+        "departmentNoun": "Lugar",
+        "teamSizeLabel": "Laki ng Sambahayan",
+        "exampleAgents": {
+          "0": "Tagapamahala ng Bahay",
+          "1": "Tagaplano"
+        }
+      },
+      "blank": {
+        "label": "Walang Lamang Kwarto",
+        "tagline": "Wala pa. Dalhin ang sariling ahente, sariling hugis.",
+        "workspaceLabel": "Pangalanan ang iyong cabinet",
+        "workspacePlaceholder": "Aking Cabinet",
+        "descriptionLabel": "Para saan ito?",
+        "descriptionPlaceholder": "Kahit ano — iwanang blangko kung hindi pa sigurado",
+        "departmentNoun": "Grupo",
+        "exampleAgents": {
+          "0": "Ikaw ang bahala"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Pamumuno",
+      "marketing": "Marketing",
+      "content": "Nilalaman",
+      "engineering": "Inhinyeriya",
+      "product-and-design": "Produkto at Disenyo",
+      "business": "Negosyo",
+      "research": "Pananaliksik",
+      "finance-and-ops": "Pananalapi at Operasyon",
+      "personal": "Personal",
+      "second-brain": "Pangalawang utak",
+      "writing": "Pagsusulat",
+      "tools": "Mga Kagamitan",
+      "life-admin": "Pangangasiwa sa buhay",
+      "from-the-office": "Mula sa Opisina",
+      "writing-and-notes": "Pagsusulat at mga tala",
+      "other": "Iba pa",
+      "household": "Sambahayan",
+      "admin": "Admin",
+      "money": "Pera",
+      "product": "Produkto",
+      "design": "Disenyo",
+      "sales": "Benta",
+      "support": "Suporta",
+      "analytics": "Analytics",
+      "finance": "Pananalapi",
+      "legal": "Legal",
+      "people": "Mga Tao"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Magandang umaga, team! Maligayang pagdating sa {{workspace}}. Simulan na natin agad.",
+        "study": "Umaga. Online na ang iyong pangalawang utak — maligayang pagbabalik sa {{home}}.",
+        "lab": "Handa na ang research desk — \"{{workspace}}\". Ano ang ating sasaliksikin ngayon?",
+        "family-room": "Nagbubukas na ang Home HQ — {{home}}. Ilagay natin ang bawat isa kung saan sila nararapat.",
+        "blank": "Walang laman — \"{{workspace}}\". Ano ang gusto mong buuin dito, {{home}}?"
+      },
+      "assign": "{{name}}, kaya mo bang asikasuhin ang {{topic}}?",
+      "fallbackTopic": "susunod",
+      "office": {
+        "replies": {
+          "0": "Ginagawa na. Ihaharap ko ang pangkalahatang-ideya bago matapos ang araw.",
+          "1": "Gumagawa na ng plano. Ibaba ko ito sa #content sa lalong madaling panahon.",
+          "2": "Inaayos na ang mga pangunahing daloy ng trabaho. Maganda ang takbo sa ngayon."
+        },
+        "topics": {
+          "0": "pananaliksik sa kakumpitensya",
+          "1": "ang kalendaryo ng nilalaman",
+          "2": "ang plano sa paglulunsad"
+        },
+        "closing": "Magandang enerhiya, lahat. Gawin nating matagumpay ang unang linggo."
+      },
+      "study": {
+        "replies": {
+          "0": "Aayusin ko ang inbox at ilalabas ang mga kailangan mo.",
+          "1": "Malinaw ang kalendaryo hanggang 3pm — magandang oras para magsulat.",
+          "2": "Nai-link ko na ang tatlong bagong tala sa 'Daily' index."
+        },
+        "topics": {
+          "0": "pag-aayos ng inbox ngayon",
+          "1": "mga isusulat ngayong linggo",
+          "2": "aking listahan ng babasahin"
+        },
+        "closing": "Sige. I-ping mo ako kung may kailangan — kung hindi, hindi ako manggugulo."
+      },
+      "lab": {
+        "replies": {
+          "0": "Kinukuha ko na ang pinakabagong papel tungkol dito — draft ng buod sa loob ng isang oras.",
+          "1": "I-sync ko ang bibliograpiya pagkatapos nito at markahan ang mga doble.",
+          "2": "Ang balangkas ng lektura para sa Huwebes ay halos handa na para sa pagsusuri."
+        },
+        "topics": {
+          "0": "ang pagsusuri ng literatura",
+          "1": "paghahanda sa lektura ng Huwebes",
+          "2": "ang listahan ng mga sanggunian"
+        },
+        "closing": "Panatilihin akong updated. Susuriin ko ang anumang ipasa mo bago matapos ang araw."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Malinaw ang iskedyul pagkatapos ng 4. Minamarkahan ang mga magkakapatong na drop-off.",
+          "1": "Nagawa na ang menu para sa linggo — handa na ang listahan ng grocery para suriin.",
+          "2": "Nai-sync na ang mga aktibidad ng mga bata. Tuloy pa rin ang DnD night sa Biyernes."
+        },
+        "topics": {
+          "0": "iskedyul ngayon",
+          "1": "ang plano ng pagkain",
+          "2": "ang mga aktibidad ng mga bata"
+        },
+        "closing": "Salamat, lahat. I-ping ako kung may magbago sa araw."
+      },
+      "blank": {
+        "replies": {
+          "0": "Sige. Handa na ako kung kailan ka handa.",
+          "1": "Nakahanda.",
+          "2": "Hihintayin ko ang direksyon."
+        },
+        "topics": {
+          "0": "ang unang bagay",
+          "1": "anumang susunod",
+          "2": "ang bukas na tanong"
+        },
+        "closing": "Kung kailan ka handa, sabihin mo sa amin kung ano ang gagawin."
+      }
+    },
+    "team": {
+      "browseAll": "I-browse lahat",
+      "browseCabinets": "I-browse ang mga cabinet",
+      "cabinetNameLabel": "Pangalan ng cabinet",
+      "cancel": "Kanselahin",
+      "importButton": "I-import",
+      "importFailed": "Nabigo ang pag-import",
+      "importFailedConnection": "Nabigo ang pag-import. Suriin ang iyong koneksyon.",
+      "importTitle": "I-import ang {{name}}",
+      "pickAgents": "Piliin ang iyong mga ahente",
+      "required": "Kinakailangan",
+      "subtitle": "Bawat cabinet ay isang AI team — mga ahente, gawain, at isang ibinahaging knowledge base, nagtutulungan bilang isa.",
+      "heading": "Buuin ang <accent>iyong</accent> team",
+      "nameLabel": "Pangalan ng ahente",
+      "namePlaceholder": "hal. Editor, Researcher, Assistant",
+      "roleLabel": "Tungkulin",
+      "rolePlaceholder": "hal. Writing assistant",
+      "instructionsLabel": "Ano ang dapat gawin ng ahenteng ito?",
+      "instructionsPlaceholder": "Ilarawan kung paano ito makakatulong. Halimbawa: Gumawa at mag-edit ng aking mga pahina, panatilihing malinaw at palakaibigan ang tono, at magmungkahi ng mga pagpapabuti.",
+      "agentOptionalHint": "Opsyonal. Maaari mo itong laktawan at magdagdag ng mga ahente mamaya mula sa loob ng silid.",
+      "agentCount_one": "{{count}} ahente",
+      "agentCount_other": "{{count}} mga ahente",
+      "jobCount_one": "{{count}} gawain",
+      "jobCount_other": "{{count}} mga gawain",
+      "subCabinetCount_one": "{{count}} sub-kabinet",
+      "subCabinetCount_other": "{{count}} mga sub-cabinet",
+      "cabinetsImported_one": "{{count}} cabinet na na-import",
+      "cabinetsImported_other": "{{count}} mga cabinet na na-import",
+      "agentCount": "{{count}} mga ahente",
+      "cabinetsImported": "{{count}} mga cabinet na na-import",
+      "jobCount": "{{count}} mga gawain",
+      "subCabinetCount": "{{count}} mga sub-cabinet"
+    }
+  },
+  "search": {
+    "title": "Maghanap",
+    "placeholder": "Maghanap ng mga pahina, ahente, gawain…",
+    "clearQuery": "I-clear ang query",
+    "noCommands": "Walang tumutugmang command.",
+    "scopes": {
+      "all": "Lahat",
+      "pages": "Mga Pahina",
+      "agents": "Mga Ahente",
+      "tasks": "Mga Gawain"
+    },
+    "groups": {
+      "pages": "Mga Pahina",
+      "agents": "Mga Ahente",
+      "tasks": "Mga Gawain"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Wika",
+      "description": "Binabago ang wika at direksyon ng pagbasa. Ang mga kasalukuyang pahina ay mananatili sa kanilang direksyon bawat dokumento.",
+      "english": "Ingles",
+      "hebrew": "Hebreo",
+      "chineseSimplified": "Pinapayak na Tsino",
+      "chineseTraditional": "Tradisyonal na Tsino",
+      "moreLanguages": "Higit pang mga wika",
+      "moreLanguagesHint": "I-click ang alinman upang ipaalam sa amin na gusto mo ang Cabinet sa wikang iyon — uunahin namin ang mga pinakamaraming hiling.",
+      "comingSoon": "Malapit na",
+      "requestSubmitted": "Salamat! Naitala namin ang iyong kahilingan para sa {{language}}. Uunahin namin ang mga wikang pinakamaraming hiling.",
+      "requestFailed": "Hindi maabot ang server. Pakisubukang muli maya-maya."
+    },
+    "appearance": {
+      "title": "Hitsura",
+      "theme": "Tema",
+      "themeDescription": "Pumili ng tema para sa interface.",
+      "matchSystem": "Itugma sa sistema",
+      "matchSystemDescription": "Awtomatikong lumipat kasama ng hitsura ng iyong OS.",
+      "lightThemes": "Mga Light na Tema",
+      "darkThemes": "Mga Dark na Tema",
+      "lightVariant": "Light na baryante",
+      "darkVariant": "Dark na baryante",
+      "sidebar": "Sidebar",
+      "showHiddenFiles": "Ipakita ang mga nakatagong file",
+      "sidebarDescription": "I-configure kung paano ipinapakita ang mga file sa sidebar.",
+      "showHiddenFilesHint": "Ipakita ang mga file at folder na nagsisimula sa tuldok (hal. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Propayl",
+      "providers": "Mga Provider",
+      "skills": "Mga Kasanayan",
+      "storage": "Imbakan",
+      "integrations": "Mga Integrasyon",
+      "notifications": "Mga Notification",
+      "appearance": "Hitsura",
+      "updates": "Mga Update",
+      "about": "Tungkol"
+    },
+    "page": {
+      "title": "Mga Setting",
+      "refresh": "I-refresh",
+      "groupYou": "Ikaw",
+      "groupWorkspace": "Lugar ng Trabaho",
+      "groupApp": "App"
+    },
+    "common": {
+      "copyToClipboard": "Kopyahin sa clipboard",
+      "categoriesAriaLabel": "Mga kategorya ng Setting",
+      "loading": "Naglo-load…",
+      "connect": "Kumonekta",
+      "recommended": "Inirerekomenda"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Malapit na",
+      "hint": "Malapit nang ikonekta ang mga panlabas na integrasyon at built-in na tool."
+    },
+    "storage": {
+      "dataDirectory": "Direktoryo ng Data",
+      "restartRequired": "Kailangan i-restart",
+      "dataDirectoryDescription": "Lahat ng nilalaman ng Knowledge Base ay nakaimbak sa direktoryong ito. Ang pagpapalit ng path ay nangangailangan ng restart.",
+      "restartHint": "Magbabago ang direktoryo ng data pagkatapos mong i-restart ang Cabinet.",
+      "currentPath": "Kasalukuyang path",
+      "loadingPath": "Naglo-load...",
+      "changeDirectory": "Palitan ang direktoryo",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "Mag-browse",
+      "save": "I-save",
+      "openInFinder": "Buksan sa Finder",
+      "envVarHint1": "Maaari mo ring itakda ang ",
+      "envVarHint2": " environment variable, na mas inuuna kaysa sa setting na ito.",
+      "failedToSave": "Nabigong i-save.",
+      "failedToSaveDir": "Nabigong i-save ang direktoryo ng data."
+    },
+    "updates": {
+      "checking": "Sinusuri ang mga update ng Cabinet…"
+    },
+    "providers": {
+      "title": "Mga Provider ng Agent",
+      "defaultModel": "Default na Modelo",
+      "setupGuide": "Gabay sa pag-setup",
+      "troubleshoot": "I-troubleshoot ang mga AI provider",
+      "subtitle": "I-configure ang mga provider ng AI agent. Ang mga CLI agent ay tumatakbo sa terminal, ang mga API agent ay gumagamit ng direktang tawag sa API.",
+      "defaultRuntime": "Default na runtime",
+      "defaultRuntimeHint": "Ang pangkalahatang pag-uusap at mga fallback run ay gumagamit ng provider/modelo/pagsisikap na ito.",
+      "cliAgents": "Mga CLI Agent",
+      "apiAgents": "Mga API Agent",
+      "ready": "Handa",
+      "installedNotLoggedIn": "Naka-install ngunit hindi naka-log in",
+      "notInstalled": "Hindi naka-install",
+      "emptyMatrix": "Walang provider na naka-configure. Magdagdag ng isa sa ibaba."
+    },
+    "notifications": {
+      "channels": "Mga Channel ng Notification",
+      "alertRules": "Mga Panuntunan sa Alert",
+      "alwaysOn": "Laging naka-on",
+      "comingSoon": "Malapit na",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "I-configure kung paano ka makakatanggap ng mga alerto kapag kailangan ng mga agent ang iyong atensyon.",
+      "rulesHint": "Awtomatikong nagti-trigger ang mga notification para sa mga kaganapang ito:",
+      "previewHint": "Browser push, Telegram, Slack, at mga notification sa email.",
+      "channelPushName": "Push ng Browser",
+      "channelPushDesc": "Mga instant na alerto kapag bukas ang tab ng Cabinet o naka-install ang PWA",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Mga instant na mobile notification sa pamamagitan ng Telegram bot",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "Ipasa ang mga alerto sa Slack channel ng iyong team",
+      "channelEmailName": "Buod ng Email",
+      "channelEmailDesc": "Pinagsama-samang buod ng mga alerto at aktibidad ng agent",
+      "ruleAlertsEvent": "Mga mensahe sa #alerts channel",
+      "ruleAlertsDesc": "Sinumang agent na nagpo-post sa alerts channel",
+      "ruleMentionsEvent": "Mga pagbanggit ng @human",
+      "ruleMentionsDesc": "Kapag binanggit ng isang agent ang @human sa anumang channel",
+      "ruleFloorEvent": "Nalampasan ang minimum na layunin",
+      "ruleFloorDesc": "Bumaba ang isang layunin sa ibaba ng minimum nitong threshold",
+      "ruleHealthEvent": "Bumaba ang kalusugan ng agent",
+      "ruleHealthDesc": "3+ magkakasunod na pagkabigo ng heartbeat"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Bersyon",
+      "release": "Bersyon",
+      "framework": "Balangkas",
+      "storage": "Imbakan",
+      "privacy": "Pribasya",
+      "telemetry": "Di-kilalang telemetry ng paggamit",
+      "tagline": "AI-first na self-hosted na knowledge base at startup OS.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Lokal na filesystem",
+      "aiLabel": "AI",
+      "aiValue": "Pinapagana ng lokal na AI CLIs",
+      "philosophy": "Lahat ng nilalaman ay nakaimbak bilang markdown files sa disk. Ang mga tao ang nagtatakda ng layunin. Ang mga ahente ang gumagawa ng trabaho. Ang knowledge base ang shared memory sa pagitan ng dalawa.",
+      "privacyBody": "Nagpapadala ang Cabinet ng di-kilalang telemetry ng paggamit upang matulungan kaming mapabuti ang produkto. Walang nilalaman ng file, path, prompt, o sikreto ang kinokolekta.",
+      "privacyLink": "Ano ang kinokolekta?",
+      "telemetryEnvDisabled": "Naka-disable ng CABINET_TELEMETRY_DISABLED=1 (env var).",
+      "telemetryHint": "Bilang ng event, bersyon, at impormasyon ng platform lang. I-off para ihinto ang pagpapadala.",
+      "cabinetCloud": "Cabinet Ulap",
+      "cloudBody": "Kumonekta sa iyong Cabinet mula saanman, habang ang iyong AI team ay nagtatrabaho 24/7 para sa iyo. Ilagay ang iyong email sa ibaba at ipapaalam namin sa iyo kapag bukas na ang Cabinet Cloud.",
+      "cloudAlready": "Nasa listahan ka na — makikipag-ugnayan kami.",
+      "cloudSuccess": "Nasa listahan ka. Mag-e-email kami sa iyo kapag bukas na ang Cabinet Cloud.",
+      "cloudSending": "Nagpapadala…",
+      "cloudJoinWaitlist": "Sumali sa waitlist",
+      "cloudError": "May nagkamali. Suriin ang email at subukang muli.",
+      "connectTitle": "Kumonekta",
+      "connectBody": "Humiling ng tulong, magbahagi ng feedback, o bumati lang.",
+      "joinDiscord": "Sumali sa Discord"
+    },
+    "profile": {
+      "title": "Propayl",
+      "name": "Pangalan",
+      "namePlaceholder": "Jane",
+      "displayName": "Pangalan sa display",
+      "role": "Tungkulin",
+      "rolePlaceholder": "Tagabuo",
+      "avatar": "Avatar",
+      "accentColor": "Kulay ng accent",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Pansamantalang icon",
+      "useIconInstead": "Gamitin ang icon sa halip",
+      "searchAvatars": "Maghanap ng mga avatar…",
+      "searchIcons": "Maghanap ng mga icon…",
+      "howAppear": "Paano ka lumalabas sa mga pag-uusap at sa buong app.",
+      "youFallback": "Ikaw",
+      "displayNameHint": "Ipinapakita sa mga pag-uusap. Default sa Pangalan.",
+      "iconHint": "Ginagamit kapag walang nakatakdang larawan ng avatar. I-click muli upang i-clear.",
+      "tintHint": "Nagbibigay kulay sa pansamantalang avatar kapag walang nakatakdang larawan.",
+      "save": "I-save",
+      "saving": "Nagse-save…",
+      "saved": "Nai-save",
+      "browseAll": "I-browse lahat ({{count}})",
+      "showFavorites": "Ipakita ang mga paborito",
+      "showFewer": "Ipakita ang mas kaunti"
+    },
+    "workspace": {
+      "title": "Lugar ng Trabaho",
+      "name": "Pangalan ng workspace",
+      "namePlaceholder": "Aking Cabinet",
+      "description": "Deskripsyon",
+      "descriptionPlaceholder": "Ano ang ginagawa mo?",
+      "teamSize": "Laki ng team",
+      "teamSizePlaceholder": "Solo / 2–5 / 6–20 / 20+",
+      "subtitle": "Nakukuha sa onboarding. Binabasa ito ng mga ahente kapag nagpaplano ng trabaho."
+    }
+  },
+  "sidebar": {
+    "settings": "Mga Setting",
+    "createPage": "Gumawa ng pahina",
+    "newPage": "Bagong pahina",
+    "newAgent": "Bagong Ahente",
+    "newTask": "Bagong Gawain",
+    "archive": "Arkibo",
+    "trash": "Basura",
+    "search": "Hanapin",
+    "agents": "Mga Ahente",
+    "tasks": "Mga Gawain",
+    "missions": "Mga Misyon",
+    "drawerData": "Datos",
+    "drawerAgents": "Koponan",
+    "drawerTasks": "Mga Gawain",
+    "goHome": "Pumunta sa Home",
+    "brandWord": "",
+    "refresh": "I-refresh ang sidebar",
+    "refreshDescription": "I-refresh ang sidebar (basahing muli ang data folder)",
+    "collapseSidebar": "Tiklopin ang sidebar",
+    "expandSidebar": "Palawakin ang sidebar",
+    "resizeHandle": "Baguhin ang laki ng sidebar — i-double-click para i-reset",
+    "resetWidth": "I-double-click para i-reset ang lapad",
+    "refreshedNoChanges": "Na-refresh — walang pagbabago.",
+    "refreshedWithChanges": "Na-refresh — {{added}} idinagdag, {{removed}} tinanggal.",
+    "refreshFailed": "Nabigo ang pag-refresh.",
+    "searchPlaceholder": "Maghanap ng mga file…",
+    "searchSearching": "Naghahanap…",
+    "searchNoResults": "Walang file na tumutugma sa “{{query}}”"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Bar ng Katayuan",
+      "askAiAriaLabel": "Tanungin ang AI para i-edit ang pahinang ito",
+      "askAiPlaceholder": "Paano i-edit ang pahinang ito?",
+      "sendHint": "↵ para ipadala"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Status ng server — i-click para sa detalye",
+      "checking": "Sinusuri ang status ng server…",
+      "allRunning": "Lahat ng system ay gumagana",
+      "appNotResponding": "Ang server ng app ay hindi tumutugon",
+      "daemonDownNoProviders": "Hindi tumutugon ang Daemon; walang available na agent provider",
+      "daemonDown": "Hindi tumutugon ang Daemon",
+      "noProviders": "Walang available na agent provider",
+      "checkingShort": "Sinusuri…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "May problema",
+      "allSystemsRunning": "Lahat ng Sistema ay Gumagana",
+      "serviceDisruption": "Pagkagambala sa Serbisyo",
+      "appServer": "Server ng App",
+      "daemon": "Daemon",
+      "agentProviders": "Mga Agent Provider",
+      "running": "Gumagana",
+      "down": "Hindi Gumagana",
+      "lastSeen": "Huling nakita: {{when}}",
+      "appWorking": "Gumagana ang mga pahina, editor, paghahanap, at pamamahala ng file.",
+      "appDown": "Hindi available ang mga pahina, editor, paghahanap, at pag-save. Maaari mo pa ring basahin ang naka-cache na nilalaman.",
+      "daemonWorking": "Gumagana ang mga AI agent, naka-iskedyul na trabaho, at ang web terminal.",
+      "daemonDownDescription": "Hindi available ang mga AI agent, naka-iskedyul na trabaho, at ang web terminal. Gumagana pa rin ang pag-edit ng pahina.",
+      "available": "Magagamit",
+      "noneReady": "Walang Handa",
+      "providerReady": "Handa",
+      "providerNotLoggedIn": "Hindi naka-log in",
+      "providerNotInstalled": "Hindi naka-install",
+      "install": "I-install",
+      "howToFix": "Paano ayusin"
+    },
+    "save": {
+      "retryTitle": "I-click para subukang muli ang nabigong pag-save",
+      "retryAriaLabel": "Nabigo ang pag-save — i-click para subukang muli",
+      "autoSaving": "Nag-a-auto-save…",
+      "forceSave": "Puwersahang i-save: ⌘S",
+      "editing": "Nag-e-edit — awtomatikong magse-save kapag huminto ka",
+      "wordCountTitle": "Bilang ng salita para sa pahinang ito (hindi kasama ang markdown syntax)",
+      "savedJustNow": "ngayon lang",
+      "savedNever": "hindi kailanman",
+      "savedAgoSeconds": "{{n}} segundo na ang nakalipas",
+      "savedAgoMinutes": "{{n}} minuto na ang nakalipas",
+      "savedAgoHours": "{{n}} oras na ang nakalipas",
+      "savedAgoDays": "{{n}} araw na ang nakalipas",
+      "saveFailedRetry": "Nabigo ang pag-save — subukang muli",
+      "savingText": "Nagse-save…",
+      "savedText": "Na-save",
+      "editingText": "Nag-e-edit…",
+      "savedAgo": "Na-save · {{ago}}",
+      "word": "salita",
+      "words": "mga salita"
+    },
+    "git": {
+      "statusModified": "Binago",
+      "statusNew": "Bago",
+      "statusAdded": "Idinagdag",
+      "statusDeleted": "Tinanggal",
+      "statusRenamed": "Pinalitan ang pangalan",
+      "commitMessageAriaLabel": "Mensahe ng commit"
+    },
+    "help": {
+      "menuAriaLabel": "Buksan ang menu ng Tulong at komunidad",
+      "menuTitle": "Tulong at komunidad",
+      "demos": "Mga demo, video, at gabay",
+      "discord": "Makipag-chat sa Discord",
+      "discordSubtitle": "Suporta at feedback",
+      "github": "Mag-ambag sa GitHub",
+      "githubSubtitle": "Source, isyu, PRs",
+      "ifUseful": "Kung sa tingin mo'y kapaki-pakinabang",
+      "label": "Tulong",
+      "starsAriaLabel": "{{count}} GitHub stars — buksan ang Cabinet sa GitHub",
+      "starsTitle": "{{count}} GitHub stars — i-star ang Cabinet sa GitHub",
+      "share": "Ibahagi",
+      "shareSubtitle": "Kopyahin ang link ng imbitasyon at ipagkalat ang balita",
+      "shareCopied": "Ang galing mo, {{name}} 🩷 Salamat sa pagdadala ng mga magiging miyembro ng Cabinet. Nakopya na ang link, ibahagi ang pagmamahal!",
+      "shareFailed": "Hindi makopya ang link",
+      "friend": "kaibigan"
+    },
+    "git2": {
+      "allCommitted": "Lahat ay na-commit",
+      "uncommittedFile": "{{count}} hindi pa na-commit na file",
+      "uncommittedFiles": "{{count}} hindi pa na-commit na file",
+      "uncommittedFilesAria": "{{count}} hindi pa na-commit na file — i-click para makita ang listahan",
+      "uncommittedFileTip": "Tingnan ang hindi pa na-commit na file",
+      "uncommittedFilesTip": "Tingnan ang mga hindi pa na-commit na file",
+      "uncommittedFilesHeading": "{{count}} hindi pa na-commit na file",
+      "uncommittedFilesHeadingPlural": "{{count}} na hindi pa na-commit na file",
+      "truncatedHint": "Ang unang {{count}} file lang ang ipinapakita — patakbuhin ang `git status` para sa buong listahan.",
+      "commitDefault": "I-update ang {{count}} file",
+      "commitDefaultPlural": "I-update ang {{count}} na file",
+      "committing": "Nagko-commit…",
+      "commit": "I-commit",
+      "commitFailed": "Nabigo ang pag-commit",
+      "sync": "I-sync",
+      "syncTitle": "Kunin ang pinakabago mula sa GitHub & i-refresh",
+      "syncTitleWithLast": "Kunin ang pinakabago mula sa GitHub & i-refresh. Huling na-sync {{when}}.",
+      "syncAriaLabel": "Kunin ang pinakabagong pagbabago mula sa GitHub at i-refresh",
+      "syncAriaLabelWithLast": "Kunin ang pinakabagong pagbabago mula sa GitHub at i-refresh. Huling na-sync {{when}}.",
+      "terminal": "Terminal",
+      "openTerminal": "Buksan ang terminal",
+      "newTerminalTab": "Bagong tab ng terminal",
+      "pulling": "Hinihila…",
+      "pulled": "Na-update mula sa remote",
+      "upToDate": "Napapanahon",
+      "pullFailed": "Nabigo ang paghila"
+    },
+    "update2": {
+      "updateAvailable": "Available ang update {{version}}",
+      "updateAvailableTip": "Available ang Cabinet {{version}}"
+    },
+    "common": {
+      "dismiss": "Balewalain",
+      "close": "Isara",
+      "openSettings": "Buksan ang Mga Setting para suriin ang na-install na update"
+    },
+    "misc": {
+      "restartToFinishUpdate": "I-restart para matapos ang update"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "I-restart ang gawaing ito mula sa orihinal na prompt",
+      "markAsDone": "Markahan ang gawaing ito bilang tapos na",
+      "viewAriaLabel": "View ng Gawain",
+      "terminal": "Terminal",
+      "transcript": "Transkrip",
+      "details": "Mga Detalye",
+      "transcriptTitle": "Claude Code native sesyon JSONL",
+      "transcriptHint": "Binabasa ang ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Balik",
+      "copyPrompt": "Kopyahin ang orihinal na prompt",
+      "gracefulExit": "Isara nang maayos ang CLI (writes /exit to the PTY)",
+      "sendSigterm": "Ipadala ang SIGTERM sa tumatakbong proseso ng PTY",
+      "moreActions": "Higit pang aksyon",
+      "ptyMode": "Tumatakbo sa terminal (PTY) mode",
+      "compactContext": "I-collapse ang mga nakaraang turn sa isang buod para palayain ang context window",
+      "noSummary": "Wala pang buod.",
+      "sessionEnded": "Natapos ang session — mag-type para magpatuloy sa parehong terminal.",
+      "terminalLive": "Aktibo ang terminal. Ang susunod mong prompt ay mapipila pagkatapos matapos ang turn na ito."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Kilalanin ang iyong Cabinet tour",
+    "skip": "Laktawan",
+    "skipAriaLabel": "Laktawan ang tour",
+    "back": "Bumalik",
+    "next": "Susunod",
+    "writeFirstTask": "Isulat ang iyong unang gawain",
+    "goToSlide": "Pumunta sa slide {{n}}",
+    "starterTask": "Pag-usapan natin ang aking mga layunin at kung ano ang gusto kong makamit dito, pagkatapos ay ilagay ito sa isang bagong pahina ng Tungkol.",
+    "savingTo": "Sine-save sa ",
+    "introTitle": "Kilalanin ang iyong <accent>Cabinet</accent>.",
+    "introSubtitle": "Ang iyong AI team. Ang iyong knowledge base. Isang lugar.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Kamakailan at tumatakbong mga gawain",
+    "hide": "Itago ang tasks rail",
+    "show": "Ipakita ang tasks rail",
+    "empty": "Walang gawain",
+    "itemRunning": "{{title}} · tumatakbo · {{when}}",
+    "itemNeedsReply": "{{title}} · nangangailangan ng tugon",
+    "itemFailed": "{{title}} · nabigo · {{when}}",
+    "itemDone": "{{title}} · tapos na · {{when}}",
+    "itemArchived": "{{title}} · na-archive",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} tumatakbo — ipakita ang tasks rail"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Home",
+      "agents": "Mga Ahente",
+      "tasks": "Mga Gawain",
+      "ai": "AI",
+      "menu": "Menu",
+      "primaryAriaLabel": "Pangunahin"
+    },
+    "returnTo": {
+      "task": "Gawain",
+      "tasks": "Mga Gawain",
+      "agent": "Ahente",
+      "agents": "Mga Ahente",
+      "cabinet": "Cabinet",
+      "home": "Home",
+      "settings": "Mga Setting",
+      "registry": "Rehistro",
+      "back": "Bumalik",
+      "backTo": "Bumalik sa {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Pamantayan",
+      "dark": "Madilim",
+      "darkThemes": "Mga Madilim na Tema",
+      "lightThemes": "Mga Maliwanag na Tema"
+    },
+    "update": {
+      "restartTitle": "I-restart ang Cabinet para matapos ang pag-update",
+      "availableTitle": "May available na Cabinet {{version}}",
+      "updatesTitle": "Mga update ng Cabinet",
+      "description": "Awtomatikong sinusuri ng Cabinet ang mga release. Habang eksperimental pa ang produkto, panatilihin ang kopya ng iyong data bago mag-install ng mga update.",
+      "later": "Mamaya",
+      "releaseNotes": "Mga tala ng release"
+    },
+    "daemon": {
+      "fixHintElectron": "Lumabas at muling ilunsad ang Cabinet para i-restart ang agent daemon.",
+      "fixHintDev": "Patakbuhin ang `npm run dev:daemon` (o i-restart ang `npm run dev:all`) para muling buhayin ang agent daemon.",
+      "notResponding": "Hindi tumutugon ang agent daemon.",
+      "willFail": "Magfe-fail ang mga agent, trabaho, at AI request hangga't hindi ito bumabalik. {{fixHint}}"
+    }
+  }
+}

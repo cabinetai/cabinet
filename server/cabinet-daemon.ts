@@ -10,8 +10,19 @@
  * Usage: npx tsx server/cabinet-daemon.ts
  */
 
+// Boot-time native-binary check: rebuild better-sqlite3 if it was prebuilt
+// against a different NODE_MODULE_VERSION, otherwise the daemon would crash
+// silently on first DB access while Next.js stays up.
+import { ensureBetterSqlite3 } from "../src/lib/system/preflight-sqlite";
+ensureBetterSqlite3();
+
+// Load `.cabinet.env` into process.env on daemon boot. Adapter spawns also
+// re-merge from the file directly (mtime-cached), but loading here keeps the
+// daemon's own behavior consistent with Next.js.
+import { loadCabinetEnv } from "../src/lib/runtime/cabinet-env";
+loadCabinetEnv();
+
 import { WebSocketServer, WebSocket } from "ws";
-import * as pty from "node-pty";
 import path from "path";
 import http from "http";
 import fs from "fs";
@@ -20,19 +31,31 @@ import yaml from "js-yaml";
 import chokidar from "chokidar";
 import matter from "gray-matter";
 import { getDb, closeDb } from "./db";
-import { DATA_DIR } from "../src/lib/storage/path-utils";
+import { DATA_DIR, isHiddenEntry } from "../src/lib/storage/path-utils";
+import { discoverCabinetPathsSync } from "../src/lib/cabinets/discovery";
+import { resolveCabinetDir } from "../src/lib/cabinets/server-paths";
 import {
   getAppOrigin,
   getDaemonPort,
 } from "../src/lib/runtime/runtime-config";
-import { getSessionLaunchSpec, resolveProviderId } from "../src/lib/agents/provider-runtime";
+import {
+  getDetachedPromptLaunchMode,
+  resolveProviderId,
+} from "../src/lib/agents/provider-runtime";
+import {
+  agentAdapterRegistry,
+  resolveLegacyExecutionProviderId,
+} from "../src/lib/agents/adapters";
 import { getNvmNodeBin } from "../src/lib/agents/nvm-path";
 import {
   appendConversationTranscript,
+  cleanupStaleStagingAttachments,
   finalizeConversation,
-  parseCabinetBlock,
+  listConversationMetas,
   readConversationMeta,
   readConversationTranscript,
+  transcriptShowsCompletedRun,
+  writeSession,
 } from "../src/lib/agents/conversation-store";
 import {
   getTokenFromAuthorizationHeader,
@@ -42,17 +65,254 @@ import {
   normalizeJobConfig,
   normalizeJobId,
 } from "../src/lib/jobs/job-normalization";
+import { stripAnsi } from "./pty/ansi";
+import {
+  completeClaudeSession,
+  distillPtyOutput,
+  scheduleStreamCabinetExtraction,
+} from "./pty/claude-lifecycle";
+import {
+  createPtyManager,
+  type PtyManager,
+} from "./pty/manager";
+import type { BaseSession, CompletedOutputEntry, PtySession } from "./pty/types";
+import { SearchIndex, buildPageRecord, walkDataDir } from "./search/index-builder";
+import { runSearch } from "./search/search-service";
+import { startWatcher } from "./search/watcher";
+import { loadAgentDocs, loadTaskDocs } from "./search/index-agents-tasks";
+import type { SearchScope } from "./search/types";
+import {
+  clearSessionId,
+  emit as emitTelemetry,
+  getOrCreateSessionId,
+  printStartupBannerIfNeeded,
+  startTelemetryFlusher,
+} from "../src/lib/telemetry";
 
 const PORT = getDaemonPort();
-const AGENTS_DIR = path.join(DATA_DIR, ".agents");
-const ALLOWED_BROWSER_ORIGINS = new Set(
-  [
-    getAppOrigin(),
-    ...(process.env.CABINET_APP_ORIGIN
-      ? process.env.CABINET_APP_ORIGIN.split(",").map((value) => value.trim()).filter(Boolean)
-      : []),
-  ]
-);
+const CABINET_MANIFEST_FILE = ".cabinet";
+
+// ===== Watcher backend probe =====
+// Cabinet uses chokidar v5, which drops fsevents support and watches via
+// node:fs.watch on every platform. fs.watch is per-directory: it opens one
+// kernel handle (FSEvents stream on macOS, inotify watch on linux,
+// ReadDirectoryChangesW on windows) per directory, each using one fd. So
+// large trees exhaust `ulimit -n` regardless of platform — there is no
+// "recursive single-fd" path. We still log the platform for support reports.
+type WatcherBackend = {
+  platform: NodeJS.Platform;
+  fdPerDir: boolean;
+  description: string;
+};
+
+let cachedWatcherBackend: WatcherBackend | null = null;
+
+function probeWatcherBackend(): WatcherBackend {
+  if (cachedWatcherBackend) return cachedWatcherBackend;
+  // Note: chokidar 5.x is in package.json. If a downgrade adds an FSEvents
+  // path back in, update this probe and the big-tree guard below.
+  let chokidarVersion = "unknown";
+  try {
+    const chokidarPkgPath = path.join(
+      process.cwd(),
+      "node_modules",
+      "chokidar",
+      "package.json"
+    );
+    chokidarVersion = JSON.parse(fs.readFileSync(chokidarPkgPath, "utf-8")).version;
+  } catch {
+    /* leave as unknown */
+  }
+  const perPlatform: Record<string, string> = {
+    darwin: "node fs.watch via FSEvents stream (one fd per directory)",
+    linux: "node fs.watch via inotify (one watch per directory; see /proc/sys/fs/inotify/max_user_watches)",
+    win32: "node fs.watch via ReadDirectoryChangesW (one handle per directory)",
+  };
+  cachedWatcherBackend = {
+    platform: process.platform,
+    fdPerDir: true, // chokidar v5 is always per-dir
+    description: `chokidar ${chokidarVersion} → ${
+      perPlatform[process.platform] ?? `node fs.watch (platform=${process.platform})`
+    }`,
+  };
+  return cachedWatcherBackend;
+}
+
+// ===== Big-tree guard =====
+// When the watcher backend opens one fd per directory, even ulimit -n 65536
+// can be exhausted by a real dev tree (node_modules adds tens of thousands).
+// Pre-flight: count dirs respecting the same ignore rules as the indexer,
+// early-exit at MAX_DIRS, and abort startup with a friendly message if we'd
+// definitely blow the limit. Cheap (~tens of ms even on huge trees) because
+// we stop counting as soon as we cross the threshold.
+const BIG_TREE_DIR_THRESHOLD = 1500;
+
+async function countWatchableDirs(maxBeforeAbort: number): Promise<number> {
+  let count = 0;
+  const stack: string[] = [DATA_DIR];
+  while (stack.length > 0) {
+    const dir = stack.pop()!;
+    count += 1;
+    if (count > maxBeforeAbort) return count;
+    let entries: fs.Dirent[];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      if (isHiddenEntry(entry.name)) continue;
+      stack.push(path.join(dir, entry.name));
+    }
+  }
+  return count;
+}
+
+function getOpenFileLimit(): number | null {
+  // posix_getrlimit isn't in Node's stdlib. We could shell out to `ulimit`,
+  // but the simplest check is: try to read it from `process.getrlimit?.()`
+  // (added in Node 22) or fall back to null and skip the check.
+  const proc = process as unknown as {
+    getrlimit?: (resource: string) => { soft: number; hard: number };
+  };
+  if (typeof proc.getrlimit !== "function") return null;
+  try {
+    return proc.getrlimit("nofile").soft;
+  } catch {
+    return null;
+  }
+}
+
+async function guardAgainstBigTree(): Promise<void> {
+  const backend = probeWatcherBackend();
+  if (!backend.fdPerDir) return; // FSEvents/ReadDirectoryChangesW are O(1) in fds
+  const dirCount = await countWatchableDirs(BIG_TREE_DIR_THRESHOLD);
+  const ulimit = getOpenFileLimit();
+  const ulimitTooLow = ulimit !== null && ulimit < 4096;
+  if (dirCount <= BIG_TREE_DIR_THRESHOLD && !ulimitTooLow) return;
+
+  const lines = [
+    "",
+    "  ╭─ Cabinet refused to start ─────────────────────────────────────────",
+    "  │",
+    `  │  Cabinet directory: ${DATA_DIR}`,
+    `  │  Watchable directories: ${dirCount > BIG_TREE_DIR_THRESHOLD ? `>${BIG_TREE_DIR_THRESHOLD}` : dirCount}` +
+      (ulimit !== null ? `   |   ulimit -n: ${ulimit}` : ""),
+    `  │  Watcher backend: ${backend.description}`,
+    "  │",
+    "  │  This combination will exhaust file-descriptor limits and crash with",
+    "  │  EMFILE. Pick a focused workspace instead of your full dev folder:",
+    "  │",
+    "  │    cabinetai run --data-dir ~/Documents/Cabinet",
+    "  │    # or:  CABINET_DATA_DIR=~/Documents/Cabinet cabinetai run",
+    "  │    # or:  cabinetai reset-config && cabinetai run",
+    "  │",
+    "  │  If you really meant this directory, raise the descriptor limit and",
+    "  │  set CABINET_ALLOW_BIG_TREE=1 to bypass this check:",
+    "  │",
+    "  │    ulimit -n 65536 && CABINET_ALLOW_BIG_TREE=1 cabinetai run",
+    "  │",
+    "  ╰────────────────────────────────────────────────────────────────────",
+    "",
+  ];
+  if (process.env.CABINET_ALLOW_BIG_TREE === "1") {
+    console.warn(
+      `[cabinet-daemon] big-tree guard bypassed by CABINET_ALLOW_BIG_TREE=1 ` +
+        `(${dirCount > BIG_TREE_DIR_THRESHOLD ? ">" : ""}${dirCount} dirs, platform=${backend.platform})`
+    );
+    return;
+  }
+  for (const line of lines) console.error(line);
+  process.exit(1);
+}
+
+// ===== Search index =====
+
+const searchIndex = new SearchIndex();
+let searchIndexReady = false;
+
+async function bootstrapSearchIndex(): Promise<void> {
+  const t0 = Date.now();
+  broadcast("search", { type: "search:indexing", total: 0, done: 0 });
+  try {
+    const files = await walkDataDir();
+    for (const { fsPath, virtualPath } of files) {
+      const record = await buildPageRecord(fsPath, virtualPath);
+      if (record) searchIndex.add(record);
+    }
+    searchIndexReady = true;
+    const tookMs = Date.now() - t0;
+    console.log(`  Search index: ${searchIndex.size()} pages in ${tookMs}ms`);
+    broadcast("search", {
+      type: "search:ready",
+      pages: searchIndex.size(),
+      tookMs,
+    });
+  } catch (err) {
+    console.error("[cabinet-daemon] search index bootstrap failed:", err);
+    broadcast("search", {
+      type: "search:error",
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+function startSearchWatcher(): void {
+  startWatcher(searchIndex, {
+    onIndexed: ({ path: p, kind }) => {
+      broadcast("search", {
+        type: "search:indexed",
+        path: p,
+        kind,
+        pages: searchIndex.size(),
+      });
+    },
+  });
+}
+
+interface CabinetEntry {
+  /** Relative path from DATA_DIR, empty string for root */
+  relPath: string;
+  /** Absolute directory path */
+  absDir: string;
+}
+
+function discoverAllCabinets(): CabinetEntry[] {
+  return discoverCabinetPathsSync().map((relPath) => ({
+    relPath,
+    absDir: resolveCabinetDir(relPath),
+  }));
+}
+
+function isLoopbackOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin);
+    return ["127.0.0.1", "localhost", "::1", "[::1]"].includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function getAllowedBrowserOrigins(): Set<string> {
+  return new Set(
+    [
+      getAppOrigin(),
+      ...(process.env.CABINET_APP_ORIGIN
+        ? process.env.CABINET_APP_ORIGIN.split(",").map((value) => value.trim()).filter(Boolean)
+        : []),
+    ]
+  );
+}
+
+function browserOriginAllowed(origin: string | undefined): boolean {
+  if (!origin) return false;
+  if (getAllowedBrowserOrigins().has(origin)) {
+    return true;
+  }
+
+  return isLoopbackOrigin(origin);
+}
 
 // ----- Database Initialization -----
 
@@ -69,47 +329,76 @@ const enrichedPath = [
   process.env.PATH,
 ].join(":");
 
-// ===== PTY Terminal Server =====
+// ===== Session orchestration =====
+// PTY-specific types + lifecycle helpers live in server/pty/*. The daemon
+// owns the unified `sessions` map (PTY + structured), routes HTTP/WS, and
+// drives the scheduler + event bus.
 
-interface PtySession {
-  id: string;
-  providerId: string;
-  pty: pty.IPty;
-  ws: WebSocket | null;
-  createdAt: Date;
-  output: string[];
-  exited: boolean;
-  exitCode: number | null;
+interface StructuredSession extends BaseSession {
+  kind: "structured";
   timeoutHandle?: NodeJS.Timeout;
-  initialPrompt?: string;
-  initialPromptSent?: boolean;
-  initialPromptTimer?: NodeJS.Timeout;
-  promptSubmittedOutputLength?: number;
-  autoExitRequested?: boolean;
-  autoExitFallbackTimer?: NodeJS.Timeout;
-  resolvedStatus?: "completed" | "failed";
-  resolvingStatus?: boolean;
-  readyStrategy?: "claude";
+  pid?: number;
+  processGroupId?: number | null;
+  startedAt?: string;
+  /** Claude-side (or adapter-side) resume session id extracted from result. */
+  adapterSessionId?: string | null;
+  /**
+   * Adapter-specific session params (raw, pre-codec). The client-side runner
+   * runs `adapter.sessionCodec.serialize` against these to produce the
+   * `codecBlob` that lands in `session.json`.
+   */
+  adapterSessionParams?: Record<string, unknown> | null;
+  /** Token usage reported by the adapter. */
+  adapterUsage?: {
+    inputTokens: number;
+    outputTokens: number;
+    cachedInputTokens?: number;
+  } | null;
+  /**
+   * Classified error from the last failed run, written by the daemon so both
+   * the poll path and `finalizeSessionConversation` can attach it to
+   * `ConversationMeta`.
+   */
+  adapterErrorKind?:
+    | "cli_not_found"
+    | "auth_expired"
+    | "rate_limited"
+    | "session_expired"
+    | "context_exceeded"
+    | "transport"
+    | "timeout"
+    | "model_unavailable"
+    | "unknown"
+    | null;
+  adapterErrorHint?: string | null;
+  adapterErrorRetryAfterSec?: number | null;
+  /** Buffered stderr, used by classifyError on completion. */
+  stderrBuffer?: string;
 }
 
-const sessions = new Map<string, PtySession>();
-const completedOutput = new Map<string, { output: string; completedAt: number }>();
+type ActiveSession = PtySession | StructuredSession;
+
+const sessions = new Map<string, ActiveSession>();
+const completedOutput = new Map<string, CompletedOutputEntry>();
 
 function resolveSessionCwd(input?: string): string {
   if (!input) return DATA_DIR;
 
-  const resolved = path.resolve(input);
-  if (resolved.startsWith(DATA_DIR)) {
-    return resolved;
-  }
+  const asAbsolute = path.resolve(input);
+  if (asAbsolute.startsWith(DATA_DIR)) return asAbsolute;
+
+  // Also accept DATA_DIR-relative paths (e.g. passed from the frontend
+  // which doesn't know the absolute DATA_DIR prefix).
+  const relative = path.join(DATA_DIR, input);
+  if (relative.startsWith(DATA_DIR)) return relative;
 
   return DATA_DIR;
 }
 
 function applyCors(req: http.IncomingMessage, res: http.ServerResponse): void {
   const origin = req.headers.origin;
-  if (origin && ALLOWED_BROWSER_ORIGINS.has(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
+  if (browserOriginAllowed(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin ?? "");
     res.setHeader("Vary", "Origin");
   }
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -128,119 +417,240 @@ function rejectUnauthorized(res: http.ServerResponse): void {
   res.end(JSON.stringify({ error: "Unauthorized" }));
 }
 
-function stripAnsi(str: string): string {
-  return str
-    .replace(/\u001B\][^\u0007]*(?:\u0007|\u001B\\)/g, "")
-    .replace(/\u001B[P^_][\s\S]*?\u001B\\/g, "")
-    .replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, "")
-    .replace(/\u001B[@-_]/g, "")
-    .replace(/[\u0000-\u0008\u000B-\u001A\u001C-\u001F\u007F]/g, "");
+
+
+
+function clearSessionStopFallbackTimer(session: ActiveSession): void {
+  if (!session.stopFallbackTimer) return;
+  clearTimeout(session.stopFallbackTimer);
+  delete session.stopFallbackTimer;
 }
 
-function claudePromptReady(output: string): boolean {
-  const plain = stripAnsi(output).replace(/\r/g, "\n");
-  return (
-    plain.includes("shift+tab to cycle") ||
-    /(?:^|\n)[❯>]\s*$/.test(plain)
-  );
-}
 
-function claudeIdlePromptVisible(output: string): boolean {
-  const plain = stripAnsi(output).replace(/\r/g, "\n");
-  return /(?:^|\n)[❯>]\s*$/.test(plain);
-}
 
-function transcriptShowsCompletedRun(output: string, prompt?: string): boolean {
-  // Keep this prompt-aware. If we count placeholder SUMMARY/ARTIFACT lines from
-  // the echoed startup prompt as "completed", the UI flips out of live terminal
-  // mode after a few seconds and the session appears corrupted.
-  const parsed = parseCabinetBlock(output, prompt);
-  if (parsed.summary || parsed.artifactPaths.length > 0) {
-    return true;
-  }
 
-  const plain = stripAnsi(output).replace(/\r/g, "\n");
-  return (
-    claudeIdlePromptVisible(plain)
-  );
-}
-
-function submitInitialPrompt(session: PtySession): void {
-  if (!session.initialPrompt || session.initialPromptSent || session.exited) {
-    return;
-  }
-
-  session.initialPromptSent = true;
-  session.promptSubmittedOutputLength = session.output.join("").length;
-  if (session.initialPromptTimer) {
-    clearTimeout(session.initialPromptTimer);
-    delete session.initialPromptTimer;
-  }
-
-  session.pty.write(session.initialPrompt);
-  session.pty.write("\r");
-}
 
 async function syncConversationChunk(sessionId: string, chunk: string): Promise<void> {
   const meta = await readConversationMeta(sessionId);
   if (!meta) return;
   const plainChunk = stripAnsi(chunk);
   if (!plainChunk) return;
-  await appendConversationTranscript(sessionId, plainChunk);
+  await appendConversationTranscript(sessionId, plainChunk, meta.cabinetPath);
 }
 
-function maybeAutoExitClaudeSession(session: PtySession): void {
-  if (
-    !session.initialPrompt ||
-    !session.initialPromptSent ||
-    session.exited ||
-    session.autoExitRequested ||
-    session.resolvedStatus
-  ) {
+function emitSessionOutput(
+  session: ActiveSession,
+  chunk: string,
+  onData?: (chunk: string) => void
+): void {
+  if (!chunk) return;
+
+  session.output.push(chunk);
+  void syncConversationChunk(session.id, chunk).catch((err) => {
+    console.warn(
+      `[cabinet-daemon] failed to sync transcript chunk for session ${session.id}:`,
+      err
+    );
+  });
+  if (session.ws && session.ws.readyState === WebSocket.OPEN) {
+    session.ws.send(chunk);
+  }
+  onData?.(chunk);
+
+  if (session.kind === "pty") {
+    scheduleStreamCabinetExtraction(session);
+  }
+}
+
+async function finalizeSessionConversation(session: ActiveSession): Promise<void> {
+  const meta = await readConversationMeta(session.id);
+  if (!meta) {
+    console.warn(
+      `[cabinet-daemon] cannot finalize session ${session.id}: meta.json missing/unreadable — run result not persisted`
+    );
     return;
   }
-
-  const submittedLength = session.promptSubmittedOutputLength ?? 0;
-  const currentOutput = session.output.join("");
-  if (currentOutput.length <= submittedLength) return;
-
-  const outputSincePrompt = currentOutput.slice(submittedLength);
-  if (!claudeIdlePromptVisible(outputSincePrompt)) return;
-
-  session.resolvedStatus = "completed";
-  session.resolvingStatus = true;
-  session.autoExitRequested = true;
-  const plain = stripAnsi(currentOutput);
-  completedOutput.set(session.id, { output: plain, completedAt: Date.now() });
-  void finalizeConversation(session.id, {
-    status: "completed",
-    exitCode: 0,
-    output: plain,
-  }).finally(() => {
-    session.resolvingStatus = false;
-  });
-  session.pty.write("/exit\r");
-  session.autoExitFallbackTimer = setTimeout(() => {
-    if (session.exited) return;
-    try {
-      session.pty.kill();
-    } catch {}
-  }, 1500);
-}
-
-async function finalizeSessionConversation(session: PtySession): Promise<void> {
-  const meta = await readConversationMeta(session.id);
-  if (!meta) return;
 
   const plain = stripAnsi(session.output.join(""));
+  const adapterUsage =
+    session.kind === "structured" ? session.adapterUsage ?? null : null;
+  const adapterErrorKind =
+    session.kind === "structured" ? session.adapterErrorKind ?? null : null;
+  const adapterErrorHint =
+    session.kind === "structured" ? session.adapterErrorHint ?? null : null;
+  const adapterErrorRetryAfterSec =
+    session.kind === "structured" ? session.adapterErrorRetryAfterSec ?? null : null;
+  const completedPayload = {
+    output: plain,
+    completedAt: Date.now(),
+    status:
+      session.resolvedStatus ??
+      (session.exitCode === 0 ? "completed" : "failed"),
+    exitCode: session.exitCode,
+    adapterErrorKind,
+    adapterErrorHint,
+    adapterErrorRetryAfterSec,
+  };
+
   if (meta.status !== "running") {
-    completedOutput.set(session.id, { output: plain, completedAt: Date.now() });
+    completedOutput.set(session.id, completedPayload);
+    // Transcript-driven finalize can flip meta to failed before the adapter
+    // child exits and classification runs — patch missing hints here.
+    if (
+      session.kind === "structured" &&
+      completedPayload.status === "failed" &&
+      !meta.errorHint?.trim() &&
+      adapterErrorHint?.trim()
+    ) {
+      await finalizeConversation(
+        session.id,
+        {
+          status: "failed",
+          exitCode: session.exitCode ?? meta.exitCode ?? 1,
+          errorKind: adapterErrorKind ?? undefined,
+          errorHint: adapterErrorHint ?? undefined,
+          errorRetryAfterSec: adapterErrorRetryAfterSec ?? undefined,
+        },
+        meta.cabinetPath
+      ).catch((err) => {
+        console.warn(
+          `[cabinet-daemon] failed to patch error hints for ${session.id}:`,
+          err
+        );
+      });
+    }
     return;
   }
+
+  // For legacy PTY sessions, substitute a distilled 1-liner for summary
+  // extraction so the task detail doesn't render random box-drawing chars as
+  // the task summary. The raw transcript is already on disk (appended chunk
+  // by chunk), so nothing is lost — this only affects meta.summary.
+  const summaryOutput =
+    session.kind === "pty"
+      ? distillPtyOutput(plain, session.exitCode, session.providerId)
+      : plain;
+
   await finalizeConversation(session.id, {
     status: session.resolvedStatus || (session.exitCode === 0 ? "completed" : "failed"),
     exitCode: session.resolvedStatus === "completed" ? 0 : session.exitCode,
-    output: plain,
+    output: summaryOutput,
+    tokens: adapterUsage
+      ? {
+          input: adapterUsage.inputTokens,
+          output: adapterUsage.outputTokens,
+          cache: adapterUsage.cachedInputTokens,
+          total: adapterUsage.inputTokens + adapterUsage.outputTokens,
+        }
+      : undefined,
+    errorKind: adapterErrorKind ?? undefined,
+    errorHint: adapterErrorHint ?? undefined,
+    errorRetryAfterSec: adapterErrorRetryAfterSec ?? undefined,
+  }, meta.cabinetPath);
+
+  // Legacy PTY terminal-mode resume: if the provider's stream parser caught
+  // a session id during the run, persist it via writeSession so the next
+  // continue turn can pass it back to the CLI as `--resume` / `--session`.
+  // Currently only Claude's `claude-stream-json` accumulator runs in the
+  // PTY path (one-shot mode) — Cursor/OpenCode capture their session ids
+  // only when routed through the structured adapter, so this block is a
+  // no-op for them until we wire stream-parsing for their PTY modes too.
+  if (session.kind === "pty" && session.structuredOutput) {
+    const resumeId = session.structuredOutput.sessionId ?? null;
+    if (resumeId) {
+      try {
+        await writeSession(
+          session.id,
+          {
+            kind: session.adapterType || "legacy_pty_cli",
+            resumeId,
+            alive: false,
+            lastUsedAt: new Date().toISOString(),
+            codecBlob: { resumeId },
+          },
+          meta.cabinetPath
+        );
+      } catch (err) {
+        console.warn(`Session ${session.id}: failed to persist PTY resume id`, err);
+      }
+    }
+  }
+}
+
+function sessionStatus(session: ActiveSession): "running" | "completed" | "failed" {
+  if (session.resolvedStatus) {
+    return session.resolvedStatus;
+  }
+
+  if (!session.exited) {
+    return "running";
+  }
+
+  return session.exitCode === 0 ? "completed" : "failed";
+}
+
+function signalStructuredProcess(
+  pid: number | undefined,
+  processGroupId: number | null | undefined,
+  signal: NodeJS.Signals
+): void {
+  if (process.platform !== "win32" && processGroupId && processGroupId > 0) {
+    try {
+      process.kill(-processGroupId, signal);
+      return;
+    } catch {
+      // Fall back to the direct child signal below.
+    }
+  }
+
+  if (typeof pid === "number" && pid > 0) {
+    process.kill(pid, signal);
+  }
+}
+
+function attachSessionInput(session: ActiveSession, msg: string): void {
+  if (session.kind !== "pty") {
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(msg);
+    if (parsed.type === "resize" && parsed.cols && parsed.rows) {
+      session.pty.resize(parsed.cols, parsed.rows);
+      return;
+    }
+  } catch {
+    // Not JSON, treat as terminal input.
+  }
+
+  session.pty.write(msg);
+}
+
+function attachSessionSocket(session: ActiveSession, ws: WebSocket): void {
+  session.ws = ws;
+
+  const replay = session.output.join("");
+  if (replay && ws.readyState === WebSocket.OPEN) {
+    ws.send(replay);
+  }
+
+  if (session.exited) {
+    ws.send(`\r\n\x1b[90m[Process exited with code ${session.exitCode}]\x1b[0m\r\n`);
+    const raw = session.output.join("");
+    const plain = stripAnsi(raw);
+    completedOutput.set(session.id, { output: plain, completedAt: Date.now() });
+    sessions.delete(session.id);
+    ws.close();
+    return;
+  }
+
+  ws.on("message", (data: Buffer) => {
+    attachSessionInput(session, data.toString());
+  });
+
+  ws.on("close", () => {
+    console.log(`Session ${session.id} detached (WebSocket closed, session kept alive)`);
+    session.ws = null;
   });
 }
 
@@ -273,210 +683,444 @@ function handlePtyConnection(ws: WebSocket, req: http.IncomingMessage): void {
   const sessionId = url.searchParams.get("id") || `session-${Date.now()}`;
   const prompt = url.searchParams.get("prompt");
   const providerId = url.searchParams.get("providerId") || undefined;
+  const adapterType = url.searchParams.get("adapterType") || undefined;
+  const cwd = url.searchParams.get("cwd") || undefined;
+  const reconnectOnly = url.searchParams.get("reconnect") === "1";
 
   // Check if this is a reconnection to an existing session
   const existing = sessions.get(sessionId);
   if (existing) {
     console.log(`Session ${sessionId} reconnected (exited=${existing.exited})`);
-    existing.ws = ws;
+    attachSessionSocket(existing, ws);
+    return;
+  }
 
-    // Replay all buffered output so the client sees the full history
-    const replay = existing.output.join("");
-    if (replay && ws.readyState === WebSocket.OPEN) {
-      ws.send(replay);
-    }
+  // Reconnect-only mode: the client is loading a finished terminal task and
+  // just wants to see the historical transcript. Serve it from the completed-
+  // output cache first (recent runs), then fall back to the persisted
+  // transcript on disk for older ones. If neither has content, send a small
+  // "no stored output" marker. Never spawn a fresh PTY in this mode — that
+  // was the bug where refreshing an old task silently started a new CLI.
+  if (reconnectOnly) {
+    void (async () => {
+      const cached = completedOutput.get(sessionId);
+      let replay = cached?.output || null;
+      let source: "cache" | "disk" | null = cached ? "cache" : null;
+      let replayMeta: Awaited<ReturnType<typeof readConversationMeta>> = null;
+      try {
+        replayMeta = await readConversationMeta(sessionId);
+      } catch {
+        replayMeta = null;
+      }
 
-    // If the process already exited while detached, notify and clean up
-    if (existing.exited) {
-      ws.send(`\r\n\x1b[90m[Process exited with code ${existing.exitCode}]\x1b[0m\r\n`);
-      const raw = existing.output.join("");
-      const plain = stripAnsi(raw);
-      completedOutput.set(sessionId, { output: plain, completedAt: Date.now() });
-      sessions.delete(sessionId);
+      if (!replay) {
+        try {
+          const meta = replayMeta;
+          if (meta) {
+            const transcript = await readConversationTranscript(
+              sessionId,
+              meta.cabinetPath
+            );
+            if (transcript && transcript.trim()) {
+              replay = transcript;
+              source = "disk";
+            }
+          }
+        } catch (err) {
+          console.warn(
+            `Session ${sessionId} reconnect: failed to read transcript`,
+            err
+          );
+        }
+      }
+
+      if (ws.readyState !== WebSocket.OPEN) return;
+
+      // Prefix the replay with a provenance banner so the user can always
+      // verify which CLI actually ran (transcripts can accumulate stale
+      // tails from earlier buggy spawn paths — see T21 history). Also emit
+      // a clear-screen + cursor-home so xterm renders the replay from the
+      // top instead of auto-scrolling to whatever was last written.
+      const banner = replayMeta
+        ? [
+            "\x1b[2J\x1b[H", // clear screen + home cursor
+            `\x1b[90m[cabinet] \x1b[36m${replayMeta.providerId ?? "unknown"}\x1b[90m · ` +
+              `${replayMeta.adapterType ?? "?"}\x1b[0m\r\n` +
+              `\x1b[90mstarted ${replayMeta.startedAt ?? "?"}` +
+              (replayMeta.completedAt
+                ? ` · finished ${replayMeta.completedAt}`
+                : "") +
+              `\x1b[0m\r\n` +
+              `\x1b[90m─────────────────────────────────────────\x1b[0m\r\n`,
+          ].join("")
+        : "\x1b[2J\x1b[H";
+      ws.send(banner);
+
+      if (replay) {
+        ws.send(replay);
+        const note =
+          source === "disk"
+            ? "\r\n\x1b[90m[Replayed from saved transcript. Session has ended.]\x1b[0m\r\n"
+            : "\r\n\x1b[90m[Session has ended. Showing cached output.]\x1b[0m\r\n";
+        ws.send(note);
+      } else {
+        ws.send(
+          "\r\n\x1b[90m[This session has ended and no stored output is available.]\x1b[0m\r\n"
+        );
+      }
       ws.close();
+    })();
+    return;
+  }
+
+  // New session — spawn PTY or structured adapter execution. Read the
+  // conversation meta first so we can pick up `trigger`; the composer
+  // always writes meta before the client opens the WS, so this is a
+  // reliable signal (and falls back to undefined on miss, which keeps
+  // the legacy auto-exit behavior — a safe default for unknown spawns).
+  void (async () => {
+    let trigger: import("../src/types/tasks").TaskTrigger | undefined;
+    try {
+      const meta = await readConversationMeta(sessionId);
+      trigger = meta?.trigger;
+    } catch {
+      trigger = undefined;
+    }
+    try {
+      createSession({
+        sessionId,
+        providerId,
+        adapterType,
+        prompt: prompt || undefined,
+        cwd,
+        trigger,
+      });
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error(`Failed to spawn PTY for session ${sessionId}:`, errMsg);
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(`\r\n\x1b[31mError: Failed to start agent CLI\x1b[0m\r\n`);
+        ws.send(`\x1b[90m${errMsg}\x1b[0m\r\n`);
+        ws.close();
+      }
       return;
     }
-
-    // Wire up input from the new WebSocket to the existing PTY
-    ws.on("message", (data: Buffer) => {
-      const msg = data.toString();
-      try {
-        const parsed = JSON.parse(msg);
-        if (parsed.type === "resize" && parsed.cols && parsed.rows) {
-          existing.pty.resize(parsed.cols, parsed.rows);
-          return;
-        }
-      } catch {
-        // Not JSON, treat as terminal input
-      }
-      existing.pty.write(msg);
-    });
-
-    // On disconnect again, just detach — don't kill
-    ws.on("close", () => {
-      console.log(`Session ${sessionId} detached (WebSocket closed, PTY kept alive)`);
-      existing.ws = null;
-    });
-
-    return;
-  }
-
-  // New session — spawn PTY
-  try {
-    createDetachedSession({
-      sessionId,
-      providerId,
-      prompt: prompt || undefined,
-    });
-  } catch (err: unknown) {
-    const errMsg = err instanceof Error ? err.message : String(err);
-    console.error(`Failed to spawn PTY for session ${sessionId}:`, errMsg);
-    ws.send(`\r\n\x1b[31mError: Failed to start agent CLI\x1b[0m\r\n`);
-    ws.send(`\x1b[90m${errMsg}\x1b[0m\r\n`);
-    ws.close();
-    return;
-  }
-  const session = sessions.get(sessionId)!;
-  session.ws = ws;
-  console.log(`Session ${sessionId} started (${prompt ? "agent" : "interactive"} mode)`);
-
-  const replay = session.output.join("");
-  if (replay && ws.readyState === WebSocket.OPEN) {
-    ws.send(replay);
-  }
-
-  // WebSocket input → PTY
-  ws.on("message", (data: Buffer) => {
-    const msg = data.toString();
-    try {
-      const parsed = JSON.parse(msg);
-      if (parsed.type === "resize" && parsed.cols && parsed.rows) {
-        session.pty.resize(parsed.cols, parsed.rows);
-        return;
-      }
-    } catch {
-      // Not JSON, treat as terminal input
-    }
-    session.pty.write(msg);
-  });
-
-  // On WebSocket close: DETACH, don't kill the PTY
-  ws.on("close", () => {
-    console.log(`Session ${sessionId} detached (WebSocket closed, PTY kept alive)`);
-    session.ws = null;
-  });
-
+    const session = sessions.get(sessionId);
+    if (!session) return;
+    console.log(`Session ${sessionId} started (${prompt ? "agent" : "interactive"} mode, trigger=${trigger ?? "unknown"})`);
+    attachSessionSocket(session, ws);
+  })();
 }
 
-function createDetachedSession(input: {
+
+function createStructuredSession(input: {
   sessionId: string;
   providerId?: string;
+  adapterType: string;
+  adapterConfig?: Record<string, unknown>;
   prompt?: string;
   cwd?: string;
   timeoutSeconds?: number;
   onData?: (chunk: string) => void;
-}): PtySession {
+  adapterSessionId?: string | null;
+  /**
+   * Pre-rehydrated adapter session params (codec-deserialized blob). Passed
+   * straight through as `ctx.sessionParams` so the adapter can resume in its
+   * native shape (e.g. Cursor sessionId + cwd, Codex threadId).
+   */
+  adapterSessionParams?: Record<string, unknown> | null;
+}): StructuredSession {
+  const adapter = agentAdapterRegistry.get(input.adapterType);
+  if (!adapter) {
+    throw new Error(`Unknown adapter type: ${input.adapterType}`);
+  }
+  if (!adapter.execute) {
+    throw new Error(`Adapter ${input.adapterType} does not implement detached execution.`);
+  }
+  const prompt = input.prompt;
+  if (!prompt?.trim()) {
+    throw new Error(
+      `Adapter ${input.adapterType} requires a prompt. Interactive structured sessions are not supported yet.`
+    );
+  }
+  const execute = adapter.execute;
+
   const cwd = resolveSessionCwd(input.cwd);
-  const launch = getSessionLaunchSpec({
-    providerId: input.providerId,
-    prompt: input.prompt,
-    workdir: cwd,
-  });
-  const resolvedProviderId = resolveProviderId(input.providerId);
-
-  const term = pty.spawn(launch.command, launch.args, {
-    name: "xterm-256color",
-    cols: 120,
-    rows: 30,
-    cwd,
-    env: {
-      ...(process.env as Record<string, string>),
-      PATH: enrichedPath,
-      TERM: "xterm-256color",
-      COLORTERM: "truecolor",
-      FORCE_COLOR: "3",
-      LANG: "en_US.UTF-8",
-    },
-  });
-
-  const session: PtySession = {
+  const session: StructuredSession = {
     id: input.sessionId,
-    providerId: resolvedProviderId,
-    pty: term,
+    kind: "structured",
+    providerId: adapter.providerId || input.providerId || "unknown",
+    adapterType: input.adapterType,
     ws: null,
     createdAt: new Date(),
     output: [],
     exited: false,
     exitCode: null,
-    initialPrompt: launch.initialPrompt?.trim() || undefined,
-    initialPromptSent: false,
-    promptSubmittedOutputLength: 0,
-    autoExitRequested: false,
-    readyStrategy: launch.readyStrategy,
+    stop: (signal = "SIGTERM") => {
+      try {
+        signalStructuredProcess(session.pid, session.processGroupId, signal);
+      } catch {}
+    },
   };
   sessions.set(input.sessionId, session);
 
-  term.onData((data: string) => {
-    session.output.push(data);
-    if (
-      session.initialPrompt &&
-      !session.initialPromptSent &&
-      session.readyStrategy === "claude" &&
-      claudePromptReady(session.output.join(""))
-    ) {
-      submitInitialPrompt(session);
-    }
-    maybeAutoExitClaudeSession(session);
-    void syncConversationChunk(input.sessionId, data).catch(() => {});
-    if (session.ws && session.ws.readyState === WebSocket.OPEN) {
-      session.ws.send(data);
-    }
-    input.onData?.(data);
-  });
+  void (async () => {
+    try {
+      const result = await execute({
+        runId: input.sessionId,
+        adapterType: input.adapterType,
+        config: input.adapterConfig || {},
+        prompt,
+        cwd,
+        timeoutMs:
+          typeof input.timeoutSeconds === "number" && input.timeoutSeconds > 0
+            ? input.timeoutSeconds * 1000
+            : undefined,
+        sessionId: input.adapterSessionId ?? null,
+        sessionParams: input.adapterSessionParams ?? null,
+        onLog: async (stream, chunk) => {
+          if (stream === "stderr") {
+            // Diagnostic only: buffer for classifyError, but never fold
+            // stderr into the user-visible turn. Structured adapters curate
+            // their display via stdout; codex/claude/etc. emit startup
+            // tracing (e.g. skill-load errors) on stderr that would otherwise
+            // land at the TOP of the assistant message. Mirrors the
+            // stderr handling in conversation-runner's executeWithPrompt.
+            session.stderrBuffer = (session.stderrBuffer ?? "") + chunk;
+            // Cap stderr buffer at 64 KB so a chatty adapter doesn't OOM us.
+            if (session.stderrBuffer.length > 65_536) {
+              session.stderrBuffer = session.stderrBuffer.slice(-65_536);
+            }
+            return;
+          }
+          emitSessionOutput(session, chunk, input.onData);
+        },
+        onSpawn: async (meta) => {
+          session.pid = meta.pid;
+          session.processGroupId = meta.processGroupId;
+          session.startedAt = meta.startedAt;
+        },
+      });
 
-  term.onExit(({ exitCode }) => {
-    console.log(`Session ${input.sessionId} PTY exited with code ${exitCode}`);
-    session.exited = true;
-    session.exitCode = exitCode;
-    if (session.timeoutHandle) {
-      clearTimeout(session.timeoutHandle);
-      delete session.timeoutHandle;
-    }
-    if (session.initialPromptTimer) {
-      clearTimeout(session.initialPromptTimer);
-      delete session.initialPromptTimer;
-    }
-    if (session.autoExitFallbackTimer) {
-      clearTimeout(session.autoExitFallbackTimer);
-      delete session.autoExitFallbackTimer;
-    }
+      session.exited = true;
+      session.exitCode = result.exitCode;
+      session.resolvedStatus =
+        result.exitCode === 0 && !result.timedOut ? "completed" : "failed";
+      session.adapterSessionId = result.sessionId ?? null;
+      session.adapterSessionParams = result.sessionParams ?? null;
+      session.adapterUsage = result.usage ?? null;
 
-    const plain = stripAnsi(session.output.join(""));
-    completedOutput.set(input.sessionId, { output: plain, completedAt: Date.now() });
-    void finalizeSessionConversation(session).catch(() => {});
+      // Classify failures so the UI can surface an actionable hint.
+      // Prefer stderrBuffer, but fall back to the adapter-reported
+      // `errorMessage` (used by structured CLIs like codex that emit error
+      // events on STDOUT, e.g. plan-gated model rejections). Without the
+      // fallback, model_unavailable and other stdout-reported failures
+      // would classify as unknown despite the adapter having the real
+      // reason ready to hand off.
+      if (session.resolvedStatus === "failed" && adapter.classifyError) {
+        try {
+          const classifierInput =
+            (session.stderrBuffer && session.stderrBuffer.trim())
+              ? session.stderrBuffer
+              : result.errorMessage ?? "";
+          const classified = adapter.classifyError(
+            classifierInput,
+            result.exitCode
+          );
+          session.adapterErrorKind = classified.kind;
+          session.adapterErrorHint = classified.hint ?? null;
+          session.adapterErrorRetryAfterSec = classified.retryAfterSec ?? null;
+        } catch {
+          session.adapterErrorKind = "unknown";
+        }
+      } else if (session.resolvedStatus === "completed") {
+        session.adapterErrorKind = null;
+        session.adapterErrorHint = null;
+        session.adapterErrorRetryAfterSec = null;
+      }
+      clearSessionStopFallbackTimer(session);
 
-    if (session.ws && session.ws.readyState === WebSocket.OPEN) {
-      sessions.delete(input.sessionId);
-      session.ws.close();
+      if (!session.output.length && result.output) {
+        emitSessionOutput(session, result.output, input.onData);
+      }
+
+      const plain = stripAnsi(session.output.join(""));
+      completedOutput.set(input.sessionId, {
+        output: plain,
+        completedAt: Date.now(),
+        status: session.resolvedStatus ?? (session.exitCode === 0 ? "completed" : "failed"),
+        exitCode: session.exitCode,
+        adapterErrorKind: session.adapterErrorKind ?? null,
+        adapterErrorHint: session.adapterErrorHint ?? null,
+        adapterErrorRetryAfterSec: session.adapterErrorRetryAfterSec ?? null,
+      });
+      await finalizeSessionConversation(session).catch((err) => {
+        console.warn(
+          `[cabinet-daemon] finalizeSessionConversation failed for ${input.sessionId}:`,
+          err
+        );
+      });
+
+      // Persist the adapter's resume handle + codec blob to the conversation
+      // directory so future continues can resume. This only works when the
+      // daemon session id IS the conversation id (startConversationRun's
+      // path). Continue-via-daemon uses a synthetic runId and handles codec
+      // serialization client-side from the /session/:id/output response.
+      const hasResumeSignal =
+        (result.sessionId || result.sessionParams) &&
+        result.exitCode === 0 &&
+        !result.timedOut;
+      if (hasResumeSignal) {
+        let codecBlob: Record<string, unknown> | null = null;
+        let displayId: string | undefined;
+        try {
+          codecBlob =
+            adapter.sessionCodec && result.sessionParams
+              ? adapter.sessionCodec.serialize(result.sessionParams)
+              : null;
+          displayId =
+            adapter.sessionCodec?.getDisplayId?.(result.sessionParams ?? {}) ||
+            (result.sessionDisplayId ?? undefined);
+        } catch {
+          codecBlob = null;
+        }
+        await writeSession(
+          input.sessionId,
+          {
+            kind: input.adapterType,
+            resumeId: result.sessionId ?? undefined,
+            alive: !result.clearSession,
+            lastUsedAt: new Date().toISOString(),
+            codecBlob,
+            displayId,
+          }
+        ).catch(() => {});
+      }
+
+      if (session.ws && session.ws.readyState === WebSocket.OPEN) {
+        sessions.delete(input.sessionId);
+        session.ws.close();
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      emitSessionOutput(session, `${message}\n`, input.onData);
+      session.stderrBuffer = (session.stderrBuffer ?? "") + message;
+      session.exited = true;
+      session.exitCode = 1;
+      session.resolvedStatus = "failed";
+      // Run classifyError on the spawn-time failure too — ENOENT etc. should
+      // surface as `cli_not_found` so the UI can offer an Install CTA.
+      if (adapter.classifyError) {
+        try {
+          const classified = adapter.classifyError(session.stderrBuffer, 1);
+          session.adapterErrorKind = classified.kind;
+          session.adapterErrorHint = classified.hint ?? null;
+          session.adapterErrorRetryAfterSec = classified.retryAfterSec ?? null;
+        } catch {
+          session.adapterErrorKind = "unknown";
+        }
+      }
+      clearSessionStopFallbackTimer(session);
+      const plain = stripAnsi(session.output.join(""));
+      completedOutput.set(input.sessionId, {
+        output: plain,
+        completedAt: Date.now(),
+        status: session.resolvedStatus ?? (session.exitCode === 0 ? "completed" : "failed"),
+        exitCode: session.exitCode,
+        adapterErrorKind: session.adapterErrorKind ?? null,
+        adapterErrorHint: session.adapterErrorHint ?? null,
+        adapterErrorRetryAfterSec: session.adapterErrorRetryAfterSec ?? null,
+      });
+      await finalizeSessionConversation(session).catch((err) => {
+        console.warn(
+          `[cabinet-daemon] finalizeSessionConversation failed for ${input.sessionId}:`,
+          err
+        );
+      });
+
+      if (session.ws && session.ws.readyState === WebSocket.OPEN) {
+        sessions.delete(input.sessionId);
+        session.ws.close();
+      }
     }
-  });
-
-  if (input.timeoutSeconds && input.timeoutSeconds > 0) {
-    session.timeoutHandle = setTimeout(() => {
-      console.warn(`Session ${input.sessionId} timed out after ${input.timeoutSeconds}s`);
-      try {
-        term.kill();
-      } catch {}
-    }, input.timeoutSeconds * 1000);
-  }
-
-  if (session.initialPrompt) {
-    session.initialPromptTimer = setTimeout(() => {
-      submitInitialPrompt(session);
-    }, 1500);
-  }
+  })();
 
   return session;
+}
+
+// Shared PTY manager — owns the PTY-spawn factory + stdin injection path.
+// The `sessions` map and `completedOutput` map stay in the daemon so the
+// HTTP/WS routes can look up either PTY or structured sessions by id.
+const ptyManager: PtyManager = createPtyManager({
+  // Map<string, ActiveSession> is invariant in TS; the manager reads it as
+  // Map<string, BaseSession> and narrows on kind, so cast through BaseSession
+  // rather than duplicating the map across modules.
+  sessions: sessions as unknown as Map<string, BaseSession>,
+  completedOutput,
+  finalizeSessionConversation,
+  emitSessionOutput,
+  clearSessionStopFallbackTimer,
+  resolveSessionCwd,
+  enrichedPath,
+});
+
+function createSession(input: {
+  sessionId: string;
+  providerId?: string;
+  adapterType?: string;
+  adapterConfig?: Record<string, unknown>;
+  prompt?: string;
+  cwd?: string;
+  timeoutSeconds?: number;
+  onData?: (chunk: string) => void;
+  launchMode?: "session" | "one-shot";
+  adapterSessionId?: string | null;
+  adapterSessionParams?: Record<string, unknown> | null;
+  /**
+   * Meta trigger (manual/job/heartbeat/agent). Manual PTY sessions opt
+   * out of the 1.2s claude idle auto-exit and instead stay alive as
+   * "awaiting-input" until the user closes them.
+   */
+  trigger?: import("../src/types/tasks").TaskTrigger;
+}): ActiveSession {
+  // Plain shell sessions bypass the adapter/provider system entirely.
+  if (input.adapterType === "shell") {
+    return ptyManager.spawn({ ...input });
+  }
+
+  const adapter = input.adapterType
+    ? agentAdapterRegistry.get(input.adapterType)
+    : undefined;
+
+  if (input.adapterType && !adapter) {
+    throw new Error(`Unknown adapter type: ${input.adapterType}`);
+  }
+
+  if (adapter && adapter.executionEngine !== "legacy_pty_cli") {
+    return createStructuredSession({
+      sessionId: input.sessionId,
+      providerId: input.providerId,
+      adapterType: input.adapterType!,
+      adapterConfig: input.adapterConfig,
+      prompt: input.prompt,
+      cwd: input.cwd,
+      timeoutSeconds: input.timeoutSeconds,
+      onData: input.onData,
+      adapterSessionId: input.adapterSessionId ?? null,
+      adapterSessionParams: input.adapterSessionParams ?? null,
+    });
+  }
+
+  // Legacy PTY path: forward the adapter session id as `adapterResumeId` so
+  // the launch spec can append `--resume` / `--session` for providers that
+  // support terminal-mode resume (Claude, Cursor, OpenCode). Also forward
+  // `trigger` so the manager can stash it on the session — claude-lifecycle
+  // uses it to skip auto-exit on manual runs.
+  return ptyManager.spawn({
+    ...input,
+    adapterResumeId: input.adapterSessionId ?? null,
+    trigger: input.trigger,
+  });
 }
 
 // ===== WebSocket Event Bus =====
@@ -533,6 +1177,10 @@ interface JobConfig {
   prompt: string;
   timeout?: number;
   agentSlug: string;
+  cabinetPath: string;
+  oneShot?: boolean;
+  runAfter?: string;
+  ownerTaskId?: string;
 }
 
 const scheduledJobs = new Map<string, ReturnType<typeof cron.schedule>>();
@@ -559,7 +1207,7 @@ function stopScheduledTasks(): void {
 }
 
 function scheduleJob(job: JobConfig): void {
-  const key = `${job.agentSlug}/${job.id}`;
+  const key = `${job.cabinetPath}::job::${job.agentSlug}/${job.id}`;
   const existingTask = scheduledJobs.get(key);
   if (existingTask) existingTask.stop();
 
@@ -569,95 +1217,189 @@ function scheduleJob(job: JobConfig): void {
   }
 
   const task = cron.schedule(job.schedule, () => {
-    console.log(`Triggering scheduled job ${key}`);
+    const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
+    console.log(`Triggering scheduled job ${key} @ ${scheduledAt}`);
     void putJson(`${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`, {
       action: "run",
       source: "scheduler",
-    }).catch((error) => {
-      console.error(`Failed to trigger scheduled job ${key}:`, error);
-    });
+      cabinetPath: job.cabinetPath,
+      scheduledAt,
+    })
+      .then(async () => {
+        if (job.oneShot) {
+          try {
+            await putJson(
+              `${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`,
+              {
+                action: "update",
+                cabinetPath: job.cabinetPath,
+                enabled: false,
+              }
+            );
+          } catch (error) {
+            console.error(`Failed to disable one-shot job ${key}:`, error);
+          }
+          const existing = scheduledJobs.get(key);
+          if (existing) existing.stop();
+          scheduledJobs.delete(key);
+          console.log(`  One-shot job fired and disabled: ${key}`);
+        }
+      })
+      .catch((error) => {
+        console.error(`Failed to trigger scheduled job ${key}:`, error);
+      });
   });
 
   scheduledJobs.set(key, task);
-  console.log(`  Scheduled job: ${key} (${job.schedule})`);
+  console.log(
+    `  Scheduled job: ${key} (${job.schedule})${job.oneShot ? " [one-shot]" : ""}`
+  );
 }
 
-function scheduleHeartbeat(slug: string, cronExpr: string): void {
+function scheduleHeartbeat(slug: string, cronExpr: string, cabinetPath: string): void {
+  const key = `${cabinetPath}::heartbeat::${slug}`;
+
   if (!cron.validate(cronExpr)) {
-    console.warn(`Invalid heartbeat schedule for ${slug}: ${cronExpr}`);
+    console.warn(`Invalid heartbeat schedule for ${key}: ${cronExpr}`);
     return;
   }
 
   const task = cron.schedule(cronExpr, () => {
-    console.log(`Triggering heartbeat ${slug}`);
+    const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
+    console.log(`Triggering heartbeat ${key} @ ${scheduledAt}`);
     void putJson(`${getAppOrigin()}/api/agents/personas/${slug}`, {
       action: "run",
       source: "scheduler",
+      cabinetPath,
+      scheduledAt,
     }).catch((error) => {
-      console.error(`Failed to trigger heartbeat ${slug}:`, error);
+      console.error(`Failed to trigger heartbeat ${key}:`, error);
     });
   });
 
-  scheduledHeartbeats.set(slug, task);
-  console.log(`  Scheduled heartbeat: ${slug} (${cronExpr})`);
+  scheduledHeartbeats.set(key, task);
+  console.log(`  Scheduled heartbeat: ${key} (${cronExpr})`);
 }
 
 async function reloadSchedules(): Promise<void> {
   stopScheduledTasks();
 
-  if (!fs.existsSync(AGENTS_DIR)) return;
-
-  const entries = fs.readdirSync(AGENTS_DIR, { withFileTypes: true });
+  const cabinets = discoverAllCabinets();
   let jobCount = 0;
   let heartbeatCount = 0;
 
-  for (const entry of entries) {
-    if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+  for (const cabinet of cabinets) {
+    const agentsDir = path.join(cabinet.absDir, ".agents");
 
-    const personaPath = path.join(AGENTS_DIR, entry.name, "persona.md");
-    if (fs.existsSync(personaPath)) {
+    // --- Heartbeats from .agents/*/persona.md ---
+    // Also collect active-agent slugs per cabinet so jobs owned by an
+    // inactive (Stopped) agent don't get scheduled. Master switch =
+    // `agent.active`; per-heartbeat enable = `agent.heartbeatEnabled`.
+    const activeAgents = new Set<string>();
+    if (fs.existsSync(agentsDir)) {
+      let agentEntries: fs.Dirent[];
       try {
-        const rawPersona = fs.readFileSync(personaPath, "utf-8");
-        const { data } = matter(rawPersona);
-        const active = data.active !== false;
-        const heartbeat = typeof data.heartbeat === "string" ? data.heartbeat : "";
-        if (active && heartbeat) {
-          scheduleHeartbeat(entry.name, heartbeat);
-          heartbeatCount++;
-        }
+        agentEntries = fs.readdirSync(agentsDir, { withFileTypes: true });
       } catch {
-        // Skip malformed personas.
+        agentEntries = [];
+      }
+
+      for (const entry of agentEntries) {
+        if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+
+        const personaPath = path.join(agentsDir, entry.name, "persona.md");
+        if (fs.existsSync(personaPath)) {
+          try {
+            const rawPersona = fs.readFileSync(personaPath, "utf-8");
+            const { data } = matter(rawPersona);
+            const active = data.active !== false;
+            const heartbeatEnabled = data.heartbeatEnabled !== false;
+            const heartbeat = typeof data.heartbeat === "string" ? data.heartbeat : "";
+            if (active) activeAgents.add(entry.name);
+            if (active && heartbeatEnabled && heartbeat) {
+              scheduleHeartbeat(entry.name, heartbeat, cabinet.relPath);
+              heartbeatCount++;
+            }
+          } catch {
+            // Skip malformed personas.
+          }
+        }
       }
     }
 
-    const jobsDir = path.join(AGENTS_DIR, entry.name, "jobs");
-    if (!fs.existsSync(jobsDir)) continue;
-
-    const jobFiles = fs.readdirSync(jobsDir);
-    for (const jf of jobFiles) {
-      if (!jf.endsWith(".yaml")) continue;
-
+    // --- Cabinet-level jobs: .jobs/*.yaml ---
+    const cabinetJobsDir = path.join(cabinet.absDir, ".jobs");
+    if (fs.existsSync(cabinetJobsDir)) {
+      let jobFiles: string[];
       try {
-        const raw = fs.readFileSync(path.join(jobsDir, jf), "utf-8");
-        const config: JobConfig = {
-          ...normalizeJobConfig(
-            yaml.load(raw) as Partial<JobConfig>,
-            entry.name,
-            normalizeJobId(path.basename(jf, ".yaml"))
-          ),
-          agentSlug: entry.name,
-        };
-        if (config.id && config.enabled && config.schedule) {
-          scheduleJob(config);
-          jobCount++;
-        }
+        jobFiles = fs.readdirSync(cabinetJobsDir);
       } catch {
-        // Skip malformed jobs.
+        jobFiles = [];
+      }
+      for (const jf of jobFiles) {
+        if (!jf.endsWith(".yaml") && !jf.endsWith(".yml")) continue;
+        try {
+          const raw = fs.readFileSync(path.join(cabinetJobsDir, jf), "utf-8");
+          const parsed = yaml.load(raw) as Record<string, unknown>;
+          const ownerAgent = (parsed.ownerAgent as string) || (parsed.agentSlug as string) || "";
+          const config: JobConfig = {
+            ...normalizeJobConfig(
+              parsed as Partial<JobConfig>,
+              ownerAgent,
+              normalizeJobId(path.basename(jf, path.extname(jf)))
+            ),
+            agentSlug: ownerAgent,
+            cabinetPath: cabinet.relPath,
+          };
+          if (
+            config.id &&
+            config.enabled &&
+            config.schedule &&
+            ownerAgent &&
+            activeAgents.has(ownerAgent)
+          ) {
+            scheduleJob(config);
+            jobCount++;
+          }
+        } catch {
+          // Skip malformed jobs.
+        }
       }
     }
   }
 
-  console.log(`Scheduled ${jobCount} jobs and ${heartbeatCount} heartbeats.`);
+  console.log(`Discovered ${cabinets.length} cabinet(s). Scheduled ${jobCount} jobs and ${heartbeatCount} heartbeats.`);
+}
+
+/**
+ * On startup: find any conversations still marked "running" from a previous
+ * daemon session and finalize them as failed. This prevents permanently-stuck
+ * spinners when the daemon crashes or is force-killed.
+ */
+async function cleanupStaleRunningConversations(): Promise<void> {
+  const cabinets = discoverAllCabinets();
+  let cleaned = 0;
+  for (const cabinet of cabinets) {
+    const cabinetPath = cabinet.relPath || undefined;
+    try {
+      const metas = await listConversationMetas({ status: "running", cabinetPath, limit: 1000 });
+      for (const meta of metas) {
+        // Only finalize if there is no live PTY session managing it
+        if (sessions.has(meta.id)) continue;
+        await finalizeConversation(
+          meta.id,
+          { status: "failed", exitCode: 1 },
+          cabinetPath
+        ).catch(() => {});
+        cleaned++;
+      }
+    } catch {
+      // Skip cabinets that fail to read
+    }
+  }
+  if (cleaned > 0) {
+    console.log(`Cleaned up ${cleaned} stale running conversation(s) from previous session.`);
+  }
 }
 
 function queueScheduleReload(): void {
@@ -699,24 +1441,69 @@ const server = http.createServer(async (req, res) => {
     if (active) {
       const raw = active.output.join("");
       const plain = stripAnsi(raw);
+      if (
+        active.kind === "pty" &&
+        active.readyStrategy === "claude" &&
+        active.initialPrompt &&
+        active.initialPromptSent &&
+        !active.exited &&
+        !active.autoExitRequested &&
+        !active.resolvedStatus &&
+        active.trigger !== "manual" &&
+        transcriptShowsCompletedRun(plain, active.initialPrompt)
+      ) {
+        completeClaudeSession(active, plain, { completedOutput });
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            sessionId,
+            status: "completed",
+            output: plain,
+          })
+        );
+        return;
+      }
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify({
           sessionId,
-          status: active.resolvedStatus
-            ? active.resolvedStatus
-            : active.exited
-              ? active.exitCode === 0
-                ? "completed"
-                : "failed"
-              : "running",
+          status: sessionStatus(active),
           output: plain,
+          adapterSessionId:
+            active.kind === "structured" ? active.adapterSessionId ?? null : null,
+          adapterSessionParams:
+            active.kind === "structured"
+              ? active.adapterSessionParams ?? null
+              : null,
+          adapterUsage:
+            active.kind === "structured" ? active.adapterUsage ?? null : null,
+          adapterErrorKind:
+            active.kind === "structured" ? active.adapterErrorKind ?? null : null,
+          adapterErrorHint:
+            active.kind === "structured" ? active.adapterErrorHint ?? null : null,
+          adapterErrorRetryAfterSec:
+            active.kind === "structured"
+              ? active.adapterErrorRetryAfterSec ?? null
+              : null,
         })
       );
       return;
     }
 
     const conversationMeta = await readConversationMeta(sessionId).catch(() => null);
+    const completed = completedOutput.get(sessionId);
+    if (completed && completed.status && completed.status !== "running") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          sessionId,
+          status: completed.status,
+          output: completed.output,
+        })
+      );
+      return;
+    }
+
     if (conversationMeta) {
       const transcript = await readConversationTranscript(sessionId).catch(() => "");
       const plainTranscript = stripAnsi(transcript);
@@ -731,10 +1518,19 @@ const server = http.createServer(async (req, res) => {
         conversationMeta.status === "running" &&
         transcriptShowsCompletedRun(plainTranscript, prompt)
       ) {
+        // Same rationale as completeClaudeSession: feed finalizeConversation
+        // a distilled one-liner instead of the full TUI-noise transcript
+        // so parseCabinetBlock's fallback regex can't scrape garbage
+        // SUMMARY/ARTIFACT lines out of prompt echoes.
+        const summaryOutput = distillPtyOutput(
+          plainTranscript,
+          0,
+          conversationMeta.providerId
+        );
         await finalizeConversation(sessionId, {
           status: "completed",
           exitCode: 0,
-          output: plainTranscript,
+          output: summaryOutput,
         }).catch(() => null);
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(
@@ -757,10 +1553,15 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    const completed = completedOutput.get(sessionId);
     if (completed) {
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ sessionId, status: "completed", output: completed.output }));
+      res.end(
+        JSON.stringify({
+          sessionId,
+          status: completed.status ?? "completed",
+          output: completed.output,
+        })
+      );
       return;
     }
 
@@ -768,25 +1569,31 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ error: "Session not found" }));
     return;
   }
-
-  // POST /sessions — create a PTY session without a WebSocket (for agent heartbeats)
   if (url.pathname === "/sessions" && req.method === "POST") {
     let body = "";
     req.on("data", (chunk) => (body += chunk));
-    req.on("end", () => {
+    req.on("end", async () => {
       try {
         const {
           id,
           providerId,
+          adapterType,
+          adapterConfig,
           prompt,
           cwd,
           timeoutSeconds,
+          adapterSessionId,
+          adapterSessionParams,
         } = JSON.parse(body) as {
           id: string;
           providerId?: string;
+          adapterType?: string;
+          adapterConfig?: Record<string, unknown>;
           prompt?: string;
           cwd?: string;
           timeoutSeconds?: number;
+          adapterSessionId?: string | null;
+          adapterSessionParams?: Record<string, unknown> | null;
         };
         const sessionId = id || `session-${Date.now()}`;
 
@@ -796,13 +1603,42 @@ const server = http.createServer(async (req, res) => {
           return;
         }
 
+        let trigger: import("../src/types/tasks").TaskTrigger | undefined;
         try {
-          createDetachedSession({
+          const meta = await readConversationMeta(sessionId);
+          trigger = meta?.trigger;
+        } catch {
+          trigger = undefined;
+        }
+
+        try {
+          const legacyProviderId = !adapterType
+            ? providerId
+            : agentAdapterRegistry.get(adapterType)?.executionEngine === "legacy_pty_cli"
+              ? resolveLegacyExecutionProviderId({
+                  adapterType,
+                  providerId,
+                })
+              : undefined;
+          const launchMode =
+            legacyProviderId || (!adapterType && providerId)
+              ? getDetachedPromptLaunchMode({
+                  providerId: legacyProviderId || providerId,
+                  prompt,
+                })
+              : undefined;
+          createSession({
             sessionId,
             providerId,
+            adapterType,
+            adapterConfig,
             prompt,
             cwd,
             timeoutSeconds,
+            launchMode,
+            adapterSessionId: adapterSessionId ?? null,
+            adapterSessionParams: adapterSessionParams ?? null,
+            trigger,
           });
         } catch (err: unknown) {
           const errMsg = err instanceof Error ? err.message : String(err);
@@ -823,6 +1659,134 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // POST /session/:id/input — write stdin to a live PTY session
+  // Used by same-process terminal-mode continuations: if the CLI is still in
+  // its REPL waiting for input, we write the next prompt directly into the
+  // existing process instead of spawning a new PTY.
+  const inputMatch = url.pathname.match(/^\/session\/([^/]+)\/input$/);
+  if (inputMatch && req.method === "POST") {
+    const sessionId = inputMatch[1];
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      try {
+        const { input: rawInput, appendEnter } = JSON.parse(body || "{}") as {
+          input?: string;
+          appendEnter?: boolean;
+        };
+        if (typeof rawInput !== "string" || !rawInput) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "input (string) is required" }));
+          return;
+        }
+        const result = ptyManager.writeInput(sessionId, rawInput, {
+          appendEnter: appendEnter !== false,
+        });
+        if (!result.ok) {
+          res.writeHead(404, { "Content-Type": "application/json" });
+          res.end(
+            JSON.stringify({ error: "Session not found, exited, or not a PTY" })
+          );
+          return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: true, sessionId }));
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: msg }));
+      }
+    });
+    return;
+  }
+
+  // POST /session/:id/close — gracefully end a live PTY by writing `/exit`
+  // to its stdin (so the CLI shuts itself down cleanly and the PTY exits
+  // with code 0 → finalizeConversation runs with status="completed"). A
+  // 2s SIGTERM fallback covers CLIs that don't recognize /exit. Distinct
+  // from /stop which SIGTERMs immediately and finalizes as "failed".
+  const closeMatch = url.pathname.match(/^\/session\/([^/]+)\/close$/);
+  if (closeMatch && req.method === "POST") {
+    const sessionId = closeMatch[1];
+    const session = sessions.get(sessionId);
+    if (!session || session.exited) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Session not found or already exited" }));
+      return;
+    }
+    if (session.kind !== "pty") {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Only PTY sessions can be closed gracefully" }));
+      return;
+    }
+    try {
+      const result = ptyManager.writeInput(sessionId, "/exit", { appendEnter: true });
+      if (!result.ok) {
+        // Fall through to SIGTERM — writeInput refused (already exited, etc.)
+        session.stop("SIGTERM");
+      }
+      session.stopFallbackTimer = setTimeout(() => {
+        if (!session.exited) {
+          try {
+            session.stop("SIGTERM");
+          } catch {}
+        }
+      }, 2000);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, sessionId }));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: msg }));
+    }
+    return;
+  }
+
+  // POST /session/:id/stop — stop a running session
+  const stopMatch = url.pathname.match(/^\/session\/([^/]+)\/stop$/);
+  if (stopMatch && req.method === "POST") {
+    const sessionId = stopMatch[1];
+    // A conversation's live run may be keyed under the bare conversation id
+    // (turn 1 via startConversationRun; terminal-mode continues) OR under a
+    // per-turn run id of the shape `${conversationId}::t{n}::{uuid}` (native
+    // structured continues in executeViaDaemon). Stop must reach either, so
+    // match the exact id plus any `${id}::`-prefixed sessions. Without the
+    // prefix match, Stop silently 404'd on every native follow-up turn.
+    const prefix = `${sessionId}::`;
+    const targets: ActiveSession[] = [];
+    for (const [sid, s] of sessions) {
+      if (s.exited) continue;
+      if (sid === sessionId || sid.startsWith(prefix)) targets.push(s);
+    }
+    if (targets.length === 0) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Session not found or already exited" }));
+      return;
+    }
+    try {
+      // SIGTERM first, then SIGKILL after 2s if still alive.
+      for (const session of targets) {
+        session.stop("SIGTERM");
+        session.stopFallbackTimer = setTimeout(() => {
+          if (!session.exited) {
+            try {
+              session.stop("SIGKILL");
+            } catch {}
+          }
+        }, 2000);
+      }
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, sessionId, stopped: targets.length }));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: msg }));
+    }
+    return;
+  }
+
   // GET /sessions — list all active sessions
   if (url.pathname === "/sessions" && req.method === "GET") {
     const activeSessions = Array.from(sessions.values()).map((s) => ({
@@ -831,6 +1795,8 @@ const server = http.createServer(async (req, res) => {
       connected: s.ws !== null,
       exited: s.exited,
       exitCode: s.exitCode,
+      providerId: s.providerId,
+      adapterType: s.adapterType,
     }));
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(activeSessions));
@@ -880,11 +1846,16 @@ const server = http.createServer(async (req, res) => {
         const { agentSlug, jobId, prompt, providerId, timeoutSeconds } = JSON.parse(body);
         if (prompt) {
           const sessionId = jobId || `manual-${Date.now()}`;
-          createDetachedSession({
+          const launchMode = getDetachedPromptLaunchMode({
+            providerId,
+            prompt,
+          });
+          createSession({
             sessionId,
             providerId,
             prompt,
             timeoutSeconds,
+            launchMode,
           });
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ ok: true, sessionId, agentSlug: agentSlug || "manual" }));
@@ -897,6 +1868,49 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: "Invalid JSON" }));
       }
     });
+    return;
+  }
+
+  // Search endpoint — daemon-backed live index
+  if (url.pathname === "/search" && req.method === "GET") {
+    try {
+      const q = (url.searchParams.get("q") ?? "").trim();
+      const scopeParam = (url.searchParams.get("scope") ?? "all") as SearchScope;
+      const scope: SearchScope = ["all", "pages", "agents", "tasks"].includes(scopeParam)
+        ? scopeParam
+        : "all";
+      const limitParam = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
+      const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 100) : 50;
+      const cabinet = url.searchParams.get("cabinet") || undefined;
+
+      const needsAgents = scope === "all" || scope === "agents";
+      const needsTasks = scope === "all" || scope === "tasks";
+
+      const [agents, tasks] = await Promise.all([
+        needsAgents ? loadAgentDocs() : Promise.resolve([]),
+        needsTasks ? loadTaskDocs() : Promise.resolve([]),
+      ]);
+
+      const response = runSearch(
+        {
+          pages: searchIndex,
+          agents: () => agents,
+          tasks: () => tasks,
+          indexReady: () => searchIndexReady,
+        },
+        q,
+        scope,
+        limit,
+        cabinet
+      );
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(response));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Search failed";
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: message }));
+    }
     return;
   }
 
@@ -946,7 +1960,12 @@ wssEvents.on("connection", (ws) => {
 // ===== Startup =====
 
 const scheduleWatcher = chokidar.watch(
-  [path.join(AGENTS_DIR, "*/persona.md"), path.join(AGENTS_DIR, "*/jobs/*.yaml")],
+  [
+    path.join(DATA_DIR, "**", ".agents", "*", "persona.md"),
+    path.join(DATA_DIR, "**", ".jobs", "*.yaml"),
+    path.join(DATA_DIR, "**", ".agents", "*", "jobs", "*.yaml"),
+    path.join(DATA_DIR, "**", CABINET_MANIFEST_FILE),
+  ],
   {
     ignoreInitial: true,
   }
@@ -954,6 +1973,24 @@ const scheduleWatcher = chokidar.watch(
 
 scheduleWatcher.on("all", () => {
   queueScheduleReload();
+});
+
+// Same EMFILE/ENOSPC failure mode as the search watcher — log once, close,
+// keep the daemon up. Schedule reloads pause; the rest of the daemon (jobs,
+// API, sessions) keeps serving.
+let scheduleWatcherFailed = false;
+scheduleWatcher.on("error", (err: unknown) => {
+  if (scheduleWatcherFailed) return;
+  scheduleWatcherFailed = true;
+  const code = (err as NodeJS.ErrnoException)?.code;
+  const msg = err instanceof Error ? err.message : String(err);
+  console.warn(
+    `[schedule-watcher] disabled: ${code ?? "error"} — ${msg}.\n` +
+      `  Schedule changes won't auto-reload. POST /reload-schedules to refresh manually.`
+  );
+  void scheduleWatcher.close().catch(() => {
+    /* already closing */
+  });
 });
 
 server.listen(PORT, () => {
@@ -964,16 +2001,61 @@ server.listen(PORT, () => {
   console.log(`  Reload schedules: POST http://localhost:${PORT}/reload-schedules`);
   console.log(`  Health check: http://localhost:${PORT}/health`);
   console.log(`  Trigger endpoint: POST http://localhost:${PORT}/trigger`);
+  console.log(`  Search endpoint: GET http://localhost:${PORT}/search`);
   console.log(`  Default provider: ${resolveProviderId()}`);
   console.log(`  Working directory: ${DATA_DIR}`);
+  const watcherBackend = probeWatcherBackend();
+  console.log(`  Watcher backend: ${watcherBackend.description}`);
+
+  getOrCreateSessionId();
+  printStartupBannerIfNeeded();
+  startTelemetryFlusher();
+  emitTelemetry("app.launched", {});
 
   void reloadSchedules();
+  void cleanupStaleRunningConversations();
+  // Sweep composer-attachment staging dirs that were abandoned (paste
+  // without send). Runs once on boot, then daily.
+  void cleanupStaleStagingAttachments().then((r) => {
+    if (r.removed > 0) {
+      console.log(
+        `[staging-attachments] cleaned ${r.removed}/${r.scanned} stale dirs on boot`
+      );
+    }
+  });
+  cron.schedule("17 3 * * *", () => {
+    void cleanupStaleStagingAttachments().then((r) => {
+      if (r.removed > 0) {
+        console.log(
+          `[staging-attachments] daily sweep: removed ${r.removed}/${r.scanned}`
+        );
+      }
+    });
+  });
+  void guardAgainstBigTree().then(() =>
+    bootstrapSearchIndex().then(() => startSearchWatcher())
+  );
+  void (async () => {
+    try {
+      const { loadExternalAdapters } = await import(
+        "../src/lib/agents/adapters/plugin-loader"
+      );
+      await loadExternalAdapters();
+    } catch (err) {
+      console.warn(
+        "[cabinet-daemon] adapter plugin loader failed:",
+        err instanceof Error ? err.message : err
+      );
+    }
+  })();
 });
 
 // ===== Graceful Shutdown =====
 
-process.on("SIGINT", () => {
+function shutdown(): void {
   console.log("\nShutting down...");
+  emitTelemetry("app.exited", {});
+  clearSessionId();
   for (const [, task] of scheduledJobs) {
     task.stop();
   }
@@ -981,13 +2063,18 @@ process.on("SIGINT", () => {
     task.stop();
   }
   for (const [, session] of sessions) {
-    try { session.pty.kill(); } catch {}
+    try {
+      session.stop("SIGTERM");
+    } catch {}
   }
   void scheduleWatcher.close();
   closeDb();
   server.close();
   process.exit(0);
-});
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 wssPty.on("error", (err) => {
   console.error("PTY WebSocket error:", err.message);
@@ -999,8 +2086,11 @@ wssEvents.on("error", (err) => {
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught exception:", err.message);
+  emitTelemetry("error.unhandled", { where: "uncaughtException", errorCode: err.name });
 });
 
 process.on("unhandledRejection", (reason) => {
   console.error("Unhandled rejection:", reason);
+  const name = reason instanceof Error ? reason.name : "UnknownRejection";
+  emitTelemetry("error.unhandled", { where: "unhandledRejection", errorCode: name });
 });

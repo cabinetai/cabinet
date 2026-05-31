@@ -2,7 +2,7 @@
 
 import { ExternalLink, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeaderActions } from "@/components/layout/header-actions";
+import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 
 interface MediaViewerProps {
   path: string;
@@ -10,50 +10,38 @@ interface MediaViewerProps {
   type: "video" | "audio";
 }
 
-export function MediaViewer({ path, title, type }: MediaViewerProps) {
+export function MediaViewer({ path, type }: MediaViewerProps) {
   const src = `/api/assets/${path}`;
   const filename = path.split("/").pop() || path;
   const ext = filename.includes(".") ? filename.split(".").pop()!.toUpperCase() : type.toUpperCase();
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div
-        className="flex items-center justify-between border-b border-border px-4 py-2 bg-background/80 backdrop-blur-sm transition-[padding] duration-200"
-        style={{ paddingLeft: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-[13px] font-medium">{title}</span>
-          <span className="text-xs text-muted-foreground/50 bg-muted px-1.5 py-0.5 rounded">
-            {ext}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={() => {
-              const a = document.createElement("a");
-              a.href = src;
-              a.download = filename;
-              a.click();
-            }}
-          >
-            <Download className="h-3.5 w-3.5" />
-            Download
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={() => window.open(src, "_blank")}
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-            Open in new tab
-          </Button>
-          <HeaderActions />
-        </div>
-      </div>
+      <ViewerToolbar path={path} badge={ext}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 text-xs"
+          onClick={() => {
+            const a = document.createElement("a");
+            a.href = src;
+            a.download = filename;
+            a.click();
+          }}
+        >
+          <Download className="h-3.5 w-3.5" />
+          Download
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1.5 text-xs"
+          onClick={() => window.open(src, "_blank")}
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+          Open in new tab
+        </Button>
+      </ViewerToolbar>
       <div className="flex-1 overflow-auto flex items-center justify-center bg-[#1a1a1a] p-8">
         {type === "video" ? (
           <video

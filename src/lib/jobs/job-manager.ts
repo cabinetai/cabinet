@@ -1,7 +1,9 @@
 import path from "path";
 import yaml from "js-yaml";
 import type { JobConfig, JobRun } from "@/types/jobs";
-import { DATA_DIR } from "@/lib/storage/path-utils";
+import { discoverCabinetPaths } from "@/lib/cabinets/discovery";
+import { normalizeCabinetPath } from "@/lib/cabinets/paths";
+import { resolveCabinetDir } from "@/lib/cabinets/server-paths";
 import {
   readFileContent,
   writeFileContent,
@@ -18,15 +20,26 @@ import {
 } from "@/lib/jobs/job-normalization";
 import { resolveEnabledProviderId } from "@/lib/agents/provider-settings";
 
-const JOBS_DIR = path.join(DATA_DIR, ".jobs");
-const AGENTS_DIR = path.join(DATA_DIR, ".agents");
-const HISTORY_DIR = path.join(JOBS_DIR, ".history");
-
 const runHistory = new Map<string, JobRun>();
+
+function resolveJobsDir(cabinetPath?: string): string {
+  return path.join(resolveCabinetDir(cabinetPath), ".jobs");
+}
+
+function jobOwner(job: Partial<JobConfig>): string | undefined {
+  if (typeof job.ownerAgent === "string" && job.ownerAgent.trim()) {
+    return job.ownerAgent.trim();
+  }
+  if (typeof job.agentSlug === "string" && job.agentSlug.trim()) {
+    return job.agentSlug.trim();
+  }
+  return undefined;
+}
 
 async function loadNormalizedJobFile(
   filePath: string,
-  agentSlug?: string
+  ownerAgent?: string,
+  cabinetPath?: string
 ): Promise<JobConfig | null> {
   const raw = await readFileContent(filePath);
   const parsed = yaml.load(raw) as Partial<JobConfig> | null;
@@ -36,9 +49,10 @@ async function loadNormalizedJobFile(
     {
       ...parsed,
       provider: resolveEnabledProviderId(parsed.provider),
+      cabinetPath: normalizeCabinetPath(cabinetPath, true),
     },
-    agentSlug,
-    normalizeJobId(path.basename(filePath, ".yaml"), parsed.name)
+    ownerAgent || jobOwner(parsed),
+    normalizeJobId(path.basename(filePath, path.extname(filePath)), parsed.name)
   );
   const nextRaw = yaml.dump(normalized, { lineWidth: -1, noRefs: true });
   const nextPath = path.join(path.dirname(filePath), `${normalized.id}.yaml`);
@@ -54,184 +68,141 @@ async function loadNormalizedJobFile(
   return normalized;
 }
 
-/** Load jobs from the legacy /data/.jobs/ directory */
-async function loadLegacyJobs(): Promise<JobConfig[]> {
-  await ensureDirectory(JOBS_DIR);
-  const entries = await listDirectory(JOBS_DIR);
-  const jobs = new Map<string, JobConfig>();
+async function loadJobsForCabinet(cabinetPath?: string): Promise<JobConfig[]> {
+  const normalizedCabinetPath = normalizeCabinetPath(cabinetPath, true);
+  const jobsDir = resolveJobsDir(normalizedCabinetPath);
+  if (!(await fileExists(jobsDir))) return [];
+
+  const entries = await listDirectory(jobsDir);
+  const jobs: JobConfig[] = [];
 
   for (const entry of entries) {
-    if (entry.name.endsWith(".yaml") && !entry.isDirectory) {
-      try {
-        const config = await loadNormalizedJobFile(path.join(JOBS_DIR, entry.name));
-        if (config?.id) jobs.set(config.id, config);
-      } catch { /* skip */ }
-    }
-  }
-  return Array.from(jobs.values());
-}
-
-/** Load jobs from /data/.agents/{slug}/jobs/ directories */
-async function loadAgentJobs(): Promise<JobConfig[]> {
-  const jobs = new Map<string, JobConfig>();
-  try {
-    const entries = await listDirectory(AGENTS_DIR);
-    for (const entry of entries) {
-      if (!entry.isDirectory || entry.name.startsWith(".")) continue;
-      const agentJobsDir = path.join(AGENTS_DIR, entry.name, "jobs");
-      if (!(await fileExists(agentJobsDir))) continue;
-
-      const jobFiles = await listDirectory(agentJobsDir);
-      for (const jf of jobFiles) {
-        if (!jf.name.endsWith(".yaml") || jf.isDirectory) continue;
-        try {
-          const config = await loadNormalizedJobFile(
-            path.join(agentJobsDir, jf.name),
-            entry.name
-          );
-          if (config?.id) jobs.set(`${entry.name}/${config.id}`, config);
-        } catch { /* skip */ }
-      }
-    }
-  } catch { /* agents dir may not exist */ }
-  return Array.from(jobs.values());
-}
-
-/** Load all jobs from both legacy and agent-scoped directories */
-export async function loadAllJobs(): Promise<JobConfig[]> {
-  await ensureDirectory(HISTORY_DIR);
-  const [legacy, agentScoped] = await Promise.all([
-    loadLegacyJobs(),
-    loadAgentJobs(),
-  ]);
-  return [...legacy, ...agentScoped];
-}
-
-/** Load jobs for a specific agent */
-export async function loadAgentJobsBySlug(agentSlug: string): Promise<JobConfig[]> {
-  const agentJobsDir = path.join(AGENTS_DIR, agentSlug, "jobs");
-  if (!(await fileExists(agentJobsDir))) return [];
-
-  const entries = await listDirectory(agentJobsDir);
-  const jobs = new Map<string, JobConfig>();
-
-  for (const entry of entries) {
-    if (!entry.name.endsWith(".yaml") || entry.isDirectory) continue;
+    if (entry.isDirectory || !entry.name.endsWith(".yaml")) continue;
     try {
-      const config = await loadNormalizedJobFile(
-        path.join(agentJobsDir, entry.name),
-        agentSlug
+      const job = await loadNormalizedJobFile(
+        path.join(jobsDir, entry.name),
+        undefined,
+        normalizedCabinetPath
       );
-      if (config?.id) jobs.set(config.id, config);
-    } catch { /* skip */ }
+      if (job?.id) jobs.push(job);
+    } catch {
+      // skip malformed jobs
+    }
   }
-  return Array.from(jobs.values());
+
+  return jobs.sort((left, right) => left.name.localeCompare(right.name));
 }
 
-/** Save a job to the appropriate directory based on agentSlug */
-export async function saveAgentJob(agentSlug: string, job: JobConfig): Promise<void> {
-  const agentJobsDir = path.join(AGENTS_DIR, agentSlug, "jobs");
-  await ensureDirectory(agentJobsDir);
+export async function loadAllJobs(): Promise<JobConfig[]> {
+  const cabinetPaths = await discoverCabinetPaths();
+  const allGroups = await Promise.all(
+    cabinetPaths.map((cabinetPath) => loadJobsForCabinet(cabinetPath))
+  );
+  return allGroups.flat();
+}
+
+export async function loadAgentJobsBySlug(
+  agentSlug: string,
+  cabinetPath?: string
+): Promise<JobConfig[]> {
+  const jobs = await loadJobsForCabinet(cabinetPath);
+  return jobs.filter((job) => jobOwner(job) === agentSlug);
+}
+
+export async function saveAgentJob(
+  agentSlug: string,
+  job: JobConfig,
+  cabinetPath?: string
+): Promise<JobConfig> {
+  const normalizedCabinetPath = normalizeCabinetPath(
+    cabinetPath || job.cabinetPath,
+    true
+  );
+  const jobsDir = resolveJobsDir(normalizedCabinetPath);
+  await ensureDirectory(jobsDir);
+
   const normalized = normalizeJobConfig(
     {
       ...job,
+      ownerAgent: agentSlug,
+      agentSlug,
+      cabinetPath: normalizedCabinetPath,
       provider: resolveEnabledProviderId(job.provider),
     },
     agentSlug,
     normalizeJobId(job.id, job.name)
   );
-  const filePath = path.join(agentJobsDir, `${normalized.id}.yaml`);
+
+  const filePath = path.join(jobsDir, `${normalized.id}.yaml`);
   const raw = yaml.dump(normalized, { lineWidth: -1, noRefs: true });
   await writeFileContent(filePath, raw);
 
   if (typeof job.id === "string" && job.id !== normalized.id) {
     const fs = await import("fs/promises");
-    await fs.rm(path.join(agentJobsDir, `${job.id}.yaml`), { force: true });
+    await fs.rm(path.join(jobsDir, `${job.id}.yaml`), { force: true });
   }
+
+  return normalized;
 }
 
-/** Delete a job from the agent's jobs directory */
-export async function deleteAgentJob(agentSlug: string, jobId: string): Promise<void> {
-  const fs = await import("fs/promises");
-  const jobsDir = path.join(AGENTS_DIR, agentSlug, "jobs");
+export async function deleteAgentJob(
+  agentSlug: string,
+  jobId: string,
+  cabinetPath?: string
+): Promise<void> {
+  const jobsDir = resolveJobsDir(cabinetPath);
   if (!(await fileExists(jobsDir))) return;
 
   const normalizedJobId = normalizeJobId(jobId);
   const entries = await listDirectory(jobsDir);
+  const fs = await import("fs/promises");
+
   await Promise.all(
     entries
       .filter((entry) => entry.name.endsWith(".yaml") && !entry.isDirectory)
       .filter((entry) =>
         jobIdMatches(path.basename(entry.name, ".yaml"), normalizedJobId)
       )
-      .map((entry) => fs.rm(path.join(jobsDir, entry.name), { force: true }))
+      .map(async (entry) => {
+        const fullPath = path.join(jobsDir, entry.name);
+        const job = await loadNormalizedJobFile(fullPath, undefined, cabinetPath);
+        if (jobOwner(job || {}) !== agentSlug) return;
+        await fs.rm(fullPath, { force: true });
+      })
   );
 }
 
-export async function getJob(id: string): Promise<JobConfig | null> {
+export async function getJob(
+  id: string,
+  cabinetPath?: string
+): Promise<JobConfig | null> {
+  const jobsDir = resolveJobsDir(cabinetPath);
   const normalizedId = normalizeJobId(id);
-  const filePath = path.join(JOBS_DIR, `${normalizedId}.yaml`);
+  const filePath = path.join(jobsDir, `${normalizedId}.yaml`);
   if (await fileExists(filePath)) {
-    return loadNormalizedJobFile(filePath);
+    return loadNormalizedJobFile(filePath, undefined, cabinetPath);
   }
 
-  const entries = await listDirectory(JOBS_DIR);
+  const entries = await listDirectory(jobsDir).catch(() => []);
   for (const entry of entries) {
     if (!entry.name.endsWith(".yaml") || entry.isDirectory) continue;
     if (!jobIdMatches(path.basename(entry.name, ".yaml"), normalizedId)) continue;
-    return loadNormalizedJobFile(path.join(JOBS_DIR, entry.name));
+    return loadNormalizedJobFile(path.join(jobsDir, entry.name), undefined, cabinetPath);
   }
 
   return null;
 }
 
-export async function saveJob(job: JobConfig): Promise<void> {
-  await ensureDirectory(JOBS_DIR);
-  const normalized = normalizeJobConfig(
-    {
-      ...job,
-      provider: resolveEnabledProviderId(job.provider),
-    },
-    job.agentSlug,
-    normalizeJobId(job.id, job.name)
-  );
-  const filePath = path.join(JOBS_DIR, `${normalized.id}.yaml`);
-  const raw = yaml.dump(normalized, { lineWidth: -1, noRefs: true });
-  await writeFileContent(filePath, raw);
-
-  if (typeof job.id === "string" && job.id !== normalized.id) {
-    const fs = await import("fs/promises");
-    await fs.rm(path.join(JOBS_DIR, `${job.id}.yaml`), { force: true });
-  }
-}
-
-export async function deleteJob(id: string): Promise<void> {
-  const fs = await import("fs/promises");
-  const normalizedId = normalizeJobId(id);
-  const entries = await listDirectory(JOBS_DIR);
-  await Promise.all(
-    entries
-      .filter((entry) => entry.name.endsWith(".yaml") && !entry.isDirectory)
-      .filter((entry) =>
-        jobIdMatches(path.basename(entry.name, ".yaml"), normalizedId)
-      )
-      .map((entry) => fs.rm(path.join(JOBS_DIR, entry.name), { force: true }))
-  );
-}
-
-export async function toggleJob(id: string): Promise<JobConfig | null> {
-  const job = await getJob(id);
+export async function toggleJob(
+  id: string,
+  cabinetPath?: string
+): Promise<JobConfig | null> {
+  const job = await getJob(id, cabinetPath);
   if (!job) return null;
   job.enabled = !job.enabled;
   job.updatedAt = new Date().toISOString();
-  await saveJob(job);
-
-  if (job.enabled) {
-    await reloadDaemonSchedules().catch(() => {});
-  } else {
-    await reloadDaemonSchedules().catch(() => {});
-  }
-
+  await saveAgentJob(jobOwner(job) || job.agentSlug || "agent", job, cabinetPath);
+  await reloadDaemonSchedules().catch(() => {});
   return job;
 }
 
@@ -240,8 +211,11 @@ export function scheduleJob(job: JobConfig): void {
   void reloadDaemonSchedules().catch(() => {});
 }
 
-export async function executeJob(job: JobConfig): Promise<JobRun> {
-  const run = await startJobConversation(job);
+export async function executeJob(
+  job: JobConfig,
+  options: { scheduledAt?: string } = {}
+): Promise<JobRun> {
+  const run = await startJobConversation(job, options);
   runHistory.set(run.id, run);
   return run;
 }

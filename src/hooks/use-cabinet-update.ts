@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UpdateCheckResult } from "@/types";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 
 interface UseCabinetUpdateOptions {
   autoRefresh?: boolean;
@@ -32,7 +33,7 @@ export function useCabinetUpdate(options: UseCabinetUpdateOptions = {}) {
   const refresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      const response = await fetch("/api/system/update", {
+      const response = await dedupFetch("/api/system/update", {
         cache: "no-store",
       });
       if (!response.ok) {
@@ -49,29 +50,39 @@ export function useCabinetUpdate(options: UseCabinetUpdateOptions = {}) {
     }
   }, []);
 
-  const createBackup = useCallback(async (scope: "data" | "project" = "data") => {
-    setBackupPending(true);
-    try {
-      const response = await fetch("/api/system/backup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scope }),
-      });
-      const data = (await response.json()) as { backupPath?: string; error?: string };
-      if (!response.ok || !data.backupPath) {
-        throw new Error(data.error || `Backup failed (${response.status})`);
+  const createBackup = useCallback(
+    async (
+      scope: "data" | "project" = "data",
+      options: { includeEnvKeys?: boolean; includeSkills?: boolean } = {},
+    ) => {
+      setBackupPending(true);
+      try {
+        const response = await fetch("/api/system/backup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scope,
+            includeEnvKeys: options.includeEnvKeys === true,
+            includeSkills: options.includeSkills === true,
+          }),
+        });
+        const data = (await response.json()) as { backupPath?: string; error?: string };
+        if (!response.ok || !data.backupPath) {
+          throw new Error(data.error || `Backup failed (${response.status})`);
+        }
+        setBackupPath(data.backupPath);
+        setActionError(null);
+        return data.backupPath;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Backup failed";
+        setActionError(message);
+        throw error;
+      } finally {
+        setBackupPending(false);
       }
-      setBackupPath(data.backupPath);
-      setActionError(null);
-      return data.backupPath;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Backup failed";
-      setActionError(message);
-      throw error;
-    } finally {
-      setBackupPending(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const openDataDir = useCallback(async () => {
     try {
@@ -110,7 +121,18 @@ export function useCabinetUpdate(options: UseCabinetUpdateOptions = {}) {
   }, [refresh]);
 
   useEffect(() => {
-    void refresh();
+    // Defer the initial update check until the browser is idle so it
+    // doesn't compete with first paint / tree load on page refresh.
+    const w = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    if (typeof w.requestIdleCallback === "function") {
+      const handle = w.requestIdleCallback(() => void refresh(), { timeout: 2000 });
+      return () => w.cancelIdleCallback?.(handle);
+    }
+    const timer = window.setTimeout(() => void refresh(), 1500);
+    return () => window.clearTimeout(timer);
   }, [refresh]);
 
   useEffect(() => {

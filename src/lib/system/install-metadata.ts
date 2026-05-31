@@ -58,7 +58,7 @@ export function detectInstallKind(metadata: InstallMetadata | null): InstallKind
 }
 
 export async function listDirtyAppFiles(): Promise<string[]> {
-  if (!fsSync.existsSync(path.join(PROJECT_ROOT, ".git"))) {
+  if (!fsSync.existsSync(path.join(/*turbopackIgnore: true*/ PROJECT_ROOT, ".git"))) {
     return [];
   }
 

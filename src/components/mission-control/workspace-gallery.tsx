@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
+import { useLocale } from "@/i18n/use-locale";
 
 interface GalleryItem {
   name: string;
@@ -57,6 +58,7 @@ function formatSize(bytes?: number): string {
 }
 
 export function WorkspaceGallery({ onClose }: { onClose: () => void }) {
+  const { t } = useLocale();
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string | null>(null);
@@ -92,7 +94,7 @@ export function WorkspaceGallery({ onClose }: { onClose: () => void }) {
       <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center gap-2">
           <FolderOpen className="h-4 w-4 text-primary" />
-          <h2 className="text-[14px] font-semibold">Workspace Gallery</h2>
+          <h2 className="text-[14px] font-semibold">{t("tinyExtras:workspaceGallery")}</h2>
           <span className="text-[11px] text-muted-foreground/60">
             {filtered.length} item{filtered.length !== 1 ? "s" : ""} across {agents.length} agent{agents.length !== 1 ? "s" : ""}
           </span>
@@ -217,7 +219,7 @@ export function WorkspaceGallery({ onClose }: { onClose: () => void }) {
                         <span>{formatSize(item.size)}</span>
                       </>
                     ) : null}
-                    <span className={cn("ml-auto px-1.5 py-0.5 rounded text-[9px] uppercase font-medium tracking-wider", config.bg, config.color)}>
+                    <span className={cn("ms-auto px-1.5 py-0.5 rounded text-[9px] uppercase font-medium tracking-wider", config.bg, config.color)}>
                       {config.label}
                     </span>
                   </div>

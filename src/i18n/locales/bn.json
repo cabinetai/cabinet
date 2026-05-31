@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "এজেন্ট তৈরি করুন",
+      "avatar": "অবতার",
+      "namePlaceholder": "মার্কেটিং এজেন্ট",
+      "rolePlaceholder": "কন্টেন্ট বিশেষজ্ঞ",
+      "department": "বিভাগ",
+      "specialist": "বিশেষজ্ঞ",
+      "departmentLead": "বিভাগ প্রধান",
+      "provider": "প্রোভাইডার",
+      "runtime": "রানটাইম",
+      "promptPlaceholder": "আপনি একজন মার্কেটিং এজেন্ট…",
+      "addAgentTitle": "আপনার দলে একজন এজেন্ট যোগ করুন",
+      "addAgentDescription": "লাইব্রেরি থেকে একজন বিশেষজ্ঞ বেছে নিন। যোগ করার পর আপনি এর নাম, ভূমিকা এবং নির্দেশাবলী সম্পাদনা করতে পারবেন।",
+      "createFromScratchTitle": "শুরু থেকে তৈরি করুন",
+      "createFromScratchDescription": "নিজস্ব পরিচয়, ভূমিকা এবং নির্দেশাবলী সহ একটি নতুন এজেন্ট তৈরি করুন।",
+      "searchLibraryPlaceholder": "লাইব্রেরি অনুসন্ধান করুন",
+      "errorLoadLibrary": "এজেন্ট লাইব্রেরি লোড করা যায়নি।",
+      "errorAddAgent": "এই এজেন্ট যোগ করা যায়নি।"
+    },
+    "metric": {
+      "name": "মেট্রিকের নাম",
+      "namePlaceholder": "রেডিট রিপ্লাই",
+      "target": "লক্ষ্য",
+      "targetPlaceholder": "সপ্তাহে উত্তর",
+      "floor": "ফ্লোর",
+      "period": "সময়কাল",
+      "daily": "দৈনিক",
+      "weekly": "সাপ্তাহিক",
+      "monthly": "মাসিক"
+    },
+    "workspace": {
+      "promise": "প্রতিশ্রুতি",
+      "orgChart": "অর্গ চার্ট",
+      "jobDetails": "কাজের বিবরণ",
+      "heartbeat": "হার্টবিট",
+      "workspace": "ওয়ার্কস্পেস",
+      "editAgent": "এজেন্ট সম্পাদনা করুন",
+      "instructions": "নির্দেশাবলী",
+      "instructionsPlaceholder": "এই এজেন্টের নির্দেশাবলীর জন্য মার্কডাউন লিখুন।",
+      "newAgent": "নতুন এজেন্ট",
+      "routines": "রুটিন",
+      "browseLibrary": "এজেন্ট লাইব্রেরি ব্রাউজ করুন",
+      "editYourOwn": "আপনার নিজের এজেন্ট সম্পাদনা করুন",
+      "editorPlaceholder": "এডিটর",
+      "productAgentPlaceholder": "পণ্য লেখার এজেন্ট",
+      "instructionsBodyPlaceholder": "এই এজেন্ট কীভাবে Cabinet এবং KB-এর মধ্যে কাজ করবে তা সংজ্ঞায়িত করুন।",
+      "perAgentPrompts": "প্রতি-এজেন্ট পুনরাবৃত্ত প্রম্পট",
+      "runNow": "এখন চালান",
+      "delete": "মুছুন",
+      "viewOrgChart": "এই টিমকে একটি অর্গ চার্ট হিসাবে দেখুন (ফুলস্ক্রিন খোলে)",
+      "hideIntro": "এই ভূমিকা লুকান",
+      "sharedAcrossCabinets": "সমস্ত ক্যাবিনেটে শেয়ার করা হয়েছে",
+      "expandSchedule": "সময়সূচী প্রসারিত করুন",
+      "heartbeatsOnAgentPage": "হার্টবিট প্রতিটি এজেন্টের পৃষ্ঠায় কনফিগার করা হয়",
+      "exitFullscreen": "ফুলস্ক্রিন থেকে প্রস্থান করুন",
+      "refresh": "রিফ্রেশ",
+      "editHeartbeat": "হার্টবিট সম্পাদনা করুন",
+      "newRoutine": "নতুন রুটিন",
+      "configureHeartbeat": "হার্টবিট কনফিগার করুন",
+      "openOrgChart": "অর্গ চার্ট খুলুন",
+      "pickAnAgent": "একটি এজেন্ট বেছে নিন",
+      "dismiss": "খারিজ করুন",
+      "lockedHeartbeatTip": "এই এজেন্টটি বন্ধ আছে। হার্টবিট চালু করতে এজেন্ট ট্যাবে এটি শুরু করুন।",
+      "lockedRoutineTip": "এই এজেন্টটি বন্ধ আছে। এর রুটিন চালু করতে এজেন্ট ট্যাবে এটি শুরু করুন।",
+      "avatar": "ওয়ার্কস্পেস.অ্যাভাটার"
+    },
+    "detail": {
+      "clickToTurnOff": "বন্ধ করতে ক্লিক করুন।",
+      "loadError": "এই এজেন্ট লোড করা যায়নি।",
+      "retry": "আবার চেষ্টা করুন",
+      "color": "রঙ",
+      "customColor": "কাস্টম রঙ",
+      "preset": "প্রিসেট",
+      "editIconColor": "আইকন, রঙ বা অবতার সম্পাদনা করুন",
+      "sharedAcrossCabinetsHint": "সমস্ত ক্যাবিনেটে শেয়ার করা হয়েছে — এডিট সব জায়গায় প্রযোজ্য হবে",
+      "inbox": "ইনবক্স",
+      "conversations": "কথোপকথন",
+      "recentWork": "সাম্প্রতিক কাজ",
+      "schedule": "সময়সূচী",
+      "heartbeat": "হার্টবিট",
+      "runNow": "এখনই চালান",
+      "editRoutine": "রুটিন সম্পাদনা করুন",
+      "addRoutine": "রুটিন যোগ করুন",
+      "details": "বিস্তারিত",
+      "editingGlobalAgent": "গ্লোবাল এজেন্ট সম্পাদনা করা হচ্ছে",
+      "displayName": "ডিসপ্লে নাম",
+      "role": "ভূমিকা",
+      "department": "বিভাগ",
+      "type": "ধরন",
+      "workspace": "ওয়ার্কস্পেস",
+      "tags": "ট্যাগ",
+      "openSkillsSettings": "সেটিংস → স্কিলস খুলুন",
+      "notInCatalog": "ক্যাটালগে পাওয়া যায়নি — সরাতে ক্লিক করুন",
+      "recommendedForRole": "এই ভূমিকার জন্য প্রস্তাবিত — সংযুক্ত করতে ক্লিক করুন",
+      "promise": "প্রতিশ্রুতি",
+      "saved": "সংরক্ষিত",
+      "iconLabel": "আইকন"
+    },
+    "missionControl": {
+      "gallery": "গ্যালারি",
+      "newAgent": "নতুন এজেন্ট",
+      "allGoals": "সমস্ত লক্ষ্য",
+      "noGoals": "কোনো এজেন্টের লক্ষ্য কনফিগার করা হয়নি।",
+      "fromScratch": "শুরু থেকে",
+      "describeIt": "বর্ণনা করুন",
+      "import": "ইম্পোর্ট করুন",
+      "closeDialog": "ডায়ালগ বন্ধ করুন",
+      "describeYourAgent": "আপনার এজেন্ট বর্ণনা করুন",
+      "describePlaceholder": "আমার এমন একটি এজেন্ট দরকার যা হ্যাকার নিউজ-এ GPU-সম্পর্কিত পোস্টগুলি নিরীক্ষণ করে এবং আমাদের ব্লগ পোস্টগুলির সাথে লিঙ্ক করে চিন্তাশীল মন্তব্য লেখে…"
+    },
+    "pulseStrip": {
+      "agents": "এজেন্ট",
+      "running": "চলছে",
+      "goals": "লক্ষ্য",
+      "alerts": "সতর্কতা",
+      "cost": "খরচ",
+      "runningPlays": "চলমান প্লে",
+      "noRunning": "বর্তমানে কোনো এজেন্ট চলছে না।",
+      "costBreakdown": "খরচের বিবরণ",
+      "noUsage": "এখনো কোনো API ব্যবহার হয়নি।",
+      "totalEstimated": "মোট আনুমানিক"
+    },
+    "routine": {
+      "runNowTitle": "এই রুটিনটি এখন চালান (এককালীন, এর সময়সূচীর বাইরে)",
+      "deletePermanently": "এই রুটিনটি স্থায়ীভাবে মুছে ফেলুন",
+      "promptPlaceholder": "এই রুটিনটি কী করবে? যেমন: গতকালের কার্যকলাপের সারসংক্ষেপ করুন…",
+      "jobName": "কাজের নাম",
+      "jobNamePlaceholder": "সাপ্তাহিক কৌশল সারসংক্ষেপ",
+      "jobId": "কাজের আইডি",
+      "schedule": "সময়সূচী",
+      "model": "মডেল",
+      "enabled": "সক্রিয়"
+    }
+  },
+  "registry": {
+    "loading": "রেজিস্ট্রি থেকে লোড হচ্ছে…",
+    "readyToImport": "এই cabinet আমদানি করতে প্রস্তুত?",
+    "organization": "সংস্থা",
+    "agents": "এজেন্ট",
+    "scheduledJobs": "নির্ধারিত কাজ",
+    "about": "সম্পর্কে",
+    "cabinetName": "Cabinet নাম",
+    "cabinetNamePlaceholder": "Cabinet নাম…",
+    "searchPlaceholder": "Cabinet অনুসন্ধান করুন…",
+    "noResults": "আপনার অনুসন্ধানের সাথে কোনো cabinet মেলে না।"
+  },
+  "tasksBoard": {
+    "title": "কাজ",
+    "manualTooltip": "ম্যানুয়াল — যে কাজগুলি আপনি সরাসরি শুরু করেছেন",
+    "jobsTooltip": "কাজ — নির্ধারিত পুনরাবৃত্তিমূলক রান",
+    "heartbeatTooltip": "হার্টবিট — স্ব-নির্দেশিত এজেন্ট রান",
+    "clearSelection": "নির্বাচন বাতিল করুন (Esc)",
+    "createTask": "একটি নতুন কাজ তৈরি করুন",
+    "moreNewTypes": "আরও নতুন আইটেমের প্রকার",
+    "newTask": "নতুন কাজ",
+    "newRoutine": "নতুন রুটিন",
+    "viewKanban": "কানবান",
+    "viewList": "তালিকা",
+    "viewSchedule": "সময়সূচী",
+    "viewKanbanHint": "বোর্ড ভিউ — কাজগুলি ইনবক্স / আপনার পালা / চলছে / এইমাত্র শেষ হয়েছে / আর্কাইভ-এ বিভক্ত।",
+    "viewListHint": "প্রতিটি কাজের একটি ফ্ল্যাট তালিকা, নতুন কার্যকলাপ প্রথমে",
+    "viewScheduleHint": "নির্ধারিত রুটিন এবং আসন্ন রানের ক্যালেন্ডার",
+    "filterByAgent": "এজেন্ট দ্বারা ফিল্টার করুন: {{name}}",
+    "noToDeleteTitle": "মুছে ফেলার মতো কোনো কাজ নেই",
+    "noToDeleteFiltered": "{{filter}} এর সাথে কিছুই মেলে না। ফিল্টারটি পরিষ্কার করুন, অন্য একটি ভিউ বেছে নিন, অথবা একটি নতুন কাজ তৈরি করুন।",
+    "noToDeleteEmpty": "বোর্ডে এখনো কোনো কাজ নেই। + নতুন কাজ বোতাম দিয়ে একটি তৈরি করুন।",
+    "gotIt": "বুঝেছি",
+    "deleteCountTitle": "{{count}}টি কাজ মুছবেন?",
+    "deleteCountTitlePlural": "{{count}}টি কাজ মুছবেন?",
+    "deleteBody": "এটি স্থায়ীভাবে বর্তমানে প্রদর্শিত প্রতিটি কাজের কথোপকথনের মেটা, প্রতিলিপি এবং আর্টিফ্যাক্টগুলি সরিয়ে দেবে। এটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "deleteBodyFiltered": "এটি স্থায়ীভাবে সক্রিয় ফিল্টার দ্বারা বর্তমানে প্রদর্শিত প্রতিটি কাজের কথোপকথনের মেটা, প্রতিলিপি এবং আর্টিফ্যাক্টগুলি সরিয়ে দেবে। এটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "deleteConfirm": "{{count}}টি মুছুন",
+    "deleteAllShown": "প্রদর্শিত সব {{count}}টি কাজ মুছুন",
+    "deleteAllShownPlural": "প্রদর্শিত সব {{count}}টি কাজ মুছুন",
+    "nothingToDelete": "এই ভিউতে মোছার কিছু নেই",
+    "deleteAllAria": "প্রদর্শিত সব কাজ মুছুন",
+    "noTasksAria": "এই ভিউতে কোনো কাজ নেই",
+    "filterTrigger": "{{trigger}} ফিল্টারটি",
+    "filterTriggerAndAgent": "{{trigger}} ফিল্টার এবং নির্বাচিত এজেন্ট",
+    "filterSelectedAgent": "নির্বাচিত এজেন্ট ফিল্টার"
+  },
+  "runtime": {
+    "noProvider": "কোনো প্রদানকারী নির্বাচিত নেই",
+    "modeAriaLabel": "রানটাইম মোড",
+    "nativeTranscriptTitle": "Cabinet-এর নেটিভ প্রতিলিপি — কাঠামোগত JSON স্ট্রিম, আর্টিফ্যাক্ট, সারাংশ, সম্পূর্ণ UX",
+    "ptyWarningTitle": "একটি OpenAI API কী প্রয়োজন। ChatGPT-প্ল্যান Codex অ্যাকাউন্টে উপলব্ধ নয় — এই মডেলটি নির্বাচন করলে 'ChatGPT অ্যাকাউন্ট ব্যবহার করার সময় Codex সমর্থিত নয়' ত্রুটি দেখা দেবে।",
+    "native": "নেটিভ",
+    "terminal": "টার্মিনাল",
+    "terminalTitle": "একটি লাইভ PTY টার্মিনাল সেশনে CLI চালান (পরীক্ষামূলক হ্যাকার মোড)",
+    "providers": "প্রদানকারীগণ",
+    "modelCol": "মডেল",
+    "auto": "স্বয়ংক্রিয়",
+    "ready": "প্রস্তুত",
+    "loginRequired": "লগ ইন করুন",
+    "notInstalled": "ইনস্টল করা নেই",
+    "notAvailable": "উপলব্ধ নেই",
+    "defaultLabel": "ডিফল্ট",
+    "noProvidersAvailable": "কোনো প্রদানকারী উপলব্ধ নেই",
+    "appDefault": "অ্যাপ ডিফল্ট",
+    "selectAppDefault": "অ্যাপ ডিফল্ট নির্বাচন করুন",
+    "defaultModel": "ডিফল্ট মডেল",
+    "selectedModelLabel": "নির্বাচিত মডেল",
+    "loadingProviders": "প্রদানকারী লোড হচ্ছে...",
+    "loadingAvailableProviders": "উপলব্ধ প্রদানকারী লোড হচ্ছে…",
+    "triggerSummary": "মডেল: {{model}} · প্রচেষ্টা: {{effort}} · মাধ্যমে: {{provider}}",
+    "triggerSystemDefault": "টাস্ক মডেল — সিস্টেম ডিফল্ট ব্যবহার করা হচ্ছে (নির্বাচন করতে ক্লিক করুন)",
+    "clickToLaunch": "একটি PTY টার্মিনালে {{name}} চালু করতে ক্লিক করুন"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "এজেন্টরা সম্পূর্ণ অ্যাক্সেস সহ চলে।",
+    "backUp": "নিয়মিত আপনার ডেটা ব্যাক আপ করুন।",
+    "betaSoftware": "বিটা সফটওয়্যার। সমস্যা হতে পারে।",
+    "iAccept": "আমি পড়েছি এবং আমি গ্রহণ করি"
+  },
+  "skillAdd": {
+    "addSkill": "দক্ষতা যোগ করুন",
+    "auditTooltip": "skills.sh-এর বাহ্যিক নিরীক্ষার ফলাফল (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "এই দক্ষতার জন্য skills.sh নিরীক্ষা ডেটা উপলব্ধ নেই",
+    "preview": "পূর্বরূপ"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "এআই দল",
+      "aiTeams": "এআই দলসমূহ",
+      "routines": "রুটিন"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "এজেন্ট কনফিগারেশন সম্পাদনা করুন",
+    "exportBundle": "এজেন্ট বান্ডেল এক্সপোর্ট করুন",
+    "goals": "লক্ষ্য",
+    "workspace": "কর্মক্ষেত্র"
+  },
+  "scheduleRow": {
+    "deleteQ": "মুছবেন?",
+    "confirmDelete": "মোছা নিশ্চিত করুন",
+    "cancelDelete": "মোছা বাতিল করুন",
+    "runNow": "এখন চালান"
+  },
+  "apiKeys": {
+    "addKey": "কী যোগ করুন",
+    "edit": "সম্পাদনা করুন",
+    "remove": "সরান",
+    "newApiKey": "নতুন এপিআই কী"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet আপডেট",
+    "dataDirectory": "ডেটা ডিরেক্টরি",
+    "backups": "ব্যাকআপ"
+  },
+  "kanban": {
+    "stopAllInLane": "এই লেনের সমস্ত চলমান কাজ বন্ধ করুন",
+    "restartAllInLane": "এই লেনের সমস্ত কাজ পুনরায় চালু করুন",
+    "newTask": "নতুন কাজ",
+    "collapseColumn": "কলাম সঙ্কুচিত করুন",
+    "kill": "বন্ধ করুন",
+    "laneInbox": "ইনবক্স",
+    "laneInboxHint": "খসড়া করা হয়েছে — আপনার শুরু করার অপেক্ষায়",
+    "laneNeeds": "আপনার পালা",
+    "laneNeedsHint": "এজেন্ট একটি প্রশ্ন জিজ্ঞাসা করেছে বা অনুমোদনের প্রয়োজন",
+    "laneRunning": "চলছে",
+    "laneRunningHint": "এজেন্টরা এখন কাজ করছে",
+    "laneDone": "এইমাত্র শেষ হয়েছে",
+    "laneDoneHint": "গত এক ঘণ্টায় সম্পন্ন হয়েছে",
+    "laneArchive": "আর্কাইভ",
+    "laneArchiveHint": "পুরানো এবং স্বীকৃত"
+  },
+  "terminalTabs": {
+    "newTab": "নতুন টার্মিনাল ট্যাব",
+    "closeTab": "টার্মিনাল বন্ধ করুন"
+  },
+  "newTaskButton": {
+    "createNew": "নতুন তৈরি করুন…",
+    "newTask": "নতুন কাজ",
+    "newRoutine": "নতুন রুটিন"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "সাপ্তাহিক কৌশল সারসংক্ষেপ",
+    "schedule": "সময়সূচী",
+    "jobId": "জব আইডি",
+    "enabled": "সক্রিয় — এই সময়সূচীতে চালান"
+  },
+  "editIdentity": {
+    "title": "এজেন্ট সম্পাদনা করুন",
+    "displayName": "প্রদর্শন নাম",
+    "color": "রঙ",
+    "hexPlaceholder": "#হেক্স"
+  },
+  "cabinetScheduler": {
+    "startAll": "সমস্ত এজেন্ট শুরু করুন",
+    "startAllSubtitle": "হার্টবিট এবং ক্রন জব সক্রিয় করুন",
+    "stopAll": "সমস্ত এজেন্ট বন্ধ করুন",
+    "stopAllSubtitle": "হার্টবিট এবং ক্রন জব বিরতি দিন"
+  },
+  "skillLibrary": {
+    "readOnly": "শুধুমাত্র পঠনযোগ্য — Cabinet থেকে সম্পাদনা করা যাবে না",
+    "noUpstream": "সরাসরি এই ক্যাবিনেটে তৈরি করা হয়েছে — কোনো আপস্ট্রিম গিট উৎস রেকর্ড করা হয়নি",
+    "executableWarning": "বান্ডেলে এক্সিকিউটেবল স্ক্রিপ্ট রয়েছে — অনুমোদনের আগে পর্যালোচনা করুন",
+    "skills": "দক্ষতা",
+    "imported": "আমদানি করা হয়েছে",
+    "importing": "আমদানি করা হচ্ছে…",
+    "import": "আমদানি করুন"
+  },
+  "embedPopover": {
+    "placeholder": "একটি লিঙ্ক পেস্ট করুন (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, অথবা যেকোনো URL)",
+    "notValidUrl": "বৈধ URL নয়",
+    "anyUrlWorks": "যেকোনো পাবলিক URL কাজ করবে।",
+    "facebook": "ফেসবুক",
+    "instagram": "ইনস্টাগ্রাম",
+    "spotify": "স্পটিফাই",
+    "anyIframe": "যেকোনো আইফ্রেম URL"
+  },
+  "rowActions": {
+    "stop": "বন্ধ করুন",
+    "stopHint": "এই রানটি এখনই বন্ধ করুন (SIGTERM পাঠায়)",
+    "restart": "পুনরায় শুরু করুন",
+    "restartHint": "মূল প্রম্পট থেকে আবার চালান",
+    "runHint": "এই কাজটি এখনই শুরু করুন"
+  },
+  "schedulesPanel": {
+    "title": "নির্ধারিত কাজ",
+    "noJobs": "এখনো কোনো ক্যাবিনেট কাজ কনফিগার করা হয়নি।",
+    "heartbeats": "হার্টবিট",
+    "noHeartbeats": "এখনো কোনো হার্টবিট কনফিগার করা হয়নি।"
+  },
+  "scheduleTab": {
+    "explainer1": "আপনার দল এই সপ্তাহে যা কিছু করছে, একটি ক্যালেন্ডারে। গোলাপী হলো হার্টবিট, সবুজ হলো রুটিন। এটি সম্পাদনা করতে যেকোনো পিল-এ ক্লিক করুন।",
+    "explainer2": "বিরোধ শনাক্ত করতে, শান্ত সময় খুঁজে বের করতে, অথবা এক নজরে দল কতটা ব্যস্ত তা দেখতে এই ট্যাবটি ব্যবহার করুন।",
+    "aboutAria": "সময়সূচী সম্পর্কে",
+    "modeDay": "দিন",
+    "modeWeek": "সপ্তাহ",
+    "modeMonth": "মাস"
+  },
+  "mermaidViewer": {
+    "zoomOut": "জুম আউট করুন",
+    "zoomIn": "জুম ইন করুন",
+    "resetView": "ভিউ রিসেট করুন",
+    "syntaxError": "ডায়াগ্রাম সিনট্যাক্স ত্রুটি"
+  },
+  "helpPage": {
+    "keyboard": "কীবোর্ড",
+    "skills": "দক্ষতা",
+    "apiKeys": "API কী",
+    "mcpServers": "MCP সার্ভার",
+    "title": "সাহায্য",
+    "howTo": "কীভাবে করবেন",
+    "heading": "Cabinet কীভাবে কাজ করে তা জানুন",
+    "subheading": "Cabinet থেকে সর্বাধিক সুবিধা পেতে সংক্ষিপ্ত ডেমো, ওয়াকথ্রু এবং প্রিভিউ।",
+    "ctaWatchTour": "ট্যুর দেখুন",
+    "ctaWatchDemo": "ডেমো দেখুন",
+    "ctaCheatSheet": "চিট শীট খুলুন",
+    "ctaComingSoon": "শীঘ্রই আসছে",
+    "discordHeading": "যা খুঁজছেন তা খুঁজে পাননি?",
+    "discordSubheading": "আমরা ডিসকর্ডে আছি — এসে হাই বলুন, প্রশ্ন করুন, আপনি কী তৈরি করছেন তা শেয়ার করুন।",
+    "discordCta": "ডিসকর্ডে যোগ দিন",
+    "items": {
+      "tour": {
+        "title": "আপনার <accent>Cabinet</accent>-এর সাথে পরিচিত হন।",
+        "description": "আপনার এআই দল। আপনার জ্ঞানভাণ্ডার। এক জায়গায়।"
+      },
+      "agents": {
+        "title": "আপনার <accent>এআই দল</accent>।",
+        "description": "লিড এবং বিশেষজ্ঞদের নিয়োগ করুন। তাদের বিভাগগুলিতে ভাগ করুন। তাদের একে অপরের কাছে কাজ পাঠাতে দিন।"
+      },
+      "tasks": {
+        "title": "<accent>টাস্ক বোর্ড</accent>।",
+        "description": "কানবান, তালিকা এবং সময়সূচী ভিউ। এজেন্ট বা অবস্থা অনুযায়ী ফিল্টার করুন। প্রতিটি কাজের জন্য একটি রানটাইম বেছে নিন।"
+      },
+      "knowledge": {
+        "title": "আপনার <accent>জ্ঞানভাণ্ডার</accent>।",
+        "description": "মার্কডাউন, CSV, PDF, কোড, নোটবুক, মারমেইড, ছবি, অডিও — সবকিছু ইনলাইন রেন্ডার হয়। আপনার ডেটা আপনার মেশিনে থাকে; এটি আপনার, আমাদের নয়।"
+      },
+      "cabinets": {
+        "title": "<accent>এআই দল</accent>-এর একটি দল।",
+        "description": "Cabinet-এর মধ্যে Cabinet থাকে। প্রতিটি নিজস্ব ডেটা, এজেন্ট এবং দৃশ্যমানতার সুযোগ সহ নিজস্ব এআই দল — এবং তারা গাছের উপরে ও নিচে সহযোগিতা করতে পারে।"
+      },
+      "routines": {
+        "title": "<accent>রুটিন</accent> ও সময়সূচী।",
+        "description": "প্রতিদিন সকাল ৯টায়, প্রতি শুক্রবার, অথবা পরের সোমবার একবার একটি কাজ চালান। ক্রন, ক্যালেন্ডার, অথবা স্বাভাবিক ভাষা ব্যবহার করুন।"
+      },
+      "conversations": {
+        "title": "কথাবার্তা ও <accent>অনুমোদন</accent>।",
+        "description": "এজেন্টরা কর্মের প্রস্তাব দেয় — একটি কাজ শুরু করা, একটি কাজ সময়সূচী করা — এবং কিছু শুরু হওয়ার আগে আপনি অনুমোদন করেন।"
+      },
+      "themes": {
+        "title": "এটি <accent>আপনার</accent> করে নিন।",
+        "description": "লাইট এবং ডার্ক থিমগুলির একটি কিউরেটেড সেট থেকে বেছে নিন — Paper, Slate, Claude, Ink, এবং আরও অনেক কিছু।"
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — আপনার নিজস্ব এআই আনুন।",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — আপনি যে প্রদানকারীদের জন্য ইতিমধ্যেই অর্থ প্রদান করেন, তাদের নিয়ে আসুন। একটি ডিফল্ট বেছে নিন, অথবা প্রতিটি কাজের জন্য ওভাররাইড করুন।"
+      },
+      "shortcuts": {
+        "title": "<accent>কিবোর্ড</accent> শর্টকাট।",
+        "description": "একটি অনুসন্ধানযোগ্য কার্ডে প্রতিটি Cabinet শর্টকাট। এটি পুনরায় খুলতে যেকোনো জায়গা থেকে ? চাপুন। নাম বা কী দ্বারা ফিল্টার করুন — নেভিগেশন, এডিটিং, কাজ, প্যানেল এবং স্ল্যাশ কমান্ডের জন্য পাস।"
+      },
+      "skills": {
+        "title": "আপনার এজেন্টদের জন্য <accent>দক্ষতা</accent>।",
+        "description": "ইনস্টলযোগ্য এজেন্ট দক্ষতা — মডেল একটি কাজের জন্য যে প্লেবুকগুলি ব্যবহার করে। GitHub বা skills.sh থেকে ইনস্টল করুন, একটি পার্সোনার সাথে সংযুক্ত করুন, অথবা একটি একক রানের জন্য যেকোনো কম্পোজারে @-উল্লেখ করুন।"
+      },
+      "apiKeysItem": {
+        "title": "আপনার সরঞ্জামগুলির জন্য <accent>API কী</accent>।",
+        "description": "আপনার OpenAI, Anthropic, অথবা GitHub অ্যাকাউন্ট একবার প্লাগ ইন করুন — Cabinet-এর প্রতিটি এজেন্ট এবং দক্ষতা এটি ব্যবহার করবে। আপনি আপনার নিজস্ব বিল পরিশোধ করেন, আপনার নিজস্ব কোটা ব্যবহার করেন, কোনো মধ্যস্থতাকারী নেই।"
+      },
+      "integrations": {
+        "title": "<accent>MCP সার্ভার</accent> ও ইন্টিগ্রেশন।",
+        "description": "MCP সার্ভার, Slack, Telegram, Gmail, এবং Calendar OAuth — একবার সংযুক্ত করুন এবং Cabinet টোকেনগুলি পরিচালনা করবে। শীঘ্রই আসছে।"
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "কিবোর্ড শর্টকাট",
+    "filterPlaceholder": "ফিল্টার…",
+    "close": "বন্ধ করুন"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "লাইভ টার্মিনাল",
+    "runningHeartbeat": "হার্টবিট চলছে…",
+    "memory": "মেমরি",
+    "recentActivity": "সাম্প্রতিক কার্যকলাপ"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "আপনার অবতার",
+    "preset": "প্রিসেট",
+    "useInitials": "আদ্যক্ষর ফলব্যাক ব্যবহার করুন",
+    "custom": "কাস্টম"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "স্থানীয় অ্যাপ-কোড পরিবর্তন সনাক্ত করা হয়েছে"
+  },
+  "logsPanel": {
+    "classifiedError": "শ্রেণীবদ্ধ ত্রুটি",
+    "session": "সেশন",
+    "noEvents": "এখনো কোনো ইভেন্ট নেই।",
+    "noTranscript": "এখনো কোনো প্রতিলিপি নেই।"
+  },
+  "conversationResult": {
+    "prompt": "প্রম্পট",
+    "result": "ফলাফল",
+    "noSummary": "কোনো সারসংক্ষেপ ধরা পড়েনি।"
+  },
+  "scheduleRowPlus": {
+    "delete": "মুছুন"
+  },
+  "attachmentPicker": {
+    "attachFiles": "ফাইল সংযুক্ত করুন"
+  },
+  "demos": {
+    "aiTeam": "এআই দল",
+    "specialist": "বিশেষজ্ঞ",
+    "legal": "আইনি",
+    "global": "বৈশ্বিক",
+    "editor": "সম্পাদক",
+    "slashMenu": "স্ল্যাশ মেনু"
+  },
+  "slideDataCopy": {
+    "slideNum": "০১ · ডেটা",
+    "headlineSentence": "আপনার <accent>একক উৎস</accent> সত্যের।",
+    "paragraphPrefix": "মার্কডাউন, পিডিএফ, স্প্রেডশীট, স্লাইড, ছবি, ভিডিও, অডিও, লিঙ্ক করা রেপো, এম্বেড করা ওয়েব অ্যাপ, Google Docs। এর যেকোনোটি উল্লেখ করুন ",
+    "paragraphSuffix": "।",
+    "secondParagraphPrefix": "সবকিছুর জন্য একটি জায়গা — যাতে আপনি এবং আপনার এআই দল পড়েন, সম্পাদনা করেন এবং পাঠান ",
+    "sameFiles": "একই ফাইল",
+    "secondParagraphSuffix": ", কপির কপি নয়।",
+    "mockTitle": "হিলার Cabinet"
+  },
+  "slideData": {
+    "thailandRootLabel": "থাইল্যান্ড ভ্রমণ",
+    "thailandCaption": "আপনার সমস্ত ফাইল এক জায়গায় দেখুন।",
+    "videoTitle": "নাইট মার্কেট.mp4",
+    "taxRootLabel": "কর ২০২৬",
+    "taxCaption": "কর ২০২৬ — একটি লাইভ ক্যালকুলেটর ওয়েব অ্যাপ, আপনার cabinet-এ সরাসরি এম্বেড করা।",
+    "calculatorTitle": "ক্যালকুলেটর",
+    "liveAppBadge": "লাইভ অ্যাপ",
+    "taxEstimateLabel": "২০২৬ সালের করের অনুমান",
+    "income": "আয়",
+    "deductions": "ছাড়",
+    "taxBracket": "করের স্তর",
+    "estimatedTax": "আনুমানিক কর",
+    "healthRootLabel": "স্বাস্থ্য",
+    "healthCaption": "ভিটামিন ও ল্যাব — একটি স্প্রেডশীট যা একটি পৃষ্ঠার মতো মনে হয়।",
+    "csvTitle": "দৈনিক ভিটামিন.csv",
+    "csvColVitamin": "ভিটামিন",
+    "csvColDose": "ডোজ",
+    "csvColTime": "সময়",
+    "csvColDone": "সম্পন্ন",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "কোডবেস — যেকোনো Git রেপো লিঙ্ক করুন, যা আপনার এজেন্টদের দ্বারা অনুসন্ধানযোগ্য।",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "টিএস"
+  },
+  "slideTasks": {
+    "slideNum": "০৩ · কাজ",
+    "typedCommand": "১০টি কাজ চালান, প্রতিটি একটি গান লিখবে, @Songs/ এ সংরক্ষণ করুন",
+    "headlineSentence": "<accent>শুরু</accent> করতে প্রস্তুত?",
+    "paragraphPrefix": "একটি কাজ লিখুন। একটি চালান, দশটি চালান, সেগুলিকে চিরতরে সময়সূচী করুন। পৃষ্ঠাগুলি উল্লেখ করুন ",
+    "paragraphSuffix": ", আউটপুট যেখানে খুশি সংরক্ষণ করুন। আপনি এখন পরিচালক।",
+    "savingFolder": "গান/"
+  },
+  "slideAgents": {
+    "persona": "পার্সোনা",
+    "heartbeat": "হার্টবিট",
+    "jobs": "কাজ",
+    "aiTeam": "এআই দল",
+    "otherWriter": "লেখক",
+    "otherOrganizer": "সংগঠক",
+    "idle": "নিষ্ক্রিয়",
+    "researchAnalyst": "গবেষণা বিশ্লেষক",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "সক্রিয়",
+    "personaBody": "\"কঠোর বিশ্লেষক। সূত্র উল্লেখ করে। পরস্পরবিরোধী দাবি চিহ্নিত করে।\"",
+    "heartbeatBody": "প্রতি ১৫ মিনিটে @Market Research স্ক্যান করে",
+    "jobsBody": "সোম 9:00 · সাপ্তাহিক প্রতিযোগী সারসংক্ষেপ",
+    "slideNum": "02 · এজেন্ট",
+    "paragraphPrefix": "প্রতিটি এজেন্টের একটি ",
+    "personaWord": "ব্যক্তিত্ব",
+    "paragraphMiddle": ", নিজস্ব ",
+    "scheduleWord": "সময়সূচী",
+    "paragraphMiddle2": ", এবং একটি ",
+    "memoryWord": "স্মৃতি",
+    "paragraphSuffix": ". আপনার এআই এজেন্টরা ২৪/৭ কাজ সম্পন্ন করে। আপনি মানুষ হন — বাকিটা তারা সামলে নেবে।",
+    "aiTeamSentence": "আপনার <accent>এআই দল</accent>।"
+  },
+  "startWork": {
+    "close": "বন্ধ করুন",
+    "selectAgent": "এজেন্ট নির্বাচন করুন",
+    "titleNow": "কী করা দরকার?",
+    "titleRecurring": "একটি পুনরাবৃত্ত রুটিন সেট আপ করুন",
+    "titleHeartbeat": "একটি সময়সূচী অনুযায়ী এই এজেন্টকে জাগিয়ে তুলুন",
+    "titleEdit": "কাজ সম্পাদনা করুন",
+    "submitStart": "শুরু করুন",
+    "submitAddInbox": "ইনবক্সে যোগ করুন",
+    "submitSaveEdit": "পরিবর্তনগুলি সংরক্ষণ করুন",
+    "submitCreateRoutine": "রুটিন তৈরি করুন",
+    "submitSaveHeartbeat": "হার্টবিট সংরক্ষণ করুন",
+    "saving": "সংরক্ষণ করা হচ্ছে…",
+    "current": "বর্তমান",
+    "modeInboxLabel": "→ ইনবক্স",
+    "modeInboxHint": "ইনবক্সে সংরক্ষণ করুন — যখন প্রস্তুত হবেন তখন শুরু করুন",
+    "modeNowLabel": "এখনই চালান",
+    "modeNowHint": "এই কথোপকথনটি এখনই শুরু করুন",
+    "modeRecurringLabel": "একটি সময়সূচী অনুযায়ী",
+    "modeRecurringHint": "এই প্রম্পটটি একটি সময়সূচী অনুযায়ী চালান",
+    "modeHeartbeatLabel": "হার্টবিট",
+    "modeHeartbeatHint": "এজেন্টকে তার নিজস্ব ছন্দে জাগিয়ে তুলুন",
+    "agentFallback": "এজেন্ট",
+    "failedToStart": "শুরু করতে ব্যর্থ হয়েছে",
+    "failedToSave": "পরিবর্তনগুলি সংরক্ষণ করতে ব্যর্থ হয়েছে",
+    "failedToSaveHeartbeat": "হার্টবিট সংরক্ষণ করতে ব্যর্থ হয়েছে"
+  },
+  "googleDoc": {
+    "noUrl": "কোনো Google URL সেট করা হয়নি",
+    "anyoneWithLink": "লিঙ্ক সহ যে কেউ",
+    "publishedToWeb": "ওয়েবে প্রকাশিত"
+  },
+  "feedback": {
+    "close": "বন্ধ করুন",
+    "rolePlaceholder": "যেমন: ইন্ডি হ্যাকার, SaaS-এর পিএম, ডিজাইন শিক্ষার্থী, শখের মানুষ…",
+    "joinDiscord": "ডিসকর্ডে যোগ দিন",
+    "header": "হিলার পক্ষ থেকে দ্রুত খোঁজখবর",
+    "howGoing": "এখন পর্যন্ত কেমন চলছে?",
+    "starsCount": "{{n}} স্টার",
+    "starsCountPlural": "{{n}} স্টার",
+    "likeCabinet": "Cabinet পছন্দ?",
+    "starTooltipUnknown": "গিটহাবে Cabinet-কে স্টার দিন — যদি এটি আপনার কাজে আসে, একটি স্টার সত্যিই সাহায্য করে",
+    "starTooltipWithCount": "{{count}} গিটহাব স্টার — আপনারটি যোগ করতে ক্লিক করুন",
+    "starLabel": "স্টার দিন",
+    "backgroundLabel": "আপনার পটভূমি কী?",
+    "optional": "(ঐচ্ছিক)",
+    "discordCta": "সরাসরি কথা বলতে চান, নাকি অন্য Cabinet সদস্যদের সাথে আড্ডা দিতে চান?",
+    "maybeLater": "পরে হতে পারে",
+    "send": "পাঠান",
+    "thanksTitle": "ধন্যবাদ!",
+    "thanksBody": "আপনার মতামতই পরবর্তী নির্মাণকে রূপ দেয়।",
+    "copy2Lead": "আপনি Cabinet কয়েকবার খুলেছেন। ধন্যবাদ! Cabinet ওপেন সোর্স এবং সবেমাত্র শুরু হয়েছে, তাই আপনি এখানে যা বলবেন তা আসলে পরবর্তী নির্মাণকে পরিবর্তন করবে।",
+    "copy2Q1": "আজ Cabinet-এ আপনি কী করার চেষ্টা করছিলেন?",
+    "copy2Q1Hint": "এক বাক্যই যথেষ্ট। আপনি এটি কীসের জন্য খুলেছিলেন, কী করতে পারতো তা নয়।",
+    "copy2Q2": "শেষবার যখন আপনি এটি করতে চেয়েছিলেন, তখন Cabinet-এর পরিবর্তে কী ব্যবহার করেছিলেন?",
+    "copy2Q2Hint": "যেকোনো টুল, অ্যাপ, বা ডকুমেন্ট, এমনকি কলম ও কাগজও।",
+    "copy6Lead": "আপনি ফিরে এসেছেন, এবং এটাই সবচেয়ে গুরুত্বপূর্ণ সংকেত। আপনি ভুলে যাওয়ার আগে আমি অসম্পূর্ণ দিকগুলো সম্পর্কে শুনতে চাই।",
+    "copy6Q1": "আজ Cabinet-এ আপনি কী করার চেষ্টা করছিলেন?",
+    "copy6Q1Hint": "এক বাক্যই যথেষ্ট।",
+    "copy6Q2": "এই সপ্তাহে কোন একটি জিনিস আপনাকে প্রায় Cabinet ব্যবহার করা থেকে বিরত রেখেছিল?",
+    "copy6Q2Hint": "যে জিনিসটি আপনাকে সবচেয়ে বেশি বিরক্ত করেছে। সুনির্দিষ্ট হন। \"X বিভ্রান্তিকর ছিল\" \"ইউএক্স\" এর চেয়ে ভালো।"
+  },
+  "apiKeysSection": {
+    "cancel": "বাতিল করুন",
+    "pasteHere": "এখানে পেস্ট করুন",
+    "pasteNewValue": "নতুন মান পেস্ট করুন"
+  },
+  "storageBackend": {
+    "title": "স্টোরেজ ব্যাকএন্ড",
+    "migrationFailed": "মাইগ্রেশন ব্যর্থ হয়েছে"
+  },
+  "linkRepo": {
+    "title": "জ্ঞান লোড করুন",
+    "intro": "আপনার মেশিনের যেকোনো ফোল্ডারে Cabinet নির্দেশ করুন। Cabinet একটি সিমলিঙ্ক তৈরি করে যাতে ফোল্ডারের বিষয়বস্তু আপনার Knowledge Base-এ প্রদর্শিত হয় এবং AI এজেন্টদের জন্য প্রসঙ্গ হিসাবে উপলব্ধ থাকে। আসল ফোল্ডারটি কখনও সরানো বা অনুলিপি করা হয় না।",
+    "symlinkNote": "এটি একটি সিম্বলিক লিঙ্ক তৈরি করে — ফাইলগুলি যেখানে আছে সেখানেই থাকে।",
+    "autoDetectPlaceholder": "গিট রিমোট থেকে স্বয়ংক্রিয়ভাবে সনাক্ত করুন (ঐচ্ছিক)",
+    "shortSummaryPlaceholder": "এজেন্টদের জন্য ঐচ্ছিক সংক্ষিপ্ত সারসংক্ষেপ"
+  },
+  "recentTasks": {
+    "ptyMode": "টার্মিনাল (PTY) মোড",
+    "revealOlder": "আরও পুরনো কাজ দেখান",
+    "showOlder": "পুরনো দেখান"
+  },
+  "treeNode": {
+    "openCabinet": "Cabinet ভিউ খুলুন",
+    "pageTitlePlaceholder": "পৃষ্ঠার শিরোনাম…",
+    "rename": "নাম পরিবর্তন করুন",
+    "openBadge": "খুলুন",
+    "sectionAdd": "এই আইটেমে যোগ করুন",
+    "sectionThis": "এই আইটেম",
+    "addSubPage": "সাব পেজ যোগ করুন",
+    "newFolder": "নতুন ফোল্ডার",
+    "createFile": "নতুন ফাইল তৈরি করুন…",
+    "connectKnowledge": "জ্ঞান সংযুক্ত করুন…",
+    "symlinkTag": "সিমলিঙ্ক",
+    "importFile": "ফাইল ইম্পোর্ট করুন…",
+    "importFolder": "ফোল্ডার ইম্পোর্ট করুন…",
+    "createCabinet": "এখানে Cabinet তৈরি করুন",
+    "editSymlink": "সিমলিঙ্ক এডিট করুন…",
+    "settings": "সেটিংস…",
+    "moveTo": "এখানে সরান…",
+    "copyRelativePath": "আপেক্ষিক পাথ কপি করুন",
+    "copyFullPath": "সম্পূর্ণ পাথ কপি করুন",
+    "openInFinder": "ফাইন্ডারে খুলুন",
+    "delete": "মুছুন",
+    "unlink": "আনলিঙ্ক করুন",
+    "folderNamePlaceholder": "ফোল্ডারের নাম",
+    "creating": "তৈরি হচ্ছে…",
+    "create": "তৈরি করুন",
+    "addSubPageTitle": "“{{name}}”-এ সাব পেজ যোগ করুন",
+    "newFolderTitle": "“{{name}}”-এ নতুন ফোল্ডার"
+  },
+  "newFile": {
+    "title": "নতুন ফাইল তৈরি করুন",
+    "subtitle": "একটি ফাইলের ধরন বেছে নিন। প্রস্তুত হলে Cabinet এটি এডিটরে খুলবে।",
+    "groupNative": "Cabinet-এ এডিট করুন",
+    "groupOffice": "অফিস (খালি — বাইরে থেকে এডিট করুন)",
+    "groupGoogle": "গুগল (লিঙ্ক করা)",
+    "namePlaceholder": "ফাইলের নাম",
+    "create": "তৈরি করুন",
+    "creating": "তৈরি হচ্ছে…",
+    "googleUrlLabel": "গুগল ইউআরএল (ঐচ্ছিক)",
+    "googleUrlPlaceholder": "একটি শেয়ারযোগ্য গুগল লিঙ্ক পেস্ট করুন, অথবা পরে যোগ করার জন্য খালি রাখুন",
+    "officeNote": "Cabinet অফিস ফাইলগুলি শুধুমাত্র পঠনযোগ্য হিসাবে দেখায়। ডেস্কটপ অ্যাপে এডিট করতে “ফাইন্ডারে খুলুন” ব্যবহার করুন।",
+    "types": {
+      "markdown": "মার্কডাউন পেজ",
+      "markdownDesc": "রিচ টেক্সট নোট, Cabinet-এ এডিটযোগ্য",
+      "code": "কোড ফাইল",
+      "codeDesc": "যেকোনো সোর্স/টেক্সট ফাইল — এক্সটেনশন বেছে নিন",
+      "mermaid": "মারমেইড ডায়াগ্রাম",
+      "mermaidDesc": "কোড হিসাবে ফ্লোচার্ট এবং ডায়াগ্রাম",
+      "csv": "CSV টেবিল",
+      "csvDesc": "কমা-বিভক্ত স্প্রেডশীট ডেটা",
+      "docx": "ওয়ার্ড ডকুমেন্ট",
+      "docxDesc": "খালি .docx",
+      "xlsx": "এক্সেল স্প্রেডশীট",
+      "xlsxDesc": "খালি .xlsx",
+      "pptx": "পাওয়ারপয়েন্ট",
+      "pptxDesc": "খালি .pptx",
+      "gdoc": "গুগল ডক",
+      "gdocDesc": "একটি গুগল ডক এম্বেড করুন",
+      "gsheet": "গুগল শীট",
+      "gsheetDesc": "একটি গুগল শীট এম্বেড করুন",
+      "gslides": "গুগল স্লাইডস",
+      "gslidesDesc": "গুগল স্লাইডস এম্বেড করুন"
+    },
+    "codeExtLabel": "এক্সটেনশন",
+    "googleTag": "গুগল",
+    "extHint": "শুধু নামটি টাইপ করুন — Cabinet {{ext}} এক্সটেনশন যোগ করবে।",
+    "createFailed": "ফাইল তৈরি করা যায়নি।"
+  },
+  "fileSettings": {
+    "googleTitle": "গুগল এম্বেড সেটিংস",
+    "googleKindLabel": "প্রকার",
+    "googleUrlLabel": "গুগল ইউআরএল",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "এম্বেড লোড হওয়ার জন্য ডকের শেয়ারিং অবশ্যই “লিঙ্ক সহ যে কেউ” অথবা “ওয়েবে প্রকাশিত” হতে হবে।",
+    "openLink": "গুগলে খুলুন",
+    "googleKinds": {
+      "docs": "ডক্স",
+      "sheets": "শীটস",
+      "slides": "স্লাইডস",
+      "forms": "ফর্মস",
+      "drive": "ড্রাইভ"
+    },
+    "appTitle": "ওয়েব অ্যাপ সেটিংস",
+    "modeLabel": "এটি কিভাবে খুলবে?",
+    "modeWebsite": "পেজ ভিউ",
+    "modeWebsiteDesc": "সাইডবার এবং এআই প্যানেল দৃশ্যমান রেখে ইনলাইন খুলবে।",
+    "modeApp": "ওয়েব অ্যাপ",
+    "modeAppDesc": "পূর্ণ স্ক্রিনে খুলবে; সাইডবার এবং এআই প্যানেল স্বয়ংক্রিয়ভাবে সঙ্কুচিত হবে।",
+    "convertNote": "এটি ফোল্ডারে .app মার্কার ফাইলটি টগল করে। আপনার ফাইলগুলি পরিবর্তিত হয় না।",
+    "save": "সংরক্ষণ করুন",
+    "saving": "সংরক্ষণ করা হচ্ছে…",
+    "cancel": "বাতিল করুন",
+    "saveFailed": "সেটিংস সংরক্ষণ করা যায়নি।"
+  },
+  "editSymlink": {
+    "title": "সিমলিঙ্ক সম্পাদনা করুন",
+    "intro": "এই নলেজ বেস এন্ট্রিটি আপনার মেশিনের অন্য কোথাও একটি ফোল্ডারের একটি সিম্বলিক লিঙ্ক।",
+    "kbPathLabel": "নলেজ বেস পাথ",
+    "targetLabel": "লিঙ্ক করা হয়েছে (ডিস্কে)",
+    "brokenWarning": "লক্ষ্য ফোল্ডারটি আর বিদ্যমান নেই। এটিকে নিচে একটি বৈধ ফোল্ডারে পুনরায় নির্দেশ করুন।",
+    "repointLabel": "একটি নতুন ফোল্ডারে পুনরায় নির্দেশ করুন",
+    "repointHint": "Cabinet লিঙ্কটি এখানে নির্দেশ করার জন্য প্রতিস্থাপন করবে। ফাইলগুলি কখনও সরানো হয় না।",
+    "browse": "ব্রাউজ করুন",
+    "nameLabel": "নাম",
+    "descriptionLabel": "বর্ণনা",
+    "save": "সংরক্ষণ করুন",
+    "saving": "সংরক্ষণ করা হচ্ছে…",
+    "copyTarget": "লক্ষ্য পথ কপি করুন",
+    "saveFailed": "সিমলিঙ্ক আপডেট করা যায়নি।"
+  },
+  "importFolder": {
+    "importing": "ফোল্ডার ইম্পোর্ট করা হচ্ছে…",
+    "failed": "ফোল্ডার ইম্পোর্ট ব্যর্থ হয়েছে: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "কাজ লোড হচ্ছে"
+  },
+  "agentList": {
+    "agentLibrary": "এজেন্ট লাইব্রেরি",
+    "newAgent": "নতুন এজেন্ট"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "আপনার দল",
+    "lead": "প্রধান",
+    "specialist": "বিশেষজ্ঞ",
+    "tasks": "কাজসমূহ",
+    "todo": "করণীয়",
+    "doing": "চলছে",
+    "done": "সম্পন্ন হয়েছে",
+    "anythingGoes": "যেকোনো কিছু চলে",
+    "marketing": "মার্কেটিং",
+    "product": "পণ্য",
+    "research": "গবেষণা",
+    "design": "ডিজাইন",
+    "routines": "রুটিন",
+    "dailyReview": "দৈনিক পর্যালোচনা",
+    "weeklyDigest": "সাপ্তাহিক সারসংক্ষেপ",
+    "conversation": "কথোপকথন",
+    "userQuery": "২ সপ্তাহের থাইল্যান্ড ভ্রমণের পরিকল্পনা করুন…",
+    "agentReply": "আমি লাইব্রেরিয়ান এবং সম্পাদককে পাঠাবো।",
+    "pendingAction": "মুলতুবি কাজ",
+    "approve": "অনুমোদন করুন",
+    "decline": "প্রত্যাখ্যান করুন",
+    "themes": "থিম",
+    "providers": "প্রদানকারী",
+    "comingSoon": "শীঘ্রই আসছে"
+  },
+  "agentLive": {
+    "dismiss": "খারিজ করুন",
+    "paused": "এজেন্ট বিরতি নিয়েছে"
+  },
+  "conversationLive": {
+    "liveOutput": "লাইভ আউটপুট",
+    "waitingFirstChunk": "প্রথম আউটপুট খণ্ডের জন্য অপেক্ষা করা হচ্ছে…"
+  },
+  "editIdentityPlus": {
+    "avatar": "অবতার",
+    "useIconInstead": "এর পরিবর্তে আইকন ব্যবহার করুন"
+  },
+  "pendingActions": {
+    "rejectAll": "প্রতিটি মুলতুবি কাজ প্রত্যাখ্যান করুন",
+    "approveAll": "কোনো কঠিন বাধা নেই এমন প্রতিটি কাজ অনুমোদন ও প্রেরণ করুন"
+  },
+  "aiPanel": {
+    "clearSessions": "সব সেশন মুছে ফেলুন",
+    "dismiss": "খারিজ করুন"
+  },
+  "schedulerPlus": {
+    "restartAll": "সব এজেন্ট পুনরায় চালু করুন",
+    "restartSubtitle": "সব সময়সূচী বন্ধ করে পুনরায় সক্রিয় করুন"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSV ডাউনলোড করুন",
+    "deleteRow": "সারি মুছুন"
+  },
+  "resizableImage": {
+    "resizeLeft": "বাম দিক থেকে আকার পরিবর্তন করুন",
+    "resizeRight": "ডান দিক থেকে আকার পরিবর্তন করুন"
+  },
+  "folderIndex": {
+    "listView": "তালিকা দৃশ্য",
+    "galleryView": "গ্যালারি দৃশ্য"
+  },
+  "linkPopover": {
+    "openLink": "লিঙ্ক খুলুন",
+    "removeLink": "লিঙ্ক সরান"
+  },
+  "officeChrome": {
+    "openInFinder": "ফাইন্ডারে খুলুন",
+    "downloadOriginal": "আসল ডাউনলোড করুন"
+  },
+  "sourceViewer": {
+    "copyContents": "ফাইলের বিষয়বস্তু কপি করুন",
+    "downloadFile": "ফাইল ডাউনলোড করুন"
+  },
+  "versionHistory": {
+    "title": "সংস্করণের ইতিহাস"
+  },
+  "demoModal": {
+    "closeDemo": "ডেমো বন্ধ করুন",
+    "close": "বন্ধ করুন"
+  },
+  "demosPlus": {
+    "anything": "যেকোনো কিছু",
+    "yours": "আপনার",
+    "install": "ইনস্টল করুন",
+    "attach": "সংযুক্ত করুন"
+  },
+  "narrowViewport": {
+    "dismiss": "সংকীর্ণ ভিউপোর্ট ইঙ্গিত বাতিল করুন",
+    "dismissTitle": "পরবর্তী সেশন পর্যন্ত বাতিল করুন",
+    "hintPrefix": "Cabinet সবচেয়ে ভালো কাজ করে যখন ",
+    "hintWidth": "≥৯৬০ px",
+    "hintSuffix": " চওড়া। কিছু সারফেস সংকীর্ণ প্রস্থে সংকুচিত হয়।"
+  },
+  "agentCard": {
+    "runHeartbeat": "হার্টবিট চালান"
+  },
+  "schedulePicker": {
+    "frequency": "ফ্রিকোয়েন্সি",
+    "onDay": "দিনে",
+    "modeInterval": "ব্যবধান",
+    "modeDaily": "দৈনিক",
+    "modeWeekdays": "সপ্তাহের দিনগুলি",
+    "modeWeekly": "সাপ্তাহিক",
+    "modeMonthly": "মাসিক",
+    "modeCustom": "কাস্টম",
+    "parse": "পার্স করুন",
+    "showCron": "cron এক্সপ্রেশন দেখান",
+    "hideCron": "cron এক্সপ্রেশন লুকান",
+    "weekdayMo": "সোম",
+    "weekdayTu": "মঙ্গল",
+    "weekdayWe": "বুধ",
+    "weekdayTh": "বৃহ",
+    "weekdayFr": "শুক্র",
+    "weekdaySa": "শনি",
+    "weekdaySu": "রবি"
+  },
+  "slackPanel": {
+    "createChannel": "চ্যানেল তৈরি করুন",
+    "thread": "থ্রেড"
+  },
+  "uninstall": {
+    "title": "Cabinet আনইনস্টল করুন"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet ড্রয়ার",
+    "pageTitlePlaceholder": "পৃষ্ঠার শিরোনাম…"
+  },
+  "skillAddPlus": {
+    "cancel": "বাতিল করুন"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "এই দক্ষতার জন্য skills.sh থেকে অডিট ডেটা অনুপলব্ধ",
+    "searchPlaceholder": "skills.sh অনুসন্ধান করুন"
+  },
+  "skillLibraryPlus": {
+    "refresh": "রিফ্রেশ করুন",
+    "noSkills": "এখনো কোনো দক্ষতা নেই।"
+  },
+  "taskDetail": {
+    "close": "বন্ধ করুন (Esc)",
+    "muteTask": "এই কাজটি নীরব করুন — এর সম্পন্ন হওয়া কাজগুলো সরাসরি আর্কাইভে চলে যাবে",
+    "unmuteTask": "এই কাজটি সশব্দ করুন — এর সম্পন্ন হওয়া কাজগুলো 'এইমাত্র শেষ হয়েছে'-তে আবার দেখা যাবে"
+  },
+  "rowActionsPlus": {
+    "edit": "সম্পাদনা করুন",
+    "editHint": "শুরু হওয়ার আগে এই সংরক্ষিত খসড়াটি সম্পাদনা করুন",
+    "delete": "মুছুন",
+    "deleteHint": "স্থায়ীভাবে মুছুন — এটি পূর্বাবস্থায় ফেরানো যাবে না"
+  },
+  "taskCard": {
+    "ptyMode": "টার্মিনাল (PTY) মোডে চলছে"
+  },
+  "undoToast": {
+    "dismiss": "বাতিল করুন"
+  },
+  "terminalExited": {
+    "openDetails": "কাঠামোবদ্ধ বিবরণ খুলুন (প্রম্পট, আর্টিফ্যাক্ট, টার্ন)",
+    "reconnect": "ডেমন-এর সাথে পুনরায় সংযোগ করুন এবং কাঁচা PTY রিপ্লে স্ট্রিম করুন"
+  },
+  "terminalTabsPlus": {
+    "resize": "টার্মিনাল প্যানেলের আকার পরিবর্তন করুন"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "সব এজেন্ট দেখান",
+    "noRecentActivity": "সাম্প্রতিক কোনো কার্যকলাপ নেই",
+    "noAgents": "কোনো এজেন্ট নেই",
+    "noAgentsConfigured": "এই Cabinet-এর জন্য এখনো কোনো এজেন্ট কনফিগার করা হয়নি।",
+    "cabinetScope": "Cabinet পরিধি:",
+    "depthDropdownHeader": "Cabinet পরিধি",
+    "depthOwnLabel": "শুধুমাত্র এই Cabinet",
+    "depthOwnShort": "নিজস্ব",
+    "depthOwnDesc": "শুধুমাত্র এই Cabinet থেকে পেজ, এজেন্ট এবং টাস্ক।",
+    "depthChildren1Label": "সরাসরি অধীনস্থ অন্তর্ভুক্ত করুন",
+    "depthChildren1Desc": "সাব-Cabinet-এর এক স্তর যোগ করুন।",
+    "depthChildren2Label": "দুটি Cabinet স্তর অন্তর্ভুক্ত করুন",
+    "depthChildren2Desc": "সাব-Cabinet-এর দুটি স্তর যোগ করুন।",
+    "depthAllLabel": "সব অধীনস্থ অন্তর্ভুক্ত করুন",
+    "depthAllShort": "সব",
+    "depthAllDesc": "সম্পূর্ণ সাব-ট্রি অন্তর্ভুক্ত করুন।",
+    "scopeTooltip": "Cabinet পরিধি: {{label}}। পরিবর্তন করতে ক্লিক করুন।"
+  },
+  "composerExtras": {
+    "skillAttached": "দক্ষতা — শুধুমাত্র এই রানের সাথে সংযুক্ত",
+    "pageTitlePlaceholder": "পেজের শিরোনাম…",
+    "active": "সক্রিয় — এই সময়সূচীতে এজেন্টকে জাগিয়ে তুলুন",
+    "pickCliPty": "একটি PTY-তে স্পন করার জন্য একটি CLI নির্বাচন করুন:"
+  },
+  "editorExtras": {
+    "editWithAi": "AI দিয়ে সম্পাদনা করুন",
+    "jupyterLab": "কপি করুন: jupyter lab <path>",
+    "exitApp": "অ্যাপ থেকে প্রস্থান করুন"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI অ্যাকাউন্ট",
+    "aiTeams": "AI টিম"
+  },
+  "whatsNew": {
+    "dismiss": "বাতিল করুন",
+    "headerPrefix": "v-এ নতুন কী",
+    "readFull": "সম্পূর্ণ রিলিজ নোট পড়ুন"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "আমি বুঝি এবং চালিয়ে যেতে চাই।"
+  },
+  "daemonHealth": {
+    "dismiss": "বাতিল করুন"
+  },
+  "tinyExtras": {
+    "light": "হালকা",
+    "home": "হোম",
+    "workspaceGallery": "ওয়ার্কস্পেস গ্যালারি",
+    "savingTo": "এ সংরক্ষণ করা হচ্ছে",
+    "comingSoon": "শীঘ্রই আসছে",
+    "deleteSkill": "দক্ষতা মুছুন",
+    "skillsOffered": "প্রদত্ত দক্ষতা:",
+    "allAgents": "সব এজেন্ট",
+    "noTranscript": "কোনো প্রতিলিপি পাওয়া যায়নি",
+    "noDiff": "কোনো পার্থক্য উপলব্ধ নেই।",
+    "headsUp": "সতর্কতা:",
+    "back": "ফিরে যান",
+    "editYourAvatar": "আপনার অবতার সম্পাদনা করুন",
+    "openFullTaskViewer": "সম্পূর্ণ টাস্ক ভিউয়ার খুলুন",
+    "close": "বন্ধ করুন",
+    "copyToClipboard": "ক্লিপবোর্ডে কপি করুন",
+    "starOnGithub": "GitHub-এ Cabinet-কে স্টার দিন",
+    "helpMoreFind": "আরও বেশি মানুষকে কমিউনিটি খুঁজে পেতে সাহায্য করুন",
+    "joinDiscord": "ডিসকর্ড-এ যোগ দিন",
+    "chatWithBuilders": "যারা Cabinet তৈরি করছেন তাদের সাথে চ্যাট করুন",
+    "joinWaitlist": "Cabinet ক্লাউড ওয়েটলিস্টে যোগ দিন",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "জেন",
+    "addToInbox": "ইনবক্সে যোগ করুন",
+    "runTaskNow": "এখনই টাস্ক চালান",
+    "search": "অনুসন্ধান করুন",
+    "aiPanel": "এআই প্যানেল",
+    "drawers": "ড্রয়ার"
+  },
+  "dataLocations": {
+    "title": "যেখানে আপনার ডেটা থাকে",
+    "whyThisMatters": "কেন এটি গুরুত্বপূর্ণ",
+    "location": "অবস্থান",
+    "contains": "অন্তর্ভুক্ত",
+    "network": "নেটওয়ার্ক",
+    "revealInFinder": "ফাইল ম্যানেজারে দেখান",
+    "stored": "সংরক্ষিত",
+    "resetOnboarding": "অনবোর্ডিং রিসেট করুন"
+  },
+  "rooms": {
+    "switcherTitle": "রুম পরিবর্তন করুন",
+    "switchRoom": "রুমসমূহ",
+    "loading": "লোড হচ্ছে…",
+    "defaultTag": "হোম",
+    "openInNewWindow": "নতুন উইন্ডোতে খুলুন",
+    "opensBrowserWindow": "একটি নতুন ব্রাউজার উইন্ডো খোলে",
+    "customizeRoom": "রুম সম্পাদনা করুন",
+    "addRoom": "রুম যোগ করুন…",
+    "editTitle": "রুম সম্পাদনা করুন",
+    "editSubtitle": "এই রুমের নাম, আইকন, রঙ এবং থিম সেট করুন।",
+    "nameLabel": "প্রদর্শন নাম",
+    "slugHint": "ডিস্কে ফোল্ডারের নাম {{slug}} থাকবে। ফোল্ডারের নাম পরিবর্তন করা একটি আলাদা, উন্নত পদক্ষেপ।",
+    "iconLabel": "আইকন",
+    "colorLabel": "রঙ",
+    "colorAuto": "স্বয়ংক্রিয়",
+    "themeLabel": "থিম",
+    "themeGlobal": "গ্লোবাল ডিফল্ট ব্যবহার করুন",
+    "editFailed": "রুমটি সংরক্ষণ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "deleteRoom": "রুম মুছুন…",
+    "deleteLastRoomDisabledHint": "আপনি আপনার শেষ রুমটি মুছতে পারবেন না।",
+    "deleteTitle": "এই রুমটি মুছবেন?",
+    "deleteSubtitle": "এই রুম এবং এর ভেতরের সবকিছু ট্র্যাশে সরানো হবে।",
+    "deleteWarningIntro": "রুমটি ট্র্যাশে সরানোর ফলে আরও যা মুছে যাবে:",
+    "deleteWarningPages": "এই রুমের ভেতরের পেজ এবং ফাইলসমূহ",
+    "deleteWarningAgents": "এই রুমের জন্য নির্ধারিত এজেন্ট, কথোপকথন এবং মেমরি",
+    "deleteWarningJobs": "এই রুমের নির্ধারিত কাজ এবং রুটিনসমূহ",
+    "deleteWarningChat": "এই রুমের জন্য টিম চ্যাট ইতিহাস",
+    "deleteWarningSearch": "রুমের সার্চ ইনডেক্স (পুনরুদ্ধার করা হলে স্বয়ংক্রিয়ভাবে পুনর্নির্মিত হবে)",
+    "deleteRecoveryNote": "পুনরুদ্ধার: রুমটি data/.trash/-এ সরানো হয়েছে — ফোল্ডারটি data/-এ ফিরিয়ে এনে পুনরুদ্ধার করুন।",
+    "deleteConfirmLabel": "নিশ্চিত করতে {{slug}} টাইপ করুন",
+    "deleteConfirmButton": "রুম মুছুন",
+    "deleting": "মুছে ফেলা হচ্ছে…",
+    "deleteFailed": "রুমটি মুছে ফেলা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
+  },
+  "common": {
+    "actions": {
+      "save": "সংরক্ষণ করুন",
+      "cancel": "বাতিল করুন",
+      "delete": "মুছুন",
+      "confirm": "নিশ্চিত করুন",
+      "close": "বন্ধ করুন",
+      "open": "খুলুন",
+      "back": "পেছনে",
+      "next": "পরবর্তী",
+      "done": "সম্পন্ন"
+    },
+    "nav": {
+      "goBack": "পেছনে যান",
+      "goForward": "সামনে যান"
+    },
+    "aiPanel": {
+      "open": "এআই প্যানেল খুলুন",
+      "close": "এআই প্যানেল বন্ধ করুন"
+    },
+    "states": {
+      "loading": "লোড হচ্ছে…",
+      "saving": "সংরক্ষণ হচ্ছে…",
+      "saved": "সংরক্ষিত হয়েছে",
+      "error": "কিছু ভুল হয়েছে"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "নতুন পৃষ্ঠা",
+      "title": "নতুন পৃষ্ঠা তৈরি করুন",
+      "placeholder": "পৃষ্ঠার শিরোনাম…",
+      "create": "তৈরি করুন",
+      "creating": "তৈরি হচ্ছে…"
+    },
+    "newCabinet": {
+      "trigger": "নতুন Cabinet",
+      "title": "নতুন Cabinet তৈরি করুন",
+      "subtitle": "একটি Cabinet হলো একটি ওয়ার্কস্পেস যেখানে নিজস্ব এজেন্ট, কাজ এবং জ্ঞান থাকে।",
+      "importFromRegistry": "রেজিস্ট্রি থেকে ইম্পোর্ট করুন",
+      "nameLabel": "Cabinet নাম",
+      "namePlaceholder": "যেমন: আমার স্টার্টআপ, মার্কেটিং টিম, রিসার্চ ল্যাব…",
+      "selectAgents": "এজেন্ট নির্বাচন করুন",
+      "selectedCount": "{{count}}টি নির্বাচিত",
+      "createCabinet": "Cabinet তৈরি করুন",
+      "creating": "তৈরি হচ্ছে…",
+      "createFailed": "cabinet তৈরি করতে ব্যর্থ হয়েছে"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "পৃষ্ঠা এক্সপোর্ট করুন",
+      "copyMarkdown": "মার্কডাউন কপি করুন",
+      "copyForLlms": "LLM-এর জন্য কপি করুন",
+      "copyAsHtml": "HTML হিসাবে কপি করুন",
+      "downloadMarkdown": ".md ডাউনলোড করুন",
+      "downloadPdf": "PDF ডাউনলোড করুন",
+      "copiedForLlmToast": "LLM-এর জন্য {{size}} মার্কডাউন কপি করা হয়েছে"
+    },
+    "toolbar": {
+      "heading1": "শিরোনাম 1",
+      "heading2": "শিরোনাম 2",
+      "heading3": "শিরোনাম 3",
+      "bold": "বোল্ড",
+      "italic": "ইটালিক",
+      "underline": "আন্ডারলাইন",
+      "strikethrough": "স্ট্রাইকথ্রু",
+      "inlineCode": "ইনলাইন কোড",
+      "link": "লিঙ্ক",
+      "textColor": "টেক্সট রঙ",
+      "highlight": "হাইলাইট",
+      "background": "পটভূমি",
+      "bulletList": "বুলেট তালিকা",
+      "orderedList": "ক্রমিক তালিকা",
+      "blockquote": "ব্লককোট",
+      "checklist": "চেকলিস্ট",
+      "codeBlock": "কোড ব্লক",
+      "divider": "বিভাজক",
+      "alignLeft": "বামে সারিবদ্ধ করুন",
+      "alignCenter": "মাঝখানে সারিবদ্ধ করুন",
+      "alignRight": "ডানে সারিবদ্ধ করুন",
+      "justify": "জাস্টিফাই",
+      "align": "সারিবদ্ধ করুন",
+      "table": {
+        "selectCellText": "সেল টেক্সট নির্বাচন করুন",
+        "addRowAbove": "উপরে সারি যোগ করুন",
+        "addRowBelow": "নিচে সারি যোগ করুন",
+        "moveRowUp": "সারি উপরে সরান",
+        "moveRowDown": "সারি নিচে সরান",
+        "deleteRow": "সারি মুছুন",
+        "addColumnBefore": "আগে কলাম যোগ করুন",
+        "addColumnAfter": "পরে কলাম যোগ করুন",
+        "moveColumnLeft": "কলাম বামে সরান",
+        "moveColumnRight": "কলাম ডানে সরান",
+        "deleteColumn": "কলাম মুছুন",
+        "toggleHeaderRow": "হেডার সারি টগল করুন",
+        "toggleHeaderColumn": "হেডার কলাম টগল করুন",
+        "deleteTable": "টেবিল মুছুন"
+      },
+      "superscript": "সুপারস্ক্রিপ্ট",
+      "subscript": "সাবস্ক্রিপ্ট",
+      "insertImage": "ছবি যোগ করুন",
+      "insertVideo": "ভিডিও যোগ করুন",
+      "embed": "এম্বেড করুন",
+      "undo": "আনডু করুন",
+      "redo": "রিডু করুন",
+      "switchToLtr": "LTR-এ পরিবর্তন করুন",
+      "switchToRtl": "RTL-এ পরিবর্তন করুন",
+      "scrollLeft": "টুলবার বামে স্ক্রল করুন",
+      "scrollRight": "টুলবার ডানে স্ক্রল করুন",
+      "markdown": "মার্কডাউন",
+      "preview": "প্রিভিউ"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet নাম…",
+      "renameWarning": "Cabinet নাম পরে পরিবর্তন করা যাবে না (আপাতত)। সাবধানে নির্বাচন করুন।"
+    },
+    "templates": {
+      "header": "একটি টেমপ্লেট থেকে শুরু করুন",
+      "browseAll": "সব দেখুন →"
+    },
+    "quickActions": {
+      "shuffle": "ভিন্ন পরামর্শ দেখান",
+      "launch10Songs": "১০টি গান লেখার এডিটর চালু করুন",
+      "dailyReview9am": "সকাল ৯টায় দৈনিক পর্যালোচনা।",
+      "weeklyReview": "আগামী সোমবার সাপ্তাহিক পর্যালোচনা।",
+      "thailandTrip": "আমার থাইল্যান্ড ভ্রমণের পরিকল্পনা করুন।",
+      "physicsApp": "আমাকে একটি পদার্থবিজ্ঞান অধ্যয়নের অ্যাপ তৈরি করে দিন।",
+      "summariseRecent": "আমার সাম্প্রতিক কাজের সারসংক্ষেপ করুন।",
+      "recruiterReply": "একজন নিয়োগকারীর উত্তরের খসড়া তৈরি করুন।",
+      "mapArticles": "প্রবন্ধের সংযোগ ম্যাপ করুন।",
+      "physicsCourse": "একটি ৬-মডিউলের পদার্থবিজ্ঞান কোর্স তৈরি করুন।",
+      "shortStory": "একটি ছোট গল্পের রূপরেখা তৈরি করুন।",
+      "hourlyStandup": "প্রতি ঘণ্টায় স্ট্যান্ড-আপ রিমাইন্ডার।",
+      "researchPhone": "আমার পরবর্তী ফোন নিয়ে গবেষণা করুন।",
+      "translateToSpanish": "এই Cabinet স্প্যানিশে অনুবাদ করুন।",
+      "refactorNotes": "আমার নোট নেওয়ার সিস্টেম রিফ্যাক্টর করুন।",
+      "birthdayParty": "একটি জন্মদিনের পার্টির পরিকল্পনা করুন।",
+      "boardUpdate": "একটি বোর্ড আপডেটের খসড়া তৈরি করুন।",
+      "customerInterviews": "৫টি গ্রাহক সাক্ষাৎকার সিমুলেট করুন।"
+    },
+    "goodMorning": "শুভ সকাল",
+    "goodAfternoon": "শুভ দুপুর",
+    "goodEvening": "শুভ সন্ধ্যা",
+    "greetingWithName": "{{greeting}}, {{name}}।",
+    "greetingNoName": "{{greeting}}।",
+    "composerPlaceholder": "আমি তৈরি করতে চাই...",
+    "composerDaemonDown": "এজেন্ট ডেমোন অফলাইন — পাঠাতে রিস্টার্ট করুন।"
+  },
+  "onboarding": {
+    "launchHeading": "আপনার <accent>Cabinet</accent> শুরু করুন।",
+    "intro": {
+      "tagline1": "আপনার জ্ঞানভাণ্ডার।",
+      "tagline2": "আপনার এআই দল।",
+      "getStarted": "শুরু করুন"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "অফিস",
+        "study": "স্টাডি",
+        "lab": "ল্যাব",
+        "library": "লাইব্রেরি",
+        "kitchen": "রান্নাঘর",
+        "family": "পরিবার",
+        "dining": "ডাইনিং",
+        "studio": "স্টুডিও"
+      }
+    },
+    "welcome": {
+      "paragraph": "আপনার হোম আপনারই। এর ভেতরে আপনি আপনার জীবনের বিভিন্ন অংশের জন্য রুম সেট আপ করবেন: কাজ, সেকেন্ড ব্রেন, গবেষণা, পরিবার। আর প্রতিটি রুমে ক্যাবিনেট আছে: আপনার নোট, আপনার ফাইল এবং একটি এআই টিম নীরবে পটভূমিতে কাজ করে যাচ্ছে।",
+      "namePrompt": "আপনার নাম কি?",
+      "heading": "স্বাগতম <accent>ঘরে</accent>"
+    },
+    "welcomeBack": {
+      "heading": "স্বাগতম",
+      "headingNamed": "{{cabinet}}-এ স্বাগতম",
+      "subtitle": "আমরা এখানে একটি বিদ্যমান ক্যাবিনেট পেয়েছি। চলুন এটি সেট আপ করা শেষ করি।",
+      "continue": "চালিয়ে যান"
+    },
+    "verify": {
+      "passed": "উত্তীর্ণ",
+      "notInstalled": "ইনস্টল করা হয়নি",
+      "authRequired": "প্রমাণীকরণ প্রয়োজন",
+      "paymentRequired": "পেমেন্ট প্রয়োজন",
+      "quotaExceeded": "কোটা / রেট সীমা",
+      "error": "ত্রুটি"
+    },
+    "providerStatus": {
+      "ready": "প্রস্তুত",
+      "loginRequired": "লগ ইন প্রয়োজন",
+      "notInstalled": "ইনস্টল করা হয়নি"
+    },
+    "actions": {
+      "back": "ফিরে যান",
+      "next": "পরবর্তী",
+      "continue": "চালিয়ে যান",
+      "skip": "এড়িয়ে যান",
+      "finish": "শেষ করুন",
+      "complete": "সেটআপ সম্পূর্ণ করুন",
+      "copyToClipboard": "ক্লিপবোর্ডে কপি করুন"
+    },
+    "cabinetCreated": {
+      "continue": "সেটআপ চালিয়ে যান",
+      "heading": "আপনার Cabinet তৈরি হয়েছে",
+      "subtitle": "সবকিছু সেটআপ করা হয়েছে এবং প্রস্তুত আছে।",
+      "agentsReady_one": "{{count}} এজেন্ট কাজের জন্য প্রস্তুত",
+      "agentsReady_other": "{{count}} এজেন্ট কাজের জন্য প্রস্তুত",
+      "scheduledJobs_one": "{{count}} নির্ধারিত কাজ",
+      "scheduledJobs_other": "{{count}} নির্ধারিত কাজ",
+      "subCabinets_one": "{{count}} সাব-ক্যাবিনেট",
+      "subCabinets_other": "{{count}} সাব-ক্যাবিনেট",
+      "agentsReady": "{{count}} এজেন্ট কাজের জন্য প্রস্তুত",
+      "scheduledJobs": "{{count}} নির্ধারিত কাজ",
+      "subCabinets": "{{count}} সাব-ক্যাবিনেট"
+    },
+    "cloud": {
+      "alreadyOnList": "আপনি ইতিমধ্যেই তালিকায় আছেন — আমরা আপনার সাথে যোগাযোগ করব।",
+      "aside": "Cabinet Cloud শীঘ্রই আসছে। একই পণ্য, কিন্তু সেলফ-হোস্টিংয়ের ঝামেলা নেই।",
+      "description": "আপনার Cabinet যেকোনো ডিভাইস থেকে খুলুন, যখন আপনার AI এজেন্টরা কাজ চালিয়ে যাবে — ড্রাফটিং, গবেষণা, সংগঠিত করা — এমনকি আপনার ল্যাপটপ বন্ধ থাকলেও।",
+      "error": "কিছু ভুল হয়েছে। ইমেলটি পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+      "joinWaitlist": "ওয়েটলিস্টে যোগ দিন",
+      "onList": "আপনি তালিকায় আছেন। Cabinet Cloud চালু হলে আমরা আপনাকে ইমেল করব।",
+      "sending": "পাঠানো হচ্ছে…",
+      "title": "আপনার Cabinet, যেকোনো জায়গায়। আপনার AI টিম, সর্বদা চালু।",
+      "waitlistSubtitle": "যেকোনো জায়গা থেকে সংযুক্ত হন। আপনার AI টিম ২৪/৭ কাজ করে।"
+    },
+    "discord": {
+      "aside": "আপনি যদি প্রথমে নতুন ফিচার চান এবং 'টিকিট জমা দিন'-এর চেয়ে 'আসুন চ্যাট করি' পছন্দ করেন, তাহলে এটি আপনার জন্য সঠিক জায়গা।",
+      "description": "এখানেই ফিডব্যাক ফিচারে পরিণত হয়, স্ক্রিনশট বিতর্কে পরিণত হয়, এবং সাধারণত কেউ না কেউ আপনার কাছে পৌঁছানোর আগেই এজ কেস খুঁজে বের করে।",
+      "joinBadge": "যোগ দিন",
+      "title": "ডিসকর্ডেই ভালো অদ্ভুত ঘটনাগুলো ঘটে।"
+    },
+    "github": {
+      "aside": "Cabinet ওপেন সোর্স। আপনি যদি এই ভিশনটি পছন্দ করেন, তাহলে আমাদের কথা ছড়িয়ে দিতে সাহায্য করুন।",
+      "description": "একটি GitHub স্টার আরও বেশি মানুষকে Cabinet আবিষ্কার করতে এবং কমিউনিটিতে যোগ দিতে সাহায্য করে।",
+      "starsLabel": "{{stars}} GitHub স্টার",
+      "title": "Cabinet কমিউনিটিকে বাড়তে সাহায্য করুন"
+    },
+    "launch": {
+      "beforeYouLaunch": "লঞ্চ করার আগে",
+      "defaultCabinetName": "আপনার Cabinet",
+      "defaultDescription": "নলেজ বেস + AI টিম",
+      "knowledgeBaseLabel": "নলেজ বেস",
+      "aiTeamLabel": "এআই টিম",
+      "launchCabinet": "Cabinet চালু করুন",
+      "settingUp": "সেটআপ করা হচ্ছে...",
+      "disclaimerAccess": "<strong>এজেন্টরা সম্পূর্ণ অ্যাক্সেস নিয়ে চলে।</strong> Cabinet <flag>--dangerously-skip-permissions</flag> (Claude Code) এবং অন্যান্য প্রোভাইডারদের সমতুল্য ফ্ল্যাগ ব্যবহার করে। এটি আপনার নিজস্ব টার্মিনাল থেকে এই CLI টুলগুলি চালানোর মতোই। আপনার কনফিগার করা যেকোনো MCP সার্ভার বা টুল এজেন্টদের দ্বারা স্বয়ংক্রিয়ভাবে আহ্বান করা হতে পারে।",
+      "disclaimerBackup": "<strong>আপনার ডেটা নিয়মিত ব্যাকআপ করুন।</strong> এজেন্টরা আপনার KB এবং লিঙ্ক করা রেপো জুড়ে ফাইল পড়তে, লিখতে এবং মুছে ফেলতে পারে। Cabinet ডেটা হারানোর জন্য দায়ী নয়। আপনি আপনার নির্বাচিত AI প্রোভাইডার এবং তাদের পরিষেবার শর্তাবলীর জন্য দায়ী।",
+      "disclaimerBeta": "<strong>বিটা সফটওয়্যার। সমস্যা হতে পারে।</strong> আমরা দ্রুত শিপ করি। ব্রেকিং পরিবর্তনগুলি কোনো বিজ্ঞপ্তি ছাড়াই আসতে পারে।",
+      "legalNotice": "চালিয়ে যাওয়ার মাধ্যমে আপনি আমাদের <terms>শর্তাবলী</terms> এবং <privacy>গোপনীয়তা নীতি</privacy>তে সম্মত হন। Cabinet একটি <oss>ওপেন-সোর্স প্রজেক্ট</oss>।",
+      "keepInTouch": "আমার সাথে যোগাযোগ রাখুন। Cabinet ওপেন সোর্স এবং উন্মুক্তভাবে তৈরি, এবং আমরা জানতে চাই পরবর্তীতে কী তৈরি করা উচিত। কোনো স্প্যাম নয়, আমরা প্রতিশ্রুতি দিচ্ছি।"
+    },
+    "provider": {
+      "agentType": "{{type}} এজেন্ট",
+      "close": "বন্ধ করুন",
+      "comingSoon": "শীঘ্রই আসছে",
+      "guide": "নির্দেশিকা",
+      "heading": "এজেন্ট প্রদানকারী",
+      "moreModels": "আরও এআই",
+      "install": "ইনস্টল করুন",
+      "logIn": "লগ ইন করুন",
+      "openTerminalButton": "টার্মিনাল খুলুন",
+      "openTerminalDetail": "পরবর্তী ধাপগুলি চালানোর জন্য আপনার একটি টার্মিনাল প্রয়োজন হবে।",
+      "openTerminalError": "টার্মিনাল স্বয়ংক্রিয়ভাবে খোলা যায়নি। আপনার সিস্টেম টার্মিনাল ম্যানুয়ালি খুলুন।",
+      "openTerminalTitle": "একটি টার্মিনাল খুলুন",
+      "recheck": "প্রদানকারীগুলি পুনরায় পরীক্ষা করুন",
+      "rerunVerify": "যাচাইকরণ পুনরায় চালান",
+      "runVerify": "যাচাইকরণ চালান",
+      "setupTitle": "{{name}} সেটআপ",
+      "skipForNow": "এখনকার জন্য এড়িয়ে যান",
+      "subtitle": "আপনার এজেন্টদের শক্তি যোগাতে Cabinet-এর একটি AI CLI প্রয়োজন।",
+      "verifyExplanation": "যাচাইকরণ প্রদানকারীর হেডলেস প্রম্পট এন্ড-টু-এন্ড চালায় এবং যেকোনো ব্যর্থতাকে শ্রেণীবদ্ধ করে যাতে আপনি জানতে পারেন কোন ধাপে ফিরে যেতে হবে।",
+      "verifying": "যাচাই করা হচ্ছে…",
+      "failedAtStep": "এই ধাপে ব্যর্থ হয়েছে: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "এই ক্যাবিনেট কিসের জন্য? প্রতিটি রুম তার নিজস্ব AI দল নিয়ে আসে।",
+      "heading": "একটি <accent>রুম</accent> বেছে নিন"
+    },
+    "whatIsCabinet": {
+      "heading": "ক্যাবিনেট কী?",
+      "body": "ক্যাবিনেট হলো আপনার জীবন বা কাজের একটি নির্দিষ্ট ক্ষেত্রের জন্য একটি ফোকাসড ওয়ার্কস্পেস। এটি আপনার ফাইল, নোট, টুলস, এজেন্ট এবং কাজগুলি রাখে, যাতে আপনার এআই টিমের কাছে কার্যকরভাবে সাহায্য করার জন্য প্রয়োজনীয় প্রসঙ্গ থাকে।",
+      "examplesLabel": "মানুষ কীভাবে ক্যাবিনেট ব্যবহার করে",
+      "example1": "আপনার স্টার্টআপ",
+      "example2": "একটি GitHub রেপো",
+      "example3": "আপনার মার্কেটিংয়ের কাজ",
+      "example4": "একটি ক্লায়েন্ট প্রজেক্ট",
+      "example5": "আপনার ব্যক্তিগত জ্ঞানভাণ্ডার"
+    },
+    "access": {
+      "heading": "{{name}} কী অ্যাক্সেস করতে পারে?",
+      "subtitle": "এই এজেন্ট যে জ্ঞান ও টুলস ব্যবহার করতে পারে তা বেছে নিন। আপনি এটি যেকোনো সময় পরিবর্তন করতে পারবেন।",
+      "defaultAgent": "আপনার এজেন্ট",
+      "files": "ফাইল ও জ্ঞান",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP সার্ভার",
+      "plugins": "প্লাগইন",
+      "skills": "দক্ষতা",
+      "placeholderNote": "আপনি এজেন্টের সেটিংসে পরে অ্যাক্সেস ফাইন-টিউন করতে পারবেন।"
+    },
+    "heartbeat": {
+      "heading": "{{name}} কি হার্টবিটে চলবে?",
+      "subtitle": "একটি হার্টবিট এজেন্টকে একটি সময়সূচী অনুযায়ী নিজে নিজে চেক ইন করতে এবং কাজ করতে দেয়।",
+      "off": "বন্ধ",
+      "offHint": "আপনি চাইলে তবেই চলে। শুরু করার জন্য প্রস্তাবিত।",
+      "daily": "দৈনিক",
+      "dailyHint": "দিনে একবার চেক করে।",
+      "weekly": "সাপ্তাহিক",
+      "weeklyHint": "সপ্তাহে একবার চেক করে।",
+      "tokenNote": "সতর্কীকরণ: একটি হার্টবিট এজেন্টকে স্বয়ংক্রিয়ভাবে চালায়, যা প্রতিবার চালু হলে এআই টোকেন (এবং আপনার প্রদানকারীর কোটা) ব্যবহার করে। আপনি এটি যেকোনো সময় পরিবর্তন বা বন্ধ করতে পারবেন।"
+    },
+    "firstTask": {
+      "heading": "আপনার প্রথম কাজটি ফাইল করুন",
+      "subtitle": "কাজগুলি হলো আপনি কীভাবে {{name}}-কে কাজ দেন। এখন একটি লিখুন এবং এটি আপনার ক্যাবিনেটে চলে আসবে, চলার জন্য প্রস্তুত।",
+      "label": "{{name}} প্রথমে কী করবে?",
+      "placeholder": "যেমন: নতুন গ্রাহকদের জন্য একটি স্বাগত ইমেল ড্রাফ্ট করুন",
+      "example1": "আমার সাম্প্রতিক নোটগুলি সারসংক্ষেপ করুন",
+      "example2": "একটি প্রজেক্ট প্ল্যান ড্রাফ্ট করুন",
+      "example3": "আমাদের শীর্ষ ৩ জন প্রতিযোগীকে নিয়ে গবেষণা করুন",
+      "note": "আপনি এটি খালি রাখতে পারেন এবং পরে কাজ যোগ করতে পারেন। একটি এআই প্রদানকারী সংযুক্ত না করা পর্যন্ত কিছুই চলবে না।"
+    },
+    "rail": {
+      "untitled": "আপনার ক্যাবিনেট",
+      "dataCaption": "আপনার প্রজেক্টের সমস্ত ফাইল ও নোট এখানে থাকে।",
+      "teamEmpty": "এখনো কোনো এজেন্ট নেই।",
+      "teamCaption": "আপনার এআই টিম এখানে কাজ করে।",
+      "tasksEmpty": "এখনো কোনো কাজ নেই।",
+      "tasksCaption": "আপনি আপনার টিমকে যে কাজ দেন তা এখানে দেখা যায়।",
+      "assignedTo": "{{name}}-কে বরাদ্দ করা হয়েছে",
+      "you": "আপনি"
+    },
+    "rooms": {
+      "office": {
+        "label": "অফিস",
+        "tagline": "একটি ব্যবসা, স্টার্টআপ বা সাইড প্রজেক্ট চালান।",
+        "workspaceLabel": "কোম্পানি বা প্রজেক্টের নাম",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "আপনি কী করেন?",
+        "descriptionPlaceholder": "আমরা এআই স্টার্টআপ নিয়ে একটি পডকাস্ট তৈরি করি",
+        "departmentNoun": "বিভাগ",
+        "teamSizeLabel": "দলের আকার",
+        "exampleAgents": {
+          "0": "সিইও",
+          "1": "সম্পাদক"
+        }
+      },
+      "study": {
+        "label": "স্টাডি",
+        "tagline": "আপনার দ্বিতীয় মস্তিষ্ক — লেখা, নোট, ব্যক্তিগত সহকারী।",
+        "workspaceLabel": "আপনার ক্যাবিনেটের নাম দিন",
+        "workspacePlaceholder": "আমার স্টাডি",
+        "descriptionLabel": "জীবনের কোন ক্ষেত্রে আপনি সাহায্য চান?",
+        "descriptionPlaceholder": "লেখা, ইমেল বাছাই, ক্যালেন্ডার, অভ্যাস ট্র্যাকিং",
+        "departmentNoun": "ক্ষেত্র",
+        "exampleAgents": {
+          "0": "সহকারী",
+          "1": "লাইব্রেরিয়ান"
+        }
+      },
+      "lab": {
+        "label": "গবেষণা ল্যাব",
+        "tagline": "একাডেমিক কাজ, সাহিত্য, শিক্ষকতা, থিসিস।",
+        "workspaceLabel": "ওয়ার্কস্পেসের নাম",
+        "workspacePlaceholder": "মনের দর্শন",
+        "descriptionLabel": "আপনার ক্ষেত্র কী বা আপনি কী নিয়ে গবেষণা করছেন?",
+        "descriptionPlaceholder": "ফেনোমেনোলজি, চেতনা, দর্শনের পরিচিতি পড়ানো",
+        "departmentNoun": "ক্ষেত্র",
+        "exampleAgents": {
+          "0": "গবেষণা প্রধান",
+          "1": "লাইব্রেরিয়ান"
+        }
+      },
+      "family-room": {
+        "label": "ফ্যামিলি রুম",
+        "tagline": "গৃহস্থালি, পারিবারিক ক্যালেন্ডার, খাবার, বাচ্চারা।",
+        "workspaceLabel": "গৃহস্থালির নাম",
+        "workspacePlaceholder": "দ্য নগুয়েন পরিবার",
+        "descriptionLabel": "এখানে কারা থাকেন এবং আপনি কী সামলান?",
+        "descriptionPlaceholder": "দুই বাবা-মা, তিন সন্তান, দুটি স্কুল, একটি কুকুর",
+        "departmentNoun": "ক্ষেত্র",
+        "teamSizeLabel": "গৃহস্থালির আকার",
+        "exampleAgents": {
+          "0": "হোম ম্যানেজার",
+          "1": "পরিকল্পনাকারী"
+        }
+      },
+      "blank": {
+        "label": "খালি ঘর",
+        "tagline": "এখনো কিছু নেই। আপনার নিজস্ব এজেন্ট, আপনার নিজস্ব আকার নিয়ে আসুন।",
+        "workspaceLabel": "আপনার ক্যাবিনেটের নাম দিন",
+        "workspacePlaceholder": "আমার ক্যাবিনেট",
+        "descriptionLabel": "এটা কিসের জন্য?",
+        "descriptionPlaceholder": "যেকোনো কিছু — যদি নিশ্চিত না হন, ফাঁকা রাখুন",
+        "departmentNoun": "গ্রুপ",
+        "exampleAgents": {
+          "0": "আপনার সিদ্ধান্ত"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "নেতৃত্ব",
+      "marketing": "মার্কেটিং",
+      "content": "কন্টেন্ট",
+      "engineering": "ইঞ্জিনিয়ারিং",
+      "product-and-design": "প্রোডাক্ট ও ডিজাইন",
+      "business": "ব্যবসা",
+      "research": "গবেষণা",
+      "finance-and-ops": "ফিনান্স ও অপারেশনস",
+      "personal": "ব্যক্তিগত",
+      "second-brain": "দ্বিতীয় মস্তিষ্ক",
+      "writing": "লেখা",
+      "tools": "টুলস",
+      "life-admin": "জীবন ব্যবস্থাপনা",
+      "from-the-office": "অফিস থেকে",
+      "writing-and-notes": "লেখা ও নোটস",
+      "other": "অন্যান্য",
+      "household": "গৃহস্থালি",
+      "admin": "অ্যাডমিন",
+      "money": "অর্থ",
+      "product": "প্রোডাক্ট",
+      "design": "ডিজাইন",
+      "sales": "সেলস",
+      "support": "সাপোর্ট",
+      "analytics": "অ্যানালিটিক্স",
+      "finance": "ফিনান্স",
+      "legal": "আইনি",
+      "people": "মানুষ"
+    },
+    "demo": {
+      "greeting": {
+        "office": "শুভ সকাল টিম! {{workspace}}-এ স্বাগতম। চলুন কাজ শুরু করি।",
+        "study": "শুভ সকাল। আপনার দ্বিতীয় মস্তিষ্ক অনলাইন হয়েছে — {{home}}-এ স্বাগতম।",
+        "lab": "গবেষণা ডেস্ক প্রস্তুত — \"{{workspace}}\"। আজ আমরা কী নিয়ে কাজ করব?",
+        "family-room": "হোম এইচকিউ চালু হচ্ছে — {{home}}। চলুন সবাইকে তাদের নির্দিষ্ট জায়গায় নিয়ে যাই।",
+        "blank": "ফাঁকা স্লেট — \"{{workspace}}\"। এখানে আপনি কী তৈরি করতে চান, {{home}}?"
+      },
+      "assign": "{{name}}, আপনি কি {{topic}} এর দায়িত্ব নিতে পারবেন?",
+      "fallbackTopic": "এরপর কী",
+      "office": {
+        "replies": {
+          "0": "ঠিক আছে। দিনের শেষে আমি একটি ল্যান্ডস্কেপ ওভারভিউ প্রস্তুত রাখব।",
+          "1": "ইতিমধ্যে একটি পরিকল্পনা তৈরি করছি। শীঘ্রই #content-এ শেয়ার করব।",
+          "2": "এখন মৌলিক ওয়ার্কফ্লো সেট আপ করছি। এখন পর্যন্ত ভালোই লাগছে।"
+        },
+        "topics": {
+          "0": "প্রতিযোগী গবেষণা",
+          "1": "কন্টেন্ট ক্যালেন্ডার",
+          "2": "লঞ্চ পরিকল্পনা"
+        },
+        "closing": "সবার দারুণ উদ্দীপনা। চলুন এই প্রথম সপ্তাহটিকে শক্তিশালী করে তুলি।"
+      },
+      "study": {
+        "replies": {
+          "0": "আমি ইনবক্সটি ট্রাইজ করব এবং আপনার প্রয়োজনীয় বিষয়গুলো তুলে ধরব।",
+          "1": "ক্যালেন্ডার বিকাল ৩টা পর্যন্ত ফাঁকা আছে — লেখার জন্য ভালো সময়।",
+          "2": "আমি ইতিমধ্যেই 'Daily' ইনডেক্সে তিনটি নতুন নোট লিঙ্ক করেছি।"
+        },
+        "topics": {
+          "0": "আজকের ইনবক্স বাছাই",
+          "1": "এই সপ্তাহের লেখা",
+          "2": "আমার পড়ার তালিকা"
+        },
+        "closing": "ঠিক আছে। যখন কিছুতে আমাকে প্রয়োজন হবে, জানাবেন — অন্যথায় আমি আপনার কাজে বাধা দেব না।"
+      },
+      "lab": {
+        "replies": {
+          "0": "এই বিষয়ে সর্বশেষ গবেষণাপত্রটি নিচ্ছি — এক ঘণ্টার মধ্যে সারসংক্ষেপের খসড়া।",
+          "1": "এর পরে গ্রন্থপঞ্জি সিঙ্ক করব এবং ডুপ্লিকেট চিহ্নিত করব।",
+          "2": "বৃহস্পতিবারের লেকচারের রূপরেখা পর্যালোচনার জন্য প্রায় প্রস্তুত।"
+        },
+        "topics": {
+          "0": "সাহিত্য পর্যালোচনা",
+          "1": "বৃহস্পতিবারের লেকচার প্রস্তুতি",
+          "2": "রেফারেন্স তালিকা"
+        },
+        "closing": "আমাকে অবগত রাখবেন। দিনের শেষে আপনি যা দেবেন, আমি তা পর্যালোচনা করব।"
+      },
+      "family-room": {
+        "replies": {
+          "0": "৪টার পর সময়সূচী পরিষ্কার। ওভারল্যাপিং ড্রপ-অফ চিহ্নিত করছি।",
+          "1": "সপ্তাহের মেনু খসড়া করা হয়েছে — মুদিখানার তালিকা পর্যালোচনার জন্য প্রস্তুত।",
+          "2": "বাচ্চাদের কার্যক্রম সিঙ্ক করা হয়েছে। শুক্রবারের DnD রাত এখনও আছে।"
+        },
+        "topics": {
+          "0": "আজকের সময়সূচী",
+          "1": "খাবারের পরিকল্পনা",
+          "2": "বাচ্চাদের কার্যক্রম"
+        },
+        "closing": "সবাইকে ধন্যবাদ। দিনের মধ্যে কিছু পরিবর্তন হলে আমাকে জানাবেন।"
+      },
+      "blank": {
+        "replies": {
+          "0": "বুঝেছি। আপনি যখন প্রস্তুত, আমিও প্রস্তুত।",
+          "1": "প্রস্তুত আছি।",
+          "2": "আমি নির্দেশের জন্য অপেক্ষা করব।"
+        },
+        "topics": {
+          "0": "প্রথম কাজটি",
+          "1": "পরবর্তী যা কিছু",
+          "2": "অমীমাংসিত প্রশ্ন"
+        },
+        "closing": "আপনি যখন প্রস্তুত হবেন, আমাদের কী করতে হবে বলুন।"
+      }
+    },
+    "team": {
+      "browseAll": "সব দেখুন",
+      "browseCabinets": "ক্যাবিনেটগুলি ব্রাউজ করুন",
+      "cabinetNameLabel": "ক্যাবিনেটের নাম",
+      "cancel": "বাতিল করুন",
+      "importButton": "আমদানি করুন",
+      "importFailed": "আমদানি ব্যর্থ হয়েছে",
+      "importFailedConnection": "আমদানি ব্যর্থ হয়েছে। আপনার সংযোগ পরীক্ষা করুন।",
+      "importTitle": "{{name}} আমদানি করুন",
+      "pickAgents": "আপনার এজেন্টদের বেছে নিন",
+      "required": "প্রয়োজনীয়",
+      "subtitle": "প্রতিটি ক্যাবিনেট একটি AI দল — এজেন্ট, কাজ এবং একটি শেয়ার করা জ্ঞানভাণ্ডার, যা একসাথে কাজ করে।",
+      "heading": "<accent>আপনার</accent> দল তৈরি করুন",
+      "nameLabel": "এজেন্টের নাম",
+      "namePlaceholder": "যেমন: এডিটর, গবেষক, সহকারী",
+      "roleLabel": "ভূমিকা",
+      "rolePlaceholder": "যেমন: লেখার সহকারী",
+      "instructionsLabel": "এই এজেন্ট কী করবে?",
+      "instructionsPlaceholder": "এটি কীভাবে সাহায্য করবে তা বর্ণনা করুন। উদাহরণস্বরূপ: আমার পৃষ্ঠাগুলি খসড়া করুন এবং সম্পাদনা করুন, সুরটি স্পষ্ট এবং বন্ধুত্বপূর্ণ রাখুন এবং উন্নতির পরামর্শ দিন।",
+      "agentOptionalHint": "ঐচ্ছিক। আপনি এটি এড়িয়ে যেতে পারেন এবং পরে রুমের ভেতর থেকে এজেন্ট যোগ করতে পারেন।",
+      "agentCount_one": "{{count}} এজেন্ট",
+      "agentCount_other": "{{count}} এজেন্ট",
+      "jobCount_one": "{{count}} কাজ",
+      "jobCount_other": "{{count}} কাজ",
+      "subCabinetCount_one": "{{count}} সাব-ক্যাবিনেট",
+      "subCabinetCount_other": "{{count}} সাব-ক্যাবিনেট",
+      "cabinetsImported_one": "{{count}} ক্যাবিনেট আমদানি করা হয়েছে",
+      "cabinetsImported_other": "{{count}} ক্যাবিনেট আমদানি করা হয়েছে",
+      "agentCount": "{{count}} এজেন্ট",
+      "cabinetsImported": "{{count}} ক্যাবিনেট আমদানি করা হয়েছে",
+      "jobCount": "{{count}} কাজ",
+      "subCabinetCount": "{{count}} সাব-ক্যাবিনেট"
+    }
+  },
+  "search": {
+    "title": "অনুসন্ধান",
+    "placeholder": "পৃষ্ঠা, এজেন্ট, কাজ অনুসন্ধান করুন…",
+    "clearQuery": "ক্যোয়ারী সাফ করুন",
+    "noCommands": "কোনো কমান্ড মেলেনি।",
+    "scopes": {
+      "all": "সব",
+      "pages": "পৃষ্ঠা",
+      "agents": "এজেন্ট",
+      "tasks": "কাজ"
+    },
+    "groups": {
+      "pages": "পৃষ্ঠা",
+      "agents": "এজেন্ট",
+      "tasks": "কাজ"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "ভাষা",
+      "description": "ভাষা এবং পড়ার দিক পরিবর্তন করে। বিদ্যমান পৃষ্ঠাগুলি তাদের প্রতি-ডকুমেন্ট দিক বজায় রাখে।",
+      "english": "ইংরেজি",
+      "hebrew": "হিব্রু",
+      "chineseSimplified": "সরলীকৃত চীনা",
+      "chineseTraditional": "ঐতিহ্যবাহী চীনা",
+      "moreLanguages": "আরও ভাষা",
+      "moreLanguagesHint": "সেই ভাষায় Cabinet পেতে যেকোনোটিতে ক্লিক করুন — আমরা সবচেয়ে বেশি অনুরোধ করা ভাষাগুলিকে অগ্রাধিকার দেব।",
+      "comingSoon": "শীঘ্রই আসছে",
+      "requestSubmitted": "ধন্যবাদ! আমরা {{language}} এর জন্য আপনার অনুরোধটি নোট করেছি। আমরা সবচেয়ে বেশি অনুরোধ করা ভাষাগুলিকে অগ্রাধিকার দেব।",
+      "requestFailed": "সার্ভারে পৌঁছানো যায়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
+    },
+    "appearance": {
+      "title": "চেহারা",
+      "theme": "থিম",
+      "themeDescription": "ইন্টারফেসের জন্য একটি থিম বেছে নিন।",
+      "matchSystem": "সিস্টেমের সাথে মিলিয়ে নিন",
+      "matchSystemDescription": "আপনার OS এর চেহারা অনুযায়ী স্বয়ংক্রিয়ভাবে পরিবর্তন করুন।",
+      "lightThemes": "হালকা থিম",
+      "darkThemes": "গাঢ় থিম",
+      "lightVariant": "হালকা ভ্যারিয়েন্ট",
+      "darkVariant": "গাঢ় ভ্যারিয়েন্ট",
+      "sidebar": "সাইডবার",
+      "showHiddenFiles": "লুকানো ফাইল দেখান",
+      "sidebarDescription": "সাইডবারে ফাইলগুলি কীভাবে প্রদর্শিত হবে তা কনফিগার করুন।",
+      "showHiddenFilesHint": "ডট দিয়ে শুরু হওয়া ফাইল এবং ফোল্ডারগুলি প্রদর্শন করুন (যেমন .env, .git)"
+    },
+    "tabs": {
+      "profile": "প্রোফাইল",
+      "providers": "প্রদানকারী",
+      "skills": "দক্ষতা",
+      "storage": "স্টোরেজ",
+      "integrations": "ইন্টিগ্রেশন",
+      "notifications": "বিজ্ঞপ্তি",
+      "appearance": "চেহারা",
+      "updates": "আপডেট",
+      "about": "সম্পর্কে"
+    },
+    "page": {
+      "title": "সেটিংস",
+      "refresh": "রিফ্রেশ করুন",
+      "groupYou": "আপনি",
+      "groupWorkspace": "ওয়ার্কস্পেস",
+      "groupApp": "অ্যাপ"
+    },
+    "common": {
+      "copyToClipboard": "ক্লিপবোর্ডে কপি করুন",
+      "categoriesAriaLabel": "সেটিংস ক্যাটাগরি",
+      "loading": "লোড হচ্ছে…",
+      "connect": "সংযুক্ত করুন",
+      "recommended": "প্রস্তাবিত"
+    },
+    "integrationsPreview": {
+      "comingSoon": "শীঘ্রই আসছে",
+      "hint": "বাহ্যিক ইন্টিগ্রেশন এবং বিল্ট-ইন টুলস সংযোগ করার কাজ চলছে।"
+    },
+    "storage": {
+      "dataDirectory": "ডেটা ডিরেক্টরি",
+      "restartRequired": "রিস্টার্ট প্রয়োজন",
+      "dataDirectoryDescription": "সমস্ত নলেজ বেস কন্টেন্ট এই ডিরেক্টরিতে সংরক্ষিত আছে। পাথ পরিবর্তন করতে রিস্টার্ট প্রয়োজন।",
+      "restartHint": "Cabinet রিস্টার্ট করার পর ডেটা ডিরেক্টরি পরিবর্তিত হবে।",
+      "currentPath": "বর্তমান পাথ",
+      "loadingPath": "লোড হচ্ছে...",
+      "changeDirectory": "ডিরেক্টরি পরিবর্তন করুন",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "ব্রাউজ করুন",
+      "save": "সংরক্ষণ করুন",
+      "openInFinder": "ফাইন্ডারে খুলুন",
+      "envVarHint1": "আপনি ",
+      "envVarHint2": " পরিবেশ ভেরিয়েবলও সেট করতে পারেন, যা এই সেটিং এর উপর অগ্রাধিকার পায়।",
+      "failedToSave": "সংরক্ষণ ব্যর্থ হয়েছে।",
+      "failedToSaveDir": "ডেটা ডিরেক্টরি সংরক্ষণ ব্যর্থ হয়েছে।"
+    },
+    "updates": {
+      "checking": "Cabinet আপডেটের জন্য পরীক্ষা করা হচ্ছে…"
+    },
+    "providers": {
+      "title": "এজেন্ট প্রদানকারী",
+      "defaultModel": "ডিফল্ট মডেল",
+      "setupGuide": "সেটআপ গাইড",
+      "troubleshoot": "AI প্রদানকারীদের সমস্যা সমাধান করুন",
+      "subtitle": "AI এজেন্ট প্রোভাইডার কনফিগার করুন। CLI এজেন্ট টার্মিনালের মাধ্যমে চলে, API এজেন্ট সরাসরি API কল ব্যবহার করে।",
+      "defaultRuntime": "ডিফল্ট রানটাইম",
+      "defaultRuntimeHint": "সাধারণ কথোপকথন এবং ফলব্যাক রান এই প্রোভাইডার/মডেল/প্রচেষ্টা ব্যবহার করে।",
+      "cliAgents": "CLI এজেন্ট",
+      "apiAgents": "API এজেন্ট",
+      "ready": "প্রস্তুত",
+      "installedNotLoggedIn": "ইনস্টল করা হয়েছে কিন্তু লগ ইন করা হয়নি",
+      "notInstalled": "ইনস্টল করা হয়নি",
+      "emptyMatrix": "কোনো প্রোভাইডার কনফিগার করা হয়নি। নিচে একটি যোগ করুন।"
+    },
+    "notifications": {
+      "channels": "নোটিফিকেশন চ্যানেল",
+      "alertRules": "সতর্কতা নিয়মাবলী",
+      "alwaysOn": "সর্বদা চালু",
+      "comingSoon": "শীঘ্রই আসছে",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "এজেন্টদের আপনার মনোযোগের প্রয়োজন হলে আপনি কীভাবে সতর্কতা পাবেন তা কনফিগার করুন।",
+      "rulesHint": "এই ইভেন্টগুলির জন্য নোটিফিকেশন স্বয়ংক্রিয়ভাবে ট্রিগার হয়:",
+      "previewHint": "ব্রাউজার পুশ, টেলিগ্রাম, স্ল্যাক এবং ইমেল নোটিফিকেশন।",
+      "channelPushName": "ব্রাউজার পুশ",
+      "channelPushDesc": "Cabinet ট্যাব খোলা থাকলে বা PWA ইনস্টল করা থাকলে তাৎক্ষণিক সতর্কতা",
+      "channelTelegramName": "টেলিগ্রাম",
+      "channelTelegramDesc": "টেলিগ্রাম বটের মাধ্যমে তাৎক্ষণিক মোবাইল নোটিফিকেশন",
+      "channelSlackName": "স্ল্যাক ওয়েবহুক",
+      "channelSlackDesc": "আপনার দলের স্ল্যাক চ্যানেলে সতর্কতা ফরোয়ার্ড করুন",
+      "channelEmailName": "ইমেল ডাইজেস্ট",
+      "channelEmailDesc": "সতর্কতা এবং এজেন্ট কার্যকলাপের ব্যাচ করা সারাংশ",
+      "ruleAlertsEvent": "#alerts চ্যানেল মেসেজ",
+      "ruleAlertsDesc": "যে কোনো এজেন্ট সতর্কতা চ্যানেলে পোস্ট করলে",
+      "ruleMentionsEvent": "@human উল্লেখ",
+      "ruleMentionsDesc": "যখন কোনো এজেন্ট যেকোনো চ্যানেলে @human উল্লেখ করে",
+      "ruleFloorEvent": "লক্ষ্যের সর্বনিম্ন সীমা লঙ্ঘিত",
+      "ruleFloorDesc": "একটি লক্ষ্য তার সর্বনিম্ন থ্রেশহোল্ডের নিচে নেমে যায়",
+      "ruleHealthEvent": "এজেন্টের স্বাস্থ্য অবনমিত",
+      "ruleHealthDesc": "3+ ধারাবাহিক হার্টবিট ব্যর্থতা"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "সংস্করণ",
+      "release": "রিলিজ",
+      "framework": "ফ্রেমওয়ার্ক",
+      "storage": "স্টোরেজ",
+      "privacy": "গোপনীয়তা",
+      "telemetry": "বেনামী ব্যবহারের টেলিমেট্রি",
+      "tagline": "AI-প্রথম স্ব-হোস্টেড নলেজ বেস এবং স্টার্টআপ OS।",
+      "frameworkValue": "Next.js (অ্যাপ রাউটার)",
+      "storageValue": "স্থানীয় ফাইলসিস্টেম",
+      "aiLabel": "AI",
+      "aiValue": "স্থানীয় AI CLI দ্বারা চালিত",
+      "philosophy": "সমস্ত কন্টেন্ট ডিস্কে মার্কডাউন ফাইল হিসাবে থাকে। মানুষ উদ্দেশ্য নির্ধারণ করে। এজেন্টরা কাজ করে। নলেজ বেস উভয়ের মধ্যে ভাগ করা স্মৃতি।",
+      "privacyBody": "পণ্য উন্নত করতে সাহায্য করার জন্য Cabinet বেনামী ব্যবহারের টেলিমেট্রি পাঠায়। কোনো ফাইলের বিষয়বস্তু, পাথ, প্রম্পট বা গোপনীয় তথ্য সংগ্রহ করা হয় না।",
+      "privacyLink": "কী সংগ্রহ করা হয়?",
+      "telemetryEnvDisabled": "CABINET_TELEMETRY_DISABLED=1 (পরিবেশ ভেরিয়েবল) দ্বারা নিষ্ক্রিয় করা হয়েছে।",
+      "telemetryHint": "শুধুমাত্র ইভেন্টের সংখ্যা, সংস্করণ এবং প্ল্যাটফর্মের তথ্য। পাঠানো বন্ধ করতে টগল বন্ধ করুন।",
+      "cabinetCloud": "ক্যাবিনেট ক্লাউড",
+      "cloudBody": "যে কোনো জায়গা থেকে আপনার Cabinet-এর সাথে সংযোগ করুন, যখন আপনার AI দল আপনার জন্য ২৪/৭ কাজ করে। নিচে আপনার ইমেল দিন এবং Cabinet Cloud চালু হলে আমরা আপনাকে জানাবো।",
+      "cloudAlready": "আপনি ইতিমধ্যেই তালিকায় আছেন — আমরা যোগাযোগ করব।",
+      "cloudSuccess": "আপনি তালিকায় আছেন। Cabinet Cloud চালু হলে আমরা আপনাকে ইমেল করব।",
+      "cloudSending": "পাঠানো হচ্ছে…",
+      "cloudJoinWaitlist": "অপেক্ষমাণ তালিকায় যোগ দিন",
+      "cloudError": "কিছু ভুল হয়েছে। ইমেল পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+      "connectTitle": "সংযোগ করুন",
+      "connectBody": "সাহায্য পান, মতামত দিন, অথবা শুধু হ্যালো বলুন।",
+      "joinDiscord": "ডিসকর্ড-এ যোগ দিন"
+    },
+    "profile": {
+      "title": "প্রোফাইল",
+      "name": "নাম",
+      "namePlaceholder": "Jane",
+      "displayName": "প্রদর্শন নাম",
+      "role": "ভূমিকা",
+      "rolePlaceholder": "নির্মাতা",
+      "avatar": "অবতার",
+      "accentColor": "অ্যাকসেন্ট রঙ",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "ফলব্যাক আইকন",
+      "useIconInstead": "পরিবর্তে আইকন ব্যবহার করুন",
+      "searchAvatars": "অবতার খুঁজুন…",
+      "searchIcons": "আইকন খুঁজুন…",
+      "howAppear": "কথোপকথনে এবং অ্যাপ জুড়ে আপনাকে কীভাবে দেখা যাবে।",
+      "youFallback": "আপনি",
+      "displayNameHint": "কথোপকথনে দেখানো হবে। ডিফল্টরূপে নাম ব্যবহার করা হবে।",
+      "iconHint": "যখন কোনো অবতার ছবি সেট করা থাকে না তখন ব্যবহৃত হয়। পরিষ্কার করতে আবার ক্লিক করুন।",
+      "tintHint": "যখন কোনো ছবি সেট করা থাকে না তখন ফলব্যাক অবতারের রঙ পরিবর্তন করে।",
+      "save": "সংরক্ষণ করুন",
+      "saving": "সংরক্ষণ করা হচ্ছে…",
+      "saved": "সংরক্ষিত",
+      "browseAll": "সব দেখুন ({{count}})",
+      "showFavorites": "প্রিয়গুলি দেখান",
+      "showFewer": "কম দেখান"
+    },
+    "workspace": {
+      "title": "ওয়ার্কস্পেস",
+      "name": "ওয়ার্কস্পেসের নাম",
+      "namePlaceholder": "আমার Cabinet",
+      "description": "বিবরণ",
+      "descriptionPlaceholder": "আপনি কী করেন?",
+      "teamSize": "দলের আকার",
+      "teamSizePlaceholder": "একক / ২-৫ / ৬-২০ / ২০+",
+      "subtitle": "অনবোর্ডিংয়ের সময় সংগ্রহ করা হয়েছে। এজেন্টরা কাজ পরিকল্পনা করার সময় এগুলি পড়ে।"
+    }
+  },
+  "sidebar": {
+    "settings": "সেটিংস",
+    "createPage": "পৃষ্ঠা তৈরি করুন",
+    "newPage": "নতুন পৃষ্ঠা",
+    "newAgent": "নতুন এজেন্ট",
+    "newTask": "নতুন কাজ",
+    "archive": "আর্কাইভ",
+    "trash": "ট্র্যাশ",
+    "search": "অনুসন্ধান",
+    "agents": "এজেন্ট",
+    "tasks": "কাজ",
+    "missions": "মিশন",
+    "drawerData": "ডেটা",
+    "drawerAgents": "টিম",
+    "drawerTasks": "কাজ",
+    "goHome": "হোমে যান",
+    "brandWord": "",
+    "refresh": "সাইডবার রিফ্রেশ করুন",
+    "refreshDescription": "সাইডবার রিফ্রেশ করুন (ডেটা ফোল্ডার পুনরায় পড়ুন)",
+    "collapseSidebar": "সাইডবার ছোট করুন",
+    "expandSidebar": "সাইডবার বড় করুন",
+    "resizeHandle": "সাইডবারের আকার পরিবর্তন করুন — রিসেট করতে ডাবল-ক্লিক করুন",
+    "resetWidth": "প্রস্থ রিসেট করতে ডাবল-ক্লিক করুন",
+    "refreshedNoChanges": "রিফ্রেশ করা হয়েছে — কোনো পরিবর্তন নেই।",
+    "refreshedWithChanges": "রিফ্রেশ করা হয়েছে — {{added}} যোগ করা হয়েছে, {{removed}} সরানো হয়েছে।",
+    "refreshFailed": "রিফ্রেশ ব্যর্থ হয়েছে।",
+    "searchPlaceholder": "ফাইল অনুসন্ধান করুন…",
+    "searchSearching": "অনুসন্ধান চলছে…",
+    "searchNoResults": "“{{query}}” এর সাথে কোনো ফাইল মেলে না"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "স্ট্যাটাস বার",
+      "askAiAriaLabel": "এই পৃষ্ঠা সম্পাদনা করতে AI কে জিজ্ঞাসা করুন",
+      "askAiPlaceholder": "এই পৃষ্ঠাটি কীভাবে সম্পাদনা করবেন?",
+      "sendHint": "↵ পাঠাতে"
+    },
+    "server": {
+      "serverStatusAriaLabel": "সার্ভার স্ট্যাটাস — বিস্তারিত জানতে ক্লিক করুন",
+      "checking": "সার্ভার স্ট্যাটাস পরীক্ষা করা হচ্ছে…",
+      "allRunning": "সমস্ত সিস্টেম চালু আছে",
+      "appNotResponding": "অ্যাপ সার্ভার সাড়া দিচ্ছে না",
+      "daemonDownNoProviders": "ডিমোন সাড়া দিচ্ছে না; কোনো এজেন্ট প্রদানকারী উপলব্ধ নেই",
+      "daemonDown": "ডিমোন সাড়া দিচ্ছে না",
+      "noProviders": "কোনো এজেন্ট প্রদানকারী উপলব্ধ নেই",
+      "checkingShort": "পরীক্ষা করা হচ্ছে…",
+      "online": "অনলাইন",
+      "offline": "অফলাইন",
+      "degraded": "কার্যক্ষমতা হ্রাসপ্রাপ্ত",
+      "allSystemsRunning": "সমস্ত সিস্টেম চালু আছে",
+      "serviceDisruption": "পরিষেবা ব্যাহত",
+      "appServer": "অ্যাপ সার্ভার",
+      "daemon": "ডিমোন",
+      "agentProviders": "এজেন্ট প্রদানকারী",
+      "running": "চালু আছে",
+      "down": "অচল",
+      "lastSeen": "শেষ দেখা গেছে: {{when}}",
+      "appWorking": "পৃষ্ঠা, সম্পাদক, অনুসন্ধান এবং ফাইল ব্যবস্থাপনা কাজ করছে।",
+      "appDown": "পৃষ্ঠা, এডিটর, অনুসন্ধান এবং সংরক্ষণ অনুপলব্ধ। আপনি এখনও ক্যাশে করা বিষয়বস্তু পড়তে পারবেন।",
+      "daemonWorking": "AI এজেন্ট, নির্ধারিত কাজ এবং ওয়েব টার্মিনাল কাজ করছে।",
+      "daemonDownDescription": "AI এজেন্ট, নির্ধারিত কাজ এবং ওয়েব টার্মিনাল অনুপলব্ধ। পৃষ্ঠা সম্পাদনা এখনও কাজ করছে।",
+      "available": "উপলব্ধ",
+      "noneReady": "কোনোটি প্রস্তুত নয়",
+      "providerReady": "প্রস্তুত",
+      "providerNotLoggedIn": "লগ ইন করা নেই",
+      "providerNotInstalled": "ইনস্টল করা নেই",
+      "install": "ইনস্টল করুন",
+      "howToFix": "কীভাবে ঠিক করবেন"
+    },
+    "save": {
+      "retryTitle": "ব্যর্থ সংরক্ষণ পুনরায় চেষ্টা করতে ক্লিক করুন",
+      "retryAriaLabel": "সংরক্ষণ ব্যর্থ হয়েছে — পুনরায় চেষ্টা করতে ক্লিক করুন",
+      "autoSaving": "স্বয়ংক্রিয়ভাবে সংরক্ষণ হচ্ছে…",
+      "forceSave": "জোরপূর্বক সংরক্ষণ: ⌘S",
+      "editing": "সম্পাদনা হচ্ছে — আপনি বিরতি নিলে স্বয়ংক্রিয় সংরক্ষণ চলবে",
+      "wordCountTitle": "এই পৃষ্ঠার শব্দ সংখ্যা (মার্কডাউন সিনট্যাক্স বাদ দিয়ে)",
+      "savedJustNow": "এইমাত্র",
+      "savedNever": "কখনো না",
+      "savedAgoSeconds": "{{n}} সেকেন্ড আগে",
+      "savedAgoMinutes": "{{n}} মিনিট আগে",
+      "savedAgoHours": "{{n}} ঘণ্টা আগে",
+      "savedAgoDays": "{{n}} দিন আগে",
+      "saveFailedRetry": "সংরক্ষণ ব্যর্থ হয়েছে — আবার চেষ্টা করুন",
+      "savingText": "সংরক্ষণ করা হচ্ছে…",
+      "savedText": "সংরক্ষিত",
+      "editingText": "সম্পাদনা করা হচ্ছে…",
+      "savedAgo": "সংরক্ষিত · {{ago}}",
+      "word": "শব্দ",
+      "words": "শব্দ"
+    },
+    "git": {
+      "statusModified": "পরিবর্তিত",
+      "statusNew": "নতুন",
+      "statusAdded": "যোগ করা হয়েছে",
+      "statusDeleted": "মুছে ফেলা হয়েছে",
+      "statusRenamed": "পুনরায় নামকরণ করা হয়েছে",
+      "commitMessageAriaLabel": "কমিট বার্তা"
+    },
+    "help": {
+      "menuAriaLabel": "সহায়তা ও কমিউনিটি মেনু খুলুন",
+      "menuTitle": "সহায়তা ও কমিউনিটি",
+      "demos": "ডেমো, ভিডিও এবং নির্দেশিকা",
+      "discord": "ডিসকর্ডে চ্যাট করুন",
+      "discordSubtitle": "সহায়তা ও মতামত",
+      "github": "গিটহাবে অবদান রাখুন",
+      "githubSubtitle": "সোর্স, সমস্যা, পিআর",
+      "ifUseful": "যদি এটি আপনার কাছে দরকারী মনে হয়",
+      "label": "সহায়তা",
+      "starsAriaLabel": "{{count}} গিটহাব স্টার — গিটহাবে Cabinet খুলুন",
+      "starsTitle": "{{count}} গিটহাব স্টার — গিটহাবে Cabinet-কে স্টার দিন",
+      "share": "শেয়ার করুন",
+      "shareSubtitle": "একটি আমন্ত্রণ লিঙ্ক কপি করুন এবং ছড়িয়ে দিন",
+      "shareCopied": "আপনি অসাধারণ, {{name}} 🩷 ভবিষ্যতের Cabinet সদস্যদের নিয়ে আসার জন্য আপনাকে ধন্যবাদ। লিঙ্ক কপি করা হয়েছে, ভালোবাসা ছড়িয়ে দিন!",
+      "shareFailed": "লিঙ্ক কপি করা যায়নি",
+      "friend": "বন্ধু"
+    },
+    "git2": {
+      "allCommitted": "সব কমিট করা হয়েছে",
+      "uncommittedFile": "{{count}} আনকমিট করা ফাইল",
+      "uncommittedFiles": "{{count}} আনকমিট করা ফাইল",
+      "uncommittedFilesAria": "{{count}} আনকমিট করা ফাইল — তালিকা দেখতে ক্লিক করুন",
+      "uncommittedFileTip": "অ-কমিট করা ফাইল দেখতে ক্লিক করুন",
+      "uncommittedFilesTip": "অ-কমিট করা ফাইলগুলি দেখতে ক্লিক করুন",
+      "uncommittedFilesHeading": "{{count}}টি অ-কমিট করা ফাইল",
+      "uncommittedFilesHeadingPlural": "{{count}}টি অ-কমিট করা ফাইল",
+      "truncatedHint": "শুধুমাত্র প্রথম {{count}}টি ফাইল দেখানো হয়েছে — সম্পূর্ণ তালিকা দেখতে `git status` চালান।",
+      "commitDefault": "{{count}}টি ফাইল আপডেট করুন",
+      "commitDefaultPlural": "{{count}}টি ফাইল আপডেট করুন",
+      "committing": "কমিট করা হচ্ছে…",
+      "commit": "কমিট করুন",
+      "commitFailed": "কমিট ব্যর্থ হয়েছে",
+      "sync": "সিঙ্ক করুন",
+      "syncTitle": "GitHub থেকে সর্বশেষ টানুন ও রিফ্রেশ করুন",
+      "syncTitleWithLast": "GitHub থেকে সর্বশেষ টানুন ও রিফ্রেশ করুন। শেষ সিঙ্ক হয়েছে {{when}}।",
+      "syncAriaLabel": "GitHub থেকে সর্বশেষ পরিবর্তনগুলি টানুন এবং রিফ্রেশ করুন",
+      "syncAriaLabelWithLast": "GitHub থেকে সর্বশেষ পরিবর্তনগুলি টানুন এবং রিফ্রেশ করুন। শেষ সিঙ্ক হয়েছে {{when}}।",
+      "terminal": "টার্মিনাল",
+      "openTerminal": "টার্মিনাল খুলুন",
+      "newTerminalTab": "নতুন টার্মিনাল ট্যাব",
+      "pulling": "টানা হচ্ছে…",
+      "pulled": "রিমোট থেকে আপডেট করা হয়েছে",
+      "upToDate": "আপডেট করা আছে",
+      "pullFailed": "টানা ব্যর্থ হয়েছে"
+    },
+    "update2": {
+      "updateAvailable": "আপডেট {{version}} উপলব্ধ",
+      "updateAvailableTip": "Cabinet {{version}} উপলব্ধ"
+    },
+    "common": {
+      "dismiss": "বাতিল করুন",
+      "close": "বন্ধ করুন",
+      "openSettings": "ইনস্টল করা আপডেট পর্যালোচনা করতে সেটিংস খুলুন"
+    },
+    "misc": {
+      "restartToFinishUpdate": "আপডেট শেষ করতে রিস্টার্ট করুন"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "মূল প্রম্পট থেকে এই কাজটি পুনরায় শুরু করুন",
+      "markAsDone": "এই কাজটি সম্পন্ন হিসাবে চিহ্নিত করুন",
+      "viewAriaLabel": "টাস্ক ভিউ",
+      "terminal": "টার্মিনাল",
+      "transcript": "ট্রান্সক্রিপ্ট",
+      "details": "বিস্তারিত",
+      "transcriptTitle": "Claude Code নেটিভ সেশন JSONL",
+      "transcriptHint": "পড়ে ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "ফিরে যান",
+      "copyPrompt": "মূল প্রম্পট কপি করুন",
+      "gracefulExit": "CLI সুন্দরভাবে বন্ধ করুন (/exit PTY-তে লেখে)",
+      "sendSigterm": "চলমান PTY প্রক্রিয়াতে SIGTERM পাঠান",
+      "moreActions": "আরও অ্যাকশন",
+      "ptyMode": "টার্মিনাল (PTY) মোডে চলছে",
+      "compactContext": "পূর্ববর্তী পালাগুলিকে একটি সারসংক্ষেপে সংকুচিত করুন যাতে কনটেক্সট উইন্ডো মুক্ত হয়",
+      "noSummary": "এখনো কোনো সারসংক্ষেপ নেই।",
+      "sessionEnded": "সেশন শেষ হয়েছে — একই টার্মিনালে চালিয়ে যেতে টাইপ করুন।",
+      "terminalLive": "টার্মিনাল লাইভ। এই পালা শেষ হওয়ার পর আপনার পরবর্তী প্রম্পট সারিতে যোগ হবে।"
+    }
+  },
+  "tour": {
+    "ariaLabel": "আপনার Cabinet ট্যুর দেখুন",
+    "skip": "এড়িয়ে যান",
+    "skipAriaLabel": "ট্যুর এড়িয়ে যান",
+    "back": "ফিরে যান",
+    "next": "পরবর্তী",
+    "writeFirstTask": "আপনার প্রথম কাজটি লিখুন",
+    "goToSlide": "স্লাইড {{n}}-এ যান",
+    "starterTask": "আমার লক্ষ্য ও অর্জন নিয়ে কথা বলি, তারপর একটি নতুন About পৃষ্ঠায় সংরক্ষণ করি।",
+    "savingTo": "সংরক্ষণ করা হচ্ছে ",
+    "introTitle": "আপনার <accent>Cabinet</accent>-এর সাথে পরিচিত হন।",
+    "introSubtitle": "আপনার এআই দল। আপনার জ্ঞানভাণ্ডার। এক জায়গায়।",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "সাম্প্রতিক ও চলমান কাজ",
+    "hide": "কাজ প্যানেল লুকান",
+    "show": "কাজ প্যানেল দেখান",
+    "empty": "কোনো কাজ নেই",
+    "itemRunning": "{{title}} · চলছে · {{when}}",
+    "itemNeedsReply": "{{title}} · উত্তরের প্রয়োজন",
+    "itemFailed": "{{title}} · ব্যর্থ হয়েছে · {{when}}",
+    "itemDone": "{{title}} · সম্পন্ন হয়েছে · {{when}}",
+    "itemArchived": "{{title}} · আর্কাইভ করা হয়েছে",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} চলছে — কাজ প্যানেল দেখান"
+  },
+  "chrome": {
+    "nav": {
+      "home": "হোম",
+      "agents": "এজেন্ট",
+      "tasks": "কাজ",
+      "ai": "AI",
+      "menu": "মেনু",
+      "primaryAriaLabel": "প্রাথমিক"
+    },
+    "returnTo": {
+      "task": "কাজ",
+      "tasks": "কাজ",
+      "agent": "এজেন্ট",
+      "agents": "এজেন্ট",
+      "cabinet": "Cabinet",
+      "home": "হোম",
+      "settings": "সেটিংস",
+      "registry": "রেজিস্ট্রি",
+      "back": "ফিরে যান",
+      "backTo": "{{label}}-এ ফিরে যান"
+    },
+    "theme": {
+      "defaultHeader": "ডিফল্ট",
+      "dark": "ডার্ক",
+      "darkThemes": "ডার্ক থিম",
+      "lightThemes": "লাইট থিম"
+    },
+    "update": {
+      "restartTitle": "আপডেট শেষ করতে Cabinet রিস্টার্ট করুন",
+      "availableTitle": "Cabinet {{version}} উপলব্ধ",
+      "updatesTitle": "Cabinet আপডেট",
+      "description": "Cabinet স্বয়ংক্রিয়ভাবে নতুন সংস্করণ পরীক্ষা করে। পণ্যটি এখনও পরীক্ষামূলক অবস্থায় থাকায়, আপডেট ইনস্টল করার আগে আপনার ডেটার একটি কপি রাখুন।",
+      "later": "পরে",
+      "releaseNotes": "রিলিজ নোট"
+    },
+    "daemon": {
+      "fixHintElectron": "এজেন্ট ডেমন রিস্টার্ট করতে Cabinet বন্ধ করে আবার চালু করুন।",
+      "fixHintDev": "এজেন্ট ডেমন আবার চালু করতে `npm run dev:daemon` (অথবা `npm run dev:all` রিস্টার্ট করুন) চালান।",
+      "notResponding": "এজেন্ট ডেমোন প্রতিক্রিয়া দিচ্ছে না।",
+      "willFail": "এজেন্ট, কাজ এবং এআই অনুরোধ এটি ফিরে না আসা পর্যন্ত ব্যর্থ হবে। {{fixHint}}"
+    }
+  }
+}

@@ -15,6 +15,13 @@ import { SchedulePicker } from "./schedule-picker";
 import { cn } from "@/lib/utils";
 import { Plus, X } from "lucide-react";
 import type { ProviderInfo } from "@/types/agents";
+import {
+  formatAdapterOptionLabel,
+  getAdapterOptionsForProvider,
+  getDefaultAdapterTypeForProviderInfo,
+  resolveAdapterTypeForProvider,
+} from "@/lib/agents/adapter-options";
+import { useLocale } from "@/i18n/use-locale";
 
 interface GoalInput {
   metric: string;
@@ -27,6 +34,8 @@ interface CreateAgentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated?: () => void;
+  /** Cabinet (room) the agent belongs to. Omitted = the neutral home. */
+  cabinetPath?: string;
 }
 
 const EMOJI_OPTIONS = [
@@ -36,7 +45,8 @@ const EMOJI_OPTIONS = [
 
 const DEPARTMENTS = ["marketing", "sales", "engineering", "research", "operations", "content", "support", "general"];
 
-export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgentDialogProps) {
+export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }: CreateAgentDialogProps) {
+  const { t } = useLocale();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [emoji, setEmoji] = useState("🤖");
@@ -44,10 +54,16 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
   const [type, setType] = useState<"specialist" | "lead">("specialist");
   const [heartbeat, setHeartbeat] = useState("0 */4 * * *");
   const [provider, setProvider] = useState("claude-code");
+  const [adapterType, setAdapterType] = useState<string | undefined>(undefined);
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
   const [defaultProvider, setDefaultProvider] = useState("claude-code");
   const [goals, setGoals] = useState<GoalInput[]>([]);
   const [creating, setCreating] = useState(false);
+  const adapterOptions = getAdapterOptionsForProvider(
+    providers,
+    provider || defaultProvider,
+    defaultProvider
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -55,10 +71,20 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
     fetch("/api/agents/providers")
       .then((r) => r.json())
       .then((data) => {
-        setProviders((data.providers || []).filter((entry: ProviderInfo) => entry.type === "cli" && entry.enabled));
+        const nextProviders = (data.providers || []).filter(
+          (entry: ProviderInfo) => entry.type === "cli" && entry.enabled
+        );
+        setProviders(nextProviders);
         const nextDefault = data.defaultProvider || "claude-code";
         setDefaultProvider(nextDefault);
         setProvider(nextDefault);
+        setAdapterType(
+          getDefaultAdapterTypeForProviderInfo(
+            nextProviders,
+            nextDefault,
+            nextDefault
+          )
+        );
       })
       .catch(() => {});
   }, [open]);
@@ -92,6 +118,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
         type,
         heartbeat,
         provider,
+        adapterType,
         budget: 200,
         active: false,
         workdir: "/data",
@@ -105,7 +132,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
       const res = await fetch(`/api/agents/personas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, ...body }),
+        body: JSON.stringify({ slug, ...body, cabinetPath }),
       });
 
       if (res.ok) {
@@ -128,6 +155,9 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
     setType("specialist");
     setHeartbeat("0 */4 * * *");
     setProvider(defaultProvider);
+    setAdapterType(
+      getDefaultAdapterTypeForProviderInfo(providers, defaultProvider, defaultProvider)
+    );
     setGoals([]);
   };
 
@@ -135,7 +165,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Agent</DialogTitle>
+          <DialogTitle>{t("agents:dialog.createAgent")}</DialogTitle>
           <DialogDescription>
             Define a new agent with its identity, schedule, and goals.
           </DialogDescription>
@@ -150,7 +180,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
 
             {/* Emoji picker */}
             <div className="space-y-1">
-              <label className="text-[12px] font-medium">Avatar</label>
+              <label className="text-[12px] font-medium">{t("agents:dialog.avatar")}</label>
               <div className="flex flex-wrap gap-1">
                 {EMOJI_OPTIONS.map((e) => (
                   <button
@@ -176,7 +206,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Marketing Agent"
+                  placeholder={t("agents:dialog.namePlaceholder")}
                   className="text-[12px] h-8"
                 />
               </div>
@@ -185,7 +215,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                 <Input
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  placeholder="Content Specialist"
+                  placeholder={t("agents:dialog.rolePlaceholder")}
                   className="text-[12px] h-8"
                 />
               </div>
@@ -206,7 +236,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[12px] font-medium">Department</label>
+                <label className="text-[12px] font-medium">{t("agents:dialog.department")}</label>
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
@@ -251,10 +281,20 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
             </div>
 
             <div className="space-y-1">
-              <label className="text-[12px] font-medium">Provider</label>
+              <label className="text-[12px] font-medium">{t("agents:dialog.provider")}</label>
               <select
                 value={provider}
-                onChange={(e) => setProvider(e.target.value)}
+                onChange={(e) => {
+                  setProvider(e.target.value);
+                  setAdapterType(
+                    resolveAdapterTypeForProvider(
+                      providers,
+                      e.target.value,
+                      undefined,
+                      defaultProvider
+                    )
+                  );
+                }}
                 className="w-full h-8 text-[12px] bg-background border border-border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-ring"
               >
                 {(providers.length > 0
@@ -267,6 +307,30 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                 ))}
               </select>
             </div>
+            {adapterOptions.length > 0 ? (
+              <div className="space-y-1">
+                <label className="text-[12px] font-medium">{t("agents:dialog.runtime")}</label>
+                <select
+                  value={
+                    adapterType ||
+                    getDefaultAdapterTypeForProviderInfo(
+                      providers,
+                      provider,
+                      defaultProvider
+                    ) ||
+                    ""
+                  }
+                  onChange={(e) => setAdapterType(e.target.value)}
+                  className="w-full h-8 text-[12px] bg-background border border-border rounded-md px-2 focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  {adapterOptions.map((adapter) => (
+                    <option key={adapter.type} value={adapter.type}>
+                      {formatAdapterOptionLabel(adapter)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
           </div>
 
           {/* Schedule */}
@@ -307,7 +371,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                       <Input
                         value={g.metric}
                         onChange={(e) => setGoals((prev) => prev.map((goal, idx) => idx === i ? { ...goal, metric: e.target.value } : goal))}
-                        placeholder="reddit_replies"
+                        placeholder={t("agents:metric.namePlaceholder")}
                         className="text-[11px] h-7 col-span-2"
                       />
                       <Input
@@ -320,7 +384,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                       <Input
                         value={g.unit}
                         onChange={(e) => setGoals((prev) => prev.map((goal, idx) => idx === i ? { ...goal, unit: e.target.value } : goal))}
-                        placeholder="replies/week"
+                        placeholder={t("agents:metric.targetPlaceholder")}
                         className="text-[11px] h-7"
                       />
                       <select
@@ -328,9 +392,9 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated }: CreateAgent
                         onChange={(e) => setGoals((prev) => prev.map((goal, idx) => idx === i ? { ...goal, period: e.target.value } : goal))}
                         className="text-[11px] h-7 bg-background border border-border rounded-md px-1.5 focus:outline-none focus:ring-1 focus:ring-ring col-span-2"
                       >
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
+                        <option value="daily">{t("agents:metric.daily")}</option>
+                        <option value="weekly">{t("agents:metric.weekly")}</option>
+                        <option value="monthly">{t("agents:metric.monthly")}</option>
                       </select>
                     </div>
                     <button

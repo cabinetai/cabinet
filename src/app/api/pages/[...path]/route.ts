@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readPage, writePage, createPage, deletePage, movePage, renamePage } from "@/lib/storage/page-io";
+import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 
 type RouteParams = { params: Promise<{ path: string[] }> };
@@ -37,6 +38,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     const virtualPath = segments.join("/");
     const body = await req.json();
     await createPage(virtualPath, body.title);
+    invalidateTreeCache();
     autoCommit(virtualPath, "Add");
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
@@ -52,10 +54,18 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     const virtualPath = segments.join("/");
     const body = await req.json();
     if (body.rename) {
-      const newPath = await renamePage(virtualPath, body.rename);
-      return NextResponse.json({ ok: true, newPath });
+      const { newPath, references } = await renamePage(virtualPath, body.rename);
+      invalidateTreeCache();
+      return NextResponse.json({ ok: true, newPath, references });
     }
-    const newPath = await movePage(virtualPath, body.toParent || "");
+    const fromParent = virtualPath.split("/").slice(0, -1).join("/");
+    const toParent =
+      typeof body.toParent === "string" ? body.toParent : fromParent;
+    const newPath = await movePage(virtualPath, toParent, {
+      prevName: body.prevName ?? undefined,
+      nextName: body.nextName ?? undefined,
+    });
+    invalidateTreeCache();
     return NextResponse.json({ ok: true, newPath });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -68,6 +78,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     const { path: segments } = await params;
     const virtualPath = segments.join("/");
     await deletePage(virtualPath);
+    invalidateTreeCache();
     autoCommit(virtualPath, "Delete");
     return new NextResponse(null, { status: 204 });
   } catch (error) {

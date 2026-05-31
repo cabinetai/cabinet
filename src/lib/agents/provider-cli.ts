@@ -1,17 +1,13 @@
 import fs from "fs";
-import { execSync, spawn } from "child_process";
+import { spawn } from "child_process";
 import type { AgentProvider } from "./provider-interface";
-import { getNvmNodeBin } from "./nvm-path";
+import {
+  ADAPTER_RUNTIME_PATH,
+  resolveCommandFromCandidates,
+  withAdapterRuntimeEnv,
+} from "./adapters/utils";
 
-const nvmBin = getNvmNodeBin();
-
-export const RUNTIME_PATH = [
-  `${process.env.HOME || ""}/.local/bin`,
-  "/usr/local/bin",
-  "/opt/homebrew/bin",
-  ...(nvmBin ? [nvmBin] : []),
-  process.env.PATH || "",
-].filter(Boolean).join(":");
+export const RUNTIME_PATH = ADAPTER_RUNTIME_PATH;
 
 export function resolveCliCommand(provider: AgentProvider): string {
   const candidates = [
@@ -19,27 +15,11 @@ export function resolveCliCommand(provider: AgentProvider): string {
     provider.command,
   ].filter((candidate): candidate is string => !!candidate);
 
-  for (const candidate of candidates) {
-    if (candidate.includes("/") && fs.existsSync(candidate)) {
-      return candidate;
-    }
-  }
+  const resolved = resolveCommandFromCandidates(candidates, process.env);
+  if (resolved) return resolved;
 
   for (const candidate of candidates) {
-    if (candidate.includes("/")) continue;
-    try {
-      const resolved = execSync(`command -v ${candidate}`, {
-        encoding: "utf8",
-        env: { ...process.env, PATH: RUNTIME_PATH },
-        stdio: ["ignore", "pipe", "ignore"],
-      }).trim();
-
-      if (resolved) {
-        return resolved;
-      }
-    } catch {
-      // Ignore and keep trying.
-    }
+    if (candidate.includes("/") && fs.existsSync(candidate)) return candidate;
   }
 
   if (!provider.command) {
@@ -60,10 +40,7 @@ export async function checkCliProviderAvailable(provider: AgentProvider): Promis
     }
 
     const proc = spawn(command, ["--version"], {
-      env: {
-        ...process.env,
-        PATH: RUNTIME_PATH,
-      },
+      env: withAdapterRuntimeEnv(process.env),
       stdio: ["ignore", "pipe", "pipe"],
     });
 
@@ -84,5 +61,58 @@ export async function checkCliProviderAvailable(provider: AgentProvider): Promis
       proc.kill();
       settle(false);
     }, 5000);
+  });
+}
+
+// Async replacement for execSync-based CLI probes. Keeps the event loop free
+// so Promise.all over N providers actually runs in parallel.
+export async function execCli(
+  command: string,
+  args: string[],
+  options: { timeout?: number; captureStderr?: boolean } = {}
+): Promise<string> {
+  const timeoutMs = options.timeout ?? 5000;
+  return new Promise((resolve, reject) => {
+    const proc = spawn(command, args, {
+      env: withAdapterRuntimeEnv(process.env),
+      stdio: ["ignore", "pipe", options.captureStderr ? "pipe" : "ignore"],
+    });
+
+    let stdout = "";
+    let stderr = "";
+    let settled = false;
+
+    proc.stdout?.on("data", (chunk: Buffer) => {
+      stdout += chunk.toString("utf8");
+    });
+    if (options.captureStderr) {
+      proc.stderr?.on("data", (chunk: Buffer) => {
+        stderr += chunk.toString("utf8");
+      });
+    }
+
+    const settle = (err: Error | null, output: string) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (err) reject(err);
+      else resolve(output);
+    };
+
+    proc.on("close", (code) => {
+      if (code === 0) {
+        const combined = options.captureStderr ? `${stdout}${stderr}` : stdout;
+        settle(null, combined.trim());
+      } else {
+        settle(new Error(`${command} exited with code ${code}`), "");
+      }
+    });
+
+    proc.on("error", (err) => settle(err, ""));
+
+    const timer = setTimeout(() => {
+      proc.kill();
+      settle(new Error(`${command} timed out`), "");
+    }, timeoutMs);
   });
 }

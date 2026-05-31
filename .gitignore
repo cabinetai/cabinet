@@ -33,6 +33,7 @@ yarn-error.log*
 # env files
 .env*
 !.env.example
+.cabinet.env
 
 # vercel
 .vercel
@@ -41,24 +42,28 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# data: keep only the shipped templates, agent library, and guidance tracked
-data/**
-!data/
-!data/getting-started/
-!data/getting-started/**
-!data/example-cabinet-carousel-factory/
-!data/example-cabinet-carousel-factory/**
-!data/.agents/
-!data/.agents/.library/
-!data/.agents/.library/**
-!data/.agents/stripe/
-!data/.agents/stripe/**
-!data/index.md
-!data/CLAUDE.md
-data/**/.DS_Store
+# data: pure local runtime state — never tracked. Seed content lives in resources/.
+/data/
+
+# old data backup
+/old-data/
+# local data backups (e.g. created before a migration) — never tracked
+/data-backup-*/
+/data copy/
 
 # claude code
 .claude/
 
-# stray build artifacts
-data/.agents/.library/.next/
+# cabinetai CLI
+cabinetai/dist/
+cabinetai/node_modules/
+
+# local install config (per-machine dataDir)
+.cabinet-install.json
+
+# skills lock (per-machine; runtime-managed)
+skills-lock.json
+
+# installed skills bundles (per-machine; managed by Settings -> Skills)
+.agents/skills/
+.agents/skills-stats.json

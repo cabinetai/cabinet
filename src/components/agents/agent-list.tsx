@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppStore } from "@/stores/app-store";
 import { cn } from "@/lib/utils";
 import type { AgentListItem } from "@/types/agents";
+import { useLocale } from "@/i18n/use-locale";
 
 interface LibraryTemplate {
   slug: string;
@@ -31,6 +32,7 @@ function AgentCardItem({
   agent: AgentListItem;
   onClick: () => void;
 }) {
+  const { t } = useLocale();
   return (
     <button
       onClick={onClick}
@@ -84,6 +86,7 @@ function LibraryDialog({
   onClose: () => void;
   onAdd: (slug: string) => void;
 }) {
+  const { t } = useLocale();
   const [templates, setTemplates] = useState<LibraryTemplate[]>([]);
   const [adding, setAdding] = useState<string | null>(null);
 
@@ -125,7 +128,7 @@ function LibraryDialog({
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2">
             <Library className="h-4 w-4" />
-            <h2 className="text-[15px] font-semibold">Agent Library</h2>
+            <h2 className="text-[15px] font-semibold">{t("agentList:agentLibrary")}</h2>
           </div>
           <Button variant="ghost" size="icon-sm" onClick={onClose}>
             <X className="h-4 w-4" />
@@ -178,6 +181,7 @@ function LibraryDialog({
 }
 
 export function AgentList() {
+  const { t } = useLocale();
   const [agents, setAgents] = useState<AgentListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLibrary, setShowLibrary] = useState(false);
@@ -235,8 +239,27 @@ export function AgentList() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-        Loading...
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <div className="h-4 w-16 rounded bg-muted animate-pulse" />
+          <div className="h-7 w-28 rounded bg-muted animate-pulse" />
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="bg-card border border-border rounded-lg p-4 animate-pulse">
+                <div className="flex justify-between">
+                  <div className="h-8 w-8 rounded-full bg-muted" />
+                  <div className="h-5 w-14 rounded-full bg-muted" />
+                </div>
+                <div className="h-3 w-1/2 bg-muted rounded mt-3" />
+                <div className="h-2 w-1/3 bg-muted rounded mt-2" />
+                <div className="h-2 w-2/3 bg-muted rounded mt-2" />
+                <div className="h-2 w-1/4 bg-muted rounded mt-3" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -286,7 +309,7 @@ export function AgentList() {
               className="border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-accent/20 transition-colors cursor-pointer min-h-[140px]"
             >
               <Plus className="h-6 w-6" />
-              <span className="text-[13px] font-medium">New Agent</span>
+              <span className="text-[13px] font-medium">{t("agentList:newAgent")}</span>
             </button>
           </div>
         </div>

@@ -3,6 +3,10 @@ import type { AgentProvider, CliProviderInvocation } from "./provider-interface"
 import { providerRegistry } from "./provider-registry";
 import { resolveCliCommand, RUNTIME_PATH } from "./provider-cli";
 import {
+  resolveDetachedPromptLaunchMode,
+  type DetachedLaunchMode,
+} from "./detached-launch-mode";
+import {
   getConfiguredDefaultProviderId,
   readProviderSettingsSync,
   resolveEnabledProviderId,
@@ -33,7 +37,8 @@ function buildLaunchSpec(
   providerId: string | undefined,
   prompt: string | undefined,
   workdir: string,
-  mode: "one-shot" | "session"
+  mode: "one-shot" | "session",
+  opts?: { model?: string; effort?: string; resumeId?: string }
 ): ProviderLaunchSpec {
   const provider = resolveProviderOrThrow(providerId);
 
@@ -44,11 +49,13 @@ function buildLaunchSpec(
   let invocation: CliProviderInvocation | undefined;
 
   if (mode === "one-shot" && provider.buildOneShotInvocation && prompt) {
-    invocation = provider.buildOneShotInvocation(prompt, workdir);
+    invocation = provider.buildOneShotInvocation(prompt, workdir, opts);
   }
 
   if (mode === "session" && provider.buildSessionInvocation) {
-    invocation = provider.buildSessionInvocation(prompt, workdir);
+    invocation = provider.buildSessionInvocation(prompt, workdir, {
+      resumeId: opts?.resumeId,
+    });
   }
 
   if (!invocation && prompt && provider.buildArgs && provider.command) {
@@ -88,20 +95,40 @@ export function resolveProviderId(providerId?: string): string {
   return resolveProviderOrThrow(providerId).id;
 }
 
+export function getDetachedPromptLaunchMode(input: {
+  providerId?: string;
+  prompt?: string;
+}): DetachedLaunchMode {
+  const provider = resolveProviderOrThrow(input.providerId);
+  return resolveDetachedPromptLaunchMode(provider, input.prompt);
+}
+
 export function getSessionLaunchSpec(input: {
   providerId?: string;
   prompt?: string;
   workdir: string;
+  resumeId?: string;
 }): ProviderLaunchSpec {
-  return buildLaunchSpec(input.providerId, input.prompt, input.workdir, "session");
+  return buildLaunchSpec(input.providerId, input.prompt, input.workdir, "session", {
+    resumeId: input.resumeId,
+  });
 }
 
 export function getOneShotLaunchSpec(input: {
   providerId?: string;
   prompt: string;
   workdir: string;
+  model?: string;
+  effort?: string;
+  resumeId?: string;
 }): ProviderLaunchSpec {
-  return buildLaunchSpec(input.providerId, input.prompt, input.workdir, "one-shot");
+  return buildLaunchSpec(
+    input.providerId,
+    input.prompt,
+    input.workdir,
+    "one-shot",
+    { model: input.model, effort: input.effort, resumeId: input.resumeId }
+  );
 }
 
 export async function runOneShotProviderPrompt(input: {
@@ -109,6 +136,8 @@ export async function runOneShotProviderPrompt(input: {
   prompt: string;
   cwd: string;
   timeoutMs?: number;
+  model?: string;
+  effort?: string;
 }): Promise<string> {
   const provider = resolveProviderOrThrow(input.providerId);
 
@@ -120,6 +149,8 @@ export async function runOneShotProviderPrompt(input: {
     providerId: input.providerId,
     prompt: input.prompt,
     workdir: input.cwd,
+    model: input.model,
+    effort: input.effort,
   });
 
   return new Promise<string>((resolve, reject) => {

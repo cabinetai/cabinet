@@ -3,11 +3,13 @@ import path from "path";
 import yaml from "js-yaml";
 import simpleGit from "simple-git";
 import { NextRequest, NextResponse } from "next/server";
+import { CABINET_LINK_META_FILE } from "@/lib/cabinets/files";
 import {
   resolveContentPath,
   sanitizeFilename,
 } from "@/lib/storage/path-utils";
 import { ensureDirectory, fileExists, writeFileContent } from "@/lib/storage/fs-operations";
+import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +28,7 @@ async function detectGitMetadata(localPath: string): Promise<{
   remote?: string;
 }> {
   try {
-    const git = simpleGit(localPath);
+    const git = simpleGit(/*turbopackIgnore: true*/ localPath);
     const isRepo = await git.checkIsRepo();
     if (!isRepo) return { isRepo: false };
 
@@ -64,8 +66,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    localPath = path.resolve(localPathInput);
-    const stat = await fs.stat(localPath).catch(() => null);
+    localPath = path.resolve(/*turbopackIgnore: true*/ localPathInput);
+    const stat = await fs.stat(/*turbopackIgnore: true*/ localPath).catch(() => null);
     if (!stat || !stat.isDirectory()) {
       return NextResponse.json(
         { error: "Local path must be an existing directory." },
@@ -117,8 +119,11 @@ export async function POST(req: NextRequest) {
     const source = remote ? "both" : "local";
     const description = body.description?.trim() || undefined;
 
-    // Write .cabinet.yaml into the target directory
-    const cabinetYamlPath = path.join(localPath, ".cabinet.yaml");
+    // Write linked-folder metadata into the target directory.
+    const cabinetMetaPath = path.join(
+      /*turbopackIgnore: true*/ localPath,
+      CABINET_LINK_META_FILE
+    );
     const cabinetMeta = {
       title: derivedName,
       tags: isRepo ? ["repo"] : ["knowledge"],
@@ -126,15 +131,18 @@ export async function POST(req: NextRequest) {
       ...(description ? { description } : {}),
     };
     await writeFileContent(
-      cabinetYamlPath,
+      cabinetMetaPath,
       yaml.dump(cabinetMeta, { lineWidth: -1, noRefs: true })
     );
-    writtenFiles.push(cabinetYamlPath);
+    writtenFiles.push(cabinetMetaPath);
 
     // Write .repo.yaml into the target directory (for git repos, skip if already exists)
     let warning: string | undefined;
     if (isRepo) {
-      const repoYamlPath = path.join(localPath, ".repo.yaml");
+      const repoYamlPath = path.join(
+        /*turbopackIgnore: true*/ localPath,
+        ".repo.yaml"
+      );
       if (await fileExists(repoYamlPath)) {
         warning = ".repo.yaml already exists in the target directory — skipped writing.";
       } else {
@@ -162,6 +170,9 @@ export async function POST(req: NextRequest) {
     );
     symlinkCreated = true;
 
+    // The symlink adds a node to the tree — drop the 5s buildTree cache so the
+    // sidebar's immediate loadTree() reflects it instead of stale data.
+    invalidateTreeCache();
     autoCommit(relativePath, "Add");
 
     return NextResponse.json({

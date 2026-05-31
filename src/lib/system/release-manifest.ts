@@ -11,6 +11,16 @@ interface PackageManifest {
   };
 }
 
+function buildReleaseUrls(repositoryUrl: string, gitTag: string): Pick<
+  ReleaseManifest,
+  "releaseNotesUrl" | "sourceTarballUrl"
+> {
+  return {
+    releaseNotesUrl: `${repositoryUrl}/releases/tag/${gitTag}`,
+    sourceTarballUrl: `${repositoryUrl}/archive/refs/tags/${gitTag}.tar.gz`,
+  };
+}
+
 function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
   const version = pkg.version || "0.0.0";
   const gitTag = `v${version}`;
@@ -24,10 +34,11 @@ function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
     releaseDate: new Date(0).toISOString(),
     gitTag,
     repositoryUrl,
-    releaseNotesUrl: `${repositoryUrl}/releases/tag/${gitTag}`,
-    sourceTarballUrl: `${repositoryUrl}/archive/refs/tags/${gitTag}.tar.gz`,
+    ...buildReleaseUrls(repositoryUrl, gitTag),
     npmPackage: "create-cabinet",
     createCabinetVersion: version,
+    cabinetaiPackage: "cabinetai",
+    cabinetaiVersion: version,
     electron: {
       macos: {
         zipAssetName: "Cabinet-darwin-arm64.zip",
@@ -58,6 +69,25 @@ function normalizeReleaseManifest(input: Partial<ReleaseManifest>, fallback: Rel
   };
 }
 
+function alignManifestWithFallback(
+  manifest: ReleaseManifest,
+  fallback: ReleaseManifest
+): ReleaseManifest {
+  const version = fallback.version;
+  const repositoryUrl = manifest.repositoryUrl || fallback.repositoryUrl;
+  const gitTag = `v${version}`;
+
+  return {
+    ...manifest,
+    version,
+    gitTag,
+    repositoryUrl,
+    ...buildReleaseUrls(repositoryUrl, gitTag),
+    createCabinetVersion: version,
+    cabinetaiVersion: manifest.cabinetaiPackage ? version : manifest.cabinetaiVersion,
+  };
+}
+
 export async function readBundledReleaseManifest(): Promise<ReleaseManifest> {
   const pkg = await readPackageManifest();
   const fallback = buildFallbackManifest(pkg);
@@ -65,12 +95,7 @@ export async function readBundledReleaseManifest(): Promise<ReleaseManifest> {
   try {
     const raw = await fs.readFile(PROJECT_RELEASE_MANIFEST_PATH, "utf-8");
     const manifest = normalizeReleaseManifest(JSON.parse(raw) as Partial<ReleaseManifest>, fallback);
-    // package.json is the source of truth for the current version —
-    // cabinet-release.json may be stale if a version bump didn't regenerate it
-    if (pkg.version) {
-      manifest.version = pkg.version;
-    }
-    return manifest;
+    return alignManifestWithFallback(manifest, fallback);
   } catch {
     return fallback;
   }
@@ -108,4 +133,3 @@ export async function fetchLatestReleaseManifest(): Promise<{
     };
   }
 }
-

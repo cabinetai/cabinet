@@ -1,7 +1,12 @@
 import type { JobConfig } from "@/types/jobs";
+import { defaultAdapterTypeForProvider } from "@/lib/agents/adapters";
 
 function normalizeWhitespace(value: string): string {
   return value.replace(/\r\n/g, "\n").trim();
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export function normalizeExistingJobId(value: unknown): string {
@@ -56,6 +61,24 @@ export function normalizeJobConfig(
       typeof input.provider === "string" && input.provider.trim()
         ? input.provider.trim()
         : "claude-code",
+    adapterType:
+      typeof input.adapterType === "string" && input.adapterType.trim()
+        ? input.adapterType.trim()
+        : defaultAdapterTypeForProvider(
+            typeof input.provider === "string" ? input.provider.trim() : "claude-code"
+          ),
+    adapterConfig:
+      isRecord(input.adapterConfig) && Object.keys(input.adapterConfig).length > 0
+        ? input.adapterConfig
+        : undefined,
+    ownerAgent:
+      typeof agentSlug === "string" && agentSlug.trim()
+        ? agentSlug.trim()
+        : typeof input.ownerAgent === "string" && input.ownerAgent.trim()
+          ? input.ownerAgent.trim()
+          : typeof input.agentSlug === "string" && input.agentSlug.trim()
+            ? input.agentSlug.trim()
+            : undefined,
     agentSlug:
       typeof agentSlug === "string" && agentSlug.trim()
         ? agentSlug.trim()
@@ -78,6 +101,10 @@ export function normalizeJobConfig(
         : "",
     on_complete: Array.isArray(input.on_complete) ? input.on_complete : undefined,
     on_failure: Array.isArray(input.on_failure) ? input.on_failure : undefined,
+    cabinetPath:
+      typeof input.cabinetPath === "string" && input.cabinetPath.trim()
+        ? input.cabinetPath.trim()
+        : undefined,
     createdAt:
       typeof input.createdAt === "string" && input.createdAt.trim()
         ? input.createdAt
@@ -86,5 +113,12 @@ export function normalizeJobConfig(
       typeof input.updatedAt === "string" && input.updatedAt.trim()
         ? input.updatedAt
         : now,
+    ...(input.oneShot === true ? { oneShot: true } : {}),
+    ...(typeof input.runAfter === "string" && input.runAfter.trim()
+      ? { runAfter: input.runAfter.trim() }
+      : {}),
+    ...(typeof input.ownerTaskId === "string" && input.ownerTaskId.trim()
+      ? { ownerTaskId: input.ownerTaskId.trim() }
+      : {}),
   };
 }

@@ -30,5 +30,17 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "coverage",
+    ".audit-shots",
+    "data",
+    "data-old*",
+    "old-data",
+    "cabinetai",
+    "cli"
+  ]
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_URL="${1:-http://localhost:3000}"
+APP_URL="${1:-http://localhost:4000}"
 DEBUG_PORT="${DEBUG_PORT:-9222}"
 VERSION_ENDPOINT="http://127.0.0.1:${DEBUG_PORT}/json/version"
 LIST_ENDPOINT="http://127.0.0.1:${DEBUG_PORT}/json/list"

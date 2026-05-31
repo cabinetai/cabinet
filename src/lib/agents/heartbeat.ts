@@ -12,6 +12,37 @@ import {
   getHeartbeatHistory,
   type AgentPersona,
 } from "./persona-manager";
+import { renderPersonaBody } from "./persona-templating";
+import { readCabinetReferenceByPath } from "@/lib/cabinets/overview";
+import { readUserProfile } from "@/lib/user/profile-io";
+import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
+
+async function buildPersonaPromptBody(persona: AgentPersona): Promise<string> {
+  const cabinetPath = persona.cabinetPath || ROOT_CABINET_PATH;
+  let cabinetName: string | undefined;
+  let cabinetSlug: string | undefined;
+  try {
+    const ref = await readCabinetReferenceByPath(cabinetPath);
+    cabinetName = ref?.name;
+    cabinetSlug = ref?.id;
+  } catch {
+    /* fall through — leave placeholders intact */
+  }
+  let userName: string | undefined;
+  try {
+    const profile = await readUserProfile();
+    const raw = (profile.displayName || profile.name || "").trim();
+    if (raw && raw.toLowerCase() !== "you") userName = raw;
+  } catch {
+    /* fall through */
+  }
+  return renderPersonaBody(persona.body, {
+    cabinet: { name: cabinetName, slug: cabinetSlug, path: cabinetPath },
+    user: { name: userName },
+    agent: { name: persona.name, slug: persona.slug },
+    today: new Date().toISOString().slice(0, 10),
+  });
+}
 import { readFileContent, fileExists } from "@/lib/storage/fs-operations";
 import { autoCommit } from "@/lib/git/git-service";
 import { postMessage } from "./slack-manager";
@@ -19,6 +50,10 @@ import { getGoalState, updateGoal } from "./goal-manager";
 import { startConversationRun } from "./conversation-runner";
 import { reloadDaemonSchedules } from "./daemon-client";
 import { getDaemonUrl, getOrCreateDaemonToken } from "./daemon-auth";
+import {
+  defaultAdapterTypeForProvider,
+  resolveExecutionProviderId,
+} from "./adapters";
 
 interface HeartbeatContext {
   prompt: string;
@@ -28,16 +63,16 @@ interface HeartbeatContext {
   startTime: number;
 }
 
-async function buildHeartbeatContext(slug: string): Promise<HeartbeatContext | null> {
+async function buildHeartbeatContext(slug: string, cabinetPath?: string): Promise<HeartbeatContext | null> {
   const startTime = Date.now();
-  const persona = await readPersona(slug);
+  const persona = await readPersona(slug, cabinetPath);
   if (!persona || !persona.active) return null;
 
-  const context = await readMemory(slug, "context.md");
-  const decisions = await readMemory(slug, "decisions.md");
-  const learnings = await readMemory(slug, "learnings.md");
+  const context = await readMemory(slug, "context.md", cabinetPath);
+  const decisions = await readMemory(slug, "decisions.md", cabinetPath);
+  const learnings = await readMemory(slug, "learnings.md", cabinetPath);
 
-  const inbox = await readInbox(slug);
+  const inbox = await readInbox(slug, cabinetPath);
   const inboxText = inbox.length > 0
     ? inbox.map((m) => `**From ${m.from}** (${m.timestamp}):\n${m.message}`).join("\n\n---\n\n")
     : "(no new messages)";
@@ -65,8 +100,8 @@ async function buildHeartbeatContext(slug: string): Promise<HeartbeatContext | n
   let tasksContext = "";
   try {
     const { getTasksForAgent } = await import("./task-inbox");
-    const pendingTasks = await getTasksForAgent(slug, "pending");
-    const inProgressTasks = await getTasksForAgent(slug, "in_progress");
+    const pendingTasks = await getTasksForAgent(slug, "pending", cabinetPath);
+    const inProgressTasks = await getTasksForAgent(slug, "in_progress", cabinetPath);
     const allActive = [...pendingTasks, ...inProgressTasks];
     if (allActive.length > 0) {
       tasksContext = allActive.map((t) =>
@@ -75,7 +110,8 @@ async function buildHeartbeatContext(slug: string): Promise<HeartbeatContext | n
     }
   } catch { /* ignore */ }
 
-  const prompt = `${persona.body}
+  const personaBody = await buildPersonaPromptBody(persona);
+  const prompt = `${personaBody}
 
 ---
 
@@ -130,17 +166,24 @@ TASK_CREATE [target-agent-slug] [priority 1-5]: title | description (optional �
 TASK_COMPLETE [task-id]: result summary (mark a pending task as completed)
 \`\`\`
 
-Also include a second block at the very end:
+REQUIRED: also include a second block at the very end. A heartbeat without this
+block is treated as incomplete and you will be asked to emit it again.
 
 \`\`\`cabinet
-SUMMARY: One short summary line of what happened.
+SUMMARY: One short summary line of what happened. (always required)
 CONTEXT: Optional lightweight context summary to remember later.
 ARTIFACT: relative/path/to/created-or-updated-kb-file
 \`\`\`
 
+Emit one ARTIFACT: line per file you created or updated. Do not combine multiple files on a single ARTIFACT: line.
+If you did not create or modify any file this heartbeat, still emit exactly one line \`ARTIFACT: none\` so the block is well-formed.
+
 Now execute your heartbeat. Check your focus areas, process inbox, review goals, and take action.`;
 
-  const cwd = persona.workdir === "/data" ? DATA_DIR : path.join(DATA_DIR, persona.workdir);
+  const baseCwd = cabinetPath ? path.join(DATA_DIR, cabinetPath) : DATA_DIR;
+  const cwd = persona.workdir === "/data" || persona.workdir === "/"
+    ? baseCwd
+    : path.join(baseCwd, persona.workdir.replace(/^\/+/, ""));
   return { prompt, persona, inbox, cwd, startTime };
 }
 
@@ -151,6 +194,7 @@ async function processHeartbeatOutput(
   persona: AgentPersona,
   inbox: Array<{ from: string; timestamp: string; message: string }>,
   startTime: number,
+  cabinetPath?: string,
 ): Promise<void> {
   // Parse memory block from output
   const memoryMatch = output.match(/```memory\n([\s\S]*?)```/);
@@ -161,34 +205,34 @@ async function processHeartbeatOutput(
     if (contextUpdate) {
       const timestamp = new Date().toISOString();
       const entry = `\n\n## ${timestamp}\n${contextUpdate[1].trim()}`;
-      const existingContext = await readMemory(slug, "context.md");
+      const existingContext = await readMemory(slug, "context.md", cabinetPath);
       const entries = existingContext.split(/\n## \d{4}-/).filter(Boolean);
       const trimmed = entries.slice(-19).map((e, i) => i === 0 ? e : `## ${e.startsWith("20") ? "" : ""}${e}`).join("\n");
-      await writeMemory(slug, "context.md", trimmed + entry);
+      await writeMemory(slug, "context.md", trimmed + entry, cabinetPath);
     }
 
     const decision = memoryBlock.match(/DECISION:\s*(.*)/);
     if (decision && decision[1].trim()) {
       const timestamp = new Date().toISOString();
-      const existingDecisions = await readMemory(slug, "decisions.md");
+      const existingDecisions = await readMemory(slug, "decisions.md", cabinetPath);
       await writeMemory(slug, "decisions.md",
-        existingDecisions + `\n\n## ${timestamp}\n${decision[1].trim()}`
+        existingDecisions + `\n\n## ${timestamp}\n${decision[1].trim()}`, cabinetPath
       );
     }
 
     const learning = memoryBlock.match(/LEARNING:\s*(.*)/);
     if (learning && learning[1].trim()) {
       const timestamp = new Date().toISOString();
-      const existingLearnings = await readMemory(slug, "learnings.md");
+      const existingLearnings = await readMemory(slug, "learnings.md", cabinetPath);
       await writeMemory(slug, "learnings.md",
-        existingLearnings + `\n\n## ${timestamp}\n${learning[1].trim()}`
+        existingLearnings + `\n\n## ${timestamp}\n${learning[1].trim()}`, cabinetPath
       );
     }
 
     const messageMatches = memoryBlock.matchAll(/MESSAGE_TO\s+\[([^\]]+)\]:\s*(.*)/g);
     for (const match of messageMatches) {
       const { sendMessage } = await import("./persona-manager");
-      await sendMessage(slug, match[1], match[2].trim());
+      await sendMessage(slug, match[1], match[2].trim(), cabinetPath);
     }
 
     const slackMatches = memoryBlock.matchAll(/SLACK\s+\[([^\]]+)\]:\s*(.*)/g);
@@ -223,6 +267,7 @@ async function processHeartbeatOutput(
         fromAgent: slug, fromEmoji: persona.emoji, fromName: persona.name,
         toAgent, channel: persona.channels?.[0] || "general",
         title, description, kbRefs: [], priority,
+        cabinetPath,
       });
       await postMessage({
         channel: persona.channels?.[0] || "general",
@@ -236,7 +281,12 @@ async function processHeartbeatOutput(
     const taskCompleteMatches = memoryBlock.matchAll(/TASK_COMPLETE\s+\[([^\]]+)\]:\s*(.*)/g);
     for (const match of taskCompleteMatches) {
       const { updateTask } = await import("./task-inbox");
-      await updateTask(slug, match[1].trim(), { status: "completed", result: match[2].trim() });
+      await updateTask(
+        slug,
+        match[1].trim(),
+        { status: "completed", result: match[2].trim() },
+        cabinetPath
+      );
     }
   }
 
@@ -277,16 +327,17 @@ async function processHeartbeatOutput(
     });
   }
 
-  if (inbox.length > 0 && status === "completed") await clearInbox(slug);
+  if (inbox.length > 0 && status === "completed") await clearInbox(slug, cabinetPath);
 
   const duration = Date.now() - startTime;
   const timestamp = new Date().toISOString();
-  await recordHeartbeat({ agentSlug: slug, timestamp, duration, status, summary: output.slice(0, 500) });
+  await recordHeartbeat({ agentSlug: slug, timestamp, duration, status, summary: output.slice(0, 500), cabinetPath });
 
   // Auto-generate workspace index
   try {
     const fs = await import("fs/promises");
-    const wsDir = path.join(DATA_DIR, ".agents", slug, "workspace");
+    const agentsDir = cabinetPath ? path.join(DATA_DIR, cabinetPath, ".agents") : path.join(DATA_DIR, ".agents");
+    const wsDir = path.join(agentsDir, slug, "workspace");
     const stats = await fs.stat(wsDir).catch(() => null);
     if (stats?.isDirectory()) {
       const entries = await fs.readdir(wsDir, { withFileTypes: true });
@@ -306,7 +357,7 @@ async function processHeartbeatOutput(
 
   // Auto-pause after 3 consecutive failures
   if (status === "failed") {
-    const recentHistory = await getHeartbeatHistory(slug);
+    const recentHistory = await getHeartbeatHistory(slug, undefined, cabinetPath);
     const lastThree = recentHistory.slice(0, 3);
     if (lastThree.length >= 3 && lastThree.every((h) => h.status === "failed")) {
       const { writePersona } = await import("./persona-manager");
@@ -321,7 +372,8 @@ async function processHeartbeatOutput(
     }
   }
 
-  autoCommit(`.agents/${slug}`, "Update");
+  const commitPath = cabinetPath ? `${cabinetPath}/.agents/${slug}` : `.agents/${slug}`;
+  autoCommit(commitPath, "Update");
 }
 
 /**
@@ -332,8 +384,12 @@ async function processHeartbeatOutput(
  * Returns the sessionId (cron ignores it; frontend connects WebTerminal to it).
  * Returns null if the agent is inactive or over budget.
  */
-export async function runHeartbeat(slug: string): Promise<string | null> {
-  const ctx = await buildHeartbeatContext(slug);
+export async function runHeartbeat(
+  slug: string,
+  cabinetPath?: string,
+  scheduledAt?: string,
+): Promise<string | null> {
+  const ctx = await buildHeartbeatContext(slug, cabinetPath);
   if (!ctx) return null;
   const { prompt, persona, inbox, startTime, cwd } = ctx;
 
@@ -350,7 +406,21 @@ export async function runHeartbeat(slug: string): Promise<string | null> {
       title: `${persona.name} heartbeat`,
       trigger: "heartbeat",
       prompt,
-      providerId: persona.provider,
+      adapterType:
+        persona.adapterType ||
+        defaultAdapterTypeForProvider(
+          resolveExecutionProviderId({
+            adapterType: persona.adapterType,
+            providerId: persona.provider,
+          })
+        ),
+      adapterConfig: persona.adapterConfig,
+      providerId: resolveExecutionProviderId({
+        adapterType: persona.adapterType,
+        providerId: persona.provider,
+      }),
+      cabinetPath,
+      scheduledAt,
       cwd,
       timeoutSeconds: 600,
       onComplete: async (completion) => {
@@ -369,7 +439,8 @@ export async function runHeartbeat(slug: string): Promise<string | null> {
           completion.status,
           persona,
           inbox,
-          startTime
+          startTime,
+          cabinetPath,
         );
       },
     });
@@ -386,8 +457,12 @@ export async function runHeartbeat(slug: string): Promise<string | null> {
  * Start a manual heartbeat — thin wrapper over runHeartbeat.
  * Returns sessionId for the frontend to connect a WebTerminal to.
  */
-export async function startManualHeartbeat(slug: string): Promise<string | null> {
-  return runHeartbeat(slug);
+export async function startManualHeartbeat(
+  slug: string,
+  cabinetPath?: string,
+  scheduledAt?: string,
+): Promise<string | null> {
+  return runHeartbeat(slug, cabinetPath, scheduledAt);
 }
 
 /**
@@ -440,7 +515,8 @@ export async function runQuickResponse(
     /* ignore */
   }
 
-  const prompt = `${persona.body}
+  const personaBody = await buildPersonaPromptBody(persona);
+  const prompt = `${personaBody}
 
 ---
 

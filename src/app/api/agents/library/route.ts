@@ -2,19 +2,22 @@ import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs/promises";
 import matter from "gray-matter";
-import { DATA_DIR } from "@/lib/storage/path-utils";
-
-const LIBRARY_DIR = path.join(DATA_DIR, ".agents", ".library");
+import { resolveAgentLibraryDir } from "@/lib/agents/library-manager";
 
 export async function GET() {
   try {
-    const entries = await fs.readdir(LIBRARY_DIR, { withFileTypes: true });
+    const libraryDir = await resolveAgentLibraryDir();
+    if (!libraryDir) {
+      return NextResponse.json({ templates: [] });
+    }
+
+    const entries = await fs.readdir(libraryDir, { withFileTypes: true });
     const templates = [];
 
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
 
-      const personaPath = path.join(LIBRARY_DIR, entry.name, "persona.md");
+      const personaPath = path.join(libraryDir, entry.name, "persona.md");
       try {
         const raw = await fs.readFile(personaPath, "utf-8");
         const { data, content } = matter(raw);

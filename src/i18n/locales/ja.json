@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "エージェントを作成",
+      "avatar": "アバター",
+      "namePlaceholder": "マーケティングエージェント",
+      "rolePlaceholder": "コンテンツスペシャリスト",
+      "department": "部署",
+      "specialist": "スペシャリスト",
+      "departmentLead": "部署リーダー",
+      "provider": "プロバイダー",
+      "runtime": "ランタイム",
+      "promptPlaceholder": "あなたは…のマーケティングエージェントです。",
+      "addAgentTitle": "チームにエージェントを追加",
+      "addAgentDescription": "ライブラリからスペシャリストを選択してください。追加後、名前、役割、指示を編集できます。",
+      "createFromScratchTitle": "新規作成",
+      "createFromScratchDescription": "独自のID、役割、指示を持つ新しいエージェントを作成。",
+      "searchLibraryPlaceholder": "ライブラリを検索",
+      "errorLoadLibrary": "エージェントライブラリを読み込めませんでした。",
+      "errorAddAgent": "このエージェントを追加できませんでした。"
+    },
+    "metric": {
+      "name": "メトリック名",
+      "namePlaceholder": "Redditの返信",
+      "target": "目標",
+      "targetPlaceholder": "週ごとの返信数",
+      "floor": "下限",
+      "period": "期間",
+      "daily": "毎日",
+      "weekly": "毎週",
+      "monthly": "毎月"
+    },
+    "workspace": {
+      "promise": "約束",
+      "orgChart": "組織図",
+      "jobDetails": "職務詳細",
+      "heartbeat": "ハートビート",
+      "workspace": "ワークスペース",
+      "editAgent": "エージェントを編集",
+      "instructions": "指示",
+      "instructionsPlaceholder": "このエージェントの指示をMarkdownで記述してください。",
+      "newAgent": "新しいエージェント",
+      "routines": "ルーティン",
+      "browseLibrary": "エージェントライブラリを参照",
+      "editYourOwn": "自分のエージェントを編集",
+      "editorPlaceholder": "エディター",
+      "productAgentPlaceholder": "プロダクトライティングエージェント",
+      "instructionsBodyPlaceholder": "このエージェントがCabinetとKB内でどのように機能するかを定義します。",
+      "perAgentPrompts": "エージェントごとの定期的なプロンプト",
+      "runNow": "今すぐ実行",
+      "delete": "削除",
+      "viewOrgChart": "このチームを組織図として表示（全画面表示で開きます）",
+      "hideIntro": "この紹介を非表示にする",
+      "sharedAcrossCabinets": "すべてのcabinetで共有",
+      "expandSchedule": "スケジュールを展開",
+      "heartbeatsOnAgentPage": "ハートビートは各エージェントのページで設定されます",
+      "exitFullscreen": "全画面表示を終了",
+      "refresh": "更新",
+      "editHeartbeat": "ハートビートを編集",
+      "newRoutine": "新規ルーティン",
+      "configureHeartbeat": "ハートビートを設定",
+      "openOrgChart": "組織図を開く",
+      "pickAnAgent": "エージェントを選択",
+      "dismiss": "閉じる",
+      "lockedHeartbeatTip": "このエージェントは停止しています。ハートビートを有効にするには、エージェントタブで起動してください。",
+      "lockedRoutineTip": "このエージェントは停止しています。ルーティンを有効にするには、エージェントタブで起動してください。",
+      "avatar": "ワークスペースのアバター"
+    },
+    "detail": {
+      "clickToTurnOff": "クリックしてオフにする",
+      "loadError": "このエージェントを読み込めませんでした。",
+      "retry": "再試行",
+      "color": "色",
+      "customColor": "カスタムカラー",
+      "preset": "プリセット",
+      "editIconColor": "アイコン、色、またはアバターを編集",
+      "sharedAcrossCabinetsHint": "すべてのcabinetで共有 — 編集はすべてに適用されます",
+      "inbox": "受信トレイ",
+      "conversations": "会話",
+      "recentWork": "最近の作業",
+      "schedule": "スケジュール",
+      "heartbeat": "ハートビート",
+      "runNow": "今すぐ実行",
+      "editRoutine": "ルーティンを編集",
+      "addRoutine": "ルーティンを追加",
+      "details": "詳細",
+      "editingGlobalAgent": "グローバルエージェントを編集",
+      "displayName": "表示名",
+      "role": "ロール",
+      "department": "部署",
+      "type": "タイプ",
+      "workspace": "ワークスペース",
+      "tags": "タグ",
+      "openSkillsSettings": "設定 → スキルを開く",
+      "notInCatalog": "カタログに見つかりません — クリックして削除",
+      "recommendedForRole": "このロールにおすすめ — クリックしてアタッチ",
+      "promise": "プロミス",
+      "saved": "保存済み",
+      "iconLabel": "アイコン"
+    },
+    "missionControl": {
+      "gallery": "ギャラリー",
+      "newAgent": "新規エージェント",
+      "allGoals": "すべての目標",
+      "noGoals": "目標が設定されているエージェントはありません。",
+      "fromScratch": "ゼロから",
+      "describeIt": "説明する",
+      "import": "インポート",
+      "closeDialog": "ダイアログを閉じる",
+      "describeYourAgent": "エージェントを説明する",
+      "describePlaceholder": "Hacker NewsでGPU関連の投稿を監視し、当社のブログ記事にリンクする思慮深いコメントを作成するエージェントが必要です…"
+    },
+    "pulseStrip": {
+      "agents": "エージェント",
+      "running": "実行中",
+      "goals": "目標",
+      "alerts": "アラート",
+      "cost": "コスト",
+      "runningPlays": "実行中のプレイ",
+      "noRunning": "現在、実行中のエージェントはありません。",
+      "costBreakdown": "コスト内訳",
+      "noUsage": "まだAPIの使用はありません。",
+      "totalEstimated": "合計推定"
+    },
+    "routine": {
+      "runNowTitle": "このルーチンを今すぐ実行（一度限り、スケジュール外）",
+      "deletePermanently": "このルーチンを完全に削除",
+      "promptPlaceholder": "このルーチンは何をすべきですか？例：昨日のアクティビティを要約…",
+      "jobName": "ジョブ名",
+      "jobNamePlaceholder": "週次戦略ダイジェスト",
+      "jobId": "ジョブID",
+      "schedule": "スケジュール",
+      "model": "モデル",
+      "enabled": "有効"
+    }
+  },
+  "registry": {
+    "loading": "レジストリから読み込み中…",
+    "readyToImport": "このcabinetをインポートする準備ができましたか？",
+    "organization": "組織",
+    "agents": "エージェント",
+    "scheduledJobs": "スケジュール済みジョブ",
+    "about": "について",
+    "cabinetName": "Cabinet名",
+    "cabinetNamePlaceholder": "Cabinet名…",
+    "searchPlaceholder": "Cabinetを検索…",
+    "noResults": "検索条件に一致するCabinetはありません。"
+  },
+  "tasksBoard": {
+    "title": "タスク",
+    "manualTooltip": "手動 — 直接起動したタスク",
+    "jobsTooltip": "ジョブ — スケジュールされた定期実行",
+    "heartbeatTooltip": "ハートビート — 自己主導型エージェント実行",
+    "clearSelection": "選択を解除 (Esc)",
+    "createTask": "新しいタスクを作成",
+    "moreNewTypes": "その他の新規アイテムタイプ",
+    "newTask": "新規タスク",
+    "newRoutine": "新規ルーチン",
+    "viewKanban": "カンバン",
+    "viewList": "リスト",
+    "viewSchedule": "スケジュール",
+    "viewKanbanHint": "ボードビュー — タスクは受信トレイ / あなたの番 / 実行中 / 完了済み / アーカイブにグループ化されます",
+    "viewListHint": "すべてのタスクのフラットリスト、最新のアクティビティ順",
+    "viewScheduleHint": "スケジュールされたルーチンと今後の実行のカレンダー",
+    "filterByAgent": "エージェントでフィルタリング: {{name}}",
+    "noToDeleteTitle": "削除するタスクはありません",
+    "noToDeleteFiltered": "{{filter}}に一致するものはありません。フィルターをクリアするか、別のビューを選択するか、新しいタスクを作成してください。",
+    "noToDeleteEmpty": "ボードにタスクはまだありません。「+ 新規タスク」ボタンで作成してください。",
+    "gotIt": "了解しました",
+    "deleteCountTitle": "{{count}}件のタスクを削除しますか？",
+    "deleteCountTitlePlural": "{{count}}件のタスクを削除しますか？",
+    "deleteBody": "これにより、現在表示されているすべてのタスクの会話メタデータ、トランスクリプト、成果物が完全に削除されます。この操作は元に戻せません。",
+    "deleteBodyFiltered": "これにより、アクティブなフィルターで現在表示されているすべてのタスクの会話メタデータ、トランスクリプト、成果物が完全に削除されます。この操作は元に戻せません。",
+    "deleteConfirm": "{{count}}件を削除",
+    "deleteAllShown": "表示されている{{count}}件のタスクをすべて削除",
+    "deleteAllShownPlural": "表示されている{{count}}件のタスクをすべて削除",
+    "nothingToDelete": "このビューには削除するものはありません。",
+    "deleteAllAria": "表示されているすべてのタスクを削除",
+    "noTasksAria": "このビューにはタスクがありません。",
+    "filterTrigger": "{{trigger}}フィルター",
+    "filterTriggerAndAgent": "{{trigger}}フィルターと選択されたエージェント",
+    "filterSelectedAgent": "選択されたエージェントフィルター"
+  },
+  "runtime": {
+    "noProvider": "プロバイダーが選択されていません",
+    "modeAriaLabel": "実行モード",
+    "nativeTranscriptTitle": "Cabinetのネイティブトランスクリプト — 構造化JSONストリーム、成果物、要約、完全なUX",
+    "ptyWarningTitle": "OpenAI APIキーが必要です。ChatGPTプランのCodexアカウントでは利用できません。このモデルを選択すると、「ChatGPTアカウントでCodexを使用する場合、モデルはサポートされていません」というエラーが発生します。",
+    "native": "ネイティブ",
+    "terminal": "ターミナル",
+    "terminalTitle": "ライブPTYターミナルセッションでCLIを実行（実験的なハッカーモード）",
+    "providers": "プロバイダー",
+    "modelCol": "モデル",
+    "auto": "自動",
+    "ready": "準備完了",
+    "loginRequired": "ログイン",
+    "notInstalled": "インストールされていません",
+    "notAvailable": "利用できません",
+    "defaultLabel": "デフォルト",
+    "noProvidersAvailable": "利用可能なプロバイダーがありません",
+    "appDefault": "アプリのデフォルト",
+    "selectAppDefault": "アプリのデフォルトを選択",
+    "defaultModel": "デフォルトモデル",
+    "selectedModelLabel": "選択されたモデル",
+    "loadingProviders": "プロバイダーを読み込み中...",
+    "loadingAvailableProviders": "利用可能なプロバイダーを読み込み中…",
+    "triggerSummary": "モデル: {{model}} · 労力: {{effort}} · 経由: {{provider}}",
+    "triggerSystemDefault": "タスクモデル — システムデフォルトを使用中（クリックして選択）",
+    "clickToLaunch": "PTYターミナルで{{name}}を起動するにはクリック"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "エージェントはフルアクセスで実行されます。",
+    "backUp": "データを定期的にバックアップしてください。",
+    "betaSoftware": "ベータ版ソフトウェアです。不具合が発生する可能性があります。",
+    "iAccept": "読み、同意します"
+  },
+  "skillAdd": {
+    "addSkill": "スキルを追加",
+    "auditTooltip": "skills.shの外部監査結果（Alibaba Threat Hunter, Socket, Snyk, zeroleaks）",
+    "auditUnavailable": "このスキルについてはskills.shの監査データは利用できません",
+    "preview": "プレビュー"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "AIチーム",
+      "aiTeams": "AIチーム",
+      "routines": "ルーティン"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "エージェント設定を編集",
+    "exportBundle": "エージェントバンドルをエクスポート",
+    "goals": "目標",
+    "workspace": "ワークスペース"
+  },
+  "scheduleRow": {
+    "deleteQ": "削除？",
+    "confirmDelete": "削除を確定",
+    "cancelDelete": "削除をキャンセル",
+    "runNow": "今すぐ実行"
+  },
+  "apiKeys": {
+    "addKey": "キーを追加",
+    "edit": "編集",
+    "remove": "削除",
+    "newApiKey": "新規APIキー"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinetアップデート",
+    "dataDirectory": "データディレクトリ",
+    "backups": "バックアップ"
+  },
+  "kanban": {
+    "stopAllInLane": "このレーンの実行中のすべてのタスクを停止",
+    "restartAllInLane": "このレーンのすべてのタスクを再開",
+    "newTask": "新規タスク",
+    "collapseColumn": "列を折りたたむ",
+    "kill": "強制終了",
+    "laneInbox": "インボックス",
+    "laneInboxHint": "下書き済み — 開始待ち",
+    "laneNeeds": "あなたの番",
+    "laneNeedsHint": "エージェントが質問しました、または承認が必要です",
+    "laneRunning": "実行中",
+    "laneRunningHint": "現在作業中のエージェント",
+    "laneDone": "完了済み",
+    "laneDoneHint": "過去1時間以内に完了",
+    "laneArchive": "アーカイブ",
+    "laneArchiveHint": "古い、確認済み"
+  },
+  "terminalTabs": {
+    "newTab": "新規ターミナルタブ",
+    "closeTab": "ターミナルを閉じる"
+  },
+  "newTaskButton": {
+    "createNew": "新規作成…",
+    "newTask": "新規タスク",
+    "newRoutine": "新規ルーティン"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "週次戦略ダイジェスト",
+    "schedule": "スケジュール",
+    "jobId": "ジョブID",
+    "enabled": "有効 — このスケジュールで実行"
+  },
+  "editIdentity": {
+    "title": "エージェントを編集",
+    "displayName": "表示名",
+    "color": "色",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "すべてのエージェントを開始",
+    "startAllSubtitle": "ハートビートとcronジョブを有効化",
+    "stopAll": "すべてのエージェントを停止",
+    "stopAllSubtitle": "ハートビートとcronジョブを一時停止"
+  },
+  "skillLibrary": {
+    "readOnly": "読み取り専用 — Cabinetからは編集できません",
+    "noUpstream": "このキャビネットで直接作成されました — 上流のGitソースは記録されていません",
+    "executableWarning": "バンドルには実行可能なスクリプトが含まれています — 承認前に確認してください",
+    "skills": "スキル",
+    "imported": "インポート済み",
+    "importing": "インポート中…",
+    "import": "インポート"
+  },
+  "embedPopover": {
+    "placeholder": "リンクを貼り付け (YouTube、X、Vimeo、Loom、TikTok、Facebook、Instagram、Spotify、または任意のURL)",
+    "notValidUrl": "有効なURLではありません",
+    "anyUrlWorks": "任意の公開URLが機能します。",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "任意のiframe URL"
+  },
+  "rowActions": {
+    "stop": "停止",
+    "stopHint": "この実行を今すぐ停止 (SIGTERMを送信します)",
+    "restart": "再起動",
+    "restartHint": "元のプロンプトから再度実行",
+    "runHint": "このタスクを今すぐ開始"
+  },
+  "schedulesPanel": {
+    "title": "スケジュールされたジョブ",
+    "noJobs": "まだキャビネットジョブは設定されていません。",
+    "heartbeats": "ハートビート",
+    "noHeartbeats": "まだハートビートは設定されていません。"
+  },
+  "scheduleTab": {
+    "explainer1": "チームが今週行うすべてのこと、1つのカレンダーで。ピンクはハートビート、緑はルーチンです。任意の項目をクリックして編集します。",
+    "explainer2": "このタブを使用して、競合を見つけたり、静かな期間を見つけたり、またはチームがどれだけ忙しいかを一目で確認できます。",
+    "aboutAria": "スケジュールについて",
+    "modeDay": "日",
+    "modeWeek": "週",
+    "modeMonth": "月"
+  },
+  "mermaidViewer": {
+    "zoomOut": "縮小",
+    "zoomIn": "拡大",
+    "resetView": "表示をリセット",
+    "syntaxError": "図の構文エラー"
+  },
+  "helpPage": {
+    "keyboard": "キーボード",
+    "skills": "スキル",
+    "apiKeys": "APIキー",
+    "mcpServers": "MCPサーバー",
+    "title": "ヘルプ",
+    "howTo": "使い方",
+    "heading": "Cabinetの仕組みを学ぶ",
+    "subheading": "Cabinetを最大限に活用するための短いデモ、ウォークスルー、プレビュー。",
+    "ctaWatchTour": "ツアーを見る",
+    "ctaWatchDemo": "デモを見る",
+    "ctaCheatSheet": "チートシートを開く",
+    "ctaComingSoon": "近日公開",
+    "discordHeading": "お探しのものが見つかりませんでしたか？",
+    "discordSubheading": "Discordにいます — ぜひご参加ください。質問したり、作成中のものを共有したりできます。",
+    "discordCta": "Discordに参加",
+    "items": {
+      "tour": {
+        "title": "あなたの<accent>Cabinet</accent>をご紹介します。",
+        "description": "あなたのAIチーム。あなたのナレッジベース。すべてを一つに。"
+      },
+      "agents": {
+        "title": "あなたの<accent>AIチーム</accent>。",
+        "description": "リーダーやスペシャリストを雇用し、部署に編成。互いに仕事を割り当てさせましょう。"
+      },
+      "tasks": {
+        "title": "<accent>タスクボード</accent>。",
+        "description": "カンバン、リスト、スケジュール表示。エージェントまたはステータスでフィルタリング。タスクごとにランタイムを選択。"
+      },
+      "knowledge": {
+        "title": "あなたの<accent>ナレッジベース</accent>。",
+        "description": "Markdown、CSV、PDF、コード、ノートブック、Mermaid、画像、音声 — すべてインラインで表示。データはあなたのマシンに保存され、あなたのものです。"
+      },
+      "cabinets": {
+        "title": "<accent>AIチーム</accent>のチーム。",
+        "description": "CabinetはCabinetの中にネスト可能。それぞれが独自のデータ、エージェント、可視性スコープを持つAIチームであり、ツリー構造で連携できます。"
+      },
+      "routines": {
+        "title": "<accent>ルーティン</accent>とスケジュール。",
+        "description": "タスクを毎日午前9時、毎週金曜日、または来週月曜日に一度実行。Cron、カレンダー、または自然言語で設定。"
+      },
+      "conversations": {
+        "title": "会話と<accent>承認</accent>。",
+        "description": "エージェントがアクション（タスクの開始、ジョブのスケジュールなど）を提案し、実行前にあなたが承認します。"
+      },
+      "themes": {
+        "title": "<accent>あなた</accent>好みに。",
+        "description": "厳選されたライトテーマとダークテーマ（Paper、Slate、Claude、Inkなど）から選択。"
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — あなた自身のAIを持ち込みましょう。",
+        "description": "Claude、GPT、Gemini、Grok、Codex、Cursor — 既にお支払い済みのプロバイダーを持ち込みましょう。デフォルトを選択するか、タスクごとに上書きします。"
+      },
+      "shortcuts": {
+        "title": "<accent>キーボード</accent>ショートカット。",
+        "description": "すべてのCabinetショートカットを検索可能な1枚のカードに。どこからでも「?」を押して再表示。名前またはキーでフィルタリング — ナビゲーション、編集、タスク、パネル、スラッシュコマンドに対応。"
+      },
+      "skills": {
+        "title": "エージェントの<accent>スキル</accent>。",
+        "description": "インストール可能なエージェントスキル — モデルがタスクに利用するプレイブック。GitHubまたはskills.shからインストール、ペルソナにアタッチ、または任意のコンポーザーで@-メンションして一度だけ実行。"
+      },
+      "apiKeysItem": {
+        "title": "ツールの<accent>APIキー</accent>。",
+        "description": "OpenAI、Anthropic、GitHubアカウントを一度接続すれば、Cabinet内のすべてのエージェントとスキルがそれを使用します。料金はあなたが支払い、あなたのクォータを使用し、仲介者はいません。"
+      },
+      "integrations": {
+        "title": "<accent>MCPサーバー</accent>と連携。",
+        "description": "MCPサーバー、Slack、Telegram、Gmail、Calendar OAuth — 一度接続すればCabinetがトークンを管理します。近日公開。"
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "キーボードショートカット",
+    "filterPlaceholder": "フィルター…",
+    "close": "閉じる"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "ライブターミナル",
+    "runningHeartbeat": "ハートビートを実行中…",
+    "memory": "メモリ",
+    "recentActivity": "最近のアクティビティ"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "あなたのアバター",
+    "preset": "プリセット",
+    "useInitials": "イニシャルをフォールバックとして使用",
+    "custom": "カスタム"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "ローカルアプリコードの変更を検出"
+  },
+  "logsPanel": {
+    "classifiedError": "分類済みエラー",
+    "session": "セッション",
+    "noEvents": "まだイベントはありません。",
+    "noTranscript": "まだトランスクリプトはありません。"
+  },
+  "conversationResult": {
+    "prompt": "プロンプト",
+    "result": "結果",
+    "noSummary": "要約がありません。"
+  },
+  "scheduleRowPlus": {
+    "delete": "削除"
+  },
+  "attachmentPicker": {
+    "attachFiles": "ファイルを添付"
+  },
+  "demos": {
+    "aiTeam": "AIチーム",
+    "specialist": "スペシャリスト",
+    "legal": "法務",
+    "global": "グローバル",
+    "editor": "エディター",
+    "slashMenu": "スラッシュメニュー"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · データ",
+    "headlineSentence": "信頼できる<accent>唯一の情報源</accent>。",
+    "paragraphPrefix": "Markdown、PDF、スプレッドシート、スライド、画像、動画、音声、リンクされたリポジトリ、埋め込みWebアプリ、Googleドキュメント。これらすべてを",
+    "paragraphSuffix": "。",
+    "secondParagraphPrefix": "すべてを1か所に — あなたとAIチームが",
+    "sameFiles": "同じファイル",
+    "secondParagraphSuffix": "から読み込み、編集し、公開できるように。コピーのコピーではなく。",
+    "mockTitle": "JaneのCabinet"
+  },
+  "slideData": {
+    "thailandRootLabel": "タイ旅行",
+    "thailandCaption": "すべてのファイルを1か所で表示。",
+    "videoTitle": "ナイトマーケット.mp4",
+    "taxRootLabel": "税金 2026",
+    "taxCaption": "税金 2026 — あなたのcabinetに直接埋め込まれたライブ計算機Webアプリ。",
+    "calculatorTitle": "計算機",
+    "liveAppBadge": "ライブアプリ",
+    "taxEstimateLabel": "2026年税金見積もり",
+    "income": "収入",
+    "deductions": "控除",
+    "taxBracket": "税率区分",
+    "estimatedTax": "見積もり税額",
+    "healthRootLabel": "健康",
+    "healthCaption": "ビタミンと検査 — ページのように感じるスプレッドシート。",
+    "csvTitle": "毎日のビタミン.csv",
+    "csvColVitamin": "ビタミン",
+    "csvColDose": "服用量",
+    "csvColTime": "時間",
+    "csvColDone": "完了",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "コードベース — 任意のGitリポジトリをリンクし、エージェントで検索可能に。",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · タスク",
+    "typedCommand": "10個のタスクを実行し、それぞれ曲を作成し、@Songs/に保存。",
+    "headlineSentence": "<accent>開始</accent>しますか？",
+    "paragraphPrefix": "タスクを作成。1つ実行、10個実行、永久にスケジュール。ページは",
+    "paragraphSuffix": "で言及し、出力は好きな場所に保存。あなたがディレクターです。",
+    "savingFolder": "曲/"
+  },
+  "slideAgents": {
+    "persona": "ペルソナ",
+    "heartbeat": "ハートビート",
+    "jobs": "ジョブ",
+    "aiTeam": "AIチーム",
+    "otherWriter": "ライター",
+    "otherOrganizer": "オーガナイザー",
+    "idle": "アイドル中",
+    "researchAnalyst": "リサーチアナリスト",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "稼働中",
+    "personaBody": "\"厳密なアナリスト。情報源を引用し、矛盾する主張にフラグを立てます。\"",
+    "heartbeatBody": "@Market Research を15分ごとにスキャン",
+    "jobsBody": "月 9:00 · 競合他社週次ダイジェスト",
+    "slideNum": "02 · エージェント",
+    "paragraphPrefix": "各エージェントには",
+    "personaWord": "ペルソナ",
+    "paragraphMiddle": "、独自の",
+    "scheduleWord": "スケジュール",
+    "paragraphMiddle2": "、そして",
+    "memoryWord": "記憶",
+    "paragraphSuffix": "があります。AIエージェントが24時間365日作業をこなします。あなたは人間らしく過ごし、残りは彼らに任せましょう。",
+    "aiTeamSentence": "あなたの<accent>AIチーム</accent>。"
+  },
+  "startWork": {
+    "close": "閉じる",
+    "selectAgent": "エージェントを選択",
+    "titleNow": "何をしますか？",
+    "titleRecurring": "定期的なルーティンを設定",
+    "titleHeartbeat": "このエージェントをスケジュールで起動",
+    "titleEdit": "タスクを編集",
+    "submitStart": "開始",
+    "submitAddInbox": "受信トレイに追加",
+    "submitSaveEdit": "変更を保存",
+    "submitCreateRoutine": "ルーティンを作成",
+    "submitSaveHeartbeat": "ハートビートを保存",
+    "saving": "保存中…",
+    "current": "現在",
+    "modeInboxLabel": "→ 受信トレイ",
+    "modeInboxHint": "受信トレイに保存 — 準備ができたら開始",
+    "modeNowLabel": "今すぐ実行",
+    "modeNowHint": "この会話をすぐに開始",
+    "modeRecurringLabel": "スケジュールで",
+    "modeRecurringHint": "このプロンプトをスケジュールで実行",
+    "modeHeartbeatLabel": "ハートビート",
+    "modeHeartbeatHint": "エージェントを独自のリズムで起動",
+    "agentFallback": "エージェント",
+    "failedToStart": "開始できませんでした",
+    "failedToSave": "変更を保存できませんでした",
+    "failedToSaveHeartbeat": "ハートビートを保存できませんでした"
+  },
+  "googleDoc": {
+    "noUrl": "Google URLが設定されていません",
+    "anyoneWithLink": "リンクを知っている全員",
+    "publishedToWeb": "ウェブに公開済み"
+  },
+  "feedback": {
+    "close": "閉じる",
+    "rolePlaceholder": "例：インディーハッカー、SaaSのPM、デザイン学生、趣味人…",
+    "joinDiscord": "Discordに参加",
+    "header": "Janeからのクイックチェックイン",
+    "howGoing": "ここまではいかがですか？",
+    "starsCount": "{{n}}つ星",
+    "starsCountPlural": "{{n}}つ星",
+    "likeCabinet": "Cabinetを気に入りましたか？",
+    "starTooltipUnknown": "GitHubでCabinetにスターを付ける — 役立つと感じたら、スターは大きな助けになります",
+    "starTooltipWithCount": "GitHubスター{{count}}個 — あなたのスターを追加するにはクリック",
+    "starLabel": "スターを付ける",
+    "backgroundLabel": "あなたの経歴は？",
+    "optional": "(任意)",
+    "discordCta": "直接話したいですか、それとも他のCabinetメンバーと交流しますか？",
+    "maybeLater": "後で",
+    "send": "送信",
+    "thanksTitle": "ありがとうございます！",
+    "thanksBody": "あなたのフィードバックが、今後の開発を決定します。",
+    "copy2Lead": "Cabinetを数回開いていただきありがとうございます！Cabinetはオープンソースで、まだ始まったばかりです。あなたの意見が、今後の開発に直接影響します。",
+    "copy2Q1": "今日、Cabinetで何をしようとしていましたか？",
+    "copy2Q1Hint": "一文で構いません。何のために開いたのかを教えてください。期待した機能ではなく。",
+    "copy2Q2": "前回それをしようとしたとき、Cabinetの代わりに何を使いましたか？",
+    "copy2Q2Hint": "ツール、アプリ、ドキュメント、ペンと紙でも構いません。",
+    "copy6Lead": "お帰りなさい。それが最も重要なサインです。忘れてしまう前に、使いづらい点をお聞かせください。",
+    "copy6Q1": "今日、Cabinetで何をしようとしていましたか？",
+    "copy6Q1Hint": "一文で構いません。",
+    "copy6Q2": "今週、Cabinetの使用をためらわせた一番の要因は何ですか？",
+    "copy6Q2Hint": "最も気になった点。具体的に。「Xが分かりにくかった」は「UX」よりも良いです。"
+  },
+  "apiKeysSection": {
+    "cancel": "キャンセル",
+    "pasteHere": "ここに貼り付け",
+    "pasteNewValue": "新しい値を貼り付け"
+  },
+  "storageBackend": {
+    "title": "ストレージバックエンド",
+    "migrationFailed": "移行に失敗しました"
+  },
+  "linkRepo": {
+    "title": "知識を読み込む",
+    "intro": "お使いのPC上の任意のフォルダーをCabinetに指定します。Cabinetはシンボリックリンクを作成し、フォルダーの内容をナレッジベースに表示し、AIエージェントのコンテキストとして利用できるようにします。元のフォルダーは移動もコピーもされません。",
+    "symlinkNote": "シンボリックリンクを作成します — ファイルは元の場所に残ります。",
+    "autoDetectPlaceholder": "Gitリモートから自動検出 (任意)",
+    "shortSummaryPlaceholder": "エージェント用の短い要約（任意）"
+  },
+  "recentTasks": {
+    "ptyMode": "ターミナル (PTY) モード",
+    "revealOlder": "さらに古いタスクを表示",
+    "showOlder": "古いものを表示"
+  },
+  "treeNode": {
+    "openCabinet": "Cabinetビューを開く",
+    "pageTitlePlaceholder": "ページタイトル…",
+    "rename": "名前を変更",
+    "openBadge": "開く",
+    "sectionAdd": "この項目に追加",
+    "sectionThis": "この項目",
+    "addSubPage": "サブページを追加",
+    "newFolder": "新規フォルダー",
+    "createFile": "新規ファイルを作成…",
+    "connectKnowledge": "ナレッジを接続…",
+    "symlinkTag": "シンボリックリンク",
+    "importFile": "ファイルをインポート…",
+    "importFolder": "フォルダーをインポート…",
+    "createCabinet": "ここにCabinetを作成",
+    "editSymlink": "シンボリックリンクを編集…",
+    "settings": "設定…",
+    "moveTo": "移動…",
+    "copyRelativePath": "相対パスをコピー",
+    "copyFullPath": "フルパスをコピー",
+    "openInFinder": "Finderで開く",
+    "delete": "削除",
+    "unlink": "リンク解除",
+    "folderNamePlaceholder": "フォルダー名",
+    "creating": "作成中…",
+    "create": "作成",
+    "addSubPageTitle": "「{{name}}」にサブページを追加",
+    "newFolderTitle": "「{{name}}」に新規フォルダー"
+  },
+  "newFile": {
+    "title": "新規ファイルを作成",
+    "subtitle": "ファイルの種類を選択。準備ができたらCabinetがエディターで開きます。",
+    "groupNative": "Cabinetで編集",
+    "groupOffice": "Office (空白 — 外部で編集)",
+    "groupGoogle": "Google (リンク済み)",
+    "namePlaceholder": "ファイル名",
+    "create": "作成",
+    "creating": "作成中…",
+    "googleUrlLabel": "Google URL (任意)",
+    "googleUrlPlaceholder": "共有可能なGoogleリンクを貼り付けるか、後で追加するために空白のままにします",
+    "officeNote": "CabinetはOfficeファイルを読み取り専用で表示します。「Finderで開く」でデスクトップアプリで編集してください。",
+    "types": {
+      "markdown": "Markdownページ",
+      "markdownDesc": "Cabinetで編集可能なリッチテキストノート",
+      "code": "コードファイル",
+      "codeDesc": "あらゆるソース/テキストファイル — 拡張子を選択",
+      "mermaid": "Mermaid図",
+      "mermaidDesc": "コードとしてのフローチャートと図",
+      "csv": "CSVテーブル",
+      "csvDesc": "カンマ区切りのスプレッドシートデータ",
+      "docx": "Wordドキュメント",
+      "docxDesc": "空の.docx",
+      "xlsx": "Excelスプレッドシート",
+      "xlsxDesc": "空の.xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "空の.pptx",
+      "gdoc": "Googleドキュメント",
+      "gdocDesc": "Googleドキュメントを埋め込む",
+      "gsheet": "Googleスプレッドシート",
+      "gsheetDesc": "Googleスプレッドシートを埋め込む",
+      "gslides": "Googleスライド",
+      "gslidesDesc": "Googleスライドを埋め込む"
+    },
+    "codeExtLabel": "拡張子",
+    "googleTag": "Google",
+    "extHint": "名前を入力するだけ — Cabinetが{{ext}}拡張子を追加します。",
+    "createFailed": "ファイルを作成できませんでした。"
+  },
+  "fileSettings": {
+    "googleTitle": "Google埋め込み設定",
+    "googleKindLabel": "種類",
+    "googleUrlLabel": "Google URL",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "埋め込みを読み込むには、ドキュメントの共有設定が「リンクを知っている全員」または「ウェブに公開」になっている必要があります。",
+    "openLink": "Googleで開く",
+    "googleKinds": {
+      "docs": "ドキュメント",
+      "sheets": "スプレッドシート",
+      "slides": "スライド",
+      "forms": "フォーム",
+      "drive": "ドライブ"
+    },
+    "appTitle": "ウェブアプリ設定",
+    "modeLabel": "どのように開きますか？",
+    "modeWebsite": "ページビュー",
+    "modeWebsiteDesc": "サイドバーとAIパネルが表示された状態でインラインで開きます。",
+    "modeApp": "ウェブアプリ",
+    "modeAppDesc": "全画面で開きます。サイドバーとAIパネルは自動的に折りたたまれます。",
+    "convertNote": "これは、フォルダ内の.appマーカーファイルを切り替えます。ファイルは変更されません。",
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "キャンセル",
+    "saveFailed": "設定を保存できませんでした。"
+  },
+  "editSymlink": {
+    "title": "シンボリックリンクを編集",
+    "intro": "このナレッジベースエントリは、お使いのマシン上の別のフォルダへのシンボリックリンクです。",
+    "kbPathLabel": "ナレッジベースパス",
+    "targetLabel": "リンク先（ディスク上）",
+    "brokenWarning": "ターゲットフォルダが存在しません。以下の有効なフォルダに再指定してください。",
+    "repointLabel": "新しいフォルダに再指定",
+    "repointHint": "Cabinet はリンクをここに置き換えます。ファイルが移動されることはありません。",
+    "browse": "参照",
+    "nameLabel": "名前",
+    "descriptionLabel": "説明",
+    "save": "保存",
+    "saving": "保存中…",
+    "copyTarget": "ターゲットパスをコピー",
+    "saveFailed": "シンボリックリンクを更新できませんでした。"
+  },
+  "importFolder": {
+    "importing": "フォルダをインポート中…",
+    "failed": "フォルダのインポートに失敗しました: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "タスクを読み込み中"
+  },
+  "agentList": {
+    "agentLibrary": "エージェントライブラリ",
+    "newAgent": "新規エージェント"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "あなたのチーム",
+    "lead": "リード",
+    "specialist": "スペシャリスト",
+    "tasks": "タスク",
+    "todo": "ToDo",
+    "doing": "進行中",
+    "done": "完了",
+    "anythingGoes": "何でもあり",
+    "marketing": "マーケティング",
+    "product": "プロダクト",
+    "research": "リサーチ",
+    "design": "デザイン",
+    "routines": "ルーティン",
+    "dailyReview": "日次レビュー",
+    "weeklyDigest": "週次ダイジェスト",
+    "conversation": "会話",
+    "userQuery": "2週間のタイ旅行を計画…",
+    "agentReply": "ライブラリアンとエディターを派遣します。",
+    "pendingAction": "保留中のアクション",
+    "approve": "承認",
+    "decline": "却下",
+    "themes": "テーマ",
+    "providers": "プロバイダー",
+    "comingSoon": "近日公開"
+  },
+  "agentLive": {
+    "dismiss": "閉じる",
+    "paused": "エージェントは一時停止中"
+  },
+  "conversationLive": {
+    "liveOutput": "ライブ出力",
+    "waitingFirstChunk": "最初の出力チャンクを待機中…"
+  },
+  "editIdentityPlus": {
+    "avatar": "アバター",
+    "useIconInstead": "代わりにアイコンを使用"
+  },
+  "pendingActions": {
+    "rejectAll": "すべての保留中のアクションを却下",
+    "approveAll": "ハードブロッカーのないすべてのアクションを承認して実行"
+  },
+  "aiPanel": {
+    "clearSessions": "すべてのセッションをクリア",
+    "dismiss": "閉じる"
+  },
+  "schedulerPlus": {
+    "restartAll": "すべてのエージェントを再起動",
+    "restartSubtitle": "すべてのスケジュールを停止してから再アクティブ化"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSVをダウンロード",
+    "deleteRow": "行を削除"
+  },
+  "resizableImage": {
+    "resizeLeft": "左からサイズ変更",
+    "resizeRight": "右からサイズ変更"
+  },
+  "folderIndex": {
+    "listView": "リスト表示",
+    "galleryView": "ギャラリー表示"
+  },
+  "linkPopover": {
+    "openLink": "リンクを開く",
+    "removeLink": "リンクを削除"
+  },
+  "officeChrome": {
+    "openInFinder": "Finderで開く",
+    "downloadOriginal": "オリジナルをダウンロード"
+  },
+  "sourceViewer": {
+    "copyContents": "ファイルの内容をコピー",
+    "downloadFile": "ファイルをダウンロード"
+  },
+  "versionHistory": {
+    "title": "バージョン履歴"
+  },
+  "demoModal": {
+    "closeDemo": "デモを閉じる",
+    "close": "閉じる"
+  },
+  "demosPlus": {
+    "anything": "すべて",
+    "yours": "自分",
+    "install": "インストール",
+    "attach": "添付"
+  },
+  "narrowViewport": {
+    "dismiss": "狭い表示領域のヒントを非表示にする",
+    "dismissTitle": "次回のセッションまで非表示にする",
+    "hintPrefix": "Cabinet の最適な表示幅は",
+    "hintWidth": "960 px 以上",
+    "hintSuffix": "です。幅が狭いと一部の表示が窮屈になります。"
+  },
+  "agentCard": {
+    "runHeartbeat": "ハートビートを実行"
+  },
+  "schedulePicker": {
+    "frequency": "頻度",
+    "onDay": "曜日",
+    "modeInterval": "間隔",
+    "modeDaily": "毎日",
+    "modeWeekdays": "平日",
+    "modeWeekly": "毎週",
+    "modeMonthly": "毎月",
+    "modeCustom": "カスタム",
+    "parse": "解析",
+    "showCron": "cron 式を表示",
+    "hideCron": "cron 式を非表示",
+    "weekdayMo": "月",
+    "weekdayTu": "火",
+    "weekdayWe": "水",
+    "weekdayTh": "木",
+    "weekdayFr": "金",
+    "weekdaySa": "土",
+    "weekdaySu": "日"
+  },
+  "slackPanel": {
+    "createChannel": "チャンネルを作成",
+    "thread": "スレッド"
+  },
+  "uninstall": {
+    "title": "Cabinet をアンインストール"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet ドロワー",
+    "pageTitlePlaceholder": "ページタイトル…"
+  },
+  "skillAddPlus": {
+    "cancel": "キャンセル"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "このスキルに関する監査データは skills.sh から利用できません",
+    "searchPlaceholder": "skills.sh を検索"
+  },
+  "skillLibraryPlus": {
+    "refresh": "更新",
+    "noSkills": "まだスキルがありません。"
+  },
+  "taskDetail": {
+    "close": "閉じる (Esc)",
+    "muteTask": "このタスクをミュート — 完了した実行は直接アーカイブへ",
+    "unmuteTask": "このタスクのミュートを解除 — 完了した実行は「完了済み」に再表示されます"
+  },
+  "rowActionsPlus": {
+    "edit": "編集",
+    "editHint": "開始前にこの保存済み下書きを編集",
+    "delete": "削除",
+    "deleteHint": "完全に削除 — 元に戻せません"
+  },
+  "taskCard": {
+    "ptyMode": "ターミナル (PTY) モードで実行中"
+  },
+  "undoToast": {
+    "dismiss": "閉じる"
+  },
+  "terminalExited": {
+    "openDetails": "構造化された詳細 (プロンプト、成果物、ターン) を開く",
+    "reconnect": "デーモンに再接続し、生のPTYリプレイをストリームする"
+  },
+  "terminalTabsPlus": {
+    "resize": "ターミナルパネルのサイズを変更"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "すべてのエージェントを表示",
+    "noRecentActivity": "最近のアクティビティはありません",
+    "noAgents": "エージェントなし",
+    "noAgentsConfigured": "このCabinetにはまだエージェントが設定されていません。",
+    "cabinetScope": "Cabinetスコープ:",
+    "depthDropdownHeader": "Cabinetスコープ",
+    "depthOwnLabel": "このCabinetのみ",
+    "depthOwnShort": "自身",
+    "depthOwnDesc": "このCabinetからのページ、エージェント、タスクのみ。",
+    "depthChildren1Label": "直接の子を含める",
+    "depthChildren1Desc": "サブCabinetを1レベル追加します。",
+    "depthChildren2Label": "2つのCabinetレベルを含める",
+    "depthChildren2Desc": "サブCabinetを2レベル追加します。",
+    "depthAllLabel": "すべての子孫を含める",
+    "depthAllShort": "すべて",
+    "depthAllDesc": "サブツリー全体を含めます。",
+    "scopeTooltip": "Cabinetスコープ: {{label}}。クリックして変更。"
+  },
+  "composerExtras": {
+    "skillAttached": "スキル — この実行にのみアタッチ",
+    "pageTitlePlaceholder": "ページタイトル…",
+    "active": "アクティブ — このスケジュールでエージェントを起動",
+    "pickCliPty": "PTYで起動するCLIを選択:"
+  },
+  "editorExtras": {
+    "editWithAi": "AIで編集",
+    "jupyterLab": "コピー: jupyter lab <path>",
+    "exitApp": "アプリを終了"
+  },
+  "demosExtras": {
+    "aiAccounts": "AIアカウント",
+    "aiTeams": "AIチーム"
+  },
+  "whatsNew": {
+    "dismiss": "閉じる",
+    "headerPrefix": "vの最新情報",
+    "readFull": "リリースノート全文を読む"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "理解しました。続行します。"
+  },
+  "daemonHealth": {
+    "dismiss": "閉じる"
+  },
+  "tinyExtras": {
+    "light": "ライト",
+    "home": "ホーム",
+    "workspaceGallery": "ワークスペースギャラリー",
+    "savingTo": "保存先:",
+    "comingSoon": "近日公開",
+    "deleteSkill": "スキルを削除",
+    "skillsOffered": "提供されるスキル:",
+    "allAgents": "すべてのエージェント",
+    "noTranscript": "トランスクリプトが見つかりません",
+    "noDiff": "差分はありません。",
+    "headsUp": "注意:",
+    "back": "戻る",
+    "editYourAvatar": "アバターを編集",
+    "openFullTaskViewer": "全タスクビューアを開く",
+    "close": "閉じる",
+    "copyToClipboard": "クリップボードにコピー",
+    "starOnGithub": "GitHubでCabinetをスターする",
+    "helpMoreFind": "コミュニティを広める",
+    "joinDiscord": "Discordに参加",
+    "chatWithBuilders": "Cabinet開発者とチャット",
+    "joinWaitlist": "Cabinet Cloudのウェイティングリストに参加",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "受信トレイに追加",
+    "runTaskNow": "今すぐタスクを実行",
+    "search": "検索",
+    "aiPanel": "AIパネル",
+    "drawers": "ドロワー"
+  },
+  "dataLocations": {
+    "title": "データの保存場所",
+    "whyThisMatters": "重要性",
+    "location": "場所",
+    "contains": "含まれるもの",
+    "network": "ネットワーク",
+    "revealInFinder": "ファイルマネージャーで表示",
+    "stored": "保存済み",
+    "resetOnboarding": "オンボーディングをリセット"
+  },
+  "rooms": {
+    "switcherTitle": "ルームを切り替え",
+    "switchRoom": "ルーム",
+    "loading": "読み込み中…",
+    "defaultTag": "ホーム",
+    "openInNewWindow": "新しいウィンドウで開く",
+    "opensBrowserWindow": "新しいブラウザウィンドウを開きます",
+    "customizeRoom": "ルームを編集",
+    "addRoom": "ルームを追加…",
+    "editTitle": "ルームを編集",
+    "editSubtitle": "このルームの名前、アイコン、色、テーマを設定します。",
+    "nameLabel": "表示名",
+    "slugHint": "ディスク上のフォルダ名は {{slug}} のままです。フォルダ名の変更は、別の高度な操作です。",
+    "iconLabel": "アイコン",
+    "colorLabel": "色",
+    "colorAuto": "自動",
+    "themeLabel": "テーマ",
+    "themeGlobal": "グローバルデフォルトを使用",
+    "editFailed": "ルームを保存できませんでした。もう一度お試しください。",
+    "deleteRoom": "ルームを削除…",
+    "deleteLastRoomDisabledHint": "最後のルームは削除できません。",
+    "deleteTitle": "このルームを削除しますか？",
+    "deleteSubtitle": "このルームとその中のすべてのコンテンツはゴミ箱に移動されます。",
+    "deleteWarningIntro": "ルームをゴミ箱に移動すると、以下も削除されます:",
+    "deleteWarningPages": "このルーム内のページとファイル",
+    "deleteWarningAgents": "このルームにスコープされたエージェント、会話、メモリ",
+    "deleteWarningJobs": "このルーム内のスケジュールされたジョブとルーチン",
+    "deleteWarningChat": "このルームのチームチャット履歴",
+    "deleteWarningSearch": "ルームの検索インデックス（復元された場合、自動的に再構築されます）",
+    "deleteRecoveryNote": "復元: ルームは data/.trash/ に移動されます — フォルダを data/ に戻すことで復元できます。",
+    "deleteConfirmLabel": "確認のため {{slug}} と入力してください",
+    "deleteConfirmButton": "部屋を削除",
+    "deleting": "削除中…",
+    "deleteFailed": "部屋を削除できませんでした。もう一度お試しください。"
+  },
+  "common": {
+    "actions": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "confirm": "確認",
+      "close": "閉じる",
+      "open": "開く",
+      "back": "戻る",
+      "next": "次へ",
+      "done": "完了"
+    },
+    "nav": {
+      "goBack": "戻る",
+      "goForward": "進む"
+    },
+    "aiPanel": {
+      "open": "AIパネルを開く",
+      "close": "AIパネルを閉じる"
+    },
+    "states": {
+      "loading": "読み込み中…",
+      "saving": "保存中…",
+      "saved": "保存済み",
+      "error": "エラーが発生しました"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "新規ページ",
+      "title": "新規ページを作成",
+      "placeholder": "ページタイトル…",
+      "create": "作成",
+      "creating": "作成中…"
+    },
+    "newCabinet": {
+      "trigger": "新規Cabinet",
+      "title": "新規Cabinetを作成",
+      "subtitle": "Cabinetは、独自のAIエージェント、ジョブ、知識を持つワークスペースです。",
+      "importFromRegistry": "レジストリからインポート",
+      "nameLabel": "Cabinet名",
+      "namePlaceholder": "例: マイスタートアップ、マーケティングチーム、リサーチラボなど…",
+      "selectAgents": "エージェントを選択",
+      "selectedCount": "{{count}}個選択済み",
+      "createCabinet": "Cabinetを作成",
+      "creating": "作成中…",
+      "createFailed": "cabinetの作成に失敗しました"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "ページをエクスポート",
+      "copyMarkdown": "Markdownをコピー",
+      "copyForLlms": "LLM向けにコピー",
+      "copyAsHtml": "HTMLとしてコピー",
+      "downloadMarkdown": ".mdをダウンロード",
+      "downloadPdf": "PDFをダウンロード",
+      "copiedForLlmToast": "LLM向けMarkdownを{{size}}コピーしました"
+    },
+    "toolbar": {
+      "heading1": "見出し1",
+      "heading2": "見出し2",
+      "heading3": "見出し3",
+      "bold": "太字",
+      "italic": "斜体",
+      "underline": "下線",
+      "strikethrough": "取り消し線",
+      "inlineCode": "インラインコード",
+      "link": "リンク",
+      "textColor": "文字色",
+      "highlight": "ハイライト",
+      "background": "背景",
+      "bulletList": "箇条書き",
+      "orderedList": "番号付きリスト",
+      "blockquote": "引用",
+      "checklist": "チェックリスト",
+      "codeBlock": "コードブロック",
+      "divider": "区切り線",
+      "alignLeft": "左揃え",
+      "alignCenter": "中央揃え",
+      "alignRight": "右揃え",
+      "justify": "両端揃え",
+      "align": "配置",
+      "table": {
+        "selectCellText": "セルのテキストを選択",
+        "addRowAbove": "上に行を追加",
+        "addRowBelow": "下に行を追加",
+        "moveRowUp": "行を上に移動",
+        "moveRowDown": "行を下に移動",
+        "deleteRow": "行を削除",
+        "addColumnBefore": "前に列を追加",
+        "addColumnAfter": "後に列を追加",
+        "moveColumnLeft": "列を左に移動",
+        "moveColumnRight": "列を右に移動",
+        "deleteColumn": "列を削除",
+        "toggleHeaderRow": "ヘッダー行を切り替え",
+        "toggleHeaderColumn": "ヘッダー列を切り替え",
+        "deleteTable": "テーブルを削除"
+      },
+      "superscript": "上付き文字",
+      "subscript": "下付き文字",
+      "insertImage": "画像を挿入",
+      "insertVideo": "動画を挿入",
+      "embed": "埋め込み",
+      "undo": "元に戻す",
+      "redo": "やり直し",
+      "switchToLtr": "左から右へ切り替え",
+      "switchToRtl": "右から左へ切り替え",
+      "scrollLeft": "ツールバーを左にスクロール",
+      "scrollRight": "ツールバーを右にスクロール",
+      "markdown": "Markdown",
+      "preview": "プレビュー"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet名…",
+      "renameWarning": "Cabinet名は後で変更できません（現時点では）。慎重に選択してください。"
+    },
+    "templates": {
+      "header": "テンプレートから開始",
+      "browseAll": "すべて閲覧 →"
+    },
+    "quickActions": {
+      "shuffle": "別の提案を表示",
+      "launch10Songs": "10個の作詞エディターを起動",
+      "dailyReview9am": "午前9時に日次レビュー",
+      "weeklyReview": "来週月曜日に週次レビュー",
+      "thailandTrip": "タイ旅行を計画",
+      "physicsApp": "物理学習アプリを作成",
+      "summariseRecent": "最近の仕事を要約",
+      "recruiterReply": "採用担当者への返信を作成",
+      "mapArticles": "記事の関連性をマッピング",
+      "physicsCourse": "6モジュールの物理コースを立ち上げ",
+      "shortStory": "短編小説の概要を作成",
+      "hourlyStandup": "毎時スタンドアップ通知",
+      "researchPhone": "次の携帯電話を調査",
+      "translateToSpanish": "このcabinetをスペイン語に翻訳",
+      "refactorNotes": "ノートシステムをリファクタリング",
+      "birthdayParty": "誕生日パーティーを計画",
+      "boardUpdate": "役員会向け更新を作成",
+      "customerInterviews": "顧客インタビュー5件をシミュレート"
+    },
+    "goodMorning": "おはようございます",
+    "goodAfternoon": "こんにちは",
+    "goodEvening": "こんばんは",
+    "greetingWithName": "{{greeting}}、{{name}}。",
+    "greetingNoName": "{{greeting}}。",
+    "composerPlaceholder": "作成したい…",
+    "composerDaemonDown": "エージェントデーモンがオフラインです — 送信するには再起動してください"
+  },
+  "onboarding": {
+    "launchHeading": "あなたの<accent>Cabinet</accent>を始めましょう",
+    "intro": {
+      "tagline1": "あなたの知識ベース。",
+      "tagline2": "あなたのAIチーム。",
+      "getStarted": "始める"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "オフィス",
+        "study": "書斎",
+        "lab": "ラボ",
+        "library": "図書館",
+        "kitchen": "キッチン",
+        "family": "家族",
+        "dining": "ダイニング",
+        "studio": "スタジオ"
+      }
+    },
+    "welcome": {
+      "paragraph": "あなたのホームは、あなただけの空間です。ここでは、仕事、セカンドブレイン、研究、家族など、生活のあらゆる側面に対応する「ルーム」を設定できます。各ルームには、メモやファイル、そしてバックグラウンドで静かに作業を進めるAIチームが収められた「キャビネット」があります。",
+      "namePrompt": "お名前は何ですか？",
+      "heading": "<accent>おかえりなさい</accent>"
+    },
+    "welcomeBack": {
+      "heading": "おかえりなさい",
+      "headingNamed": "{{cabinet}}へようこそ、おかえりなさい",
+      "subtitle": "既存のキャビネットが見つかりました。セットアップを完了しましょう。",
+      "continue": "続行"
+    },
+    "verify": {
+      "passed": "完了",
+      "notInstalled": "未インストール",
+      "authRequired": "認証が必要です",
+      "paymentRequired": "支払いが必要です",
+      "quotaExceeded": "クォータ/レート制限",
+      "error": "エラー"
+    },
+    "providerStatus": {
+      "ready": "準備完了",
+      "loginRequired": "ログインが必要です",
+      "notInstalled": "未インストール"
+    },
+    "actions": {
+      "back": "戻る",
+      "next": "次へ",
+      "continue": "続行",
+      "skip": "スキップ",
+      "finish": "完了",
+      "complete": "セットアップを完了",
+      "copyToClipboard": "クリップボードにコピー"
+    },
+    "cabinetCreated": {
+      "continue": "セットアップを続行",
+      "heading": "Cabinetが作成されました",
+      "subtitle": "すべて設定が完了し、準備万端です。",
+      "agentsReady_one": "{{count}}人のエージェントが稼働準備完了",
+      "agentsReady_other": "{{count}}人のエージェントが稼働準備完了",
+      "scheduledJobs_one": "{{count}}件のスケジュール済みジョブ",
+      "scheduledJobs_other": "{{count}}件のスケジュール済みジョブ",
+      "subCabinets_one": "{{count}}個のサブCabinet",
+      "subCabinets_other": "{{count}}個のサブCabinet",
+      "agentsReady": "{{count}}人のエージェントが稼働準備完了",
+      "scheduledJobs": "{{count}}件のスケジュール済みジョブ",
+      "subCabinets": "{{count}}個のサブCabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "すでにご登録済みです — 後ほどご連絡いたします。",
+      "aside": "Cabinet Cloudは近日公開予定です。同じ製品を、自己ホスティングの手間なしでご利用いただけます。",
+      "description": "AIエージェントがドラフト作成、調査、整理を継続している間も、どのデバイスからでもCabinetを開くことができます。ノートパソコンを閉じていても大丈夫です。",
+      "error": "問題が発生しました。メールアドレスを確認して、もう一度お試しください。",
+      "joinWaitlist": "ウェイティングリストに参加",
+      "onList": "リストに追加されました。Cabinet Cloudの公開時にメールでお知らせします。",
+      "sending": "送信中…",
+      "title": "どこからでもあなたのCabinetへ。AIチームは常に稼働中。",
+      "waitlistSubtitle": "どこからでも接続。AIチームは24時間365日稼働。"
+    },
+    "discord": {
+      "aside": "新機能をいち早く試したい方、チケット提出よりも「チャットで話す」を好む方へ、ここがあなたの場所です。",
+      "description": "ここでは、フィードバックが機能になり、スクリーンショットが議論になり、誰かがあなたが見つける前にエッジケースを発見します。",
+      "joinBadge": "参加",
+      "title": "Discordは、良い意味での「奇妙さ」が生まれる場所です。"
+    },
+    "github": {
+      "aside": "Cabinetはオープンソースです。このビジョンに共感したら、ぜひ広めるお手伝いをしてください。",
+      "description": "GitHubでスターを付けることで、より多くの人がCabinetを発見し、コミュニティに参加する手助けになります。",
+      "starsLabel": "GitHubスター {{stars}}個",
+      "title": "Cabinetコミュニティの成長を支援"
+    },
+    "launch": {
+      "beforeYouLaunch": "公開前に",
+      "defaultCabinetName": "あなたのCabinet",
+      "defaultDescription": "ナレッジベース + AIチーム",
+      "knowledgeBaseLabel": "ナレッジベース",
+      "aiTeamLabel": "AIチーム",
+      "launchCabinet": "Cabinet を起動",
+      "settingUp": "設定中...",
+      "disclaimerAccess": "<strong>エージェントはフルアクセスで実行されます。</strong> Cabinet は <flag>--dangerously-skip-permissions</flag> (Claude Code) および他のプロバイダーの同等のフラグを使用します。これは、これらの CLI ツールを自身のターミナルから実行するのと同等です。設定した MCP サーバーやツールは、エージェントによって自動的に呼び出される場合があります。",
+      "disclaimerBackup": "<strong>データを定期的にバックアップしてください。</strong> エージェントは、KB およびリンクされたリポジトリ内のファイルを読み取り、書き込み、削除できます。Cabinet はデータ損失の責任を負いません。選択する AI プロバイダーとその利用規約については、お客様が責任を負います。",
+      "disclaimerBeta": "<strong>ベータ版ソフトウェアです。不具合が発生する可能性があります。</strong> 迅速にリリースしています。破壊的な変更が予告なく行われる場合があります。",
+      "legalNotice": "続行すると、当社の<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したことになります。Cabinet は<oss>オープンソースプロジェクト</oss>です。",
+      "keepInTouch": "最新情報を受け取る。Cabinetはオープンソースで開発されており、次に何を開発すべきか、ぜひご意見をお聞かせください。スパムは送りません。お約束します。"
+    },
+    "provider": {
+      "agentType": "{{type}} エージェント",
+      "close": "閉じる",
+      "comingSoon": "近日公開",
+      "guide": "ガイド",
+      "heading": "エージェントプロバイダー",
+      "moreModels": "その他のAI",
+      "install": "インストール",
+      "logIn": "ログイン",
+      "openTerminalButton": "ターミナルを開く",
+      "openTerminalDetail": "次のステップを実行するにはターミナルが必要です。",
+      "openTerminalError": "ターミナルを自動的に開けませんでした。システムターミナルを手動で開いてください。",
+      "openTerminalTitle": "ターミナルを開く",
+      "recheck": "プロバイダーを再確認",
+      "rerunVerify": "検証を再実行",
+      "runVerify": "検証を実行",
+      "setupTitle": "{{name}} のセットアップ",
+      "skipForNow": "今回はスキップ",
+      "subtitle": "Cabinet はエージェントを動かすために AI CLI が必要です。",
+      "verifyExplanation": "検証はプロバイダーのヘッドレスプロンプトをエンドツーエンドで実行し、失敗を分類して、どのステップを再確認すべきかを示します。",
+      "verifying": "検証中...",
+      "failedAtStep": "ステップ: <strong>{{step}}</strong> で失敗しました"
+    },
+    "roomSetup": {
+      "subtitle": "このキャビネットは何ですか？各ルームには独自の AI チームが付属しています。",
+      "heading": "<accent>ルーム</accent>を選択"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinetとは？",
+      "body": "Cabinetは、生活や仕事の特定の分野に特化したワークスペースです。ファイル、メモ、ツール、エージェント、タスクを保管し、AIチームが実際に役立つために必要なコンテキストを提供します。",
+      "examplesLabel": "Cabinetの活用例",
+      "example1": "あなたのスタートアップ",
+      "example2": "GitHubリポジトリ",
+      "example3": "あなたのマーケティング業務",
+      "example4": "クライアントプロジェクト",
+      "example5": "あなたの個人ナレッジベース"
+    },
+    "access": {
+      "heading": "{{name}}は何にアクセスできますか？",
+      "subtitle": "このエージェントが使用できる知識とツールを選択してください。これはいつでも変更できます。",
+      "defaultAgent": "あなたのエージェント",
+      "files": "ファイルと知識",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP servers",
+      "plugins": "プラグイン",
+      "skills": "スキル",
+      "placeholderNote": "アクセス権は後でエージェントの設定で微調整できます。"
+    },
+    "heartbeat": {
+      "heading": "{{name}}をハートビートで実行しますか？",
+      "subtitle": "ハートビートにより、エージェントはスケジュールに基づいて自動的にチェックインし、作業を実行します。",
+      "off": "オフ",
+      "offHint": "要求されたときにのみ実行されます。開始時におすすめです。",
+      "daily": "毎日",
+      "dailyHint": "1日1回チェックインします。",
+      "weekly": "毎週",
+      "weeklyHint": "1週間に1回チェックインします。",
+      "tokenNote": "注意：ハートビートはエージェントを自動的に実行し、実行されるたびにAIトークン（およびプロバイダーのクォータ）を使用します。これはいつでも変更またはオフにできます。"
+    },
+    "firstTask": {
+      "heading": "最初のタスクを登録する",
+      "subtitle": "タスクは、{{name}}に作業を依頼する方法です。今すぐ作成すると、Cabinetに登録され、実行準備が整います。",
+      "label": "{{name}}に最初は何をさせますか？",
+      "placeholder": "例：新規顧客向けのウェルカムメールを作成する",
+      "example1": "最新のメモを要約する",
+      "example2": "プロジェクト計画を作成する",
+      "example3": "競合上位3社を調査する",
+      "note": "これは空白のままにして、後でタスクを追加できます。AIプロバイダーを接続するまで何も実行されません。"
+    },
+    "rail": {
+      "untitled": "あなたのCabinet",
+      "dataCaption": "すべてのプロジェクトファイルとメモがここにあります。",
+      "teamEmpty": "まだエージェントはありません。",
+      "teamCaption": "あなたのAIチームはここで作業します。",
+      "tasksEmpty": "まだタスクはありません。",
+      "tasksCaption": "チームに渡した作業がここに表示されます。",
+      "assignedTo": "{{name}}に割り当て済み",
+      "you": "あなた"
+    },
+    "rooms": {
+      "office": {
+        "label": "オフィス",
+        "tagline": "ビジネス、スタートアップ、サイドプロジェクトを運営。",
+        "workspaceLabel": "会社名またはプロジェクト名",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "何をしているか？",
+        "descriptionPlaceholder": "AIスタートアップに関するポッドキャストを制作しています",
+        "departmentNoun": "部署",
+        "teamSizeLabel": "チーム規模",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "編集者"
+        }
+      },
+      "study": {
+        "label": "書斎",
+        "tagline": "あなたの第二の脳 — 執筆、メモ、パーソナルアシスタント。",
+        "workspaceLabel": "キャビネットの名前",
+        "workspacePlaceholder": "私の書斎",
+        "descriptionLabel": "どのような分野でサポートが必要ですか？",
+        "descriptionPlaceholder": "執筆、メール整理、カレンダー、習慣トラッキング",
+        "departmentNoun": "分野",
+        "exampleAgents": {
+          "0": "アシスタント",
+          "1": "司書"
+        }
+      },
+      "lab": {
+        "label": "研究室",
+        "tagline": "学術研究、文献、教育、論文。",
+        "workspaceLabel": "ワークスペース名",
+        "workspacePlaceholder": "心の哲学",
+        "descriptionLabel": "専門分野または研究テーマは何ですか？",
+        "descriptionPlaceholder": "現象学、意識、哲学入門の指導",
+        "departmentNoun": "分野",
+        "exampleAgents": {
+          "0": "研究リーダー",
+          "1": "司書"
+        }
+      },
+      "family-room": {
+        "label": "ファミリールーム",
+        "tagline": "家事、家族カレンダー、食事、子供たち。",
+        "workspaceLabel": "世帯名",
+        "workspacePlaceholder": "グエン家",
+        "descriptionLabel": "ここに住んでいるのは誰で、何をやりくりしていますか？",
+        "descriptionPlaceholder": "両親2人、子供3人、学校2つ、犬1匹",
+        "departmentNoun": "分野",
+        "teamSizeLabel": "世帯人数",
+        "exampleAgents": {
+          "0": "ホームマネージャー",
+          "1": "プランナー"
+        }
+      },
+      "blank": {
+        "label": "空の部屋",
+        "tagline": "まだ何もありません。エージェントや形を自由に追加してください。",
+        "workspaceLabel": "キャビネットに名前を付けてください",
+        "workspacePlaceholder": "マイキャビネット",
+        "descriptionLabel": "何に使いますか？",
+        "descriptionPlaceholder": "何でも — まだ不明な場合は空欄のままで",
+        "departmentNoun": "グループ",
+        "exampleAgents": {
+          "0": "ご自由に"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "リーダーシップ",
+      "marketing": "マーケティング",
+      "content": "コンテンツ",
+      "engineering": "エンジニアリング",
+      "product-and-design": "プロダクト＆デザイン",
+      "business": "ビジネス",
+      "research": "リサーチ",
+      "finance-and-ops": "財務・運用",
+      "personal": "個人",
+      "second-brain": "セカンドブレイン",
+      "writing": "ライティング",
+      "tools": "ツール",
+      "life-admin": "生活管理",
+      "from-the-office": "オフィス関連",
+      "writing-and-notes": "ライティング＆ノート",
+      "other": "その他",
+      "household": "家庭",
+      "admin": "管理",
+      "money": "お金",
+      "product": "プロダクト",
+      "design": "デザイン",
+      "sales": "営業",
+      "support": "サポート",
+      "analytics": "アナリティクス",
+      "finance": "財務",
+      "legal": "法務",
+      "people": "人事"
+    },
+    "demo": {
+      "greeting": {
+        "office": "チームの皆さん、おはようございます！{{workspace}}へようこそ。早速始めましょう。",
+        "study": "おはようございます。セカンドブレインがオンラインになりました — {{home}}へおかえりなさい。",
+        "lab": "リサーチデスクの準備ができました — 「{{workspace}}」。今日は何を掘り下げますか？",
+        "family-room": "ホームHQを起動中 — {{home}}。皆をそれぞれの場所に配置しましょう。",
+        "blank": "白紙の状態 — 「{{workspace}}」。{{home}}で何を構築しますか？"
+      },
+      "assign": "{{name}}さん、{{topic}}を担当できますか？",
+      "fallbackTopic": "次は何ですか",
+      "office": {
+        "replies": {
+          "0": "承知しました。今日の終わりまでに全体像の概要を準備します。",
+          "1": "すでに計画を起草中です。まもなく#contentで共有します。",
+          "2": "現在、基盤となるワークフローを設定中です。今のところ順調です。"
+        },
+        "topics": {
+          "0": "競合調査",
+          "1": "コンテンツカレンダー",
+          "2": "リリース計画"
+        },
+        "closing": "皆さん、素晴らしいエネルギーです。この最初の週を力強く乗り切りましょう。"
+      },
+      "study": {
+        "replies": {
+          "0": "受信トレイを整理し、あなたが必要なものを抽出します。",
+          "1": "午後3時まで予定なし — 執筆に良い時間です。",
+          "2": "すでに3つの新しいメモを「デイリー」インデックスにリンクしました。"
+        },
+        "topics": {
+          "0": "今日の受信トレイ整理",
+          "1": "今週の執筆",
+          "2": "私の読書リスト"
+        },
+        "closing": "承知しました。何かあれば連絡ください — なければ邪魔しません。"
+      },
+      "lab": {
+        "replies": {
+          "0": "これに関する最新論文を今引き出しています — 1時間で要約をドラフトします。",
+          "1": "これが終わったら参考文献を同期し、重複をマークします。",
+          "2": "木曜日の講義概要はレビュー準備がほぼ整いました。"
+        },
+        "topics": {
+          "0": "文献レビュー",
+          "1": "木曜日の講義準備",
+          "2": "参考文献リスト"
+        },
+        "closing": "随時報告してください。今日中にプッシュされたものはすべてレビューします。"
+      },
+      "family-room": {
+        "replies": {
+          "0": "4時以降は予定なし。重複する送り迎えをマークしています。",
+          "1": "今週のメニューをドラフトしました — 買い物リストはレビュー準備完了です。",
+          "2": "子供たちの活動を同期しました。金曜日のDnDナイトはまだ予定通りです。"
+        },
+        "topics": {
+          "0": "今日の予定",
+          "1": "食事計画",
+          "2": "子供たちの活動"
+        },
+        "closing": "皆さんありがとう。日中に何か変更があれば連絡ください。"
+      },
+      "blank": {
+        "replies": {
+          "0": "承知しました。いつでも準備できています。",
+          "1": "待機中。",
+          "2": "指示を待ちます。"
+        },
+        "topics": {
+          "0": "最初のもの",
+          "1": "次のもの",
+          "2": "未解決の質問"
+        },
+        "closing": "準備ができたら、何をすべきか教えてください。"
+      }
+    },
+    "team": {
+      "browseAll": "すべて閲覧",
+      "browseCabinets": "キャビネットを閲覧",
+      "cabinetNameLabel": "キャビネット名",
+      "cancel": "キャンセル",
+      "importButton": "インポート",
+      "importFailed": "インポート失敗",
+      "importFailedConnection": "インポートに失敗しました。接続を確認してください。",
+      "importTitle": "{{name}} をインポート",
+      "pickAgents": "エージェントを選択",
+      "required": "必須",
+      "subtitle": "各キャビネットは AI チームです — エージェント、タスク、共有ナレッジベースが一体となって機能します。",
+      "heading": "<accent>あなたの</accent>チームを構築",
+      "nameLabel": "エージェント名",
+      "namePlaceholder": "例：エディター、リサーチャー、アシスタント",
+      "roleLabel": "役割",
+      "rolePlaceholder": "例：ライティングアシスタント",
+      "instructionsLabel": "このエージェントは何をすべきですか？",
+      "instructionsPlaceholder": "どのように役立つか説明してください。例：ページの草稿作成と編集、トーンを明確かつフレンドリーに保ち、改善点を提案する。",
+      "agentOptionalHint": "オプション。この手順をスキップして、後でルーム内からエージェントを追加できます。",
+      "agentCount_one": "{{count}} エージェント",
+      "agentCount_other": "{{count}} エージェント",
+      "jobCount_one": "ジョブ {{count}} 件",
+      "jobCount_other": "ジョブ {{count}} 件",
+      "subCabinetCount_one": "サブキャビネット {{count}} 件",
+      "subCabinetCount_other": "サブキャビネット {{count}} 件",
+      "cabinetsImported_one": "キャビネット {{count}} 件をインポート済み",
+      "cabinetsImported_other": "{{count}}個のキャビネットをインポート済み",
+      "agentCount": "{{count}}人のエージェント",
+      "cabinetsImported": "{{count}}個のキャビネットをインポート済み",
+      "jobCount": "{{count}}件のジョブ",
+      "subCabinetCount": "{{count}}個のサブキャビネット"
+    }
+  },
+  "search": {
+    "title": "検索",
+    "placeholder": "ページ、エージェント、タスクを検索…",
+    "clearQuery": "検索条件をクリア",
+    "noCommands": "一致するコマンドはありません。",
+    "scopes": {
+      "all": "すべて",
+      "pages": "ページ",
+      "agents": "エージェント",
+      "tasks": "タスク"
+    },
+    "groups": {
+      "pages": "ページ",
+      "agents": "エージェント",
+      "tasks": "タスク"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "言語",
+      "description": "言語と読みの方向を変更します。既存のページは、ドキュメントごとの方向を維持します。",
+      "english": "英語",
+      "hebrew": "ヘブライ語",
+      "chineseSimplified": "簡体中文",
+      "chineseTraditional": "繁体中文",
+      "moreLanguages": "その他の言語",
+      "moreLanguagesHint": "ご希望の言語をクリックしてお知らせください。リクエストの多い言語から優先的に対応します。",
+      "comingSoon": "近日公開",
+      "requestSubmitted": "ありがとうございます！{{language}}のご要望を承りました。リクエストの多い言語から優先的に対応します。",
+      "requestFailed": "サーバーに接続できませんでした。しばらくしてからもう一度お試しください。"
+    },
+    "appearance": {
+      "title": "外観",
+      "theme": "テーマ",
+      "themeDescription": "インターフェースのテーマを選択します。",
+      "matchSystem": "システムに合わせる",
+      "matchSystemDescription": "OSの外観に合わせて自動的に切り替えます。",
+      "lightThemes": "ライトテーマ",
+      "darkThemes": "ダークテーマ",
+      "lightVariant": "ライトバリアント",
+      "darkVariant": "ダークバリアント",
+      "sidebar": "サイドバー",
+      "showHiddenFiles": "隠しファイルを表示",
+      "sidebarDescription": "サイドバーでのファイルの表示方法を設定します。",
+      "showHiddenFilesHint": "ドットで始まるファイルやフォルダーを表示します（例: .env, .git）。"
+    },
+    "tabs": {
+      "profile": "プロフィール",
+      "providers": "プロバイダー",
+      "skills": "スキル",
+      "storage": "ストレージ",
+      "integrations": "連携",
+      "notifications": "通知",
+      "appearance": "外観",
+      "updates": "アップデート",
+      "about": "バージョン情報"
+    },
+    "page": {
+      "title": "設定",
+      "refresh": "更新",
+      "groupYou": "あなた",
+      "groupWorkspace": "ワークスペース",
+      "groupApp": "アプリ"
+    },
+    "common": {
+      "copyToClipboard": "クリップボードにコピー",
+      "categoriesAriaLabel": "設定カテゴリ",
+      "loading": "読み込み中…",
+      "connect": "接続",
+      "recommended": "おすすめ"
+    },
+    "integrationsPreview": {
+      "comingSoon": "近日公開",
+      "hint": "外部連携と組み込みツールの接続は準備中です。"
+    },
+    "storage": {
+      "dataDirectory": "データディレクトリ",
+      "restartRequired": "再起動が必要です",
+      "dataDirectoryDescription": "すべてのナレッジベースコンテンツはこのディレクトリに保存されます。パスを変更するには再起動が必要です。",
+      "restartHint": "Cabinetを再起動すると、データディレクトリが変更されます。",
+      "currentPath": "現在のパス",
+      "loadingPath": "読み込み中...",
+      "changeDirectory": "ディレクトリを変更",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "参照",
+      "save": "保存",
+      "openInFinder": "Finderで開く",
+      "envVarHint1": "また、",
+      "envVarHint2": "環境変数を設定することもできます。これはこの設定よりも優先されます。",
+      "failedToSave": "保存に失敗しました。",
+      "failedToSaveDir": "データディレクトリの保存に失敗しました。"
+    },
+    "updates": {
+      "checking": "Cabinetのアップデートを確認中…"
+    },
+    "providers": {
+      "title": "エージェントプロバイダー",
+      "defaultModel": "デフォルトモデル",
+      "setupGuide": "セットアップガイド",
+      "troubleshoot": "AIプロバイダーのトラブルシューティング",
+      "subtitle": "AIエージェントプロバイダーを設定します。CLIエージェントはターミナル経由で実行され、APIエージェントは直接API呼び出しを使用します。",
+      "defaultRuntime": "デフォルトの実行環境",
+      "defaultRuntimeHint": "一般的な会話やフォールバック実行には、このプロバイダー/モデル/労力が使用されます。",
+      "cliAgents": "CLIエージェント",
+      "apiAgents": "APIエージェント",
+      "ready": "準備完了",
+      "installedNotLoggedIn": "インストール済み、未ログイン",
+      "notInstalled": "未インストール",
+      "emptyMatrix": "プロバイダーが設定されていません。以下から追加してください。"
+    },
+    "notifications": {
+      "channels": "通知チャネル",
+      "alertRules": "アラートルール",
+      "alwaysOn": "常にオン",
+      "comingSoon": "近日公開",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "エージェントが注意を必要とする際のアラート受信方法を設定します。",
+      "rulesHint": "以下のイベントで通知が自動的にトリガーされます:",
+      "previewHint": "ブラウザプッシュ、Telegram、Slack、およびメール通知。",
+      "channelPushName": "ブラウザプッシュ",
+      "channelPushDesc": "Cabinetタブが開いているかPWAがインストールされている場合に即時アラート",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Telegramボット経由での即時モバイル通知",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "チームのSlackチャネルにアラートを転送",
+      "channelEmailName": "メールダイジェスト",
+      "channelEmailDesc": "アラートとエージェント活動のバッチ処理された要約",
+      "ruleAlertsEvent": "#alertsチャネルメッセージ",
+      "ruleAlertsDesc": "アラートチャネルに投稿する任意のエージェント",
+      "ruleMentionsEvent": "@humanメンション",
+      "ruleMentionsDesc": "エージェントが任意のチャネルで@humanに言及した場合",
+      "ruleFloorEvent": "目標の下限値を超過",
+      "ruleFloorDesc": "目標が最小しきい値を下回った場合",
+      "ruleHealthEvent": "エージェントの健全性が低下",
+      "ruleHealthDesc": "3回以上の連続したハートビート失敗"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "バージョン",
+      "release": "リリース",
+      "framework": "フレームワーク",
+      "storage": "ストレージ",
+      "privacy": "プライバシー",
+      "telemetry": "匿名利用状況テレメトリー",
+      "tagline": "AIファーストのセルフホスト型ナレッジベースとスタートアップOS。",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "ローカルファイルシステム",
+      "aiLabel": "AI",
+      "aiValue": "ローカルAI CLIによって駆動",
+      "philosophy": "すべてのコンテンツはディスク上のMarkdownファイルとして存在します。人間が意図を定義し、エージェントが作業を行います。ナレッジベースは両者間の共有メモリです。",
+      "privacyBody": "Cabinetは製品改善のために匿名利用状況テレメトリーを送信します。ファイルの内容、パス、プロンプト、秘密情報は一切収集されません。",
+      "privacyLink": "収集されるもの?",
+      "telemetryEnvDisabled": "CABINET_TELEMETRY_DISABLED=1 (環境変数) により無効化されています。",
+      "telemetryHint": "イベント数、バージョン、プラットフォーム情報のみ。送信を停止するにはオフにしてください。",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "どこからでもCabinetに接続し、AIチームが24時間365日あなたのために働きます。下記にメールアドレスを入力してください。Cabinet Cloudの開始時にお知らせします。",
+      "cloudAlready": "すでにリストに登録されています — 後ほどご連絡いたします。",
+      "cloudSuccess": "リストに登録されました。Cabinet Cloudの開始時にメールでお知らせします。",
+      "cloudSending": "送信中…",
+      "cloudJoinWaitlist": "順番待ちリストに登録",
+      "cloudError": "問題が発生しました。メールアドレスを確認して、もう一度お試しください。",
+      "connectTitle": "接続",
+      "connectBody": "ヘルプを見る、フィードバックを共有する、または挨拶する。",
+      "joinDiscord": "Discordに参加"
+    },
+    "profile": {
+      "title": "プロフィール",
+      "name": "名前",
+      "namePlaceholder": "Jane",
+      "displayName": "表示名",
+      "role": "役割",
+      "rolePlaceholder": "ビルダー",
+      "avatar": "アバター",
+      "accentColor": "アクセントカラー",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "フォールバックアイコン",
+      "useIconInstead": "代わりにアイコンを使用",
+      "searchAvatars": "アバターを検索…",
+      "searchIcons": "アイコンを検索…",
+      "howAppear": "会話やアプリ全体での表示方法。",
+      "youFallback": "自分",
+      "displayNameHint": "会話に表示されます。デフォルトは名前です。",
+      "iconHint": "アバター画像が設定されていない場合に使用されます。もう一度クリックするとクリアされます。",
+      "tintHint": "画像が設定されていない場合、フォールバックアバターに色を付けます。",
+      "save": "保存",
+      "saving": "保存中…",
+      "saved": "保存済み",
+      "browseAll": "すべて表示 ({{count}})",
+      "showFavorites": "お気に入りを表示",
+      "showFewer": "表示を減らす"
+    },
+    "workspace": {
+      "title": "ワークスペース",
+      "name": "ワークスペース名",
+      "namePlaceholder": "私のCabinet",
+      "description": "説明",
+      "descriptionPlaceholder": "業務内容",
+      "teamSize": "チームサイズ",
+      "teamSizePlaceholder": "ソロ / 2–5 / 6–20 / 20+",
+      "subtitle": "オンボーディング中に取得されます。エージェントは作業計画時にこれを読みます。"
+    }
+  },
+  "sidebar": {
+    "settings": "設定",
+    "createPage": "ページを作成",
+    "newPage": "新しいページ",
+    "newAgent": "新しいエージェント",
+    "newTask": "新しいタスク",
+    "archive": "アーカイブ",
+    "trash": "ゴミ箱",
+    "search": "検索",
+    "agents": "エージェント",
+    "tasks": "タスク",
+    "missions": "ミッション",
+    "drawerData": "データ",
+    "drawerAgents": "チーム",
+    "drawerTasks": "タスク",
+    "goHome": "ホームへ移動",
+    "brandWord": "",
+    "refresh": "サイドバーを更新",
+    "refreshDescription": "サイドバーを更新 (データフォルダを再読み込み)",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "expandSidebar": "サイドバーを展開",
+    "resizeHandle": "サイドバーのサイズを変更 — ダブルクリックでリセット",
+    "resetWidth": "ダブルクリックで幅をリセット",
+    "refreshedNoChanges": "更新済み — 変更なし。",
+    "refreshedWithChanges": "更新済み — {{added}}件追加、{{removed}}件削除。",
+    "refreshFailed": "更新に失敗しました。",
+    "searchPlaceholder": "ファイルを検索…",
+    "searchSearching": "検索中…",
+    "searchNoResults": "「{{query}}」に一致するファイルはありません"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "ステータスバー",
+      "askAiAriaLabel": "AIにこのページの編集を依頼",
+      "askAiPlaceholder": "このページを編集するには？",
+      "sendHint": "↵で送信"
+    },
+    "server": {
+      "serverStatusAriaLabel": "サーバーの状態 — クリックで詳細",
+      "checking": "サーバーの状態を確認中…",
+      "allRunning": "すべてのシステムが稼働中",
+      "appNotResponding": "アプリサーバーが応答していません",
+      "daemonDownNoProviders": "デーモンが応答していません。エージェントプロバイダーは利用できません",
+      "daemonDown": "デーモンが応答していません",
+      "noProviders": "エージェントプロバイダーは利用できません",
+      "checkingShort": "確認中…",
+      "online": "オンライン",
+      "offline": "オフライン",
+      "degraded": "機能低下",
+      "allSystemsRunning": "すべてのシステムが稼働中",
+      "serviceDisruption": "サービス中断",
+      "appServer": "アプリサーバー",
+      "daemon": "デーモン",
+      "agentProviders": "エージェントプロバイダー",
+      "running": "稼働中",
+      "down": "停止中",
+      "lastSeen": "最終確認: {{when}}",
+      "appWorking": "ページ、エディター、検索、ファイル管理は動作しています。",
+      "appDown": "ページ、エディター、検索、保存は利用できません。キャッシュされたコンテンツは引き続き閲覧できます。",
+      "daemonWorking": "AIエージェント、スケジュールされたジョブ、ウェブターミナルは動作しています。",
+      "daemonDownDescription": "AIエージェント、スケジュールされたジョブ、ウェブターミナルは利用できません。ページの編集は引き続き可能です。",
+      "available": "利用可能",
+      "noneReady": "準備完了なし",
+      "providerReady": "準備完了",
+      "providerNotLoggedIn": "ログインしていません",
+      "providerNotInstalled": "インストールされていません",
+      "install": "インストール",
+      "howToFix": "修正方法"
+    },
+    "save": {
+      "retryTitle": "クリックして保存失敗を再試行",
+      "retryAriaLabel": "保存失敗 — クリックして再試行",
+      "autoSaving": "自動保存中…",
+      "forceSave": "強制保存: ⌘S",
+      "editing": "編集中 — 一時停止すると自動保存が実行されます",
+      "wordCountTitle": "このページの文字数（Markdown構文を除く）",
+      "savedJustNow": "たった今",
+      "savedNever": "未実行",
+      "savedAgoSeconds": "{{n}}秒前",
+      "savedAgoMinutes": "{{n}}分前",
+      "savedAgoHours": "{{n}}時間前",
+      "savedAgoDays": "{{n}}日前",
+      "saveFailedRetry": "保存失敗 — 再試行",
+      "savingText": "保存中…",
+      "savedText": "保存済み",
+      "editingText": "編集中…",
+      "savedAgo": "保存済み · {{ago}}",
+      "word": "単語",
+      "words": "単語"
+    },
+    "git": {
+      "statusModified": "変更済み",
+      "statusNew": "新規",
+      "statusAdded": "追加済み",
+      "statusDeleted": "削除済み",
+      "statusRenamed": "名前変更済み",
+      "commitMessageAriaLabel": "コミットメッセージ"
+    },
+    "help": {
+      "menuAriaLabel": "ヘルプとコミュニティメニューを開く",
+      "menuTitle": "ヘルプとコミュニティ",
+      "demos": "デモ、ビデオ、ガイド",
+      "discord": "Discordでチャット",
+      "discordSubtitle": "サポートとフィードバック",
+      "github": "GitHubで貢献",
+      "githubSubtitle": "ソース、イシュー、PR",
+      "ifUseful": "もしお役に立てたら",
+      "label": "ヘルプ",
+      "starsAriaLabel": "{{count}}個のGitHubスター — GitHubでCabinetを開く",
+      "starsTitle": "{{count}}個のGitHubスター — GitHubでCabinetをスターする",
+      "share": "共有",
+      "shareSubtitle": "招待リンクをコピーして広める",
+      "shareCopied": "{{name}}さん、素晴らしいです🩷 将来のCabinetメンバーを迎え入れてくださりありがとうございます。リンクがコピーされました。愛を広めましょう！",
+      "shareFailed": "リンクをコピーできませんでした",
+      "friend": "友達"
+    },
+    "git2": {
+      "allCommitted": "すべてコミット済み",
+      "uncommittedFile": "コミットされていないファイルが{{count}}個",
+      "uncommittedFiles": "コミットされていないファイルが{{count}}個",
+      "uncommittedFilesAria": "コミットされていないファイルが{{count}}個 — クリックしてリストを表示",
+      "uncommittedFileTip": "未コミットのファイルを表示",
+      "uncommittedFilesTip": "未コミットのファイルを表示",
+      "uncommittedFilesHeading": "{{count}} 件の未コミットファイル",
+      "uncommittedFilesHeadingPlural": "{{count}} 件の未コミットファイル",
+      "truncatedHint": "最初の {{count}} ファイルのみ表示 — 全リストは `git status` を実行してください。",
+      "commitDefault": "{{count}} 件のファイルを更新",
+      "commitDefaultPlural": "{{count}} 件のファイルを更新",
+      "committing": "コミット中…",
+      "commit": "コミット",
+      "commitFailed": "コミット失敗",
+      "sync": "同期",
+      "syncTitle": "GitHubから最新をプルして更新",
+      "syncTitleWithLast": "GitHubから最新をプルして更新。最終同期: {{when}}。",
+      "syncAriaLabel": "GitHubから最新の変更をプルして更新",
+      "syncAriaLabelWithLast": "GitHubから最新の変更をプルして更新。最終同期: {{when}}。",
+      "terminal": "ターミナル",
+      "openTerminal": "ターミナルを開く",
+      "newTerminalTab": "新しいターミナルタブ",
+      "pulling": "プル中…",
+      "pulled": "リモートから更新済み",
+      "upToDate": "最新",
+      "pullFailed": "プル失敗"
+    },
+    "update2": {
+      "updateAvailable": "アップデート {{version}} が利用可能",
+      "updateAvailableTip": "Cabinet {{version}} が利用可能"
+    },
+    "common": {
+      "dismiss": "閉じる",
+      "close": "閉じる",
+      "openSettings": "インストール済みアップデートを確認するには設定を開く"
+    },
+    "misc": {
+      "restartToFinishUpdate": "更新完了のため再起動"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "元のプロンプトからこのタスクを再開",
+      "markAsDone": "このタスクを完了にする",
+      "viewAriaLabel": "タスクビュー",
+      "terminal": "ターミナル",
+      "transcript": "トランスクリプト",
+      "details": "詳細",
+      "transcriptTitle": "Claude Code ネイティブセッション JSONL",
+      "transcriptHint": "~/.claude/projects/<slug>/<session>.jsonl を読み込みます",
+      "back": "戻る",
+      "copyPrompt": "元のプロンプトをコピー",
+      "gracefulExit": "CLIを正常に終了 (PTYに /exit を書き込みます)",
+      "sendSigterm": "実行中のPTYプロセスにSIGTERMを送信",
+      "moreActions": "その他の操作",
+      "ptyMode": "ターミナル (PTY) モードで実行中",
+      "compactContext": "以前のターンを要約してコンテキストウィンドウを解放",
+      "noSummary": "まだ要約はありません。",
+      "sessionEnded": "セッションが終了しました — 同じターミナルで続けるには入力してください。",
+      "terminalLive": "ターミナルは稼働中です。次のプロンプトは現在のターン終了後にキューに入ります。"
+    }
+  },
+  "tour": {
+    "ariaLabel": "Cabinetツアーへようこそ",
+    "skip": "スキップ",
+    "skipAriaLabel": "ツアーをスキップ",
+    "back": "戻る",
+    "next": "次へ",
+    "writeFirstTask": "最初のタスクを作成",
+    "goToSlide": "スライド {{n}} へ移動",
+    "starterTask": "目標を話し合い、新しい「About」ページにまとめましょう。",
+    "savingTo": "保存中: ",
+    "introTitle": "あなたの<accent>Cabinet</accent>へようこそ。",
+    "introSubtitle": "あなたのAIチーム。あなたのナレッジベース。すべてを1か所で。",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "最近のタスクと実行中",
+    "hide": "タスクレールを非表示",
+    "show": "タスクレールを表示",
+    "empty": "タスクなし",
+    "itemRunning": "{{title}} · 実行中 · {{when}}",
+    "itemNeedsReply": "{{title}} · 返信が必要です",
+    "itemFailed": "{{title}} · 失敗 · {{when}}",
+    "itemDone": "{{title}} · 完了 · {{when}}",
+    "itemArchived": "{{title}} · アーカイブ済み",
+    "itemDefault": "{{title}} ・ {{when}}",
+    "toggleRunning": "{{count}}件実行中 — タスクレールを表示"
+  },
+  "chrome": {
+    "nav": {
+      "home": "ホーム",
+      "agents": "エージェント",
+      "tasks": "タスク",
+      "ai": "AI",
+      "menu": "メニュー",
+      "primaryAriaLabel": "メイン"
+    },
+    "returnTo": {
+      "task": "タスク",
+      "tasks": "タスク",
+      "agent": "エージェント",
+      "agents": "エージェント",
+      "cabinet": "Cabinet",
+      "home": "ホーム",
+      "settings": "設定",
+      "registry": "レジストリ",
+      "back": "戻る",
+      "backTo": "{{label}}に戻る"
+    },
+    "theme": {
+      "defaultHeader": "デフォルト",
+      "dark": "ダーク",
+      "darkThemes": "ダークテーマ",
+      "lightThemes": "ライトテーマ"
+    },
+    "update": {
+      "restartTitle": "更新を完了するにはCabinetを再起動してください",
+      "availableTitle": "Cabinet {{version}} が利用可能です",
+      "updatesTitle": "Cabinetのアップデート",
+      "description": "Cabinetは自動的にリリースを確認します。製品はまだ実験段階のため、アップデートをインストールする前にデータのコピーを保管してください。",
+      "later": "後で",
+      "releaseNotes": "リリースノート"
+    },
+    "daemon": {
+      "fixHintElectron": "エージェントデーモンを再起動するには、Cabinetを終了して再起動してください。",
+      "fixHintDev": "エージェントデーモンを復旧させるには、`npm run dev:daemon` を実行してください (または `npm run dev:all` を再起動)。",
+      "notResponding": "エージェントデーモンが応答していません。",
+      "willFail": "エージェント、ジョブ、AIリクエストは、復旧するまで失敗します。{{fixHint}}"
+    }
+  }
+}

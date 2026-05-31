@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "ایجنٹ بنائیں",
+      "avatar": "اوتار",
+      "namePlaceholder": "مارکیٹنگ ایجنٹ",
+      "rolePlaceholder": "مواد کا ماہر",
+      "department": "شعبہ",
+      "specialist": "ماہر",
+      "departmentLead": "شعبہ کا سربراہ",
+      "provider": "فراہم کنندہ",
+      "runtime": "رن ٹائم",
+      "promptPlaceholder": "آپ ایک مارکیٹنگ ایجنٹ ہیں برائے…",
+      "addAgentTitle": "اپنی ٹیم میں ایک ایجنٹ شامل کریں",
+      "addAgentDescription": "لائبریری سے ایک ماہر کا انتخاب کریں۔ شامل کرنے کے بعد آپ اس کا نام، کردار اور ہدایات میں ترمیم کر سکتے ہیں۔",
+      "createFromScratchTitle": "شروع سے بنائیں",
+      "createFromScratchDescription": "ایک نیا ایجنٹ بنائیں جس کی اپنی شناخت، کردار اور ہدایات ہوں۔",
+      "searchLibraryPlaceholder": "لائبریری میں تلاش کریں",
+      "errorLoadLibrary": "ایجنٹ لائبریری لوڈ نہیں ہو سکی۔",
+      "errorAddAgent": "اس ایجنٹ کو شامل نہیں کیا جا سکا۔"
+    },
+    "metric": {
+      "name": "میٹرک کا نام",
+      "namePlaceholder": "reddit_replies",
+      "target": "ہدف",
+      "targetPlaceholder": "جوابات/ہفتہ",
+      "floor": "کم از کم حد",
+      "period": "مدت",
+      "daily": "روزانہ",
+      "weekly": "ہفتہ وار",
+      "monthly": "ماہانہ"
+    },
+    "workspace": {
+      "promise": "وعدہ",
+      "orgChart": "تنظیمی چارٹ",
+      "jobDetails": "ملازمت کی تفصیلات",
+      "heartbeat": "ہارٹ بیٹ",
+      "workspace": "ورک اسپیس",
+      "editAgent": "ایجنٹ میں ترمیم کریں",
+      "instructions": "ہدایات",
+      "instructionsPlaceholder": "اس ایجنٹ کی ہدایات کے لیے مارک ڈاؤن لکھیں۔",
+      "newAgent": "نیا ایجنٹ",
+      "routines": "روٹینز",
+      "browseLibrary": "ایجنٹ لائبریری براؤز کریں",
+      "editYourOwn": "اپنے ایجنٹ میں ترمیم کریں",
+      "editorPlaceholder": "ایڈیٹر",
+      "productAgentPlaceholder": "پروڈکٹ رائٹنگ ایجنٹ",
+      "instructionsBodyPlaceholder": "تعین کریں کہ یہ ایجنٹ Cabinet اور KB کے اندر کیسے کام کرے گا۔",
+      "perAgentPrompts": "فی ایجنٹ بار بار آنے والے پرامپٹس",
+      "runNow": "ابھی چلائیں",
+      "delete": "حذف کریں",
+      "viewOrgChart": "اس ٹیم کو تنظیمی چارٹ کے طور پر دیکھیں (فل سکرین میں کھلتا ہے)",
+      "hideIntro": "یہ تعارف چھپائیں",
+      "sharedAcrossCabinets": "تمام کیبنٹس میں مشترکہ",
+      "expandSchedule": "شیڈول پھیلائیں",
+      "heartbeatsOnAgentPage": "ہارٹ بیٹس ہر ایجنٹ کے صفحے پر ترتیب دی جاتی ہیں۔",
+      "exitFullscreen": "فل سکرین سے باہر نکلیں",
+      "refresh": "تازہ کریں",
+      "editHeartbeat": "ہارٹ بیٹ میں ترمیم کریں",
+      "newRoutine": "نیا معمول",
+      "configureHeartbeat": "ہارٹ بیٹ ترتیب دیں",
+      "openOrgChart": "تنظیمی چارٹ کھولیں",
+      "pickAnAgent": "ایک ایجنٹ منتخب کریں",
+      "dismiss": "برخاست کریں",
+      "lockedHeartbeatTip": "یہ ایجنٹ رکا ہوا ہے۔ ہارٹ بیٹ کو فعال کرنے کے لیے اسے ایجنٹس ٹیب پر شروع کریں۔",
+      "lockedRoutineTip": "یہ ایجنٹ رکا ہوا ہے۔ اس کے معمولات کو فعال کرنے کے لیے اسے ایجنٹس ٹیب پر شروع کریں۔",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "بند کرنے کے لیے کلک کریں۔",
+      "loadError": "اس ایجنٹ کو لوڈ نہیں کیا جا سکا۔",
+      "retry": "دوبارہ کوشش کریں",
+      "color": "رنگ",
+      "customColor": "اپنی مرضی کا رنگ",
+      "preset": "پری سیٹ",
+      "editIconColor": "آئیکن، رنگ، یا اوتار میں ترمیم کریں",
+      "sharedAcrossCabinetsHint": "تمام کیبنٹس میں مشترک — ترامیم ہر جگہ لاگو ہوتی ہیں",
+      "inbox": "ان باکس",
+      "conversations": "بات چیت",
+      "recentWork": "حالیہ کام",
+      "schedule": "شیڈول",
+      "heartbeat": "ہارٹ بیٹ",
+      "runNow": "ابھی چلائیں",
+      "editRoutine": "معمول میں ترمیم کریں",
+      "addRoutine": "معمول شامل کریں",
+      "details": "تفصیلات",
+      "editingGlobalAgent": "عالمی ایجنٹ میں ترمیم کر رہے ہیں",
+      "displayName": "دکھانے کا نام",
+      "role": "کردار",
+      "department": "شعبہ",
+      "type": "قسم",
+      "workspace": "ورک اسپیس",
+      "tags": "ٹیگز",
+      "openSkillsSettings": "سیٹنگز → سکلز کھولیں",
+      "notInCatalog": "کیٹلاگ میں نہیں ملا — ہٹانے کے لیے کلک کریں",
+      "recommendedForRole": "اس کردار کے لیے تجویز کردہ — منسلک کرنے کے لیے کلک کریں",
+      "promise": "وعدہ",
+      "saved": "محفوظ کر لیا گیا",
+      "iconLabel": "آئیکن"
+    },
+    "missionControl": {
+      "gallery": "گیلری",
+      "newAgent": "نیا ایجنٹ",
+      "allGoals": "تمام اہداف",
+      "noGoals": "کسی ایجنٹ کے اہداف ترتیب نہیں دیے گئے ہیں۔",
+      "fromScratch": "شروع سے",
+      "describeIt": "اسے بیان کریں",
+      "import": "درآمد کریں",
+      "closeDialog": "ڈائیلاگ بند کریں",
+      "describeYourAgent": "اپنے ایجنٹ کو بیان کریں",
+      "describePlaceholder": "مجھے ایک ایجنٹ چاہیے جو ہیکر نیوز پر GPU سے متعلقہ پوسٹس کی نگرانی کرے اور ہماری بلاگ پوسٹس سے منسلک سوچ سمجھ کر تبصرے لکھے…"
+    },
+    "pulseStrip": {
+      "agents": "ایجنٹس",
+      "running": "چل رہا ہے",
+      "goals": "اہداف",
+      "alerts": "الرٹس",
+      "cost": "لاگت",
+      "runningPlays": "چلنے والے پلے",
+      "noRunning": "فی الحال کوئی ایجنٹ نہیں چل رہا ہے۔",
+      "costBreakdown": "لاگت کی تفصیل",
+      "noUsage": "ابھی تک کوئی API استعمال نہیں ہوا۔",
+      "totalEstimated": "کل تخمینہ شدہ"
+    },
+    "routine": {
+      "runNowTitle": "یہ معمول ابھی چلائیں (ایک بار، اس کے شیڈول سے باہر)",
+      "deletePermanently": "اس معمول کو مستقل طور پر حذف کریں۔",
+      "promptPlaceholder": "یہ معمول کیا کرے؟ مثلاً کل کی سرگرمی کا خلاصہ کرے…",
+      "jobName": "جاب کا نام",
+      "jobNamePlaceholder": "ہفتہ وار حکمت عملی کا خلاصہ",
+      "jobId": "جاب ID",
+      "schedule": "شیڈول",
+      "model": "ماڈل",
+      "enabled": "فعال"
+    }
+  },
+  "registry": {
+    "loading": "رجسٹری سے لوڈ ہو رہا ہے…",
+    "readyToImport": "کیا یہ cabinet درآمد کرنے کے لیے تیار ہے؟",
+    "organization": "تنظیم",
+    "agents": "ایجنٹس",
+    "scheduledJobs": "شیڈول شدہ جابز",
+    "about": "بارے میں",
+    "cabinetName": "Cabinet کا نام",
+    "cabinetNamePlaceholder": "Cabinet کا نام…",
+    "searchPlaceholder": "cabinets تلاش کریں…",
+    "noResults": "آپ کی تلاش سے کوئی cabinet مماثل نہیں ہے۔"
+  },
+  "tasksBoard": {
+    "title": "ٹاسکس",
+    "manualTooltip": "دستی — وہ ٹاسکس جو آپ نے براہ راست شروع کیے",
+    "jobsTooltip": "جابز — شیڈول شدہ بار بار چلنے والے رن",
+    "heartbeatTooltip": "ہارٹ بیٹ — خود سے چلنے والے ایجنٹ رن",
+    "clearSelection": "انتخاب صاف کریں (Esc)",
+    "createTask": "ایک نیا ٹاسک بنائیں",
+    "moreNewTypes": "مزید نئی آئٹم کی اقسام",
+    "newTask": "نیا ٹاسک",
+    "newRoutine": "نیا معمول",
+    "viewKanban": "کانبان",
+    "viewList": "فہرست",
+    "viewSchedule": "شیڈول",
+    "viewKanbanHint": "بورڈ ویو — ٹاسکس کو ان باکس / آپ کی باری / چل رہا ہے / ابھی مکمل ہوا / آرکائیو میں گروپ کیا گیا",
+    "viewListHint": "ہر ٹاسک کی سادہ فہرست، تازہ ترین سرگرمی پہلے",
+    "viewScheduleHint": "شیڈول شدہ معمولات اور آنے والے رن کا کیلنڈر",
+    "filterByAgent": "ایجنٹ کے ذریعے فلٹر کریں: {{name}}",
+    "noToDeleteTitle": "حذف کرنے کے لیے کوئی ٹاسک نہیں",
+    "noToDeleteFiltered": "{{filter}} سے کچھ مماثل نہیں ہے۔ فلٹر صاف کریں، کوئی اور ویو منتخب کریں، یا ایک نیا ٹاسک بنائیں۔",
+    "noToDeleteEmpty": "بورڈ پر ابھی کوئی ٹاسک نہیں ہے۔ + نیا ٹاسک بٹن سے ایک بنائیں۔",
+    "gotIt": "سمجھ گیا",
+    "deleteCountTitle": "{{count}} ٹاسک حذف کریں؟",
+    "deleteCountTitlePlural": "{{count}} ٹاسک حذف کریں؟",
+    "deleteBody": "یہ فی الحال دکھائے گئے ہر ٹاسک کے لیے گفتگو کا میٹا، ٹرانسکرپٹس، اور آرٹفیکٹس کو مستقل طور پر ہٹا دے گا۔ اسے کالعدم نہیں کیا جا سکتا۔",
+    "deleteBodyFiltered": "یہ فعال فلٹرز کے ذریعے فی الحال دکھائے گئے ہر ٹاسک کے لیے گفتگو کا میٹا، ٹرانسکرپٹس، اور آرٹفیکٹس کو مستقل طور پر ہٹا دے گا۔ اسے کالعدم نہیں کیا جا سکتا۔",
+    "deleteConfirm": "{{count}} حذف کریں",
+    "deleteAllShown": "دکھائے گئے تمام {{count}} ٹاسک حذف کریں",
+    "deleteAllShownPlural": "دکھائے گئے تمام {{count}} ٹاسک حذف کریں",
+    "nothingToDelete": "اس منظر میں حذف کرنے کے لیے کچھ نہیں",
+    "deleteAllAria": "دکھائے گئے تمام ٹاسک حذف کریں",
+    "noTasksAria": "اس منظر میں کوئی ٹاسک نہیں",
+    "filterTrigger": "{{trigger}} فلٹر",
+    "filterTriggerAndAgent": "{{trigger}} فلٹر اور منتخب ایجنٹ",
+    "filterSelectedAgent": "منتخب ایجنٹ فلٹر"
+  },
+  "runtime": {
+    "noProvider": "کوئی فراہم کنندہ منتخب نہیں",
+    "modeAriaLabel": "رن ٹائم موڈ",
+    "nativeTranscriptTitle": "Cabinet کا مقامی ٹرانسکرپٹ — منظم JSON سٹریم، آرٹفیکٹس، خلاصہ، مکمل UX",
+    "ptyWarningTitle": "OpenAI API کلید درکار ہے۔ ChatGPT-پلان Codex اکاؤنٹس پر دستیاب نہیں — اس ماڈل کو منتخب کرنے سے 'model not supported when using Codex with a ChatGPT account' کی خرابی آئے گی۔",
+    "native": "مقامی",
+    "terminal": "ٹرمینل",
+    "terminalTitle": "CLI کو لائیو PTY ٹرمینل سیشن میں چلائیں (تجرباتی ہیکر موڈ)",
+    "providers": "فراہم کنندگان",
+    "modelCol": "ماڈل",
+    "auto": "خودکار",
+    "ready": "تیار",
+    "loginRequired": "لاگ ان کریں",
+    "notInstalled": "انسٹال نہیں",
+    "notAvailable": "دستیاب نہیں",
+    "defaultLabel": "ڈیفالٹ",
+    "noProvidersAvailable": "کوئی فراہم کنندہ دستیاب نہیں",
+    "appDefault": "ایپ ڈیفالٹ",
+    "selectAppDefault": "ایپ ڈیفالٹ منتخب کریں",
+    "defaultModel": "ڈیفالٹ ماڈل",
+    "selectedModelLabel": "منتخب ماڈل",
+    "loadingProviders": "فراہم کنندگان لوڈ ہو رہے ہیں...",
+    "loadingAvailableProviders": "دستیاب فراہم کنندگان لوڈ ہو رہے ہیں…",
+    "triggerSummary": "ماڈل: {{model}} · کوشش: {{effort}} · بذریعہ {{provider}}",
+    "triggerSystemDefault": "ٹاسک ماڈل — سسٹم ڈیفالٹ استعمال کر رہا ہے (منتخب کرنے کے لیے کلک کریں)",
+    "clickToLaunch": "PTY ٹرمینل میں {{name}} لانچ کرنے کے لیے کلک کریں"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "ایجنٹس مکمل رسائی کے ساتھ چلتے ہیں۔",
+    "backUp": "اپنے ڈیٹا کا باقاعدگی سے بیک اپ لیں۔",
+    "betaSoftware": "بیٹا سافٹ ویئر۔ چیزیں خراب ہو سکتی ہیں۔",
+    "iAccept": "میں نے پڑھ لیا ہے اور میں قبول کرتا ہوں"
+  },
+  "skillAdd": {
+    "addSkill": "مہارت شامل کریں",
+    "auditTooltip": "skills.sh کے بیرونی آڈٹس کا نتیجہ (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "اس مہارت کے لیے skills.sh آڈٹ ڈیٹا دستیاب نہیں ہے",
+    "preview": "پیش منظر"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "AI ٹیم",
+      "aiTeams": "AI ٹیمیں",
+      "routines": "روٹینز"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "ایجنٹ کنفیگریشن میں ترمیم کریں",
+    "exportBundle": "ایجنٹ بنڈل ایکسپورٹ کریں",
+    "goals": "اہداف",
+    "workspace": "ورک اسپیس"
+  },
+  "scheduleRow": {
+    "deleteQ": "حذف کریں؟",
+    "confirmDelete": "حذف کرنے کی تصدیق کریں",
+    "cancelDelete": "حذف کرنا منسوخ کریں",
+    "runNow": "ابھی چلائیں"
+  },
+  "apiKeys": {
+    "addKey": "کی شامل کریں",
+    "edit": "ترمیم کریں",
+    "remove": "ہٹائیں",
+    "newApiKey": "نئی API کی"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Cabinet اپڈیٹس",
+    "dataDirectory": "ڈیٹا ڈائریکٹری",
+    "backups": "بیک اپس"
+  },
+  "kanban": {
+    "stopAllInLane": "اس لین میں چلنے والے تمام ٹاسکس روکیں",
+    "restartAllInLane": "اس لین میں تمام ٹاسکس دوبارہ شروع کریں",
+    "newTask": "نیا ٹاسک",
+    "collapseColumn": "کالم سمیٹیں",
+    "kill": "روکیں",
+    "laneInbox": "ان باکس",
+    "laneInboxHint": "ڈرافٹ شدہ — آپ کے شروع کرنے کا انتظار ہے",
+    "laneNeeds": "آپ کی باری",
+    "laneNeedsHint": "ایجنٹ نے سوال پوچھا یا منظوری درکار ہے",
+    "laneRunning": "چل رہا ہے",
+    "laneRunningHint": "ایجنٹس ابھی کام کر رہے ہیں",
+    "laneDone": "ابھی مکمل ہوا",
+    "laneDoneHint": "پچھلے گھنٹے میں مکمل ہوا",
+    "laneArchive": "آرکائیو",
+    "laneArchiveHint": "پرانے اور تسلیم شدہ"
+  },
+  "terminalTabs": {
+    "newTab": "نیا ٹرمینل ٹیب",
+    "closeTab": "ٹرمینل بند کریں"
+  },
+  "newTaskButton": {
+    "createNew": "نیا بنائیں…",
+    "newTask": "نیا ٹاسک",
+    "newRoutine": "نئی روٹین"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "ہفتہ وار حکمت عملی کا خلاصہ",
+    "schedule": "شیڈول",
+    "jobId": "جاب آئی ڈی",
+    "enabled": "فعال — اس شیڈول پر چلائیں"
+  },
+  "editIdentity": {
+    "title": "ایجنٹ میں ترمیم کریں",
+    "displayName": "ڈسپلے نام",
+    "color": "رنگ",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "تمام ایجنٹس شروع کریں",
+    "startAllSubtitle": "ہارٹ بیٹس اور کرون جابز فعال کریں",
+    "stopAll": "تمام ایجنٹس روکیں",
+    "stopAllSubtitle": "ہارٹ بیٹس اور کرون جابز موقوف کریں"
+  },
+  "skillLibrary": {
+    "readOnly": "صرف پڑھنے کے لیے — Cabinet سے ترمیم نہیں کر سکتے",
+    "noUpstream": "اس کیبنٹ میں براہ راست تخلیق کیا گیا — کوئی اپ اسٹریم git سورس ریکارڈ نہیں کیا گیا",
+    "executableWarning": "بنڈل میں قابل عمل اسکرپٹس شامل ہیں — منظوری سے پہلے جائزہ لیں",
+    "skills": "صلاحیتیں",
+    "imported": "درآمد شدہ",
+    "importing": "درآمد ہو رہا ہے…",
+    "import": "درآمد کریں"
+  },
+  "embedPopover": {
+    "placeholder": "ایک لنک پیسٹ کریں (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify، یا کوئی بھی URL)",
+    "notValidUrl": "درست URL نہیں ہے",
+    "anyUrlWorks": "کوئی بھی عوامی URL کام کرتا ہے۔",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "کوئی بھی iframe URL"
+  },
+  "rowActions": {
+    "stop": "روکیں",
+    "stopHint": "اس رن کو ابھی روکیں (SIGTERM بھیجتا ہے)",
+    "restart": "دوبارہ شروع کریں",
+    "restartHint": "اصل پرامپٹ سے دوبارہ چلائیں",
+    "runHint": "یہ کام ابھی شروع کریں"
+  },
+  "schedulesPanel": {
+    "title": "شیڈول شدہ جابز",
+    "noJobs": "ابھی تک کوئی کیبنٹ جابز کنفیگر نہیں کی گئیں۔",
+    "heartbeats": "ہارٹ بیٹس",
+    "noHeartbeats": "ابھی تک کوئی ہارٹ بیٹس کنفیگر نہیں کی گئیں۔"
+  },
+  "scheduleTab": {
+    "explainer1": "آپ کی ٹیم اس ہفتے جو کچھ کر رہی ہے، ایک ہی کیلنڈر پر۔ گلابی ہارٹ بیٹ ہے، سبز ایک روٹین ہے۔ اسے ترمیم کرنے کے لیے کسی بھی پِل پر کلک کریں۔",
+    "explainer2": "تنازعات کو تلاش کرنے، پرسکون وقفے ڈھونڈنے، یا صرف ایک نظر میں یہ دیکھنے کے لیے کہ ٹیم کتنی مصروف ہے، اس ٹیب کا استعمال کریں۔",
+    "aboutAria": "شیڈول کے بارے میں",
+    "modeDay": "دن",
+    "modeWeek": "ہفتہ",
+    "modeMonth": "مہینہ"
+  },
+  "mermaidViewer": {
+    "zoomOut": "زوم آؤٹ کریں",
+    "zoomIn": "زوم اِن کریں",
+    "resetView": "ویو ری سیٹ کریں",
+    "syntaxError": "ڈایاگرام سینٹیکس کی خرابی"
+  },
+  "helpPage": {
+    "keyboard": "کی بورڈ",
+    "skills": "صلاحیتیں",
+    "apiKeys": "API کیز",
+    "mcpServers": "MCP سرورز",
+    "title": "مدد",
+    "howTo": "طریقہ کار",
+    "heading": "جانیں کہ Cabinet کیسے کام کرتا ہے",
+    "subheading": "Cabinet سے زیادہ سے زیادہ فائدہ اٹھانے کے لیے مختصر ڈیموز، واک تھرو، اور پیش نظارے۔",
+    "ctaWatchTour": "ٹور دیکھیں",
+    "ctaWatchDemo": "ڈیمو دیکھیں",
+    "ctaCheatSheet": "فوری رہنمائی کھولیں",
+    "ctaComingSoon": "جلد آ رہا ہے",
+    "discordHeading": "آپ کو مطلوبہ چیز نہیں ملی؟",
+    "discordSubheading": "ہم ڈسکارڈ پر موجود ہیں — آئیں سلام کریں، سوالات پوچھیں، بتائیں کہ آپ کیا بنا رہے ہیں۔",
+    "discordCta": "ڈسکارڈ میں شامل ہوں",
+    "items": {
+      "tour": {
+        "title": "اپنے <accent>Cabinet</accent> سے ملیں۔",
+        "description": "آپ کی AI ٹیم۔ آپ کا نالج بیس۔ ایک ہی جگہ پر۔"
+      },
+      "agents": {
+        "title": "آپ کی <accent>AI ٹیم</accent>۔",
+        "description": "لیڈز اور ماہرین کی خدمات حاصل کریں۔ انہیں محکموں میں تقسیم کریں۔ انہیں ایک دوسرے کو کام تفویض کرنے دیں۔"
+      },
+      "tasks": {
+        "title": "<accent>ٹاسک بورڈ</accent>۔",
+        "description": "کانبان، فہرست، اور شیڈول کے نظارے۔ ایجنٹ یا اسٹیٹس کے لحاظ سے فلٹر کریں۔ ہر ٹاسک کے لیے ایک رن ٹائم منتخب کریں۔"
+      },
+      "knowledge": {
+        "title": "آپ کا <accent>نالج بیس</accent>۔",
+        "description": "مارک ڈاؤن، CSV، PDF، کوڈ، نوٹ بکس، مر میڈ، تصاویر، آڈیو — سب کچھ ان لائن رینڈر ہوتا ہے۔ آپ کا ڈیٹا آپ کی مشین پر رہتا ہے؛ یہ آپ کا ہے، ہمارا نہیں۔"
+      },
+      "cabinets": {
+        "title": "<accent>AI ٹیموں</accent> کی ایک ٹیم۔",
+        "description": "Cabinet کے اندر Cabinet موجود ہوتے ہیں۔ ہر ایک اپنی ڈیٹا، ایجنٹس، اور مرئیت کے دائرہ کار کے ساتھ اپنی AI ٹیم ہے۔ — اور وہ درخت میں اوپر اور نیچے تعاون کر سکتے ہیں۔"
+      },
+      "routines": {
+        "title": "<accent>روٹینز</accent> اور شیڈولز۔",
+        "description": "ایک ٹاسک روزانہ صبح 9 بجے، ہفتہ وار جمعہ کو، یا اگلے پیر کو ایک بار چلائیں۔ کرون، کیلنڈر، یا قدرتی زبان۔"
+      },
+      "conversations": {
+        "title": "بات چیت اور <accent>منظوریاں</accent>۔",
+        "description": "ایجنٹس کارروائیوں کی تجویز پیش کرتے ہیں — ایک ٹاسک شروع کریں، ایک جاب شیڈول کریں — اور آپ کسی بھی چیز کے چلنے سے پہلے منظوری دیتے ہیں۔"
+      },
+      "themes": {
+        "title": "اسے <accent>اپنا</accent> بنائیں۔",
+        "description": "لائٹ اور ڈارک تھیمز کے منتخب سیٹ میں سے چنیں — پیپر، سلیٹ، کلاڈ، انک، اور مزید۔"
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — اپنی AI لائیں۔",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — وہ فراہم کنندگان لائیں جن کے لیے آپ پہلے ہی ادائیگی کرتے ہیں۔ ایک ڈیفالٹ منتخب کریں، یا ہر ٹاسک کے لیے اوور رائیڈ کریں۔"
+      },
+      "shortcuts": {
+        "title": "<accent>کی بورڈ</accent> شارٹ کٹس۔",
+        "description": "ہر Cabinet شارٹ کٹ ایک قابل تلاش کارڈ پر۔ اسے دوبارہ کھولنے کے لیے کہیں سے بھی ? دبائیں۔ نام یا کلید کے لحاظ سے فلٹر کریں — نیویگیشن، ایڈیٹنگ، ٹاسکس، پینلز، اور سلیش کمانڈز کے لیے۔"
+      },
+      "skills": {
+        "title": "آپ کے ایجنٹس کے لیے <accent>اسکلز</accent>۔",
+        "description": "انسٹال ایبل ایجنٹ اسکلز — پلے بکس جو ماڈل ایک ٹاسک کے لیے استعمال کرتا ہے۔ گٹ ہب یا skills.sh سے انسٹال کریں، ایک پرسونل سے منسلک کریں، یا کسی بھی کمپوزر میں ایک بار چلانے کے لیے @-ذکر کریں۔"
+      },
+      "apiKeysItem": {
+        "title": "آپ کے ٹولز کے لیے <accent>API کیز</accent>۔",
+        "description": "اپنا OpenAI، Anthropic، یا GitHub اکاؤنٹ ایک بار پلگ ان کریں — Cabinet میں ہر ایجنٹ اور اسکل اسے استعمال کرے گا۔ آپ اپنے بل خود ادا کرتے ہیں، اپنا کوٹہ استعمال کرتے ہیں، کوئی درمیانی آدمی نہیں۔"
+      },
+      "integrations": {
+        "title": "<accent>MCP سرورز</accent> اور انٹیگریشنز۔",
+        "description": "MCP سرورز، Slack، Telegram، Gmail، اور Calendar OAuth — ایک بار منسلک کریں اور Cabinet ٹوکنز کو سنبھالے گا۔ جلد آ رہا ہے۔"
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "کی بورڈ شارٹ کٹس",
+    "filterPlaceholder": "فلٹر کریں…",
+    "close": "بند کریں"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "لائیو ٹرمینل",
+    "runningHeartbeat": "ہارٹ بیٹ چل رہا ہے…",
+    "memory": "میموری",
+    "recentActivity": "حالیہ سرگرمی"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "آپ کا اوتار",
+    "preset": "پری سیٹ",
+    "useInitials": "ابتدائی حروف کا فال بیک استعمال کریں",
+    "custom": "کسٹم"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "مقامی ایپ کوڈ میں تبدیلیاں پائی گئیں"
+  },
+  "logsPanel": {
+    "classifiedError": "درجہ بند غلطی",
+    "session": "سیشن",
+    "noEvents": "ابھی تک کوئی ایونٹ نہیں۔",
+    "noTranscript": "ابھی تک کوئی ٹرانسکرپٹ نہیں۔"
+  },
+  "conversationResult": {
+    "prompt": "پرامپٹ",
+    "result": "نتیجہ",
+    "noSummary": "کوئی خلاصہ حاصل نہیں ہوا۔"
+  },
+  "scheduleRowPlus": {
+    "delete": "حذف کریں"
+  },
+  "attachmentPicker": {
+    "attachFiles": "فائلیں منسلک کریں"
+  },
+  "demos": {
+    "aiTeam": "AI ٹیم",
+    "specialist": "ماہر",
+    "legal": "قانونی",
+    "global": "عالمی",
+    "editor": "ایڈیٹر",
+    "slashMenu": "سلیش مینو"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · ڈیٹا",
+    "headlineSentence": "آپ کا <accent>واحد ذریعہ</accent> حقیقت کا۔",
+    "paragraphPrefix": "مارک ڈاؤن، پی ڈی ایف، اسپریڈ شیٹس، سلائیڈز، تصاویر، ویڈیو، آڈیو، منسلک ریپوز، ایمبیڈڈ ویب ایپس، گوگل ڈاکس۔ ان میں سے کسی کا بھی ذکر کریں ",
+    "paragraphSuffix": "۔",
+    "secondParagraphPrefix": "ہر چیز کے لیے ایک جگہ — تاکہ آپ اور آپ کی AI ٹیم پڑھیں، ترمیم کریں، اور بھیجیں ",
+    "sameFiles": "ایک ہی فائلوں سے",
+    "secondParagraphSuffix": "، نہ کہ کاپیوں کی کاپیوں سے۔",
+    "mockTitle": "ہیلا کا Cabinet"
+  },
+  "slideData": {
+    "thailandRootLabel": "تھائی لینڈ کا سفر",
+    "thailandCaption": "اپنی تمام فائلیں ایک جگہ دیکھیں۔",
+    "videoTitle": "نائٹ مارکیٹ.mp4",
+    "taxRootLabel": "ٹیکس 2026",
+    "taxCaption": "ٹیکس 2026 — ایک لائیو کیلکولیٹر ویب ایپ، جو آپ کے cabinet میں براہ راست ایمبیڈڈ ہے۔",
+    "calculatorTitle": "کیلکولیٹر",
+    "liveAppBadge": "لائیو ایپ",
+    "taxEstimateLabel": "2026 ٹیکس کا تخمینہ",
+    "income": "آمدنی",
+    "deductions": "کٹوتیاں",
+    "taxBracket": "ٹیکس بریکٹ",
+    "estimatedTax": "تخمینہ شدہ ٹیکس",
+    "healthRootLabel": "صحت",
+    "healthCaption": "وٹامنز اور لیبز — ایک اسپریڈ شیٹ جو ایک صفحے کی طرح محسوس ہوتی ہے۔",
+    "csvTitle": "روزانہ کے وٹامنز.csv",
+    "csvColVitamin": "وٹامن",
+    "csvColDose": "خوراک",
+    "csvColTime": "وقت",
+    "csvColDone": "ہو گیا",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "کوڈ بیسز — کوئی بھی Git repo لنک کریں، جو آپ کے ایجنٹس کے ذریعے قابل تلاش ہو۔",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · ٹاسکس",
+    "typedCommand": "10 ٹاسک چلائیں، ہر ایک گانا لکھے، @Songs/ میں محفوظ کریں۔",
+    "headlineSentence": "<accent>شروع</accent> کرنے کے لیے تیار ہیں؟",
+    "paragraphPrefix": "ایک ٹاسک لکھیں۔ ایک چلائیں، دس چلائیں، انہیں ہمیشہ کے لیے شیڈول کریں۔ صفحات کا ذکر کریں ",
+    "paragraphSuffix": "، آؤٹ پٹ جہاں چاہیں محفوظ کریں۔ اب آپ ڈائریکٹر ہیں۔",
+    "savingFolder": "گانے/"
+  },
+  "slideAgents": {
+    "persona": "پرسنہ",
+    "heartbeat": "دھڑکن",
+    "jobs": "کام",
+    "aiTeam": "AI ٹیم",
+    "otherWriter": "مصنف",
+    "otherOrganizer": "منتظم",
+    "idle": "غیر فعال",
+    "researchAnalyst": "تحقیقی تجزیہ کار",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "فعال",
+    "personaBody": "\"ایک سخت تجزیہ کار۔ ذرائع کا حوالہ دیتا ہے۔ متضاد دعووں کی نشاندہی کرتا ہے۔\"",
+    "heartbeatBody": "ہر 15 منٹ پر @Market Research کو اسکین کرتا ہے",
+    "jobsBody": "Mon 9:00 · ہفتہ وار حریفوں کا خلاصہ",
+    "slideNum": "02 · ایجنٹس",
+    "paragraphPrefix": "ہر ایجنٹ کی ایک ",
+    "personaWord": "شخصیت",
+    "paragraphMiddle": "، اس کا اپنا ",
+    "scheduleWord": "شیڈول",
+    "paragraphMiddle2": "، اور ایک ",
+    "memoryWord": "یادداشت",
+    "paragraphSuffix": " ہوتی ہے۔ آپ کے AI ایجنٹس 24/7 کام کرتے ہیں۔ آپ انسان بنیں — باقی وہ سنبھال لیں گے۔",
+    "aiTeamSentence": "آپ کی <accent>AI ٹیم</accent>۔"
+  },
+  "startWork": {
+    "close": "بند کریں",
+    "selectAgent": "ایجنٹ منتخب کریں",
+    "titleNow": "کیا کام کرنے کی ضرورت ہے؟",
+    "titleRecurring": "ایک بار بار چلنے والا معمول ترتیب دیں",
+    "titleHeartbeat": "اس ایجنٹ کو شیڈول پر جگائیں",
+    "titleEdit": "کام میں ترمیم کریں",
+    "submitStart": "شروع کریں",
+    "submitAddInbox": "ان باکس میں شامل کریں",
+    "submitSaveEdit": "تبدیلیاں محفوظ کریں",
+    "submitCreateRoutine": "معمول بنائیں",
+    "submitSaveHeartbeat": "دھڑکن محفوظ کریں",
+    "saving": "محفوظ ہو رہا ہے…",
+    "current": "موجودہ",
+    "modeInboxLabel": "→ ان باکس",
+    "modeInboxHint": "ان باکس میں محفوظ کریں — جب آپ تیار ہوں تو اسے شروع کریں",
+    "modeNowLabel": "ابھی چلائیں",
+    "modeNowHint": "یہ گفتگو فوراً شروع کریں",
+    "modeRecurringLabel": "شیڈول پر",
+    "modeRecurringHint": "اس پرامپٹ کو شیڈول پر چلائیں",
+    "modeHeartbeatLabel": "دھڑکن",
+    "modeHeartbeatHint": "ایجنٹ کو اس کی اپنی تال پر جگائیں",
+    "agentFallback": "ایجنٹ",
+    "failedToStart": "شروع کرنے میں ناکام رہا",
+    "failedToSave": "تبدیلیاں محفوظ کرنے میں ناکام رہا",
+    "failedToSaveHeartbeat": "دھڑکن محفوظ کرنے میں ناکام رہا"
+  },
+  "googleDoc": {
+    "noUrl": "کوئی گوگل URL سیٹ نہیں کیا گیا",
+    "anyoneWithLink": "لنک کے ساتھ کوئی بھی",
+    "publishedToWeb": "ویب پر شائع ہو گیا"
+  },
+  "feedback": {
+    "close": "بند کریں",
+    "rolePlaceholder": "مثلاً: انڈی ہیکر، SaaS میں PM، ڈیزائن کا طالب علم، شوقین…",
+    "joinDiscord": "ڈسکارڈ میں شامل ہوں",
+    "header": "ہیلا کی طرف سے فوری چیک اِن",
+    "howGoing": "اب تک کیسا چل رہا ہے؟",
+    "starsCount": "{{n}} ستارہ",
+    "starsCountPlural": "{{n}} ستارے",
+    "likeCabinet": "کیبنٹ پسند آیا؟",
+    "starTooltipUnknown": "گٹ ہب پر کیبنٹ کو اسٹار دیں — اگر یہ آپ کے لیے مفید ہے، تو ایک اسٹار واقعی مدد کرتا ہے",
+    "starTooltipWithCount": "{{count}} گٹ ہب اسٹارز — اپنا شامل کرنے کے لیے کلک کریں",
+    "starLabel": "اسٹار دیں",
+    "backgroundLabel": "آپ کا پس منظر کیا ہے؟",
+    "optional": "(اختیاری)",
+    "discordCta": "براہ راست بات کرنا چاہتے ہیں، یا کیبنٹ کے دیگر اراکین کے ساتھ وقت گزارنا چاہتے ہیں؟",
+    "maybeLater": "شاید بعد میں",
+    "send": "بھیجیں",
+    "thanksTitle": "شکریہ!",
+    "thanksBody": "آپ کی رائے سے طے ہوتا ہے کہ اگلا کیا بنے گا۔",
+    "copy2Lead": "آپ نے کیبنٹ کو چند بار کھولا ہے۔ شکریہ! کیبنٹ اوپن سورس ہے اور ابھی شروع ہو رہا ہے، لہذا آپ یہاں جو کچھ کہتے ہیں وہ واقعی طے کرتا ہے کہ اگلا کیا بنے گا۔",
+    "copy2Q1": "آج آپ کیبنٹ میں کیا کرنے کی کوشش کر رہے تھے؟",
+    "copy2Q1Hint": "ایک جملہ کافی ہے۔ آپ نے اسے کس لیے کھولا تھا، نہ کہ آپ کیا چاہتے تھے کہ یہ کر سکے۔",
+    "copy2Q2": "آخری بار جب آپ یہ کرنا چاہتے تھے، تو کیبنٹ کے بجائے آپ نے کیا استعمال کیا تھا؟",
+    "copy2Q2Hint": "کوئی بھی ٹول، ایپ، یا دستاویز، حتیٰ کہ قلم اور کاغذ بھی۔",
+    "copy6Lead": "آپ واپس آ گئے ہیں، اور یہی سب سے اہم اشارہ ہے۔ میں ان خامیوں کے بارے میں سننا چاہتا ہوں اس سے پہلے کہ آپ انہیں بھول جائیں۔",
+    "copy6Q1": "آج آپ کیبنٹ میں کیا کرنے کی کوشش کر رہے تھے؟",
+    "copy6Q1Hint": "ایک جملہ کافی ہے۔",
+    "copy6Q2": "اس ہفتے وہ کون سی ایک چیز تھی جس نے آپ کو کیبنٹ استعمال کرنا تقریباً بند کروا دیا تھا؟",
+    "copy6Q2Hint": "وہ چیز جس نے آپ کو سب سے زیادہ پریشان کیا۔ مخصوص رہیں۔ \"X الجھا ہوا تھا\"، \"UX\" سے بہتر ہے۔"
+  },
+  "apiKeysSection": {
+    "cancel": "منسوخ کریں",
+    "pasteHere": "یہاں پیسٹ کریں",
+    "pasteNewValue": "نئی قدر پیسٹ کریں"
+  },
+  "storageBackend": {
+    "title": "اسٹوریج بیک اینڈ",
+    "migrationFailed": "منتقلی ناکام ہو گئی"
+  },
+  "linkRepo": {
+    "title": "علم لوڈ کریں",
+    "intro": "Cabinet کو اپنی مشین پر کسی بھی فولڈر کی طرف اشارہ کریں۔ Cabinet ایک سم لنک بناتا ہے تاکہ فولڈر کا مواد آپ کے نالج بیس میں ظاہر ہو اور AI ایجنٹس کے لیے سیاق و سباق کے طور پر دستیاب ہو۔ اصل فولڈر کو کبھی منتقل یا کاپی نہیں کیا جاتا۔",
+    "symlinkNote": "یہ ایک علامتی لنک بناتا ہے — فائلیں اپنی جگہ پر رہتی ہیں۔",
+    "autoDetectPlaceholder": "گٹ ریموٹ سے خودکار پتہ لگائیں (اختیاری)",
+    "shortSummaryPlaceholder": "ایجنٹس کے لیے اختیاری مختصر خلاصہ"
+  },
+  "recentTasks": {
+    "ptyMode": "ٹرمینل (PTY) موڈ",
+    "revealOlder": "مزید پرانے کام دکھائیں",
+    "showOlder": "پرانے دکھائیں"
+  },
+  "treeNode": {
+    "openCabinet": "کیبنٹ ویو کھولیں",
+    "pageTitlePlaceholder": "صفحے کا عنوان…",
+    "rename": "نام تبدیل کریں",
+    "openBadge": "کھولیں",
+    "sectionAdd": "اس آئٹم میں شامل کریں",
+    "sectionThis": "یہ آئٹم",
+    "addSubPage": "ذیلی صفحہ شامل کریں",
+    "newFolder": "نیا فولڈر",
+    "createFile": "نئی فائل بنائیں…",
+    "connectKnowledge": "نالج کنیکٹ کریں…",
+    "symlinkTag": "سم لنک",
+    "importFile": "فائل امپورٹ کریں…",
+    "importFolder": "فولڈر امپورٹ کریں…",
+    "createCabinet": "یہاں Cabinet بنائیں",
+    "editSymlink": "سم لنک میں ترمیم کریں…",
+    "settings": "ترتیبات…",
+    "moveTo": "منتقل کریں…",
+    "copyRelativePath": "متعلقہ پاتھ کاپی کریں",
+    "copyFullPath": "مکمل پاتھ کاپی کریں",
+    "openInFinder": "فائنڈر میں کھولیں",
+    "delete": "حذف کریں",
+    "unlink": "لنک ختم کریں",
+    "folderNamePlaceholder": "فولڈر کا نام",
+    "creating": "بنایا جا رہا ہے…",
+    "create": "بنائیں",
+    "addSubPageTitle": "“{{name}}” میں ذیلی صفحہ شامل کریں",
+    "newFolderTitle": "“{{name}}” میں نیا فولڈر"
+  },
+  "newFile": {
+    "title": "نئی فائل بنائیں",
+    "subtitle": "فائل کی قسم منتخب کریں۔ تیار ہونے پر Cabinet اسے ایڈیٹر میں کھول دے گا۔",
+    "groupNative": "Cabinet میں ترمیم کریں",
+    "groupOffice": "آفس (خالی — بیرونی طور پر ترمیم کریں)",
+    "groupGoogle": "گوگل (لنک شدہ)",
+    "namePlaceholder": "فائل کا نام",
+    "create": "بنائیں",
+    "creating": "بنایا جا رہا ہے…",
+    "googleUrlLabel": "گوگل یو آر ایل (اختیاری)",
+    "googleUrlPlaceholder": "ایک قابل اشتراک گوگل لنک پیسٹ کریں، یا بعد میں شامل کرنے کے لیے خالی چھوڑ دیں۔",
+    "officeNote": "Cabinet آفس فائلیں صرف پڑھنے کے لیے دکھاتا ہے۔ ڈیسک ٹاپ ایپ میں ترمیم کرنے کے لیے \"فائنڈر میں کھولیں\" استعمال کریں۔",
+    "types": {
+      "markdown": "مارک ڈاؤن صفحہ",
+      "markdownDesc": "رچ ٹیکسٹ نوٹس، Cabinet میں قابل ترمیم",
+      "code": "کوڈ فائل",
+      "codeDesc": "کوئی بھی سورس/ٹیکسٹ فائل — ایکسٹینشن منتخب کریں",
+      "mermaid": "مر میڈ ڈایاگرام",
+      "mermaidDesc": "فلو چارٹس اور ڈایاگرام کوڈ کے طور پر",
+      "csv": "CSV ٹیبل",
+      "csvDesc": "کوما سے الگ کردہ اسپریڈ شیٹ ڈیٹا",
+      "docx": "ورڈ دستاویز",
+      "docxDesc": "خالی .docx",
+      "xlsx": "ایکسل اسپریڈ شیٹ",
+      "xlsxDesc": "خالی .xlsx",
+      "pptx": "پاور پوائنٹ",
+      "pptxDesc": "خالی .pptx",
+      "gdoc": "گوگل ڈاک",
+      "gdocDesc": "گوگل ڈاک ایمبیڈ کریں",
+      "gsheet": "گوگل شیٹ",
+      "gsheetDesc": "گوگل شیٹ ایمبیڈ کریں",
+      "gslides": "گوگل سلائیڈز",
+      "gslidesDesc": "گوگل سلائیڈز ایمبیڈ کریں"
+    },
+    "codeExtLabel": "ایکسٹینشن",
+    "googleTag": "گوگل",
+    "extHint": "بس نام ٹائپ کریں — Cabinet {{ext}} ایکسٹینشن شامل کر دے گا۔",
+    "createFailed": "فائل نہیں بنائی جا سکی۔"
+  },
+  "fileSettings": {
+    "googleTitle": "گوگل ایمبیڈ سیٹنگز",
+    "googleKindLabel": "قسم",
+    "googleUrlLabel": "گوگل یو آر ایل",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "ایمبیڈ لوڈ ہونے کے لیے ڈاک کی شیئرنگ \"لنک کے ساتھ کوئی بھی\" یا \"ویب پر شائع شدہ\" ہونی چاہیے۔",
+    "openLink": "گوگل میں کھولیں",
+    "googleKinds": {
+      "docs": "ڈاکس",
+      "sheets": "شیٹس",
+      "slides": "سلائیڈز",
+      "forms": "فارمز",
+      "drive": "ڈرائیو"
+    },
+    "appTitle": "ویب ایپ سیٹنگز",
+    "modeLabel": "یہ کیسے کھلنا چاہیے؟",
+    "modeWebsite": "صفحہ کا منظر",
+    "modeWebsiteDesc": "سائیڈ بار اور AI پینل کے ساتھ ان لائن کھلتا ہے۔",
+    "modeApp": "ویب ایپ",
+    "modeAppDesc": "پوری اسکرین پر کھلتا ہے؛ سائیڈ بار اور AI پینل خود بخود سکڑ جاتے ہیں۔",
+    "convertNote": "یہ فولڈر میں .app مارکر فائل کو ٹوگل کرتا ہے۔ آپ کی فائلیں تبدیل نہیں ہوتیں۔",
+    "save": "محفوظ کریں",
+    "saving": "محفوظ ہو رہا ہے…",
+    "cancel": "منسوخ کریں",
+    "saveFailed": "سیٹنگز محفوظ نہیں کی جا سکیں۔"
+  },
+  "editSymlink": {
+    "title": "سم لنک میں ترمیم کریں",
+    "intro": "یہ نالج بیس اندراج آپ کی مشین پر کسی اور فولڈر کا ایک علامتی لنک ہے۔",
+    "kbPathLabel": "نالج بیس پاتھ",
+    "targetLabel": "لنک کرتا ہے (ڈسک پر)",
+    "brokenWarning": "ہدف فولڈر اب موجود نہیں ہے۔ اسے نیچے ایک درست فولڈر کی طرف دوبارہ پوائنٹ کریں۔",
+    "repointLabel": "ایک نئے فولڈر کی طرف دوبارہ پوائنٹ کریں",
+    "repointHint": "Cabinet لنک کو یہاں پوائنٹ کرنے کے لیے تبدیل کر دے گا۔ فائلیں کبھی منتقل نہیں کی جاتیں۔",
+    "browse": "براؤز کریں",
+    "nameLabel": "نام",
+    "descriptionLabel": "تفصیل",
+    "save": "محفوظ کریں",
+    "saving": "محفوظ ہو رہا ہے…",
+    "copyTarget": "ہدف پاتھ کاپی کریں",
+    "saveFailed": "سم لنک کو اپ ڈیٹ نہیں کر سکا"
+  },
+  "importFolder": {
+    "importing": "فولڈر امپورٹ ہو رہا ہے…",
+    "failed": "فولڈر امپورٹ ناکام ہو گیا: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "کام لوڈ ہو رہے ہیں"
+  },
+  "agentList": {
+    "agentLibrary": "ایجنٹ لائبریری",
+    "newAgent": "نیا ایجنٹ"
+  },
+  "helpVisuals": {
+    "cabinet": "کیبنٹ",
+    "yourTeam": "آپ کی ٹیم",
+    "lead": "لیڈ",
+    "specialist": "ماہر",
+    "tasks": "کام",
+    "todo": "کرنے کے کام",
+    "doing": "جاری ہے",
+    "done": "مکمل",
+    "anythingGoes": "کچھ بھی چلے گا",
+    "marketing": "مارکیٹنگ",
+    "product": "پروڈکٹ",
+    "research": "تحقیق",
+    "design": "ڈیزائن",
+    "routines": "معمولات",
+    "dailyReview": "روزانہ کا جائزہ",
+    "weeklyDigest": "ہفتہ وار خلاصہ",
+    "conversation": "گفتگو",
+    "userQuery": "2 ہفتے کے تھائی لینڈ کے سفر کا منصوبہ بنائیں…",
+    "agentReply": "میں لائبریرین اور ایڈیٹر کو بھیج دوں گا۔",
+    "pendingAction": "زیر التوا کارروائی",
+    "approve": "منظور کریں",
+    "decline": "مسترد کریں",
+    "themes": "تھیمز",
+    "providers": "فراہم کنندگان",
+    "comingSoon": "جلد آ رہا ہے"
+  },
+  "agentLive": {
+    "dismiss": "ہٹا دیں",
+    "paused": "ایجنٹ موقوف ہے"
+  },
+  "conversationLive": {
+    "liveOutput": "براہ راست آؤٹ پٹ",
+    "waitingFirstChunk": "پہلے آؤٹ پٹ چنک کا انتظار ہے…"
+  },
+  "editIdentityPlus": {
+    "avatar": "اوتار",
+    "useIconInstead": "اس کے بجائے آئیکن استعمال کریں"
+  },
+  "pendingActions": {
+    "rejectAll": "ہر زیر التوا کارروائی کو مسترد کریں",
+    "approveAll": "بغیر کسی سخت رکاوٹ کے تمام کارروائیوں کو منظور اور روانہ کریں۔"
+  },
+  "aiPanel": {
+    "clearSessions": "تمام سیشنز صاف کریں",
+    "dismiss": "ہٹا دیں"
+  },
+  "schedulerPlus": {
+    "restartAll": "تمام ایجنٹس کو دوبارہ شروع کریں",
+    "restartSubtitle": "تمام شیڈولز کو روکیں پھر دوبارہ فعال کریں"
+  },
+  "csvViewer": {
+    "downloadCsv": "CSV ڈاؤن لوڈ کریں",
+    "deleteRow": "قطار حذف کریں"
+  },
+  "resizableImage": {
+    "resizeLeft": "بائیں سے سائز تبدیل کریں",
+    "resizeRight": "دائیں سے سائز تبدیل کریں"
+  },
+  "folderIndex": {
+    "listView": "فہرست منظر",
+    "galleryView": "گیلری منظر"
+  },
+  "linkPopover": {
+    "openLink": "لنک کھولیں",
+    "removeLink": "لنک ہٹائیں"
+  },
+  "officeChrome": {
+    "openInFinder": "فائنڈر میں کھولیں",
+    "downloadOriginal": "اصل ڈاؤن لوڈ کریں"
+  },
+  "sourceViewer": {
+    "copyContents": "فائل کے مواد کو کاپی کریں",
+    "downloadFile": "فائل ڈاؤن لوڈ کریں"
+  },
+  "versionHistory": {
+    "title": "ورژن ہسٹری"
+  },
+  "demoModal": {
+    "closeDemo": "ڈیمو بند کریں",
+    "close": "بند کریں"
+  },
+  "demosPlus": {
+    "anything": "کچھ بھی",
+    "yours": "آپ کا",
+    "install": "انسٹال کریں",
+    "attach": "منسلک کریں"
+  },
+  "narrowViewport": {
+    "dismiss": "تنگ ویوپورٹ اشارہ کو برخاست کریں",
+    "dismissTitle": "اگلے سیشن تک برخاست کریں",
+    "hintPrefix": "Cabinet بہترین ہے جب ",
+    "hintWidth": "≥960 پکسل",
+    "hintSuffix": " چوڑا ہو۔ کچھ سطحیں تنگ چوڑائیوں پر سکڑ جاتی ہیں۔"
+  },
+  "agentCard": {
+    "runHeartbeat": "ہارٹ بیٹ چلائیں"
+  },
+  "schedulePicker": {
+    "frequency": "تعدد",
+    "onDay": "دن",
+    "modeInterval": "وقفہ",
+    "modeDaily": "روزانہ",
+    "modeWeekdays": "ہفتے کے دن",
+    "modeWeekly": "ہفتہ وار",
+    "modeMonthly": "ماہانہ",
+    "modeCustom": "حسب ضرورت",
+    "parse": "تجزیہ کریں",
+    "showCron": "کرون ایکسپریشن دکھائیں",
+    "hideCron": "کرون ایکسپریشن چھپائیں",
+    "weekdayMo": "پیر",
+    "weekdayTu": "منگل",
+    "weekdayWe": "بدھ",
+    "weekdayTh": "جمعرات",
+    "weekdayFr": "جمعہ",
+    "weekdaySa": "ہفتہ",
+    "weekdaySu": "اتوار"
+  },
+  "slackPanel": {
+    "createChannel": "چینل بنائیں",
+    "thread": "تھریڈ"
+  },
+  "uninstall": {
+    "title": "Cabinet ان انسٹال کریں"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Cabinet دراز",
+    "pageTitlePlaceholder": "صفحے کا عنوان…"
+  },
+  "skillAddPlus": {
+    "cancel": "منسوخ کریں"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "اس مہارت کے لیے skills.sh سے آڈٹ ڈیٹا دستیاب نہیں",
+    "searchPlaceholder": "skills.sh میں تلاش کریں"
+  },
+  "skillLibraryPlus": {
+    "refresh": "ریفریش کریں",
+    "noSkills": "ابھی تک کوئی مہارت نہیں ہے۔"
+  },
+  "taskDetail": {
+    "close": "بند کریں (Esc)",
+    "muteTask": "اس ٹاسک کو خاموش کریں — اس کے مکمل شدہ رن براہ راست آرکائیو میں چلے جاتے ہیں",
+    "unmuteTask": "اس ٹاسک کو غیر خاموش کریں — اس کے مکمل شدہ رن 'Just Finished' میں دوبارہ ظاہر ہوتے ہیں"
+  },
+  "rowActionsPlus": {
+    "edit": "ترمیم کریں",
+    "editHint": "اس محفوظ شدہ ڈرافٹ کو شروع ہونے سے پہلے ترمیم کریں",
+    "delete": "حذف کریں",
+    "deleteHint": "مستقل طور پر حذف کریں — اسے واپس نہیں کیا جا سکتا"
+  },
+  "taskCard": {
+    "ptyMode": "ٹرمینل (PTY) موڈ میں چل رہا ہے"
+  },
+  "undoToast": {
+    "dismiss": "برخاست کریں"
+  },
+  "terminalExited": {
+    "openDetails": "ساختی تفصیلات کھولیں (پراُمپٹ، آرٹیفیکٹس، ٹرنز)",
+    "reconnect": "ڈیمن سے دوبارہ جڑیں اور خام PTY ری پلے کو سٹریم کریں"
+  },
+  "terminalTabsPlus": {
+    "resize": "ٹرمینل پینل کا سائز تبدیل کریں"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "تمام ایجنٹس دکھائیں",
+    "noRecentActivity": "کوئی حالیہ سرگرمی نہیں",
+    "noAgents": "کوئی ایجنٹس نہیں",
+    "noAgentsConfigured": "اس کیبنٹ کے لیے ابھی تک کوئی ایجنٹس کنفیگر نہیں کیے گئے۔",
+    "cabinetScope": "کیبنٹ کا دائرہ کار:",
+    "depthDropdownHeader": "کیبنٹ کا دائرہ کار",
+    "depthOwnLabel": "صرف یہ کیبنٹ",
+    "depthOwnShort": "اپنا",
+    "depthOwnDesc": "صرف اس کیبنٹ سے صفحات، ایجنٹس، اور ٹاسکس۔",
+    "depthChildren1Label": "براہ راست ذیلی شامل کریں",
+    "depthChildren1Desc": "ذیلی کیبنٹس کی ایک سطح شامل کریں۔",
+    "depthChildren2Label": "کیبنٹ کی دو سطحیں شامل کریں",
+    "depthChildren2Desc": "ذیلی کیبنٹس کی دو سطحیں شامل کریں۔",
+    "depthAllLabel": "تمام ذیلی شامل کریں",
+    "depthAllShort": "تمام",
+    "depthAllDesc": "پورا ذیلی درخت شامل کریں۔",
+    "scopeTooltip": "کیبنٹ کا دائرہ کار: {{label}}۔ تبدیل کرنے کے لیے کلک کریں۔"
+  },
+  "composerExtras": {
+    "skillAttached": "مہارت — صرف اس رن سے منسلک",
+    "pageTitlePlaceholder": "صفحے کا عنوان…",
+    "active": "فعال — اس شیڈول پر ایجنٹ کو جگائیں",
+    "pickCliPty": "ایک PTY میں شروع کرنے کے لیے ایک CLI منتخب کریں:"
+  },
+  "editorExtras": {
+    "editWithAi": "AI کے ساتھ ترمیم کریں",
+    "jupyterLab": "کاپی کریں: jupyter lab <path>",
+    "exitApp": "ایپ سے باہر نکلیں"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI اکاؤنٹس",
+    "aiTeams": "AI ٹیمیں"
+  },
+  "whatsNew": {
+    "dismiss": "برخاست کریں",
+    "headerPrefix": "v میں نیا کیا ہے",
+    "readFull": "مکمل ریلیز نوٹس پڑھیں"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "میں سمجھتا ہوں اور جاری رکھنا چاہتا ہوں۔"
+  },
+  "daemonHealth": {
+    "dismiss": "برخاست کریں"
+  },
+  "tinyExtras": {
+    "light": "ہلکا",
+    "home": "ہوم",
+    "workspaceGallery": "ورک اسپیس گیلری",
+    "savingTo": "میں محفوظ کر رہا ہے",
+    "comingSoon": "جلد آ رہا ہے",
+    "deleteSkill": "مہارت حذف کریں",
+    "skillsOffered": "پیش کردہ مہارتیں:",
+    "allAgents": "تمام ایجنٹس",
+    "noTranscript": "کوئی ٹرانسکرپٹ نہیں ملا",
+    "noDiff": "کوئی فرق دستیاب نہیں ہے۔",
+    "headsUp": "توجہ فرمائیں:",
+    "back": "واپس",
+    "editYourAvatar": "اپنے اوتار کی ترمیم کریں",
+    "openFullTaskViewer": "مکمل ٹاسک ویور کھولیں",
+    "close": "بند کریں",
+    "copyToClipboard": "کلپ بورڈ پر کاپی کریں",
+    "starOnGithub": "گٹ ہب پر Cabinet کو سٹار کریں",
+    "helpMoreFind": "مزید لوگوں کو کمیونٹی تلاش کرنے میں مدد کریں",
+    "joinDiscord": "ڈسکارڈ میں شامل ہوں",
+    "chatWithBuilders": "Cabinet بنانے والے لوگوں سے بات کریں",
+    "joinWaitlist": "Cabinet Cloud کی انتظار کی فہرست میں شامل ہوں",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "جین",
+    "addToInbox": "ان باکس میں شامل کریں",
+    "runTaskNow": "ٹاسک ابھی چلائیں",
+    "search": "تلاش کریں",
+    "aiPanel": "AI پینل",
+    "drawers": "دراز"
+  },
+  "dataLocations": {
+    "title": "جہاں آپ کا ڈیٹا رہتا ہے",
+    "whyThisMatters": "یہ کیوں اہم ہے",
+    "location": "مقام",
+    "contains": "مشتمل ہے",
+    "network": "نیٹ ورک",
+    "revealInFinder": "فائل مینیجر میں دکھائیں",
+    "stored": "ذخیرہ شدہ",
+    "resetOnboarding": "آن بورڈنگ ری سیٹ کریں"
+  },
+  "rooms": {
+    "switcherTitle": "کمرہ تبدیل کریں",
+    "switchRoom": "کمرے",
+    "loading": "لوڈ ہو رہا ہے…",
+    "defaultTag": "ہوم",
+    "openInNewWindow": "نئی ونڈو میں کھولیں",
+    "opensBrowserWindow": "ایک نئی براؤزر ونڈو کھولتا ہے",
+    "customizeRoom": "کمرہ میں ترمیم کریں",
+    "addRoom": "کمرہ شامل کریں…",
+    "editTitle": "کمرہ میں ترمیم کریں",
+    "editSubtitle": "اس کمرے کا نام، آئیکن، رنگ، اور تھیم سیٹ کریں۔",
+    "nameLabel": "ڈسپلے نام",
+    "slugHint": "ڈسک پر فولڈر کا نام {{slug}} ہی رہے گا۔ فولڈر کا نام تبدیل کرنا ایک الگ، جدید کارروائی ہے۔",
+    "iconLabel": "آئیکن",
+    "colorLabel": "رنگ",
+    "colorAuto": "آٹو",
+    "themeLabel": "تھیم",
+    "themeGlobal": "عالمی ڈیفالٹ استعمال کریں",
+    "editFailed": "کمرہ محفوظ نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔",
+    "deleteRoom": "کمرہ حذف کریں…",
+    "deleteLastRoomDisabledHint": "آپ اپنا آخری کمرہ حذف نہیں کر سکتے۔",
+    "deleteTitle": "کیا اس کمرے کو حذف کریں؟",
+    "deleteSubtitle": "یہ کمرہ اور اس کے اندر موجود ہر چیز ٹرش میں منتقل کر دی جائے گی۔",
+    "deleteWarningIntro": "کمرے کو ٹرش میں منتقل کرنے سے یہ بھی ہٹ جاتا ہے:",
+    "deleteWarningPages": "اس کمرے کے اندر صفحات اور فائلیں",
+    "deleteWarningAgents": "ایجنٹس، گفتگو، اور میموری جو اس کمرے تک محدود ہیں",
+    "deleteWarningJobs": "اس کمرے میں شیڈول شدہ جابز اور روٹینز",
+    "deleteWarningChat": "اس کمرے کے لیے ٹیم چیٹ ہسٹری",
+    "deleteWarningSearch": "کمرے کا سرچ انڈیکس (بحال ہونے پر خود بخود دوبارہ بنایا جاتا ہے)",
+    "deleteRecoveryNote": "ریکوری: کمرہ data/.trash/ میں منتقل کر دیا جاتا ہے — اسے فولڈر کو واپس data/ میں منتقل کر کے بحال کریں۔",
+    "deleteConfirmLabel": "{{slug}} ٹائپ کریں تصدیق کرنے کے لیے",
+    "deleteConfirmButton": "کمرہ حذف کریں",
+    "deleting": "حذف ہو رہا ہے…",
+    "deleteFailed": "کمرہ حذف نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔"
+  },
+  "common": {
+    "actions": {
+      "save": "محفوظ کریں",
+      "cancel": "منسوخ کریں",
+      "delete": "حذف کریں",
+      "confirm": "تصدیق کریں",
+      "close": "بند کریں",
+      "open": "کھولیں",
+      "back": "پیچھے",
+      "next": "اگلا",
+      "done": "ہو گیا"
+    },
+    "nav": {
+      "goBack": "پیچھے جائیں",
+      "goForward": "آگے جائیں"
+    },
+    "aiPanel": {
+      "open": "AI پینل کھولیں",
+      "close": "AI پینل بند کریں"
+    },
+    "states": {
+      "loading": "لوڈ ہو رہا ہے…",
+      "saving": "محفوظ ہو رہا ہے…",
+      "saved": "محفوظ ہو گیا",
+      "error": "کچھ غلط ہو گیا"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "نیا صفحہ",
+      "title": "نیا صفحہ بنائیں",
+      "placeholder": "صفحے کا عنوان…",
+      "create": "بنائیں",
+      "creating": "بنایا جا رہا ہے…"
+    },
+    "newCabinet": {
+      "trigger": "نیا Cabinet",
+      "title": "نیا Cabinet بنائیں",
+      "subtitle": "ایک Cabinet ایک ورک اسپیس ہے جس کے اپنے ایجنٹس، جابز اور علم ہوتے ہیں۔",
+      "importFromRegistry": "رجسٹری سے امپورٹ کریں",
+      "nameLabel": "کیبنٹ کا نام",
+      "namePlaceholder": "مثلاً: میری سٹارٹ اپ، مارکیٹنگ ٹیم، ریسرچ لیب…",
+      "selectAgents": "ایجنٹس منتخب کریں",
+      "selectedCount": "{{count}} منتخب",
+      "createCabinet": "کیبنٹ بنائیں",
+      "creating": "بنایا جا رہا ہے…",
+      "createFailed": "کیبنٹ بنانے میں ناکامی"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "صفحہ ایکسپورٹ کریں",
+      "copyMarkdown": "مارک ڈاؤن کاپی کریں",
+      "copyForLlms": "LLMs کے لیے کاپی کریں",
+      "copyAsHtml": "HTML کے طور پر کاپی کریں",
+      "downloadMarkdown": ".md ڈاؤن لوڈ کریں",
+      "downloadPdf": "PDF ڈاؤن لوڈ کریں",
+      "copiedForLlmToast": "LLM کے لیے {{size}} مارک ڈاؤن کاپی کیا گیا"
+    },
+    "toolbar": {
+      "heading1": "سرخی 1",
+      "heading2": "سرخی 2",
+      "heading3": "سرخی 3",
+      "bold": "بولڈ",
+      "italic": "اٹیلک",
+      "underline": "انڈر لائن",
+      "strikethrough": "سٹرائیک تھرو",
+      "inlineCode": "ان لائن کوڈ",
+      "link": "لنک",
+      "textColor": "متن کا رنگ",
+      "highlight": "ہائی لائٹ",
+      "background": "پس منظر",
+      "bulletList": "بلٹ لسٹ",
+      "orderedList": "ترتیب وار فہرست",
+      "blockquote": "بلاک کوٹ",
+      "checklist": "چیک لسٹ",
+      "codeBlock": "کوڈ بلاک",
+      "divider": "تقسیم کنندہ",
+      "alignLeft": "بائیں سیدھ کریں",
+      "alignCenter": "مرکز میں سیدھ کریں",
+      "alignRight": "دائیں سیدھ کریں",
+      "justify": "جسٹیفائی کریں",
+      "align": "سیدھ کریں",
+      "table": {
+        "selectCellText": "سیل کا متن منتخب کریں",
+        "addRowAbove": "اوپر قطار شامل کریں",
+        "addRowBelow": "نیچے قطار شامل کریں",
+        "moveRowUp": "قطار اوپر منتقل کریں",
+        "moveRowDown": "قطار نیچے منتقل کریں",
+        "deleteRow": "قطار حذف کریں",
+        "addColumnBefore": "پہلے کالم شامل کریں",
+        "addColumnAfter": "بعد میں کالم شامل کریں",
+        "moveColumnLeft": "کالم بائیں منتقل کریں",
+        "moveColumnRight": "کالم دائیں منتقل کریں",
+        "deleteColumn": "کالم حذف کریں",
+        "toggleHeaderRow": "ہیڈر قطار ٹوگل کریں",
+        "toggleHeaderColumn": "ہیڈر کالم ٹوگل کریں",
+        "deleteTable": "ٹیبل حذف کریں"
+      },
+      "superscript": "سپر اسکرپٹ",
+      "subscript": "سب اسکرپٹ",
+      "insertImage": "تصویر داخل کریں",
+      "insertVideo": "ویڈیو داخل کریں",
+      "embed": "ایمبیڈ کریں",
+      "undo": "کالعدم کریں",
+      "redo": "دوبارہ کریں",
+      "switchToLtr": "LTR پر سوئچ کریں",
+      "switchToRtl": "RTL پر سوئچ کریں",
+      "scrollLeft": "ٹول بار بائیں اسکرول کریں",
+      "scrollRight": "ٹول بار دائیں اسکرول کریں",
+      "markdown": "مارک ڈاؤن",
+      "preview": "پیش منظر"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Cabinet کا نام…",
+      "renameWarning": "Cabinet کے نام بعد میں تبدیل نہیں کیے جا سکتے (فی الحال)۔ سمجھداری سے انتخاب کریں۔"
+    },
+    "templates": {
+      "header": "ایک ٹیمپلیٹ سے شروع کریں",
+      "browseAll": "سبھی براؤز کریں →"
+    },
+    "quickActions": {
+      "shuffle": "مختلف تجاویز دکھائیں",
+      "launch10Songs": "10 گیت لکھنے والے ایڈیٹرز لانچ کریں",
+      "dailyReview9am": "صبح 9 بجے روزانہ کا جائزہ",
+      "weeklyReview": "اگلے پیر کو ہفتہ وار جائزہ",
+      "thailandTrip": "میرے تھائی لینڈ کے سفر کا منصوبہ بنائیں",
+      "physicsApp": "میرے لیے ایک فزکس اسٹڈی ایپ بنائیں",
+      "summariseRecent": "میرے حالیہ کام کا خلاصہ کریں",
+      "recruiterReply": "ایک ریکروٹر کے جواب کا مسودہ تیار کریں",
+      "mapArticles": "مضامین کے روابط کا نقشہ بنائیں",
+      "physicsCourse": "ایک 6 ماڈیول کا فزکس کورس تیار کریں",
+      "shortStory": "ایک مختصر کہانی کا خاکہ بنائیں",
+      "hourlyStandup": "فی گھنٹہ اسٹینڈ اپ یاد دہانی",
+      "researchPhone": "میرے اگلے فون کی تحقیق کریں",
+      "translateToSpanish": "اس Cabinet کا ہسپانوی میں ترجمہ کریں",
+      "refactorNotes": "میرے نوٹ لینے کے نظام کو ری فیکٹر کریں",
+      "birthdayParty": "ایک سالگرہ کی پارٹی کا منصوبہ بنائیں",
+      "boardUpdate": "بورڈ اپ ڈیٹ کا مسودہ تیار کریں",
+      "customerInterviews": "5 کسٹمر انٹرویوز کی نقل کریں"
+    },
+    "goodMorning": "صبح بخیر",
+    "goodAfternoon": "سہ پہر بخیر",
+    "goodEvening": "شام بخیر",
+    "greetingWithName": "{{greeting}}، {{name}}۔",
+    "greetingNoName": "{{greeting}}۔",
+    "composerPlaceholder": "میں بنانا چاہتا ہوں...",
+    "composerDaemonDown": "ایجنٹ ڈیمن آف لائن ہے — بھیجنے کے لیے دوبارہ شروع کریں"
+  },
+  "onboarding": {
+    "launchHeading": "اپنا <accent>Cabinet</accent> شروع کریں",
+    "intro": {
+      "tagline1": "آپ کا نالج بیس۔",
+      "tagline2": "آپ کی AI ٹیم۔",
+      "getStarted": "شروع کریں"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "دفتر",
+        "study": "مطالعہ",
+        "lab": "لیب",
+        "library": "لائبریری",
+        "kitchen": "باورچی خانہ",
+        "family": "خاندان",
+        "dining": "ڈائننگ",
+        "studio": "سٹوڈیو"
+      }
+    },
+    "welcome": {
+      "paragraph": "آپ کا ہوم آپ کا اپنا ہے۔ اس کے اندر، آپ اپنی زندگی کے مختلف حصوں کے لیے کمرے ترتیب دیں گے: کام، سیکنڈ برین، تحقیق، خاندان۔ اور ہر کمرے میں کیبنٹ ہیں: آپ کے نوٹس، آپ کی فائلیں، اور ایک AI ٹیم جو پس منظر میں خاموشی سے کام کرتی ہے۔",
+      "namePrompt": "آپ کا نام کیا ہے؟",
+      "heading": "<accent>گھر</accent> میں خوش آمدید"
+    },
+    "welcomeBack": {
+      "heading": "واپس خوش آمدید",
+      "headingNamed": "{{cabinet}} میں واپس خوش آمدید",
+      "subtitle": "ہمیں یہاں ایک موجودہ کیبنٹ ملا ہے۔ آئیے اسے سیٹ اپ کرنا مکمل کریں۔",
+      "continue": "جاری رکھیں"
+    },
+    "verify": {
+      "passed": "کامیاب",
+      "notInstalled": "انسٹال نہیں ہے",
+      "authRequired": "تصدیق درکار ہے",
+      "paymentRequired": "ادائیگی درکار ہے",
+      "quotaExceeded": "کوٹہ / شرح کی حد",
+      "error": "خرابی"
+    },
+    "providerStatus": {
+      "ready": "تیار",
+      "loginRequired": "لاگ ان درکار ہے",
+      "notInstalled": "انسٹال نہیں ہے"
+    },
+    "actions": {
+      "back": "پیچھے",
+      "next": "اگلا",
+      "continue": "جاری رکھیں",
+      "skip": "چھوڑ دیں",
+      "finish": "ختم کریں",
+      "complete": "سیٹ اپ مکمل کریں",
+      "copyToClipboard": "کلپ بورڈ پر کاپی کریں"
+    },
+    "cabinetCreated": {
+      "continue": "سیٹ اپ جاری رکھیں",
+      "heading": "آپ کا Cabinet بنا دیا گیا ہے",
+      "subtitle": "سب کچھ سیٹ اپ ہو چکا ہے اور تیار ہے۔",
+      "agentsReady_one": "{{count}} ایجنٹ کام کرنے کے لیے تیار ہے",
+      "agentsReady_other": "{{count}} ایجنٹس کام کرنے کے لیے تیار ہیں",
+      "scheduledJobs_one": "{{count}} شیڈول شدہ کام",
+      "scheduledJobs_other": "{{count}} شیڈول شدہ کام",
+      "subCabinets_one": "{{count}} سب-Cabinet",
+      "subCabinets_other": "{{count}} سب-Cabinets",
+      "agentsReady": "{{count}} ایجنٹس کام کرنے کے لیے تیار ہیں",
+      "scheduledJobs": "{{count}} شیڈول شدہ کام",
+      "subCabinets": "{{count}} سب-Cabinets"
+    },
+    "cloud": {
+      "alreadyOnList": "آپ پہلے ہی فہرست میں شامل ہیں — ہم جلد رابطہ کریں گے۔",
+      "aside": "Cabinet Cloud جلد آ رہا ہے۔ وہی پروڈکٹ، خود ہوسٹنگ کی کوئی پریشانی نہیں۔",
+      "description": "اپنے Cabinet کو کسی بھی ڈیوائس سے کھولیں جبکہ آپ کے AI ایجنٹس کام کرتے رہیں — مسودہ تیار کرنا، تحقیق کرنا، منظم کرنا — یہاں تک کہ جب آپ کا لیپ ٹاپ بند ہو۔",
+      "error": "کچھ غلط ہو گیا۔ ای میل چیک کریں اور دوبارہ کوشش کریں۔",
+      "joinWaitlist": "انتظار کی فہرست میں شامل ہوں",
+      "onList": "آپ فہرست میں شامل ہیں۔ جب Cabinet Cloud دستیاب ہوگا تو ہم آپ کو ای میل کریں گے۔",
+      "sending": "بھیجا جا رہا ہے…",
+      "title": "آپ کا Cabinet، کہیں بھی۔ آپ کی AI ٹیم، ہمیشہ آن۔",
+      "waitlistSubtitle": "کہیں سے بھی جڑیں۔ آپ کی AI ٹیم 24/7 کام کرتی ہے۔"
+    },
+    "discord": {
+      "aside": "اگر آپ نئی خصوصیات پہلے چاہتے ہیں اور 'ٹکٹ جمع کرائیں' کے بجائے 'آئیں بات کریں' کو ترجیح دیتے ہیں، تو یہ آپ کا کمرہ ہے۔",
+      "description": "یہ وہ جگہ ہے جہاں فیڈ بیک خصوصیات میں بدل جاتا ہے، اسکرین شاٹس بحثوں میں بدل جاتے ہیں، اور کوئی عام طور پر کنارے کا کیس آپ تک پہنچنے سے پہلے ہی ڈھونڈ لیتا ہے۔",
+      "joinBadge": "شامل ہوں",
+      "title": "Discord وہ جگہ ہے جہاں اچھی عجیب و غریب چیزیں ہوتی ہیں۔"
+    },
+    "github": {
+      "aside": "Cabinet اوپن سورس ہے۔ اگر آپ کو یہ وژن پسند ہے، تو لفظ پھیلانے میں ہماری مدد کریں۔",
+      "description": "ایک GitHub اسٹار زیادہ لوگوں کو Cabinet دریافت کرنے اور کمیونٹی میں شامل ہونے میں مدد کرتا ہے۔",
+      "starsLabel": "{{stars}} GitHub اسٹارز",
+      "title": "Cabinet کمیونٹی کو بڑھانے میں مدد کریں"
+    },
+    "launch": {
+      "beforeYouLaunch": "لانچ کرنے سے پہلے",
+      "defaultCabinetName": "آپ کا Cabinet",
+      "defaultDescription": "علمی بنیاد + AI ٹیم",
+      "knowledgeBaseLabel": "علمی بنیاد",
+      "aiTeamLabel": "AI ٹیم",
+      "launchCabinet": "Cabinet لانچ کریں",
+      "settingUp": "سیٹ اپ ہو رہا ہے...",
+      "disclaimerAccess": "<strong>ایجنٹس کو مکمل رسائی حاصل ہے۔</strong> Cabinet <flag>--dangerously-skip-permissions</flag> (Claude Code) اور دیگر فراہم کنندگان میں مساوی فلیگز استعمال کرتا ہے۔ یہ ان CLI ٹولز کو اپنے ٹرمینل سے چلانے کے مترادف ہے۔ آپ کے کنفیگر کردہ کوئی بھی MCP سرورز یا ٹولز ایجنٹس کے ذریعے خود بخود استعمال ہو سکتے ہیں۔",
+      "disclaimerBackup": "<strong>اپنے ڈیٹا کا باقاعدگی سے بیک اپ لیں۔</strong> ایجنٹس آپ کے KB اور منسلک ریپوز میں فائلوں کو پڑھ، لکھ اور حذف کر سکتے ہیں۔ Cabinet ڈیٹا کے نقصان کا ذمہ دار نہیں ہے۔ آپ اپنے منتخب کردہ AI فراہم کنندگان اور ان کی سروس کی شرائط کے ذمہ دار ہیں۔",
+      "disclaimerBeta": "<strong>بیٹا سافٹ ویئر۔ چیزیں خراب ہو سکتی ہیں۔</strong> ہم تیزی سے ریلیز کرتے ہیں۔ اہم تبدیلیاں بغیر اطلاع کے آ سکتی ہیں۔",
+      "legalNotice": "جاری رکھنے سے آپ ہماری <terms>شرائط</terms> اور <privacy>رازداری</privacy> سے اتفاق کرتے ہیں۔ Cabinet ایک <oss>اوپن سورس پروجیکٹ</oss> ہے۔",
+      "keepInTouch": "مجھے باخبر رکھیں۔ Cabinet اوپن سورس ہے اور کھلے عام بنایا گیا ہے، اور ہم یہ جاننا پسند کریں گے کہ آگے کیا بنانا ہے۔ کوئی سپیم نہیں، ہم وعدہ کرتے ہیں۔"
+    },
+    "provider": {
+      "agentType": "{{type}} ایجنٹ",
+      "close": "بند کریں",
+      "comingSoon": "جلد آ رہا ہے",
+      "guide": "رہنما",
+      "heading": "ایجنٹ فراہم کنندہ",
+      "moreModels": "مزید AIs",
+      "install": "انسٹال کریں",
+      "logIn": "لاگ ان کریں",
+      "openTerminalButton": "ٹرمینل کھولیں",
+      "openTerminalDetail": "اگلے مراحل چلانے کے لیے آپ کو ٹرمینل کی ضرورت ہوگی۔",
+      "openTerminalError": "ٹرمینل خود بخود نہیں کھل سکا۔ اپنے سسٹم ٹرمینل کو دستی طور پر کھولیں۔",
+      "openTerminalTitle": "ایک ٹرمینل کھولیں",
+      "recheck": "فراہم کنندگان کو دوبارہ چیک کریں",
+      "rerunVerify": "تصدیق دوبارہ چلائیں",
+      "runVerify": "تصدیق چلائیں",
+      "setupTitle": "{{name}} سیٹ اپ",
+      "skipForNow": "فی الحال چھوڑ دیں",
+      "subtitle": "Cabinet کو آپ کے ایجنٹس کو طاقت دینے کے لیے ایک AI CLI کی ضرورت ہے۔",
+      "verifyExplanation": "تصدیق فراہم کنندہ کے ہیڈ لیس پرامپٹ کو شروع سے آخر تک چلاتی ہے اور کسی بھی ناکامی کی درجہ بندی کرتی ہے تاکہ آپ کو معلوم ہو کہ کس مرحلے پر دوبارہ جانا ہے۔",
+      "verifying": "تصدیق ہو رہی ہے…",
+      "failedAtStep": "مرحلے پر ناکام: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "یہ Cabinet کس لیے ہے؟ ہر کمرہ اپنی AI ٹیم کے ساتھ آتا ہے۔",
+      "heading": "ایک <accent>کمرہ</accent> منتخب کریں"
+    },
+    "whatIsCabinet": {
+      "heading": "Cabinet کیا ہے؟",
+      "body": "Cabinet آپ کی زندگی یا کام کے ایک شعبے کے لیے ایک مرکوز ورک اسپیس ہے۔ یہ آپ کی فائلیں، نوٹس، ٹولز، ایجنٹس اور ٹاسکس کو رکھتا ہے، تاکہ آپ کی AI ٹیم کو وہ سیاق و سباق مل سکے جس کی اسے واقعی مدد کرنے کے لیے ضرورت ہے۔",
+      "examplesLabel": "لوگ Cabinet کیسے استعمال کرتے ہیں",
+      "example1": "آپ کا اسٹارٹ اپ",
+      "example2": "ایک GitHub ریپو",
+      "example3": "آپ کا مارکیٹنگ کا کام",
+      "example4": "ایک کلائنٹ پروجیکٹ",
+      "example5": "آپ کی ذاتی علمی بنیاد"
+    },
+    "access": {
+      "heading": "{{name}} کس چیز تک رسائی حاصل کر سکتا ہے؟",
+      "subtitle": "وہ علم اور ٹولز منتخب کریں جو یہ ایجنٹ استعمال کر سکتا ہے۔ آپ اسے کسی بھی وقت تبدیل کر سکتے ہیں۔",
+      "defaultAgent": "آپ کا ایجنٹ",
+      "files": "فائلیں اور علم",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP سرورز",
+      "plugins": "پلگ انز",
+      "skills": "صلاحیتیں",
+      "placeholderNote": "آپ ایجنٹ کی سیٹنگز میں بعد میں رسائی کو بہتر بنا سکتے ہیں۔"
+    },
+    "heartbeat": {
+      "heading": "کیا {{name}} ہارٹ بیٹ پر چلے؟",
+      "subtitle": "ہارٹ بیٹ ایجنٹ کو ایک شیڈول کے مطابق خود بخود چیک ان کرنے اور کام کرنے کی اجازت دیتی ہے۔",
+      "off": "بند",
+      "offHint": "صرف آپ کے کہنے پر چلتا ہے۔ شروع کرنے کے لیے تجویز کردہ۔",
+      "daily": "روزانہ",
+      "dailyHint": "دن میں ایک بار چیک کرتا ہے۔",
+      "weekly": "ہفتہ وار",
+      "weeklyHint": "ہفتے میں ایک بار چیک کرتا ہے۔",
+      "tokenNote": "خبردار: ایک ہارٹ بیٹ ایجنٹ کو خود بخود چلاتی ہے، جو ہر بار چلنے پر AI ٹوکنز (اور آپ کا فراہم کنندہ کوٹہ) استعمال کرتی ہے۔ آپ اسے کسی بھی وقت تبدیل یا بند کر سکتے ہیں۔"
+    },
+    "firstTask": {
+      "heading": "اپنا پہلا ٹاسک فائل کریں",
+      "subtitle": "ٹاسکس وہ طریقہ ہیں جس سے آپ {{name}} کو کام سونپتے ہیں۔ ابھی ایک لکھیں اور یہ آپ کے Cabinet میں آ جائے گا، چلنے کے لیے تیار۔",
+      "label": "{{name}} کو پہلے کیا کرنا چاہیے؟",
+      "placeholder": "مثلاً: نئے صارفین کے لیے ایک خیرمقدمی ای میل کا مسودہ تیار کریں",
+      "example1": "میرے تازہ ترین نوٹس کا خلاصہ کریں",
+      "example2": "ایک پروجیکٹ پلان کا مسودہ تیار کریں",
+      "example3": "ہمارے سرفہرست 3 حریفوں پر تحقیق کریں",
+      "note": "آپ اسے خالی چھوڑ سکتے ہیں اور بعد میں ٹاسکس شامل کر سکتے ہیں۔ جب تک آپ AI فراہم کنندہ کو منسلک نہیں کرتے، کچھ بھی نہیں چلے گا۔"
+    },
+    "rail": {
+      "untitled": "آپ کا Cabinet",
+      "dataCaption": "آپ کے پروجیکٹ کی تمام فائلیں اور نوٹس یہاں موجود ہیں۔",
+      "teamEmpty": "ابھی کوئی ایجنٹ نہیں۔",
+      "teamCaption": "آپ کی AI ٹیم یہاں کام کرتی ہے۔",
+      "tasksEmpty": "ابھی کوئی ٹاسک نہیں۔",
+      "tasksCaption": "وہ کام جو آپ اپنی ٹیم کو سونپتے ہیں وہ یہاں ظاہر ہوتا ہے۔",
+      "assignedTo": "{{name}} کے نام",
+      "you": "آپ"
+    },
+    "rooms": {
+      "office": {
+        "label": "دفتر",
+        "tagline": "کاروبار، سٹارٹ اپ، یا سائیڈ پروجیکٹ چلائیں۔",
+        "workspaceLabel": "کمپنی یا پروجیکٹ کا نام",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "آپ کیا کرتے ہیں؟",
+        "descriptionPlaceholder": "ہم AI سٹارٹ اپس کے بارے میں ایک پوڈ کاسٹ بناتے ہیں۔",
+        "departmentNoun": "شعبہ",
+        "teamSizeLabel": "ٹیم کا سائز",
+        "exampleAgents": {
+          "0": "سی ای او",
+          "1": "ایڈیٹر"
+        }
+      },
+      "study": {
+        "label": "مطالعہ",
+        "tagline": "آپ کا دوسرا دماغ — تحریر، نوٹس، ذاتی معاون۔",
+        "workspaceLabel": "اپنے کیبنٹ کا نام دیں",
+        "workspacePlaceholder": "میرا مطالعہ",
+        "descriptionLabel": "زندگی کے کن شعبوں میں آپ مدد چاہتے ہیں؟",
+        "descriptionPlaceholder": "تحریر، ای میل چھانٹی، کیلنڈر، عادات کی ٹریکنگ",
+        "departmentNoun": "شعبہ",
+        "exampleAgents": {
+          "0": "معاون",
+          "1": "لائبریرین"
+        }
+      },
+      "lab": {
+        "label": "ریسرچ لیب",
+        "tagline": "تعلیمی کام، ادب، تدریس، تھیسس۔",
+        "workspaceLabel": "ورک اسپیس کا نام",
+        "workspacePlaceholder": "فلسفہ ذہن",
+        "descriptionLabel": "آپ کا شعبہ کیا ہے یا آپ کس چیز پر تحقیق کر رہے ہیں؟",
+        "descriptionPlaceholder": "فینومینولوجی، شعور، فلسفہ کا تعارف پڑھانا",
+        "departmentNoun": "شعبہ",
+        "exampleAgents": {
+          "0": "ریسرچ لیڈ",
+          "1": "لائبریرین"
+        }
+      },
+      "family-room": {
+        "label": "فیملی روم",
+        "tagline": "گھریلو، فیملی کیلنڈر، کھانے، بچے",
+        "workspaceLabel": "گھریلو نام",
+        "workspacePlaceholder": "دی نگوین فیملی",
+        "descriptionLabel": "یہاں کون رہتا ہے اور آپ کیا سنبھالتے ہیں؟",
+        "descriptionPlaceholder": "دو والدین، تین بچے، دو سکول، ایک کتا",
+        "departmentNoun": "شعبہ",
+        "teamSizeLabel": "گھرانے کا سائز",
+        "exampleAgents": {
+          "0": "ہوم مینیجر",
+          "1": "منصوبہ ساز"
+        }
+      },
+      "blank": {
+        "label": "خالی کمرہ",
+        "tagline": "ابھی کچھ نہیں۔ اپنے ایجنٹس، اپنی شکل لائیں۔",
+        "workspaceLabel": "اپنے Cabinet کا نام دیں",
+        "workspacePlaceholder": "میرا Cabinet",
+        "descriptionLabel": "یہ کس لیے ہے؟",
+        "descriptionPlaceholder": "کچھ بھی — اگر ابھی یقین نہیں تو خالی چھوڑ دیں",
+        "departmentNoun": "گروپ",
+        "exampleAgents": {
+          "0": "آپ کی مرضی"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "قیادت",
+      "marketing": "مارکیٹنگ",
+      "content": "مواد",
+      "engineering": "انجینئرنگ",
+      "product-and-design": "پروڈکٹ اور ڈیزائن",
+      "business": "کاروبار",
+      "research": "تحقیق",
+      "finance-and-ops": "فنانس اور آپریشنز",
+      "personal": "ذاتی",
+      "second-brain": "دوسرا دماغ",
+      "writing": "تحریر",
+      "tools": "ٹولز",
+      "life-admin": "ذاتی انتظامیہ",
+      "from-the-office": "دفتر سے",
+      "writing-and-notes": "تحریر اور نوٹس",
+      "other": "دیگر",
+      "household": "گھریلو",
+      "admin": "انتظامیہ",
+      "money": "پیسہ",
+      "product": "پروڈکٹ",
+      "design": "ڈیزائن",
+      "sales": "سیلز",
+      "support": "سپورٹ",
+      "analytics": "تجزیات",
+      "finance": "فنانس",
+      "legal": "قانونی",
+      "people": "افراد"
+    },
+    "demo": {
+      "greeting": {
+        "office": "صبح بخیر ٹیم! {{workspace}} میں خوش آمدید۔ آئیے فوراً کام شروع کریں۔",
+        "study": "صبح بخیر۔ آپ کا دوسرا دماغ آن لائن ہے — {{home}} میں خوش آمدید۔",
+        "lab": "ریسرچ ڈیسک تیار ہے — \"{{workspace}}\"۔ آج ہم کس چیز پر کام کر رہے ہیں؟",
+        "family-room": "ہوم ہیڈ کوارٹر شروع ہو رہا ہے — {{home}}۔ آئیے سب کو ان کی جگہ پر پہنچائیں۔",
+        "blank": "خالی سلیٹ — \"{{workspace}}\"۔ آپ یہاں کیا بنانا چاہتے ہیں، {{home}}؟"
+      },
+      "assign": "{{name}}، کیا آپ {{topic}} پر کام کر سکتے ہیں؟",
+      "fallbackTopic": "آگے کیا ہے",
+      "office": {
+        "replies": {
+          "0": "اس پر کام کر رہا ہوں۔ دن کے اختتام تک ایک لینڈ سکیپ جائزہ تیار کر لوں گا۔",
+          "1": "پہلے ہی ایک منصوبہ تیار کر رہا ہوں۔ جلد ہی اسے #content میں شیئر کروں گا۔",
+          "2": "بنیادی ورک فلو سیٹ کر رہا ہوں۔ اب تک اچھا لگ رہا ہے۔"
+        },
+        "topics": {
+          "0": "حریف تحقیق",
+          "1": "مواد کا کیلنڈر",
+          "2": "لانچ کا منصوبہ"
+        },
+        "closing": "سب کی زبردست توانائی۔ آئیے اسے ایک مضبوط پہلا ہفتہ بنائیں۔"
+      },
+      "study": {
+        "replies": {
+          "0": "میں ان باکس کو ترتیب دوں گا اور جو آپ کو درکار ہے اسے سامنے لاؤں گا۔",
+          "1": "کیلنڈر دوپہر 3 بجے تک صاف ہے — لکھنے کے لیے اچھا وقت ہے۔",
+          "2": "میں نے پہلے ہی تین نئے نوٹس 'روزانہ' انڈیکس سے منسلک کر دیے ہیں۔"
+        },
+        "topics": {
+          "0": "آج کا ان باکس ترتیب",
+          "1": "اس ہفتے کی تحریر",
+          "2": "میری پڑھنے کی فہرست"
+        },
+        "closing": "اچھا۔ جب کسی چیز میں میری ضرورت ہو تو مجھے پنگ کریں — ورنہ میں آپ کے راستے میں نہیں آؤں گا۔"
+      },
+      "lab": {
+        "replies": {
+          "0": "اس پر تازہ ترین پیپر ابھی نکال رہا ہوں — ایک گھنٹے میں خلاصہ تیار کروں گا۔",
+          "1": "میں اس کے بعد کتابیات کو مطابقت پذیر کروں گا اور نقلوں کو نشان زد کروں گا۔",
+          "2": "جمعرات کے لیکچر کا خاکہ تقریباً جائزے کے لیے تیار ہے۔"
+        },
+        "topics": {
+          "0": "ادبی جائزہ",
+          "1": "جمعرات کے لیکچر کی تیاری",
+          "2": "حوالہ جات کی فہرست"
+        },
+        "closing": "مجھے باخبر رکھیں۔ میں دن کے اختتام تک جو کچھ بھی آپ بھیجیں گے اس کا جائزہ لوں گا۔"
+      },
+      "family-room": {
+        "replies": {
+          "0": "شیڈول 4 بجے کے بعد صاف ہے۔ اوورلیپنگ ڈراپ آف کو نشان زد کر رہا ہوں۔",
+          "1": "ہفتے کے لیے مینو تیار کر لیا گیا ہے — گروسری کی فہرست جائزے کے لیے تیار ہے۔",
+          "2": "بچوں کی سرگرمیاں مطابقت پذیر ہو گئیں۔ DnD نائٹ جمعہ کو اب بھی جاری ہے۔"
+        },
+        "topics": {
+          "0": "آج کا شیڈول",
+          "1": "کھانے کا منصوبہ",
+          "2": "بچوں کی سرگرمیاں"
+        },
+        "closing": "سب کا شکریہ۔ اگر دن میں کچھ تبدیل ہوتا ہے تو مجھے پنگ کریں۔"
+      },
+      "blank": {
+        "replies": {
+          "0": "سمجھ گیا۔ جب بھی آپ تیار ہوں، میں تیار ہوں۔",
+          "1": "تیار ہوں۔",
+          "2": "میں ہدایات کا انتظار کروں گا۔"
+        },
+        "topics": {
+          "0": "پہلی چیز",
+          "1": "جو بھی اگلا ہے",
+          "2": "کھلا سوال"
+        },
+        "closing": "جب بھی آپ تیار ہوں، ہمیں بتائیں کہ کیا کرنا ہے۔"
+      }
+    },
+    "team": {
+      "browseAll": "سب براؤز کریں",
+      "browseCabinets": "Cabinets براؤز کریں",
+      "cabinetNameLabel": "Cabinet کا نام",
+      "cancel": "منسوخ کریں",
+      "importButton": "درآمد کریں",
+      "importFailed": "درآمد ناکام ہو گئی",
+      "importFailedConnection": "درآمد ناکام ہو گئی۔ اپنا کنکشن چیک کریں۔",
+      "importTitle": "{{name}} درآمد کریں",
+      "pickAgents": "اپنے ایجنٹس منتخب کریں",
+      "required": "مطلوبہ",
+      "subtitle": "ہر Cabinet ایک AI ٹیم ہے — ایجنٹس، ٹاسکس، اور ایک مشترکہ نالج بیس، جو ایک ساتھ مل کر کام کرتے ہیں۔",
+      "heading": "اپنی <accent>ٹیم</accent> بنائیں۔",
+      "nameLabel": "ایجنٹ کا نام",
+      "namePlaceholder": "مثلاً ایڈیٹر، ریسرچر، اسسٹنٹ",
+      "roleLabel": "کردار",
+      "rolePlaceholder": "مثلاً رائٹنگ اسسٹنٹ",
+      "instructionsLabel": "یہ ایجنٹ کیا کرے؟",
+      "instructionsPlaceholder": "بیان کریں کہ یہ کیسے مدد کرے۔ مثلاً: میرے صفحات کا مسودہ تیار کرے اور ان میں ترمیم کرے، انداز کو واضح اور دوستانہ رکھے، اور بہتری کی تجاویز دے۔",
+      "agentOptionalHint": "اختیاری۔ آپ اسے چھوڑ سکتے ہیں اور بعد میں کمرے کے اندر سے ایجنٹس شامل کر سکتے ہیں۔",
+      "agentCount_one": "{{count}} ایجنٹ",
+      "agentCount_other": "{{count}} ایجنٹس",
+      "jobCount_one": "{{count}} جاب",
+      "jobCount_other": "{{count}} جابز",
+      "subCabinetCount_one": "{{count}} سب-Cabinet",
+      "subCabinetCount_other": "{{count}} سب-Cabinets",
+      "cabinetsImported_one": "{{count}} Cabinet درآمد کیا گیا",
+      "cabinetsImported_other": "{{count}} Cabinets درآمد کیے گئے",
+      "agentCount": "{{count}} ایجنٹس",
+      "cabinetsImported": "{{count}} کیبنٹ درآمد کیے گئے",
+      "jobCount": "{{count}} کام",
+      "subCabinetCount": "{{count}} ذیلی کیبنٹ"
+    }
+  },
+  "search": {
+    "title": "تلاش کریں",
+    "placeholder": "صفحات، ایجنٹس، ٹاسکس تلاش کریں…",
+    "clearQuery": "تلاش صاف کریں",
+    "noCommands": "کوئی کمانڈ مماثل نہیں ہے۔",
+    "scopes": {
+      "all": "تمام",
+      "pages": "صفحات",
+      "agents": "ایجنٹس",
+      "tasks": "ٹاسکس"
+    },
+    "groups": {
+      "pages": "صفحات",
+      "agents": "ایجنٹس",
+      "tasks": "ٹاسکس"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "زبان",
+      "description": "زبان اور پڑھنے کی سمت تبدیل کرتا ہے۔ موجودہ صفحات اپنی فی دستاویز سمت برقرار رکھتے ہیں۔",
+      "english": "انگریزی",
+      "hebrew": "عبرانی",
+      "chineseSimplified": "آسان چینی",
+      "chineseTraditional": "روایتی چینی",
+      "moreLanguages": "مزید زبانیں",
+      "moreLanguagesHint": "کسی پر بھی کلک کریں تاکہ ہمیں بتائیں کہ آپ اس زبان میں Cabinet چاہتے ہیں — ہم سب سے زیادہ درخواست کردہ زبانوں کو ترجیح دیں گے۔",
+      "comingSoon": "جلد آ رہا ہے",
+      "requestSubmitted": "شکریہ! ہم نے {{language}} کے لیے آپ کی درخواست نوٹ کر لی ہے۔ ہم سب سے زیادہ پوچھی جانے والی زبانوں کو ترجیح دیں گے۔",
+      "requestFailed": "سرور تک رسائی حاصل نہیں ہو سکی۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔"
+    },
+    "appearance": {
+      "title": "ظاہری شکل",
+      "theme": "تھیم",
+      "themeDescription": "انٹرفیس کے لیے ایک تھیم منتخب کریں۔",
+      "matchSystem": "سسٹم کے مطابق",
+      "matchSystemDescription": "اپنے OS کی ظاہری شکل کے ساتھ خودکار طور پر سوئچ کریں۔",
+      "lightThemes": "لائٹ تھیمز",
+      "darkThemes": "ڈارک تھیمز",
+      "lightVariant": "لائٹ ویرینٹ",
+      "darkVariant": "ڈارک ویرینٹ",
+      "sidebar": "سائیڈبار",
+      "showHiddenFiles": "چھپی ہوئی فائلیں دکھائیں",
+      "sidebarDescription": "سائیڈبار میں فائلوں کو کیسے دکھایا جائے اسے ترتیب دیں۔",
+      "showHiddenFilesHint": "ڈاٹ سے شروع ہونے والی فائلیں اور فولڈرز دکھائیں (مثلاً .env، .git)"
+    },
+    "tabs": {
+      "profile": "پروفائل",
+      "providers": "پرووائیڈرز",
+      "skills": "اسکلز",
+      "storage": "اسٹوریج",
+      "integrations": "انٹیگریشنز",
+      "notifications": "نوٹیفیکیشنز",
+      "appearance": "ظاہری شکل",
+      "updates": "اپ ڈیٹس",
+      "about": "متعلق"
+    },
+    "page": {
+      "title": "سیٹنگز",
+      "refresh": "ریفریش کریں",
+      "groupYou": "آپ",
+      "groupWorkspace": "ورک اسپیس",
+      "groupApp": "ایپ"
+    },
+    "common": {
+      "copyToClipboard": "کلپ بورڈ پر کاپی کریں",
+      "categoriesAriaLabel": "سیٹنگز کیٹیگریز",
+      "loading": "لوڈ ہو رہا ہے…",
+      "connect": "کنیکٹ کریں",
+      "recommended": "تجویز کردہ"
+    },
+    "integrationsPreview": {
+      "comingSoon": "جلد آ رہا ہے",
+      "hint": "بیرونی انٹیگریشنز اور بلٹ ان ٹولز کو جوڑنا جلد دستیاب ہوگا۔"
+    },
+    "storage": {
+      "dataDirectory": "ڈیٹا ڈائریکٹری",
+      "restartRequired": "ری اسٹارٹ درکار ہے",
+      "dataDirectoryDescription": "تمام نالج بیس مواد اس ڈائریکٹری میں محفوظ ہے۔ پاتھ تبدیل کرنے کے لیے ری اسٹارٹ درکار ہے۔",
+      "restartHint": "Cabinet کو ری اسٹارٹ کرنے کے بعد ڈیٹا ڈائریکٹری تبدیل ہو جائے گی۔",
+      "currentPath": "موجودہ پاتھ",
+      "loadingPath": "لوڈ ہو رہا ہے...",
+      "changeDirectory": "ڈائریکٹری تبدیل کریں",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "براؤز کریں",
+      "save": "محفوظ کریں",
+      "openInFinder": "فائنڈر میں کھولیں",
+      "envVarHint1": "آپ ",
+      "envVarHint2": " انوائرنمنٹ ویری ایبل بھی سیٹ کر سکتے ہیں، جسے اس سیٹنگ پر ترجیح حاصل ہے۔",
+      "failedToSave": "محفوظ کرنے میں ناکامی۔",
+      "failedToSaveDir": "ڈیٹا ڈائریکٹری محفوظ کرنے میں ناکامی۔"
+    },
+    "updates": {
+      "checking": "Cabinet اپ ڈیٹس کی جانچ ہو رہی ہے…"
+    },
+    "providers": {
+      "title": "ایجنٹ پرووائیڈرز",
+      "defaultModel": "ڈیفالٹ ماڈل",
+      "setupGuide": "سیٹ اپ گائیڈ",
+      "troubleshoot": "AI پرووائیڈرز کی خرابیوں کا ازالہ کریں",
+      "subtitle": "AI ایجنٹ فراہم کنندگان کو ترتیب دیں۔ CLI ایجنٹس ٹرمینل کے ذریعے چلتے ہیں، API ایجنٹس براہ راست API کالز استعمال کرتے ہیں۔",
+      "defaultRuntime": "پہلے سے طے شدہ رن ٹائم",
+      "defaultRuntimeHint": "عام گفتگو اور فال بیک رن اس فراہم کنندہ/ماڈل/کوشش کا استعمال کرتے ہیں۔",
+      "cliAgents": "CLI ایجنٹس",
+      "apiAgents": "API ایجنٹس",
+      "ready": "تیار",
+      "installedNotLoggedIn": "نصب ہے لیکن لاگ ان نہیں",
+      "notInstalled": "نصب نہیں",
+      "emptyMatrix": "کوئی فراہم کنندہ ترتیب نہیں دیا گیا۔ نیچے ایک شامل کریں۔"
+    },
+    "notifications": {
+      "channels": "اطلاع کے چینلز",
+      "alertRules": "الرٹ کے قواعد",
+      "alwaysOn": "ہمیشہ فعال",
+      "comingSoon": "جلد آ رہا ہے",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "ترتیب دیں کہ جب ایجنٹس کو آپ کی توجہ کی ضرورت ہو تو آپ الرٹس کیسے وصول کرتے ہیں۔",
+      "rulesHint": "ان واقعات کے لیے اطلاعات خود بخود متحرک ہوتی ہیں:",
+      "previewHint": "براؤزر پش، ٹیلیگرام، سلیک، اور ای میل اطلاعات۔",
+      "channelPushName": "براؤزر پش",
+      "channelPushDesc": "فوری الرٹس جب Cabinet ٹیب کھلا ہو یا PWA نصب ہو۔",
+      "channelTelegramName": "ٹیلیگرام",
+      "channelTelegramDesc": "ٹیلیگرام بوٹ کے ذریعے فوری موبائل اطلاعات",
+      "channelSlackName": "سلیک ویب ہک",
+      "channelSlackDesc": "اپنی ٹیم کے سلیک چینل پر الرٹس فارورڈ کریں۔",
+      "channelEmailName": "ای میل ڈائجسٹ",
+      "channelEmailDesc": "الرٹس اور ایجنٹ کی سرگرمی کا مجموعی خلاصہ",
+      "ruleAlertsEvent": "#alerts چینل کے پیغامات",
+      "ruleAlertsDesc": "کوئی بھی ایجنٹ جو الرٹس چینل پر پوسٹ کرے۔",
+      "ruleMentionsEvent": "@human کا ذکر",
+      "ruleMentionsDesc": "جب کوئی ایجنٹ کسی بھی چینل میں @human کا ذکر کرے۔",
+      "ruleFloorEvent": "ہدف کی نچلی حد کی خلاف ورزی",
+      "ruleFloorDesc": "ایک ہدف اپنی کم از کم حد سے نیچے گر جاتا ہے۔",
+      "ruleHealthEvent": "ایجنٹ کی صحت خراب",
+      "ruleHealthDesc": "3+ مسلسل ہارٹ بیٹ کی ناکامیاں"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "ورژن",
+      "release": "ریلیز",
+      "framework": "فریم ورک",
+      "storage": "اسٹوریج",
+      "privacy": "رازداری",
+      "telemetry": "گمنام استعمال کی ٹیلی میٹری",
+      "tagline": "AI-first خود میزبان علم کا ذخیرہ اور اسٹارٹ اپ OS۔",
+      "frameworkValue": "Next.js (ایپ راؤٹر)",
+      "storageValue": "مقامی فائل سسٹم",
+      "aiLabel": "AI",
+      "aiValue": "مقامی AI CLIs کے ذریعے تقویت یافتہ",
+      "philosophy": "تمام مواد ڈسک پر مارک ڈاؤن فائلوں کے طور پر موجود ہے۔ انسان ارادے کا تعین کرتے ہیں۔ ایجنٹس کام کرتے ہیں۔ علم کا ذخیرہ دونوں کے درمیان مشترکہ یادداشت ہے۔",
+      "privacyBody": "Cabinet گمنام استعمال کی ٹیلی میٹری بھیجتا ہے تاکہ ہمیں پروڈکٹ کو بہتر بنانے میں مدد ملے۔ کوئی فائل مواد، پاتھ، پرامپٹ، یا راز جمع نہیں کیے جاتے۔",
+      "privacyLink": "کیا جمع کیا جاتا ہے؟",
+      "telemetryEnvDisabled": "CABINET_TELEMETRY_DISABLED=1 (env var) سے غیر فعال۔",
+      "telemetryHint": "صرف ایونٹ کی گنتی، ورژنز اور پلیٹ فارم کی معلومات۔ بھیجنا بند کرنے کے لیے ٹوگل آف کریں۔",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "اپنے Cabinet سے کہیں سے بھی جڑیں، جبکہ آپ کی AI ٹیم آپ کے لیے 24/7 کام کرتی ہے۔ نیچے اپنا ای میل درج کریں اور جب Cabinet Cloud دستیاب ہوگا تو ہم آپ کو مطلع کریں گے۔",
+      "cloudAlready": "آپ پہلے ہی فہرست میں شامل ہیں — ہم آپ سے رابطہ کریں گے۔",
+      "cloudSuccess": "آپ فہرست میں شامل ہیں۔ جب Cabinet Cloud دستیاب ہوگا تو ہم آپ کو ای میل کریں گے۔",
+      "cloudSending": "بھیجا جا رہا ہے…",
+      "cloudJoinWaitlist": "ویٹ لسٹ میں شامل ہوں",
+      "cloudError": "کچھ غلط ہو گیا۔ ای میل چیک کریں اور دوبارہ کوشش کریں۔",
+      "connectTitle": "جڑیں",
+      "connectBody": "مدد حاصل کریں، رائے دیں، یا صرف سلام کہیں۔",
+      "joinDiscord": "ڈسکارڈ میں شامل ہوں"
+    },
+    "profile": {
+      "title": "پروفائل",
+      "name": "نام",
+      "namePlaceholder": "Jane",
+      "displayName": "ڈسپلے نام",
+      "role": "کردار",
+      "rolePlaceholder": "بلڈر",
+      "avatar": "اوتار",
+      "accentColor": "نمایاں رنگ",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "فال بیک آئیکن",
+      "useIconInstead": "اس کے بجائے آئیکن استعمال کریں",
+      "searchAvatars": "اوتار تلاش کریں…",
+      "searchIcons": "آئیکنز تلاش کریں…",
+      "howAppear": "آپ بات چیت اور پوری ایپ میں کیسے نظر آتے ہیں۔",
+      "youFallback": "آپ",
+      "displayNameHint": "بات چیت میں دکھایا جاتا ہے۔ نام پر ڈیفالٹ ہوتا ہے۔",
+      "iconHint": "جب کوئی اوتار تصویر سیٹ نہ ہو تو استعمال ہوتا ہے۔ صاف کرنے کے لیے دوبارہ کلک کریں۔",
+      "tintHint": "جب کوئی تصویر سیٹ نہ ہو تو فال بیک اوتار کو رنگ دیتا ہے۔",
+      "save": "محفوظ کریں",
+      "saving": "محفوظ کیا جا رہا ہے…",
+      "saved": "محفوظ ہو گیا",
+      "browseAll": "تمام براؤز کریں ({{count}})",
+      "showFavorites": "پسندیدہ دکھائیں",
+      "showFewer": "کم دکھائیں"
+    },
+    "workspace": {
+      "title": "ورک اسپیس",
+      "name": "ورک اسپیس کا نام",
+      "namePlaceholder": "میرا Cabinet",
+      "description": "تفصیل",
+      "descriptionPlaceholder": "آپ کیا کرتے ہیں؟",
+      "teamSize": "ٹیم کا سائز",
+      "teamSizePlaceholder": "اکیلا / 2–5 / 6–20 / 20+",
+      "subtitle": "آن بورڈنگ کے دوران حاصل کیا گیا۔ ایجنٹس کام کی منصوبہ بندی کرتے وقت انہیں پڑھتے ہیں۔"
+    }
+  },
+  "sidebar": {
+    "settings": "ترتیبات",
+    "createPage": "صفحہ بنائیں",
+    "newPage": "نیا صفحہ",
+    "newAgent": "نیا ایجنٹ",
+    "newTask": "نیا کام",
+    "archive": "آرکائیو",
+    "trash": "ردی",
+    "search": "تلاش",
+    "agents": "ایجنٹس",
+    "tasks": "کام",
+    "missions": "مشنز",
+    "drawerData": "ڈیٹا",
+    "drawerAgents": "ٹیم",
+    "drawerTasks": "کام",
+    "goHome": "ہوم پر جائیں",
+    "brandWord": "",
+    "refresh": "سائیڈبار ریفریش کریں",
+    "refreshDescription": "سائیڈبار ریفریش کریں (ڈیٹا فولڈر دوبارہ پڑھیں)",
+    "collapseSidebar": "سائیڈبار سمیٹیں",
+    "expandSidebar": "سائیڈبار پھیلائیں",
+    "resizeHandle": "سائیڈبار کا سائز تبدیل کریں — ری سیٹ کرنے کے لیے ڈبل کلک کریں",
+    "resetWidth": "چوڑائی ری سیٹ کرنے کے لیے ڈبل کلک کریں",
+    "refreshedNoChanges": "ریفریش ہو گیا — کوئی تبدیلی نہیں ہوئی۔",
+    "refreshedWithChanges": "ریفریش ہو گیا — {{added}} شامل کیے گئے، {{removed}} ہٹائے گئے۔",
+    "refreshFailed": "ریفریش ناکام ہو گیا۔",
+    "searchPlaceholder": "فائلیں تلاش کریں…",
+    "searchSearching": "تلاش جاری ہے…",
+    "searchNoResults": "کوئی فائل “{{query}}” سے مماثل نہیں ہے۔"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "اسٹیٹس بار",
+      "askAiAriaLabel": "AI سے اس صفحے میں ترمیم کرنے کو کہیں",
+      "askAiPlaceholder": "اس صفحے میں ترمیم کیسے کریں؟",
+      "sendHint": "↵ بھیجنے کے لیے"
+    },
+    "server": {
+      "serverStatusAriaLabel": "سرور اسٹیٹس — تفصیلات کے لیے کلک کریں",
+      "checking": "سرور اسٹیٹس چیک کیا جا رہا ہے…",
+      "allRunning": "تمام سسٹمز چل رہے ہیں",
+      "appNotResponding": "ایپ سرور جواب نہیں دے رہا",
+      "daemonDownNoProviders": "ڈیمن جواب نہیں دے رہا؛ کوئی ایجنٹ فراہم کنندہ دستیاب نہیں",
+      "daemonDown": "ڈیمن جواب نہیں دے رہا",
+      "noProviders": "کوئی ایجنٹ فراہم کنندہ دستیاب نہیں",
+      "checkingShort": "چیک کیا جا رہا ہے…",
+      "online": "آن لائن",
+      "offline": "آف لائن",
+      "degraded": "کارکردگی متاثر",
+      "allSystemsRunning": "تمام سسٹمز چل رہے ہیں",
+      "serviceDisruption": "سروس میں خلل",
+      "appServer": "ایپ سرور",
+      "daemon": "ڈیمن",
+      "agentProviders": "ایجنٹ فراہم کنندگان",
+      "running": "چل رہا ہے",
+      "down": "بند",
+      "lastSeen": "آخری بار دیکھا گیا: {{when}}",
+      "appWorking": "صفحات، ایڈیٹر، تلاش، اور فائل مینجمنٹ کام کر رہے ہیں۔",
+      "appDown": "صفحات، ایڈیٹر، تلاش، اور محفوظ کرنا دستیاب نہیں ہیں۔ آپ اب بھی کیش شدہ مواد پڑھ سکتے ہیں۔",
+      "daemonWorking": "AI ایجنٹس، شیڈول شدہ کام، اور ویب ٹرمینل کام کر رہے ہیں۔",
+      "daemonDownDescription": "AI ایجنٹس، شیڈول شدہ کام، اور ویب ٹرمینل دستیاب نہیں ہیں۔ صفحہ کی تدوین اب بھی کام کرتی ہے۔",
+      "available": "دستیاب",
+      "noneReady": "کوئی تیار نہیں",
+      "providerReady": "تیار",
+      "providerNotLoggedIn": "لاگ ان نہیں",
+      "providerNotInstalled": "انسٹال نہیں",
+      "install": "انسٹال کریں",
+      "howToFix": "کیسے ٹھیک کریں"
+    },
+    "save": {
+      "retryTitle": "ناکام محفوظ کرنے کی دوبارہ کوشش کرنے کے لیے کلک کریں۔",
+      "retryAriaLabel": "محفوظ کرنا ناکام ہو گیا — دوبارہ کوشش کرنے کے لیے کلک کریں۔",
+      "autoSaving": "خودکار محفوظ ہو رہا ہے…",
+      "forceSave": "جبری محفوظ کریں: ⌘S",
+      "editing": "تدوین — جب آپ توقف کریں گے تو خودکار محفوظ ہو جائے گا۔",
+      "wordCountTitle": "اس صفحہ کے الفاظ کی گنتی (مارک ڈاؤن نحو شامل نہیں)",
+      "savedJustNow": "ابھی",
+      "savedNever": "کبھی نہیں",
+      "savedAgoSeconds": "{{n}} سیکنڈ پہلے",
+      "savedAgoMinutes": "{{n}} منٹ پہلے",
+      "savedAgoHours": "{{n}} گھنٹے پہلے",
+      "savedAgoDays": "{{n}} دن پہلے",
+      "saveFailedRetry": "محفوظ کرنا ناکام رہا — دوبارہ کوشش کریں",
+      "savingText": "محفوظ ہو رہا ہے…",
+      "savedText": "محفوظ ہو گیا",
+      "editingText": "ترمیم ہو رہی ہے…",
+      "savedAgo": "محفوظ ہو گیا · {{ago}}",
+      "word": "لفظ",
+      "words": "الفاظ"
+    },
+    "git": {
+      "statusModified": "ترمیم شدہ",
+      "statusNew": "نیا",
+      "statusAdded": "شامل کیا گیا",
+      "statusDeleted": "حذف شدہ",
+      "statusRenamed": "نام تبدیل کیا گیا",
+      "commitMessageAriaLabel": "کمٹ پیغام"
+    },
+    "help": {
+      "menuAriaLabel": "مدد اور کمیونٹی مینو کھولیں",
+      "menuTitle": "مدد اور کمیونٹی",
+      "demos": "ڈیمو، ویڈیوز، اور گائیڈز",
+      "discord": "ڈسکارڈ پر چیٹ کریں",
+      "discordSubtitle": "سپورٹ اور فیڈ بیک",
+      "github": "گٹ ہب پر تعاون کریں",
+      "githubSubtitle": "سورس، مسائل، PRs",
+      "ifUseful": "اگر آپ کو یہ مفید لگے",
+      "label": "مدد",
+      "starsAriaLabel": "{{count}} گٹ ہب ستارے — گٹ ہب پر Cabinet کھولیں",
+      "starsTitle": "{{count}} گٹ ہب ستارے — گٹ ہب پر Cabinet کو اسٹار کریں",
+      "share": "شیئر کریں",
+      "shareSubtitle": "دعوت نامہ کا لنک کاپی کریں اور بات پھیلائیں",
+      "shareCopied": "آپ زبردست ہیں، {{name}} 🩷 مستقبل کے Cabinet ممبران کو شامل کرنے کے لیے آپ کا شکریہ۔ لنک کاپی ہو گیا، محبت پھیلائیں!",
+      "shareFailed": "لنک کاپی نہیں ہو سکا",
+      "friend": "دوست"
+    },
+    "git2": {
+      "allCommitted": "سب کمٹ ہو گئے",
+      "uncommittedFile": "{{count}} غیر کمٹ شدہ فائل",
+      "uncommittedFiles": "{{count}} غیر کمٹ شدہ فائلیں",
+      "uncommittedFilesAria": "{{count}} غیر کمٹ شدہ فائل — فہرست دیکھنے کے لیے کلک کریں",
+      "uncommittedFileTip": "غیر کمیٹ شدہ فائل دیکھنے کے لیے کلک کریں",
+      "uncommittedFilesTip": "غیر کمیٹ شدہ فائلیں دیکھنے کے لیے کلک کریں",
+      "uncommittedFilesHeading": "{{count}} غیر کمیٹ شدہ فائل",
+      "uncommittedFilesHeadingPlural": "{{count}} غیر کمیٹ شدہ فائلیں",
+      "truncatedHint": "صرف پہلی {{count}} فائلیں دکھائی گئی ہیں — مکمل فہرست کے لیے `git status` چلائیں۔",
+      "commitDefault": "{{count}} فائل اپ ڈیٹ کریں",
+      "commitDefaultPlural": "{{count}} فائلیں اپ ڈیٹ کریں",
+      "committing": "کمیٹ ہو رہا ہے…",
+      "commit": "کمیٹ کریں",
+      "commitFailed": "کمیٹ ناکام ہو گیا",
+      "sync": "مطابقت پذیری",
+      "syncTitle": "گٹ ہب سے تازہ ترین کھینچیں اور ریفریش کریں",
+      "syncTitleWithLast": "گٹ ہب سے تازہ ترین کھینچیں اور ریفریش کریں۔ آخری مطابقت پذیری {{when}} کو ہوئی۔",
+      "syncAriaLabel": "گٹ ہب سے تازہ ترین تبدیلیاں کھینچیں اور ریفریش کریں",
+      "syncAriaLabelWithLast": "گٹ ہب سے تازہ ترین تبدیلیاں کھینچیں اور ریفریش کریں۔ آخری مطابقت پذیری {{when}} کو ہوئی۔",
+      "terminal": "ٹرمینل",
+      "openTerminal": "ٹرمینل کھولیں",
+      "newTerminalTab": "نیا ٹرمینل ٹیب",
+      "pulling": "کھینچا جا رہا ہے…",
+      "pulled": "ریموٹ سے اپ ڈیٹ ہو گیا",
+      "upToDate": "تازہ ترین",
+      "pullFailed": "کھینچنا ناکام رہا"
+    },
+    "update2": {
+      "updateAvailable": "اپ ڈیٹ {{version}} دستیاب ہے",
+      "updateAvailableTip": "Cabinet {{version}} دستیاب ہے"
+    },
+    "common": {
+      "dismiss": "برخاست کریں",
+      "close": "بند کریں",
+      "openSettings": "انسٹال شدہ اپ ڈیٹ کا جائزہ لینے کے لیے سیٹنگز کھولیں"
+    },
+    "misc": {
+      "restartToFinishUpdate": "اپ ڈیٹ مکمل کرنے کے لیے دوبارہ شروع کریں"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "اس ٹاسک کو اصل پرامپٹ سے دوبارہ شروع کریں",
+      "markAsDone": "اس ٹاسک کو مکمل کے طور پر نشان زد کریں",
+      "viewAriaLabel": "ٹاسک منظر",
+      "terminal": "ٹرمینل",
+      "transcript": "ٹرانسکرپٹ",
+      "details": "تفصیلات",
+      "transcriptTitle": "Claude Code مقامی سیشن JSONL",
+      "transcriptHint": "~/.claude/projects/<slug>/<session>.jsonl پڑھتا ہے",
+      "back": "واپس",
+      "copyPrompt": "اصل پرامپٹ کاپی کریں",
+      "gracefulExit": "CLI کو باوقار طریقے سے بند کریں (PTY پر /exit لکھتا ہے)",
+      "sendSigterm": "چل رہے PTY پراسیس کو SIGTERM بھیجیں",
+      "moreActions": "مزید کارروائیاں",
+      "ptyMode": "ٹرمینل (PTY) موڈ میں چل رہا ہے",
+      "compactContext": "سیاق و سباق کی ونڈو کو خالی کرنے کے لیے پچھلی باریوں کو ایک خلاصے میں سمیٹیں",
+      "noSummary": "ابھی تک کوئی خلاصہ نہیں۔",
+      "sessionEnded": "سیشن ختم ہو گیا — اسی ٹرمینل میں جاری رکھنے کے لیے ٹائپ کریں۔",
+      "terminalLive": "ٹرمینل لائیو ہے۔ آپ کا اگلا پرامپٹ اس باری کے ختم ہونے کے بعد قطار میں لگ جائے گا۔"
+    }
+  },
+  "tour": {
+    "ariaLabel": "اپنے Cabinet ٹور کا تعارف",
+    "skip": "چھوڑیں",
+    "skipAriaLabel": "ٹور چھوڑیں",
+    "back": "واپس",
+    "next": "اگلا",
+    "writeFirstTask": "اپنا پہلا ٹاسک لکھیں",
+    "goToSlide": "سلائیڈ {{n}} پر جائیں",
+    "starterTask": "آئیے اپنے اہداف اور یہاں حاصل کرنے کی خواہش پر بات کریں، پھر اسے ایک نئے 'ہمارے بارے میں' صفحہ میں درج کریں۔",
+    "savingTo": "میں محفوظ ہو رہا ہے ",
+    "introTitle": "اپنے <accent>Cabinet</accent> سے ملیں۔",
+    "introSubtitle": "آپ کی AI ٹیم۔ آپ کا نالج بیس۔ ایک جگہ۔",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "حالیہ اور جاری کام",
+    "hide": "ٹاسک ریل چھپائیں",
+    "show": "ٹاسک ریل دکھائیں",
+    "empty": "کوئی کام نہیں",
+    "itemRunning": "{{title}} · جاری · {{when}}",
+    "itemNeedsReply": "{{title}} · جواب درکار ہے",
+    "itemFailed": "{{title}} · ناکام · {{when}}",
+    "itemDone": "{{title}} · مکمل · {{when}}",
+    "itemArchived": "{{title}} · آرکائیو شدہ",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} جاری — ٹاسک ریل دکھائیں"
+  },
+  "chrome": {
+    "nav": {
+      "home": "ہوم",
+      "agents": "ایجنٹس",
+      "tasks": "ٹاسکس",
+      "ai": "AI",
+      "menu": "مینو",
+      "primaryAriaLabel": "بنیادی"
+    },
+    "returnTo": {
+      "task": "ٹاسک",
+      "tasks": "ٹاسکس",
+      "agent": "ایجنٹ",
+      "agents": "ایجنٹس",
+      "cabinet": "Cabinet",
+      "home": "ہوم",
+      "settings": "ترتیبات",
+      "registry": "رجسٹری",
+      "back": "واپس",
+      "backTo": "واپس {{label}} پر"
+    },
+    "theme": {
+      "defaultHeader": "ڈیفالٹ",
+      "dark": "ڈارک",
+      "darkThemes": "ڈارک تھیمز",
+      "lightThemes": "لائٹ تھیمز"
+    },
+    "update": {
+      "restartTitle": "اپ ڈیٹ مکمل کرنے کے لیے Cabinet کو دوبارہ شروع کریں",
+      "availableTitle": "Cabinet {{version}} دستیاب ہے",
+      "updatesTitle": "Cabinet اپ ڈیٹس",
+      "description": "Cabinet خود بخود ریلیزز کی جانچ کرتا ہے۔ جبکہ پروڈکٹ ابھی تجرباتی ہے، اپ ڈیٹس انسٹال کرنے سے پہلے اپنے ڈیٹا کی ایک کاپی رکھیں۔",
+      "later": "بعد میں",
+      "releaseNotes": "ریلیز نوٹس"
+    },
+    "daemon": {
+      "fixHintElectron": "ایجنٹ ڈیمن کو دوبارہ شروع کرنے کے لیے Cabinet کو بند کریں اور دوبارہ لانچ کریں۔",
+      "fixHintDev": "ایجنٹ ڈیمن کو دوبارہ فعال کرنے کے لیے `npm run dev:daemon` چلائیں (یا `npm run dev:all` کو دوبارہ شروع کریں)۔",
+      "notResponding": "ایجنٹ ڈیمن جواب نہیں دے رہا ہے۔",
+      "willFail": "ایجنٹس، جابز، اور AI درخواستیں اس کے واپس آنے تک ناکام رہیں گی۔ {{fixHint}}"
+    }
+  }
+}

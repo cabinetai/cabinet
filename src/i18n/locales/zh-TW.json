@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "建立智慧代理",
+      "avatar": "頭像",
+      "namePlaceholder": "行銷代理",
+      "rolePlaceholder": "內容專員",
+      "department": "部門",
+      "specialist": "專員",
+      "departmentLead": "部門主管",
+      "provider": "服務商",
+      "runtime": "執行環境",
+      "promptPlaceholder": "你是一位行銷代理……",
+      "addAgentTitle": "把一個智慧代理加入你的團隊",
+      "addAgentDescription": "從庫中挑選一位專員。新增後你可以編輯它的名字、角色和指令。",
+      "createFromScratchTitle": "從頭建立",
+      "createFromScratchDescription": "建立一個擁有獨立身份、角色和指令的新代理。",
+      "searchLibraryPlaceholder": "搜尋庫",
+      "errorLoadLibrary": "無法載入智慧代理庫。",
+      "errorAddAgent": "無法新增此智慧代理。"
+    },
+    "metric": {
+      "name": "指標名稱",
+      "namePlaceholder": "reddit_replies",
+      "target": "目標",
+      "targetPlaceholder": "回覆/週",
+      "floor": "下限",
+      "period": "週期",
+      "daily": "每日",
+      "weekly": "每週",
+      "monthly": "每月"
+    },
+    "workspace": {
+      "promise": "承諾",
+      "orgChart": "團隊組織圖",
+      "jobDetails": "任務詳情",
+      "heartbeat": "心跳",
+      "workspace": "工作區",
+      "editAgent": "編輯智慧代理",
+      "instructions": "指令",
+      "instructionsPlaceholder": "用 Markdown 撰寫此智慧代理的指令。",
+      "newAgent": "新增智慧代理",
+      "routines": "例行任務",
+      "browseLibrary": "瀏覽智慧代理庫",
+      "editYourOwn": "編輯你自己的智慧代理",
+      "editorPlaceholder": "編輯器",
+      "productAgentPlaceholder": "產品撰寫代理",
+      "instructionsBodyPlaceholder": "定義這個智慧代理在凱比內特和知識庫中的工作方式。",
+      "perAgentPrompts": "每個智慧代理的循環提示詞",
+      "runNow": "立即執行",
+      "delete": "刪除",
+      "viewOrgChart": "以組織圖檢視此團隊(全螢幕開啟)",
+      "hideIntro": "隱藏此介紹",
+      "sharedAcrossCabinets": "在所有凱比內特間共用",
+      "expandSchedule": "展開排程",
+      "heartbeatsOnAgentPage": "心跳在每個智慧代理的頁面上設定",
+      "exitFullscreen": "離開全螢幕",
+      "refresh": "重新整理",
+      "editHeartbeat": "編輯心跳",
+      "newRoutine": "新增例行任務",
+      "configureHeartbeat": "設定心跳",
+      "openOrgChart": "開啟組織圖",
+      "pickAnAgent": "挑選一個智慧代理",
+      "dismiss": "關閉",
+      "lockedHeartbeatTip": "該智慧代理已停止。請在「智慧代理」分頁中啟動它,才能啟用心跳。",
+      "lockedRoutineTip": "該智慧代理已停止。請在「智慧代理」分頁中啟動它,才能啟用它的例行任務。",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "點擊以關閉。",
+      "loadError": "無法載入此代理。",
+      "retry": "重試",
+      "color": "顏色",
+      "customColor": "自訂顏色",
+      "preset": "預設",
+      "editIconColor": "編輯圖示、顏色或頭像",
+      "sharedAcrossCabinetsHint": "在所有凱比內特間共用 — 編輯會套用到所有位置",
+      "inbox": "收件匣",
+      "conversations": "對話",
+      "recentWork": "近期工作",
+      "schedule": "排程",
+      "heartbeat": "心跳",
+      "runNow": "立即執行",
+      "editRoutine": "編輯例行任務",
+      "addRoutine": "新增例行任務",
+      "details": "詳情",
+      "editingGlobalAgent": "正在編輯全域智慧代理",
+      "displayName": "顯示名稱",
+      "role": "角色",
+      "department": "部門",
+      "type": "類型",
+      "workspace": "工作區",
+      "tags": "標籤",
+      "openSkillsSettings": "開啟設定 → 技能",
+      "notInCatalog": "目錄中找不到 — 點擊以移除",
+      "recommendedForRole": "推薦給此角色 — 點擊以附加",
+      "promise": "承諾",
+      "saved": "已儲存",
+      "iconLabel": "圖示"
+    },
+    "missionControl": {
+      "gallery": "圖庫",
+      "newAgent": "新增智慧代理",
+      "allGoals": "所有目標",
+      "noGoals": "尚未為任何智慧代理設定目標。",
+      "fromScratch": "從零開始",
+      "describeIt": "描述它",
+      "import": "匯入",
+      "closeDialog": "關閉對話框",
+      "describeYourAgent": "描述你的智慧代理",
+      "describePlaceholder": "我需要一個監控 Hacker News 上 GPU 相關貼文並撰寫深入評論、連結到我們部落格的智慧代理……"
+    },
+    "pulseStrip": {
+      "agents": "智慧代理",
+      "running": "執行中",
+      "goals": "目標",
+      "alerts": "警示",
+      "cost": "成本",
+      "runningPlays": "進行中的劇本",
+      "noRunning": "目前沒有執行中的智慧代理。",
+      "costBreakdown": "成本明細",
+      "noUsage": "尚無 API 使用量。",
+      "totalEstimated": "估算總計"
+    },
+    "routine": {
+      "runNowTitle": "立即執行此例行任務(一次性,不在排程內)",
+      "deletePermanently": "永久刪除此例行任務",
+      "promptPlaceholder": "這個例行任務該做什麼?例如:總結昨日的活動……",
+      "jobName": "任務名稱",
+      "jobNamePlaceholder": "每週策略摘要",
+      "jobId": "任務 ID",
+      "schedule": "排程",
+      "model": "模型",
+      "enabled": "已啟用"
+    }
+  },
+  "registry": {
+    "loading": "正在從註冊表載入……",
+    "readyToImport": "準備好匯入這個凱比內特了嗎?",
+    "organization": "組織",
+    "agents": "智慧代理",
+    "scheduledJobs": "已排程任務",
+    "about": "關於",
+    "cabinetName": "凱比內特名稱",
+    "cabinetNamePlaceholder": "凱比內特名稱……",
+    "searchPlaceholder": "搜尋凱比內特……",
+    "noResults": "沒有符合搜尋條件的凱比內特。"
+  },
+  "tasksBoard": {
+    "title": "任務",
+    "manualTooltip": "手動 — 你直接啟動的任務",
+    "jobsTooltip": "任務 — 已排程的循環執行",
+    "heartbeatTooltip": "心跳 — 智慧代理自主驅動的執行",
+    "clearSelection": "清除選取 (Esc)",
+    "createTask": "建立新任務",
+    "moreNewTypes": "更多新增類型",
+    "newTask": "新增任務",
+    "newRoutine": "新增例行任務",
+    "viewKanban": "看板",
+    "viewList": "清單",
+    "viewSchedule": "排程",
+    "viewKanbanHint": "看板檢視 — 依 收件匣 / 輪到你 / 執行中 / 剛完成 / 封存 分組",
+    "viewListHint": "所有任務的平面清單,最近活動優先",
+    "viewScheduleHint": "已排程例行任務與即將執行的行事曆",
+    "filterByAgent": "依智慧代理篩選:{{name}}",
+    "noToDeleteTitle": "沒有可刪除的任務",
+    "noToDeleteFiltered": "沒有符合 {{filter}} 的內容。清除篩選、換個檢視,或建立一個新任務。",
+    "noToDeleteEmpty": "看板上還沒有任務。用 + 新增任務 按鈕建立一個。",
+    "gotIt": "知道了",
+    "deleteCountTitle": "刪除 {{count}} 個任務?",
+    "deleteCountTitlePlural": "刪除 {{count}} 個任務?",
+    "deleteBody": "這將永久刪除目前顯示的每個任務的對話中繼資料、記錄和產出物。無法復原。",
+    "deleteBodyFiltered": "這將永久刪除目前在使用中篩選下顯示的每個任務的對話中繼資料、記錄和產出物。無法復原。",
+    "deleteConfirm": "刪除 {{count}}",
+    "deleteAllShown": "刪除全部 {{count}} 個顯示的任務",
+    "deleteAllShownPlural": "刪除全部 {{count}} 個顯示的任務",
+    "nothingToDelete": "此檢視中沒有可刪除的內容",
+    "deleteAllAria": "刪除全部顯示的任務",
+    "noTasksAria": "此檢視中沒有任務",
+    "filterTrigger": "{{trigger}} 篩選",
+    "filterTriggerAndAgent": "{{trigger}} 篩選和所選智慧代理",
+    "filterSelectedAgent": "所選智慧代理篩選"
+  },
+  "runtime": {
+    "noProvider": "未選擇服務商",
+    "modeAriaLabel": "執行環境模式",
+    "nativeTranscriptTitle": "凱比內特的原生記錄 — 結構化 JSON 串流、產出物、摘要,完整 UX",
+    "ptyWarningTitle": "需要 OpenAI API 金鑰。在 ChatGPT 方案的 Codex 帳戶上不可用 — 選擇該模型會失敗並提示 'model not supported when using Codex with a ChatGPT account'。",
+    "native": "原生",
+    "terminal": "終端機",
+    "terminalTitle": "在實時 PTY 終端機工作階段中執行 CLI(實驗性駭客模式)",
+    "providers": "服務商",
+    "modelCol": "模型",
+    "auto": "自動",
+    "ready": "就緒",
+    "loginRequired": "請登入",
+    "notInstalled": "未安裝",
+    "notAvailable": "不可用",
+    "defaultLabel": "預設",
+    "noProvidersAvailable": "無可用服務商",
+    "appDefault": "應用程式預設",
+    "selectAppDefault": "選擇應用程式預設",
+    "defaultModel": "預設模型",
+    "selectedModelLabel": "已選模型",
+    "loadingProviders": "正在載入服務商……",
+    "loadingAvailableProviders": "正在載入可用服務商……",
+    "triggerSummary": "模型:{{model}} · 強度:{{effort}} · 透過 {{provider}}",
+    "triggerSystemDefault": "任務模型 — 使用系統預設(點擊選擇)",
+    "clickToLaunch": "點擊在 PTY 終端機中啟動 {{name}}"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "智慧代理以完整權限執行。",
+    "backUp": "請定期備份你的資料。",
+    "betaSoftware": "測試版軟體,可能會有問題。",
+    "iAccept": "我已閱讀並接受"
+  },
+  "skillAdd": {
+    "addSkill": "新增技能",
+    "auditTooltip": "來自 skills.sh 外部稽核的結果(Alibaba Threat Hunter、Socket、Snyk、zeroleaks)",
+    "auditUnavailable": "此技能沒有 skills.sh 稽核資料",
+    "preview": "預覽"
+  },
+  "help": {
+    "page": {
+      "cabinet": "凱比內特",
+      "aiTeam": "AI 團隊",
+      "aiTeams": "AI 團隊",
+      "routines": "例行任務"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "編輯智慧代理設定",
+    "exportBundle": "匯出智慧代理包",
+    "goals": "目標",
+    "workspace": "工作區"
+  },
+  "scheduleRow": {
+    "deleteQ": "確認刪除?",
+    "confirmDelete": "確認刪除",
+    "cancelDelete": "取消刪除",
+    "runNow": "立即執行"
+  },
+  "apiKeys": {
+    "addKey": "新增金鑰",
+    "edit": "編輯",
+    "remove": "移除",
+    "newApiKey": "新增 API 金鑰"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "凱比內特更新",
+    "dataDirectory": "資料目錄",
+    "backups": "備份"
+  },
+  "kanban": {
+    "stopAllInLane": "停止此欄內所有執行中的任務",
+    "restartAllInLane": "重新啟動此欄內所有任務",
+    "newTask": "新增任務",
+    "collapseColumn": "折疊欄",
+    "kill": "終止",
+    "laneInbox": "收件匣",
+    "laneInboxHint": "草稿 — 等你啟動",
+    "laneNeeds": "輪到你",
+    "laneNeedsHint": "智慧代理提了問題或需要核准",
+    "laneRunning": "執行中",
+    "laneRunningHint": "智慧代理正在工作",
+    "laneDone": "剛完成",
+    "laneDoneHint": "最近一小時內完成",
+    "laneArchive": "封存",
+    "laneArchiveHint": "較舊且已查看"
+  },
+  "terminalTabs": {
+    "newTab": "新增終端機分頁",
+    "closeTab": "關閉終端機"
+  },
+  "newTaskButton": {
+    "createNew": "新增……",
+    "newTask": "新增任務",
+    "newRoutine": "新增例行任務"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "每週策略摘要",
+    "schedule": "排程",
+    "jobId": "任務 ID",
+    "enabled": "已啟用 — 依此排程執行"
+  },
+  "editIdentity": {
+    "title": "編輯智慧代理",
+    "displayName": "顯示名稱",
+    "color": "顏色",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "啟動所有智慧代理",
+    "startAllSubtitle": "啟用心跳和排程任務",
+    "stopAll": "停止所有智慧代理",
+    "stopAllSubtitle": "暫停心跳和排程任務"
+  },
+  "skillLibrary": {
+    "readOnly": "唯讀 — 無法在凱比內特中編輯",
+    "noUpstream": "直接在此凱比內特中建立 — 未記錄上游 git 來源",
+    "executableWarning": "套件內含可執行指令碼 — 核准前請審視",
+    "skills": "技能",
+    "imported": "已匯入",
+    "importing": "正在匯入……",
+    "import": "匯入"
+  },
+  "embedPopover": {
+    "placeholder": "貼上連結 (YouTube、X、Vimeo、Loom、TikTok、Facebook、Instagram、Spotify 或任意 URL)",
+    "notValidUrl": "不是有效的 URL",
+    "anyUrlWorks": "任何公開 URL 都可以。",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "任意 iframe URL"
+  },
+  "rowActions": {
+    "stop": "停止",
+    "stopHint": "立即停止此執行(送出 SIGTERM)",
+    "restart": "重新啟動",
+    "restartHint": "從原始提示詞重新執行",
+    "runHint": "立即開始此任務"
+  },
+  "schedulesPanel": {
+    "title": "已排程任務",
+    "noJobs": "尚未為該凱比內特設定任何任務。",
+    "heartbeats": "心跳",
+    "noHeartbeats": "尚未設定任何心跳。"
+  },
+  "scheduleTab": {
+    "explainer1": "你的團隊這週在做的一切,都在一個行事曆上。粉色是心跳,綠色是例行任務。點擊任意藥丸即可編輯。",
+    "explainer2": "用這個分頁發現衝突、找出空閒時段,或一眼看出團隊有多忙。",
+    "aboutAria": "關於排程",
+    "modeDay": "日",
+    "modeWeek": "週",
+    "modeMonth": "月"
+  },
+  "mermaidViewer": {
+    "zoomOut": "縮小",
+    "zoomIn": "放大",
+    "resetView": "重設檢視",
+    "syntaxError": "圖表語法錯誤"
+  },
+  "helpPage": {
+    "keyboard": "鍵盤",
+    "skills": "技能",
+    "apiKeys": "API 金鑰",
+    "mcpServers": "MCP 伺服器",
+    "title": "說明",
+    "howTo": "操作指南",
+    "heading": "了解凱比內特如何運作",
+    "subheading": "簡短的示範、導覽和預覽,讓你充分發揮凱比內特的價值。",
+    "ctaWatchTour": "觀看導覽",
+    "ctaWatchDemo": "觀看示範",
+    "ctaCheatSheet": "開啟備忘單",
+    "ctaComingSoon": "即將推出",
+    "discordHeading": "沒找到你想要的?",
+    "discordSubheading": "我們在 Discord — 來打個招呼,提問題,分享你正在做什麼。",
+    "discordCta": "加入 Discord",
+    "items": {
+      "tour": {
+        "title": "認識你的 <accent>凱比內特</accent>。",
+        "description": "你的 AI 團隊。你的知識庫。一站搞定。"
+      },
+      "agents": {
+        "title": "你的 <accent>AI 團隊</accent>。",
+        "description": "雇用主管和專員,把他們分到部門裡,讓他們彼此分派工作。"
+      },
+      "tasks": {
+        "title": "<accent>任務面板</accent>。",
+        "description": "看板、清單和排程三種檢視。依智慧代理或狀態篩選。為每個任務挑選執行環境。"
+      },
+      "knowledge": {
+        "title": "你的 <accent>知識庫</accent>。",
+        "description": "Markdown、CSV、PDF、程式碼、Notebook、Mermaid、影像、音訊 — 一切都行內呈現。你的資料始終在你的電腦上,屬於你,不屬於我們。"
+      },
+      "cabinets": {
+        "title": "由 <accent>AI 團隊</accent> 組成的團隊。",
+        "description": "凱比內特可以巢狀。每一層都是一個獨立的 AI 團隊,有自己的資料、智慧代理和可見範圍 — 而且它們能沿著樹上下協作。"
+      },
+      "routines": {
+        "title": "<accent>例行任務</accent> 與排程。",
+        "description": "讓任務每天上午 9 點跑、每週五跑,或下週一只跑一次。Cron、行事曆或自然語言都行。"
+      },
+      "conversations": {
+        "title": "對話與 <accent>核准</accent>。",
+        "description": "智慧代理提出動作 — 啟動一個任務、安排一個 job — 在任何東西實際執行之前,先由你核准。"
+      },
+      "themes": {
+        "title": "把它變成 <accent>你的</accent>。",
+        "description": "從一組精選的淺色與深色主題裡挑選 — Paper、Slate、Claude、Ink 等等。"
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — 自帶你的 AI。",
+        "description": "Claude、GPT、Gemini、Grok、Codex、Cursor — 你已經付費的服務商,都帶過來。設預設,或按任務覆寫。"
+      },
+      "shortcuts": {
+        "title": "<accent>鍵盤</accent> 快速鍵。",
+        "description": "凱比內特的每一個快速鍵,放在一張可搜尋的卡片裡。任何地方按 ? 重新開啟。依名稱或按鍵篩選 — 涵蓋導覽、編輯、任務、面板和斜線指令。"
+      },
+      "skills": {
+        "title": "為你的智慧代理準備 <accent>技能</accent>。",
+        "description": "可安裝的智慧代理技能 — 模型在執行任務時會取用的劇本。從 GitHub 或 skills.sh 安裝,掛到某個角色上,或在任意輸入框 @ 提及來單次使用。"
+      },
+      "apiKeysItem": {
+        "title": "為你的工具設定 <accent>API 金鑰</accent>。",
+        "description": "把你的 OpenAI、Anthropic 或 GitHub 帳戶連進來一次 — 凱比內特裡所有的智慧代理和技能都會用它。你付自己的帳單,用自己的配額,中間沒有中介。"
+      },
+      "integrations": {
+        "title": "<accent>MCP 伺服器</accent> 與整合。",
+        "description": "MCP 伺服器、Slack、Telegram、Gmail 和 Calendar OAuth — 連一次,凱比內特幫你管 token。即將推出。"
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "鍵盤快速鍵",
+    "filterPlaceholder": "篩選……",
+    "close": "關閉"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "實時終端機",
+    "runningHeartbeat": "心跳執行中……",
+    "memory": "記憶",
+    "recentActivity": "近期活動"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "你的頭像",
+    "preset": "預設",
+    "useInitials": "使用首字母備援",
+    "custom": "自訂"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "偵測到本機應用程式碼變動"
+  },
+  "logsPanel": {
+    "classifiedError": "已分類錯誤",
+    "session": "工作階段",
+    "noEvents": "尚無事件。",
+    "noTranscript": "尚無記錄。"
+  },
+  "conversationResult": {
+    "prompt": "提示詞",
+    "result": "結果",
+    "noSummary": "未擷取摘要。"
+  },
+  "scheduleRowPlus": {
+    "delete": "刪除"
+  },
+  "attachmentPicker": {
+    "attachFiles": "附加檔案"
+  },
+  "demos": {
+    "aiTeam": "AI 團隊",
+    "specialist": "專員",
+    "legal": "法務",
+    "global": "全域",
+    "editor": "編輯器",
+    "slashMenu": "斜線選單"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · 資料",
+    "headlineSentence": "你<accent>唯一的事實來源</accent>。",
+    "paragraphPrefix": "Markdown、PDF、試算表、投影片、圖片、影片、音訊、連結的程式碼庫、嵌入的網頁應用、Google Docs。用 ",
+    "paragraphSuffix": " 提及它們中的任何一個。",
+    "secondParagraphPrefix": "一切都在一個地方 — 這樣你和你的 AI 團隊都從",
+    "sameFiles": "同一份檔案",
+    "secondParagraphSuffix": "裡讀、寫、發佈,而不是一層層的副本。",
+    "mockTitle": "Jane 的凱比內特"
+  },
+  "slideData": {
+    "thailandRootLabel": "泰國之旅",
+    "thailandCaption": "把你所有的檔案放在一個地方檢視。",
+    "videoTitle": "Night market.mp4",
+    "taxRootLabel": "2026 報稅",
+    "taxCaption": "2026 報稅 — 一個互動式的計算器網頁應用,直接嵌在你的凱比內特裡。",
+    "calculatorTitle": "計算機",
+    "liveAppBadge": "即時應用",
+    "taxEstimateLabel": "2026 稅額估算",
+    "income": "收入",
+    "deductions": "扣除",
+    "taxBracket": "稅級",
+    "estimatedTax": "預估稅額",
+    "healthRootLabel": "健康",
+    "healthCaption": "維他命與檢測 — 像頁面一樣好用的試算表。",
+    "csvTitle": "每日維他命.csv",
+    "csvColVitamin": "維他命",
+    "csvColDose": "劑量",
+    "csvColTime": "時間",
+    "csvColDone": "完成",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "程式碼庫 — 連結任何 Git 倉庫,智慧代理可以搜尋。",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · 任務",
+    "typedCommand": "跑 10 個任務,每個寫一首歌,儲存到 @Songs/",
+    "headlineSentence": "準備<accent>開始</accent>了嗎?",
+    "paragraphPrefix": "寫一個任務。跑一個、跑十個、永遠排程下去。用 ",
+    "paragraphSuffix": " 提及頁面,把輸出儲存到你想要的地方。現在你是導演。",
+    "savingFolder": "歌曲/"
+  },
+  "slideAgents": {
+    "persona": "角色",
+    "heartbeat": "心跳",
+    "jobs": "任務",
+    "aiTeam": "AI 團隊",
+    "otherWriter": "撰稿人",
+    "otherOrganizer": "組織者",
+    "idle": "閒置",
+    "researchAnalyst": "研究分析師",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "線上",
+    "personaBody": "「嚴謹的分析師。引用來源。標記互相衝突的說法。」",
+    "heartbeatBody": "每 15 分鐘掃一遍 @Market Research",
+    "jobsBody": "週一 9:00 · 每週競品摘要",
+    "slideNum": "02 · 智慧代理",
+    "paragraphPrefix": "每個智慧代理都有一個",
+    "personaWord": "人格",
+    "paragraphMiddle": ",它有自己的",
+    "scheduleWord": "排程",
+    "paragraphMiddle2": ",還有一份",
+    "memoryWord": "記憶",
+    "paragraphSuffix": "。你的 AI 智慧代理把工作做完,24/7。你只管當個人 — 剩下交給他們。",
+    "aiTeamSentence": "你的 <accent>AI 團隊</accent>。"
+  },
+  "startWork": {
+    "close": "關閉",
+    "selectAgent": "選擇智慧代理",
+    "titleNow": "需要做點什麼?",
+    "titleRecurring": "設定一個循環例行任務",
+    "titleHeartbeat": "按時喚醒這個智慧代理",
+    "titleEdit": "編輯任務",
+    "submitStart": "開始",
+    "submitAddInbox": "加入收件匣",
+    "submitSaveEdit": "儲存變更",
+    "submitCreateRoutine": "建立例行任務",
+    "submitSaveHeartbeat": "儲存心跳",
+    "saving": "儲存中……",
+    "current": "目前",
+    "modeInboxLabel": "→ 收件匣",
+    "modeInboxHint": "儲存到收件匣 — 等你準備好再啟動",
+    "modeNowLabel": "立即執行",
+    "modeNowHint": "現在就開始這個對話",
+    "modeRecurringLabel": "按排程執行",
+    "modeRecurringHint": "按排程執行這個提示詞",
+    "modeHeartbeatLabel": "心跳",
+    "modeHeartbeatHint": "按它自己的節奏喚醒智慧代理",
+    "agentFallback": "智慧代理",
+    "failedToStart": "啟動失敗",
+    "failedToSave": "儲存變更失敗",
+    "failedToSaveHeartbeat": "儲存心跳失敗"
+  },
+  "googleDoc": {
+    "noUrl": "未設定 Google URL",
+    "anyoneWithLink": "擁有連結的任何人",
+    "publishedToWeb": "已發佈到網路"
+  },
+  "feedback": {
+    "close": "關閉",
+    "rolePlaceholder": "如:獨立開發者、SaaS PM、設計系學生、業餘愛好者……",
+    "joinDiscord": "加入 Discord",
+    "header": "Jane 的簡短問候",
+    "howGoing": "目前用得怎麼樣?",
+    "starsCount": "{{n}} 顆星",
+    "starsCountPlural": "{{n}} 顆星",
+    "likeCabinet": "喜歡凱比內特?",
+    "starTooltipUnknown": "在 GitHub 上幫凱比內特按星 — 如果它對你有用,一顆星真的很有幫助",
+    "starTooltipWithCount": "{{count}} 顆 GitHub 星 — 點擊加上你的一顆",
+    "starLabel": "按星",
+    "backgroundLabel": "你的背景是什麼?",
+    "optional": "(選填)",
+    "discordCta": "想直接聊聊,或跟其他凱比內特成員一起?",
+    "maybeLater": "晚點再說",
+    "send": "傳送",
+    "thanksTitle": "謝謝!",
+    "thanksBody": "你的回饋塑造下一步要做什麼。",
+    "copy2Lead": "你已經打開凱比內特好幾次了。謝謝!凱比內特是開源的,而且才剛起步,所以你在這裡說的話真的會改變下一步要做什麼。",
+    "copy2Q1": "你今天打開凱比內特想做什麼?",
+    "copy2Q1Hint": "一句話就夠了。是你打開它要做的事,不是你希望它能做的事。",
+    "copy2Q2": "上次你想做這件事時,你用了什麼來代替凱比內特?",
+    "copy2Q2Hint": "任何工具、應用程式或文件,連紙筆都算。",
+    "copy6Lead": "你回來了,這是最重要的訊號。我想在你忘記之前聽聽那些不順手的地方。",
+    "copy6Q1": "你今天打開凱比內特想做什麼?",
+    "copy6Q1Hint": "一句話就夠了。",
+    "copy6Q2": "這週裡,差點讓你不再用凱比內特的那件事是什麼?",
+    "copy6Q2Hint": "最讓你煩躁的那件事。說具體一點。\"X 讓人混淆\" 比 \"UX 不好\" 有用得多。"
+  },
+  "apiKeysSection": {
+    "cancel": "取消",
+    "pasteHere": "貼到此處",
+    "pasteNewValue": "貼上新值"
+  },
+  "storageBackend": {
+    "title": "儲存後端",
+    "migrationFailed": "遷移失敗"
+  },
+  "linkRepo": {
+    "title": "載入知識",
+    "intro": "將 Cabinet 指向您機器上的任何資料夾。Cabinet 會建立一個符號連結，讓該資料夾的內容顯示在您的知識庫中，並可供 AI 代理作為上下文使用。原始資料夾絕不會被移動或複製。",
+    "symlinkNote": "這會建立一個符號連結 — 檔案會保留在原位。",
+    "autoDetectPlaceholder": "從 git remote 自動偵測(選填)",
+    "shortSummaryPlaceholder": "給智慧代理參考的選填簡短摘要"
+  },
+  "recentTasks": {
+    "ptyMode": "終端機 (PTY) 模式",
+    "revealOlder": "顯示更多較早任務",
+    "showOlder": "顯示較早"
+  },
+  "treeNode": {
+    "openCabinet": "開啟凱比內特檢視",
+    "pageTitlePlaceholder": "頁面標題……",
+    "rename": "重新命名",
+    "openBadge": "開啟",
+    "sectionAdd": "新增至此項目",
+    "sectionThis": "此項目",
+    "addSubPage": "新增子頁面",
+    "newFolder": "新增資料夾",
+    "createFile": "建立新檔案…",
+    "connectKnowledge": "連接知識…",
+    "symlinkTag": "符號連結",
+    "importFile": "匯入檔案…",
+    "importFolder": "匯入資料夾…",
+    "createCabinet": "在此建立 Cabinet",
+    "editSymlink": "編輯符號連結…",
+    "settings": "設定…",
+    "moveTo": "移動至…",
+    "copyRelativePath": "複製相對路徑",
+    "copyFullPath": "複製完整路徑",
+    "openInFinder": "在 Finder 中開啟",
+    "delete": "刪除",
+    "unlink": "取消連結",
+    "folderNamePlaceholder": "資料夾名稱",
+    "creating": "正在建立…",
+    "create": "建立",
+    "addSubPageTitle": "將子頁面新增至「{{name}}」",
+    "newFolderTitle": "在「{{name}}」中建立新資料夾"
+  },
+  "newFile": {
+    "title": "建立新檔案",
+    "subtitle": "選擇檔案類型。準備就緒後，Cabinet 會在編輯器中開啟它。",
+    "groupNative": "在 Cabinet 中編輯",
+    "groupOffice": "Office (空白 — 外部編輯)",
+    "groupGoogle": "Google (已連結)",
+    "namePlaceholder": "檔案名稱",
+    "create": "建立",
+    "creating": "正在建立…",
+    "googleUrlLabel": "Google 網址 (選填)",
+    "googleUrlPlaceholder": "貼上可分享的 Google 連結，或留空稍後新增",
+    "officeNote": "Cabinet 顯示 Office 檔案為唯讀。請使用「在 Finder 中開啟」在桌面應用程式中編輯。",
+    "types": {
+      "markdown": "Markdown 頁面",
+      "markdownDesc": "富文字筆記，可在 Cabinet 中編輯。",
+      "code": "程式碼檔案",
+      "codeDesc": "任何原始碼/文字檔案 — 選擇副檔名",
+      "mermaid": "Mermaid 圖表",
+      "mermaidDesc": "以程式碼形式呈現的流程圖和圖表",
+      "csv": "CSV 表格",
+      "csvDesc": "逗號分隔的試算表資料",
+      "docx": "Word 文件",
+      "docxDesc": "空白 .docx",
+      "xlsx": "Excel 試算表",
+      "xlsxDesc": "空白 .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "空白 .pptx",
+      "gdoc": "Google 文件",
+      "gdocDesc": "嵌入 Google 文件",
+      "gsheet": "Google 試算表",
+      "gsheetDesc": "嵌入 Google 試算表",
+      "gslides": "Google 簡報",
+      "gslidesDesc": "嵌入 Google 簡報"
+    },
+    "codeExtLabel": "副檔名",
+    "googleTag": "Google",
+    "extHint": "只需輸入名稱 — Cabinet 會自動加上 {{ext}} 副檔名。",
+    "createFailed": "無法建立檔案。"
+  },
+  "fileSettings": {
+    "googleTitle": "Google 嵌入設定",
+    "googleKindLabel": "類型",
+    "googleUrlLabel": "Google 網址",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "該文件的分享設定必須是「知道連結的任何人」或「發佈到網路」，才能載入嵌入內容。",
+    "openLink": "在 Google 中開啟",
+    "googleKinds": {
+      "docs": "文件",
+      "sheets": "試算表",
+      "slides": "簡報",
+      "forms": "表單",
+      "drive": "雲端硬碟"
+    },
+    "appTitle": "網路應用程式設定",
+    "modeLabel": "應如何開啟？",
+    "modeWebsite": "頁面檢視",
+    "modeWebsiteDesc": "以內嵌方式開啟，側邊欄和 AI 面板可見。",
+    "modeApp": "網路應用程式",
+    "modeAppDesc": "以全螢幕方式開啟；側邊欄和 AI 面板會自動收合。",
+    "convertNote": "這會切換資料夾中的 .app 標記檔案。您的檔案不會被更改。",
+    "save": "儲存",
+    "saving": "儲存中…",
+    "cancel": "取消",
+    "saveFailed": "無法儲存設定。"
+  },
+  "editSymlink": {
+    "title": "編輯符號連結",
+    "intro": "此知識庫條目是您機器上其他位置資料夾的符號連結。",
+    "kbPathLabel": "知識庫路徑",
+    "targetLabel": "連結至 (磁碟上)",
+    "brokenWarning": "目標資料夾已不存在。請將其重新指向下方有效的資料夾。",
+    "repointLabel": "重新指向新資料夾",
+    "repointHint": "Cabinet 將取代連結以指向此處。檔案絕不會被移動。",
+    "browse": "瀏覽",
+    "nameLabel": "名稱",
+    "descriptionLabel": "描述",
+    "save": "儲存",
+    "saving": "儲存中…",
+    "copyTarget": "複製目標路徑",
+    "saveFailed": "無法更新符號連結。"
+  },
+  "importFolder": {
+    "importing": "正在匯入資料夾…",
+    "failed": "資料夾匯入失敗：{{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "正在載入任務"
+  },
+  "agentList": {
+    "agentLibrary": "智慧代理庫",
+    "newAgent": "新增智慧代理"
+  },
+  "helpVisuals": {
+    "cabinet": "凱比內特",
+    "yourTeam": "你的團隊",
+    "lead": "主管",
+    "specialist": "專員",
+    "tasks": "任務",
+    "todo": "待辦",
+    "doing": "進行中",
+    "done": "已完成",
+    "anythingGoes": "什麼都行",
+    "marketing": "行銷",
+    "product": "產品",
+    "research": "研究",
+    "design": "設計",
+    "routines": "例行任務",
+    "dailyReview": "每日回顧",
+    "weeklyDigest": "每週摘要",
+    "conversation": "對話",
+    "userQuery": "幫我規劃一次為期兩週的泰國之旅……",
+    "agentReply": "我會派遣圖書管理員和編輯過去。",
+    "pendingAction": "待處理動作",
+    "approve": "核准",
+    "decline": "拒絕",
+    "themes": "主題",
+    "providers": "服務商",
+    "comingSoon": "即將推出"
+  },
+  "agentLive": {
+    "dismiss": "關閉",
+    "paused": "智慧代理已暫停"
+  },
+  "conversationLive": {
+    "liveOutput": "實時輸出",
+    "waitingFirstChunk": "等待第一個輸出片段……"
+  },
+  "editIdentityPlus": {
+    "avatar": "頭像",
+    "useIconInstead": "改用圖示"
+  },
+  "pendingActions": {
+    "rejectAll": "拒絕所有待處理動作",
+    "approveAll": "核准並派發所有沒有硬性阻擋的動作"
+  },
+  "aiPanel": {
+    "clearSessions": "清除所有工作階段",
+    "dismiss": "關閉"
+  },
+  "schedulerPlus": {
+    "restartAll": "重新啟動所有智慧代理",
+    "restartSubtitle": "先停止再重新啟用所有排程"
+  },
+  "csvViewer": {
+    "downloadCsv": "下載 CSV",
+    "deleteRow": "刪除列"
+  },
+  "resizableImage": {
+    "resizeLeft": "從左側調整大小",
+    "resizeRight": "從右側調整大小"
+  },
+  "folderIndex": {
+    "listView": "清單檢視",
+    "galleryView": "圖庫檢視"
+  },
+  "linkPopover": {
+    "openLink": "開啟連結",
+    "removeLink": "移除連結"
+  },
+  "officeChrome": {
+    "openInFinder": "在 Finder 中開啟",
+    "downloadOriginal": "下載原始檔"
+  },
+  "sourceViewer": {
+    "copyContents": "複製檔案內容",
+    "downloadFile": "下載檔案"
+  },
+  "versionHistory": {
+    "title": "版本紀錄"
+  },
+  "demoModal": {
+    "closeDemo": "關閉示範",
+    "close": "關閉"
+  },
+  "demosPlus": {
+    "anything": "任何東西",
+    "yours": "你的",
+    "install": "安裝",
+    "attach": "附加"
+  },
+  "narrowViewport": {
+    "dismiss": "關閉窄螢幕提示",
+    "dismissTitle": "在下次工作階段前關閉",
+    "hintPrefix": "凱比內特最適合 ",
+    "hintWidth": "≥960 像素",
+    "hintSuffix": " 寬。在更窄的寬度下,部分介面會顯得擁擠。"
+  },
+  "agentCard": {
+    "runHeartbeat": "執行心跳"
+  },
+  "schedulePicker": {
+    "frequency": "頻率",
+    "onDay": "在某日",
+    "modeInterval": "間隔",
+    "modeDaily": "每日",
+    "modeWeekdays": "平日",
+    "modeWeekly": "每週",
+    "modeMonthly": "每月",
+    "modeCustom": "自訂",
+    "parse": "解析",
+    "showCron": "顯示 cron 表達式",
+    "hideCron": "隱藏 cron 表達式",
+    "weekdayMo": "一",
+    "weekdayTu": "二",
+    "weekdayWe": "三",
+    "weekdayTh": "四",
+    "weekdayFr": "五",
+    "weekdaySa": "六",
+    "weekdaySu": "日"
+  },
+  "slackPanel": {
+    "createChannel": "建立頻道",
+    "thread": "討論串"
+  },
+  "uninstall": {
+    "title": "解除安裝凱比內特"
+  },
+  "treeView": {
+    "drawersAriaLabel": "凱比內特抽屜",
+    "pageTitlePlaceholder": "頁面標題……"
+  },
+  "skillAddPlus": {
+    "cancel": "取消"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "skills.sh 上沒有此技能的稽核資料",
+    "searchPlaceholder": "搜尋 skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "重新整理",
+    "noSkills": "尚無技能。"
+  },
+  "taskDetail": {
+    "close": "關閉 (Esc)",
+    "muteTask": "靜音此任務 — 其已完成的執行將直接進入封存",
+    "unmuteTask": "取消靜音此任務 — 其已完成的執行將重新出現在「剛完成」中"
+  },
+  "rowActionsPlus": {
+    "edit": "編輯",
+    "editHint": "在開始前編輯此草稿",
+    "delete": "刪除",
+    "deleteHint": "永久刪除 — 無法復原"
+  },
+  "taskCard": {
+    "ptyMode": "以終端機 (PTY) 模式執行中"
+  },
+  "undoToast": {
+    "dismiss": "關閉"
+  },
+  "terminalExited": {
+    "openDetails": "開啟結構化詳情(提示詞、產出物、輪次)",
+    "reconnect": "重新連線到守護程式並串流重播原始 PTY"
+  },
+  "terminalTabsPlus": {
+    "resize": "調整終端機面板大小"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "顯示所有智慧代理",
+    "noRecentActivity": "無近期活動",
+    "noAgents": "無智慧代理",
+    "noAgentsConfigured": "尚未為此凱比內特設定任何智慧代理。",
+    "cabinetScope": "凱比內特範圍:",
+    "depthDropdownHeader": "凱比內特範圍",
+    "depthOwnLabel": "僅目前凱比內特",
+    "depthOwnShort": "本",
+    "depthOwnDesc": "只顯示目前凱比內特的頁面、智慧代理和任務。",
+    "depthChildren1Label": "包含直接子層",
+    "depthChildren1Desc": "再加一層子凱比內特。",
+    "depthChildren2Label": "包含兩層",
+    "depthChildren2Desc": "再加兩層子凱比內特。",
+    "depthAllLabel": "包含全部後代",
+    "depthAllShort": "全",
+    "depthAllDesc": "包含整個子樹。",
+    "scopeTooltip": "凱比內特範圍:{{label}}。點擊更改。"
+  },
+  "composerExtras": {
+    "skillAttached": "技能 — 僅附加於此次執行",
+    "pageTitlePlaceholder": "頁面標題……",
+    "active": "已啟用 — 依此排程喚醒智慧代理",
+    "pickCliPty": "選擇要在 PTY 中啟動的 CLI:"
+  },
+  "editorExtras": {
+    "editWithAi": "用 AI 編輯",
+    "jupyterLab": "複製:jupyter lab <path>",
+    "exitApp": "結束應用程式"
+  },
+  "demosExtras": {
+    "aiAccounts": "AI 帳戶",
+    "aiTeams": "AI 團隊"
+  },
+  "whatsNew": {
+    "dismiss": "關閉",
+    "headerPrefix": "v",
+    "readFull": "閱讀完整版本說明"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "我已了解並想繼續。"
+  },
+  "daemonHealth": {
+    "dismiss": "關閉"
+  },
+  "tinyExtras": {
+    "light": "淺色",
+    "home": "首頁",
+    "workspaceGallery": "工作區圖庫",
+    "savingTo": "正在儲存到",
+    "comingSoon": "即將推出",
+    "deleteSkill": "刪除技能",
+    "skillsOffered": "提供的技能:",
+    "allAgents": "所有智慧代理",
+    "noTranscript": "找不到記錄",
+    "noDiff": "無可用差異。",
+    "headsUp": "提醒:",
+    "back": "返回",
+    "editYourAvatar": "編輯你的頭像",
+    "openFullTaskViewer": "開啟完整任務檢視器",
+    "close": "關閉",
+    "copyToClipboard": "複製到剪貼簿",
+    "starOnGithub": "在 GitHub 上為凱比內特按星",
+    "helpMoreFind": "幫助更多人發現這個社群",
+    "joinDiscord": "加入 Discord",
+    "chatWithBuilders": "與打造凱比內特的人聊天",
+    "joinWaitlist": "加入凱比內特雲端候補名單",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "新增到收件匣",
+    "runTaskNow": "立即執行任務",
+    "search": "搜尋",
+    "aiPanel": "AI 面板",
+    "drawers": "抽屜"
+  },
+  "dataLocations": {
+    "title": "你的資料放在哪裡",
+    "whyThisMatters": "為什麼這很重要",
+    "location": "位置",
+    "contains": "包含",
+    "network": "網路",
+    "revealInFinder": "在檔案管理員中顯示",
+    "stored": "已儲存",
+    "resetOnboarding": "重設入門引導"
+  },
+  "rooms": {
+    "switcherTitle": "切換空間",
+    "switchRoom": "空間",
+    "loading": "載入中…",
+    "defaultTag": "首頁",
+    "openInNewWindow": "在新視窗中開啟",
+    "opensBrowserWindow": "開啟新的瀏覽器視窗",
+    "customizeRoom": "編輯空間",
+    "addRoom": "新增空間…",
+    "editTitle": "編輯空間",
+    "editSubtitle": "設定此空間的名稱、圖示、顏色和主題。",
+    "nameLabel": "顯示名稱",
+    "slugHint": "磁碟上的資料夾名稱仍為 {{slug}}。重新命名資料夾是獨立的進階操作。",
+    "iconLabel": "圖示",
+    "colorLabel": "顏色",
+    "colorAuto": "自動",
+    "themeLabel": "主題",
+    "themeGlobal": "使用全域預設值",
+    "editFailed": "無法儲存空間。請再試一次。",
+    "deleteRoom": "刪除空間…",
+    "deleteLastRoomDisabledHint": "您無法刪除您最後一個空間。",
+    "deleteTitle": "刪除此空間？",
+    "deleteSubtitle": "此空間及其中的所有內容將會移至垃圾桶。",
+    "deleteWarningIntro": "將空間移至垃圾桶也會移除：",
+    "deleteWarningPages": "此空間內的頁面和檔案",
+    "deleteWarningAgents": "範圍限定於此空間的代理程式、對話和記憶體",
+    "deleteWarningJobs": "此空間中的排程工作和例行程式",
+    "deleteWarningChat": "此空間的團隊聊天記錄",
+    "deleteWarningSearch": "此空間的搜尋索引 (若還原將自動重建)",
+    "deleteRecoveryNote": "復原：空間已移至 data/.trash/ — 將資料夾移回 data/ 即可還原。",
+    "deleteConfirmLabel": "輸入 {{slug}} 以確認",
+    "deleteConfirmButton": "刪除房間",
+    "deleting": "正在刪除…",
+    "deleteFailed": "無法刪除房間。請再試一次。"
+  },
+  "common": {
+    "actions": {
+      "save": "儲存",
+      "cancel": "取消",
+      "delete": "刪除",
+      "confirm": "確認",
+      "close": "關閉",
+      "open": "開啟",
+      "back": "返回",
+      "next": "下一步",
+      "done": "完成"
+    },
+    "nav": {
+      "goBack": "返回",
+      "goForward": "前進"
+    },
+    "aiPanel": {
+      "open": "開啟 AI 面板",
+      "close": "關閉 AI 面板"
+    },
+    "states": {
+      "loading": "載入中……",
+      "saving": "儲存中……",
+      "saved": "已儲存",
+      "error": "發生錯誤"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "新增頁面",
+      "title": "建立新頁面",
+      "placeholder": "頁面標題……",
+      "create": "建立",
+      "creating": "正在建立……"
+    },
+    "newCabinet": {
+      "trigger": "新增凱比內特",
+      "title": "建立新凱比內特",
+      "subtitle": "凱比內特是一個擁有自己的智慧代理、任務和知識的工作區。",
+      "importFromRegistry": "從註冊表匯入",
+      "nameLabel": "凱比內特名稱",
+      "namePlaceholder": "如:我的新創公司、行銷團隊、研究實驗室……",
+      "selectAgents": "選擇智慧代理",
+      "selectedCount": "已選 {{count}} 個",
+      "createCabinet": "建立凱比內特",
+      "creating": "正在建立……",
+      "createFailed": "建立凱比內特失敗"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "匯出頁面",
+      "copyMarkdown": "複製 Markdown",
+      "copyForLlms": "複製給 LLM",
+      "copyAsHtml": "複製為 HTML",
+      "downloadMarkdown": "下載 .md",
+      "downloadPdf": "下載 PDF",
+      "copiedForLlmToast": "已複製 {{size}} 的 Markdown 給 LLM"
+    },
+    "toolbar": {
+      "heading1": "一級標題",
+      "heading2": "二級標題",
+      "heading3": "三級標題",
+      "bold": "粗體",
+      "italic": "斜體",
+      "underline": "底線",
+      "strikethrough": "刪除線",
+      "inlineCode": "行內程式碼",
+      "link": "連結",
+      "textColor": "文字顏色",
+      "highlight": "螢光",
+      "background": "背景",
+      "bulletList": "項目符號清單",
+      "orderedList": "有序清單",
+      "blockquote": "引用區塊",
+      "checklist": "核對清單",
+      "codeBlock": "程式碼區塊",
+      "divider": "分隔線",
+      "alignLeft": "靠左對齊",
+      "alignCenter": "置中對齊",
+      "alignRight": "靠右對齊",
+      "justify": "左右對齊",
+      "align": "對齊",
+      "table": {
+        "selectCellText": "選取儲存格文字",
+        "addRowAbove": "在上方新增列",
+        "addRowBelow": "在下方新增列",
+        "moveRowUp": "上移該列",
+        "moveRowDown": "下移該列",
+        "deleteRow": "刪除列",
+        "addColumnBefore": "在前方新增欄",
+        "addColumnAfter": "在後方新增欄",
+        "moveColumnLeft": "左移該欄",
+        "moveColumnRight": "右移該欄",
+        "deleteColumn": "刪除欄",
+        "toggleHeaderRow": "切換表頭列",
+        "toggleHeaderColumn": "切換表頭欄",
+        "deleteTable": "刪除表格"
+      },
+      "superscript": "上標",
+      "subscript": "下標",
+      "insertImage": "插入圖片",
+      "insertVideo": "插入影片",
+      "embed": "嵌入",
+      "undo": "復原",
+      "redo": "取消復原",
+      "switchToLtr": "切換為由左至右",
+      "switchToRtl": "切換為由右至左",
+      "scrollLeft": "向左捲動工具列",
+      "scrollRight": "向右捲動工具列",
+      "markdown": "Markdown",
+      "preview": "預覽"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "凱比內特名稱……",
+      "renameWarning": "凱比內特名稱之後無法重新命名(目前如此)。請慎重選擇。"
+    },
+    "templates": {
+      "header": "從範本開始",
+      "browseAll": "瀏覽全部 →"
+    },
+    "quickActions": {
+      "shuffle": "顯示不同建議",
+      "launch10Songs": "並行啟動 10 個寫歌編輯",
+      "dailyReview9am": "每天上午 9 點的每日回顧",
+      "weeklyReview": "下週一做每週回顧",
+      "thailandTrip": "幫我規劃泰國之旅",
+      "physicsApp": "幫我做一個物理學習應用",
+      "summariseRecent": "總結我最近的工作",
+      "recruiterReply": "草擬一封獵頭回覆",
+      "mapArticles": "梳理文章之間的關聯",
+      "physicsCourse": "建立 6 個模組的物理課程",
+      "shortStory": "為短篇小說寫一個大綱",
+      "hourlyStandup": "每小時一次的站立會議提醒",
+      "researchPhone": "幫我研究下一支手機",
+      "translateToSpanish": "把這個凱比內特翻譯成西班牙文",
+      "refactorNotes": "整理我的筆記系統",
+      "birthdayParty": "規劃一場生日派對",
+      "boardUpdate": "草擬一份董事會更新",
+      "customerInterviews": "模擬 5 場使用者訪談"
+    },
+    "goodMorning": "早安",
+    "goodAfternoon": "午安",
+    "goodEvening": "晚安",
+    "greetingWithName": "{{greeting}},{{name}}。",
+    "greetingNoName": "{{greeting}}。",
+    "composerPlaceholder": "我想建立……",
+    "composerDaemonDown": "智慧代理守護程式離線 — 請重新啟動才能傳送"
+  },
+  "onboarding": {
+    "launchHeading": "啟動你的 <accent>凱比內特</accent>",
+    "intro": {
+      "tagline1": "你的知識庫。",
+      "tagline2": "你的 AI 團隊。",
+      "getStarted": "開始使用"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "辦公室",
+        "study": "書房",
+        "lab": "實驗室",
+        "library": "圖書館",
+        "kitchen": "廚房",
+        "family": "家庭",
+        "dining": "飯廳",
+        "studio": "工作室"
+      }
+    },
+    "welcome": {
+      "paragraph": "你的首頁是你的。在裡面,你將為生活的不同部分建立房間:工作、第二大腦、研究、家庭。每個房間都有凱比內特:你的筆記、你的檔案,以及一個在背景默默把事情做完的 AI 團隊。",
+      "namePrompt": "您的姓名？",
+      "heading": "歡迎 <accent>回家</accent>"
+    },
+    "welcomeBack": {
+      "heading": "歡迎回來",
+      "headingNamed": "歡迎回到 {{cabinet}}",
+      "subtitle": "我們在這裡找到一個既有的凱比內特,讓我們把它設定完成。",
+      "continue": "繼續"
+    },
+    "verify": {
+      "passed": "已通過",
+      "notInstalled": "未安裝",
+      "authRequired": "需要驗證",
+      "paymentRequired": "需要付費",
+      "quotaExceeded": "配額/速率限制",
+      "error": "錯誤"
+    },
+    "providerStatus": {
+      "ready": "就緒",
+      "loginRequired": "需要登入",
+      "notInstalled": "未安裝"
+    },
+    "actions": {
+      "back": "返回",
+      "next": "下一步",
+      "continue": "繼續",
+      "skip": "跳過",
+      "finish": "完成",
+      "complete": "完成設定",
+      "copyToClipboard": "複製到剪貼簿"
+    },
+    "cabinetCreated": {
+      "continue": "繼續設定",
+      "heading": "您的 Cabinet 已建立",
+      "subtitle": "一切都已設定完成，隨時可用。",
+      "agentsReady_one": "{{count}} 個代理人已準備就緒",
+      "agentsReady_other": "{{count}} 個代理人已準備就緒",
+      "scheduledJobs_one": "{{count}} 個排程工作",
+      "scheduledJobs_other": "{{count}} 個排程工作",
+      "subCabinets_one": "{{count}} 個子 Cabinet",
+      "subCabinets_other": "{{count}} 個子 Cabinet",
+      "agentsReady": "{{count}} 個代理人已準備就緒",
+      "scheduledJobs": "{{count}} 個排程工作",
+      "subCabinets": "{{count}} 個子 Cabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "您已在名單上 — 我們會與您聯繫。",
+      "aside": "Cabinet Cloud 即將推出。相同產品，無需自行託管的繁瑣設定。",
+      "description": "從任何裝置開啟您的 Cabinet，您的 AI 代理人會持續運作 — 起草、研究、整理 — 即使您的筆記型電腦已關閉。",
+      "error": "發生錯誤。請檢查電子郵件並重試。",
+      "joinWaitlist": "加入候補名單",
+      "onList": "您已在名單上。Cabinet Cloud 開放時，我們會寄送電子郵件通知您。",
+      "sending": "傳送中…",
+      "title": "您的 Cabinet，隨處可用。您的 AI 團隊，隨時待命。",
+      "waitlistSubtitle": "隨處連線。您的 AI 團隊 24/7 全天候運作。"
+    },
+    "discord": {
+      "aside": "如果您想搶先體驗新功能，並且喜歡「來聊天」勝過「請提交工單」，這裡就是您的專屬空間。",
+      "description": "在這裡，回饋會轉化為功能，螢幕截圖會引發討論，而且通常會有人在您遇到邊緣案例之前就發現它。",
+      "joinBadge": "加入",
+      "title": "Discord 是奇妙事物發生的地方。"
+    },
+    "github": {
+      "aside": "Cabinet 是開源的。如果您喜歡這個願景，請幫助我們傳播出去。",
+      "description": "一個 GitHub 星標能幫助更多人發現 Cabinet 並加入社群。",
+      "starsLabel": "{{stars}} 個 GitHub 星標",
+      "title": "幫助 Cabinet 社群成長"
+    },
+    "launch": {
+      "beforeYouLaunch": "啟動前",
+      "defaultCabinetName": "您的 Cabinet",
+      "defaultDescription": "知識庫 + AI 團隊",
+      "knowledgeBaseLabel": "知識庫",
+      "aiTeamLabel": "AI 團隊",
+      "launchCabinet": "啟動 Cabinet",
+      "settingUp": "設定中...",
+      "disclaimerAccess": "<strong>代理程式以完整權限執行。</strong>Cabinet 使用 <flag>--dangerously-skip-permissions</flag> (Claude Code) 以及其他供應商的等效旗標。這與從您自己的終端機執行這些 CLI 工具相同。您設定的任何 MCP 伺服器或工具都可能由代理程式自動呼叫。",
+      "disclaimerBackup": "<strong>定期備份您的資料。</strong>代理程式可以讀取、寫入和刪除您的知識庫和連結儲存庫中的檔案。Cabinet 不對資料遺失負責。您需對您選擇的 AI 供應商及其服務條款負責。",
+      "disclaimerBeta": "<strong>測試版軟體。可能會發生問題。</strong>我們快速發布。破壞性變更可能不經通知即上線。",
+      "legalNotice": "繼續即表示您同意我們的<terms>條款</terms>和<privacy>隱私權政策</privacy>。Cabinet 是一個<oss>開源專案</oss>。",
+      "keepInTouch": "保持聯繫。Cabinet 是開源專案，公開開發，我們很樂意了解接下來要開發什麼。我們保證絕無垃圾郵件。"
+    },
+    "provider": {
+      "agentType": "{{type}} 代理程式",
+      "close": "關閉",
+      "comingSoon": "即將推出",
+      "guide": "指南",
+      "heading": "代理程式供應商",
+      "moreModels": "更多 AI",
+      "install": "安裝",
+      "logIn": "登入",
+      "openTerminalButton": "開啟終端機",
+      "openTerminalDetail": "您需要終端機來執行後續步驟。",
+      "openTerminalError": "無法自動開啟終端機。請手動開啟您的系統終端機。",
+      "openTerminalTitle": "開啟終端機",
+      "recheck": "重新檢查供應商",
+      "rerunVerify": "重新執行驗證",
+      "runVerify": "執行驗證",
+      "setupTitle": "{{name}} 設定",
+      "skipForNow": "暫時跳過",
+      "subtitle": "Cabinet 需要 AI CLI 來驅動您的代理程式。",
+      "verifyExplanation": "驗證會端對端執行供應商的無頭提示，並分類任何失敗，以便您知道要重新檢視哪個步驟。",
+      "verifying": "驗證中…",
+      "failedAtStep": "在步驟 <strong>{{step}}</strong> 失敗"
+    },
+    "roomSetup": {
+      "subtitle": "這個 cabinet 是做什麼用的？每個房間都配備自己的 AI 團隊。",
+      "heading": "選擇一個<accent>房間</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "什麼是 Cabinet？",
+      "body": "Cabinet 是一個專注於您生活或工作某個領域的工作空間。它儲存您的檔案、筆記、工具、代理程式和任務，讓您的 AI 團隊擁有實際提供幫助所需的上下文。",
+      "examplesLabel": "人們如何使用 Cabinet",
+      "example1": "您的新創公司",
+      "example2": "一個 GitHub 儲存庫",
+      "example3": "您的行銷工作",
+      "example4": "一個客戶專案",
+      "example5": "您的個人知識庫"
+    },
+    "access": {
+      "heading": "{{name}} 可以存取什麼？",
+      "subtitle": "選擇此代理程式可以使用的知識和工具。您可以隨時更改。",
+      "defaultAgent": "您的代理程式",
+      "files": "檔案與知識",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "MCP 伺服器",
+      "plugins": "外掛程式",
+      "skills": "技能",
+      "placeholderNote": "您可以在代理程式設定中稍後微調存取權限。"
+    },
+    "heartbeat": {
+      "heading": "{{name}} 應該定期執行嗎？",
+      "subtitle": "定期執行讓代理程式能按排程自行檢查並工作。",
+      "off": "關閉",
+      "offHint": "僅在您要求時執行。建議從此開始。",
+      "daily": "每日",
+      "dailyHint": "每天檢查一次。",
+      "weekly": "每週",
+      "weeklyHint": "每週檢查一次。",
+      "tokenNote": "注意：定期執行會自動啟動代理程式，每次啟動都會使用 AI 權杖（以及您的供應商配額）。您可以隨時更改或關閉此功能。"
+    },
+    "firstTask": {
+      "heading": "提交您的第一個任務",
+      "subtitle": "任務是您將工作交給 {{name}} 的方式。現在撰寫一個，它將會出現在您的 Cabinet 中，準備執行。",
+      "label": "{{name}} 應該先做什麼？",
+      "placeholder": "例如：為新客戶草擬一封歡迎信",
+      "example1": "總結我最新的筆記",
+      "example2": "草擬一份專案計畫",
+      "example3": "研究我們前 3 名的競爭對手",
+      "note": "您可以將此留空，稍後再新增任務。在您連接 AI 供應商之前，不會執行任何操作。"
+    },
+    "rail": {
+      "untitled": "您的 Cabinet",
+      "dataCaption": "您專案的所有檔案和筆記都儲存在這裡。",
+      "teamEmpty": "尚無代理程式。",
+      "teamCaption": "您的 AI 團隊在此工作。",
+      "tasksEmpty": "尚無任務。",
+      "tasksCaption": "您交辦給團隊的工作會顯示在這裡。",
+      "assignedTo": "指派給 {{name}}",
+      "you": "您"
+    },
+    "rooms": {
+      "office": {
+        "label": "辦公室",
+        "tagline": "經營事業、新創公司或副業。",
+        "workspaceLabel": "公司或專案名稱",
+        "workspacePlaceholder": "Acme 公司",
+        "descriptionLabel": "您做什麼？",
+        "descriptionPlaceholder": "我們製作關於 AI 新創公司的 Podcast。",
+        "departmentNoun": "部門",
+        "teamSizeLabel": "團隊規模",
+        "exampleAgents": {
+          "0": "執行長",
+          "1": "編輯"
+        }
+      },
+      "study": {
+        "label": "書房",
+        "tagline": "您的第二大腦 — 寫作、筆記、個人助理。",
+        "workspaceLabel": "為您的 Cabinet 命名",
+        "workspacePlaceholder": "我的書房",
+        "descriptionLabel": "您希望在哪些生活領域獲得協助？",
+        "descriptionPlaceholder": "寫作、電子郵件分類、行事曆、習慣追蹤",
+        "departmentNoun": "領域",
+        "exampleAgents": {
+          "0": "助理",
+          "1": "圖書管理員"
+        }
+      },
+      "lab": {
+        "label": "研究實驗室",
+        "tagline": "學術工作、文獻、教學、論文。",
+        "workspaceLabel": "工作區名稱",
+        "workspacePlaceholder": "心靈哲學",
+        "descriptionLabel": "您的領域是什麼？或您正在研究什麼？",
+        "descriptionPlaceholder": "現象學、意識、哲學導論教學",
+        "departmentNoun": "領域",
+        "exampleAgents": {
+          "0": "研究主管",
+          "1": "圖書館員"
+        }
+      },
+      "family-room": {
+        "label": "家庭房",
+        "tagline": "家庭、家庭行事曆、餐點、孩子。",
+        "workspaceLabel": "家庭名稱",
+        "workspacePlaceholder": "阮氏家庭",
+        "descriptionLabel": "誰住在這裡，需要兼顧哪些事？",
+        "descriptionPlaceholder": "兩位家長、三個孩子、兩所學校、一隻狗",
+        "departmentNoun": "區域",
+        "teamSizeLabel": "家庭人數",
+        "exampleAgents": {
+          "0": "家庭經理",
+          "1": "規劃者"
+        }
+      },
+      "blank": {
+        "label": "空白房間",
+        "tagline": "暫無內容。帶入您自己的代理人，打造您自己的樣貌。",
+        "workspaceLabel": "為您的 cabinet 命名",
+        "workspacePlaceholder": "我的 Cabinet",
+        "descriptionLabel": "它的用途？",
+        "descriptionPlaceholder": "任何用途 — 如果您還不確定，請留空",
+        "departmentNoun": "群組",
+        "exampleAgents": {
+          "0": "由您決定"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "領導層",
+      "marketing": "行銷",
+      "content": "內容",
+      "engineering": "工程",
+      "product-and-design": "產品與設計",
+      "business": "業務",
+      "research": "研究",
+      "finance-and-ops": "財務與營運",
+      "personal": "個人",
+      "second-brain": "第二大腦",
+      "writing": "寫作",
+      "tools": "工具",
+      "life-admin": "生活管理",
+      "from-the-office": "辦公室相關",
+      "writing-and-notes": "寫作與筆記",
+      "other": "其他",
+      "household": "家庭",
+      "admin": "行政",
+      "money": "財務",
+      "product": "產品",
+      "design": "設計",
+      "sales": "銷售",
+      "support": "支援",
+      "analytics": "分析",
+      "finance": "財務",
+      "legal": "法務",
+      "people": "人事"
+    },
+    "demo": {
+      "greeting": {
+        "office": "團隊早安！歡迎來到 {{workspace}}。讓我們立即展開工作吧。",
+        "study": "早上好。您的第二大腦已上線 — 歡迎回到 {{home}}。",
+        "lab": "研究工作台已就緒 — 「{{workspace}}」。今天我們要深入研究什麼？",
+        "family-room": "總部正在啟動 — {{home}}。讓大家各就各位。",
+        "blank": "全新開始 — 「{{workspace}}」。{{home}}，您想在這裡建立什麼？"
+      },
+      "assign": "{{name}}，您可以負責 {{topic}} 嗎？",
+      "fallbackTopic": "接下來是什麼",
+      "office": {
+        "replies": {
+          "0": "好的。我會在今天結束前準備好一份概況總覽。",
+          "1": "已經在草擬計畫了。我會很快在 #content 分享。",
+          "2": "正在設定基礎工作流程。目前看起來不錯。"
+        },
+        "topics": {
+          "0": "競爭者研究",
+          "1": "內容行事曆",
+          "2": "上線計畫"
+        },
+        "closing": "大家精神很好。讓我們有個強勁的第一週。"
+      },
+      "study": {
+        "replies": {
+          "0": "我會整理收件匣，並找出需要您處理的事項。",
+          "1": "行事曆在下午三點前都很空 — 是個寫作的好時機。",
+          "2": "我已經將三份新筆記連結到「每日」索引了。"
+        },
+        "topics": {
+          "0": "今日收件匣整理",
+          "1": "本週寫作",
+          "2": "我的閱讀清單"
+        },
+        "closing": "好的。有任何需要我的地方請通知我 — 否則我不會打擾您。"
+      },
+      "lab": {
+        "replies": {
+          "0": "正在拉取關於此的最新論文 — 一小時內提供摘要草稿。",
+          "1": "之後我會同步參考書目並標記重複項。",
+          "2": "週四的演講大綱幾乎準備好可以審閱了。"
+        },
+        "topics": {
+          "0": "文獻回顧",
+          "1": "週四演講準備",
+          "2": "參考文獻清單"
+        },
+        "closing": "隨時告知我。我會在今天結束前審閱您提交的所有內容。"
+      },
+      "family-room": {
+        "replies": {
+          "0": "四點後行程看起來很空。正在標記重疊的接送時間。",
+          "1": "本週菜單已草擬 — 購物清單已準備好可以審閱。",
+          "2": "孩子們的活動已同步。週五的 DnD 之夜照常舉行。"
+        },
+        "topics": {
+          "0": "今日行程",
+          "1": "餐點計畫",
+          "2": "孩子們的活動"
+        },
+        "closing": "謝謝大家。如果今天有任何變動請通知我。"
+      },
+      "blank": {
+        "replies": {
+          "0": "明白了。隨時準備就緒。",
+          "1": "待命中。",
+          "2": "我會等待指示。"
+        },
+        "topics": {
+          "0": "第一件事",
+          "1": "接下來是什麼",
+          "2": "待解決的問題"
+        },
+        "closing": "準備好時，請告訴我們該怎麼做。"
+      }
+    },
+    "team": {
+      "browseAll": "瀏覽全部",
+      "browseCabinets": "瀏覽 cabinets",
+      "cabinetNameLabel": "Cabinet 名稱",
+      "cancel": "取消",
+      "importButton": "匯入",
+      "importFailed": "匯入失敗",
+      "importFailedConnection": "匯入失敗。請檢查您的連線。",
+      "importTitle": "匯入 {{name}}",
+      "pickAgents": "選擇您的代理人",
+      "required": "必填",
+      "subtitle": "每個 cabinet 都是一個 AI 團隊 — 代理程式、任務和共享知識庫，共同協作。",
+      "heading": "建立<accent>您的</accent>團隊",
+      "nameLabel": "代理人名稱",
+      "namePlaceholder": "例如：編輯、研究員、助理",
+      "roleLabel": "角色",
+      "rolePlaceholder": "例如：寫作助理",
+      "instructionsLabel": "此代理人應執行什麼？",
+      "instructionsPlaceholder": "描述其應如何提供協助。例如：草擬並編輯我的頁面，保持語氣清晰友善，並提出改進建議。",
+      "agentOptionalHint": "選填。您可以跳過此步驟，稍後再從房間內新增代理人。",
+      "agentCount_one": "{{count}} 個代理程式",
+      "agentCount_other": "{{count}} 個代理程式",
+      "jobCount_one": "{{count}} 個任務",
+      "jobCount_other": "{{count}} 個任務",
+      "subCabinetCount_one": "{{count}} 個子 cabinet",
+      "subCabinetCount_other": "{{count}} 個子 cabinet",
+      "cabinetsImported_one": "已匯入 {{count}} 個 cabinet",
+      "cabinetsImported_other": "{{count}} 個 cabinet 已匯入",
+      "agentCount": "{{count}} 個代理程式",
+      "cabinetsImported": "{{count}} 個 cabinet 已匯入",
+      "jobCount": "{{count}} 個工作",
+      "subCabinetCount": "{{count}} 個子 cabinet"
+    }
+  },
+  "search": {
+    "title": "搜尋",
+    "placeholder": "搜尋頁面、智慧代理、任務……",
+    "clearQuery": "清除查詢",
+    "noCommands": "沒有符合的指令。",
+    "scopes": {
+      "all": "全部",
+      "pages": "頁面",
+      "agents": "智慧代理",
+      "tasks": "任務"
+    },
+    "groups": {
+      "pages": "頁面",
+      "agents": "智慧代理",
+      "tasks": "任務"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "語言",
+      "description": "變更語言和閱讀方向。既有頁面會保留各自的文件方向。",
+      "english": "英文",
+      "hebrew": "希伯來文",
+      "chineseSimplified": "簡體中文",
+      "chineseTraditional": "繁體中文",
+      "moreLanguages": "更多語言",
+      "moreLanguagesHint": "點擊任一語言告訴我們你希望凱比內特支援它 — 我們會優先處理最受歡迎的語言。",
+      "comingSoon": "即將推出",
+      "requestSubmitted": "感謝!我們已記錄你對 {{language}} 的請求。我們會優先處理最受歡迎的語言。",
+      "requestFailed": "無法連線到伺服器。請稍後再試。"
+    },
+    "appearance": {
+      "title": "外觀",
+      "theme": "主題",
+      "themeDescription": "為介面選擇主題。",
+      "matchSystem": "跟隨系統",
+      "matchSystemDescription": "隨作業系統外觀自動切換。",
+      "lightThemes": "淺色主題",
+      "darkThemes": "深色主題",
+      "lightVariant": "淺色變體",
+      "darkVariant": "深色變體",
+      "sidebar": "側邊欄",
+      "showHiddenFiles": "顯示隱藏檔案",
+      "sidebarDescription": "配置檔案在侧边栏中的显示方式。",
+      "showHiddenFilesHint": "显示以点开头的檔案和檔案夹(例如 .env、.git)"
+    },
+    "tabs": {
+      "profile": "個人資料",
+      "providers": "服務商",
+      "skills": "技能",
+      "storage": "儲存",
+      "integrations": "整合",
+      "notifications": "通知",
+      "appearance": "外觀",
+      "updates": "更新",
+      "about": "關於"
+    },
+    "page": {
+      "title": "設定",
+      "refresh": "重新整理",
+      "groupYou": "你",
+      "groupWorkspace": "工作區",
+      "groupApp": "應用程式"
+    },
+    "common": {
+      "copyToClipboard": "複製到剪貼簿",
+      "categoriesAriaLabel": "設定類別",
+      "loading": "載入中……",
+      "connect": "連線",
+      "recommended": "推薦"
+    },
+    "integrationsPreview": {
+      "comingSoon": "即將推出",
+      "hint": "外部整合與內建工具的連接功能即將上線。"
+    },
+    "storage": {
+      "dataDirectory": "資料目錄",
+      "restartRequired": "需要重新啟動",
+      "dataDirectoryDescription": "所有知识库内容都存放在该目錄。修改路径需要重启。",
+      "restartHint": "重启凱比內特后,資料目錄将变更。",
+      "currentPath": "当前路径",
+      "loadingPath": "加载中...",
+      "changeDirectory": "更改目錄",
+      "directoryPlaceholder": "/path/to/data",
+      "browse": "浏览",
+      "save": "保存",
+      "openInFinder": "在 Finder 中打开",
+      "envVarHint1": "你也可以設定环境变量 ",
+      "envVarHint2": " ,它的优先级高于该設定。",
+      "failedToSave": "保存失败。",
+      "failedToSaveDir": "保存資料目錄失败。"
+    },
+    "updates": {
+      "checking": "正在檢查凱比內特更新……"
+    },
+    "providers": {
+      "title": "智慧代理服務商",
+      "defaultModel": "預設模型",
+      "setupGuide": "設定指南",
+      "troubleshoot": "排查 AI 服務商问題",
+      "subtitle": "配置 AI 智能体服務商。CLI 智能体通过终端執行,API 智能体直接调用 API。",
+      "defaultRuntime": "預設執行时",
+      "defaultRuntimeHint": "一般对话和回退執行会使用這個服務商/模型/强度。",
+      "cliAgents": "CLI 智能体",
+      "apiAgents": "API 智能体",
+      "ready": "就绪",
+      "installedNotLoggedIn": "已安装但未登錄",
+      "notInstalled": "未安装",
+      "emptyMatrix": "未配置任何服務商。在下方添加一個。"
+    },
+    "notifications": {
+      "channels": "通知頻道",
+      "alertRules": "警示規則",
+      "alwaysOn": "始終開啟",
+      "comingSoon": "即將推出",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "配置当智能体需要你关注时如何通知你。",
+      "rulesHint": "以下事件会自动触发通知:",
+      "previewHint": "浏览器推送、Telegram、Slack 和邮件通知。",
+      "channelPushName": "浏览器推送",
+      "channelPushDesc": "当凱比內特标签页打开或 PWA 已安装时即时提醒",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "通过 Telegram 机器人即时移动通知",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "转发提醒到团队的 Slack 频道",
+      "channelEmailName": "邮件摘要",
+      "channelEmailDesc": "提醒和智能体活动的批量摘要",
+      "ruleAlertsEvent": "#alerts 频道消息",
+      "ruleAlertsDesc": "任意智能体发布到 alerts 频道",
+      "ruleMentionsEvent": "@human 提及",
+      "ruleMentionsDesc": "智能体在任意频道提及 @human 时",
+      "ruleFloorEvent": "目标下限被突破",
+      "ruleFloorDesc": "某個目标降到了最小阈值以下",
+      "ruleHealthEvent": "智能体健康下降",
+      "ruleHealthDesc": "连续 3 次或更多心跳失败"
+    },
+    "about": {
+      "cabinet": "凱比內特",
+      "version": "版本",
+      "release": "發行版",
+      "framework": "框架",
+      "storage": "儲存",
+      "privacy": "隱私",
+      "telemetry": "匿名使用遙測",
+      "tagline": "AI 优先的自托管知识库与創业 OS。",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "本地檔案系统",
+      "aiLabel": "AI",
+      "aiValue": "由本地 AI CLI 驱动",
+      "philosophy": "所有内容都以 markdown 檔案的形式存在你的硬盤上。人类定义意图,智能体执行工作。知识库是两者共享的記忆。",
+      "privacyBody": "凱比內特发送匿名使用遥測,以說明我们改进产品。不收集檔案内容、路径、提示词或密钥。",
+      "privacyLink": "收集了什么?",
+      "telemetryEnvDisabled": "被 CABINET_TELEMETRY_DISABLED=1(环境变量)禁用。",
+      "telemetryHint": "仅收集事件計數、版本和平台信息。关闭后停止发送。",
+      "cabinetCloud": "凱比內特云",
+      "cloudBody": "随时随地连接到你的凱比內特,而 AI 团队 24/7 為你工作。在下面留下邮箱,凱比內特云开放时我们会通知你。",
+      "cloudAlready": "你已经在名单上了 — 我们会联系你。",
+      "cloudSuccess": "你已经在名单上。凱比內特云开放时我们会发邮件。",
+      "cloudSending": "发送中……",
+      "cloudJoinWaitlist": "加入候补名单",
+      "cloudError": "出了点问題。檢查邮箱再试一次。",
+      "connectTitle": "联系",
+      "connectBody": "取得說明、分享反馈,或者來打個招呼。",
+      "joinDiscord": "加入 Discord"
+    },
+    "profile": {
+      "title": "個人資料",
+      "name": "姓名",
+      "namePlaceholder": "Jane",
+      "displayName": "顯示名稱",
+      "role": "角色",
+      "rolePlaceholder": "建造者",
+      "avatar": "頭像",
+      "accentColor": "強調色",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "備援圖示",
+      "useIconInstead": "改用圖示",
+      "searchAvatars": "搜尋頭像……",
+      "searchIcons": "搜尋圖示……",
+      "howAppear": "你在对话中和整個應用里的呈现方式。",
+      "youFallback": "你",
+      "displayNameHint": "在对话中显示。預設使用「姓名」。",
+      "iconHint": "未設定头像图片时使用。再次点击清除。",
+      "tintHint": "未設定图片时為回退头像上色。",
+      "save": "保存",
+      "saving": "正在保存……",
+      "saved": "已保存",
+      "browseAll": "浏览全部 ({{count}})",
+      "showFavorites": "顯示收藏",
+      "showFewer": "顯示較少"
+    },
+    "workspace": {
+      "title": "工作區",
+      "name": "工作區名稱",
+      "namePlaceholder": "我的凱比內特",
+      "description": "描述",
+      "descriptionPlaceholder": "你在做什麼?",
+      "teamSize": "團隊規模",
+      "teamSizePlaceholder": "單人 / 2–5 / 6–20 / 20+",
+      "subtitle": "入门时記錄的内容。智能体在规划工作时会读取。"
+    }
+  },
+  "sidebar": {
+    "settings": "設定",
+    "createPage": "建立頁面",
+    "newPage": "新增頁面",
+    "newAgent": "新增智慧代理",
+    "newTask": "新增任務",
+    "archive": "封存",
+    "trash": "垃圾桶",
+    "search": "搜尋",
+    "agents": "智慧代理",
+    "tasks": "任務",
+    "missions": "任務",
+    "drawerData": "資料",
+    "drawerAgents": "團隊",
+    "drawerTasks": "任務",
+    "goHome": "回到首頁",
+    "brandWord": "卡比內特",
+    "refresh": "重新整理側邊欄",
+    "refreshDescription": "重新整理側邊欄(重新讀取資料夾)",
+    "collapseSidebar": "折疊側邊欄",
+    "expandSidebar": "展開側邊欄",
+    "resizeHandle": "調整側邊欄 — 雙擊重設",
+    "resetWidth": "雙擊重設寬度",
+    "refreshedNoChanges": "已重新整理 — 無變更。",
+    "refreshedWithChanges": "已重新整理 — 新增 {{added}},移除 {{removed}}。",
+    "refreshFailed": "重新整理失敗。",
+    "searchPlaceholder": "搜尋檔案…",
+    "searchSearching": "搜尋中…",
+    "searchNoResults": "沒有符合「{{query}}」的檔案"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "狀態列",
+      "askAiAriaLabel": "請 AI 編輯此頁面",
+      "askAiPlaceholder": "如何編輯此頁面?",
+      "sendHint": "↵ 送出"
+    },
+    "server": {
+      "serverStatusAriaLabel": "伺服器狀態 — 點擊查看詳情",
+      "checking": "正在檢查伺服器狀態……",
+      "allRunning": "全部服務執行中",
+      "appNotResponding": "應用程式伺服器無回應",
+      "daemonDownNoProviders": "守護程式無回應;無可用智慧代理服務商",
+      "daemonDown": "守護程式無回應",
+      "noProviders": "沒有可用的智慧代理服務商",
+      "checkingShort": "檢查中……",
+      "online": "線上",
+      "offline": "離線",
+      "degraded": "受損",
+      "allSystemsRunning": "全部系統運行中",
+      "serviceDisruption": "服務中斷",
+      "appServer": "應用程式伺服器",
+      "daemon": "守護程式",
+      "agentProviders": "智慧代理服務商",
+      "running": "執行中",
+      "down": "下線",
+      "lastSeen": "最後一次回應:{{when}}",
+      "appWorking": "頁面、編輯器、搜尋和檔案管理正常運作。",
+      "appDown": "頁面、編輯器、搜尋和儲存不可用。仍可閱讀已快取的內容。",
+      "daemonWorking": "AI 智慧代理、排程任務和網頁終端機正常運作。",
+      "daemonDownDescription": "AI 智慧代理、排程任務和網頁終端機不可用。頁面編輯仍可運作。",
+      "available": "可用",
+      "noneReady": "無可用",
+      "providerReady": "就緒",
+      "providerNotLoggedIn": "未登入",
+      "providerNotInstalled": "未安裝",
+      "install": "安裝",
+      "howToFix": "如何修復"
+    },
+    "save": {
+      "retryTitle": "點擊以重試失敗的儲存",
+      "retryAriaLabel": "儲存失敗 — 點擊重試",
+      "autoSaving": "自動儲存中……",
+      "forceSave": "強制儲存:⌘S",
+      "editing": "編輯中 — 暫停後會自動儲存",
+      "wordCountTitle": "此頁面的字數(排除 Markdown 語法)",
+      "savedJustNow": "剛剛",
+      "savedNever": "從未",
+      "savedAgoSeconds": "{{n}} 秒前",
+      "savedAgoMinutes": "{{n}} 分鐘前",
+      "savedAgoHours": "{{n}} 小時前",
+      "savedAgoDays": "{{n}} 天前",
+      "saveFailedRetry": "儲存失敗 — 重試",
+      "savingText": "儲存中…",
+      "savedText": "已儲存",
+      "editingText": "編輯中…",
+      "savedAgo": "已儲存 · {{ago}}",
+      "word": "字",
+      "words": "字"
+    },
+    "git": {
+      "statusModified": "已修改",
+      "statusNew": "新增",
+      "statusAdded": "已新增",
+      "statusDeleted": "已刪除",
+      "statusRenamed": "已重新命名",
+      "commitMessageAriaLabel": "提交訊息"
+    },
+    "help": {
+      "menuAriaLabel": "開啟說明與社群選單",
+      "menuTitle": "說明與社群",
+      "demos": "示範、影片與指南",
+      "discord": "在 Discord 上聊天",
+      "discordSubtitle": "支援與回饋",
+      "github": "在 GitHub 上貢獻",
+      "githubSubtitle": "原始碼、議題、PR",
+      "ifUseful": "如果你覺得它有用",
+      "label": "說明",
+      "starsAriaLabel": "{{count}} 個 GitHub star — 在 GitHub 上開啟 Cabinet",
+      "starsTitle": "{{count}} 個 GitHub star — 在 GitHub 上為 Cabinet 點星",
+      "share": "分享",
+      "shareSubtitle": "複製邀請連結並分享出去",
+      "shareCopied": "你太棒了，{{name}} 🩷 謝謝你把未來的 Cabinet 成員帶進來。連結已複製，快去分享這份熱愛吧！",
+      "shareFailed": "無法複製連結",
+      "friend": "朋友"
+    },
+    "git2": {
+      "allCommitted": "全部已提交",
+      "uncommittedFile": "{{count}} 個未提交的檔案",
+      "uncommittedFiles": "{{count}} 個未提交的檔案",
+      "uncommittedFilesAria": "{{count}} 個未提交的檔案 — 點擊查看列表",
+      "uncommittedFileTip": "點擊查看未提交的檔案",
+      "uncommittedFilesTip": "點擊查看未提交的檔案",
+      "uncommittedFilesHeading": "{{count}} 個未提交的檔案",
+      "uncommittedFilesHeadingPlural": "{{count}} 個未提交的檔案",
+      "truncatedHint": "僅顯示前 {{count}} 個檔案 — 執行 `git status` 查看完整列表。",
+      "commitDefault": "更新 {{count}} 個檔案",
+      "commitDefaultPlural": "更新 {{count}} 個檔案",
+      "committing": "正在提交……",
+      "commit": "提交",
+      "commitFailed": "提交失敗",
+      "sync": "同步",
+      "syncTitle": "從 GitHub 拉取最新並重新整理",
+      "syncTitleWithLast": "從 GitHub 拉取最新並重新整理。上次同步:{{when}}。",
+      "syncAriaLabel": "從 GitHub 拉取最新變更並重新整理",
+      "syncAriaLabelWithLast": "從 GitHub 拉取最新變更並重新整理。上次同步:{{when}}。",
+      "terminal": "終端機",
+      "openTerminal": "開啟終端機",
+      "newTerminalTab": "新增終端機分頁",
+      "pulling": "拉取中…",
+      "pulled": "已從遠端更新",
+      "upToDate": "已是最新",
+      "pullFailed": "拉取失敗"
+    },
+    "update2": {
+      "updateAvailable": "{{version}} 版本可用",
+      "updateAvailableTip": "凱比內特 {{version}} 可用"
+    },
+    "common": {
+      "dismiss": "關閉",
+      "close": "關閉",
+      "openSettings": "開啟設定以查看已安裝的更新"
+    },
+    "misc": {
+      "restartToFinishUpdate": "重新啟動以完成更新"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "從原始提示詞重新啟動此任務",
+      "markAsDone": "將此任務標記為已完成",
+      "viewAriaLabel": "任務檢視",
+      "terminal": "終端機",
+      "transcript": "記錄",
+      "details": "詳情",
+      "transcriptTitle": "Claude Code 原生工作階段 JSONL",
+      "transcriptHint": "讀取 ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "返回",
+      "copyPrompt": "複製原始提示詞",
+      "gracefulExit": "優雅關閉 CLI(向 PTY 寫入 /exit)",
+      "sendSigterm": "向執行中的 PTY 行程傳送 SIGTERM",
+      "moreActions": "更多動作",
+      "ptyMode": "以終端機 (PTY) 模式執行中",
+      "compactContext": "將先前的輪次折疊為摘要以釋出上下文視窗",
+      "noSummary": "尚無摘要。",
+      "sessionEnded": "工作階段已結束 — 輸入即可在同一終端機中繼續。",
+      "terminalLive": "終端機實時運作中。你的下一條提示詞將在本輪完成後排隊。"
+    }
+  },
+  "tour": {
+    "ariaLabel": "認識你的凱比內特之旅",
+    "skip": "跳過",
+    "skipAriaLabel": "跳過導覽",
+    "back": "返回",
+    "next": "下一步",
+    "writeFirstTask": "寫下你的第一個任務",
+    "goToSlide": "前往投影片 {{n}}",
+    "starterTask": "我們來聊聊我的目標和我想在這裡實現什麼,然後把它記錄到一個新的「關於」頁面中。",
+    "savingTo": "正在儲存到 ",
+    "introTitle": "認識你的 <accent>凱比內特</accent>。",
+    "introSubtitle": "你的 AI 團隊。你的知識庫。一站搞定。",
+    "cabinetTitle": "凱比內特"
+  },
+  "taskRail": {
+    "title": "最近與執行中的任務",
+    "hide": "隱藏任務列",
+    "show": "顯示任務列",
+    "empty": "尚無任務",
+    "itemRunning": "{{title}} · 執行中 · {{when}}",
+    "itemNeedsReply": "{{title}} · 等待回覆",
+    "itemFailed": "{{title}} · 失敗 · {{when}}",
+    "itemDone": "{{title}} · 已完成 · {{when}}",
+    "itemArchived": "{{title}} · 已封存",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} 個執行中 — 顯示任務列"
+  },
+  "chrome": {
+    "nav": {
+      "home": "首頁",
+      "agents": "代理程式",
+      "tasks": "任務",
+      "ai": "AI",
+      "menu": "選單",
+      "primaryAriaLabel": "主要"
+    },
+    "returnTo": {
+      "task": "任務",
+      "tasks": "任務",
+      "agent": "代理程式",
+      "agents": "代理程式",
+      "cabinet": "Cabinet",
+      "home": "首頁",
+      "settings": "設定",
+      "registry": "註冊表",
+      "back": "返回",
+      "backTo": "返回 {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "預設",
+      "dark": "深色",
+      "darkThemes": "深色主題",
+      "lightThemes": "淺色主題"
+    },
+    "update": {
+      "restartTitle": "重新啟動 Cabinet 以完成更新",
+      "availableTitle": "Cabinet {{version}} 已推出",
+      "updatesTitle": "Cabinet 更新",
+      "description": "Cabinet 會自動檢查新版本。由於本產品仍處於實驗階段，請在安裝更新前備份您的資料。",
+      "later": "稍後",
+      "releaseNotes": "版本資訊"
+    },
+    "daemon": {
+      "fixHintElectron": "結束並重新啟動 Cabinet 以重新啟動代理程式常駐服務。",
+      "fixHintDev": "執行 `npm run dev:daemon` (或重新啟動 `npm run dev:all`) 以重新啟動代理程式常駐服務。",
+      "notResponding": "代理程式常駐服務沒有回應。",
+      "willFail": "代理程式、工作和 AI 請求在其恢復正常前將會失敗。{{fixHint}}"
+    }
+  }
+}

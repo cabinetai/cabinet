@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from "react";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Header } from "@/components/layout/header";
 import { KBEditor } from "@/components/editor/editor";
@@ -8,52 +8,155 @@ import { WebsiteViewer } from "@/components/editor/website-viewer";
 import { PdfViewer } from "@/components/editor/pdf-viewer";
 import { CsvViewer } from "@/components/editor/csv-viewer";
 import { SourceViewer } from "@/components/editor/source-viewer";
+import { NotebookViewer } from "@/components/editor/notebook-viewer";
 import { ImageViewer } from "@/components/editor/image-viewer";
 import { MediaViewer } from "@/components/editor/media-viewer";
 import { MermaidViewer } from "@/components/editor/mermaid-viewer";
 import { FileFallbackViewer } from "@/components/editor/file-fallback-viewer";
+import dynamic from "next/dynamic";
+import { GoogleDocViewer } from "@/components/editor/google-doc-viewer";
+
+const DocxViewer = dynamic(
+  () => import("@/components/editor/office/docx-viewer").then((m) => m.DocxViewer),
+  { ssr: false }
+);
+const XlsxViewer = dynamic(
+  () => import("@/components/editor/office/xlsx-viewer").then((m) => m.XlsxViewer),
+  { ssr: false }
+);
+const PptxViewer = dynamic(
+  () => import("@/components/editor/office/pptx-viewer").then((m) => m.PptxViewer),
+  { ssr: false }
+);
 import { HomeScreen } from "@/components/home/home-screen";
-import { AgentsWorkspace } from "@/components/agents/agents-workspace";
-import { JobsManager } from "@/components/jobs/jobs-manager";
-import { SettingsPage } from "@/components/settings/settings-page";
+import type { ConversationMeta } from "@/types/conversations";
 import { TerminalTabs } from "@/components/terminal/terminal-tabs";
-import { AIPanel } from "@/components/ai-panel/ai-panel";
-import { SearchDialog } from "@/components/search/search-dialog";
-import { KeyboardShortcuts } from "@/components/shortcuts/keyboard-shortcuts";
+import { TaskDetailPanel } from "@/components/tasks/task-detail-panel";
+import { TaskRail } from "@/components/tasks/rail/task-rail";
+import { TaskRailProvider } from "@/components/tasks/rail/task-rail-context";
+import { SearchPalette } from "@/components/search/search-palette";
+import { KeyboardShortcutsModal } from "@/components/help/keyboard-shortcuts-modal";
+import { WhatsNewCard } from "@/components/help/whats-new-card";
+import { NarrowViewportHint } from "@/components/layout/narrow-viewport-hint";
+import { ConfirmDialogHost } from "@/components/ui/confirm-dialog-host";
+import { useGlobalHotkeys } from "@/hooks/use-global-hotkeys";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { StatusBar } from "@/components/layout/status-bar";
-import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
+import { DaemonHealthBanner } from "@/components/layout/daemon-health-banner";
+import { TourModal } from "@/components/onboarding/tour/tour-modal";
+import { useTour } from "@/components/onboarding/tour/use-tour";
+import {
+  DataDirPrompt,
+  isDataDirConfirmed,
+} from "@/components/onboarding/data-dir-prompt";
+import { FeedbackPopup } from "@/components/onboarding/feedback-popup";
+import { StartWorkDialog, type StartWorkMode } from "@/components/composer/start-work-dialog";
+import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
+import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
+import type { CabinetAgentSummary } from "@/types/cabinets";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import { UpdateDialog } from "@/components/layout/update-dialog";
 import { NotificationToasts } from "@/components/layout/notification-toasts";
+import { SystemToasts } from "@/components/layout/system-toasts";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { useIsMobile } from "@/hooks/use-is-mobile";
+
+// Section components are only rendered when the user navigates to them —
+// load them on demand to keep the first-paint bundle small. Previously all of
+// these (together ~15k lines of code including OnboardingWizard) shipped in
+// the home-page chunk.
+const AgentsWorkspaceV2 = dynamic(
+  () =>
+    import("@/components/agents/v2/agents-workspace-v2").then(
+      (m) => m.AgentsWorkspaceV2
+    ),
+  { ssr: false }
+);
+const AgentDetailV2 = dynamic(
+  () => import("@/components/agents/agent-detail-v2").then((m) => m.AgentDetailV2),
+  { ssr: false }
+);
+const TasksBoard = dynamic(
+  () => import("@/components/tasks/board").then((m) => m.TasksBoard),
+  { ssr: false }
+);
+const TaskConversationPage = dynamic(
+  () =>
+    import("@/components/tasks/conversation/task-conversation-page").then(
+      (m) => m.TaskConversationPage
+    ),
+  { ssr: false }
+);
+const SettingsPage = dynamic(
+  () => import("@/components/settings/settings-page").then((m) => m.SettingsPage),
+  { ssr: false }
+);
+const HelpPage = dynamic(
+  () => import("@/components/help/help-page").then((m) => m.HelpPage),
+  { ssr: false }
+);
+const CabinetView = dynamic(
+  () => import("@/components/cabinets/cabinet-view").then((m) => m.CabinetView),
+  { ssr: false }
+);
+const RegistryBrowser = dynamic(
+  () =>
+    import("@/components/registry/registry-browser").then((m) => m.RegistryBrowser),
+  { ssr: false }
+);
+const OnboardingWizard = dynamic(
+  () =>
+    import("@/components/onboarding/onboarding-wizard").then(
+      (m) => m.OnboardingWizard
+    ),
+  { ssr: false }
+);
+import { findNodeByPath } from "@/lib/cabinets/tree";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useHashRoute } from "@/hooks/use-hash-route";
 import { useTreeStore } from "@/stores/tree-store";
 import { useAppStore } from "@/stores/app-store";
-import type { TreeNode } from "@/types";
+import { useEditorStore } from "@/stores/editor-store";
+import { useRoomsStore } from "@/stores/rooms-store";
 
 const DISMISSED_UPDATE_STORAGE_KEY = "cabinet.dismissed-update-version";
+const WIZARD_DONE_STORAGE_KEY = "cabinet.wizard-done";
+// sessionStorage key set by Settings → Storage → Reset onboarding. While
+// present we (a) skip the silent-accept of dataDirConfirmed and (b) skip the
+// agents-config self-correction that would otherwise rewrite wizard-done="1"
+// from server state — both of which silently undid Reset before this guard.
+// Cleared when the wizard completes; auto-clears on tab close (sessionStorage).
+export const ONBOARDING_RESET_MARKER_KEY = "cabinet.onboarding-reset-in-progress";
 
-function findNode(nodes: TreeNode[], path: string): TreeNode | null {
-  for (const node of nodes) {
-    if (node.path === path) return node;
-    if (node.children) {
-      const found = findNode(node.children, path);
-      if (found) return found;
-    }
+function isOnboardingResetInProgress(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(ONBOARDING_RESET_MARKER_KEY) === "1";
+  } catch {
+    return false;
   }
-  return null;
 }
 
+// useLayoutEffect logs a no-op warning during SSR; alias to useEffect on the
+// server so we get pre-paint sync on the client without console noise.
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 export function AppShell() {
+  useGlobalHotkeys();
+  const isMobile = useIsMobile();
   const loadTree = useTreeStore((s) => s.loadTree);
   const nodes = useTreeStore((s) => s.nodes);
   const selectedPath = useTreeStore((s) => s.selectedPath);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const terminalOpen = useAppStore((s) => s.terminalOpen);
+  const terminalPosition = useAppStore((s) => s.terminalPosition);
+  const taskRailOpen = useAppStore((s) => s.taskRailOpen);
+  const setTerminalCwd = useAppStore((s) => s.setTerminalCwd);
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
   const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
-  const aiPanelCollapsed = useAppStore((s) => s.aiPanelCollapsed);
+  const setTaskPanelConversation = useAppStore((s) => s.setTaskPanelConversation);
   const {
     update,
     refreshing: updateRefreshing,
@@ -70,8 +173,43 @@ export function AppShell() {
   // Sync navigation state with URL hash + localStorage
   useHashRoute();
 
-  // Onboarding wizard state
+  // Onboarding wizard state. We initialize to `null` on both server and first
+  // client render to avoid a hydration mismatch, then synchronously rehydrate
+  // from localStorage in a layout effect (runs before paint, so cached users
+  // still skip the blank-screen flash that used to appear on refresh).
   const [showWizard, setShowWizard] = useState<boolean | null>(null);
+  const [showDataDirPrompt, setShowDataDirPrompt] = useState<boolean>(false);
+  useIsoLayoutEffect(() => {
+    try {
+      const resetting = isOnboardingResetInProgress();
+      const wizardDone =
+        window.localStorage.getItem(WIZARD_DONE_STORAGE_KEY) === "1";
+      if (resetting) {
+        // Explicit reset in progress: re-show the data-dir picker (with the
+        // current folder pre-filled) so the user can confirm or change it
+        // before the wizard re-runs. Do NOT silent-accept dataDirConfirmed —
+        // that would skip the picker the user just asked to see again.
+        if (!isDataDirConfirmed()) {
+          setShowDataDirPrompt(true);
+        }
+        // Leave showWizard=null so the agents-config effect (below) can flip
+        // it to true regardless of whether workspace.json exists on disk.
+      } else if (wizardDone) {
+        setShowWizard(false);
+        // Existing user — silent-accept their current data dir choice so the
+        // first-launch picker never ambushes them post-update.
+        if (!isDataDirConfirmed()) {
+          window.localStorage.setItem("cabinet.dataDirConfirmed", "silent");
+        }
+      } else if (!isDataDirConfirmed()) {
+        // First-run users see the data-dir picker before the wizard so they
+        // can confirm or override the default before the wizard writes anything.
+        setShowDataDirPrompt(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [dismissedUpdateVersion, setDismissedUpdateVersion] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
@@ -82,21 +220,252 @@ export function AppShell() {
     }
   });
 
+  const loadProviders = useAppStore((s) => s.loadProviders);
+
+  // Audit #017: page tab title should use the human title from frontmatter
+  // when present, falling back to the slug. Read from the editor store so the
+  // title reflects the currently-loaded page (selectedPath can race ahead of
+  // the actual editor content during loadPage).
+  const editorFrontmatterTitle = useEditorStore((s) => s.frontmatter?.title);
+  const editorCurrentPath = useEditorStore((s) => s.currentPath);
+
+  // Audit #045: when "Match system" is on, listen to OS color-scheme
+  // changes and re-apply the appropriate light/dark variant from the
+  // stored pair without a reload.
+  useEffect(() => {
+    let cancelled = false;
+    const apply = async () => {
+      const themesMod = await import("@/lib/themes");
+      if (cancelled) return;
+      const mode = themesMod.getStoredThemeMode();
+      if (mode !== "system") return;
+      const active = themesMod.resolveActiveTheme();
+      if (active) themesMod.applyTheme(active);
+    };
+    const mq =
+      typeof window !== "undefined"
+        ? window.matchMedia("(prefers-color-scheme: dark)")
+        : null;
+    const handler = () => {
+      void apply();
+    };
+    mq?.addEventListener("change", handler);
+    void apply();
+    return () => {
+      cancelled = true;
+      mq?.removeEventListener("change", handler);
+    };
+  }, []);
+
   useEffect(() => {
     loadTree();
   }, [loadTree]);
 
-  // Auto-refresh sidebar when /data changes (detected via SSE)
+  // Auto-refresh the sidebar tree when a conversation reports created/modified
+  // artifacts (files an agent wrote). The global conversation event stream
+  // emits a `task.updated` carrying `payload.artifactPaths`; when that's
+  // non-empty we reload the tree (debounced) so new files appear without a
+  // manual refresh. App-wide so it works from any section.
+  useEffect(() => {
+    const es = new EventSource("/api/agents/conversations/events");
+    let timer: number | null = null;
+    const scheduleRefresh = () => {
+      if (timer !== null) return;
+      timer = window.setTimeout(() => {
+        timer = null;
+        void loadTree();
+      }, 400);
+    };
+    es.onmessage = (msg) => {
+      try {
+        const ev = JSON.parse(msg.data) as {
+          type?: string;
+          payload?: { artifactPaths?: unknown };
+        };
+        if (ev.type !== "task.updated") return;
+        const artifacts = ev.payload?.artifactPaths;
+        if (Array.isArray(artifacts) && artifacts.length > 0) {
+          scheduleRefresh();
+        }
+      } catch {
+        // ignore malformed frames / pings
+      }
+    };
+    return () => {
+      es.close();
+      if (timer !== null) window.clearTimeout(timer);
+    };
+  }, [loadTree]);
+
+  useEffect(() => {
+    void loadProviders();
+  }, [loadProviders]);
+
+  // Rooms v3: you are always inside a room. The data-dir root is a neutral
+  // "home" container with no content, so when the app lands on the bare home
+  // section we redirect into the default room (its scope drives the tree,
+  // agents, tasks and view). Deep links into a specific room/page already
+  // carry a cabinetPath and are left untouched.
+  const loadRooms = useRoomsStore((s) => s.load);
+  const defaultRoom = useRoomsStore((s) => s.defaultRoom);
+  useEffect(() => {
+    void loadRooms();
+  }, [loadRooms]);
+  useEffect(() => {
+    if (!defaultRoom || defaultRoom === ROOT_CABINET_PATH) return;
+    const cp = section.cabinetPath;
+    // Snap into the default room whenever a section would otherwise show the
+    // neutral home container: the bare home screen, or any content view scoped
+    // to the data-dir root ("."). You're always inside a room, never the dir
+    // above it. (settings/help/registry carry no cabinetPath, so are untouched.)
+    const onHomeContainer =
+      (section.type === "home" && !cp) || cp === ROOT_CABINET_PATH;
+    if (onHomeContainer) {
+      setSection({ type: "cabinet", cabinetPath: defaultRoom });
+    }
+  }, [defaultRoom, section.type, section.cabinetPath, setSection]);
+
+  // Dynamic document.title — reflects the current section and page.
+  useEffect(() => {
+    const base = "Cabinet";
+    // Audit #017: prefer the frontmatter `title` over the slug whenever a
+    // page is loaded. Falls back to the slug when the frontmatter is absent
+    // or the editor store hasn't caught up to the new selection yet.
+    const pageDisplayTitle = (() => {
+      if (!selectedPath) return null;
+      const slug = selectedPath.split("/").pop() ?? selectedPath;
+      if (
+        editorCurrentPath === selectedPath &&
+        typeof editorFrontmatterTitle === "string" &&
+        editorFrontmatterTitle.trim()
+      ) {
+        return editorFrontmatterTitle.trim();
+      }
+      return slug;
+    })();
+    let title: string;
+    switch (section.type) {
+      case "home":
+        title = base;
+        break;
+      case "page":
+        title = pageDisplayTitle ? `${pageDisplayTitle} — ${base}` : base;
+        break;
+      case "cabinet":
+        title = pageDisplayTitle ? `${pageDisplayTitle} — ${base}` : base;
+        break;
+      case "agents":
+        title = `Agents — ${base}`;
+        break;
+      case "agent":
+        // Audit #025: title-case the slug so the tab title matches the
+        // agent's display name (was lowercase "assistant — Cabinet"). Use
+        // word-by-word capitalization on the dasherized slug.
+        title = section.slug
+          ? `${section.slug
+              .split("-")
+              .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))
+              .join(" ")} — ${base}`
+          : `Agents — ${base}`;
+        break;
+      case "tasks":
+        title = `Tasks — ${base}`;
+        break;
+      case "task":
+        title = `Task — ${base}`;
+        break;
+      case "settings":
+        // Audit #062: include the active settings tab in the title so window
+        // history shows "Appearance — Settings — Cabinet" not just "Settings".
+        title = section.slug
+          ? `${section.slug.charAt(0).toUpperCase() + section.slug.slice(1)} — Settings — ${base}`
+          : `Settings — ${base}`;
+        break;
+      case "help":
+        title = `Help — ${base}`;
+        break;
+      case "registry":
+        title = `Registry — ${base}`;
+        break;
+      default:
+        title = base;
+    }
+    document.title = title;
+    // Audit #031: write the new page title into the SR live region so
+    // VoiceOver/NVDA announce route changes. Cleared briefly first so the
+    // same string on repeat-nav still triggers an announcement, then set
+    // on the next tick.
+    const announcer = document.getElementById("cabinet-page-announcer");
+    if (announcer) {
+      announcer.textContent = "";
+      const id = window.setTimeout(() => {
+        if (announcer) announcer.textContent = title;
+      }, 30);
+      return () => window.clearTimeout(id);
+    }
+  }, [section, selectedPath, editorFrontmatterTitle, editorCurrentPath]);
+
+  // Track the last known file context so new terminal tabs open in the right CWD.
+  useEffect(() => {
+    const cabinetPath = section.cabinetPath ?? ".";
+    if (selectedPath) {
+      const lastSlash = selectedPath.lastIndexOf("/");
+      const dir = lastSlash > 0 ? selectedPath.slice(0, lastSlash) : "";
+      setTerminalCwd(dir ? `${cabinetPath}/${dir}` : cabinetPath);
+    } else {
+      setTerminalCwd(cabinetPath === "." ? "" : cabinetPath);
+    }
+  }, [section.cabinetPath, selectedPath, setTerminalCwd]);
+
+  // Single /api/agents/events subscription for the whole app. Re-dispatches
+  // each SSE event as a `cabinet:agents/<event>` window event so other panels
+  // (mission control, tree view, slack) can listen without each opening their
+  // own EventSource. Previously both app-shell and mission-control subscribed
+  // independently, creating two concurrent SSE streams.
   useEffect(() => {
     let es: EventSource | null = null;
     try {
       es = new EventSource("/api/agents/events");
       es.addEventListener("tree_changed", () => loadTree());
+
+      const forward = (name: string) => (e: MessageEvent) => {
+        try {
+          const detail = JSON.parse(e.data);
+          window.dispatchEvent(
+            new CustomEvent(`cabinet:agents/${name}`, { detail })
+          );
+        } catch {
+          /* ignore malformed payload */
+        }
+      };
+
+      const forwardedEvents = [
+        "conversation_completed",
+        "conversation_started",
+        "agent_status",
+        "pulse",
+        "agent_responding",
+        "slack_activity",
+        "goal_update",
+      ] as const;
+      for (const name of forwardedEvents) {
+        es.addEventListener(name, forward(name));
+      }
+
+      // Keep existing conversation events on the legacy name for back-compat.
       es.addEventListener("conversation_completed", (e) => {
         try {
           const data = JSON.parse(e.data);
           window.dispatchEvent(
             new CustomEvent("cabinet:conversation-completed", { detail: data })
+          );
+        } catch { /* ignore */ }
+      });
+      es.addEventListener("conversation_started", (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          window.dispatchEvent(
+            new CustomEvent("cabinet:conversation-started", { detail: data })
           );
         } catch { /* ignore */ }
       });
@@ -106,19 +475,168 @@ export function AppShell() {
     return () => es?.close();
   }, [loadTree]);
 
-  // Check if company config exists (first-time setup)
+  // Check if company config exists (first-time setup). Defer to idle so it
+  // doesn't block first paint; if we already cached "wizard done" we only
+  // use this to self-correct a stale cache.
   useEffect(() => {
-    fetch("/api/agents/config")
-      .then((r) => r.json())
-      .then((data) => setShowWizard(!data.exists))
-      .catch(() => setShowWizard(false));
+    const run = () => {
+      dedupFetch("/api/agents/config")
+        .then((r) => r.json())
+        .then((data) => {
+          // While Reset onboarding is in progress, force the wizard to show
+          // even though workspace.json still exists on disk. Without this the
+          // self-correction below silently rewrites wizard-done="1" within a
+          // second of reload and undoes the reset the user just requested.
+          if (isOnboardingResetInProgress()) {
+            setShowWizard(true);
+            return;
+          }
+          const done = !!data.exists;
+          setShowWizard(!done);
+          if (done) {
+            try {
+              window.localStorage.setItem(WIZARD_DONE_STORAGE_KEY, "1");
+            } catch {
+              // ignore
+            }
+          }
+        })
+        .catch(() => setShowWizard(false));
+    };
+    const w = window as typeof window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    if (typeof w.requestIdleCallback === "function") {
+      const handle = w.requestIdleCallback(run, { timeout: 2000 });
+      return () => w.cancelIdleCallback?.(handle);
+    }
+    const timer = window.setTimeout(run, 1000);
+    return () => window.clearTimeout(timer);
   }, []);
+
+  // Onboarding tour. Auto-opens once per browser after the wizard. The
+  // legal disclaimer is folded into the wizard's final step (single source
+  // of truth) — there is no separate disclaimer modal here. The tour mounts
+  // synchronously before paint (useLayoutEffect inside useTour) so the
+  // user goes straight from wizard to "Meet your Cabinet" with no app
+  // flash in between.
+  const tour = useTour(showWizard === false);
+
+  // Tour-finish task composer. Opened from the tour's "Write your first task"
+  // CTA. We mount the dialog at AppShell level so the user can land on the
+  // composer popup wherever they were — no jarring section change to /tasks.
+  const [tourTaskOpen, setTourTaskOpen] = useState(false);
+  const [tourTaskAgents, setTourTaskAgents] = useState<CabinetAgentSummary[]>([]);
+
+  const handleLaunchTourTask = useCallback(() => {
+    setTourTaskOpen(true);
+    // Refresh the agent roster on each open so the agent picker reflects
+    // whatever the user has installed.
+    fetchCabinetOverviewClient(ROOT_CABINET_PATH, "all")
+      .then((data) => {
+        setTourTaskAgents((data?.agents || []) as CabinetAgentSummary[]);
+      })
+      .catch(() => {
+        // Empty list is fine — StartWorkDialog handles it gracefully.
+      });
+  }, []);
+
+  // ⌘⌥T (inbox) and ⌘⌥R (run-now) — shared global composer dialog.
+  const [globalTaskOpen, setGlobalTaskOpen] = useState(false);
+  const [globalTaskMode, setGlobalTaskMode] = useState<StartWorkMode>("now");
+  const [globalTaskAgents, setGlobalTaskAgents] = useState<CabinetAgentSummary[]>([]);
+
+  const openGlobalTask = useCallback((mode: StartWorkMode) => {
+    const cabinetPath =
+      ("cabinetPath" in section && section.cabinetPath) || ROOT_CABINET_PATH;
+    fetchCabinetOverviewClient(cabinetPath, "all")
+      .then((data) => { setGlobalTaskAgents((data?.agents || []) as CabinetAgentSummary[]); })
+      .catch(() => {});
+    setGlobalTaskMode(mode);
+    setGlobalTaskOpen(true);
+  }, [section]);
+
+  useEffect(() => {
+    const handler = () => openGlobalTask("inbox");
+    window.addEventListener("cabinet:global-inbox-task", handler);
+    return () => window.removeEventListener("cabinet:global-inbox-task", handler);
+  }, [openGlobalTask]);
+
+  useEffect(() => {
+    const handler = () => openGlobalTask("now");
+    window.addEventListener("cabinet:global-run-task", handler);
+    return () => window.removeEventListener("cabinet:global-run-task", handler);
+  }, [openGlobalTask]);
+
+  // ── Chat-editor handoff ────────────────────────────────────────────────
+  // After a file is created from the sidebar, open the right-side chat panel
+  // (compose mode, `editor` agent) greeting the user with a file-aware prompt
+  // — same surface as the editor's "Ask AI" button, not the task-prompt modal.
+  const profileState = useUserProfile();
+  const userFirstName = useMemo(() => {
+    if (profileState.status !== "ready") return "";
+    const raw =
+      profileState.data.profile.displayName ||
+      profileState.data.profile.name ||
+      "";
+    if (!raw || raw.toLowerCase() === "you") return "";
+    return raw.trim().split(/\s+/)[0];
+  }, [profileState]);
+
+  // Post-tour first task: a warm, teammate-voiced opener shown as the composer
+  // placeholder (evocative empty-state text, not a pre-filled value). Name-free
+  // on purpose, so it never surfaces a stale or awkward profile name.
+  const tourStarterPlaceholder = useMemo(
+    () =>
+      "Hi, I'm your teammate. I've just joined your Cabinet and I'm ready to get to work. " +
+      "What would you like to accomplish? I can create useful pages, beautiful dashboards, and web apps for you.",
+    []
+  );
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as
+        | { pagePath?: string; fileName?: string }
+        | undefined;
+      const fileName = detail?.fileName || "this file";
+      const greeting = userFirstName
+        ? `Hi ${userFirstName} — what would you like to do in ${fileName}?`
+        : `What would you like to do in ${fileName}?`;
+      useAppStore.getState().openTaskPanelCompose({
+        source: "editor",
+        pinnedPagePath: detail?.pagePath ?? null,
+        defaultAgentSlug: "editor",
+        greeting,
+      });
+    };
+    window.addEventListener("cabinet:open-editor-chat", handler);
+    return () => window.removeEventListener("cabinet:open-editor-chat", handler);
+  }, [userFirstName]);
 
   const handleWizardComplete = useCallback(() => {
     setShowWizard(false);
+    try {
+      window.localStorage.setItem(WIZARD_DONE_STORAGE_KEY, "1");
+      // Onboarding defaults for the Tasks board. Ensures a first-time user
+      // lands on Kanban with no filters active, regardless of any stale
+      // state that may have leaked in from a prior dev build.
+      window.localStorage.setItem("cabinet.tasks.v2.view", "kanban");
+      window.localStorage.setItem("cabinet.tasks.v2.trigger", "all");
+      window.localStorage.removeItem("cabinet.tasks.v2.agent");
+      // Onboarding flow finished — drop the reset marker so the next page
+      // load goes through the normal silent-accept path.
+      window.sessionStorage.removeItem(ONBOARDING_RESET_MARKER_KEY);
+    } catch {
+      // ignore
+    }
     setSection({ type: "home" });
     loadTree();
-  }, [setSection, loadTree]);
+    // Onboarding just created the first room, but the rooms store was loaded
+    // earlier when none existed (defaultRoom: null). Force a refresh so the
+    // landing redirect picks up the new room and drops you inside it.
+    void loadRooms(true);
+  }, [setSection, loadTree, loadRooms]);
 
   function handleUpdateLater() {
     const latestVersion = update?.latest?.version;
@@ -133,12 +651,28 @@ export function AppShell() {
     setUpdateDialogOpen(false);
   }
 
-  const selectedNode = selectedPath ? findNode(nodes, selectedPath) : null;
-  // For paths not in the tree (e.g. .agents/ workspace files), infer type from extension
+  const selectedNode = selectedPath ? findNodeByPath(nodes, selectedPath) : null;
+  // For paths not in the tree (e.g. .agents/ workspace files, or artifact
+  // paths opened from a conversation panel), infer type from extension so
+  // we route to the right viewer instead of treating everything as markdown.
   const inferredType = !selectedNode && selectedPath
-    ? selectedPath.endsWith(".csv") ? "csv"
-    : selectedPath.endsWith(".pdf") ? "pdf"
-    : null
+    ? (() => {
+        const lower = selectedPath.toLowerCase();
+        if (lower.endsWith(".csv")) return "csv";
+        if (lower.endsWith(".pdf")) return "pdf";
+        if (lower.endsWith(".docx")) return "docx";
+        if (lower.endsWith(".xlsx") || lower.endsWith(".xlsm")) return "xlsx";
+        if (lower.endsWith(".pptx")) return "pptx";
+        if (lower.endsWith(".ipynb")) return "notebook";
+        if (lower.endsWith(".mmd") || lower.endsWith(".mermaid")) return "mermaid";
+        if (/\.(png|jpe?g|gif|webp|svg|bmp)$/.test(lower)) return "image";
+        if (/\.(mp4|mov|webm|avi|mkv)$/.test(lower)) return "video";
+        if (/\.(mp3|wav|ogg|flac|m4a)$/.test(lower)) return "audio";
+        if (/\.(ts|tsx|js|jsx|mjs|cjs|py|rb|go|rs|java|kt|swift|c|cpp|cs|php|sh|bash|zsh|html|css|scss|less|json|yaml|yml|toml|xml|sql|lua|r|dart)$/.test(lower)) {
+          return "code";
+        }
+        return null;
+      })()
     : null;
   const nodeType = selectedNode?.type || inferredType;
   const isWebsite = nodeType === "website";
@@ -146,11 +680,16 @@ export function AppShell() {
   const isPdf = nodeType === "pdf";
   const isCsv = nodeType === "csv";
   const isCode = nodeType === "code";
+  const isNotebook = nodeType === "notebook";
   const isImage = nodeType === "image";
   const isVideo = nodeType === "video";
   const isAudio = nodeType === "audio";
   const isMermaid = nodeType === "mermaid";
+  const isDocx = nodeType === "docx";
+  const isXlsx = nodeType === "xlsx";
+  const isPptx = nodeType === "pptx";
   const isUnknown = nodeType === "unknown";
+  const googleFrontmatter = selectedNode?.frontmatter?.google;
   const hasPersistentUpdateState =
     update?.updateStatus.state === "restart-required" ||
     update?.updateStatus.state === "failed" ||
@@ -184,21 +723,98 @@ export function AppShell() {
   const renderContent = () => {
     // System sections (non-page views)
     if (section.type === "home") return <HomeScreen />;
+    if (section.type === "registry") return <RegistryBrowser />;
     if (section.type === "settings") return <SettingsPage />;
-    if (section.type === "agents") {
-      return <AgentsWorkspace selectedScope="all" selectedAgentSlug={null} />;
+    if (section.type === "help") return <HelpPage />;
+    if (section.type === "cabinet" && section.cabinetPath) {
+      return <CabinetView cabinetPath={section.cabinetPath} />;
     }
-    if (section.type === "agent") {
+    if (section.type === "agents") {
       return (
-        <AgentsWorkspace
-          selectedScope="agent"
-          selectedAgentSlug={section.slug || null}
+        <AgentsWorkspaceV2
+          cabinetPath={section.cabinetPath}
+          tab={section.agentsTab}
+          onTabChange={(next) =>
+            setSection({
+              type: "agents",
+              cabinetPath: section.cabinetPath,
+              agentsTab: next,
+            })
+          }
         />
       );
     }
-    if (section.type === "jobs") return <JobsManager />;
+    if (section.type === "agent") {
+      if (section.slug) {
+        const agentCabinetPath = section.cabinetPath || ".";
+        const agentScopedId = `${agentCabinetPath}::agent::${section.slug}`;
+        return (
+          <AgentDetailV2
+            key={agentScopedId}
+            slug={section.slug}
+            cabinetPath={agentCabinetPath}
+            onBack={() =>
+              setSection({
+                type: "agents",
+                cabinetPath: section.cabinetPath,
+              })
+            }
+            onOpenConversation={(c: ConversationMeta) =>
+              setSection({
+                type: "task",
+                taskId: c.id,
+                cabinetPath: c.cabinetPath,
+              })
+            }
+            onSeeAllConversations={() =>
+              setSection({
+                type: "tasks",
+                cabinetPath: section.cabinetPath,
+                agentScopedId,
+              })
+            }
+          />
+        );
+      }
+      // Slug-less "agent" section (not produced by routing today) falls back
+      // to the V2 agents list rather than the retired V1 workspace.
+      return (
+        <AgentsWorkspaceV2
+          cabinetPath={section.cabinetPath}
+          onTabChange={(next) =>
+            setSection({
+              type: "agents",
+              cabinetPath: section.cabinetPath,
+              agentsTab: next,
+            })
+          }
+        />
+      );
+    }
+    if (section.type === "tasks") {
+      const visibility =
+        useAppStore.getState().cabinetVisibilityModes[
+          section.cabinetPath ?? ""
+        ] ?? "own";
+      return (
+        <TasksBoard
+          cabinetPath={section.cabinetPath}
+          visibilityMode={visibility}
+        />
+      );
+    }
+    if (section.type === "task" && section.taskId) {
+      return (
+        <TaskConversationPage
+          taskId={section.taskId}
+          cabinetPath={section.cabinetPath}
+        />
+      );
+    }
 
     // Page-based views (when a KB page is selected)
+    // A cabinet's own markdown can be opened as a data page, so only render
+    // the dashboard when navigation explicitly targets the cabinet section.
     if (isApp && selectedNode) {
       return (
         <WebsiteViewer
@@ -237,6 +853,11 @@ export function AppShell() {
         />
       );
     }
+    if (isNotebook && (selectedNode || selectedPath)) {
+      const nbPath = selectedNode?.path || selectedPath!;
+      const nbTitle = selectedNode?.frontmatter?.title || selectedNode?.name || nbPath.split("/").pop() || "Notebook";
+      return <NotebookViewer path={nbPath} title={nbTitle} />;
+    }
     if (isCode && (selectedNode || selectedPath)) {
       const codePath = selectedNode?.path || selectedPath!;
       const codeTitle = selectedNode?.frontmatter?.title || selectedNode?.name || codePath.split("/").pop() || "Source";
@@ -259,6 +880,36 @@ export function AppShell() {
       return <MermaidViewer path={mmdPath} title={mmdTitle} />;
     }
 
+    if (isDocx && (selectedNode || selectedPath)) {
+      const p = selectedNode?.path || selectedPath!;
+      const t = selectedNode?.frontmatter?.title || selectedNode?.name || p.split("/").pop() || "Document";
+      return <DocxViewer path={p} title={t} />;
+    }
+
+    if (isXlsx && (selectedNode || selectedPath)) {
+      const p = selectedNode?.path || selectedPath!;
+      const t = selectedNode?.frontmatter?.title || selectedNode?.name || p.split("/").pop() || "Spreadsheet";
+      return <XlsxViewer path={p} title={t} />;
+    }
+
+    if (isPptx && (selectedNode || selectedPath)) {
+      const p = selectedNode?.path || selectedPath!;
+      const t = selectedNode?.frontmatter?.title || selectedNode?.name || p.split("/").pop() || "Presentation";
+      return <PptxViewer path={p} title={t} />;
+    }
+
+    // Google-linked markdown page: frontmatter.google.url flips the page to the
+    // Google viewer in place of the normal editor.
+    if (googleFrontmatter?.url && selectedNode) {
+      return (
+        <GoogleDocViewer
+          path={selectedNode.path}
+          title={selectedNode.frontmatter?.title || selectedNode.name}
+          google={googleFrontmatter}
+        />
+      );
+    }
+
     if (isUnknown && (selectedNode || selectedPath)) {
       const unkPath = selectedNode?.path || selectedPath!;
       const unkTitle = selectedNode?.frontmatter?.title || selectedNode?.name || unkPath.split("/").pop() || "File";
@@ -279,27 +930,61 @@ export function AppShell() {
     return <div className="flex h-screen bg-background" />;
   }
 
+  // Show data-dir picker before the wizard for true first-run users.
+  if (showDataDirPrompt) {
+    return (
+      <DataDirPrompt onConfirmed={() => setShowDataDirPrompt(false)} />
+    );
+  }
+
   // Show onboarding wizard for first-time users
   if (showWizard) {
     return <OnboardingWizard onComplete={handleWizardComplete} />;
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <TaskRailProvider>
+    {/* When the rail is open we reserve a 30px gutter on the inline-end
+        edge: the whole app shrinks into the remaining width (the "iframe")
+        and the fixed, full-height rail lives in that gutter. */}
+    <div
+      className={`flex h-screen bg-background text-foreground transition-[padding] duration-200 ease-out${
+        taskRailOpen && !isMobile ? " pe-[30px]" : ""
+      }`}
+    >
+      {/* Audit #031: SR-only live region announcing the active page title
+          on every route change. role="status" + aria-live="polite" so it
+          doesn't interrupt other speech; aria-atomic so the entire string
+          is read on each update. The effect that writes document.title
+          also writes here. */}
+      <div
+        id="cabinet-page-announcer"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      />
       <Sidebar />
       <div
-        className="flex-1 flex flex-col overflow-hidden"
-        style={{ '--sidebar-toggle-offset': sidebarCollapsed ? '2.25rem' : '0px' } as React.CSSProperties}
+        className="flex-1 flex flex-col overflow-hidden max-md:pb-[calc(56px+env(safe-area-inset-bottom))]"
+        style={{ '--sidebar-toggle-offset': sidebarCollapsed ? 'calc(2.25rem + var(--traffic-clearance, 0px))' : '0px' } as React.CSSProperties}
       >
+        <DaemonHealthBanner />
+        {!isMobile && <NarrowViewportHint />}
         <main className="flex-1 flex flex-col overflow-hidden">
           {renderContent()}
         </main>
-        {terminalOpen && <TerminalTabs />}
-        <StatusBar />
+        {terminalOpen && terminalPosition === "bottom" && <TerminalTabs />}
+        {!isMobile && <StatusBar />}
       </div>
-      {!aiPanelCollapsed && <AIPanel />}
-      <SearchDialog />
-      <KeyboardShortcuts />
+      <MobileBottomNav />
+      {terminalOpen && terminalPosition === "right" && <TerminalTabs />}
+      {!isMobile && <TaskRail />}
+      <TaskDetailPanel />
+      <SearchPalette />
+      <KeyboardShortcutsModal />
+      <WhatsNewCard />
+      <ConfirmDialogHost />
       <UpdateDialog
         open={effectiveUpdateDialogOpen}
         update={update}
@@ -319,13 +1004,63 @@ export function AppShell() {
           void refreshUpdate();
         }}
         onApply={applyUpdate}
-        onCreateBackup={async () => {
-          await createBackup("data");
+        onCreateBackup={async (options) => {
+          await createBackup("data", options);
         }}
         onOpenDataDir={openDataDir}
         onLater={handleUpdateLater}
       />
       <NotificationToasts />
+      <SystemToasts />
+      <FeedbackPopup />
+      <TourModal
+        open={tour.open}
+        onClose={tour.close}
+        onLaunchTask={handleLaunchTourTask}
+      />
+      <StartWorkDialog
+        open={tourTaskOpen}
+        onOpenChange={setTourTaskOpen}
+        cabinetPath={ROOT_CABINET_PATH}
+        agents={tourTaskAgents}
+        initialMode="now"
+        placeholderOverride={tourStarterPlaceholder}
+        onStarted={(conversationId) => {
+          setTourTaskOpen(false);
+          setSection({
+            type: "task",
+            taskId: conversationId,
+            cabinetPath: ROOT_CABINET_PATH,
+          });
+        }}
+      />
+      <StartWorkDialog
+        open={globalTaskOpen}
+        onOpenChange={setGlobalTaskOpen}
+        cabinetPath={
+          ("cabinetPath" in section && section.cabinetPath) || ROOT_CABINET_PATH
+        }
+        agents={globalTaskAgents}
+        initialMode={globalTaskMode}
+        onStarted={async (conversationId, conversationCabinetPath) => {
+          setGlobalTaskOpen(false);
+          if (globalTaskMode === "inbox") return;
+          try {
+            const params = new URLSearchParams();
+            if (conversationCabinetPath) params.set("cabinetPath", conversationCabinetPath);
+            const res = await fetch(
+              `/api/agents/conversations/${encodeURIComponent(conversationId)}${params.toString() ? `?${params.toString()}` : ""}`
+            );
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data?.meta) setTaskPanelConversation(data.meta);
+          } catch {
+            // non-fatal — task is created, panel just won't auto-open
+          }
+        }}
+      />
     </div>
+    </TaskRailProvider>
   );
 }
+

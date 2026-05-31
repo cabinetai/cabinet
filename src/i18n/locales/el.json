@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Δημιουργία Πράκτορα",
+      "avatar": "Άβαταρ",
+      "namePlaceholder": "Πράκτορας Μάρκετινγκ",
+      "rolePlaceholder": "Ειδικός Περιεχομένου",
+      "department": "Τμήμα",
+      "specialist": "Ειδικός",
+      "departmentLead": "Επικεφαλής Τμήματος",
+      "provider": "Πάροχος",
+      "runtime": "Χρόνος Εκτέλεσης",
+      "promptPlaceholder": "Είστε ένας πράκτορας μάρκετινγκ για…",
+      "addAgentTitle": "Προσθήκη πράκτορα στην ομάδα σας",
+      "addAgentDescription": "Επιλέξτε έναν ειδικό από τη βιβλιοθήκη. Μπορείτε να επεξεργαστείτε το όνομα, τον ρόλο και τις οδηγίες του αφού προστεθεί.",
+      "createFromScratchTitle": "Δημιουργία από το μηδέν",
+      "createFromScratchDescription": "Δημιουργήστε έναν νέο πράκτορα με τη δική του ταυτότητα, ρόλο και οδηγίες.",
+      "searchLibraryPlaceholder": "Αναζήτηση στη βιβλιοθήκη",
+      "errorLoadLibrary": "Αδυναμία φόρτωσης της βιβλιοθήκης πρακτόρων.",
+      "errorAddAgent": "Αδυναμία προσθήκης αυτού του πράκτορα."
+    },
+    "metric": {
+      "name": "Όνομα μέτρησης",
+      "namePlaceholder": "reddit_replies",
+      "target": "Στόχος",
+      "targetPlaceholder": "απαντήσεις/εβδομάδα",
+      "floor": "Κατώτατο όριο",
+      "period": "Περίοδος",
+      "daily": "Καθημερινά",
+      "weekly": "Εβδομαδιαία",
+      "monthly": "Μηνιαία"
+    },
+    "workspace": {
+      "promise": "Υπόσχεση",
+      "orgChart": "Οργανόγραμμα",
+      "jobDetails": "Λεπτομέρειες Θέσης",
+      "heartbeat": "Καρδιακός παλμός",
+      "workspace": "Χώρος εργασίας",
+      "editAgent": "Επεξεργασία Πράκτορα",
+      "instructions": "Οδηγίες",
+      "instructionsPlaceholder": "Γράψτε markdown για τις οδηγίες αυτού του πράκτορα.",
+      "newAgent": "Νέος Πράκτορας",
+      "routines": "Ρουτίνες",
+      "browseLibrary": "Περιήγηση Βιβλιοθήκης Πρακτόρων",
+      "editYourOwn": "Επεξεργασία του δικού σας πράκτορα",
+      "editorPlaceholder": "Επεξεργαστής",
+      "productAgentPlaceholder": "Πράκτορας συγγραφής προϊόντων",
+      "instructionsBodyPlaceholder": "Ορίστε πώς πρέπει να λειτουργεί αυτός ο πράκτορας εντός του Cabinet και της ΒΓ.",
+      "perAgentPrompts": "Επαναλαμβανόμενες προτροπές ανά πράκτορα",
+      "runNow": "Εκτέλεση τώρα",
+      "delete": "Διαγραφή",
+      "viewOrgChart": "Προβολή αυτής της ομάδας ως οργανόγραμμα (ανοίγει σε πλήρη οθόνη)",
+      "hideIntro": "Απόκρυψη αυτής της εισαγωγής",
+      "sharedAcrossCabinets": "Κοινόχρηστο σε όλα τα cabinet",
+      "expandSchedule": "Ανάπτυξη χρονοδιαγράμματος",
+      "heartbeatsOnAgentPage": "Οι καρδιακοί παλμοί διαμορφώνονται στη σελίδα κάθε πράκτορα",
+      "exitFullscreen": "Έξοδος από πλήρη οθόνη",
+      "refresh": "Ανανέωση",
+      "editHeartbeat": "Επεξεργασία καρδιακού παλμού",
+      "newRoutine": "Νέα Ρουτίνα",
+      "configureHeartbeat": "Διαμόρφωση καρδιακού παλμού",
+      "openOrgChart": "Άνοιγμα οργανογράμματος",
+      "pickAnAgent": "Επιλέξτε έναν πράκτορα",
+      "dismiss": "Απόρριψη",
+      "lockedHeartbeatTip": "Αυτός ο πράκτορας είναι σταματημένος. Ξεκινήστε τον στην καρτέλα Πράκτορες για να ενεργοποιήσετε τον καρδιακό παλμό.",
+      "lockedRoutineTip": "Αυτός ο πράκτορας είναι σταματημένος. Ξεκινήστε τον στην καρτέλα Πράκτορες για να ενεργοποιήσετε τις ρουτίνες του.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Κάντε κλικ για απενεργοποίηση.",
+      "loadError": "Δεν ήταν δυνατή η φόρτωση αυτού του πράκτορα.",
+      "retry": "Επανάληψη",
+      "color": "Χρώμα",
+      "customColor": "Προσαρμοσμένο χρώμα",
+      "preset": "Προεπιλογή",
+      "editIconColor": "Επεξεργασία εικονιδίου, χρώματος ή avatar",
+      "sharedAcrossCabinetsHint": "Κοινό σε όλα τα ντουλάπια — οι αλλαγές εφαρμόζονται παντού",
+      "inbox": "Εισερχόμενα",
+      "conversations": "Συνομιλίες",
+      "recentWork": "Πρόσφατη εργασία",
+      "schedule": "Πρόγραμμα",
+      "heartbeat": "Ζωτικός παλμός",
+      "runNow": "Εκτέλεση τώρα",
+      "editRoutine": "Επεξεργασία ρουτίνας",
+      "addRoutine": "Προσθήκη ρουτίνας",
+      "details": "Λεπτομέρειες",
+      "editingGlobalAgent": "Επεξεργασία καθολικού παράγοντα",
+      "displayName": "Όνομα εμφάνισης",
+      "role": "Ρόλος",
+      "department": "Τμήμα",
+      "type": "Τύπος",
+      "workspace": "Χώρος εργασίας",
+      "tags": "Ετικέτες",
+      "openSkillsSettings": "Άνοιγμα Ρυθμίσεων → Δεξιότητες",
+      "notInCatalog": "Δεν βρέθηκε στον κατάλογο — κάντε κλικ για αφαίρεση",
+      "recommendedForRole": "Προτείνεται για αυτόν τον ρόλο — κάντε κλικ για επισύναψη",
+      "promise": "Υπόσχεση",
+      "saved": "Αποθηκεύτηκε",
+      "iconLabel": "Εικονίδιο"
+    },
+    "missionControl": {
+      "gallery": "Συλλογή",
+      "newAgent": "Νέος παράγοντας",
+      "allGoals": "Όλοι οι στόχοι",
+      "noGoals": "Κανένας παράγοντας δεν έχει διαμορφωμένους στόχους.",
+      "fromScratch": "Από το μηδέν",
+      "describeIt": "Περιγράψτε το",
+      "import": "Εισαγωγή",
+      "closeDialog": "Κλείσιμο διαλόγου",
+      "describeYourAgent": "Περιγράψτε τον παράγοντά σας",
+      "describePlaceholder": "Χρειάζομαι έναν πράκτορα που να παρακολουθεί το Hacker News για αναρτήσεις σχετικές με GPU και να γράφει προσεγμένα σχόλια που να συνδέονται με τις αναρτήσεις του ιστολογίου μας…"
+    },
+    "pulseStrip": {
+      "agents": "Πράκτορες",
+      "running": "Σε λειτουργία",
+      "goals": "Στόχοι",
+      "alerts": "Ειδοποιήσεις",
+      "cost": "Κόστος",
+      "runningPlays": "Εκτελούμενες ενέργειες",
+      "noRunning": "Δεν εκτελούνται πράκτορες αυτή τη στιγμή.",
+      "costBreakdown": "Ανάλυση κόστους",
+      "noUsage": "Δεν υπάρχει χρήση API ακόμα.",
+      "totalEstimated": "Συνολικό εκτιμώμενο"
+    },
+    "routine": {
+      "runNowTitle": "Εκτέλεση αυτής της ρουτίνας τώρα (μία φορά, εκτός προγράμματος)",
+      "deletePermanently": "Διαγραφή αυτής της ρουτίνας οριστικά",
+      "promptPlaceholder": "Τι πρέπει να κάνει αυτή η ρουτίνα; π.χ. Σύνοψη της χθεσινής δραστηριότητας…",
+      "jobName": "Όνομα εργασίας",
+      "jobNamePlaceholder": "Εβδομαδιαία σύνοψη στρατηγικής",
+      "jobId": "Αναγνωριστικό εργασίας",
+      "schedule": "Πρόγραμμα",
+      "model": "Μοντέλο",
+      "enabled": "Ενεργοποιημένο"
+    }
+  },
+  "registry": {
+    "loading": "Φόρτωση από το μητρώο…",
+    "readyToImport": "Έτοιμο για εισαγωγή αυτού του cabinet;",
+    "organization": "Οργανισμός",
+    "agents": "Πράκτορες",
+    "scheduledJobs": "Προγραμματισμένες εργασίες",
+    "about": "Σχετικά",
+    "cabinetName": "Όνομα cabinet",
+    "cabinetNamePlaceholder": "Όνομα cabinet…",
+    "searchPlaceholder": "Αναζήτηση cabinets…",
+    "noResults": "Κανένα cabinet δεν ταιριάζει με την αναζήτησή σας."
+  },
+  "tasksBoard": {
+    "title": "Εργασίες",
+    "manualTooltip": "Μη αυτόματο — εργασίες που εκκινήσατε απευθείας",
+    "jobsTooltip": "Εργασίες — προγραμματισμένες επαναλαμβανόμενες εκτελέσεις",
+    "heartbeatTooltip": "Καρδιακός παλμός — αυτοκατευθυνόμενες εκτελέσεις πρακτόρων",
+    "clearSelection": "Εκκαθάριση επιλογής (Esc)",
+    "createTask": "Δημιουργία νέας εργασίας",
+    "moreNewTypes": "Περισσότεροι νέοι τύποι στοιχείων",
+    "newTask": "Νέα Εργασία",
+    "newRoutine": "Νέα Ρουτίνα",
+    "viewKanban": "Kanban",
+    "viewList": "Λίστα",
+    "viewSchedule": "Πρόγραμμα",
+    "viewKanbanHint": "Προβολή πίνακα — εργασίες ομαδοποιημένες σε Εισερχόμενα / Σειρά σας / Σε εξέλιξη / Μόλις Ολοκληρώθηκαν / Αρχείο",
+    "viewListHint": "Επίπεδη λίστα κάθε εργασίας, με την πιο πρόσφατη δραστηριότητα πρώτη",
+    "viewScheduleHint": "Ημερολόγιο προγραμματισμένων ρουτινών και επερχόμενων εκτελέσεων",
+    "filterByAgent": "Φιλτράρισμα κατά πράκτορα: {{name}}",
+    "noToDeleteTitle": "Δεν υπάρχουν εργασίες για διαγραφή",
+    "noToDeleteFiltered": "Τίποτα δεν ταιριάζει με το {{filter}}. Καθαρίστε το φίλτρο, επιλέξτε άλλη προβολή ή δημιουργήστε μια νέα εργασία.",
+    "noToDeleteEmpty": "Δεν υπάρχουν ακόμη εργασίες στον πίνακα. Δημιουργήστε μία με το κουμπί + Νέα Εργασία.",
+    "gotIt": "Το κατάλαβα",
+    "deleteCountTitle": "Διαγραφή {{count}} εργασίας;",
+    "deleteCountTitlePlural": "Διαγραφή {{count}} εργασιών;",
+    "deleteBody": "Αυτό αφαιρεί οριστικά μεταδεδομένα συνομιλίας, μεταγραφές και τεχνουργήματα για κάθε εργασία που εμφανίζεται αυτήν τη στιγμή. Αυτό δεν μπορεί να αναιρεθεί.",
+    "deleteBodyFiltered": "Αυτό αφαιρεί οριστικά μεταδεδομένα συνομιλίας, μεταγραφές και τεχνουργήματα για κάθε εργασία που εμφανίζεται αυτήν τη στιγμή από τα ενεργά φίλτρα. Αυτό δεν μπορεί να αναιρεθεί.",
+    "deleteConfirm": "Διαγραφή {{count}}",
+    "deleteAllShown": "Διαγραφή της {{count}} εμφανιζόμενης εργασίας",
+    "deleteAllShownPlural": "Διαγραφή όλων των {{count}} εμφανιζόμενων εργασιών",
+    "nothingToDelete": "Τίποτα για διαγραφή σε αυτήν την προβολή",
+    "deleteAllAria": "Διαγραφή όλων των εμφανιζόμενων εργασιών",
+    "noTasksAria": "Δεν υπάρχουν εργασίες σε αυτήν την προβολή",
+    "filterTrigger": "το φίλτρο {{trigger}}",
+    "filterTriggerAndAgent": "το φίλτρο {{trigger}} και ο επιλεγμένος πράκτορας",
+    "filterSelectedAgent": "το φίλτρο επιλεγμένου πράκτορα"
+  },
+  "runtime": {
+    "noProvider": "Δεν έχει επιλεγεί πάροχος",
+    "modeAriaLabel": "Λειτουργία εκτέλεσης",
+    "nativeTranscriptTitle": "Εγγενής μεταγραφή του Cabinet — δομημένη ροή JSON, τεχνουργήματα, περίληψη, η πλήρης εμπειρία χρήστη",
+    "ptyWarningTitle": "Απαιτεί κλειδί API OpenAI. Δεν είναι διαθέσιμο σε λογαριασμούς Codex με πλάνο ChatGPT — η επιλογή αυτού του μοντέλου θα αποτύχει με το μήνυμα 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Εγγενές",
+    "terminal": "Τερματικό",
+    "terminalTitle": "Εκτέλεση του CLI σε μια ζωντανή συνεδρία τερματικού PTY (πειραματική λειτουργία hacker)",
+    "providers": "Πάροχοι",
+    "modelCol": "Μοντέλο",
+    "auto": "Αυτόματο",
+    "ready": "Έτοιμο",
+    "loginRequired": "Σύνδεση",
+    "notInstalled": "Δεν είναι εγκατεστημένο",
+    "notAvailable": "Μη διαθέσιμο",
+    "defaultLabel": "Προεπιλογή",
+    "noProvidersAvailable": "Δεν υπάρχουν διαθέσιμοι πάροχοι",
+    "appDefault": "Προεπιλογή εφαρμογής",
+    "selectAppDefault": "Επιλογή προεπιλογής εφαρμογής",
+    "defaultModel": "Προεπιλεγμένο μοντέλο",
+    "selectedModelLabel": "Επιλεγμένο μοντέλο",
+    "loadingProviders": "Φόρτωση παρόχων...",
+    "loadingAvailableProviders": "Φόρτωση διαθέσιμων παρόχων…",
+    "triggerSummary": "Μοντέλο: {{model}} · Προσπάθεια: {{effort}} · μέσω {{provider}}",
+    "triggerSystemDefault": "Μοντέλο εργασίας — χρησιμοποιείται η προεπιλογή συστήματος (κλικ για επιλογή)",
+    "clickToLaunch": "Κλικ για εκκίνηση του {{name}} σε τερματικό PTY"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Οι πράκτορες εκτελούνται με πλήρη πρόσβαση.",
+    "backUp": "Δημιουργείτε τακτικά αντίγραφα ασφαλείας των δεδομένων σας.",
+    "betaSoftware": "Λογισμικό Beta. Ενδέχεται να παρουσιαστούν προβλήματα.",
+    "iAccept": "Έχω διαβάσει και αποδέχομαι"
+  },
+  "skillAdd": {
+    "addSkill": "Προσθήκη δεξιότητας",
+    "auditTooltip": "Αποτέλεσμα από εξωτερικούς ελέγχους του skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Τα δεδομένα ελέγχου του skills.sh δεν είναι διαθέσιμα για αυτή τη δεξιότητα",
+    "preview": "Προεπισκόπηση"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Ομάδα AI",
+      "aiTeams": "Ομάδες AI",
+      "routines": "Ρουτίνες"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Επεξεργασία διαμόρφωσης πράκτορα",
+    "exportBundle": "Εξαγωγή πακέτου πράκτορα",
+    "goals": "Στόχοι",
+    "workspace": "Χώρος εργασίας"
+  },
+  "scheduleRow": {
+    "deleteQ": "Διαγραφή;",
+    "confirmDelete": "Επιβεβαίωση διαγραφής",
+    "cancelDelete": "Ακύρωση διαγραφής",
+    "runNow": "Εκτέλεση τώρα"
+  },
+  "apiKeys": {
+    "addKey": "Προσθήκη κλειδιού",
+    "edit": "Επεξεργασία",
+    "remove": "Αφαίρεση",
+    "newApiKey": "Νέο κλειδί API"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Ενημερώσεις Cabinet",
+    "dataDirectory": "Κατάλογος δεδομένων",
+    "backups": "Αντίγραφα ασφαλείας"
+  },
+  "kanban": {
+    "stopAllInLane": "Διακοπή όλων των τρεχουσών εργασιών σε αυτή τη λωρίδα",
+    "restartAllInLane": "Επανεκκίνηση όλων των εργασιών σε αυτή τη λωρίδα",
+    "newTask": "Νέα εργασία",
+    "collapseColumn": "Σύμπτυξη στήλης",
+    "kill": "Τερματισμός",
+    "laneInbox": "Εισερχόμενα",
+    "laneInboxHint": "Πρόχειρο — περιμένει να ξεκινήσετε",
+    "laneNeeds": "Η σειρά σας",
+    "laneNeedsHint": "Ο πράκτορας έθεσε μια ερώτηση ή χρειάζεται έγκριση",
+    "laneRunning": "Σε εκτέλεση",
+    "laneRunningHint": "Πράκτορες που εργάζονται αυτή τη στιγμή",
+    "laneDone": "Μόλις Ολοκληρώθηκε",
+    "laneDoneHint": "Ολοκληρώθηκε την τελευταία ώρα",
+    "laneArchive": "Αρχειοθέτηση",
+    "laneArchiveHint": "Παλαιότερα και αναγνωρισμένα"
+  },
+  "terminalTabs": {
+    "newTab": "Νέα καρτέλα τερματικού",
+    "closeTab": "Κλείσιμο τερματικού"
+  },
+  "newTaskButton": {
+    "createNew": "Δημιουργία νέου…",
+    "newTask": "Νέα εργασία",
+    "newRoutine": "Νέα ρουτίνα"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Εβδομαδιαία σύνοψη στρατηγικής",
+    "schedule": "Πρόγραμμα",
+    "jobId": "Αναγνωριστικό εργασίας",
+    "enabled": "Ενεργοποιημένο — εκτέλεση με αυτό το πρόγραμμα"
+  },
+  "editIdentity": {
+    "title": "Επεξεργασία παράγοντα",
+    "displayName": "Όνομα εμφάνισης",
+    "color": "Χρώμα",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Εκκίνηση όλων των παραγόντων",
+    "startAllSubtitle": "Ενεργοποίηση heartbeats και cron jobs",
+    "stopAll": "Διακοπή όλων των παραγόντων",
+    "stopAllSubtitle": "Παύση heartbeats και cron jobs"
+  },
+  "skillLibrary": {
+    "readOnly": "Μόνο για ανάγνωση — δεν είναι δυνατή η επεξεργασία από το Cabinet",
+    "noUpstream": "Δημιουργήθηκε απευθείας σε αυτό το cabinet — δεν καταγράφηκε πηγή git upstream",
+    "executableWarning": "Το πακέτο περιλαμβάνει εκτελέσιμα σενάρια — ελέγξτε πριν την έγκριση",
+    "skills": "Δεξιότητες",
+    "imported": "Εισαγμένο",
+    "importing": "Εισαγωγή…",
+    "import": "Εισαγωγή"
+  },
+  "embedPopover": {
+    "placeholder": "Επικολλήστε έναν σύνδεσμο (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, ή οποιαδήποτε URL)",
+    "notValidUrl": "Μη έγκυρη URL",
+    "anyUrlWorks": "Οποιαδήποτε δημόσια URL λειτουργεί.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Οποιαδήποτε διεύθυνση URL iframe"
+  },
+  "rowActions": {
+    "stop": "Διακοπή",
+    "stopHint": "Διακοπή αυτής της εκτέλεσης τώρα (στέλνει SIGTERM)",
+    "restart": "Επανεκκίνηση",
+    "restartHint": "Εκτέλεση ξανά από την αρχική προτροπή",
+    "runHint": "Έναρξη αυτής της εργασίας τώρα"
+  },
+  "schedulesPanel": {
+    "title": "Προγραμματισμένες εργασίες",
+    "noJobs": "Δεν έχουν ρυθμιστεί ακόμη εργασίες cabinet.",
+    "heartbeats": "Καρδιακοί παλμοί",
+    "noHeartbeats": "Δεν έχουν ρυθμιστεί ακόμη καρδιακοί παλμοί."
+  },
+  "scheduleTab": {
+    "explainer1": "Όλα όσα κάνει η ομάδα σας αυτή την εβδομάδα, σε ένα ημερολόγιο. Το ροζ είναι καρδιακός παλμός, το πράσινο είναι ρουτίνα. Κάντε κλικ σε οποιοδήποτε στοιχείο για να το επεξεργαστείτε.",
+    "explainer2": "Χρησιμοποιήστε αυτήν την καρτέλα για να εντοπίσετε συγκρούσεις, να βρείτε ήσυχες περιόδους ή απλά να δείτε με μια ματιά πόσο απασχολημένη είναι η ομάδα.",
+    "aboutAria": "Σχετικά με το πρόγραμμα",
+    "modeDay": "Ημέρα",
+    "modeWeek": "Εβδομάδα",
+    "modeMonth": "Μήνας"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Σμίκρυνση",
+    "zoomIn": "Μεγέθυνση",
+    "resetView": "Επαναφορά προβολής",
+    "syntaxError": "Σφάλμα σύνταξης διαγράμματος"
+  },
+  "helpPage": {
+    "keyboard": "Πληκτρολόγιο",
+    "skills": "Δεξιότητες",
+    "apiKeys": "Κλειδιά API",
+    "mcpServers": "Διακομιστές MCP",
+    "title": "Βοήθεια",
+    "howTo": "Οδηγίες",
+    "heading": "Μάθετε πώς λειτουργεί το Cabinet",
+    "subheading": "Σύντομες επιδείξεις, αναλυτικές παρουσιάσεις και προεπισκοπήσεις για να αξιοποιήσετε στο έπακρο το Cabinet.",
+    "ctaWatchTour": "Παρακολουθήστε την περιήγηση",
+    "ctaWatchDemo": "Παρακολουθήστε την επίδειξη",
+    "ctaCheatSheet": "Άνοιγμα συνοπτικού οδηγού",
+    "ctaComingSoon": "Έρχεται σύντομα",
+    "discordHeading": "Δεν βρήκατε αυτό που ψάχνετε;",
+    "discordSubheading": "Είμαστε στο Discord — ελάτε να πείτε ένα γεια, κάντε ερωτήσεις, μοιραστείτε τι δημιουργείτε.",
+    "discordCta": "Συμμετοχή στο Discord",
+    "items": {
+      "tour": {
+        "title": "Γνωρίστε το <accent>Cabinet</accent>.",
+        "description": "Η ομάδα AI σας. Η βάση γνώσεων σας. Ένα μέρος."
+      },
+      "agents": {
+        "title": "Η <accent>ομάδα AI</accent> σας.",
+        "description": "Προσλάβετε επικεφαλής και ειδικούς. Ομαδοποιήστε τους σε τμήματα. Αφήστε τους να αναθέτουν εργασίες ο ένας στον άλλο."
+      },
+      "tasks": {
+        "title": "Ο <accent>πίνακας εργασιών</accent>.",
+        "description": "Προβολές Kanban, λίστας και χρονοδιαγράμματος. Φιλτράρισμα ανά παράγοντα ή κατάσταση. Επιλέξτε χρόνο εκτέλεσης ανά εργασία."
+      },
+      "knowledge": {
+        "title": "Η <accent>βάση γνώσεων</accent> σας.",
+        "description": "Markdown, CSV, PDF, κώδικας, σημειωματάρια, mermaid, εικόνες, ήχος — όλα αποδίδονται ενσωματωμένα. Τα δεδομένα σας παραμένουν στον υπολογιστή σας· είναι δικά σας, όχι δικά μας."
+      },
+      "cabinets": {
+        "title": "Μια ομάδα από <accent>ομάδες AI</accent>.",
+        "description": "Τα Cabinet φωλιάζουν μέσα σε Cabinet. Κάθε ένα είναι η δική του ομάδα AI με τα δικά του δεδομένα, παράγοντες και πεδίο ορατότητας — και μπορούν να συνεργάζονται πάνω και κάτω στην ιεραρχία."
+      },
+      "routines": {
+        "title": "<accent>Ρουτίνες</accent> & χρονοδιαγράμματα.",
+        "description": "Εκτελέστε μια εργασία καθημερινά στις 9 π.μ., εβδομαδιαία την Παρασκευή ή μία φορά την επόμενη Δευτέρα. Cron, ημερολόγιο ή φυσική γλώσσα."
+      },
+      "conversations": {
+        "title": "Συνομιλίες & <accent>εγκρίσεις</accent>.",
+        "description": "Οι παράγοντες προτείνουν ενέργειες — εκκίνηση εργασίας, προγραμματισμός εργασίας — και εσείς εγκρίνετε πριν εκτελεστεί οτιδήποτε."
+      },
+      "themes": {
+        "title": "Κάντε το <accent>δικό σας</accent>.",
+        "description": "Επιλέξτε από μια επιλεγμένη συλλογή φωτεινών και σκούρων θεμάτων — Paper, Slate, Claude, Ink και άλλα."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — φέρτε τη δική σας AI.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — φέρτε όποιους παρόχους ήδη πληρώνετε. Επιλέξτε μια προεπιλογή ή παρακάμψτε ανά εργασία."
+      },
+      "shortcuts": {
+        "title": "<accent>Συντομεύσεις</accent> πληκτρολογίου.",
+        "description": "Κάθε συντόμευση του Cabinet σε μία αναζητήσιμη κάρτα. Πατήστε ? από οπουδήποτε για να την ανοίξετε ξανά. Φιλτράρισμα ανά όνομα ή πλήκτρο — ισχύει για πλοήγηση, επεξεργασία, εργασίες, πίνακες και εντολές slash."
+      },
+      "skills": {
+        "title": "<accent>Δεξιότητες</accent> για τους παράγοντές σας.",
+        "description": "Εγκαταστάσιμες Δεξιότητες Παραγόντων — εγχειρίδια που χρησιμοποιεί το μοντέλο για μια εργασία. Εγκαταστήστε από το GitHub ή το skills.sh, συνδέστε σε μια περσόνα ή αναφέρετε με @ σε οποιοδήποτε συνθέτη για μία μόνο εκτέλεση."
+      },
+      "apiKeysItem": {
+        "title": "<accent>Κλειδιά API</accent> για τα εργαλεία σας.",
+        "description": "Συνδέστε τον λογαριασμό σας OpenAI, Anthropic ή GitHub μία φορά — κάθε παράγοντας και δεξιότητα στο Cabinet θα τον χρησιμοποιεί. Πληρώνετε τους δικούς σας λογαριασμούς, χρησιμοποιείτε τη δική σας ποσόστωση, χωρίς μεσάζοντες."
+      },
+      "integrations": {
+        "title": "<accent>Διακομιστές MCP</accent> & ενσωματώσεις.",
+        "description": "Διακομιστές MCP, Slack, Telegram, Gmail και Calendar OAuth — συνδεθείτε μία φορά και το Cabinet χειρίζεται τα tokens. Έρχεται σύντομα."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Συντομεύσεις πληκτρολογίου",
+    "filterPlaceholder": "Φίλτρο…",
+    "close": "Κλείσιμο"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Ζωντανό Τερματικό",
+    "runningHeartbeat": "Σφυγμός σε εξέλιξη…",
+    "memory": "Μνήμη",
+    "recentActivity": "Πρόσφατη Δραστηριότητα"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Το avatar σας",
+    "preset": "Προεπιλογή",
+    "useInitials": "Εναλλακτική με αρχικά",
+    "custom": "Προσαρμοσμένο"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Εντοπίστηκαν τοπικές αλλαγές στον κώδικα της εφαρμογής"
+  },
+  "logsPanel": {
+    "classifiedError": "Ταξινομημένο σφάλμα",
+    "session": "Συνεδρία",
+    "noEvents": "Δεν υπάρχουν συμβάντα ακόμα.",
+    "noTranscript": "Δεν υπάρχει μεταγραφή ακόμα."
+  },
+  "conversationResult": {
+    "prompt": "Προτροπή",
+    "result": "Αποτέλεσμα",
+    "noSummary": "Δεν καταγράφηκε περίληψη."
+  },
+  "scheduleRowPlus": {
+    "delete": "Διαγραφή"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Επισύναψη αρχείων"
+  },
+  "demos": {
+    "aiTeam": "Ομάδα AI",
+    "specialist": "Ειδικός",
+    "legal": "Νομικά",
+    "global": "Παγκόσμια",
+    "editor": "Επεξεργαστής",
+    "slashMenu": "Μενού με κάθετο"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · ΔΕΔΟΜΕΝΑ",
+    "headlineSentence": "Η <accent>μοναδική πηγή</accent> αλήθειας σας.",
+    "paragraphPrefix": "Markdown, PDF, υπολογιστικά φύλλα, διαφάνειες, εικόνες, βίντεο, ήχος, συνδεδεμένα αποθετήρια, ενσωματωμένες εφαρμογές ιστού, Google Docs. Αναφέρετε οτιδήποτε από αυτά με ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Ένα μέρος για τα πάντα — ώστε εσείς και η ομάδα AI σας να διαβάζετε, να επεξεργάζεστε και να παραδίδετε από τα ",
+    "sameFiles": "ίδια αρχεία",
+    "secondParagraphSuffix": ", όχι αντίγραφα αντιγράφων.",
+    "mockTitle": "Το Cabinet της Jane"
+  },
+  "slideData": {
+    "thailandRootLabel": "Ταξίδι στην Ταϊλάνδη",
+    "thailandCaption": "Δείτε όλα τα αρχεία σας σε ένα μέρος.",
+    "videoTitle": "Νυχτερινή αγορά.mp4",
+    "taxRootLabel": "Φόρος 2026",
+    "taxCaption": "Φόρος 2026 — μια ζωντανή εφαρμογή υπολογιστή, ενσωματωμένη απευθείας στο cabinet σας.",
+    "calculatorTitle": "Υπολογιστής",
+    "liveAppBadge": "Ζωντανή εφαρμογή",
+    "taxEstimateLabel": "Εκτίμηση φόρου 2026",
+    "income": "Εισόδημα",
+    "deductions": "Εκπτώσεις",
+    "taxBracket": "Φορολογική κλίμακα",
+    "estimatedTax": "Εκτιμώμενος φόρος",
+    "healthRootLabel": "Υγεία",
+    "healthCaption": "Βιταμίνες & εργαστηριακά — ένα υπολογιστικό φύλλο που μοιάζει με σελίδα.",
+    "csvTitle": "Καθημερινές βιταμίνες.csv",
+    "csvColVitamin": "Βιταμίνη",
+    "csvColDose": "Δόση",
+    "csvColTime": "Ώρα",
+    "csvColDone": "Έγινε",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Βάσεις κώδικα — συνδέστε οποιοδήποτε αποθετήριο Git, με δυνατότητα αναζήτησης από τους πράκτορές σας.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · ΕΡΓΑΣΙΕΣ",
+    "typedCommand": "Εκτελέστε 10 εργασίες, η καθεμία γράφοντας ένα τραγούδι, αποθηκεύστε στο @Songs/",
+    "headlineSentence": "Έτοιμοι να <accent>ξεκινήσετε</accent>;",
+    "paragraphPrefix": "Γράψτε μια εργασία. Εκτελέστε μία, εκτελέστε δέκα, προγραμματίστε τις για πάντα. Αναφέρετε σελίδες με ",
+    "paragraphSuffix": ", αποθηκεύστε την έξοδο όπου θέλετε. Είστε ο σκηνοθέτης τώρα.",
+    "savingFolder": "Τραγούδια/"
+  },
+  "slideAgents": {
+    "persona": "Προσωπικότητα",
+    "heartbeat": "Ρυθμός",
+    "jobs": "Εργασίες",
+    "aiTeam": "Ομάδα AI",
+    "otherWriter": "Συγγραφέας",
+    "otherOrganizer": "Οργανωτής",
+    "idle": "αδρανής",
+    "researchAnalyst": "Ερευνητής Αναλυτής",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "ενεργός",
+    "personaBody": "«Αυστηρός αναλυτής. Αναφέρει πηγές. Επισημαίνει αντικρουόμενους ισχυρισμούς.»",
+    "heartbeatBody": "Σαρώνει το @Market Research κάθε 15 λεπτά",
+    "jobsBody": "Δευ 9:00 · Εβδομαδιαία περίληψη ανταγωνιστών",
+    "slideNum": "02 · ΠΡΑΚΤΟΡΕΣ",
+    "paragraphPrefix": "Κάθε πράκτορας έχει μια ",
+    "personaWord": "προσωπικότητα",
+    "paragraphMiddle": ", το δικό του ",
+    "scheduleWord": "πρόγραμμα",
+    "paragraphMiddle2": ", και μια ",
+    "memoryWord": "μνήμη",
+    "paragraphSuffix": ". Οι πράκτορες AI σας ολοκληρώνουν τη δουλειά, 24/7. Εσείς γίνετε άνθρωπος — αυτοί θα αναλάβουν τα υπόλοιπα.",
+    "aiTeamSentence": "Η <accent>ομάδα AI</accent> σας."
+  },
+  "startWork": {
+    "close": "Κλείσιμο",
+    "selectAgent": "Επιλογή πράκτορα",
+    "titleNow": "Τι πρέπει να γίνει;",
+    "titleRecurring": "Ρύθμιση επαναλαμβανόμενης ρουτίνας",
+    "titleHeartbeat": "Ενεργοποίηση αυτού του πράκτορα με πρόγραμμα",
+    "titleEdit": "Επεξεργασία εργασίας",
+    "submitStart": "Έναρξη",
+    "submitAddInbox": "Προσθήκη στα Εισερχόμενα",
+    "submitSaveEdit": "Αποθήκευση αλλαγών",
+    "submitCreateRoutine": "Δημιουργία ρουτίνας",
+    "submitSaveHeartbeat": "Αποθήκευση ρυθμού",
+    "saving": "Αποθήκευση…",
+    "current": "τρέχον",
+    "modeInboxLabel": "→ Εισερχόμενα",
+    "modeInboxHint": "Αποθήκευση στα Εισερχόμενα — ξεκινήστε το όταν είστε έτοιμοι",
+    "modeNowLabel": "Εκτέλεση τώρα",
+    "modeNowHint": "Ξεκινήστε αυτή τη συνομιλία αμέσως",
+    "modeRecurringLabel": "Σε πρόγραμμα",
+    "modeRecurringHint": "Εκτελέστε αυτή την προτροπή σε πρόγραμμα",
+    "modeHeartbeatLabel": "Παλμός",
+    "modeHeartbeatHint": "Αφύπνιση του πράκτορα στον δικό του ρυθμό",
+    "agentFallback": "Πράκτορας",
+    "failedToStart": "Αποτυχία εκκίνησης",
+    "failedToSave": "Αποτυχία αποθήκευσης αλλαγών",
+    "failedToSaveHeartbeat": "Αποτυχία αποθήκευσης παλμού"
+  },
+  "googleDoc": {
+    "noUrl": "Δεν έχει οριστεί URL Google",
+    "anyoneWithLink": "Οποιοσδήποτε με τον σύνδεσμο",
+    "publishedToWeb": "Δημοσιεύτηκε στον ιστό"
+  },
+  "feedback": {
+    "close": "Κλείσιμο",
+    "rolePlaceholder": "π.χ. indie hacker, PM σε SaaS, φοιτητής design, χομπίστας…",
+    "joinDiscord": "Εγγραφή στο Discord",
+    "header": "Γρήγορη ενημέρωση από τη Jane",
+    "howGoing": "Πώς πάει μέχρι στιγμής;",
+    "starsCount": "{{n}} αστέρι",
+    "starsCountPlural": "{{n}} αστέρια",
+    "likeCabinet": "Σας αρέσει το Cabinet;",
+    "starTooltipUnknown": "Δώστε ένα star στο Cabinet στο GitHub — αν σας είναι χρήσιμο, ένα star βοηθάει πολύ",
+    "starTooltipWithCount": "{{count}} GitHub stars — κάντε κλικ για να προσθέσετε το δικό σας",
+    "starLabel": "Αστέρι",
+    "backgroundLabel": "Ποιο είναι το υπόβαθρό σας;",
+    "optional": "(προαιρετικό)",
+    "discordCta": "Θέλετε να μιλήσετε απευθείας ή να συνομιλήσετε με άλλα μέλη του Cabinet;",
+    "maybeLater": "Ίσως αργότερα",
+    "send": "Αποστολή",
+    "thanksTitle": "Ευχαριστούμε!",
+    "thanksBody": "Τα σχόλιά σας διαμορφώνουν την επόμενη έκδοση.",
+    "copy2Lead": "Έχετε ανοίξει το Cabinet μερικές φορές. Ευχαριστούμε! Το Cabinet είναι ανοιχτού κώδικα και μόλις ξεκίνησε, οπότε αυτά που λέτε εδώ αλλάζουν πραγματικά το τι θα δημιουργηθεί στη συνέχεια.",
+    "copy2Q1": "Τι προσπαθούσατε να κάνετε στο Cabinet σήμερα;",
+    "copy2Q1Hint": "Μία πρόταση αρκεί. Για ποιο λόγο το ανοίξατε, όχι τι θα θέλατε να κάνει.",
+    "copy2Q2": "Την τελευταία φορά που θέλατε να το κάνετε αυτό, τι χρησιμοποιήσατε αντί για το Cabinet;",
+    "copy2Q2Hint": "Οποιοδήποτε εργαλείο, εφαρμογή ή έγγραφο, ακόμα και στυλό και χαρτί.",
+    "copy6Lead": "Επιστρέψατε, και αυτό είναι το πιο σημαντικό σημάδι. Θέλω να ακούσω για τις δυσκολίες πριν τις ξεχάσετε.",
+    "copy6Q1": "Τι προσπαθούσατε να κάνετε στο Cabinet σήμερα;",
+    "copy6Q1Hint": "Μία πρόταση αρκεί.",
+    "copy6Q2": "Ποιο είναι το ένα πράγμα που παραλίγο να σας κάνει να σταματήσετε να χρησιμοποιείτε το Cabinet αυτή την εβδομάδα;",
+    "copy6Q2Hint": "Αυτό που σας ενόχλησε περισσότερο. Να είστε συγκεκριμένοι. Το «το Χ ήταν μπερδεμένο» είναι καλύτερο από το «το UX»."
+  },
+  "apiKeysSection": {
+    "cancel": "Ακύρωση",
+    "pasteHere": "επικολλήστε εδώ",
+    "pasteNewValue": "επικολλήστε νέα τιμή"
+  },
+  "storageBackend": {
+    "title": "Backend αποθήκευσης",
+    "migrationFailed": "Η μετεγκατάσταση απέτυχε"
+  },
+  "linkRepo": {
+    "title": "Φόρτωση Γνώσης",
+    "intro": "Δείξτε το Cabinet σε οποιονδήποτε φάκελο στον υπολογιστή σας. Το Cabinet δημιουργεί έναν συμβολικό σύνδεσμο, ώστε τα περιεχόμενα του φακέλου να εμφανίζονται στη Βάση Γνώσεων σας και να είναι διαθέσιμα στους πράκτορες AI ως περιεχόμενο. Ο αρχικός φάκελος δεν μετακινείται ή αντιγράφεται ποτέ.",
+    "symlinkNote": "Αυτό δημιουργεί έναν συμβολικό σύνδεσμο — τα αρχεία παραμένουν εκεί που είναι.",
+    "autoDetectPlaceholder": "Αυτόματη ανίχνευση από απομακρυσμένο git (προαιρετικό)",
+    "shortSummaryPlaceholder": "Προαιρετική σύντομη περίληψη για πράκτορες"
+  },
+  "recentTasks": {
+    "ptyMode": "Λειτουργία Terminal (PTY)",
+    "revealOlder": "Αποκάλυψη περισσότερων παλαιότερων εργασιών",
+    "showOlder": "Εμφάνιση παλαιότερων"
+  },
+  "treeNode": {
+    "openCabinet": "Άνοιγμα προβολής Cabinet",
+    "pageTitlePlaceholder": "Τίτλος σελίδας…",
+    "rename": "Μετονομασία",
+    "openBadge": "Άνοιγμα",
+    "sectionAdd": "Προσθήκη σε αυτό το στοιχείο",
+    "sectionThis": "Αυτό το στοιχείο",
+    "addSubPage": "Προσθήκη Υποσελίδας",
+    "newFolder": "Νέος Φάκελος",
+    "createFile": "Δημιουργία Νέου Αρχείου…",
+    "connectKnowledge": "Σύνδεση Γνώσης…",
+    "symlinkTag": "Συμβολικός Σύνδεσμος",
+    "importFile": "Εισαγωγή Αρχείου…",
+    "importFolder": "Εισαγωγή Φακέλου…",
+    "createCabinet": "Δημιουργία Cabinet Εδώ",
+    "editSymlink": "Επεξεργασία Συμβολικού Συνδέσμου…",
+    "settings": "Ρυθμίσεις…",
+    "moveTo": "Μετακίνηση σε…",
+    "copyRelativePath": "Αντιγραφή Σχετικής Διαδρομής",
+    "copyFullPath": "Αντιγραφή Πλήρους Διαδρομής",
+    "openInFinder": "Άνοιγμα στο Finder",
+    "delete": "Διαγραφή",
+    "unlink": "Αποσύνδεση",
+    "folderNamePlaceholder": "Όνομα φακέλου",
+    "creating": "Δημιουργείται…",
+    "create": "Δημιουργία",
+    "addSubPageTitle": "Προσθήκη Υποσελίδας στο «{{name}}»",
+    "newFolderTitle": "Νέος Φάκελος στο «{{name}}»"
+  },
+  "newFile": {
+    "title": "Δημιουργία Νέου Αρχείου",
+    "subtitle": "Επιλέξτε έναν τύπο αρχείου. Το Cabinet θα το ανοίξει στον επεξεργαστή όταν είναι έτοιμο.",
+    "groupNative": "Επεξεργασία στο Cabinet",
+    "groupOffice": "Office (κενό — επεξεργασία εξωτερικά)",
+    "groupGoogle": "Google (συνδεδεμένο)",
+    "namePlaceholder": "Όνομα αρχείου",
+    "create": "Δημιουργία",
+    "creating": "Δημιουργείται…",
+    "googleUrlLabel": "URL Google (προαιρετικό)",
+    "googleUrlPlaceholder": "Επικολλήστε έναν κοινόχρηστο σύνδεσμο Google ή αφήστε το κενό για να τον προσθέσετε αργότερα",
+    "officeNote": "Το Cabinet εμφανίζει τα αρχεία Office μόνο για ανάγνωση. Χρησιμοποιήστε το «Άνοιγμα στο Finder» για επεξεργασία στην εφαρμογή υπολογιστή.",
+    "types": {
+      "markdown": "Σελίδα Markdown",
+      "markdownDesc": "Σημειώσεις εμπλουτισμένου κειμένου, επεξεργάσιμες στο Cabinet",
+      "code": "Αρχείο Κώδικα",
+      "codeDesc": "Οποιοδήποτε αρχείο πηγαίου κώδικα/κειμένου — επιλέξτε την επέκταση",
+      "mermaid": "Διάγραμμα Mermaid",
+      "mermaidDesc": "Διαγράμματα ροής και διαγράμματα ως κώδικας",
+      "csv": "Πίνακας CSV",
+      "csvDesc": "Δεδομένα υπολογιστικού φύλλου διαχωρισμένα με κόμμα",
+      "docx": "Έγγραφο Word",
+      "docxDesc": "Κενό .docx",
+      "xlsx": "Υπολογιστικό Φύλλο Excel",
+      "xlsxDesc": "Κενό .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Κενό .pptx",
+      "gdoc": "Έγγραφο Google",
+      "gdocDesc": "Ενσωμάτωση Εγγράφου Google",
+      "gsheet": "Φύλλο Google",
+      "gsheetDesc": "Ενσωμάτωση Φύλλου Google",
+      "gslides": "Παρουσιάσεις Google",
+      "gslidesDesc": "Ενσωμάτωση Παρουσιάσεων Google"
+    },
+    "codeExtLabel": "Επέκταση",
+    "googleTag": "Google",
+    "extHint": "Απλώς πληκτρολογήστε το όνομα — το Cabinet προσθέτει την επέκταση {{ext}}.",
+    "createFailed": "Δεν ήταν δυνατή η δημιουργία του αρχείου."
+  },
+  "fileSettings": {
+    "googleTitle": "Ρυθμίσεις Ενσωμάτωσης Google",
+    "googleKindLabel": "Τύπος",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Η κοινή χρήση του εγγράφου πρέπει να είναι «Οποιοσδήποτε με τον σύνδεσμο» ή «Δημοσιευμένο στον ιστό» για να φορτώσει η ενσωμάτωση.",
+    "openLink": "Άνοιγμα στο Google",
+    "googleKinds": {
+      "docs": "Έγγραφα",
+      "sheets": "Φύλλα",
+      "slides": "Παρουσιάσεις",
+      "forms": "Φόρμες",
+      "drive": "Drive"
+    },
+    "appTitle": "Ρυθμίσεις Εφαρμογής Ιστού",
+    "modeLabel": "Πώς πρέπει να ανοίξει αυτό;",
+    "modeWebsite": "Προβολή σελίδας",
+    "modeWebsiteDesc": "Ανοίγει ενσωματωμένα με την πλαϊνή γραμμή και τον πίνακα AI ορατά.",
+    "modeApp": "Εφαρμογή Ιστού",
+    "modeAppDesc": "Ανοίγει σε πλήρη οθόνη· η πλαϊνή γραμμή και ο πίνακας AI συμπτύσσονται αυτόματα.",
+    "convertNote": "Αυτό εναλλάσσει το αρχείο δείκτη .app στον φάκελο. Τα αρχεία σας δεν αλλάζουν.",
+    "save": "Αποθήκευση",
+    "saving": "Αποθήκευση…",
+    "cancel": "Ακύρωση",
+    "saveFailed": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων."
+  },
+  "editSymlink": {
+    "title": "Επεξεργασία συμβολικού συνδέσμου",
+    "intro": "Αυτή η καταχώριση της Βάσης Γνώσεων είναι ένας συμβολικός σύνδεσμος προς έναν φάκελο αλλού στον υπολογιστή σας.",
+    "kbPathLabel": "Διαδρομή Βάσης Γνώσεων",
+    "targetLabel": "Συνδέεται με (στον δίσκο)",
+    "brokenWarning": "Ο φάκελος προορισμού δεν υπάρχει πλέον. Επαναπροσανατολίστε τον σε έναν έγκυρο φάκελο παρακάτω.",
+    "repointLabel": "Επαναπροσανατολισμός σε νέο φάκελο",
+    "repointHint": "Το Cabinet θα αντικαταστήσει τον σύνδεσμο για να δείχνει εδώ. Τα αρχεία δεν μετακινούνται ποτέ.",
+    "browse": "Αναζήτηση",
+    "nameLabel": "Όνομα",
+    "descriptionLabel": "Περιγραφή",
+    "save": "Αποθήκευση",
+    "saving": "Αποθήκευση…",
+    "copyTarget": "Αντιγραφή διαδρομής προορισμού",
+    "saveFailed": "Δεν ήταν δυνατή η ενημέρωση του συμβολικού συνδέσμου."
+  },
+  "importFolder": {
+    "importing": "Εισαγωγή φακέλου…",
+    "failed": "Η εισαγωγή φακέλου απέτυχε: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Φόρτωση εργασιών"
+  },
+  "agentList": {
+    "agentLibrary": "Βιβλιοθήκη Πρακτόρων",
+    "newAgent": "Νέος Πράκτορας"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Η ομάδα σας",
+    "lead": "Επικεφαλής",
+    "specialist": "Ειδικός",
+    "tasks": "Εργασίες",
+    "todo": "Προς εκτέλεση",
+    "doing": "Σε εξέλιξη",
+    "done": "Ολοκληρώθηκε",
+    "anythingGoes": "Όλα επιτρέπονται",
+    "marketing": "Μάρκετινγκ",
+    "product": "Προϊόν",
+    "research": "Έρευνα",
+    "design": "Σχεδιασμός",
+    "routines": "Ρουτίνες",
+    "dailyReview": "Καθημερινή ανασκόπηση",
+    "weeklyDigest": "Εβδομαδιαία σύνοψη",
+    "conversation": "Συνομιλία",
+    "userQuery": "Σχεδιάστε ένα 2-εβδομαδιαίο ταξίδι στην Ταϊλάνδη…",
+    "agentReply": "Θα στείλω τον βιβλιοθηκάριο και τον επιμελητή.",
+    "pendingAction": "Εκκρεμής ενέργεια",
+    "approve": "Έγκριση",
+    "decline": "Απόρριψη",
+    "themes": "Θέματα",
+    "providers": "Πάροχοι",
+    "comingSoon": "Σύντομα κοντά σας"
+  },
+  "agentLive": {
+    "dismiss": "Απόρριψη",
+    "paused": "Ο πράκτορας είναι σε παύση"
+  },
+  "conversationLive": {
+    "liveOutput": "Ζωντανή Έξοδος",
+    "waitingFirstChunk": "Αναμονή για το πρώτο τμήμα εξόδου…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Άβαταρ",
+    "useIconInstead": "Χρήση εικονιδίου αντ' αυτού"
+  },
+  "pendingActions": {
+    "rejectAll": "Απόρριψη κάθε εκκρεμούς ενέργειας",
+    "approveAll": "Εγκρίνετε και αναθέστε κάθε ενέργεια που δεν έχει σοβαρά εμπόδια"
+  },
+  "aiPanel": {
+    "clearSessions": "Εκκαθάριση όλων των περιόδων λειτουργίας",
+    "dismiss": "Απόρριψη"
+  },
+  "schedulerPlus": {
+    "restartAll": "Επανεκκίνηση όλων των πρακτόρων",
+    "restartSubtitle": "Διακοπή και επανενεργοποίηση όλων των προγραμμάτων"
+  },
+  "csvViewer": {
+    "downloadCsv": "Λήψη CSV",
+    "deleteRow": "Διαγραφή γραμμής"
+  },
+  "resizableImage": {
+    "resizeLeft": "Αλλαγή μεγέθους από αριστερά",
+    "resizeRight": "Αλλαγή μεγέθους από δεξιά"
+  },
+  "folderIndex": {
+    "listView": "Προβολή λίστας",
+    "galleryView": "Προβολή συλλογής"
+  },
+  "linkPopover": {
+    "openLink": "Άνοιγμα συνδέσμου",
+    "removeLink": "Κατάργηση συνδέσμου"
+  },
+  "officeChrome": {
+    "openInFinder": "Άνοιγμα στο Finder",
+    "downloadOriginal": "Λήψη πρωτότυπου"
+  },
+  "sourceViewer": {
+    "copyContents": "Αντιγραφή περιεχομένων αρχείου",
+    "downloadFile": "Λήψη αρχείου"
+  },
+  "versionHistory": {
+    "title": "Ιστορικό εκδόσεων"
+  },
+  "demoModal": {
+    "closeDemo": "Κλείσιμο επίδειξης",
+    "close": "Κλείσιμο"
+  },
+  "demosPlus": {
+    "anything": "Οτιδήποτε",
+    "yours": "Δικά σας",
+    "install": "Εγκατάσταση",
+    "attach": "Επισύναψη"
+  },
+  "narrowViewport": {
+    "dismiss": "Απόρριψη υπόδειξης στενής προβολής",
+    "dismissTitle": "Απόρριψη μέχρι την επόμενη περίοδο λειτουργίας",
+    "hintPrefix": "Το Cabinet λειτουργεί καλύτερα σε ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " πλάτος. Ορισμένες επιφάνειες συμπιέζονται σε μικρότερα πλάτη."
+  },
+  "agentCard": {
+    "runHeartbeat": "Εκτέλεση heartbeat"
+  },
+  "schedulePicker": {
+    "frequency": "Συχνότητα",
+    "onDay": "Την ημέρα",
+    "modeInterval": "Διάστημα",
+    "modeDaily": "Καθημερινά",
+    "modeWeekdays": "Καθημερινές",
+    "modeWeekly": "Εβδομαδιαία",
+    "modeMonthly": "Μηνιαία",
+    "modeCustom": "Προσαρμοσμένο",
+    "parse": "Ανάλυση",
+    "showCron": "Εμφάνιση έκφρασης cron",
+    "hideCron": "Απόκρυψη έκφρασης cron",
+    "weekdayMo": "Δευ",
+    "weekdayTu": "Τρι",
+    "weekdayWe": "Τετ",
+    "weekdayTh": "Πεμ",
+    "weekdayFr": "Παρ",
+    "weekdaySa": "Σαβ",
+    "weekdaySu": "Κυρ"
+  },
+  "slackPanel": {
+    "createChannel": "Δημιουργία καναλιού",
+    "thread": "Νήμα"
+  },
+  "uninstall": {
+    "title": "Απεγκατάσταση Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Συρτάρια Cabinet",
+    "pageTitlePlaceholder": "Τίτλος σελίδας…"
+  },
+  "skillAddPlus": {
+    "cancel": "Ακύρωση"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Δεδομένα ελέγχου μη διαθέσιμα από το skills.sh για αυτήν την δεξιότητα",
+    "searchPlaceholder": "Αναζήτηση στο skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Ανανέωση",
+    "noSkills": "Δεν υπάρχουν δεξιότητες ακόμα."
+  },
+  "taskDetail": {
+    "close": "Κλείσιμο (Esc)",
+    "muteTask": "Σίγαση αυτής της εργασίας — οι ολοκληρωμένες εκτελέσεις της πηγαίνουν απευθείας στο Αρχείο",
+    "unmuteTask": "Κατάργηση σίγασης αυτής της εργασίας — οι ολοκληρωμένες εκτελέσεις της επανεμφανίζονται στα Μόλις Ολοκληρωμένα"
+  },
+  "rowActionsPlus": {
+    "edit": "Επεξεργασία",
+    "editHint": "Επεξεργασία αυτού του αποθηκευμένου προσχεδίου πριν ξεκινήσει",
+    "delete": "Διαγραφή",
+    "deleteHint": "Οριστική διαγραφή — αυτή η ενέργεια δεν αναιρείται"
+  },
+  "taskCard": {
+    "ptyMode": "Εκτέλεση σε λειτουργία τερματικού (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "Απόρριψη"
+  },
+  "terminalExited": {
+    "openDetails": "Άνοιγμα δομημένων λεπτομερειών (προτροπή, τεχνουργήματα, στροφές)",
+    "reconnect": "Επανασύνδεση στον δαίμονα και ροή της ακατέργαστης επανάληψης PTY"
+  },
+  "terminalTabsPlus": {
+    "resize": "Αλλαγή μεγέθους πίνακα τερματικού"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Εμφάνιση όλων των πρακτόρων",
+    "noRecentActivity": "Καμία πρόσφατη δραστηριότητα",
+    "noAgents": "Κανένας πράκτορας",
+    "noAgentsConfigured": "Δεν έχουν ρυθμιστεί πράκτορες για αυτό το cabinet ακόμα.",
+    "cabinetScope": "Εύρος Cabinet:",
+    "depthDropdownHeader": "Εύρος Cabinet",
+    "depthOwnLabel": "Μόνο αυτό το cabinet",
+    "depthOwnShort": "Το παρόν",
+    "depthOwnDesc": "Σελίδες, πράκτορες και εργασίες μόνο από αυτό το cabinet.",
+    "depthChildren1Label": "Συμπερίληψη άμεσων θυγατρικών",
+    "depthChildren1Desc": "Προσθήκη ενός επιπέδου υπο-cabinets.",
+    "depthChildren2Label": "Συμπερίληψη δύο επιπέδων cabinet",
+    "depthChildren2Desc": "Προσθήκη δύο επιπέδων υπο-cabinets.",
+    "depthAllLabel": "Συμπερίληψη όλων των απογόνων",
+    "depthAllShort": "Όλα",
+    "depthAllDesc": "Συμπερίληψη ολόκληρου του υπο-δέντρου.",
+    "scopeTooltip": "Εύρος Cabinet: {{label}}. Κάντε κλικ για αλλαγή."
+  },
+  "composerExtras": {
+    "skillAttached": "Δεξιότητα — συνδεδεμένη μόνο με αυτήν την εκτέλεση",
+    "pageTitlePlaceholder": "Τίτλος σελίδας…",
+    "active": "Ενεργό — αφύπνιση του πράκτορα σε αυτό το πρόγραμμα",
+    "pickCliPty": "Επιλέξτε ένα CLI για εκκίνηση σε PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Επεξεργασία με AI",
+    "jupyterLab": "Αντιγραφή: jupyter lab <path>",
+    "exitApp": "Έξοδος από την εφαρμογή"
+  },
+  "demosExtras": {
+    "aiAccounts": "Λογαριασμοί AI",
+    "aiTeams": "Ομάδες AI"
+  },
+  "whatsNew": {
+    "dismiss": "Απόρριψη",
+    "headerPrefix": "Τι νέο υπάρχει στην έκδοση v",
+    "readFull": "Διαβάστε τις πλήρεις σημειώσεις έκδοσης"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Κατανοώ και θέλω να συνεχίσω."
+  },
+  "daemonHealth": {
+    "dismiss": "Απόρριψη"
+  },
+  "tinyExtras": {
+    "light": "Φωτεινό",
+    "home": "Αρχική",
+    "workspaceGallery": "Συλλογή Χώρων Εργασίας",
+    "savingTo": "Αποθήκευση σε",
+    "comingSoon": "Έρχεται σύντομα",
+    "deleteSkill": "Διαγραφή δεξιότητας",
+    "skillsOffered": "Προσφερόμενες δεξιότητες:",
+    "allAgents": "Όλοι οι πράκτορες",
+    "noTranscript": "Δεν βρέθηκε μεταγραφή",
+    "noDiff": "Δεν διατίθεται διαφορά.",
+    "headsUp": "Προσοχή:",
+    "back": "Πίσω",
+    "editYourAvatar": "Επεξεργασία του avatar σας",
+    "openFullTaskViewer": "Άνοιγμα πλήρους προβολής εργασιών",
+    "close": "Κλείσιμο",
+    "copyToClipboard": "Αντιγραφή στο πρόχειρο",
+    "starOnGithub": "Βάλτε αστεράκι στο Cabinet στο GitHub",
+    "helpMoreFind": "Βοηθήστε περισσότερους να βρουν την κοινότητα",
+    "joinDiscord": "Εγγραφείτε στο Discord",
+    "chatWithBuilders": "Συνομιλήστε με τους δημιουργούς του Cabinet",
+    "joinWaitlist": "Εγγραφείτε στη λίστα αναμονής του Cabinet Cloud",
+    "emailPlaceholder": "εσείς@εταιρεία.com",
+    "namePlaceholder": "Τζέιν",
+    "addToInbox": "Προσθήκη στα Εισερχόμενα",
+    "runTaskNow": "Εκτέλεση εργασίας τώρα",
+    "search": "Αναζήτηση",
+    "aiPanel": "Πίνακας AI",
+    "drawers": "Συρτάρια"
+  },
+  "dataLocations": {
+    "title": "Εκεί που ζουν τα δεδομένα σας",
+    "whyThisMatters": "Γιατί αυτό έχει σημασία",
+    "location": "Τοποθεσία",
+    "contains": "Περιέχει",
+    "network": "Δίκτυο",
+    "revealInFinder": "Εμφάνιση στον διαχειριστή αρχείων",
+    "stored": "Αποθηκευμένο",
+    "resetOnboarding": "Επαναφορά εισαγωγής"
+  },
+  "rooms": {
+    "switcherTitle": "Αλλαγή δωματίου",
+    "switchRoom": "Δωμάτια",
+    "loading": "Φόρτωση…",
+    "defaultTag": "Αρχική",
+    "openInNewWindow": "Άνοιγμα σε νέο παράθυρο",
+    "opensBrowserWindow": "Ανοίγει ένα νέο παράθυρο προγράμματος περιήγησης",
+    "customizeRoom": "Επεξεργασία δωματίου",
+    "addRoom": "Προσθήκη δωματίου…",
+    "editTitle": "Επεξεργασία δωματίου",
+    "editSubtitle": "Ορίστε το όνομα, το εικονίδιο, το χρώμα και το θέμα αυτού του δωματίου.",
+    "nameLabel": "Όνομα εμφάνισης",
+    "slugHint": "Το όνομα φακέλου στον δίσκο παραμένει ως {{slug}}. Η μετονομασία του φακέλου είναι μια ξεχωριστή, προηγμένη ενέργεια.",
+    "iconLabel": "Εικονίδιο",
+    "colorLabel": "Χρώμα",
+    "colorAuto": "Αυτόματο",
+    "themeLabel": "Θέμα",
+    "themeGlobal": "Χρήση καθολικής προεπιλογής",
+    "editFailed": "Δεν ήταν δυνατή η αποθήκευση του δωματίου. Παρακαλώ δοκιμάστε ξανά.",
+    "deleteRoom": "Διαγραφή δωματίου…",
+    "deleteLastRoomDisabledHint": "Δεν μπορείτε να διαγράψετε το τελευταίο σας δωμάτιο.",
+    "deleteTitle": "Διαγραφή αυτού του δωματίου;",
+    "deleteSubtitle": "Αυτό το δωμάτιο και ό,τι περιέχει θα μετακινηθούν στον κάδο απορριμμάτων.",
+    "deleteWarningIntro": "Η μετακίνηση του δωματίου στον κάδο απορριμμάτων αφαιρεί επίσης:",
+    "deleteWarningPages": "Σελίδες και αρχεία μέσα σε αυτό το δωμάτιο",
+    "deleteWarningAgents": "Πράκτορες, συνομιλίες και μνήμη που αφορούν αυτό το δωμάτιο",
+    "deleteWarningJobs": "Προγραμματισμένες εργασίες και ρουτίνες σε αυτό το δωμάτιο",
+    "deleteWarningChat": "Ιστορικό ομαδικής συνομιλίας για αυτό το δωμάτιο",
+    "deleteWarningSearch": "Ο δείκτης αναζήτησης του χώρου (αναδημιουργείται αυτόματα αν αποκατασταθεί)",
+    "deleteRecoveryNote": "Ανάκτηση: ο χώρος μετακινείται στο data/.trash/ — επαναφέρετέ τον μετακινώντας τον φάκελο πίσω στο data/.",
+    "deleteConfirmLabel": "Πληκτρολογήστε {{slug}} για επιβεβαίωση",
+    "deleteConfirmButton": "Διαγραφή χώρου",
+    "deleting": "Διαγράφεται…",
+    "deleteFailed": "Δεν ήταν δυνατή η διαγραφή του χώρου. Παρακαλώ δοκιμάστε ξανά."
+  },
+  "common": {
+    "actions": {
+      "save": "Αποθήκευση",
+      "cancel": "Ακύρωση",
+      "delete": "Διαγραφή",
+      "confirm": "Επιβεβαίωση",
+      "close": "Κλείσιμο",
+      "open": "Άνοιγμα",
+      "back": "Πίσω",
+      "next": "Επόμενο",
+      "done": "Τέλος"
+    },
+    "nav": {
+      "goBack": "Επιστροφή",
+      "goForward": "Προώθηση"
+    },
+    "aiPanel": {
+      "open": "Άνοιγμα πίνακα AI",
+      "close": "Κλείσιμο πίνακα AI"
+    },
+    "states": {
+      "loading": "Φόρτωση…",
+      "saving": "Αποθήκευση…",
+      "saved": "Αποθηκεύτηκε",
+      "error": "Κάτι πήγε στραβά"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Νέα Σελίδα",
+      "title": "Δημιουργία Νέας Σελίδας",
+      "placeholder": "Τίτλος σελίδας…",
+      "create": "Δημιουργία",
+      "creating": "Δημιουργία…"
+    },
+    "newCabinet": {
+      "trigger": "Νέο Cabinet",
+      "title": "Δημιουργία Νέου Cabinet",
+      "subtitle": "Ένα cabinet είναι ένας χώρος εργασίας με τους δικούς του πράκτορες, εργασίες και γνώσεις.",
+      "importFromRegistry": "Εισαγωγή από το Μητρώο",
+      "nameLabel": "Όνομα Cabinet",
+      "namePlaceholder": "π.χ. Η Startup μου, Ομάδα Μάρκετινγκ, Εργαστήριο Έρευνας…",
+      "selectAgents": "Επιλογή πρακτόρων",
+      "selectedCount": "{{count}} επιλεγμένοι",
+      "createCabinet": "Δημιουργία Cabinet",
+      "creating": "Δημιουργείται…",
+      "createFailed": "Αποτυχία δημιουργίας cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Εξαγωγή σελίδας",
+      "copyMarkdown": "Αντιγραφή Markdown",
+      "copyForLlms": "Αντιγραφή για LLMs",
+      "copyAsHtml": "Αντιγραφή ως HTML",
+      "downloadMarkdown": "Λήψη .md",
+      "downloadPdf": "Λήψη PDF",
+      "copiedForLlmToast": "Αντιγράφηκε {{size}} Markdown για LLM"
+    },
+    "toolbar": {
+      "heading1": "Επικεφαλίδα 1",
+      "heading2": "Επικεφαλίδα 2",
+      "heading3": "Επικεφαλίδα 3",
+      "bold": "Έντονα",
+      "italic": "Πλάγια",
+      "underline": "Υπογράμμιση",
+      "strikethrough": "Διαγραφή",
+      "inlineCode": "Ενσωματωμένος κώδικας",
+      "link": "Σύνδεσμος",
+      "textColor": "Χρώμα κειμένου",
+      "highlight": "Επισήμανση",
+      "background": "Φόντο",
+      "bulletList": "Λίστα με κουκκίδες",
+      "orderedList": "Αριθμημένη λίστα",
+      "blockquote": "Παράθεση",
+      "checklist": "Λίστα ελέγχου",
+      "codeBlock": "Μπλοκ κώδικα",
+      "divider": "Διαχωριστικό",
+      "alignLeft": "Στοίχιση αριστερά",
+      "alignCenter": "Στοίχιση στο κέντρο",
+      "alignRight": "Στοίχιση δεξιά",
+      "justify": "Πλήρης στοίχιση",
+      "align": "Στοίχιση",
+      "table": {
+        "selectCellText": "Επιλογή κειμένου κελιού",
+        "addRowAbove": "Προσθήκη γραμμής επάνω",
+        "addRowBelow": "Προσθήκη γραμμής κάτω",
+        "moveRowUp": "Μετακίνηση γραμμής επάνω",
+        "moveRowDown": "Μετακίνηση γραμμής κάτω",
+        "deleteRow": "Διαγραφή γραμμής",
+        "addColumnBefore": "Προσθήκη στήλης πριν",
+        "addColumnAfter": "Προσθήκη στήλης μετά",
+        "moveColumnLeft": "Μετακίνηση στήλης αριστερά",
+        "moveColumnRight": "Μετακίνηση στήλης δεξιά",
+        "deleteColumn": "Διαγραφή στήλης",
+        "toggleHeaderRow": "Εναλλαγή γραμμής κεφαλίδας",
+        "toggleHeaderColumn": "Εναλλαγή στήλης κεφαλίδας",
+        "deleteTable": "Διαγραφή πίνακα"
+      },
+      "superscript": "Εκθέτης",
+      "subscript": "Δείκτης",
+      "insertImage": "Εισαγωγή εικόνας",
+      "insertVideo": "Εισαγωγή βίντεο",
+      "embed": "Ενσωμάτωση",
+      "undo": "Αναίρεση",
+      "redo": "Επανάληψη",
+      "switchToLtr": "Εναλλαγή σε LTR",
+      "switchToRtl": "Εναλλαγή σε RTL",
+      "scrollLeft": "Κύλιση γραμμής εργαλείων αριστερά",
+      "scrollRight": "Κύλιση γραμμής εργαλείων δεξιά",
+      "markdown": "Markdown",
+      "preview": "Προεπισκόπηση"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Όνομα Cabinet…",
+      "renameWarning": "Τα ονόματα Cabinet δεν μπορούν να μετονομαστούν αργότερα (προς το παρόν). Επιλέξτε προσεκτικά."
+    },
+    "templates": {
+      "header": "Έναρξη από πρότυπο",
+      "browseAll": "Προβολή όλων →"
+    },
+    "quickActions": {
+      "shuffle": "Εμφάνιση διαφορετικών προτάσεων",
+      "launch10Songs": "Εκκίνηση 10 επεξεργαστών σύνθεσης τραγουδιών",
+      "dailyReview9am": "Καθημερινή ανασκόπηση στις 9 π.μ.",
+      "weeklyReview": "Εβδομαδιαία ανασκόπηση την επόμενη Δευτέρα",
+      "thailandTrip": "Σχεδίασε το ταξίδι μου στην Ταϊλάνδη",
+      "physicsApp": "Φτιάξε μου μια εφαρμογή μελέτης φυσικής",
+      "summariseRecent": "Συνόψισε την πρόσφατη εργασία μου",
+      "recruiterReply": "Σύνταξη απάντησης σε recruiter",
+      "mapArticles": "Χαρτογράφηση συνδέσεων άρθρων",
+      "physicsCourse": "Δημιούργησε ένα μάθημα φυσικής 6 ενοτήτων",
+      "shortStory": "Περίγραμμα μιας μικρής ιστορίας",
+      "hourlyStandup": "Ωριαία υπενθύμιση stand-up",
+      "researchPhone": "Έρευνα για το επόμενο τηλέφωνό μου",
+      "translateToSpanish": "Μετάφραση αυτού του cabinet στα Ισπανικά",
+      "refactorNotes": "Αναδιάρθρωση του συστήματος σημειώσεών μου",
+      "birthdayParty": "Σχεδίασε ένα πάρτι γενεθλίων",
+      "boardUpdate": "Σύνταξη ενημέρωσης διοικητικού συμβουλίου",
+      "customerInterviews": "Προσομοίωση 5 συνεντεύξεων πελατών"
+    },
+    "goodMorning": "Καλημέρα",
+    "goodAfternoon": "Καλό απόγευμα",
+    "goodEvening": "Καλησπέρα",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Θέλω να δημιουργήσω…",
+    "composerDaemonDown": "Ο δαίμονας Agent είναι εκτός σύνδεσης — επανεκκινήστε για αποστολή"
+  },
+  "onboarding": {
+    "launchHeading": "Ξεκινήστε το <accent>Cabinet</accent> σας",
+    "intro": {
+      "tagline1": "Η βάση γνώσεών σας.",
+      "tagline2": "Η ομάδα AI σας.",
+      "getStarted": "Έναρξη"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Γραφείο",
+        "study": "Μελέτη",
+        "lab": "Εργαστήριο",
+        "library": "Βιβλιοθήκη",
+        "kitchen": "Κουζίνα",
+        "family": "Οικογένεια",
+        "dining": "Τραπεζαρία",
+        "studio": "Στούντιο"
+      }
+    },
+    "welcome": {
+      "paragraph": "Το Home σας ανήκει. Μέσα σε αυτό, θα δημιουργήσετε δωμάτια για διαφορετικά μέρη της ζωής σας: εργασία, δεύτερο μυαλό, έρευνα, οικογένεια. Και κάθε δωμάτιο έχει cabinets: τις σημειώσεις σας, τα αρχεία σας και μια ομάδα AI που ολοκληρώνει αθόρυβα εργασίες στο παρασκήνιο.",
+      "namePrompt": "Πώς σε λένε;",
+      "heading": "Καλώς ήρθες <accent>σπίτι</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Καλώς ορίσατε",
+      "headingNamed": "Καλώς ορίσατε στο {{cabinet}}",
+      "subtitle": "Βρέθηκε ένα υπάρχον cabinet εδώ. Ας ολοκληρώσουμε τη ρύθμισή του.",
+      "continue": "Συνέχεια"
+    },
+    "verify": {
+      "passed": "Επιτυχία",
+      "notInstalled": "Δεν είναι εγκατεστημένο",
+      "authRequired": "Απαιτείται έλεγχος ταυτότητας",
+      "paymentRequired": "Απαιτείται πληρωμή",
+      "quotaExceeded": "Όριο χρήσης / ρυθμού",
+      "error": "Σφάλμα"
+    },
+    "providerStatus": {
+      "ready": "Έτοιμο",
+      "loginRequired": "Απαιτείται σύνδεση",
+      "notInstalled": "Δεν είναι εγκατεστημένο"
+    },
+    "actions": {
+      "back": "Πίσω",
+      "next": "Επόμενο",
+      "continue": "Συνέχεια",
+      "skip": "Παράλειψη",
+      "finish": "Ολοκλήρωση",
+      "complete": "Ολοκλήρωση ρύθμισης",
+      "copyToClipboard": "Αντιγραφή στο πρόχειρο"
+    },
+    "cabinetCreated": {
+      "continue": "Συνέχεια ρύθμισης",
+      "heading": "Το Cabinet σας δημιουργήθηκε.",
+      "subtitle": "Όλα είναι έτοιμα.",
+      "agentsReady_one": "{{count}} πράκτορας έτοιμος για εργασία",
+      "agentsReady_other": "{{count}} πράκτορες έτοιμοι για εργασία",
+      "scheduledJobs_one": "{{count}} προγραμματισμένη εργασία",
+      "scheduledJobs_other": "{{count}} προγραμματισμένες εργασίες",
+      "subCabinets_one": "{{count}} υπο-Cabinet",
+      "subCabinets_other": "{{count}} υπο-Cabinets",
+      "agentsReady": "{{count}} πράκτορες έτοιμοι για εργασία",
+      "scheduledJobs": "{{count}} προγραμματισμένες εργασίες",
+      "subCabinets": "{{count}} υπο-Cabinets"
+    },
+    "cloud": {
+      "alreadyOnList": "Είστε ήδη στη λίστα — θα επικοινωνήσουμε μαζί σας.",
+      "aside": "Το Cabinet Cloud έρχεται σύντομα. Το ίδιο προϊόν, χωρίς την πολυπλοκότητα της αυτο-φιλοξενίας.",
+      "description": "Ανοίξτε το Cabinet σας από οποιαδήποτε συσκευή, ενώ οι πράκτορες AI σας συνεχίζουν να εργάζονται — συντάσσοντας, ερευνώντας, οργανώνοντας — ακόμα και όταν ο φορητός υπολογιστής σας είναι κλειστός.",
+      "error": "Κάτι πήγε στραβά. Ελέγξτε το email και δοκιμάστε ξανά.",
+      "joinWaitlist": "Εγγραφή στη λίστα αναμονής",
+      "onList": "Είστε στη λίστα. Θα σας στείλουμε email όταν ανοίξει το Cabinet Cloud.",
+      "sending": "Αποστολή…",
+      "title": "Το Cabinet σας, παντού. Η ομάδα AI σας, πάντα ενεργή.",
+      "waitlistSubtitle": "Συνδεθείτε από οπουδήποτε. Η ομάδα AI σας εργάζεται 24/7."
+    },
+    "discord": {
+      "aside": "Αν θέλετε πρώτοι τις νέες λειτουργίες και προτιμάτε το 'ελάτε να συζητήσουμε' από το 'παρακαλώ υποβάλετε ένα αίτημα', αυτό είναι το δωμάτιό σας.",
+      "description": "Εδώ το feedback μετατρέπεται σε λειτουργίες, τα στιγμιότυπα οθόνης σε συζητήσεις, και κάποιος συνήθως βρίσκει την ακραία περίπτωση πριν σας βρει αυτή.",
+      "joinBadge": "Συμμετοχή",
+      "title": "Το Discord είναι εκεί όπου συμβαίνουν οι καλές παραξενιές."
+    },
+    "github": {
+      "aside": "Το Cabinet είναι ανοιχτού κώδικα. Αν σας αρέσει το όραμα, βοηθήστε μας να διαδώσουμε το μήνυμα.",
+      "description": "Ένα GitHub star βοηθά περισσότερους ανθρώπους να ανακαλύψουν το Cabinet και να ενταχθούν στην κοινότητα.",
+      "starsLabel": "{{stars}} αστέρια GitHub",
+      "title": "Βοηθήστε την κοινότητα του Cabinet να αναπτυχθεί"
+    },
+    "launch": {
+      "beforeYouLaunch": "Πριν την εκκίνηση",
+      "defaultCabinetName": "Το Cabinet σας",
+      "defaultDescription": "Βάση γνώσεων + ομάδα AI",
+      "knowledgeBaseLabel": "Βάση γνώσεων",
+      "aiTeamLabel": "Ομάδα AI",
+      "launchCabinet": "Εκκίνηση Cabinet",
+      "settingUp": "Ρύθμιση...",
+      "disclaimerAccess": "<strong>Οι πράκτορες εκτελούνται με πλήρη πρόσβαση.</strong> Το Cabinet χρησιμοποιεί <flag>--dangerously-skip-permissions</flag> (Claude Code) και ισοδύναμες σημαίες σε άλλους παρόχους. Αυτό είναι πανομοιότυπο με την εκτέλεση αυτών των εργαλείων CLI από το δικό σας τερματικό. Οποιοιδήποτε διακομιστές MCP ή εργαλεία που έχετε διαμορφώσει ενδέχεται να καλούνται αυτόματα από τους πράκτορες.",
+      "disclaimerBackup": "<strong>Δημιουργείτε τακτικά αντίγραφα ασφαλείας των δεδομένων σας.</strong> Οι πράκτορες μπορούν να διαβάζουν, να γράφουν και να διαγράφουν αρχεία σε όλη τη βάση γνώσεων (KB) και τα συνδεδεμένα αποθετήρια (repos) σας. Το Cabinet δεν φέρει ευθύνη για απώλεια δεδομένων. Είστε υπεύθυνοι για τους παρόχους AI που επιλέγετε και τους όρους χρήσης τους.",
+      "disclaimerBeta": "<strong>Λογισμικό Beta. Ενδέχεται να υπάρξουν προβλήματα.</strong> Κυκλοφορούμε γρήγορα. Οι αλλαγές που προκαλούν ασυμβατότητα μπορεί να εφαρμοστούν χωρίς προειδοποίηση.",
+      "legalNotice": "Συνεχίζοντας, συμφωνείτε με τους <terms>Όρους</terms> και την <privacy>Πολιτική Απορρήτου</privacy> μας. Το Cabinet είναι ένα <oss>έργο ανοιχτού κώδικα</oss>.",
+      "keepInTouch": "Ενημερώστε με. Το Cabinet είναι ανοιχτού κώδικα και αναπτύσσεται ανοιχτά, και θα θέλαμε πολύ να μάθουμε τι να φτιάξουμε στη συνέχεια. Χωρίς spam, το υποσχόμαστε."
+    },
+    "provider": {
+      "agentType": "Πράκτορας {{type}}",
+      "close": "Κλείσιμο",
+      "comingSoon": "Σύντομα διαθέσιμο",
+      "guide": "Οδηγός",
+      "heading": "Πάροχος Πράκτορα",
+      "moreModels": "Περισσότερα AI",
+      "install": "Εγκατάσταση",
+      "logIn": "Σύνδεση",
+      "openTerminalButton": "Άνοιγμα τερματικού",
+      "openTerminalDetail": "Θα χρειαστείτε ένα τερματικό για να εκτελέσετε τα επόμενα βήματα.",
+      "openTerminalError": "Δεν ήταν δυνατή η αυτόματη εκκίνηση του τερματικού. Ανοίξτε το τερματικό του συστήματός σας χειροκίνητα.",
+      "openTerminalTitle": "Ανοίξτε ένα τερματικό",
+      "recheck": "Επανέλεγχος παρόχων",
+      "rerunVerify": "Επανεκτέλεση επαλήθευσης",
+      "runVerify": "Εκτέλεση επαλήθευσης",
+      "setupTitle": "Ρύθμιση {{name}}",
+      "skipForNow": "Παράλειψη προς το παρόν",
+      "subtitle": "Το Cabinet χρειάζεται ένα AI CLI για να τροφοδοτήσει τους πράκτορές σας.",
+      "verifyExplanation": "Η επαλήθευση εκτελεί την headless προτροπή του παρόχου από άκρο σε άκρο και ταξινομεί τυχόν αποτυχίες, ώστε να γνωρίζετε ποιο βήμα να επανεξετάσετε.",
+      "verifying": "Επαλήθευση…",
+      "failedAtStep": "Αποτυχία στο βήμα: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Σε τι χρησιμεύει αυτό το cabinet; Κάθε δωμάτιο διαθέτει τη δική του ομάδα AI.",
+      "heading": "Επιλέξτε ένα <accent>δωμάτιο</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Τι είναι ένα Cabinet;",
+      "body": "Ένα Cabinet είναι ένας εστιασμένος χώρος εργασίας για έναν τομέα της ζωής ή της εργασίας σας. Περιέχει τα αρχεία, τις σημειώσεις, τα εργαλεία, τους πράκτορες και τις εργασίες σας, ώστε η ομάδα AI σας να έχει το απαραίτητο πλαίσιο για να βοηθήσει πραγματικά.",
+      "examplesLabel": "Πώς χρησιμοποιούν οι άνθρωποι το Cabinet",
+      "example1": "η startup σας",
+      "example2": "ένα αποθετήριο GitHub",
+      "example3": "η δουλειά σας στο μάρκετινγκ",
+      "example4": "ένα έργο πελάτη",
+      "example5": "η προσωπική σας βάση γνώσεων"
+    },
+    "access": {
+      "heading": "Σε τι μπορεί να έχει πρόσβαση ο/η {{name}};",
+      "subtitle": "Επιλέξτε τις γνώσεις και τα εργαλεία που μπορεί να χρησιμοποιήσει αυτός ο πράκτορας. Μπορείτε να το αλλάξετε οποιαδήποτε στιγμή.",
+      "defaultAgent": "ο πράκτοράς σας",
+      "files": "Αρχεία & γνώσεις",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Διακομιστές MCP",
+      "plugins": "Πρόσθετα",
+      "skills": "Δεξιότητες",
+      "placeholderNote": "Μπορείτε να ρυθμίσετε λεπτομερώς την πρόσβαση αργότερα στις ρυθμίσεις του πράκτορα."
+    },
+    "heartbeat": {
+      "heading": "Πρέπει ο/η {{name}} να λειτουργεί με αυτόματο ρυθμό;",
+      "subtitle": "Ένας αυτόματος ρυθμός επιτρέπει στον πράκτορα να ενημερώνεται και να εργάζεται αυτόνομα σε προγραμματισμένη βάση.",
+      "off": "Ανενεργό",
+      "offHint": "Εκτελείται μόνο όταν το ζητήσετε. Συνιστάται για αρχή.",
+      "daily": "Καθημερινά",
+      "dailyHint": "Ενημερώνεται μία φορά την ημέρα.",
+      "weekly": "Εβδομαδιαία",
+      "weeklyHint": "Ενημερώνεται μία φορά την εβδομάδα.",
+      "tokenNote": "Προσοχή: ένας αυτόματος ρυθμός εκτελεί τον πράκτορα αυτόματα, κάτι που χρησιμοποιεί διακριτικά AI (και το όριο του παρόχου σας) κάθε φορά που ενεργοποιείται. Μπορείτε να το αλλάσετε ή να το απενεργοποιήσετε οποιαδήποτε στιγμή."
+    },
+    "firstTask": {
+      "heading": "Καταχωρίστε την πρώτη σας εργασία",
+      "subtitle": "Οι εργασίες είναι ο τρόπος που αναθέτετε δουλειά στον/στην {{name}}. Γράψτε μία τώρα και θα προσγειωθεί στο cabinet σας, έτοιμη να εκτελεστεί.",
+      "label": "Τι πρέπει να κάνει πρώτα ο/η {{name}};",
+      "placeholder": "π.χ. Συντάξτε ένα email καλωσορίσματος για νέους πελάτες",
+      "example1": "Συνοψίστε τις τελευταίες μου σημειώσεις",
+      "example2": "Συντάξτε ένα σχέδιο έργου",
+      "example3": "Ερευνήστε τους 3 κορυφαίους ανταγωνιστές μας",
+      "note": "Μπορείτε να το αφήσετε κενό και να προσθέσετε εργασίες αργότερα. Τίποτα δεν εκτελείται μέχρι να συνδέσετε έναν πάροχο AI."
+    },
+    "rail": {
+      "untitled": "Το Cabinet σας",
+      "dataCaption": "Όλα τα αρχεία και οι σημειώσεις του έργου σας βρίσκονται εδώ.",
+      "teamEmpty": "Δεν υπάρχουν ακόμη πράκτορες.",
+      "teamCaption": "Η ομάδα AI σας εργάζεται εδώ.",
+      "tasksEmpty": "Δεν υπάρχουν ακόμη εργασίες.",
+      "tasksCaption": "Η εργασία που αναθέτετε στην ομάδα σας εμφανίζεται εδώ.",
+      "assignedTo": "Ανατέθηκε σε {{name}}",
+      "you": "Εσείς"
+    },
+    "rooms": {
+      "office": {
+        "label": "Το Γραφείο",
+        "tagline": "Διαχειριστείτε μια επιχείρηση, startup ή παράλληλο έργο.",
+        "workspaceLabel": "Όνομα εταιρείας ή έργου",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Τι κάνετε;",
+        "descriptionPlaceholder": "Δημιουργούμε ένα podcast για startups τεχνητής νοημοσύνης.",
+        "departmentNoun": "Τμήμα",
+        "teamSizeLabel": "Μέγεθος ομάδας",
+        "exampleAgents": {
+          "0": "Διευθύνων Σύμβουλος",
+          "1": "Επιμελητής"
+        }
+      },
+      "study": {
+        "label": "Μελέτη",
+        "tagline": "Ο δεύτερος εγκέφαλός σας — γραφή, σημειώσεις, προσωπικός βοηθός.",
+        "workspaceLabel": "Ονομάστε το cabinet σας",
+        "workspacePlaceholder": "Η Μελέτη μου",
+        "descriptionLabel": "Σε ποιους τομείς της ζωής θέλετε βοήθεια;",
+        "descriptionPlaceholder": "Γραφή, διαχείριση email, ημερολόγιο, παρακολούθηση συνηθειών",
+        "departmentNoun": "Τομέας",
+        "exampleAgents": {
+          "0": "Βοηθός",
+          "1": "Βιβλιοθηκάριος"
+        }
+      },
+      "lab": {
+        "label": "Εργαστήριο Έρευνας",
+        "tagline": "Ακαδημαϊκή εργασία, λογοτεχνία, διδασκαλία, διατριβή.",
+        "workspaceLabel": "Όνομα χώρου εργασίας",
+        "workspacePlaceholder": "Φιλοσοφία του Νου",
+        "descriptionLabel": "Ποιο είναι το πεδίο σας ή τι ερευνάτε;",
+        "descriptionPlaceholder": "Φαινομενολογία, συνείδηση, διδασκαλία Εισαγωγής στη Φιλοσοφία",
+        "departmentNoun": "Τομέας",
+        "exampleAgents": {
+          "0": "Επικεφαλής Έρευνας",
+          "1": "Βιβλιοθηκονόμος"
+        }
+      },
+      "family-room": {
+        "label": "Οικογενειακός Χώρος",
+        "tagline": "Νοικοκυριό, οικογενειακό ημερολόγιο, γεύματα, παιδιά.",
+        "workspaceLabel": "Όνομα νοικοκυριού",
+        "workspacePlaceholder": "Η Οικογένεια Nguyen",
+        "descriptionLabel": "Ποιοι μένουν εδώ και τι διαχειρίζεστε;",
+        "descriptionPlaceholder": "Δύο γονείς, τρία παιδιά, δύο σχολεία, ένα σκύλο",
+        "departmentNoun": "Περιοχή",
+        "teamSizeLabel": "Μέγεθος νοικοκυριού",
+        "exampleAgents": {
+          "0": "Διαχειριστής Σπιτιού",
+          "1": "Προγραμματιστής"
+        }
+      },
+      "blank": {
+        "label": "Άδειος Χώρος",
+        "tagline": "Τίποτα ακόμα. Φέρτε τους δικούς σας πράκτορες, τη δική σας μορφή.",
+        "workspaceLabel": "Ονομάστε το cabinet σας",
+        "workspacePlaceholder": "Το Cabinet μου",
+        "descriptionLabel": "Σε τι χρησιμεύει;",
+        "descriptionPlaceholder": "Οτιδήποτε — αφήστε κενό αν δεν είστε σίγουροι ακόμα",
+        "departmentNoun": "Ομάδα",
+        "exampleAgents": {
+          "0": "Επιλογή σας"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Ηγεσία",
+      "marketing": "Μάρκετινγκ",
+      "content": "Περιεχόμενο",
+      "engineering": "Μηχανική",
+      "product-and-design": "Προϊόν & Σχεδιασμός",
+      "business": "Επιχειρήσεις",
+      "research": "Έρευνα",
+      "finance-and-ops": "Οικονομικά & Λειτουργίες",
+      "personal": "Προσωπικά",
+      "second-brain": "Δεύτερος εγκέφαλος",
+      "writing": "Συγγραφή",
+      "tools": "Εργαλεία",
+      "life-admin": "Διαχείριση ζωής",
+      "from-the-office": "Από το Γραφείο",
+      "writing-and-notes": "Συγγραφή & σημειώσεις",
+      "other": "Άλλα",
+      "household": "Νοικοκυριό",
+      "admin": "Διαχείριση",
+      "money": "Χρήματα",
+      "product": "Προϊόν",
+      "design": "Σχεδιασμός",
+      "sales": "Πωλήσεις",
+      "support": "Υποστήριξη",
+      "analytics": "Αναλύσεις",
+      "finance": "Οικονομικά",
+      "legal": "Νομικά",
+      "people": "Άνθρωποι"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Καλημέρα ομάδα! Καλώς ήρθατε στο {{workspace}}. Ας ξεκινήσουμε δυναμικά.",
+        "study": "Καλημέρα. Ο δεύτερος εγκέφαλός σας είναι online — καλώς ήρθατε πίσω στο {{home}}.",
+        "lab": "Ο ερευνητικός σταθμός είναι έτοιμος — \"{{workspace}}\". Τι θα ψάξουμε σήμερα;",
+        "family-room": "Η κεντρική βάση εκκινεί — {{home}}. Ας φέρουμε τους πάντες εκεί που πρέπει.",
+        "blank": "Λευκός καμβάς — \"{{workspace}}\". Τι θέλετε να χτίσετε εδώ, {{home}};"
+      },
+      "assign": "{{name}}, μπορείς να αναλάβεις το {{topic}};",
+      "fallbackTopic": "τι ακολουθεί",
+      "office": {
+        "replies": {
+          "0": "Το αναλαμβάνω. Θα έχω μια επισκόπηση του τοπίου έτοιμη μέχρι το τέλος της ημέρας.",
+          "1": "Ήδη συντάσσω ένα σχέδιο. Θα το μοιραστώ στο #content σύντομα.",
+          "2": "Ρυθμίζω τις βασικές ροές εργασίας τώρα. Φαίνεται καλό μέχρι στιγμής."
+        },
+        "topics": {
+          "0": "έρευνα ανταγωνισμού",
+          "1": "το ημερολόγιο περιεχομένου",
+          "2": "το σχέδιο κυκλοφορίας"
+        },
+        "closing": "Υπέροχη ενέργεια όλοι. Ας κάνουμε αυτή μια δυνατή πρώτη εβδομάδα."
+      },
+      "study": {
+        "replies": {
+          "0": "Θα ταξινομήσω τα εισερχόμενα και θα αναδείξω ό,τι σας χρειάζεται.",
+          "1": "Το ημερολόγιο φαίνεται καθαρό μέχρι τις 3 μ.μ. — καλό παράθυρο για γράψιμο.",
+          "2": "Έχω ήδη συνδέσει τρεις νέες σημειώσεις στον δείκτη 'Καθημερινά'."
+        },
+        "topics": {
+          "0": "ταξινόμηση εισερχομένων σήμερα",
+          "1": "το γράψιμο αυτής της εβδομάδας",
+          "2": "η λίστα ανάγνωσής μου"
+        },
+        "closing": "Ωραία. Ενημερώστε με αν χρειαστεί κάτι — αλλιώς θα μείνω μακριά σας."
+      },
+      "lab": {
+        "replies": {
+          "0": "Ανακτώ την τελευταία εργασία για αυτό τώρα — προσχέδιο περίληψης σε μία ώρα.",
+          "1": "Θα συγχρονίσω τη βιβλιογραφία μετά από αυτό και θα επισημάνω τα διπλότυπα.",
+          "2": "Το περίγραμμα της διάλεξης για την Πέμπτη είναι σχεδόν έτοιμο για αναθεώρηση."
+        },
+        "topics": {
+          "0": "η βιβλιογραφική ανασκόπηση",
+          "1": "η προετοιμασία διάλεξης της Πέμπτης",
+          "2": "η λίστα αναφορών"
+        },
+        "closing": "Κρατήστε με ενήμερο. Θα αναθεωρήσω ό,τι στείλετε μέχρι το τέλος της ημέρας."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Το πρόγραμμα φαίνεται καθαρό μετά τις 4. Επισημαίνω αλληλεπικαλυπτόμενες παραδόσεις.",
+          "1": "Το μενού συντάχθηκε για την εβδομάδα — η λίστα αγορών είναι έτοιμη για αναθεώρηση.",
+          "2": "Οι δραστηριότητες των παιδιών συγχρονίστηκαν. Η βραδιά DnD ισχύει ακόμα για την Παρασκευή."
+        },
+        "topics": {
+          "0": "το σημερινό πρόγραμμα",
+          "1": "το πλάνο γευμάτων",
+          "2": "οι δραστηριότητες των παιδιών"
+        },
+        "closing": "Ευχαριστώ όλους. Ενημερώστε με αν αλλάξει κάτι κατά τη διάρκεια της ημέρας."
+      },
+      "blank": {
+        "replies": {
+          "0": "Το έλαβα. Έτοιμος όποτε είστε κι εσείς.",
+          "1": "Σε αναμονή.",
+          "2": "Θα περιμένω οδηγίες."
+        },
+        "topics": {
+          "0": "το πρώτο πράγμα",
+          "1": "ό,τι ακολουθεί",
+          "2": "το ανοιχτό ερώτημα"
+        },
+        "closing": "Όποτε είστε έτοιμοι, πείτε μας τι να κάνουμε."
+      }
+    },
+    "team": {
+      "browseAll": "Προβολή όλων",
+      "browseCabinets": "Περιήγηση σε cabinets",
+      "cabinetNameLabel": "Όνομα Cabinet",
+      "cancel": "Ακύρωση",
+      "importButton": "Εισαγωγή",
+      "importFailed": "Η εισαγωγή απέτυχε",
+      "importFailedConnection": "Η εισαγωγή απέτυχε. Ελέγξτε τη σύνδεσή σας.",
+      "importTitle": "Εισαγωγή {{name}}",
+      "pickAgents": "Επιλέξτε τους πράκτορές σας",
+      "required": "Απαιτείται",
+      "subtitle": "Κάθε cabinet είναι μια ομάδα AI — πράκτορες, εργασίες και μια κοινή βάση γνώσεων, που συνεργάζονται ως ένα σύνολο.",
+      "heading": "Δημιουργήστε <accent>την</accent> ομάδα σας",
+      "nameLabel": "Όνομα πράκτορα",
+      "namePlaceholder": "π.χ. Συντάκτης, Ερευνητής, Βοηθός",
+      "roleLabel": "Ρόλος",
+      "rolePlaceholder": "π.χ. Βοηθός συγγραφής",
+      "instructionsLabel": "Τι πρέπει να κάνει αυτός ο πράκτορας;",
+      "instructionsPlaceholder": "Περιγράψτε πώς πρέπει να βοηθήσει. Για παράδειγμα: Να συντάσσει και να επεξεργάζεται τις σελίδες μου, να διατηρεί τον τόνο σαφή και φιλικό, και να προτείνει βελτιώσεις.",
+      "agentOptionalHint": "Προαιρετικό. Μπορείτε να το παραλείψετε και να προσθέσετε πράκτορες αργότερα μέσα από το δωμάτιο.",
+      "agentCount_one": "{{count}} πράκτορας",
+      "agentCount_other": "{{count}} πράκτορες",
+      "jobCount_one": "{{count}} εργασία",
+      "jobCount_other": "{{count}} εργασίες",
+      "subCabinetCount_one": "{{count}} υπο-cabinet",
+      "subCabinetCount_other": "{{count}} υπο-cabinets",
+      "cabinetsImported_one": "{{count}} cabinet εισήχθη",
+      "cabinetsImported_other": "{{count}} cabinets εισήχθησαν",
+      "agentCount": "{{count}} πράκτορες",
+      "cabinetsImported": "{{count}} cabinets εισήχθησαν",
+      "jobCount": "{{count}} εργασίες",
+      "subCabinetCount": "{{count}} υπο-cabinets"
+    }
+  },
+  "search": {
+    "title": "Αναζήτηση",
+    "placeholder": "Αναζήτηση σελίδων, πρακτόρων, εργασιών…",
+    "clearQuery": "Εκκαθάριση ερωτήματος",
+    "noCommands": "Καμία εντολή δεν ταιριάζει.",
+    "scopes": {
+      "all": "Όλα",
+      "pages": "Σελίδες",
+      "agents": "Πράκτορες",
+      "tasks": "Εργασίες"
+    },
+    "groups": {
+      "pages": "Σελίδες",
+      "agents": "Πράκτορες",
+      "tasks": "Εργασίες"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Γλώσσα",
+      "description": "Αλλάζει τη γλώσσα και την κατεύθυνση ανάγνωσης. Οι υπάρχουσες σελίδες διατηρούν την κατεύθυνση ανά έγγραφο.",
+      "english": "Αγγλικά",
+      "hebrew": "Εβραϊκά",
+      "chineseSimplified": "Απλοποιημένα Κινεζικά",
+      "chineseTraditional": "Παραδοσιακά Κινεζικά",
+      "moreLanguages": "Περισσότερες γλώσσες",
+      "moreLanguagesHint": "Κάντε κλικ σε οποιαδήποτε για να μας πείτε ότι θα θέλατε το Cabinet σε αυτή τη γλώσσα — θα δώσουμε προτεραιότητα στις πιο ζητούμενες.",
+      "comingSoon": "Έρχεται σύντομα",
+      "requestSubmitted": "Ευχαριστούμε! Σημειώσαμε το αίτημά σας για {{language}}. Θα δώσουμε προτεραιότητα στις πιο ζητούμενες γλώσσες.",
+      "requestFailed": "Δεν ήταν δυνατή η επικοινωνία με τον διακομιστή. Παρακαλώ δοκιμάστε ξανά σε λίγο."
+    },
+    "appearance": {
+      "title": "Εμφάνιση",
+      "theme": "Θέμα",
+      "themeDescription": "Επιλέξτε ένα θέμα για τη διεπαφή.",
+      "matchSystem": "Σύμφωνο με το σύστημα",
+      "matchSystemDescription": "Αλλάζει αυτόματα με την εμφάνιση του λειτουργικού σας συστήματος.",
+      "lightThemes": "Ανοιχτά Θέματα",
+      "darkThemes": "Σκούρα Θέματα",
+      "lightVariant": "Ανοιχτή παραλλαγή",
+      "darkVariant": "Σκούρα παραλλαγή",
+      "sidebar": "Πλευρική γραμμή",
+      "showHiddenFiles": "Εμφάνιση κρυφών αρχείων",
+      "sidebarDescription": "Διαμορφώστε τον τρόπο εμφάνισης των αρχείων στην πλευρική γραμμή.",
+      "showHiddenFilesHint": "Εμφάνιση αρχείων και φακέλων που ξεκινούν με τελεία (π.χ. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Προφίλ",
+      "providers": "Πάροχοι",
+      "skills": "Δεξιότητες",
+      "storage": "Αποθηκευτικός χώρος",
+      "integrations": "Ενσωματώσεις",
+      "notifications": "Ειδοποιήσεις",
+      "appearance": "Εμφάνιση",
+      "updates": "Ενημερώσεις",
+      "about": "Σχετικά"
+    },
+    "page": {
+      "title": "Ρυθμίσεις",
+      "refresh": "Ανανέωση",
+      "groupYou": "Εσείς",
+      "groupWorkspace": "Χώρος εργασίας",
+      "groupApp": "Εφαρμογή"
+    },
+    "common": {
+      "copyToClipboard": "Αντιγραφή στο πρόχειρο",
+      "categoriesAriaLabel": "Κατηγορίες ρυθμίσεων",
+      "loading": "Φόρτωση…",
+      "connect": "Σύνδεση",
+      "recommended": "Προτεινόμενο"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Σύντομα διαθέσιμο",
+      "hint": "Η σύνδεση εξωτερικών ενσωματώσεων και ενσωματωμένων εργαλείων είναι καθ' οδόν."
+    },
+    "storage": {
+      "dataDirectory": "Κατάλογος Δεδομένων",
+      "restartRequired": "Απαιτείται επανεκκίνηση",
+      "dataDirectoryDescription": "Όλο το περιεχόμενο της Βάσης Γνώσεων αποθηκεύεται σε αυτόν τον κατάλογο. Η αλλαγή της διαδρομής απαιτεί επανεκκίνηση.",
+      "restartHint": "Ο κατάλογος δεδομένων θα αλλάξει μετά την επανεκκίνηση του Cabinet.",
+      "currentPath": "Τρέχουσα διαδρομή",
+      "loadingPath": "Φόρτωση...",
+      "changeDirectory": "Αλλαγή καταλόγου",
+      "directoryPlaceholder": "/διαδρομή/προς/δεδομένα",
+      "browse": "Αναζήτηση",
+      "save": "Αποθήκευση",
+      "openInFinder": "Άνοιγμα στο Finder",
+      "envVarHint1": "Μπορείτε επίσης να ορίσετε την ",
+      "envVarHint2": " μεταβλητή περιβάλλοντος, η οποία έχει προτεραιότητα έναντι αυτής της ρύθμισης.",
+      "failedToSave": "Αποτυχία αποθήκευσης.",
+      "failedToSaveDir": "Αποτυχία αποθήκευσης καταλόγου δεδομένων."
+    },
+    "updates": {
+      "checking": "Έλεγχος για ενημερώσεις του Cabinet…"
+    },
+    "providers": {
+      "title": "Πάροχοι Πρακτόρων",
+      "defaultModel": "Προεπιλεγμένο Μοντέλο",
+      "setupGuide": "Οδηγός εγκατάστασης",
+      "troubleshoot": "Αντιμετώπιση προβλημάτων παρόχων AI",
+      "subtitle": "Διαμόρφωση παρόχων πρακτόρων AI. Οι πράκτορες CLI εκτελούνται μέσω τερματικού, οι πράκτορες API χρησιμοποιούν απευθείας κλήσεις API.",
+      "defaultRuntime": "Προεπιλεγμένος χρόνος εκτέλεσης",
+      "defaultRuntimeHint": "Οι γενικές συνομιλίες και οι εφεδρικές εκτελέσεις χρησιμοποιούν αυτόν τον πάροχο/μοντέλο/προσπάθεια.",
+      "cliAgents": "Πράκτορες CLI",
+      "apiAgents": "Πράκτορες API",
+      "ready": "Έτοιμο",
+      "installedNotLoggedIn": "Εγκατεστημένο αλλά όχι συνδεδεμένο",
+      "notInstalled": "Δεν είναι εγκατεστημένο",
+      "emptyMatrix": "Δεν έχουν διαμορφωθεί πάροχοι. Προσθέστε έναν παρακάτω."
+    },
+    "notifications": {
+      "channels": "Κανάλια ειδοποιήσεων",
+      "alertRules": "Κανόνες ειδοποιήσεων",
+      "alwaysOn": "Πάντα ενεργό",
+      "comingSoon": "Σύντομα διαθέσιμο",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "Διαμορφώστε πώς λαμβάνετε ειδοποιήσεις όταν οι πράκτορες χρειάζονται την προσοχή σας.",
+      "rulesHint": "Οι ειδοποιήσεις ενεργοποιούνται αυτόματα για τα ακόλουθα συμβάντα:",
+      "previewHint": "Push browser, Telegram, Slack και ειδοποιήσεις email.",
+      "channelPushName": "Push browser",
+      "channelPushDesc": "Άμεσες ειδοποιήσεις όταν η καρτέλα Cabinet είναι ανοιχτή ή η PWA είναι εγκατεστημένη",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Άμεσες ειδοποιήσεις κινητού μέσω bot Telegram",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "Προώθηση ειδοποιήσεων στο κανάλι Slack της ομάδας σας",
+      "channelEmailName": "Σύνοψη email",
+      "channelEmailDesc": "Ομαδοποιημένη σύνοψη ειδοποιήσεων και δραστηριότητας πρακτόρων",
+      "ruleAlertsEvent": "Μηνύματα καναλιού #alerts",
+      "ruleAlertsDesc": "Οποιοσδήποτε πράκτορας δημοσιεύει στο κανάλι ειδοποιήσεων",
+      "ruleMentionsEvent": "Αναφορές @human",
+      "ruleMentionsDesc": "Όταν ένας πράκτορας αναφέρει @human σε οποιοδήποτε κανάλι",
+      "ruleFloorEvent": "Υπέρβαση κατώτατου ορίου στόχου",
+      "ruleFloorDesc": "Ένας στόχος πέφτει κάτω από το ελάχιστο όριό του",
+      "ruleHealthEvent": "Υποβαθμισμένη υγεία πράκτορα",
+      "ruleHealthDesc": "3+ διαδοχικές αποτυχίες heartbeat"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Έκδοση",
+      "release": "Κυκλοφορία",
+      "framework": "Πλαίσιο",
+      "storage": "Αποθήκευση",
+      "privacy": "Απόρρητο",
+      "telemetry": "Ανώνυμη τηλεμετρία χρήσης",
+      "tagline": "Βάση γνώσεων και λειτουργικό σύστημα startup, με προτεραιότητα την ΤΝ, αυτο-φιλοξενούμενο.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Τοπικό σύστημα αρχείων",
+      "aiLabel": "ΤΝ",
+      "aiValue": "Υποστηρίζεται από τοπικά CLIs ΤΝ",
+      "philosophy": "Όλο το περιεχόμενο αποθηκεύεται ως αρχεία markdown στον δίσκο. Οι άνθρωποι ορίζουν την πρόθεση. Οι πράκτορες κάνουν τη δουλειά. Η βάση γνώσεων είναι η κοινή μνήμη μεταξύ και των δύο.",
+      "privacyBody": "Το Cabinet στέλνει ανώνυμη τηλεμετρία χρήσης για να μας βοηθήσει να βελτιώσουμε το προϊόν. Δεν συλλέγονται περιεχόμενα αρχείων, διαδρομές, προτροπές ή μυστικά.",
+      "privacyLink": "Τι συλλέγεται;",
+      "telemetryEnvDisabled": "Απενεργοποιημένο από CABINET_TELEMETRY_DISABLED=1 (μεταβλητή περιβάλλοντος).",
+      "telemetryHint": "Μόνο μετρήσεις συμβάντων, εκδόσεις και πληροφορίες πλατφόρμας. Απενεργοποιήστε για να σταματήσετε την αποστολή.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "Συνδεθείτε στο Cabinet σας από οπουδήποτε, ενώ η ομάδα ΤΝ σας εργάζεται 24/7 για εσάς. Καταχωρίστε το email σας παρακάτω και θα σας ενημερώσουμε όταν ανοίξει το Cabinet Cloud.",
+      "cloudAlready": "Είστε ήδη στη λίστα — θα επικοινωνήσουμε.",
+      "cloudSuccess": "Είστε στη λίστα. Θα σας στείλουμε email όταν ανοίξει το Cabinet Cloud.",
+      "cloudSending": "Αποστολή…",
+      "cloudJoinWaitlist": "Εγγραφή στη λίστα αναμονής",
+      "cloudError": "Κάτι πήγε στραβά. Ελέγξτε το email και δοκιμάστε ξανά.",
+      "connectTitle": "Σύνδεση",
+      "connectBody": "Λάβετε βοήθεια, μοιραστείτε σχόλια ή απλά πείτε ένα γεια.",
+      "joinDiscord": "Εγγραφή στο Discord"
+    },
+    "profile": {
+      "title": "Προφίλ",
+      "name": "Όνομα",
+      "namePlaceholder": "Jane",
+      "displayName": "Όνομα εμφάνισης",
+      "role": "Ρόλος",
+      "rolePlaceholder": "Δημιουργός",
+      "avatar": "Άβαταρ",
+      "accentColor": "Χρώμα έμφασης",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Εφεδρικό εικονίδιο",
+      "useIconInstead": "Χρήση εικονιδίου αντ' αυτού",
+      "searchAvatars": "Αναζήτηση άβαταρ…",
+      "searchIcons": "Αναζήτηση εικονιδίων…",
+      "howAppear": "Πώς εμφανίζεστε στις συνομιλίες και σε όλη την εφαρμογή.",
+      "youFallback": "Εσείς",
+      "displayNameHint": "Εμφανίζεται στις συνομιλίες. Προεπιλογή: Όνομα.",
+      "iconHint": "Χρησιμοποιείται όταν δεν έχει οριστεί εικόνα άβαταρ. Κάντε κλικ ξανά για εκκαθάριση.",
+      "tintHint": "Χρωματίζει το εφεδρικό άβαταρ όταν δεν έχει οριστεί εικόνα.",
+      "save": "Αποθήκευση",
+      "saving": "Αποθήκευση…",
+      "saved": "Αποθηκεύτηκε",
+      "browseAll": "Προβολή όλων ({{count}})",
+      "showFavorites": "Εμφάνιση αγαπημένων",
+      "showFewer": "Εμφάνιση λιγότερων"
+    },
+    "workspace": {
+      "title": "Χώρος εργασίας",
+      "name": "Όνομα χώρου εργασίας",
+      "namePlaceholder": "Το Cabinet μου",
+      "description": "Περιγραφή",
+      "descriptionPlaceholder": "Τι κάνετε;",
+      "teamSize": "Μέγεθος ομάδας",
+      "teamSizePlaceholder": "Μόνος / 2–5 / 6–20 / 20+",
+      "subtitle": "Καταγράφεται κατά την αρχική ρύθμιση. Οι πράκτορες τα διαβάζουν κατά τον προγραμματισμό εργασιών."
+    }
+  },
+  "sidebar": {
+    "settings": "Ρυθμίσεις",
+    "createPage": "Δημιουργία σελίδας",
+    "newPage": "Νέα σελίδα",
+    "newAgent": "Νέος Πράκτορας",
+    "newTask": "Νέα Εργασία",
+    "archive": "Αρχείο",
+    "trash": "Κάδος",
+    "search": "Αναζήτηση",
+    "agents": "Πράκτορες",
+    "tasks": "Εργασίες",
+    "missions": "Αποστολές",
+    "drawerData": "Δεδομένα",
+    "drawerAgents": "Ομάδα",
+    "drawerTasks": "Εργασίες",
+    "goHome": "Μετάβαση στην αρχική",
+    "brandWord": "",
+    "refresh": "Ανανέωση πλευρικής στήλης",
+    "refreshDescription": "Ανανέωση πλευρικής στήλης (επανανάγνωση φακέλου δεδομένων)",
+    "collapseSidebar": "Σύμπτυξη πλευρικής στήλης",
+    "expandSidebar": "Ανάπτυξη πλευρικής στήλης",
+    "resizeHandle": "Αλλαγή μεγέθους πλευρικής στήλης — διπλό κλικ για επαναφορά",
+    "resetWidth": "Διπλό κλικ για επαναφορά πλάτους",
+    "refreshedNoChanges": "Ανανεώθηκε — χωρίς αλλαγές.",
+    "refreshedWithChanges": "Ανανεώθηκε — προστέθηκαν {{added}}, αφαιρέθηκαν {{removed}}.",
+    "refreshFailed": "Η ανανέωση απέτυχε.",
+    "searchPlaceholder": "Αναζήτηση αρχείων…",
+    "searchSearching": "Αναζητείται…",
+    "searchNoResults": "Κανένα αρχείο δεν ταιριάζει με \"{{query}}\""
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Γραμμή κατάστασης",
+      "askAiAriaLabel": "Ζητήστε από την AI να επεξεργαστεί αυτή τη σελίδα",
+      "askAiPlaceholder": "Πώς να επεξεργαστείτε αυτή τη σελίδα;",
+      "sendHint": "↵ για αποστολή"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Κατάσταση διακομιστή — κλικ για λεπτομέρειες",
+      "checking": "Έλεγχος κατάστασης διακομιστή…",
+      "allRunning": "Όλα τα συστήματα λειτουργούν",
+      "appNotResponding": "Ο διακομιστής εφαρμογής δεν ανταποκρίνεται",
+      "daemonDownNoProviders": "Ο Daemon δεν ανταποκρίνεται· δεν υπάρχουν διαθέσιμοι πάροχοι πρακτόρων",
+      "daemonDown": "Ο Daemon δεν ανταποκρίνεται",
+      "noProviders": "Δεν υπάρχουν διαθέσιμοι πάροχοι πρακτόρων",
+      "checkingShort": "Έλεγχος…",
+      "online": "Συνδεδεμένο",
+      "offline": "Αποσυνδεδεμένο",
+      "degraded": "Υποβαθμισμένο",
+      "allSystemsRunning": "Όλα τα Συστήματα Λειτουργούν",
+      "serviceDisruption": "Διακοπή Υπηρεσίας",
+      "appServer": "Διακομιστής Εφαρμογών",
+      "daemon": "Daemon",
+      "agentProviders": "Πάροχοι Πρακτόρων",
+      "running": "Λειτουργεί",
+      "down": "Εκτός λειτουργίας",
+      "lastSeen": "Τελευταία εμφάνιση: {{when}}",
+      "appWorking": "Οι σελίδες, το πρόγραμμα επεξεργασίας, η αναζήτηση και η διαχείριση αρχείων λειτουργούν.",
+      "appDown": "Οι σελίδες, το πρόγραμμα επεξεργασίας, η αναζήτηση και η αποθήκευση δεν είναι διαθέσιμα. Μπορείτε ακόμα να διαβάσετε αποθηκευμένο περιεχόμενο.",
+      "daemonWorking": "Οι πράκτορες AI, οι προγραμματισμένες εργασίες και το τερματικό ιστού λειτουργούν.",
+      "daemonDownDescription": "Οι πράκτορες AI, οι προγραμματισμένες εργασίες και το τερματικό ιστού δεν είναι διαθέσιμα. Η επεξεργασία σελίδων εξακολουθεί να λειτουργεί.",
+      "available": "Διαθέσιμο",
+      "noneReady": "Κανένα Έτοιμο",
+      "providerReady": "Έτοιμο",
+      "providerNotLoggedIn": "Δεν έχετε συνδεθεί",
+      "providerNotInstalled": "Δεν έχει εγκατασταθεί",
+      "install": "Εγκατάσταση",
+      "howToFix": "Πώς να το διορθώσετε"
+    },
+    "save": {
+      "retryTitle": "Κάντε κλικ για επανάληψη της αποτυχημένης αποθήκευσης",
+      "retryAriaLabel": "Η αποθήκευση απέτυχε — κάντε κλικ για επανάληψη",
+      "autoSaving": "Αυτόματη αποθήκευση…",
+      "forceSave": "Αναγκαστική αποθήκευση: ⌘S",
+      "editing": "Επεξεργασία — η αυτόματη αποθήκευση θα εκτελεστεί όταν κάνετε παύση",
+      "wordCountTitle": "Αριθμός λέξεων για αυτήν τη σελίδα (η σύνταξη markdown εξαιρείται)",
+      "savedJustNow": "μόλις τώρα",
+      "savedNever": "ποτέ",
+      "savedAgoSeconds": "πριν {{n}}δ",
+      "savedAgoMinutes": "πριν {{n}}λ",
+      "savedAgoHours": "πριν {{n}}ω",
+      "savedAgoDays": "πριν {{n}}η",
+      "saveFailedRetry": "Αποθήκευση απέτυχε — δοκιμάστε ξανά",
+      "savingText": "Αποθηκεύεται…",
+      "savedText": "Αποθηκεύτηκε",
+      "editingText": "Επεξεργασία…",
+      "savedAgo": "Αποθηκεύτηκε · {{ago}}",
+      "word": "λέξη",
+      "words": "λέξεις"
+    },
+    "git": {
+      "statusModified": "Τροποποιήθηκε",
+      "statusNew": "Νέο",
+      "statusAdded": "Προστέθηκε",
+      "statusDeleted": "Διαγράφηκε",
+      "statusRenamed": "Μετονομάστηκε",
+      "commitMessageAriaLabel": "Μήνυμα commit"
+    },
+    "help": {
+      "menuAriaLabel": "Άνοιγμα μενού Βοήθειας & κοινότητας",
+      "menuTitle": "Βοήθεια & κοινότητα",
+      "demos": "Επιδείξεις, βίντεο και οδηγοί",
+      "discord": "Συζήτηση στο Discord",
+      "discordSubtitle": "Υποστήριξη και σχόλια",
+      "github": "Συμβολή στο GitHub",
+      "githubSubtitle": "Πηγαίος κώδικας, ζητήματα, PRs",
+      "ifUseful": "Αν το βρείτε χρήσιμο",
+      "label": "Βοήθεια",
+      "starsAriaLabel": "{{count}} αστέρια GitHub — άνοιγμα του Cabinet στο GitHub",
+      "starsTitle": "{{count}} αστέρια GitHub — κάντε star το Cabinet στο GitHub",
+      "share": "Κοινή χρήση",
+      "shareSubtitle": "Αντιγραφή συνδέσμου πρόσκλησης & διάδοση",
+      "shareCopied": "Είσαι υπέροχος, {{name}} 🩷 Ευχαριστούμε που φέρνεις μελλοντικά μέλη του Cabinet. Ο σύνδεσμος αντιγράφηκε, μοιράσου την αγάπη!",
+      "shareFailed": "Αδυναμία αντιγραφής συνδέσμου",
+      "friend": "φίλος"
+    },
+    "git2": {
+      "allCommitted": "Όλα committed",
+      "uncommittedFile": "{{count}} αρχείο uncommitted",
+      "uncommittedFiles": "{{count}} αρχεία uncommitted",
+      "uncommittedFilesAria": "{{count}} αρχείο(α) uncommitted — κάντε κλικ για να δείτε τη λίστα",
+      "uncommittedFileTip": "Κάντε κλικ για να δείτε μη δεσμευμένο αρχείο",
+      "uncommittedFilesTip": "Κάντε κλικ για να δείτε μη δεσμευμένα αρχεία",
+      "uncommittedFilesHeading": "{{count}} μη δεσμευμένο αρχείο",
+      "uncommittedFilesHeadingPlural": "{{count}} μη δεσμευμένα αρχεία",
+      "truncatedHint": "Εμφανίζονται μόνο τα πρώτα {{count}} αρχεία — εκτελέστε `git status` για την πλήρη λίστα.",
+      "commitDefault": "Ενημέρωση {{count}} αρχείου",
+      "commitDefaultPlural": "Ενημέρωση {{count}} αρχείων",
+      "committing": "Δέσμευση…",
+      "commit": "Δέσμευση",
+      "commitFailed": "Η δέσμευση απέτυχε",
+      "sync": "Συγχρονισμός",
+      "syncTitle": "Λήψη των τελευταίων από το GitHub & ανανέωση",
+      "syncTitleWithLast": "Λήψη των τελευταίων από το GitHub & ανανέωση. Τελευταίος συγχρονισμός {{when}}.",
+      "syncAriaLabel": "Λήψη των τελευταίων αλλαγών από το GitHub και ανανέωση",
+      "syncAriaLabelWithLast": "Λήψη των τελευταίων αλλαγών από το GitHub και ανανέωση. Τελευταίος συγχρονισμός {{when}}.",
+      "terminal": "Τερματικό",
+      "openTerminal": "Άνοιγμα τερματικού",
+      "newTerminalTab": "Νέα καρτέλα τερματικού",
+      "pulling": "Λήψη…",
+      "pulled": "Ενημερώθηκε από απομακρυσμένο",
+      "upToDate": "Ενημερωμένο",
+      "pullFailed": "Η λήψη απέτυχε"
+    },
+    "update2": {
+      "updateAvailable": "Διαθέσιμη ενημέρωση {{version}}",
+      "updateAvailableTip": "Το Cabinet {{version}} είναι διαθέσιμο"
+    },
+    "common": {
+      "dismiss": "Απόρριψη",
+      "close": "Κλείσιμο",
+      "openSettings": "Ανοίξτε τις Ρυθμίσεις για να ελέγξετε την εγκατεστημένη ενημέρωση"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Επανεκκίνηση για ολοκλήρωση ενημέρωσης"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Επανεκκίνηση αυτής της εργασίας από την αρχική προτροπή",
+      "markAsDone": "Σήμανση αυτής της εργασίας ως ολοκληρωμένης",
+      "viewAriaLabel": "Προβολή εργασίας",
+      "terminal": "Τερματικό",
+      "transcript": "Αντίγραφο",
+      "details": "Λεπτομέρειες",
+      "transcriptTitle": "Εγγενής συνεδρία Claude Code JSONL",
+      "transcriptHint": "Διαβάζει ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Πίσω",
+      "copyPrompt": "Αντιγραφή αρχικού μηνύματος",
+      "gracefulExit": "Ομαλός τερματισμός του CLI (γράφει /exit στο PTY)",
+      "sendSigterm": "Αποστολή SIGTERM στην τρέχουσα διεργασία PTY",
+      "moreActions": "Περισσότερες ενέργειες",
+      "ptyMode": "Εκτέλεση σε λειτουργία τερματικού (PTY)",
+      "compactContext": "Σύμπτυξη προηγούμενων συνομιλιών σε περίληψη για απελευθέρωση παραθύρου περιβάλλοντος",
+      "noSummary": "Δεν υπάρχει περίληψη ακόμα.",
+      "sessionEnded": "Η συνεδρία έληξε — πληκτρολογήστε για να συνεχίσετε στο ίδιο τερματικό.",
+      "terminalLive": "Το τερματικό είναι ενεργό. Το επόμενο μήνυμά σας μπαίνει στην ουρά αφού ολοκληρωθεί αυτή η σειρά."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Γνωρίστε την περιήγηση στο Cabinet",
+    "skip": "Παράλειψη",
+    "skipAriaLabel": "Παράλειψη περιήγησης",
+    "back": "Πίσω",
+    "next": "Επόμενο",
+    "writeFirstTask": "Γράψτε την πρώτη σας εργασία",
+    "goToSlide": "Μετάβαση στη διαφάνεια {{n}}",
+    "starterTask": "Ας συζητήσουμε τους στόχους μου και τι θέλω να πετύχω εδώ, και μετά ας το καταγράψουμε σε μια νέα σελίδα Σχετικά.",
+    "savingTo": "Αποθήκευση σε ",
+    "introTitle": "Γνωρίστε το <accent>Cabinet</accent>.",
+    "introSubtitle": "Η ομάδα AI σας. Η βάση γνώσεών σας. Ένα μέρος.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Πρόσφατες και τρέχουσες εργασίες",
+    "hide": "Απόκρυψη πλευρικής γραμμής εργασιών",
+    "show": "Εμφάνιση πλευρικής γραμμής εργασιών",
+    "empty": "Καμία εργασία",
+    "itemRunning": "{{title}} · εκτελείται · {{when}}",
+    "itemNeedsReply": "{{title}} · χρειάζεται απάντηση",
+    "itemFailed": "{{title}} · απέτυχε · {{when}}",
+    "itemDone": "{{title}} · ολοκληρώθηκε · {{when}}",
+    "itemArchived": "{{title}} · αρχειοθετημένο",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} εκτελούνται — εμφάνιση πλευρικής γραμμής εργασιών"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Αρχική",
+      "agents": "Πράκτορες",
+      "tasks": "Εργασίες",
+      "ai": "AI",
+      "menu": "Μενού",
+      "primaryAriaLabel": "Κύριο"
+    },
+    "returnTo": {
+      "task": "Εργασία",
+      "tasks": "Εργασίες",
+      "agent": "Πράκτορας",
+      "agents": "Πράκτορες",
+      "cabinet": "Cabinet",
+      "home": "Αρχική",
+      "settings": "Ρυθμίσεις",
+      "registry": "Μητρώο",
+      "back": "Πίσω",
+      "backTo": "Πίσω στο {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Προεπιλογή",
+      "dark": "Σκούρο",
+      "darkThemes": "Σκούρα Θέματα",
+      "lightThemes": "Ανοιχτά Θέματα"
+    },
+    "update": {
+      "restartTitle": "Επανεκκινήστε το Cabinet για να ολοκληρωθεί η ενημέρωση",
+      "availableTitle": "Το Cabinet {{version}} είναι διαθέσιμο",
+      "updatesTitle": "Ενημερώσεις Cabinet",
+      "description": "Το Cabinet ελέγχει αυτόματα για νέες εκδόσεις. Εφόσον το προϊόν είναι ακόμα πειραματικό, κρατήστε ένα αντίγραφο των δεδομένων σας πριν εγκαταστήσετε ενημερώσεις.",
+      "later": "Αργότερα",
+      "releaseNotes": "Σημειώσεις έκδοσης"
+    },
+    "daemon": {
+      "fixHintElectron": "Κλείστε και επανεκκινήστε το Cabinet για να επανεκκινήσετε τον δαίμονα του πράκτορα.",
+      "fixHintDev": "Εκτελέστε `npm run dev:daemon` (ή επανεκκινήστε `npm run dev:all`) για να επαναφέρετε τον δαίμονα του πράκτορα.",
+      "notResponding": "Ο δαίμονας του πράκτορα δεν ανταποκρίνεται.",
+      "willFail": "Οι πράκτορες, οι εργασίες και τα αιτήματα AI θα αποτύχουν μέχρι να επανέλθει. {{fixHint}}"
+    }
+  }
+}

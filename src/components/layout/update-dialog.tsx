@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { UpdateSummary } from "@/components/system/update-summary";
+import { useLocale } from "@/i18n/use-locale";
 import type { UpdateCheckResult } from "@/types";
 
 interface UpdateDialogProps {
@@ -16,7 +17,7 @@ interface UpdateDialogProps {
   onOpenChange: (open: boolean) => void;
   onRefresh: () => void;
   onApply: () => Promise<void>;
-  onCreateBackup: () => Promise<void>;
+  onCreateBackup: (options: { includeEnvKeys?: boolean; includeSkills?: boolean }) => Promise<void>;
   onOpenDataDir: () => Promise<void>;
   onLater: () => void;
 }
@@ -36,6 +37,7 @@ export function UpdateDialog({
   onOpenDataDir,
   onLater,
 }: UpdateDialogProps) {
+  const { t } = useLocale();
   if (!update) return null;
 
   const latestVersion = update.latest?.version;
@@ -46,13 +48,13 @@ export function UpdateDialog({
         <DialogHeader className="gap-2">
           <DialogTitle>
             {update.updateStatus.state === "restart-required"
-              ? "Restart Cabinet to finish updating"
+              ? t("chrome:update.restartTitle")
               : latestVersion && update.updateAvailable
-                ? `Cabinet ${latestVersion} is available`
-                : "Cabinet updates"}
+                ? t("chrome:update.availableTitle", { version: latestVersion })
+                : t("chrome:update.updatesTitle")}
           </DialogTitle>
           <DialogDescription>
-            Cabinet checks for releases automatically. While the product is still experimental, keep a copy of your data before installing updates.
+            {t("chrome:update.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -71,7 +73,7 @@ export function UpdateDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onLater}>
-            Later
+            {t("chrome:update.later")}
           </Button>
           {update.latestReleaseNotesUrl && (
             <Button
@@ -84,7 +86,7 @@ export function UpdateDialog({
                 />
               }
             >
-              Release notes
+              {t("chrome:update.releaseNotes")}
             </Button>
           )}
         </DialogFooter>

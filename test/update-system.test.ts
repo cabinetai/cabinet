@@ -29,6 +29,9 @@ test("bundled release manifest stays aligned with the local package version", as
   assert.equal(manifest.version, pkgVersion);
   assert.equal(manifest.gitTag, `v${pkgVersion}`);
   assert.equal(manifest.channel, "stable");
+  assert.equal(manifest.createCabinetVersion, pkgVersion);
+  assert.equal(manifest.cabinetaiVersion, pkgVersion);
+  assert.match(manifest.releaseNotesUrl, new RegExp(`/tag/v${pkgVersion.replace(/\./g, "\\.")}$`));
   assert.match(manifest.sourceTarballUrl, new RegExp(`v${pkgVersion.replace(/\./g, "\\.")}\\.tar\\.gz$`));
 });
 

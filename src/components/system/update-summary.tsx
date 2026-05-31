@@ -1,8 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { AlertTriangle, CloudDownload, FolderOpen, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { UpdateCheckResult } from "@/types";
+import { useLocale } from "@/i18n/use-locale";
+
+export interface CreateBackupOptions {
+  includeEnvKeys?: boolean;
+  includeSkills?: boolean;
+}
 
 interface UpdateSummaryProps {
   update: UpdateCheckResult;
@@ -14,7 +21,7 @@ interface UpdateSummaryProps {
   actionError?: string | null;
   onRefresh: () => void;
   onApply: () => Promise<void> | void;
-  onCreateBackup: () => Promise<void> | void;
+  onCreateBackup: (options: CreateBackupOptions) => Promise<void> | void;
   onOpenDataDir: () => Promise<void> | void;
 }
 
@@ -43,7 +50,10 @@ export function UpdateSummary({
   onCreateBackup,
   onOpenDataDir,
 }: UpdateSummaryProps) {
+  const { t } = useLocale();
   const state = update.updateStatus.state;
+  const [includeEnvKeys, setIncludeEnvKeys] = useState(false);
+  const [includeSkills, setIncludeSkills] = useState(false);
 
   return (
     <div className="space-y-4 rounded-xl border border-border bg-card/70 p-4">
@@ -51,7 +61,7 @@ export function UpdateSummary({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <CloudDownload className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Cabinet Updates</h3>
+            <h3 className="text-sm font-semibold">{t("updateSummary:cabinetUpdates")}</h3>
           </div>
           <p className="text-xs text-muted-foreground">
             Current {update.current.version}
@@ -66,11 +76,11 @@ export function UpdateSummary({
 
       <div className="grid gap-3 text-xs text-muted-foreground sm:grid-cols-2">
         <div className="rounded-lg border border-border/70 bg-background/60 p-3">
-          <p className="font-medium text-foreground">Data directory</p>
+          <p className="font-medium text-foreground">{t("updateSummary:dataDirectory")}</p>
           <p className="mt-1 break-all font-mono text-[11px]">{update.dataDir}</p>
         </div>
         <div className="rounded-lg border border-border/70 bg-background/60 p-3">
-          <p className="font-medium text-foreground">Backups</p>
+          <p className="font-medium text-foreground">{t("updateSummary:backups")}</p>
           <p className="mt-1 break-all font-mono text-[11px]">{update.backupRoot}</p>
         </div>
       </div>
@@ -98,7 +108,7 @@ export function UpdateSummary({
 
       {update.dirtyAppFiles.length > 0 && (
         <div className="rounded-lg border border-destructive/25 bg-destructive/10 p-3 text-xs text-destructive">
-          <p className="font-medium">Local app-code changes detected</p>
+          <p className="font-medium">{t("updateSummaryPlus:dirtyDetected")}</p>
           <p className="mt-1 break-all font-mono text-[11px]">
             {update.dirtyAppFiles.slice(0, 8).join(", ")}
             {update.dirtyAppFiles.length > 8 ? ` +${update.dirtyAppFiles.length - 8} more` : ""}
@@ -117,6 +127,34 @@ export function UpdateSummary({
           {actionError && <p className="text-destructive">{actionError}</p>}
         </div>
       )}
+
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
+        <span className="font-medium uppercase tracking-wide text-[10px] text-muted-foreground/70">
+          Backup includes
+        </span>
+        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={includeEnvKeys}
+            onChange={(e) => setIncludeEnvKeys(e.target.checked)}
+            className="h-3.5 w-3.5 accent-foreground"
+          />
+          <span>
+            API keys (<code className="text-[10.5px]">.cabinet.env</code>)
+          </span>
+        </label>
+        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={includeSkills}
+            onChange={(e) => setIncludeSkills(e.target.checked)}
+            className="h-3.5 w-3.5 accent-foreground"
+          />
+          <span>
+            Skills (<code className="text-[10.5px]">.agents/skills/</code>)
+          </span>
+        </label>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         <Button
@@ -147,7 +185,7 @@ export function UpdateSummary({
           size="sm"
           className="h-8 gap-1.5 text-[12px]"
           onClick={() => {
-            void onCreateBackup();
+            void onCreateBackup({ includeEnvKeys, includeSkills });
           }}
           disabled={backupPending}
         >

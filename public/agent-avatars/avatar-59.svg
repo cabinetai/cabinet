@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" fill="#d7e6d2"/>
+  <path d="M14 120 Q14 84 60 80 Q106 84 106 120 Z" fill="#b33a3a"/>
+  <rect x="53" y="70" width="14" height="14" fill="#f2d4b3"/>
+  <circle cx="60" cy="54" r="22" fill="#f2d4b3"/>
+  <path fill-rule="evenodd" d="M34 70 Q30 40 60 30 Q90 40 86 70 L92 100 Q60 90 28 100 Z M40 54 a20 20 0 1 0 40 0 a20 20 0 1 0 -40 0 Z" fill="#d4a866"/>
+  <path d="M40 50 Q60 34 80 50 Q80 44 60 38 Q40 44 40 50 Z" fill="#d4a866"/>
+  <rect x="40" y="48" width="16" height="10" fill="#1a1a1a" rx="2"/>
+  <rect x="64" y="48" width="16" height="10" fill="#1a1a1a" rx="2"/>
+  <rect x="56" y="52" width="8" height="2" fill="#1a1a1a"/>
+  <path d="M40 64 Q40 72 60 72 Q80 72 80 64 Q80 70 60 70 Q40 70 40 64 Z" fill="#d4a866" opacity="0.3"/>
+</svg>

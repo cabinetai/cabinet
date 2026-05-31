@@ -1,18 +1,22 @@
 {
   "manifestVersion": 1,
-  "version": "0.2.12",
+  "version": "0.4.4",
   "channel": "stable",
-  "releaseDate": "2026-04-10T11:52:48.986Z",
-  "gitTag": "v0.2.12",
+  "releaseDate": "2026-05-23T20:03:14.915Z",
+  "gitTag": "v0.4.4",
+  "gitCommit": "ec2cf043871b63691a216b1b206e1f14f5a4c477",
   "repositoryUrl": "https://github.com/hilash/cabinet",
-  "releaseNotesUrl": "https://github.com/hilash/cabinet/releases/tag/v0.2.12",
-  "sourceTarballUrl": "https://github.com/hilash/cabinet/archive/refs/tags/v0.2.12.tar.gz",
+  "releaseNotesUrl": "https://github.com/hilash/cabinet/releases/tag/v0.4.4",
+  "sourceTarballUrl": "https://github.com/hilash/cabinet/archive/refs/tags/v0.4.4.tar.gz",
   "npmPackage": "create-cabinet",
-  "createCabinetVersion": "0.2.12",
+  "createCabinetVersion": "0.4.4",
+  "cabinetaiPackage": "cabinetai",
+  "cabinetaiVersion": "0.4.4",
   "electron": {
     "macos": {
-      "zipAssetName": "Cabinet-darwin-arm64.zip",
-      "dmgAssetName": "Cabinet.dmg"
+      "arch": "arm64",
+      "zipAssetName": "Cabinet-darwin-arm64-0.4.4.zip",
+      "dmgAssetName": "Cabinet-0.4.4-arm64.dmg"
     }
   }
 }

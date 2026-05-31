@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readConversationDetail } from "@/lib/agents/conversation-store";
+import { buildTaskHref } from "@/lib/navigation/task-route";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { CopyButton } from "./copy-button";
 import { parseTranscript } from "./transcript-parser";
@@ -36,11 +37,14 @@ function Field({
 
 export default async function ConversationTranscriptPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ cabinetPath?: string }>;
 }) {
   const { id } = await params;
-  const detail = await readConversationDetail(id);
+  const { cabinetPath } = await searchParams;
+  const detail = await readConversationDetail(id, cabinetPath);
 
   if (!detail) {
     notFound();
@@ -48,6 +52,7 @@ export default async function ConversationTranscriptPage({
 
   const promptText = detail.request || detail.meta.title;
   const transcriptText = detail.transcript || "No transcript captured.";
+  const rawTranscriptText = detail.rawTranscript || transcriptText;
 
   // Pre-render markdown for text blocks (client hydration doesn't work on this page)
   async function buildHtmlMap(text: string): Promise<Record<number, string>> {
@@ -86,12 +91,20 @@ export default async function ConversationTranscriptPage({
                 {detail.meta.agentSlug} · {detail.meta.trigger} · {detail.meta.status}
               </p>
             </div>
-            <Link
-              href="/"
-              className="inline-flex h-10 items-center rounded-full border border-border px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/60"
-            >
-              Back to Cabinet
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href={buildTaskHref(detail.meta.id, detail.meta.cabinetPath)}
+                className="inline-flex h-10 items-center rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:bg-foreground/90"
+              >
+                Open in task viewer
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex h-10 items-center rounded-full border border-border px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted/60"
+              >
+                Back to Cabinet
+              </Link>
+            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -170,6 +183,21 @@ export default async function ConversationTranscriptPage({
         </div>
 
         <TranscriptViewer text={transcriptText} htmlMap={transcriptHtmlMap} />
+
+        <section className="rounded-3xl border border-border bg-card/80 p-6 shadow-sm">
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold tracking-tight">Raw Terminal Transcript</h2>
+              <p className="text-sm text-muted-foreground">
+                Exact PTY output captured from the CLI run, including terminal redraws and status text.
+              </p>
+            </div>
+            <CopyButton text={rawTranscriptText} />
+          </div>
+          <pre className="max-h-[40rem] overflow-auto rounded-2xl bg-muted/30 p-4 font-mono text-[11px] leading-[1.55] text-foreground/85 whitespace-pre-wrap break-words">
+            {rawTranscriptText}
+          </pre>
+        </section>
       </div>
     </main>
   );

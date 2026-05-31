@@ -22,6 +22,8 @@ import {
   type AgentLiveSession,
 } from "@/stores/ai-panel-store";
 import type { AgentPersona, HeartbeatRecord } from "@/lib/agents/persona-manager";
+import { useLocale } from "@/i18n/use-locale";
+import { DirIcon } from "@/components/ui/dir-icon";
 
 interface AgentLivePanelProps {
   persona: AgentPersona;
@@ -45,6 +47,7 @@ function formatDuration(ms: number): string {
 }
 
 export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
+  const { t } = useLocale();
   const [history, setHistory] = useState<HeartbeatRecord[]>([]);
   const [expandedPast, setExpandedPast] = useState<Set<string>>(new Set());
   const [running, setRunning] = useState(false);
@@ -71,12 +74,15 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
   );
 
   const fetchHistory = useCallback(async () => {
-    const res = await fetch(`/api/agents/personas/${persona.slug}`);
+    const qs = persona.cabinetPath
+      ? `?cabinetPath=${encodeURIComponent(persona.cabinetPath)}`
+      : "";
+    const res = await fetch(`/api/agents/personas/${persona.slug}${qs}`);
     if (res.ok) {
       const data = await res.json();
       setHistory((data.history || []).slice(0, 20));
     }
-  }, [persona.slug]);
+  }, [persona.slug, persona.cabinetPath]);
 
   useEffect(() => {
     fetchHistory();
@@ -92,10 +98,12 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
   const handleRun = async () => {
     setRunning(true);
     try {
+      const body: Record<string, unknown> = { action: "run" };
+      if (persona.cabinetPath) body.cabinetPath = persona.cabinetPath;
       const res = await fetch(`/api/agents/personas/${persona.slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "run" }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (data.ok && data.sessionId) {
@@ -143,7 +151,7 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
             className="h-7 w-7 -ml-1"
             onClick={onBack}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <DirIcon ltr={ChevronLeft} rtl={ChevronRight} className="h-4 w-4" />
           </Button>
           <Bot className="h-4 w-4 text-primary" />
           <span className="text-[13px] font-semibold tracking-[-0.02em]">
@@ -226,7 +234,7 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
                     {expandedPast.has(hb.timestamp) ? (
                       <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0" />
                     ) : (
-                      <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
+                      <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0 rtl:rotate-180" />
                     )}
                     {hb.status === "completed" ? (
                       <CheckCircle className="h-3 w-3 text-green-500 shrink-0" />
@@ -274,13 +282,13 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
             >
               <div className="flex items-center gap-2 shrink-0">
                 <div className="bg-accent/50 rounded-lg px-3 py-2 text-[13px] leading-relaxed flex-1 flex items-center gap-2">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-500 shrink-0" />
                   Heartbeat running…
                 </div>
                 <button
                   onClick={() => removeAgentSession(session.sessionId)}
                   className="text-muted-foreground/40 hover:text-destructive shrink-0 p-1"
-                  title="Dismiss"
+                  title={t("agentLive:dismiss")}
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -330,7 +338,7 @@ export function AgentLivePanel({ persona, onBack }: AgentLivePanelProps) {
           {running ? "Starting…" : "Run Now"}
         </Button>
         {!persona.active && (
-          <span className="text-[11px] text-muted-foreground">Agent is paused</span>
+          <span className="text-[11px] text-muted-foreground">{t("agentLive:paused")}</span>
         )}
       </div>
     </div>

@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Ƙirƙira Wakili",
+      "avatar": "Avatar",
+      "namePlaceholder": "Wakili Mai Talla",
+      "rolePlaceholder": "Kwararre Kan Abun Ciki",
+      "department": "Sashe",
+      "specialist": "Kwararre",
+      "departmentLead": "Shugaban Sashe",
+      "provider": "Mai Bayarwa",
+      "runtime": "Lokacin Aiki",
+      "promptPlaceholder": "Kai wakili ne na talla ga…",
+      "addAgentTitle": "Ƙara wakili zuwa ƙungiyarka",
+      "addAgentDescription": "Zaɓi kwararre daga ɗakin karatu. Zaka iya gyara sunansa, matsayinsa, da umarninsa bayan an ƙara shi.",
+      "createFromScratchTitle": "Ƙirƙira daga farko",
+      "createFromScratchDescription": "Gina sabon wakili da nasa asali, rawa, da umarni.",
+      "searchLibraryPlaceholder": "Bincika ɗakin karatu",
+      "errorLoadLibrary": "An kasa ɗauko ɗakin karatu na wakili.",
+      "errorAddAgent": "An kasa ƙara wannan wakili."
+    },
+    "metric": {
+      "name": "Sunan Ma'auni",
+      "namePlaceholder": "reddit_replies",
+      "target": "Manufa",
+      "targetPlaceholder": "amsoshi/mako",
+      "floor": "Mafi ƙaranci",
+      "period": "Lokaci",
+      "daily": "Kullum",
+      "weekly": "Mako-mako",
+      "monthly": "Wata-wata"
+    },
+    "workspace": {
+      "promise": "Alƙawari",
+      "orgChart": "Tsarin ƙungiya",
+      "jobDetails": "Cikakkun Bayanan Aiki",
+      "heartbeat": "Siginar Rayuwa",
+      "workspace": "Wurin Aiki",
+      "editAgent": "Gyara Wakili",
+      "instructions": "Umarni",
+      "instructionsPlaceholder": "Rubuta markdown don umarnin wannan wakili.",
+      "newAgent": "Sabon Wakili",
+      "routines": "Tsare-tsare",
+      "browseLibrary": "Bincika Ɗakin Karatu na Wakili",
+      "editYourOwn": "Gyara wakilinka na kanka",
+      "editorPlaceholder": "Edita",
+      "productAgentPlaceholder": "Wakili Mai Rubutun Samfur",
+      "instructionsBodyPlaceholder": "Bayyana yadda wannan wakili zai yi aiki a cikin Cabinet da KB.",
+      "perAgentPrompts": "Umarni masu maimaitawa ga kowane wakili",
+      "runNow": "Gudu yanzu",
+      "delete": "Goge",
+      "viewOrgChart": "Duba wannan ƙungiya a matsayin tsarin ƙungiya (zai buɗe cikakken allo)",
+      "hideIntro": "Boye wannan gabatarwa",
+      "sharedAcrossCabinets": "An raba a duk faɗin cabinets",
+      "expandSchedule": "Faɗaɗa jadawali",
+      "heartbeatsOnAgentPage": "Ana saita Siginar Rayuwa a shafin kowane wakili",
+      "exitFullscreen": "Fita cikakken allo",
+      "refresh": "Sabunta",
+      "editHeartbeat": "Gyara bugun zuciya",
+      "newRoutine": "Sabon Tsari",
+      "configureHeartbeat": "Saita bugun zuciya",
+      "openOrgChart": "Bude tsarin kungiya",
+      "pickAnAgent": "Zaɓi wakili",
+      "dismiss": "Kore",
+      "lockedHeartbeatTip": "An dakatar da wannan wakilin. Fara shi a shafin Wakilai don kunna bugun zuciya.",
+      "lockedRoutineTip": "An dakatar da wannan wakilin. Fara shi a shafin Wakilai don kunna tsarinsa.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Danna don kashewa.",
+      "loadError": "An kasa ɗauko wannan wakilin.",
+      "retry": "Sake gwadawa",
+      "color": "Launi",
+      "customColor": "Launi na musamman",
+      "preset": "Saitattu",
+      "editIconColor": "Gyara gunkin, launi, ko hoton mai amfani",
+      "sharedAcrossCabinetsHint": "An raba shi a duk faɗin cabinets — gyare-gyare suna aiki ko'ina",
+      "inbox": "Akwatin saƙo",
+      "conversations": "Tattaunawa",
+      "recentWork": "Ayyukan baya-bayan nan",
+      "schedule": "Jadawali",
+      "heartbeat": "Bugun zuciya",
+      "runNow": "Gudanar yanzu",
+      "editRoutine": "Gyara tsari",
+      "addRoutine": "Ƙara tsari",
+      "details": "Cikakkun bayanai",
+      "editingGlobalAgent": "Ana gyara wakili na duniya",
+      "displayName": "Sunan nuni",
+      "role": "Matsayi",
+      "department": "Sashe",
+      "type": "Nau'i",
+      "workspace": "Wurin aiki",
+      "tags": "Alamomi",
+      "openSkillsSettings": "Bude Saituna → Ƙwarewa",
+      "notInCatalog": "Ba a samu a cikin kasida ba — danna don cirewa",
+      "recommendedForRole": "An ba da shawarar ga wannan matsayi — danna don haɗawa",
+      "promise": "Alƙawari",
+      "saved": "An ajiye",
+      "iconLabel": "Gunki"
+    },
+    "missionControl": {
+      "gallery": "Gidan hotuna",
+      "newAgent": "Sabon Wakili",
+      "allGoals": "Duk Manufofi",
+      "noGoals": "Babu wakilai da aka saita manufofi a gare su.",
+      "fromScratch": "Daga Farko",
+      "describeIt": "Bayyana shi",
+      "import": "Shigo da shi",
+      "closeDialog": "Rufe taga",
+      "describeYourAgent": "Bayyana Wakilinka",
+      "describePlaceholder": "Ina buƙatar wakili da zai riƙa lura da Hacker News don rubuce-rubuce masu alaƙa da GPU kuma ya rubuta sharhi masu ma'ana masu haɗi zuwa shafukanmu…"
+    },
+    "pulseStrip": {
+      "agents": "Wakilai",
+      "running": "Aiki",
+      "goals": "Manufofi",
+      "alerts": "Faɗakarwa",
+      "cost": "Kuɗi",
+      "runningPlays": "Ayyukan da ke gudana",
+      "noRunning": "Babu wakilai masu aiki a halin yanzu.",
+      "costBreakdown": "Rarraba Kuɗi",
+      "noUsage": "Babu amfani da API tukuna.",
+      "totalEstimated": "Jimlar da aka ƙiyasta"
+    },
+    "routine": {
+      "runNowTitle": "Gudanar da wannan aikin yanzu (sau ɗaya, ba tare da jadawali ba)",
+      "deletePermanently": "Share wannan aikin har abada",
+      "promptPlaceholder": "Mene ne wannan aikin zai yi? misali. Taƙaita ayyukan jiya…",
+      "jobName": "Sunan aiki",
+      "jobNamePlaceholder": "Taƙaitaccen dabarun mako-mako",
+      "jobId": "ID na aiki",
+      "schedule": "Jadawali",
+      "model": "Samfuri",
+      "enabled": "An kunna"
+    }
+  },
+  "registry": {
+    "loading": "Ana ɗauka daga rajista…",
+    "readyToImport": "A shirye don shigo da wannan cabinet?",
+    "organization": "Ƙungiya",
+    "agents": "Wakilai",
+    "scheduledJobs": "Ayyukan da aka tsara",
+    "about": "Game da",
+    "cabinetName": "Sunan cabinet",
+    "cabinetNamePlaceholder": "Sunan cabinet…",
+    "searchPlaceholder": "Bincika cabinets…",
+    "noResults": "Babu cabinets da suka dace da bincikenka."
+  },
+  "tasksBoard": {
+    "title": "Ayyuka",
+    "manualTooltip": "Na hannu — ayyukan da ka fara kai tsaye",
+    "jobsTooltip": "Ayyuka — gudanarwa masu maimaitawa da aka tsara",
+    "heartbeatTooltip": "Bugun zuciya — gudanarwar wakili mai jagorancin kai",
+    "clearSelection": "Share zaɓi (Esc)",
+    "createTask": "Ƙirƙiri sabon aiki",
+    "moreNewTypes": "Ƙarin sabbin nau'ikan abubuwa",
+    "newTask": "Sabon Aiki",
+    "newRoutine": "Sabon Aiki na yau da kullun",
+    "viewKanban": "Kanban",
+    "viewList": "Jerin",
+    "viewSchedule": "Jadawali",
+    "viewKanbanHint": "Kallon allo — ayyuka an rarraba su zuwa Akwatin saƙo / Lokacinka / Aiki / An gama yanzu / Taskar ajiya",
+    "viewListHint": "Jerin kowane aiki, sabon aiki farko",
+    "viewScheduleHint": "Kalanda na ayyukan da aka tsara da kuma gudanarwa masu zuwa",
+    "filterByAgent": "Tace ta wakili: {{name}}",
+    "noToDeleteTitle": "Babu ayyuka don sharewa",
+    "noToDeleteFiltered": "Babu abin da ya dace da {{filter}}. Share tacewa, zaɓi wani kallo, ko ƙirƙiri sabon aiki.",
+    "noToDeleteEmpty": "Babu ayyuka a kan allon tukuna. Ƙirƙiri ɗaya da maɓallin + Sabon Aiki.",
+    "gotIt": "Na gane",
+    "deleteCountTitle": "Share aiki {{count}}?",
+    "deleteCountTitlePlural": "Share ayyuka {{count}}?",
+    "deleteBody": "Wannan zai goge bayanan tattaunawa, rubuce-rubuce, da abubuwan da aka ƙirƙira na kowane aiki da aka nuna yanzu har abada. Ba za a iya dawo da shi ba.",
+    "deleteBodyFiltered": "Wannan zai goge bayanan tattaunawa, rubuce-rubuce, da abubuwan da aka ƙirƙira na kowane aiki da aka nuna yanzu ta hanyar matatun da ke aiki har abada. Ba za a iya dawo da shi ba.",
+    "deleteConfirm": "Share {{count}}",
+    "deleteAllShown": "Share dukkan aiki {{count}} da aka nuna",
+    "deleteAllShownPlural": "Share dukkan ayyuka {{count}} da aka nuna",
+    "nothingToDelete": "Babu abin sharewa a wannan kallon",
+    "deleteAllAria": "Share dukkan ayyukan da aka nuna",
+    "noTasksAria": "Babu ayyuka a wannan kallon",
+    "filterTrigger": "matatar {{trigger}}",
+    "filterTriggerAndAgent": "matatar {{trigger}} da wakilin da aka zaɓa",
+    "filterSelectedAgent": "matatar wakilin da aka zaɓa"
+  },
+  "runtime": {
+    "noProvider": "Babu mai bayarwa da aka zaɓa",
+    "modeAriaLabel": "Yanayin gudu",
+    "nativeTranscriptTitle": "Rubutun asali na Cabinet — tsarin JSON mai tsari, abubuwan da aka ƙirƙira, taƙaitawa, cikakken UX",
+    "ptyWarningTitle": "Yana buƙatar maɓallin OpenAI API. Ba ya samuwa a asusun Codex na shirin ChatGPT — zaɓin wannan samfurin zai gaza da saƙon 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Na asali",
+    "terminal": "Terminal",
+    "terminalTitle": "Gudanar da CLI a cikin zaman terminal na PTY kai tsaye (yanayin gwaji na hacker)",
+    "providers": "Masu bayarwa",
+    "modelCol": "Samfuri",
+    "auto": "Kai tsaye",
+    "ready": "A shirye",
+    "loginRequired": "Shiga",
+    "notInstalled": "Ba a shigar ba",
+    "notAvailable": "Ba ya samuwa",
+    "defaultLabel": "Tsoho",
+    "noProvidersAvailable": "Babu masu bayarwa da ke samuwa",
+    "appDefault": "Tsohon app",
+    "selectAppDefault": "Zaɓi tsohon app",
+    "defaultModel": "Tsohon samfuri",
+    "selectedModelLabel": "Samfurin da aka zaɓa",
+    "loadingProviders": "Ana ɗora masu bayarwa...",
+    "loadingAvailableProviders": "Ana ɗora masu bayarwa da ke samuwa…",
+    "triggerSummary": "Samfuri: {{model}} · Ƙoƙari: {{effort}} · ta hanyar {{provider}}",
+    "triggerSystemDefault": "Samfurin aiki — yana amfani da tsohon tsarin (danna don zaɓa)",
+    "clickToLaunch": "Danna don buɗe {{name}} a cikin terminal na PTY"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Wakilai suna aiki da cikakken dama.",
+    "backUp": "Yi ajiyar bayanan ka akai-akai.",
+    "betaSoftware": "Software na Beta. Abubuwa na iya lalacewa.",
+    "iAccept": "Na karanta kuma na yarda"
+  },
+  "skillAdd": {
+    "addSkill": "Ƙara fasaha",
+    "auditTooltip": "Sakamako daga binciken waje na skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Bayanan binciken skills.sh ba su samuwa ga wannan fasahar",
+    "preview": "Samfoti"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Ƙungiyar AI",
+      "aiTeams": "Ƙungiyoyin AI",
+      "routines": "Ayyukan yau da kullun"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Shirya saitin wakili",
+    "exportBundle": "Fitar da kunshin wakili",
+    "goals": "Manufofi",
+    "workspace": "Wurin aiki"
+  },
+  "scheduleRow": {
+    "deleteQ": "Share?",
+    "confirmDelete": "Tabbatar da sharewa",
+    "cancelDelete": "Soke sharewa",
+    "runNow": "Gudanar yanzu"
+  },
+  "apiKeys": {
+    "addKey": "Ƙara maɓalli",
+    "edit": "Shirya",
+    "remove": "Cire",
+    "newApiKey": "Sabon maɓallin API"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Sabuntawar Cabinet",
+    "dataDirectory": "Adireshin bayanai",
+    "backups": "Ajiyayyen bayanai"
+  },
+  "kanban": {
+    "stopAllInLane": "Tsaya duk ayyukan da ke gudana a wannan layin",
+    "restartAllInLane": "Sake fara duk ayyukan da ke wannan layin",
+    "newTask": "Sabon aiki",
+    "collapseColumn": "Rufe shafi",
+    "kill": "Kashe",
+    "laneInbox": "Akwatin saƙo",
+    "laneInboxHint": "An tsara — yana jiran ka fara",
+    "laneNeeds": "Lokacinka",
+    "laneNeedsHint": "Wakili ya yi tambaya ko yana buƙatar amincewa",
+    "laneRunning": "Yana gudana",
+    "laneRunningHint": "Wakilai suna aiki yanzu",
+    "laneDone": "Kawai an gama",
+    "laneDoneHint": "An kammala a cikin awa ɗaya da ta gabata",
+    "laneArchive": "Adana",
+    "laneArchiveHint": "Tsoffi kuma an amince da su"
+  },
+  "terminalTabs": {
+    "newTab": "Sabon shafin terminal",
+    "closeTab": "Rufe terminal"
+  },
+  "newTaskButton": {
+    "createNew": "Ƙirƙiri sabo…",
+    "newTask": "Sabon aiki",
+    "newRoutine": "Sabon aikin yau da kullun"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Takaitaccen dabarun mako-mako",
+    "schedule": "Tsari",
+    "jobId": "ID na aiki",
+    "enabled": "An kunna — gudanar da shi akan wannan tsarin"
+  },
+  "editIdentity": {
+    "title": "Shirya wakili",
+    "displayName": "Sunan nuni",
+    "color": "Launi",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Fara duk wakilai",
+    "startAllSubtitle": "Kunna bugun zuciya da ayyukan cron",
+    "stopAll": "Dakatar da dukan wakilai",
+    "stopAllSubtitle": "Dakata da bugun zuciya da ayyukan cron"
+  },
+  "skillLibrary": {
+    "readOnly": "Kawai karantawa — ba za a iya gyarawa daga Cabinet ba",
+    "noUpstream": "An rubuta kai tsaye a cikin wannan cabinet — ba a rubuta tushen git na sama ba",
+    "executableWarning": "Kunshin ya haɗa da rubutun da za a iya aiwatarwa — duba kafin amincewa",
+    "skills": "Ƙwarewa",
+    "imported": "An shigo da shi",
+    "importing": "Ana shigowa da shi…",
+    "import": "Shigo da shi"
+  },
+  "embedPopover": {
+    "placeholder": "Manna hanyar haɗi (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify, ko kowace URL)",
+    "notValidUrl": "Ba URL mai inganci ba ce",
+    "anyUrlWorks": "Kowace URL ta jama'a tana aiki.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Kowace URL ta iframe"
+  },
+  "rowActions": {
+    "stop": "Dakatar",
+    "stopHint": "Dakatar da wannan gudu yanzu (yana aika SIGTERM)",
+    "restart": "Sake farawa",
+    "restartHint": "Sake aiwatarwa daga asalin umarni",
+    "runHint": "Fara wannan aiki yanzu"
+  },
+  "schedulesPanel": {
+    "title": "Ayyukan da aka tsara",
+    "noJobs": "Babu ayyukan cabinet da aka saita tukuna.",
+    "heartbeats": "Bugun zuciya",
+    "noHeartbeats": "Babu bugun zuciya da aka saita tukuna."
+  },
+  "scheduleTab": {
+    "explainer1": "Duk abin da ƙungiyar ku ke yi wannan makon, a kan kalanda ɗaya. Ruwan hoda bugun zuciya ne, kore kuma aiki ne na yau da kullum. Danna kowace alama don gyara ta.",
+    "explainer2": "Yi amfani da wannan shafin don gano rikice-rikice, gano lokutan hutu, ko kuma kawai ka gani nan take yadda ƙungiyar ke aiki.",
+    "aboutAria": "Game da jadawalin",
+    "modeDay": "Rana",
+    "modeWeek": "Mako",
+    "modeMonth": "Wata"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Rage girma",
+    "zoomIn": "Ƙara girma",
+    "resetView": "Sake saita kallo",
+    "syntaxError": "Kuskuren tsarin zane"
+  },
+  "helpPage": {
+    "keyboard": "Madannai",
+    "skills": "Ƙwarewa",
+    "apiKeys": "Maɓallan API",
+    "mcpServers": "Sabobin MCP",
+    "title": "Taimako",
+    "howTo": "Yadda Ake Yi",
+    "heading": "Koyi yadda Cabinet ke aiki",
+    "subheading": "Gajerun nunawa, jagorori, da samfoti don samun mafi kyawun amfani daga Cabinet.",
+    "ctaWatchTour": "Kalli rangadi",
+    "ctaWatchDemo": "Kalli nunawa",
+    "ctaCheatSheet": "Bude takardar bayani",
+    "ctaComingSoon": "Nan ba da jimawa ba",
+    "discordHeading": "Ba ka sami abin da kake nema ba?",
+    "discordSubheading": "Muna kan Discord — zo ka gaishe mu, ka yi tambayoyi, ka raba abin da kake ginawa.",
+    "discordCta": "Shiga Discord",
+    "items": {
+      "tour": {
+        "title": "Haɗu da <accent>Cabinet</accent> ɗinka.",
+        "description": "Ƙungiyar AI ɗinka. Tushen iliminka. Wuri ɗaya."
+      },
+      "agents": {
+        "title": "Ƙungiyar <accent>AI</accent> ɗinka.",
+        "description": "Ɗauki shugabanni da ƙwararru. Raba su zuwa sassa. Bari su raba ayyuka tsakaninsu."
+      },
+      "tasks": {
+        "title": "Allon <accent>ayyuka</accent>.",
+        "description": "Kanban, jeri, da kallon jadawali. Tace ta wakili ko matsayi. Zaɓi lokacin gudu ga kowane aiki."
+      },
+      "knowledge": {
+        "title": "Tushen <accent>iliminka</accent>.",
+        "description": "Markdown, CSV, PDF, code, notebooks, mermaid, hotuna, sauti — komai yana bayyana kai tsaye. Bayananka yana kan na'urarka; naka ne, ba namu ba."
+      },
+      "cabinets": {
+        "title": "Ƙungiyar <accent>ƙungiyoyin AI</accent>.",
+        "description": "Cabinets suna cikin cabinets. Kowane ɗaya ƙungiyar AI ce ta kansa tare da bayanansa, wakilai, da iyakokin gani — kuma suna iya haɗin gwiwa sama da ƙasa a cikin bishiyar."
+      },
+      "routines": {
+        "title": "<accent>Ayyukan yau da kullun</accent> & jadawali.",
+        "description": "Gudanar da aiki kullum da ƙarfe 9 na safe, mako-mako ranar Juma'a, ko sau ɗaya Litinin mai zuwa. Cron, kalanda, ko harshen halitta."
+      },
+      "conversations": {
+        "title": "Tattaunawa & <accent>amincewa</accent>.",
+        "description": "Wakilai suna ba da shawarar ayyuka — fara aiki, tsara aiki — kuma kai ka amince kafin komai ya fara aiki."
+      },
+      "themes": {
+        "title": "Mai da shi <accent>naka</accent>.",
+        "description": "Zaɓi daga zaɓaɓɓun jigogi masu haske da duhu — Paper, Slate, Claude, Ink, da sauransu."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — kawo AI ɗinka.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — kawo duk masu samarwa da kake biya. Zaɓi tsoho, ko canza shi ga kowane aiki."
+      },
+      "shortcuts": {
+        "title": "Gajerun hanyoyin <accent>madannai</accent>.",
+        "description": "Duk gajerun hanyoyin Cabinet a katin bincike ɗaya. Danna ? daga ko'ina don sake buɗe shi. Tace ta suna ko maɓalli — yana aiki don kewayawa, gyarawa, ayyuka, panels, da umarnin slash."
+      },
+      "skills": {
+        "title": "<accent>Ƙwarewa</accent> ga wakilanka.",
+        "description": "Ƙwarewar Wakili Mai Sauƙin Shigarwa — littattafan jagora da samfurin ke amfani da su don aiki. Shigar daga GitHub ko skills.sh, haɗa zuwa wani mutum, ko @-ambato ɗaya a kowane mai rubutu don gudu ɗaya."
+      },
+      "apiKeysItem": {
+        "title": "Maɓallan <accent>API</accent> don kayan aikinka.",
+        "description": "Haɗa asusunka na OpenAI, Anthropic, ko GitHub sau ɗaya — kowane wakili da ƙwarewa a cikin Cabinet zai yi amfani da shi. Kai ne ke biyan kuɗinka, amfani da rabonka, babu mai shiga tsakani."
+      },
+      "integrations": {
+        "title": "Sabobin <accent>MCP</accent> & haɗin kai.",
+        "description": "Sabobin MCP, Slack, Telegram, Gmail, da Calendar OAuth — haɗa sau ɗaya kuma Cabinet zai sarrafa alamomin. Zai zo nan ba da jimawa ba."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Gajerun hanyoyin madannai",
+    "filterPlaceholder": "Tace…",
+    "close": "Rufe"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Terminal Mai Rai",
+    "runningHeartbeat": "Zuciya tana bugawa…",
+    "memory": "Ƙwaƙwalwa",
+    "recentActivity": "Ayyukan Kwanan Nan"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Hotonka",
+    "preset": "Saitin farko",
+    "useInitials": "Yi amfani da gajerun sunaye",
+    "custom": "Na Musamman"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "An gano canje-canjen lambar app na gida"
+  },
+  "logsPanel": {
+    "classifiedError": "Kuskuren da aka rarraba",
+    "session": "Zama",
+    "noEvents": "Babu abubuwan da suka faru tukuna.",
+    "noTranscript": "Babu rubutu tukuna."
+  },
+  "conversationResult": {
+    "prompt": "Umarni",
+    "result": "Sakamako",
+    "noSummary": "Babu taƙaitawa."
+  },
+  "scheduleRowPlus": {
+    "delete": "Share"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Haɗa fayiloli"
+  },
+  "demos": {
+    "aiTeam": "Ƙungiyar AI",
+    "specialist": "Kwararre",
+    "legal": "Shari'a",
+    "global": "Na Duniya",
+    "editor": "Edita",
+    "slashMenu": "Menu na slash"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · BAYANAI",
+    "headlineSentence": "Tushenka <accent>guda ɗaya</accent> na gaskiya.",
+    "paragraphPrefix": "Markdown, PDFs, spreadsheets, slides, images, video, audio, linked repos, embedded web apps, Google Docs. Ka ambaci kowane ɗayansu da ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Wuri ɗaya don komai — don haka kai da ƙungiyar AI ɗinka ku karanta, gyara, kuma ku tura daga ",
+    "sameFiles": "fayiloli ɗaya",
+    "secondParagraphSuffix": ", ba kwafin kwafi ba.",
+    "mockTitle": "Cabinet na Jane"
+  },
+  "slideData": {
+    "thailandRootLabel": "Tafiyar Thailand",
+    "thailandCaption": "Duba duk fayilolinka a wuri ɗaya.",
+    "videoTitle": "Kasuwar dare.mp4",
+    "taxRootLabel": "Haraji 2026",
+    "taxCaption": "Haraji 2026 — manhajar kalkuleta ta yanar gizo mai rai, an saka ta kai tsaye a cikin cabinet ɗinka.",
+    "calculatorTitle": "Kalkuleta",
+    "liveAppBadge": "Manhaja mai rai",
+    "taxEstimateLabel": "Ƙididdigar haraji na 2026",
+    "income": "Kuɗin shiga",
+    "deductions": "Rage-rage",
+    "taxBracket": "Matsayin haraji",
+    "estimatedTax": "Ƙididdigar haraji",
+    "healthRootLabel": "Lafiya",
+    "healthCaption": "Bitamin & dakunan gwaje-gwaje — takardar bayanai da ke jin kamar shafi.",
+    "csvTitle": "Bitamin na yau da kullun.csv",
+    "csvColVitamin": "Bitamin",
+    "csvColDose": "Adadin",
+    "csvColTime": "Lokaci",
+    "csvColDone": "An gama",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Codebases — haɗa kowane Git repo, wanda wakilanka za su iya bincika.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · AYYUKA",
+    "typedCommand": "Gudanar da ayyuka 10, kowannensu yana rubuta waƙa, adana zuwa @Songs/",
+    "headlineSentence": "Shirye don <accent>fara</accent>?",
+    "paragraphPrefix": "Rubuta aiki. Gudanar da ɗaya, gudanar da goma, tsara su har abada. Ka ambaci shafuka da ",
+    "paragraphSuffix": ", adana fitarwa duk inda kake so. Kai ne darakta yanzu.",
+    "savingFolder": "Waƙoƙi/"
+  },
+  "slideAgents": {
+    "persona": "Persona",
+    "heartbeat": "Bugun Zuciya",
+    "jobs": "Ayyuka",
+    "aiTeam": "Ƙungiyar AI",
+    "otherWriter": "Marubuci",
+    "otherOrganizer": "Mai Shiryawa",
+    "idle": "babu aiki",
+    "researchAnalyst": "Manazarci Bincike",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "aiki",
+    "personaBody": "\"Manazarci mai zurfi. Yana kawo hujjoji. Yana nuna sabanin bayanai.\"",
+    "heartbeatBody": "Yana bincika @Market Research kowane minti 15",
+    "jobsBody": "Litinin 9:00 · Takaitaccen bayanin masu fafatawa na mako-mako",
+    "slideNum": "02 · WAKILAI",
+    "paragraphPrefix": "Kowane wakili yana da ",
+    "personaWord": "halayya",
+    "paragraphMiddle": ", nasa ",
+    "scheduleWord": "tsari",
+    "paragraphMiddle2": ", da kuma ",
+    "memoryWord": "ƙwaƙwalwa",
+    "paragraphSuffix": ". Wakilan AI ɗinka suna kammala aiki, awanni 24/7. Ka zama ɗan Adam — za su kula da sauran.",
+    "aiTeamSentence": "<accent>Ƙungiyar AI</accent> ɗinka."
+  },
+  "startWork": {
+    "close": "Rufe",
+    "selectAgent": "Zaɓi wakili",
+    "titleNow": "Mene ne ake buƙatar yi?",
+    "titleRecurring": "Saita tsarin maimaitawa",
+    "titleHeartbeat": "Tada wannan wakili a kan tsari",
+    "titleEdit": "Gyara aiki",
+    "submitStart": "Fara",
+    "submitAddInbox": "Ƙara zuwa Akwatin Saƙo",
+    "submitSaveEdit": "Ajiye canje-canje",
+    "submitCreateRoutine": "Ƙirƙiri tsari",
+    "submitSaveHeartbeat": "Ajiye bugun zuciya",
+    "saving": "Ana ajiyewa…",
+    "current": "na yanzu",
+    "modeInboxLabel": "→ Akwatin Saƙo",
+    "modeInboxHint": "Ajiye zuwa Akwatin Saƙo — fara shi idan ka shirya",
+    "modeNowLabel": "Gudanar yanzu",
+    "modeNowHint": "Fara wannan tattaunawa nan da nan",
+    "modeRecurringLabel": "A kan tsari",
+    "modeRecurringHint": "Gudanar da wannan umarni a kan tsari",
+    "modeHeartbeatLabel": "Bugun Zuciya",
+    "modeHeartbeatHint": "Tada wakilin a kan nasa bugun",
+    "agentFallback": "Wakili",
+    "failedToStart": "Kasa farawa",
+    "failedToSave": "Kasa ajiye canje-canje",
+    "failedToSaveHeartbeat": "Kasa ajiye bugun zuciya"
+  },
+  "googleDoc": {
+    "noUrl": "Babu URL na Google da aka saita",
+    "anyoneWithLink": "Duk wanda ke da hanyar haɗi",
+    "publishedToWeb": "An wallafa a yanar gizo"
+  },
+  "feedback": {
+    "close": "Rufe",
+    "rolePlaceholder": "misali, mai kirkira mai zaman kansa, PM a SaaS, dalibin zane, mai sha'awa…",
+    "joinDiscord": "Shiga Discord",
+    "header": "Gaisuwa daga Jane",
+    "howGoing": "Yaya abubuwa ke tafiya kawo yanzu?",
+    "starsCount": "{{n}} tauraro",
+    "starsCountPlural": "{{n}} taurari",
+    "likeCabinet": "Kana son Cabinet?",
+    "starTooltipUnknown": "Ba Cabinet tauraro a GitHub — idan yana da amfani a gare ka, tauraro yana taimakawa sosai",
+    "starTooltipWithCount": "{{count}} taurarin GitHub — danna don ƙara naka",
+    "starLabel": "Ba tauraro",
+    "backgroundLabel": "Mene ne tarihin ka?",
+    "optional": "(na zaɓi)",
+    "discordCta": "Kana so ka yi magana kai tsaye, ko ka yi hira da sauran membobin Cabinet?",
+    "maybeLater": "Wataƙila daga baya",
+    "send": "Aika",
+    "thanksTitle": "Na gode!",
+    "thanksBody": "Ra'ayoyin ka ne ke tsara abin da za a gina gaba.",
+    "copy2Lead": "Ka buɗe Cabinet sau da yawa. Na gode! Cabinet buɗaɗɗen tushe ne kuma yana farawa, don haka abin da ka faɗa a nan yana canza abin da za a gina gaba.",
+    "copy2Q1": "Mene ne kake ƙoƙarin yi a Cabinet yau?",
+    "copy2Q1Hint": "Jumla ɗaya ya isa. Abin da ka buɗe shi don, ba abin da kake fata zai iya yi ba.",
+    "copy2Q2": "A lokacin da ka so yin hakan, mene ne ka yi amfani da shi maimakon Cabinet?",
+    "copy2Q2Hint": "Kowace kayan aiki, manhaja, ko takarda, har ma da alkalami da takarda.",
+    "copy6Lead": "Ka dawo, kuma wannan shine alamar da ta fi muhimmanci. Ina so in ji game da matsalolin kafin ka manta da su.",
+    "copy6Q1": "Mene ne kake ƙoƙarin yi a Cabinet yau?",
+    "copy6Q1Hint": "Jumla ɗaya ya isa.",
+    "copy6Q2": "Mene ne abu ɗaya da ya kusan sa ka daina amfani da Cabinet wannan makon?",
+    "copy6Q2Hint": "Abin da ya fi damun ka. Ka bayyana dalla-dalla. \"X ya ruɗe ni\" ya fi \"UX\"."
+  },
+  "apiKeysSection": {
+    "cancel": "Soke",
+    "pasteHere": "liƙa a nan",
+    "pasteNewValue": "liƙa sabon daraja"
+  },
+  "storageBackend": {
+    "title": "Ma'ajiyar bayanai",
+    "migrationFailed": "Canja wuri ya gaza"
+  },
+  "linkRepo": {
+    "title": "Ɗauko Ilimi",
+    "intro": "Nuna Cabinet zuwa kowace jaka a kwamfutarka. Cabinet zai ƙirƙiri symlink don abubuwan da ke cikin jakar su bayyana a cikin Tushen Iliminka kuma su kasance ga wakilan AI a matsayin mahallin. Ba a taɓa motsa ko kwafa jakar asali ba.",
+    "symlinkNote": "Wannan yana ƙirƙirar hanyar haɗi ta alama — fayilolin suna zama a inda suke.",
+    "autoDetectPlaceholder": "Gano kai tsaye daga git remote (na zaɓi)",
+    "shortSummaryPlaceholder": "Takaitaccen bayani na zaɓi ga wakilai"
+  },
+  "recentTasks": {
+    "ptyMode": "Yanayin Terminal (PTY)",
+    "revealOlder": "Nuna ƙarin tsofaffin ayyuka",
+    "showOlder": "Nuna tsofaffi"
+  },
+  "treeNode": {
+    "openCabinet": "Buɗe kallon cabinet",
+    "pageTitlePlaceholder": "Taken shafi…",
+    "rename": "Canza suna",
+    "openBadge": "Buɗe",
+    "sectionAdd": "Ƙara zuwa wannan abu",
+    "sectionThis": "Wannan abu",
+    "addSubPage": "Ƙara Ƙaramin Shafi",
+    "newFolder": "Sabuwar Jaka",
+    "createFile": "Ƙirƙiri Sabon Fayil…",
+    "connectKnowledge": "Haɗa Ilimi…",
+    "symlinkTag": "Symlink",
+    "importFile": "Shigo da Fayil…",
+    "importFolder": "Shigo da Jaka…",
+    "createCabinet": "Ƙirƙiri Cabinet Anan",
+    "editSymlink": "Gyara Symlink…",
+    "settings": "Saituna…",
+    "moveTo": "Motsa zuwa…",
+    "copyRelativePath": "Kwafi Hanyar Dangantaka",
+    "copyFullPath": "Kwafi Cikakkiyar Hanya",
+    "openInFinder": "Bude a Finder",
+    "delete": "Goge",
+    "unlink": "Cire Haɗi",
+    "folderNamePlaceholder": "Sunan Jaka",
+    "creating": "Ana ƙirƙira…",
+    "create": "Ƙirƙira",
+    "addSubPageTitle": "Ƙara Ƙaramin Shafi zuwa “{{name}}”",
+    "newFolderTitle": "Sabuwar Jaka a “{{name}}”"
+  },
+  "newFile": {
+    "title": "Ƙirƙiri Sabon Fayil",
+    "subtitle": "Zaɓi nau'in fayil. Cabinet zai buɗe shi a cikin edita idan ya shirya.",
+    "groupNative": "Gyara a Cabinet",
+    "groupOffice": "Office (fanko — gyara a waje)",
+    "groupGoogle": "Google (haɗe)",
+    "namePlaceholder": "Sunan fayil",
+    "create": "Ƙirƙira",
+    "creating": "Ana ƙirƙira…",
+    "googleUrlLabel": "Adireshin Google (na zaɓi)",
+    "googleUrlPlaceholder": "Manna adireshin Google mai raba, ko bar shi fanko don ƙarawa daga baya",
+    "officeNote": "Cabinet yana nuna fayilolin Office a yanayin karatu kawai. Yi amfani da “Bude a Finder” don gyarawa a manhajar tebur.",
+    "types": {
+      "markdown": "Shafin Markdown",
+      "markdownDesc": "Bayanan rubutu masu wadata, masu gyarawa a Cabinet",
+      "code": "Fayil ɗin Code",
+      "codeDesc": "Duk wani fayil na tushe/rubutu — zaɓi tsawo",
+      "mermaid": "Zane na Mermaid",
+      "mermaidDesc": "Zane-zane da taswirar gudana a matsayin code",
+      "csv": "Teburin CSV",
+      "csvDesc": "Bayanan tebur mai raba da koma",
+      "docx": "Takardar Word",
+      "docxDesc": "Fanko .docx",
+      "xlsx": "Teburin Excel",
+      "xlsxDesc": "Fanko .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Fanko .pptx",
+      "gdoc": "Takardar Google",
+      "gdocDesc": "Haɗa Takardar Google",
+      "gsheet": "Teburin Google",
+      "gsheetDesc": "Haɗa Teburin Google",
+      "gslides": "Google Slides",
+      "gslidesDesc": "Haɗa Google Slides"
+    },
+    "codeExtLabel": "Tsawo",
+    "googleTag": "Google",
+    "extHint": "Kawai rubuta sunan — Cabinet zai ƙara tsawo na {{ext}}.",
+    "createFailed": "An kasa ƙirƙirar fayil ɗin."
+  },
+  "fileSettings": {
+    "googleTitle": "Saitunan Haɗa Google",
+    "googleKindLabel": "Nau'i",
+    "googleUrlLabel": "Adireshin Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Dole ne rabon takardar ya zama “Duk wanda ke da adireshin” ko “An buga shi zuwa yanar gizo” don haɗin ya loda.",
+    "openLink": "Bude a Google",
+    "googleKinds": {
+      "docs": "Takardu",
+      "sheets": "Teburai",
+      "slides": "Slides",
+      "forms": "Fom",
+      "drive": "Drive"
+    },
+    "appTitle": "Saitunan Manhajar Yanar Gizo",
+    "modeLabel": "Yaya ya kamata wannan ya buɗe?",
+    "modeWebsite": "Kallon shafi",
+    "modeWebsiteDesc": "Yana buɗewa a ciki tare da gefen gefe da panel na AI a bayyane.",
+    "modeApp": "Manhajar Yanar Gizo",
+    "modeAppDesc": "Yana buɗewa cikakken allo; gefen gefe da panel na AI suna rufe kai tsaye.",
+    "convertNote": "Wannan yana canza fayil ɗin alamar .app a cikin babban fayil. Fayilolinku ba su canza ba.",
+    "save": "Ajiye",
+    "saving": "Ana ajiyewa…",
+    "cancel": "Soke",
+    "saveFailed": "An kasa adana saituna."
+  },
+  "editSymlink": {
+    "title": "Gyara Symlink",
+    "intro": "Wannan shigarwar Tushen Ilimi haɗin alama ce zuwa wani babban fayil a wani wuri a kan na'urarka.",
+    "kbPathLabel": "Hanyar Tushen Ilimi",
+    "targetLabel": "Yana haɗawa zuwa (a kan diski)",
+    "brokenWarning": "Babban fayil ɗin da aka nufa baya wanzu. Sake nuna shi zuwa wani babban fayil mai inganci a ƙasa.",
+    "repointLabel": "Sake nuna zuwa sabon babban fayil",
+    "repointHint": "Cabinet zai maye gurbin haɗin don nuna nan. Ba a taɓa motsa fayiloli.",
+    "browse": "Bincika",
+    "nameLabel": "Suna",
+    "descriptionLabel": "Bayani",
+    "save": "Ajiye",
+    "saving": "Ana ajiyewa…",
+    "copyTarget": "Kwafi hanyar da aka nufa",
+    "saveFailed": "An kasa sabunta symlink."
+  },
+  "importFolder": {
+    "importing": "Ana shigo da babban fayil…",
+    "failed": "Shigo da babban fayil ya gaza: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Ana ɗauko ayyuka"
+  },
+  "agentList": {
+    "agentLibrary": "Laburaren Wakilai",
+    "newAgent": "Sabon Wakili"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Ƙungiyar ku",
+    "lead": "Jagora",
+    "specialist": "Kwararre",
+    "tasks": "Ayyuka",
+    "todo": "Abin yi",
+    "doing": "Ana yi",
+    "done": "An gama",
+    "anythingGoes": "Komai ya halatta",
+    "marketing": "Talla",
+    "product": "Samfuri",
+    "research": "Bincike",
+    "design": "Zane",
+    "routines": "Tsare-tsare",
+    "dailyReview": "Bita ta yau da kullum",
+    "weeklyDigest": "Takaitaccen bayani na mako-mako",
+    "conversation": "Tattaunawa",
+    "userQuery": "Shirya tafiyar makonni 2 zuwa Thailand…",
+    "agentReply": "Zan tura ma'aikacin ɗakin karatu da edita.",
+    "pendingAction": "Aiki mai jiran gado",
+    "approve": "Amince",
+    "decline": "Ƙi",
+    "themes": "Jigogi",
+    "providers": "Masu bayarwa",
+    "comingSoon": "Zai zo nan ba da jimawa ba"
+  },
+  "agentLive": {
+    "dismiss": "Watsar",
+    "paused": "An dakatar da wakili"
+  },
+  "conversationLive": {
+    "liveOutput": "Fitowa kai tsaye",
+    "waitingFirstChunk": "Ana jiran ɓangaren fitowa na farko…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Hoton mai amfani",
+    "useIconInstead": "Yi amfani da gunkin maimakon"
+  },
+  "pendingActions": {
+    "rejectAll": "Ƙi duk wani aiki mai jiran gado",
+    "approveAll": "Amince kuma tura duk wani aiki da ba shi da manyan matsaloli"
+  },
+  "aiPanel": {
+    "clearSessions": "Share duk zamanin",
+    "dismiss": "Watsar"
+  },
+  "schedulerPlus": {
+    "restartAll": "Sake kunna duk wakilai",
+    "restartSubtitle": "Tsaya sannan sake kunna duk tsare-tsare"
+  },
+  "csvViewer": {
+    "downloadCsv": "Zazzage CSV",
+    "deleteRow": "Share jere"
+  },
+  "resizableImage": {
+    "resizeLeft": "Canza girma daga hagu",
+    "resizeRight": "Canza girma daga dama"
+  },
+  "folderIndex": {
+    "listView": "Kallon jeri",
+    "galleryView": "Kallon hotuna"
+  },
+  "linkPopover": {
+    "openLink": "Buɗe hanyar haɗi",
+    "removeLink": "Cire hanyar haɗi"
+  },
+  "officeChrome": {
+    "openInFinder": "Buɗe a Finder",
+    "downloadOriginal": "Zazzage asali"
+  },
+  "sourceViewer": {
+    "copyContents": "Kwafi abubuwan fayil",
+    "downloadFile": "Zazzage fayil"
+  },
+  "versionHistory": {
+    "title": "Tarihin Sigar"
+  },
+  "demoModal": {
+    "closeDemo": "Rufe demo",
+    "close": "Rufe"
+  },
+  "demosPlus": {
+    "anything": "Komai",
+    "yours": "Naku",
+    "install": "Saka",
+    "attach": "Haɗa"
+  },
+  "narrowViewport": {
+    "dismiss": "Kore gargaɗin kunkuntar fuska",
+    "dismissTitle": "Kore har zuwa zama na gaba",
+    "hintPrefix": "Cabinet ya fi kyau a ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " faɗi. Wasu fuskoki suna matsewa a faɗi mai kunkunta."
+  },
+  "agentCard": {
+    "runHeartbeat": "Gudanar da bugun zuciya"
+  },
+  "schedulePicker": {
+    "frequency": "Mita",
+    "onDay": "A rana",
+    "modeInterval": "Tsaka-tsaki",
+    "modeDaily": "Kullum",
+    "modeWeekdays": "Ranakun aiki",
+    "modeWeekly": "Mako-mako",
+    "modeMonthly": "Wata-wata",
+    "modeCustom": "Na musamman",
+    "parse": "Bincika",
+    "showCron": "Nuna bayanin cron",
+    "hideCron": "Boye bayanin cron",
+    "weekdayMo": "Lit",
+    "weekdayTu": "Tal",
+    "weekdayWe": "Lar",
+    "weekdayTh": "Alh",
+    "weekdayFr": "Jum",
+    "weekdaySa": "Asa",
+    "weekdaySu": "Lah"
+  },
+  "slackPanel": {
+    "createChannel": "Ƙirƙiri tasha",
+    "thread": "Zare"
+  },
+  "uninstall": {
+    "title": "Cire Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Aljihunan Cabinet",
+    "pageTitlePlaceholder": "Taken shafi…"
+  },
+  "skillAddPlus": {
+    "cancel": "Soke"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Binciken bayanai babu shi daga skills.sh don wannan fasaha",
+    "searchPlaceholder": "Bincika skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Sake sabuntawa",
+    "noSkills": "Babu fasahohi tukuna."
+  },
+  "taskDetail": {
+    "close": "Rufe (Esc)",
+    "muteTask": "Kashe wannan aikin — ayyukansa da aka gama suna zuwa kai tsaye zuwa Taskar Ajiya",
+    "unmuteTask": "Kunna wannan aikin — ayyukansa da aka gama suna sake bayyana a Cikin Sabbin Ayyuka"
+  },
+  "rowActionsPlus": {
+    "edit": "Gyara",
+    "editHint": "Gyara wannan daftarin da aka adana kafin ya fara",
+    "delete": "Share",
+    "deleteHint": "Share har abada — ba za a iya warware wannan ba"
+  },
+  "taskCard": {
+    "ptyMode": "Yana gudana a yanayin terminal (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "Kore"
+  },
+  "terminalExited": {
+    "openDetails": "Bude cikakkun bayanai (umarni, kayan aiki, juyawa)",
+    "reconnect": "Sake haɗawa da daemon kuma watsa sake kunnawa PTY"
+  },
+  "terminalTabsPlus": {
+    "resize": "Canza girman panel na terminal"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Nuna duk wakilai",
+    "noRecentActivity": "Babu wani aiki na baya-bayan nan",
+    "noAgents": "Babu wakilai",
+    "noAgentsConfigured": "Babu wakilai da aka saita don wannan cabinet tukuna.",
+    "cabinetScope": "Iyakar cabinet:",
+    "depthDropdownHeader": "Iyakar cabinet",
+    "depthOwnLabel": "Wannan cabinet kawai",
+    "depthOwnShort": "Mallaka",
+    "depthOwnDesc": "Shafuka, wakilai, da ayyuka daga wannan cabinet kawai.",
+    "depthChildren1Label": "Haɗa da yara kai tsaye",
+    "depthChildren1Desc": "Ƙara mataki ɗaya na sub-cabinets.",
+    "depthChildren2Label": "Haɗa matakai biyu na cabinet",
+    "depthChildren2Desc": "Ƙara matakai biyu na sub-cabinets.",
+    "depthAllLabel": "Haɗa dukkan zuriyar",
+    "depthAllShort": "Duka",
+    "depthAllDesc": "Haɗa dukkanin sub-tree.",
+    "scopeTooltip": "Iyakar cabinet: {{label}}. Danna don canzawa."
+  },
+  "composerExtras": {
+    "skillAttached": "Ƙwarewa — an haɗa ta da wannan gudu kawai",
+    "pageTitlePlaceholder": "Taken shafi…",
+    "active": "Mai aiki — farkar da wakilin a wannan jadawalin",
+    "pickCliPty": "Zaɓi CLI don farawa a PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Shirya da AI",
+    "jupyterLab": "Kwafi: jupyter lab <path>",
+    "exitApp": "Fita daga app"
+  },
+  "demosExtras": {
+    "aiAccounts": "Asusun AI",
+    "aiTeams": "Ƙungiyoyin AI"
+  },
+  "whatsNew": {
+    "dismiss": "Watsar",
+    "headerPrefix": "Menene sabo a v",
+    "readFull": "Karanta cikakkun bayanan saki"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Na fahimta kuma ina so in ci gaba."
+  },
+  "daemonHealth": {
+    "dismiss": "Watsar"
+  },
+  "tinyExtras": {
+    "light": "Haske",
+    "home": "Gida",
+    "workspaceGallery": "Gallery na Workspace",
+    "savingTo": "Ana adanawa zuwa",
+    "comingSoon": "Zai zo nan ba da jimawa ba",
+    "deleteSkill": "Share ƙwarewa",
+    "skillsOffered": "Ƙwarewa da aka bayar:",
+    "allAgents": "Duk wakilai",
+    "noTranscript": "Babu rubutun da aka samu",
+    "noDiff": "Babu diff da ke akwai.",
+    "headsUp": "Kula da kyau:",
+    "back": "Baya",
+    "editYourAvatar": "Shirya avatar ɗinka",
+    "openFullTaskViewer": "Bude cikakken mai duba aiki",
+    "close": "Rufe",
+    "copyToClipboard": "Kwafi zuwa allo",
+    "starOnGithub": "Ba Cabinet tauraro a GitHub",
+    "helpMoreFind": "Taimaka wa mutane da yawa su sami al'umma",
+    "joinDiscord": "Shiga Discord",
+    "chatWithBuilders": "Yi hira da mutanen da ke gina Cabinet",
+    "joinWaitlist": "Shiga jerin jira na Cabinet Cloud",
+    "emailPlaceholder": "kai@kamfani.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Ƙara zuwa Akwatin Saƙo",
+    "runTaskNow": "Gudanar da aiki yanzu",
+    "search": "Bincike",
+    "aiPanel": "Fannin AI",
+    "drawers": "Aljihuna"
+  },
+  "dataLocations": {
+    "title": "Inda bayananka suke",
+    "whyThisMatters": "Me yasa wannan yake da muhimmanci",
+    "location": "Wuri",
+    "contains": "Ya ƙunshi",
+    "network": "Hanyar sadarwa",
+    "revealInFinder": "Nuna a mai sarrafa fayil",
+    "stored": "An adana",
+    "resetOnboarding": "Sake saita shiga"
+  },
+  "rooms": {
+    "switcherTitle": "Canja ɗaki",
+    "switchRoom": "Ɗakuna",
+    "loading": "Ana lodawa…",
+    "defaultTag": "Gida",
+    "openInNewWindow": "Bude a sabon taga",
+    "opensBrowserWindow": "Yana buɗe sabon taga mai bincike",
+    "customizeRoom": "Gyara ɗaki",
+    "addRoom": "Ƙara ɗaki…",
+    "editTitle": "Gyara ɗaki",
+    "editSubtitle": "Saita suna, gunkin, launi, da jigon wannan ɗakin.",
+    "nameLabel": "Suna don nunawa",
+    "slugHint": "Sunan babban fayil a kan diski zai kasance {{slug}}. Sake suna babban fayil aiki ne daban, mai zurfi.",
+    "iconLabel": "Gunki",
+    "colorLabel": "Launi",
+    "colorAuto": "Kai tsaye",
+    "themeLabel": "Jigo",
+    "themeGlobal": "Yi amfani da tsoho na duniya",
+    "editFailed": "An kasa adana ɗakin. Da fatan za a sake gwadawa.",
+    "deleteRoom": "Share ɗaki…",
+    "deleteLastRoomDisabledHint": "Ba za ka iya share ɗakinka na ƙarshe ba.",
+    "deleteTitle": "Share wannan ɗakin?",
+    "deleteSubtitle": "Wannan ɗakin da duk abin da ke cikinsa za a motsa su zuwa kwandon shara.",
+    "deleteWarningIntro": "Mayar da ɗakin zuwa shara kuma yana cire:",
+    "deleteWarningPages": "Shafuka da fayiloli a cikin wannan ɗakin",
+    "deleteWarningAgents": "Wakilai, tattaunawa, da ƙwaƙwalwar ajiya na wannan ɗakin",
+    "deleteWarningJobs": "Ayyuka da ayyukan yau da kullun da aka tsara a wannan ɗakin",
+    "deleteWarningChat": "Tarihin taɗi na ƙungiya don wannan ɗakin",
+    "deleteWarningSearch": "Fihirisar bincike na ɗakin (ana sake ginawa ta atomatik idan an dawo da shi)",
+    "deleteRecoveryNote": "Maido: an matsar da ɗakin zuwa data/.trash/ — maido shi ta hanyar mayar da babban fayil ɗin zuwa data/.",
+    "deleteConfirmLabel": "Rubuta {{slug}} don tabbatarwa",
+    "deleteConfirmButton": "Share ɗaki",
+    "deleting": "Ana sharewa…",
+    "deleteFailed": "Ba a iya share ɗakin ba. Da fatan za a sake gwadawa."
+  },
+  "common": {
+    "actions": {
+      "save": "Ajiye",
+      "cancel": "Soke",
+      "delete": "Share",
+      "confirm": "Tabbatar",
+      "close": "Rufe",
+      "open": "Buɗe",
+      "back": "Baya",
+      "next": "Gaba",
+      "done": "An gama"
+    },
+    "nav": {
+      "goBack": "Koma baya",
+      "goForward": "Ci gaba"
+    },
+    "aiPanel": {
+      "open": "Buɗe fannin AI",
+      "close": "Rufe fannin AI"
+    },
+    "states": {
+      "loading": "Ana ɗorawa…",
+      "saving": "Ana ajiyewa…",
+      "saved": "An ajiye",
+      "error": "Wani abu ya faru ba daidai ba"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Sabon Shafi",
+      "title": "Ƙirƙiri Sabon Shafi",
+      "placeholder": "Taken shafi…",
+      "create": "Ƙirƙiri",
+      "creating": "Ana ƙirƙira…"
+    },
+    "newCabinet": {
+      "trigger": "Sabon Cabinet",
+      "title": "Ƙirƙiri Sabon Cabinet",
+      "subtitle": "Cabinet wuri ne na aiki tare da wakilansa, ayyukansa, da iliminsa.",
+      "importFromRegistry": "Shigo da daga Registry",
+      "nameLabel": "Sunan Cabinet",
+      "namePlaceholder": "misali. Kamfanina, Ƙungiyar Talla, Lab ɗin Bincike…",
+      "selectAgents": "Zaɓi wakilai",
+      "selectedCount": "An zaɓi {{count}}",
+      "createCabinet": "Ƙirƙiri Cabinet",
+      "creating": "Ana ƙirƙira…",
+      "createFailed": "An kasa ƙirƙirar cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Fitar da shafi",
+      "copyMarkdown": "Kwafi Markdown",
+      "copyForLlms": "Kwafi don LLMs",
+      "copyAsHtml": "Kwafi a matsayin HTML",
+      "downloadMarkdown": "Zazzage .md",
+      "downloadPdf": "Zazzage PDF",
+      "copiedForLlmToast": "An kwafi {{size}} na Markdown don LLM"
+    },
+    "toolbar": {
+      "heading1": "Babban taken 1",
+      "heading2": "Babban taken 2",
+      "heading3": "Babban taken 3",
+      "bold": "Mai kauri",
+      "italic": "Rubutun karkata",
+      "underline": "Layi a ƙasa",
+      "strikethrough": "Layi a tsakiya",
+      "inlineCode": "Lambar layi",
+      "link": "Haɗi",
+      "textColor": "Launin rubutu",
+      "highlight": "Haskaka",
+      "background": "Fage",
+      "bulletList": "Jerin digo",
+      "orderedList": "Jerin lambobi",
+      "blockquote": "Rubutun zance",
+      "checklist": "Jerin bincike",
+      "codeBlock": "Toshe lambar",
+      "divider": "Mai raba",
+      "alignLeft": "Daidaita hagu",
+      "alignCenter": "Daidaita tsakiya",
+      "alignRight": "Daidaita dama",
+      "justify": "Daidaita duka",
+      "align": "Daidaita",
+      "table": {
+        "selectCellText": "Zaɓi rubutun cell",
+        "addRowAbove": "Ƙara jere a sama",
+        "addRowBelow": "Ƙara jere a ƙasa",
+        "moveRowUp": "Matsar da jere sama",
+        "moveRowDown": "Matsar da jere ƙasa",
+        "deleteRow": "Share jere",
+        "addColumnBefore": "Ƙara shafi a gaba",
+        "addColumnAfter": "Ƙara shafi a baya",
+        "moveColumnLeft": "Matsar da shafi hagu",
+        "moveColumnRight": "Matsar da shafi dama",
+        "deleteColumn": "Share shafi",
+        "toggleHeaderRow": "Kunna/Kashe jere na kai",
+        "toggleHeaderColumn": "Kunna/Kashe shafi na kai",
+        "deleteTable": "Goge tebur"
+      },
+      "superscript": "Rubutu a sama",
+      "subscript": "Rubutu a kasa",
+      "insertImage": "Saka hoto",
+      "insertVideo": "Saka bidiyo",
+      "embed": "Saka",
+      "undo": "Mayar da baya",
+      "redo": "Maimaita",
+      "switchToLtr": "Canza zuwa LTR",
+      "switchToRtl": "Canza zuwa RTL",
+      "scrollLeft": "Gungura kayan aiki hagu",
+      "scrollRight": "Gungura kayan aiki dama",
+      "markdown": "Markdown",
+      "preview": "Duba samfuri"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Sunan Cabinet…",
+      "renameWarning": "Ba za a iya canza sunayen Cabinet ba daga baya (a yanzu). Zaɓi da hikima."
+    },
+    "templates": {
+      "header": "Fara daga samfuri",
+      "browseAll": "Duba duka →"
+    },
+    "quickActions": {
+      "shuffle": "Nuna shawarwari daban-daban",
+      "launch10Songs": "Buɗe editocin rubutun waƙa 10",
+      "dailyReview9am": "Bita na yau da kullun da ƙarfe 9 na safe",
+      "weeklyReview": "Bita na mako-mako ranar Litinin mai zuwa",
+      "thailandTrip": "Tsara tafiyata ta Thailand",
+      "physicsApp": "Gina min manhajar nazarin ilimin kimiyyar lissafi",
+      "summariseRecent": "Taƙaita aikina na baya-bayan nan",
+      "recruiterReply": "Rubuta amsar mai ɗaukar ma'aikata",
+      "mapArticles": "Nuna alaƙar labarai",
+      "physicsCourse": "Ƙirƙiri kwas na ilimin kimiyyar lissafi mai kashi 6",
+      "shortStory": "Tsara gajeren labari",
+      "hourlyStandup": "Tunatarwa ta taron gaggawa na awa-awa",
+      "researchPhone": "Bincika wayata ta gaba",
+      "translateToSpanish": "Fassara wannan cabinet zuwa Sifanisanci",
+      "refactorNotes": "Gyara tsarin rubuta bayanan nawa",
+      "birthdayParty": "Tsara bikin ranar haihuwa",
+      "boardUpdate": "Rubuta sabuntawa ga kwamiti",
+      "customerInterviews": "Kwaikwayi tambayoyin abokan ciniki 5"
+    },
+    "goodMorning": "Barka da safiya",
+    "goodAfternoon": "Barka da rana",
+    "goodEvening": "Barka da yamma",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Ina so in ƙirƙiri...",
+    "composerDaemonDown": "Wakilin daemon a kashe — sake farawa don aikawa"
+  },
+  "onboarding": {
+    "launchHeading": "Fara <accent>Cabinet</accent> ɗinka",
+    "intro": {
+      "tagline1": "Tushen iliminka.",
+      "tagline2": "Ƙungiyar AI ɗinka.",
+      "getStarted": "Fara amfani"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Ofis",
+        "study": "Nazari",
+        "lab": "Lab",
+        "library": "Laburare",
+        "kitchen": "Kicin",
+        "family": "Iyali",
+        "dining": "Wurin Cin Abinci",
+        "studio": "Studio"
+      }
+    },
+    "welcome": {
+      "paragraph": "Gidanka naka ne. A cikinsa, za ka shirya dakuna don sassa daban-daban na rayuwarka: aiki, kwakwalwa ta biyu, bincike, iyali. Kuma kowane daki yana da 'cabinets': bayanan ka, fayilolinka, da kuma tawagar AI da ke yin abubuwa a hankali a bango.",
+      "namePrompt": "Mene ne sunanka?",
+      "heading": "Barka da zuwa <accent>gida</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Barka da dawowa",
+      "headingNamed": "Barka da dawowa zuwa {{cabinet}}",
+      "subtitle": "Mun sami wani cabinet da ke akwai a nan. Bari mu gama shirya shi.",
+      "continue": "Ci gaba"
+    },
+    "verify": {
+      "passed": "An wuce",
+      "notInstalled": "Ba a shigar ba",
+      "authRequired": "Ana buƙatar tantancewa",
+      "paymentRequired": "Ana buƙatar biya",
+      "quotaExceeded": "Ƙayyadadden adadi / iyakar gudu",
+      "error": "Kuskure"
+    },
+    "providerStatus": {
+      "ready": "A shirye",
+      "loginRequired": "Ana buƙatar shiga",
+      "notInstalled": "Ba a shigar ba"
+    },
+    "actions": {
+      "back": "Baya",
+      "next": "Gaba",
+      "continue": "Ci gaba",
+      "skip": "Tsallake",
+      "finish": "Gama",
+      "complete": "Kammala saiti",
+      "copyToClipboard": "Kwafi zuwa allon rubutu"
+    },
+    "cabinetCreated": {
+      "continue": "Ci gaba da saiti",
+      "heading": "An ƙirƙiri Cabinet ɗinka",
+      "subtitle": "An saita komai kuma a shirye yake.",
+      "agentsReady_one": "{{count}} wakili a shirye don aiki",
+      "agentsReady_other": "{{count}} wakilai a shirye don aiki",
+      "scheduledJobs_one": "{{count}} aiki da aka tsara",
+      "scheduledJobs_other": "{{count}} ayyuka da aka tsara",
+      "subCabinets_one": "{{count}} ƙaramin cabinet",
+      "subCabinets_other": "{{count}} ƙananan cabinet",
+      "agentsReady": "{{count}} wakilai a shirye don aiki",
+      "scheduledJobs": "{{count}} ayyuka da aka tsara",
+      "subCabinets": "{{count}} ƙananan cabinet"
+    },
+    "cloud": {
+      "alreadyOnList": "Tuni kana cikin jerin — za mu tuntuɓe ka.",
+      "aside": "Cabinet Cloud na zuwa nan ba da jimawa ba. Samfurin iri ɗaya, ba tare da wahalar saita shi da kanka ba.",
+      "description": "Buɗe Cabinet ɗinka daga kowace na'ura yayin da wakilan AI ɗinka ke ci gaba da aiki — rubutawa, bincike, tsarawa — ko da lokacin da aka rufe kwamfutarka.",
+      "error": "Wani abu ya faru. Duba imel ɗin kuma sake gwadawa.",
+      "joinWaitlist": "Shiga jerin jira",
+      "onList": "Kana cikin jerin. Za mu aiko maka da imel idan Cabinet Cloud ya buɗe.",
+      "sending": "Ana aikawa…",
+      "title": "Cabinet ɗinka, ko'ina. Ƙungiyar AI ɗinka, koyaushe a kunne.",
+      "waitlistSubtitle": "Haɗa daga ko'ina. Ƙungiyar AI ɗinka tana aiki 24/7."
+    },
+    "discord": {
+      "aside": "Idan kana son sabbin fasalulluka da farko kuma ka fi son 'mu yi hira' maimakon 'don Allah ka gabatar da tikiti,' wannan shine ɗakinka.",
+      "description": "Wannan shine inda ra'ayoyi ke zama fasalulluka, hotunan allo ke zama muhawara, kuma wani yakan gano matsalar da ba a zata ba kafin ta same ka.",
+      "joinBadge": "Shiga",
+      "title": "Discord shine wurin abubuwan ban mamaki masu kyau."
+    },
+    "github": {
+      "aside": "Cabinet buɗaɗɗen tushe ne. Idan kana son hangen nesa, taimaka mana yaɗa labari.",
+      "description": "Star a GitHub yana taimaka wa mutane da yawa su gano Cabinet kuma su shiga cikin al'umma.",
+      "starsLabel": "{{stars}} taurarin GitHub",
+      "title": "Taimaka al'ummar Cabinet ta bunƙasa"
+    },
+    "launch": {
+      "beforeYouLaunch": "Kafin ka ƙaddamar",
+      "defaultCabinetName": "Cabinet ɗinka",
+      "defaultDescription": "Tushen ilimi + ƙungiyar AI",
+      "knowledgeBaseLabel": "Tushen ilimi",
+      "aiTeamLabel": "Ƙungiyar AI",
+      "launchCabinet": "Ƙaddamar da Cabinet",
+      "settingUp": "Ana saita...",
+      "disclaimerAccess": "<strong>Wakilai suna aiki da cikakken dama.</strong> Cabinet yana amfani da <flag>--dangerously-skip-permissions</flag> (Claude Code) da kuma makamantan alamomi a sauran masu samarwa. Wannan daidai yake da gudanar da waɗannan kayan aikin CLI daga tashar ku. Duk wani sabar MCP ko kayan aikin da kuka saita za a iya kiran su ta atomatik ta wakilai.",
+      "disclaimerBackup": "<strong>Ajiye bayanan ku akai-akai.</strong> Wakilai na iya karantawa, rubutawa, da share fayiloli a cikin KB ɗinku da kuma wuraren ajiya da aka haɗa. Cabinet ba shi da alhakin asarar bayanai. Kai ne ke da alhakin masu samar da AI da ka zaɓa da kuma sharuɗɗan sabis ɗin su.",
+      "disclaimerBeta": "<strong>Software na Beta. Abubuwa na iya lalacewa.</strong> Muna fitar da sabbin abubuwa da sauri. Canje-canje masu lalata na iya faruwa ba tare da sanarwa ba.",
+      "legalNotice": "Ta hanyar ci gaba, kun yarda da <terms>Sharuɗɗanmu</terms> da <privacy>Sirrinmu</privacy>. Cabinet wani <oss>aiki ne na buɗaɗɗen tushe</oss>.",
+      "keepInTouch": "Ku ci gaba da sanar da ni. Cabinet buɗaɗɗen tushe ne kuma an gina shi a fili, kuma muna son sanin abin da za mu gina na gaba. Babu saƙonnin banza, mun yi alƙawari."
+    },
+    "provider": {
+      "agentType": "Wakilin {{type}}",
+      "close": "Rufe",
+      "comingSoon": "Zai zo nan ba da jimawa ba",
+      "guide": "Jagora",
+      "heading": "Mai samar da wakili",
+      "moreModels": "Ƙarin AIs",
+      "install": "Shigar",
+      "logIn": "Shiga",
+      "openTerminalButton": "Bude terminal",
+      "openTerminalDetail": "Za ka buƙaci terminal don gudanar da matakai na gaba.",
+      "openTerminalError": "Ba a iya buɗe terminal ta atomatik ba. Bude terminal ɗin tsarin ku da hannu.",
+      "openTerminalTitle": "Bude terminal",
+      "recheck": "Sake duba masu samarwa",
+      "rerunVerify": "Sake gudanar da tabbatarwa",
+      "runVerify": "Gudanar da tabbatarwa",
+      "setupTitle": "Saitin {{name}}",
+      "skipForNow": "Tsallake yanzu",
+      "subtitle": "Cabinet yana buƙatar AI CLI don ƙarfafa wakilan ku.",
+      "verifyExplanation": "Tabbatarwa yana gudanar da umarnin mai samarwa ba tare da kai ba daga farko har ƙarshe kuma yana rarraba duk wani gazawa don ku san wane mataki za ku sake dubawa.",
+      "verifying": "Ana tabbatarwa…",
+      "failedAtStep": "Ya gaza a mataki: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Don me wannan cabinet yake? Kowane ɗaki yana zuwa da ƙungiyar AI tasa.",
+      "heading": "Zaɓi <accent>ɗaki</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Menene Cabinet?",
+      "body": "Cabinet wuri ne na aiki mai mai da hankali ga wani yanki na rayuwarka ko aikinka. Yana riƙe fayilolinka, bayanan kula, kayan aiki, wakilai, da ayyuka, don haka ƙungiyar AI ɗinka tana da mahallin da take buƙata don taimakawa da gaske.",
+      "examplesLabel": "Yadda mutane ke amfani da Cabinet",
+      "example1": "farkon kasuwancinka",
+      "example2": "repo na GitHub",
+      "example3": "aikin tallace-tallacenka",
+      "example4": "aikin abokin ciniki",
+      "example5": "tushen iliminka na sirri"
+    },
+    "access": {
+      "heading": "Menene {{name}} zai iya shiga?",
+      "subtitle": "Zaɓi ilimi da kayan aikin da wannan wakilin zai iya amfani da su. Zaka iya canza wannan kowane lokaci.",
+      "defaultAgent": "wakilinka",
+      "files": "Fayiloli & ilimi",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Sabobin MCP",
+      "plugins": "Plugins",
+      "skills": "Ƙwarewa",
+      "placeholderNote": "Zaka iya daidaita damar shiga daga baya a saitunan wakilin."
+    },
+    "heartbeat": {
+      "heading": "Ya kamata {{name}} ya gudana akan bugun zuciya?",
+      "subtitle": "Bugun zuciya yana barin wakilin ya duba kuma yayi aiki da kansa akan jadawali.",
+      "off": "A kashe",
+      "offHint": "Yana gudana ne kawai idan ka buƙata. An ba da shawarar farawa.",
+      "daily": "Kullum",
+      "dailyHint": "Yana dubawa sau ɗaya a rana.",
+      "weekly": "Mako-mako",
+      "weeklyHint": "Yana dubawa sau ɗaya a mako.",
+      "tokenNote": "Lura: bugun zuciya yana gudanar da wakilin ta atomatik, wanda ke amfani da alamomin AI (da adadin mai bayarwa) duk lokacin da ya fara. Zaka iya canzawa ko kashe wannan kowane lokaci."
+    },
+    "firstTask": {
+      "heading": "Ajiye aikin farko naka",
+      "subtitle": "Ayyuka sune yadda kake ba wa {{name}} aiki. Rubuta ɗaya yanzu kuma zai shiga cikin cabinet ɗinka, a shirye don aiki.",
+      "label": "Mene ne ya kamata {{name}} ya fara yi?",
+      "placeholder": "misali Rubuta imel na maraba ga sabbin abokan ciniki",
+      "example1": "Taƙaita bayanan na na baya-bayan nan",
+      "example2": "Tsara shirin aiki",
+      "example3": "Bincika manyan masu fafatawa uku namu",
+      "note": "Zaka iya barin wannan fanko kuma ka ƙara ayyuka daga baya. Babu abin da zai fara aiki har sai ka haɗa mai ba da sabis na AI."
+    },
+    "rail": {
+      "untitled": "Cabinet ɗinka",
+      "dataCaption": "Duk fayilolin aikinka da bayanan ka suna nan.",
+      "teamEmpty": "Babu wakilai tukuna.",
+      "teamCaption": "Ƙungiyar AI ɗinka tana aiki anan.",
+      "tasksEmpty": "Babu ayyuka tukuna.",
+      "tasksCaption": "Aikin da ka ba wa ƙungiyar ka zai bayyana anan.",
+      "assignedTo": "An ba wa {{name}}",
+      "you": "Kai"
+    },
+    "rooms": {
+      "office": {
+        "label": "Ofis",
+        "tagline": "Gudanar da kasuwanci, farawa, ko aikin gefe.",
+        "workspaceLabel": "Sunan kamfani ko aiki",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Me kuke yi?",
+        "descriptionPlaceholder": "Muna yin podcast game da sabbin kamfanonin AI",
+        "departmentNoun": "Sashe",
+        "teamSizeLabel": "Girman tawaga",
+        "exampleAgents": {
+          "0": "Shugaban Kamfani",
+          "1": "Edita"
+        }
+      },
+      "study": {
+        "label": "Nazari",
+        "tagline": "Kwakwalwarka ta biyu — rubutu, rubuce-rubuce, mataimakin kai.",
+        "workspaceLabel": "Saka wa cabinet ɗinka suna",
+        "workspacePlaceholder": "Nazari Na",
+        "descriptionLabel": "Waɗanne fannoni na rayuwa kake son taimako a kai?",
+        "descriptionPlaceholder": "Rubutu, tsara imel, kalanda, bin diddigin halaye",
+        "departmentNoun": "Fanni",
+        "exampleAgents": {
+          "0": "Mataimaki",
+          "1": "Ma'aikacin Laburare"
+        }
+      },
+      "lab": {
+        "label": "Dakin Bincike",
+        "tagline": "Aikin ilimi, littattafai, koyarwa, rubutun digiri.",
+        "workspaceLabel": "Sunan Wurin Aiki",
+        "workspacePlaceholder": "Falsafar Hankali",
+        "descriptionLabel": "Menene fanninka ko menene kake bincike a kai?",
+        "descriptionPlaceholder": "Falsafar abubuwan da suka faru, sani, koyar da Gabatarwa ga Falsafa",
+        "departmentNoun": "Fanni",
+        "exampleAgents": {
+          "0": "Shugaban Bincike",
+          "1": "Ma'aikacin Laburare"
+        }
+      },
+      "family-room": {
+        "label": "Daki na Iyali",
+        "tagline": "Gida, kalandar iyali, abinci, yara.",
+        "workspaceLabel": "Sunan Gida",
+        "workspacePlaceholder": "Iyalin Nguyen",
+        "descriptionLabel": "Su waye ke zaune a nan kuma menene kuke yi?",
+        "descriptionPlaceholder": "Iyaye biyu, yara uku, makarantu biyu, kare daya",
+        "departmentNoun": "Yanki",
+        "teamSizeLabel": "Girman Gida",
+        "exampleAgents": {
+          "0": "Manajan Gida",
+          "1": "Mai Shiryawa"
+        }
+      },
+      "blank": {
+        "label": "Daki Fanko",
+        "tagline": "Babu komai tukuna. Kawo wakilanka, tsarin naka.",
+        "workspaceLabel": "Sanya wa cabinet ɗinka suna",
+        "workspacePlaceholder": "Cabinet ɗina",
+        "descriptionLabel": "Don me yake?",
+        "descriptionPlaceholder": "Komai — bar shi fanko idan baka da tabbas tukuna",
+        "departmentNoun": "Rukuni",
+        "exampleAgents": {
+          "0": "Zabi naka"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Jagoranci",
+      "marketing": "Tallace-tallace",
+      "content": "Abun Ciki",
+      "engineering": "Injiniyanci",
+      "product-and-design": "Samfuri & Zane",
+      "business": "Kasuwanci",
+      "research": "Bincike",
+      "finance-and-ops": "Kudi & Ayyuka",
+      "personal": "Na Kai",
+      "second-brain": "Kwakwalwa ta biyu",
+      "writing": "Rubutu",
+      "tools": "Kayan Aiki",
+      "life-admin": "Gudanar da Rayuwa",
+      "from-the-office": "Daga Ofis",
+      "writing-and-notes": "Rubutu & Bayanai",
+      "other": "Sauran",
+      "household": "Gida",
+      "admin": "Gudanarwa",
+      "money": "Kudi",
+      "product": "Samfuri",
+      "design": "Zane",
+      "sales": "Tallace-tallace",
+      "support": "Taimako",
+      "analytics": "Nazari",
+      "finance": "Kudi",
+      "legal": "Shari'a",
+      "people": "Ma'aikata"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Barka da safiya ƙungiya! Barka da zuwa {{workspace}}. Mu fara aiki da ƙarfi.",
+        "study": "Barka da safiya. Kwakwalwarka ta biyu tana kan layi — barka da dawowa zuwa {{home}}.",
+        "lab": "Teburin bincike a shirye — \"{{workspace}}\". Me za mu bincika a yau?",
+        "family-room": "Hedikwatar gida tana farawa — {{home}}. Mu kai kowa inda yake buƙatar kasancewa.",
+        "blank": "Fanko — \"{{workspace}}\". Me kake son ginawa anan, {{home}}?"
+      },
+      "assign": "{{name}}, za ka iya ɗaukar nauyin {{topic}}?",
+      "fallbackTopic": "me ke gaba",
+      "office": {
+        "replies": {
+          "0": "Na fahimta. Zan shirya cikakken bayani kafin ƙarshen rana.",
+          "1": "Tuni na fara tsara shiri. Zan raba shi a #content nan ba da jimawa ba.",
+          "2": "Yanzu haka muna kafa tsarin aiki na asali. Yana tafiya da kyau har yanzu."
+        },
+        "topics": {
+          "0": "binciken masu fafatawa",
+          "1": "kalandar abun ciki",
+          "2": "shirin ƙaddamarwa"
+        },
+        "closing": "Kyakkyawan kuzari kowa da kowa. Mu sanya wannan ya zama mako na farko mai ƙarfi."
+      },
+      "study": {
+        "replies": {
+          "0": "Zan tsara saƙonnin shiga kuma in nuna abin da ke buƙatar ka.",
+          "1": "Kalandar tana da tsabta har zuwa ƙarfe 3 na yamma — lokaci mai kyau don rubutu.",
+          "2": "Na riga na haɗa sabbin bayanan guda uku zuwa ga 'Daily' index."
+        },
+        "topics": {
+          "0": "tsarin saƙonnin shiga na yau",
+          "1": "rubutun wannan makon",
+          "2": "jerin karatuna"
+        },
+        "closing": "Yayi. Ka sanar da ni idan akwai wani abu da ke buƙatar ni — in ba haka ba zan bar ka."
+      },
+      "lab": {
+        "replies": {
+          "0": "Yanzu haka ina jawo sabon takarda akan wannan — daftarin taƙaitawa cikin awa ɗaya.",
+          "1": "Zan daidaita jerin littattafai bayan wannan kuma in nuna masu maimaitawa.",
+          "2": "Tsarin lacca na Alhamis kusan a shirye yake don dubawa."
+        },
+        "topics": {
+          "0": "nazarin littattafai",
+          "1": "shirye-shiryen lacca na Alhamis",
+          "2": "jerin abubuwan tunani"
+        },
+        "closing": "Ka sanar da ni. Zan duba duk abin da ka tura kafin ƙarshen rana."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Tsarin aiki yana da tsabta bayan ƙarfe 4. Ina nuna abubuwan da suka yi karo.",
+          "1": "An tsara menu na mako — jerin kayan abinci a shirye yake don dubawa.",
+          "2": "An daidaita ayyukan yara. Daren DnD yana nan ranar Juma'a."
+        },
+        "topics": {
+          "0": "tsarin aiki na yau",
+          "1": "shirin abinci",
+          "2": "ayyukan yara"
+        },
+        "closing": "Na gode duka. Ka sanar da ni idan wani abu ya canza a cikin rana."
+      },
+      "blank": {
+        "replies": {
+          "0": "Na fahimta. A shirye nake duk lokacin da kake.",
+          "1": "Ina jira.",
+          "2": "Zan jira umarni."
+        },
+        "topics": {
+          "0": "abu na farko",
+          "1": "duk abin da ke gaba",
+          "2": "tambaya a buɗe"
+        },
+        "closing": "Duk lokacin da ka shirya, gaya mana abin yi."
+      }
+    },
+    "team": {
+      "browseAll": "Bincika duka",
+      "browseCabinets": "Bincika cabinets",
+      "cabinetNameLabel": "Sunan Cabinet",
+      "cancel": "Soke",
+      "importButton": "Shigo da",
+      "importFailed": "Shigo da ya gaza",
+      "importFailedConnection": "Shigo da ya gaza. Duba haɗin ku.",
+      "importTitle": "Shigo da {{name}}",
+      "pickAgents": "Zaɓi wakilan ka",
+      "required": "Wajibi",
+      "subtitle": "Kowane cabinet ƙungiyar AI ce — wakilai, ayyuka, da tushen ilimi na haɗin gwiwa, suna aiki tare a matsayin ɗaya.",
+      "heading": "Gina <accent>ƙungiyar</accent> ku",
+      "nameLabel": "Sunan wakili",
+      "namePlaceholder": "misali Edita, Mai Bincike, Mataimaki",
+      "roleLabel": "Matsayi",
+      "rolePlaceholder": "misali Mataimakin rubutu",
+      "instructionsLabel": "Mene ne ya kamata wannan wakilin ya yi?",
+      "instructionsPlaceholder": "Bayyana yadda ya kamata ya taimaka. Misali: Tsara da gyara shafukana, ka kiyaye sautin a bayyane kuma mai daɗi, kuma ka ba da shawarwarin ingantawa.",
+      "agentOptionalHint": "Zaɓi. Zaka iya tsallake wannan kuma ka ƙara wakilai daga baya daga cikin ɗakin.",
+      "agentCount_one": "Wakili {{count}}",
+      "agentCount_other": "Wakilai {{count}}",
+      "jobCount_one": "Aiki {{count}}",
+      "jobCount_other": "Ayyuka {{count}}",
+      "subCabinetCount_one": "Ƙaramin cabinet {{count}}",
+      "subCabinetCount_other": "Ƙananan cabinet {{count}}",
+      "cabinetsImported_one": "An shigo da cabinet {{count}}",
+      "cabinetsImported_other": "An shigo da cabinet {{count}}",
+      "agentCount": "Wakilai {{count}}",
+      "cabinetsImported": "An shigo da cabinet {{count}}",
+      "jobCount": "Ayyuka {{count}}",
+      "subCabinetCount": "Ƙananan cabinet {{count}}"
+    }
+  },
+  "search": {
+    "title": "Bincike",
+    "placeholder": "Bincika shafuka, wakilai, ayyuka…",
+    "clearQuery": "Share bincike",
+    "noCommands": "Babu umarni da suka dace.",
+    "scopes": {
+      "all": "Duka",
+      "pages": "Shafuka",
+      "agents": "Wakilai",
+      "tasks": "Ayyuka"
+    },
+    "groups": {
+      "pages": "Shafuka",
+      "agents": "Wakilai",
+      "tasks": "Ayyuka"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Harshe",
+      "description": "Yana canza harshe da alkiblar karatu. Shafuka da ke akwai suna riƙe alkiblarsu ta kowane takarda.",
+      "english": "Turanci",
+      "hebrew": "עברית",
+      "chineseSimplified": "简体中文",
+      "chineseTraditional": "繁體中文",
+      "moreLanguages": "Ƙarin harsuna",
+      "moreLanguagesHint": "Danna kowane don sanar da mu cewa kana son Cabinet a wannan harshen — za mu ba da fifiko ga waɗanda aka fi buƙata.",
+      "comingSoon": "Nan ba da jimawa ba",
+      "requestSubmitted": "Godiya! Mun lura da buƙatarka don {{language}}. Za mu ba da fifiko ga harsunan da aka fi buƙata.",
+      "requestFailed": "Ba a iya kaiwa ga sabar ba. Da fatan za a sake gwadawa nan da ɗan lokaci."
+    },
+    "appearance": {
+      "title": "Kamanni",
+      "theme": "Jigo",
+      "themeDescription": "Zaɓi jigo don dubawa.",
+      "matchSystem": "Dace da tsarin",
+      "matchSystemDescription": "Canza kai tsaye da kamannin OS ɗinka.",
+      "lightThemes": "Jigogi Masu Haske",
+      "darkThemes": "Jigogi Masu Duhu",
+      "lightVariant": "Nau'in Haske",
+      "darkVariant": "Nau'in Duhu",
+      "sidebar": "Gefen allo",
+      "showHiddenFiles": "Nuna fayiloli boyayyu",
+      "sidebarDescription": "Saita yadda ake nuna fayiloli a gefen allo.",
+      "showHiddenFilesHint": "Nuna fayiloli da manyan fayiloli masu farawa da ɗigo (misali .env, .git)"
+    },
+    "tabs": {
+      "profile": "Furofayil",
+      "providers": "Masu bayarwa",
+      "skills": "Ƙwarewa",
+      "storage": "Ma'aji",
+      "integrations": "Haɗaka",
+      "notifications": "Sanarwa",
+      "appearance": "Kamanni",
+      "updates": "Sabuntawa",
+      "about": "Game da"
+    },
+    "page": {
+      "title": "Saituna",
+      "refresh": "Sake sabuntawa",
+      "groupYou": "Kai",
+      "groupWorkspace": "Wurin aiki",
+      "groupApp": "Manhaja"
+    },
+    "common": {
+      "copyToClipboard": "Kwafi zuwa allon rubutu",
+      "categoriesAriaLabel": "Rukunin saituna",
+      "loading": "Ana ɗorawa…",
+      "connect": "Haɗa",
+      "recommended": "An ba da shawarar"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Zai zo nan ba da jimawa ba",
+      "hint": "Haɗa haɗin kai na waje da kayan aikin da aka gina yana kan hanya."
+    },
+    "storage": {
+      "dataDirectory": "Kundin Bayanai",
+      "restartRequired": "Ana buƙatar sake farawa",
+      "dataDirectoryDescription": "Duk abubuwan da ke cikin Knowledge Base ana adana su a wannan kundin. Canza hanyar yana buƙatar sake farawa.",
+      "restartHint": "Kundin bayanai zai canza bayan ka sake farawa Cabinet.",
+      "currentPath": "Hanyar yanzu",
+      "loadingPath": "Ana ɗorawa...",
+      "changeDirectory": "Canza kundin",
+      "directoryPlaceholder": "/hanya/zuwa/bayanai",
+      "browse": "Bincika",
+      "save": "Ajiye",
+      "openInFinder": "Bude a Finder",
+      "envVarHint1": "Hakanan zaka iya saita ",
+      "envVarHint2": " mai canjin yanayi, wanda ke da fifiko akan wannan saitin.",
+      "failedToSave": "An kasa adanawa.",
+      "failedToSaveDir": "An kasa adana kundin bayanai."
+    },
+    "updates": {
+      "checking": "Ana bincika sabuntawar Cabinet…"
+    },
+    "providers": {
+      "title": "Masu bayar da wakilai",
+      "defaultModel": "Samfurin Tsoho",
+      "setupGuide": "Jagorar saiti",
+      "troubleshoot": "Gyara matsalolin masu bayar da AI",
+      "subtitle": "Saita masu samar da wakilan AI. Wakilan CLI suna aiki ta hanyar terminal, wakilan API suna amfani da kiran API kai tsaye.",
+      "defaultRuntime": "Lokacin aiki na asali",
+      "defaultRuntimeHint": "Tattaunawa na gabaɗaya da gudu na koma-baya suna amfani da wannan mai bayarwa/samfuri/ƙoƙari.",
+      "cliAgents": "Wakilan CLI",
+      "apiAgents": "Wakilan API",
+      "ready": "A shirye",
+      "installedNotLoggedIn": "An shigar amma ba a shiga ba",
+      "notInstalled": "Ba a shigar ba",
+      "emptyMatrix": "Ba a saita masu samarwa ba. Ƙara ɗaya a ƙasa."
+    },
+    "notifications": {
+      "channels": "Tashoshin Sanarwa",
+      "alertRules": "Dokokin Faɗakarwa",
+      "alwaysOn": "Koyaushe a kunne",
+      "comingSoon": "Zai zo nan ba da jimawa ba",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "Saita yadda kake karɓar faɗakarwa lokacin da wakilai ke buƙatar hankalinka.",
+      "rulesHint": "Ana kunna sanarwa ta atomatik don waɗannan abubuwan:",
+      "previewHint": "Sanarwar turawa ta browser, Telegram, Slack, da imel.",
+      "channelPushName": "Turawa ta Browser",
+      "channelPushDesc": "Faɗakarwa nan take lokacin da shafin Cabinet ke buɗe ko PWA an shigar.",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Sanarwar wayar hannu nan take ta hanyar Telegram bot",
+      "channelSlackName": "Slack Webhook",
+      "channelSlackDesc": "Tura faɗakarwa zuwa tashar Slack na tawagarka",
+      "channelEmailName": "Takaitaccen Imel",
+      "channelEmailDesc": "Takaitaccen faɗakarwa da ayyukan wakilai da aka haɗa",
+      "ruleAlertsEvent": "Saƙonnin tashar #alerts",
+      "ruleAlertsDesc": "Duk wani wakili da ya buga zuwa tashar faɗakarwa",
+      "ruleMentionsEvent": "Ambaton @human",
+      "ruleMentionsDesc": "Lokacin da wani wakili ya ambaci @human a kowace tashar",
+      "ruleFloorEvent": "An karya matakin buri",
+      "ruleFloorDesc": "Wani buri ya faɗi ƙasa da mafi ƙarancin matakinsa",
+      "ruleHealthEvent": "Lafiyar wakili ta lalace",
+      "ruleHealthDesc": "3+ gazawar bugun zuciya a jere"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Siga",
+      "release": "Saki",
+      "framework": "Tsarin aiki",
+      "storage": "Ma'aji",
+      "privacy": "Sirri",
+      "telemetry": "Binciken amfani mara suna",
+      "tagline": "Tushen ilimi mai zaman kansa na AI-first da OS na farawa.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Tsarin fayil na gida",
+      "aiLabel": "AI",
+      "aiValue": "Ƙarfin AI CLIs na gida",
+      "philosophy": "Duk abubuwan suna rayuwa a matsayin fayilolin markdown a kan diski. Mutane suna ayyana niyya. Wakilai suna yin aikin. Tushen ilimi shine ƙwaƙwalwar ajiyar da aka raba tsakanin duka biyun.",
+      "privacyBody": "Cabinet yana aika binciken amfani mara suna don taimaka mana inganta samfurin. Ba a tattara abubuwan fayil, hanyoyi, umarni, ko sirri ba.",
+      "privacyLink": "Me aka tattara?",
+      "telemetryEnvDisabled": "An kashe ta CABINET_TELEMETRY_DISABLED=1 (env var).",
+      "telemetryHint": "Adadin abubuwan da suka faru, nau'ikan, da bayanan dandamali kawai. Kashe don dakatar da aikawa.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "Haɗa zuwa Cabinet ɗinka daga ko'ina, yayin da ƙungiyar AI ɗinka ke aiki 24/7 a gare ka. Saka imel ɗinka a ƙasa kuma za mu sanar da kai lokacin da Cabinet Cloud ya buɗe.",
+      "cloudAlready": "Kun riga kun shiga jerin – za mu tuntuɓe ku.",
+      "cloudSuccess": "Kun shiga jerin. Za mu aiko muku da imel lokacin da Cabinet Cloud ya buɗe.",
+      "cloudSending": "Ana aikawa…",
+      "cloudJoinWaitlist": "Shiga jerin jira",
+      "cloudError": "Wani abu ya faru. Duba imel ɗin kuma sake gwadawa.",
+      "connectTitle": "Haɗa",
+      "connectBody": "Nemi taimako, raba ra'ayi, ko kawai ka gaishe mu.",
+      "joinDiscord": "Shiga Discord"
+    },
+    "profile": {
+      "title": "Furofayil",
+      "name": "Suna",
+      "namePlaceholder": "Jane",
+      "displayName": "Sunan nunawa",
+      "role": "Matsayi",
+      "rolePlaceholder": "Mai ginawa",
+      "avatar": "Hoton Furofayil",
+      "accentColor": "Launin jaddadawa",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Alamar madadin",
+      "useIconInstead": "Yi amfani da alama maimakon",
+      "searchAvatars": "Bincika hotunan furofayil…",
+      "searchIcons": "Bincika alamomi…",
+      "howAppear": "Yadda kake bayyana a tattaunawa da kuma cikin manhajar.",
+      "youFallback": "Kai",
+      "displayNameHint": "Ana nunawa a tattaunawa. Tsoho shine Suna.",
+      "iconHint": "Ana amfani da shi lokacin da babu hoton furofayil. Danna sake don sharewa.",
+      "tintHint": "Yana ba da launi ga hoton furofayil na madadin lokacin da babu hoto.",
+      "save": "Ajiye",
+      "saving": "Ana ajiyewa…",
+      "saved": "An ajiye",
+      "browseAll": "Bincika duka ({{count}})",
+      "showFavorites": "Nuna waɗanda aka fi so",
+      "showFewer": "Nuna kaɗan"
+    },
+    "workspace": {
+      "title": "Wurin aiki",
+      "name": "Sunan wurin aiki",
+      "namePlaceholder": "Cabinet ɗina",
+      "description": "Bayanin",
+      "descriptionPlaceholder": "Me kake yi?",
+      "teamSize": "Girman ƙungiya",
+      "teamSizePlaceholder": "Kai kaɗai / 2–5 / 6–20 / 20+",
+      "subtitle": "An kama su yayin shiga. Wakilai suna karanta waɗannan lokacin shirya aiki."
+    }
+  },
+  "sidebar": {
+    "settings": "Saituna",
+    "createPage": "Ƙirƙiri shafi",
+    "newPage": "Sabon shafi",
+    "newAgent": "Sabon Wakili",
+    "newTask": "Sabon Aiki",
+    "archive": "Adana",
+    "trash": "Shara",
+    "search": "Bincika",
+    "agents": "Wakilai",
+    "tasks": "Ayyuka",
+    "missions": "Manufofi",
+    "drawerData": "Bayanai",
+    "drawerAgents": "Ƙungiya",
+    "drawerTasks": "Ayyuka",
+    "goHome": "Koma Gida",
+    "brandWord": "",
+    "refresh": "Sake Sabunta Sidebar",
+    "refreshDescription": "Sake Sabunta Sidebar (sake karanta fayil ɗin bayanai)",
+    "collapseSidebar": "Rufe Sidebar",
+    "expandSidebar": "Buɗe Sidebar",
+    "resizeHandle": "Canza Girman Sidebar — danna sau biyu don maidawa",
+    "resetWidth": "Danna sau biyu don maidawa faɗi",
+    "refreshedNoChanges": "An sabunta — babu canje-canje.",
+    "refreshedWithChanges": "An sabunta — an ƙara {{added}}, an cire {{removed}}.",
+    "refreshFailed": "Sabuntawa ya gaza.",
+    "searchPlaceholder": "Bincika fayiloli…",
+    "searchSearching": "Ana bincike…",
+    "searchNoResults": "Babu fayilolin da suka dace da “{{query}}”"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Ma'aunin Matsayi",
+      "askAiAriaLabel": "Tambayi AI ta gyara wannan shafin",
+      "askAiPlaceholder": "Yaya za a gyara wannan shafin?",
+      "sendHint": "↵ don aikawa"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Matsayin sabar — danna don cikakkun bayanai",
+      "checking": "Ana duba matsayin sabar…",
+      "allRunning": "Duk tsarin suna aiki",
+      "appNotResponding": "Sabar app ba ta amsawa",
+      "daemonDownNoProviders": "Daemon ba ta amsawa; babu masu samar da wakilai",
+      "daemonDown": "Daemon ba ta amsawa",
+      "noProviders": "Babu masu samar da wakilai",
+      "checkingShort": "Ana dubawa…",
+      "online": "A kan layi",
+      "offline": "Ba a kan layi ba",
+      "degraded": "Ragewa",
+      "allSystemsRunning": "Duk Tsarin Suna Aiki",
+      "serviceDisruption": "Katsewar Sabis",
+      "appServer": "Sabar App",
+      "daemon": "Daemon",
+      "agentProviders": "Masu Samar da Wakilai",
+      "running": "Yana Aiki",
+      "down": "A Kashe",
+      "lastSeen": "An gani na ƙarshe: {{when}}",
+      "appWorking": "Shafuka, edita, bincike, da sarrafa fayiloli suna aiki.",
+      "appDown": "Shafuka, edita, bincike, da adanawa ba su samuwa. Har yanzu za ka iya karanta abubuwan da aka ajiye.",
+      "daemonWorking": "Wakilan AI, ayyukan da aka tsara, da kuma tashar yanar gizo suna aiki.",
+      "daemonDownDescription": "Wakilan AI, ayyukan da aka tsara, da kuma tashar yanar gizo ba su samuwa. Gyaran shafi har yanzu yana aiki.",
+      "available": "Akwai",
+      "noneReady": "Babu wanda ya shirya",
+      "providerReady": "Shirye",
+      "providerNotLoggedIn": "Ba a shiga ba",
+      "providerNotInstalled": "Ba a shigar ba",
+      "install": "Shigar",
+      "howToFix": "Yadda za a gyara"
+    },
+    "save": {
+      "retryTitle": "Danna don sake gwada adanawar da ta gaza",
+      "retryAriaLabel": "Adanawa ya gaza — danna don sake gwadawa",
+      "autoSaving": "Ana adanawa kai tsaye…",
+      "forceSave": "Tilasta adanawa: ⌘S",
+      "editing": "Ana gyarawa — adanawa kai tsaye zai gudana idan ka dakata",
+      "wordCountTitle": "Adadin kalmomi na wannan shafin (ba tare da tsarin markdown ba)",
+      "savedJustNow": "yanzu-yanzu",
+      "savedNever": "ba taɓa ba",
+      "savedAgoSeconds": "Bayan {{n}}s",
+      "savedAgoMinutes": "Bayan {{n}}m",
+      "savedAgoHours": "Bayan {{n}}h",
+      "savedAgoDays": "Bayan {{n}}d",
+      "saveFailedRetry": "Ajiye ya gaza — sake gwadawa",
+      "savingText": "Ana ajiyewa…",
+      "savedText": "An ajiye",
+      "editingText": "Ana gyarawa…",
+      "savedAgo": "An ajiye · {{ago}}",
+      "word": "kalma",
+      "words": "kalmomi"
+    },
+    "git": {
+      "statusModified": "An gyara",
+      "statusNew": "Sabo",
+      "statusAdded": "An ƙara",
+      "statusDeleted": "An goge",
+      "statusRenamed": "An canza suna",
+      "commitMessageAriaLabel": "Saƙon ƙaddamarwa"
+    },
+    "help": {
+      "menuAriaLabel": "Buɗe menu na Taimako & al'umma",
+      "menuTitle": "Taimako & al'umma",
+      "demos": "Nunawa, bidiyoyi, da jagorori",
+      "discord": "Yi hira a Discord",
+      "discordSubtitle": "Taimako da ra'ayi",
+      "github": "Ba da gudummawa a GitHub",
+      "githubSubtitle": "Tushe, matsaloli, PRs",
+      "ifUseful": "Idan ka ga yana da amfani",
+      "label": "Taimako",
+      "starsAriaLabel": "Taurari {{count}} na GitHub — buɗe Cabinet a GitHub",
+      "starsTitle": "Taurari {{count}} na GitHub — ba Cabinet tauraro a GitHub",
+      "share": "Raba",
+      "shareSubtitle": "Kwafi hanyar gayyata & yaɗa labari",
+      "shareCopied": "Kai mai ban mamaki ne, {{name}} 🩷 Na gode da ka kawo membobin Cabinet na gaba. An kwafi hanyar haɗi, je ka raba soyayya!",
+      "shareFailed": "Ba a iya kwafi hanyar haɗi ba",
+      "friend": "aboki"
+    },
+    "git2": {
+      "allCommitted": "An ƙaddamar da duka",
+      "uncommittedFile": "Fayil {{count}} wanda ba a ƙaddamar ba",
+      "uncommittedFiles": "Fayiloli {{count}} waɗanda ba a ƙaddamar ba",
+      "uncommittedFilesAria": "Fayil(oli) {{count}} waɗanda ba a ƙaddamar ba — danna don ganin jerin",
+      "uncommittedFileTip": "Danna don ganin fayil ɗin da ba a yi commit ba",
+      "uncommittedFilesTip": "Danna don ganin fayiloli marasa commit",
+      "uncommittedFilesHeading": "{{count}} fayil mara commit",
+      "uncommittedFilesHeadingPlural": "{{count}} fayiloli marasa commit",
+      "truncatedHint": "An nuna fayiloli {{count}} na farko kawai — gudanar da `git status` don cikakken jerin.",
+      "commitDefault": "Sabunta fayil {{count}}",
+      "commitDefaultPlural": "Sabunta fayiloli {{count}}",
+      "committing": "Ana yin commit…",
+      "commit": "Aika",
+      "commitFailed": "Commit ya gaza",
+      "sync": "Aiki tare",
+      "syncTitle": "Jawo sabbin abubuwa daga GitHub & wartsake",
+      "syncTitleWithLast": "Jawo sabbin abubuwa daga GitHub & wartsake. An yi aiki tare na ƙarshe {{when}}.",
+      "syncAriaLabel": "Jawo sabbin canje-canje daga GitHub kuma wartsake",
+      "syncAriaLabelWithLast": "Jawo sabbin canje-canje daga GitHub kuma wartsake. An yi aiki tare na ƙarshe {{when}}.",
+      "terminal": "Terminal",
+      "openTerminal": "Bude terminal",
+      "newTerminalTab": "Sabon shafin terminal",
+      "pulling": "Ana jawo bayanai…",
+      "pulled": "An sabunta daga nesa",
+      "upToDate": "Sabo",
+      "pullFailed": "Jawo bayanai ya gaza"
+    },
+    "update2": {
+      "updateAvailable": "Sabuntawa {{version}} akwai",
+      "updateAvailableTip": "Cabinet {{version}} yana nan"
+    },
+    "common": {
+      "dismiss": "Watsar",
+      "close": "Rufe",
+      "openSettings": "Bude Saituna don duba sabuntawar da aka shigar"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Sake farawa don kammala sabuntawa"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Sake fara wannan aikin daga asalin umarnin",
+      "markAsDone": "Alama wannan aikin a matsayin an gama",
+      "viewAriaLabel": "Duban aiki",
+      "terminal": "Terminal",
+      "transcript": "Rubutun magana",
+      "details": "Cikakkun bayanai",
+      "transcriptTitle": "Claude Code zaman asali JSONL",
+      "transcriptHint": "Yana karanta ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Baya",
+      "copyPrompt": "Kwafi asalin umarnin",
+      "gracefulExit": "Rufe CLI a hankali (yana rubuta /exit zuwa PTY)",
+      "sendSigterm": "Aika SIGTERM zuwa tsarin PTY mai gudana",
+      "moreActions": "Ƙarin ayyuka",
+      "ptyMode": "Yana gudana a yanayin terminal (PTY)",
+      "compactContext": "Haɗa juyawa na baya zuwa taƙaitaccen bayani don 'yantar da taga mahallin",
+      "noSummary": "Babu taƙaitawa tukuna.",
+      "sessionEnded": "Zaman ya ƙare — rubuta don ci gaba a terminal ɗaya.",
+      "terminalLive": "Terminal yana raye. Umarninka na gaba zai jira bayan wannan juyawar ta ƙare."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Kalli yawon shakatawa na Cabinet ɗinka",
+    "skip": "Tsallake",
+    "skipAriaLabel": "Tsallake yawon shakatawa",
+    "back": "Baya",
+    "next": "Na gaba",
+    "writeFirstTask": "Rubuta aikin farko naka",
+    "goToSlide": "Je zuwa slide {{n}}",
+    "starterTask": "Mu tattauna manufofina da abin da nake son cimma anan, sannan mu rubuta shi a sabon shafin Bayani.",
+    "savingTo": "Ana adanawa zuwa ",
+    "introTitle": "Haɗu da <accent>Cabinet</accent> ɗinka.",
+    "introSubtitle": "Ƙungiyar AI ɗinka. Tushen iliminka. Wuri ɗaya.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Ayyukan baya-bayan nan da masu gudana",
+    "hide": "Boye layin ayyuka",
+    "show": "Nuna layin ayyuka",
+    "empty": "Babu ayyuka",
+    "itemRunning": "{{title}} · yana gudana · {{when}}",
+    "itemNeedsReply": "{{title}} · yana buƙatar amsa",
+    "itemFailed": "{{title}} · ya gaza · {{when}}",
+    "itemDone": "{{title}} · an gama · {{when}}",
+    "itemArchived": "{{title}} · an adana",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} masu gudana — nuna layin ayyuka"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Gida",
+      "agents": "Wakilai",
+      "tasks": "Ayyuka",
+      "ai": "AI",
+      "menu": "Menu",
+      "primaryAriaLabel": "Babban"
+    },
+    "returnTo": {
+      "task": "Aiki",
+      "tasks": "Ayyuka",
+      "agent": "Wakili",
+      "agents": "Wakilai",
+      "cabinet": "Cabinet",
+      "home": "Gida",
+      "settings": "Saituna",
+      "registry": "Rajista",
+      "back": "Baya",
+      "backTo": "Koma zuwa {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Tsoho",
+      "dark": "Duhu",
+      "darkThemes": "Jigogi Masu Duhu",
+      "lightThemes": "Jigogi Masu Haske"
+    },
+    "update": {
+      "restartTitle": "Sake kunna Cabinet don kammala sabuntawa",
+      "availableTitle": "Cabinet {{version}} yana nan",
+      "updatesTitle": "Sabuntawar Cabinet",
+      "description": "Cabinet yana bincika sabbin sigogi ta atomatik. Yayin da samfurin ke gwaji, ajiye kwafin bayananka kafin shigar da sabuntawa.",
+      "later": "Daga baya",
+      "releaseNotes": "Bayanan Saki"
+    },
+    "daemon": {
+      "fixHintElectron": "Fita sannan ka sake buɗe Cabinet don sake kunna wakilin daemon.",
+      "fixHintDev": "Gudanar da `npm run dev:daemon` (ko sake kunna `npm run dev:all`) don dawo da wakilin daemon.",
+      "notResponding": "Wakilin daemon baya amsawa.",
+      "willFail": "Wakilai, ayyuka, da buƙatun AI za su gaza har sai ya dawo. {{fixHint}}"
+    }
+  }
+}

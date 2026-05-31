@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" fill="#eed7d7"/>
+  <path d="M14 120 Q14 84 60 80 Q106 84 106 120 Z" fill="#6b3f8a"/>
+  <rect x="53" y="70" width="14" height="14" fill="#d49c72"/>
+  <circle cx="60" cy="54" r="22" fill="#d49c72"/>
+  <circle cx="60" cy="26" r="9" fill="#2a1d14"/>
+  <path d="M38 52 Q38 28 60 26 Q82 28 82 52 Q78 42 60 42 Q42 42 38 52 Z" fill="#2a1d14"/>
+  <g transform="translate(34 28)">
+    <circle cx="0" cy="-4" r="3" fill="#c92e2e"/>
+    <circle cx="4" cy="0" r="3" fill="#c92e2e"/>
+    <circle cx="0" cy="4" r="3" fill="#c92e2e"/>
+    <circle cx="-4" cy="0" r="3" fill="#c92e2e"/>
+    <circle cx="0" cy="0" r="2" fill="#f4e6a8"/>
+  </g>
+  <g transform="translate(86 28)">
+    <circle cx="0" cy="-4" r="3" fill="#c92e2e"/>
+    <circle cx="4" cy="0" r="3" fill="#c92e2e"/>
+    <circle cx="0" cy="4" r="3" fill="#c92e2e"/>
+    <circle cx="-4" cy="0" r="3" fill="#c92e2e"/>
+    <circle cx="0" cy="0" r="2" fill="#f4e6a8"/>
+  </g>
+  <path d="M44 46 Q60 42 76 46 Q60 44 44 46 Z" fill="#2a1d14"/>
+</svg>

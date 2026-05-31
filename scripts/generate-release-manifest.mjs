@@ -21,6 +21,13 @@ const gitCommit = readArg("git-commit", process.env.GITHUB_SHA || undefined);
 const releaseDate = readArg("release-date", new Date().toISOString());
 const repositoryUrl = "https://github.com/hilash/cabinet";
 
+// Electron Forge default naming for Cabinet (productName "Cabinet"):
+//   MakerZIP (darwin):  Cabinet-darwin-${arch}-${version}.zip
+//   MakerDMG:           Cabinet-${version}-${arch}.dmg
+// arch is the build host arch — currently arm64 (electron-release.yml runs on macos-latest).
+// Confirm by running `npm run electron:make` locally if maker versions change.
+const arch = "arm64";
+
 const manifest = {
   manifestVersion: 1,
   version,
@@ -33,10 +40,13 @@ const manifest = {
   sourceTarballUrl: `${repositoryUrl}/archive/refs/tags/${tag}.tar.gz`,
   npmPackage: "create-cabinet",
   createCabinetVersion: version,
+  cabinetaiPackage: "cabinetai",
+  cabinetaiVersion: version,
   electron: {
     macos: {
-      zipAssetName: "Cabinet-darwin-arm64.zip",
-      dmgAssetName: "Cabinet.dmg",
+      arch,
+      zipAssetName: `Cabinet-darwin-${arch}-${version}.zip`,
+      dmgAssetName: `Cabinet-${version}-${arch}.dmg`,
     },
   },
 };

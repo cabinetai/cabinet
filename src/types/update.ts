@@ -26,6 +26,8 @@ export interface ReleaseManifest {
   sourceTarballUrl: string;
   npmPackage?: string;
   createCabinetVersion?: string;
+  cabinetaiPackage?: string;
+  cabinetaiVersion?: string;
   electron?: {
     macos?: {
       zipAssetName?: string;

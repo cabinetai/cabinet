@@ -14,6 +14,7 @@ import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { cn } from "@/lib/utils";
 import type { TreeNode } from "@/types";
+import { useLocale } from "@/i18n/use-locale";
 
 interface LinkRepoDialogProps {
   open: boolean;
@@ -40,6 +41,7 @@ function findNode(nodes: TreeNode[], targetPath: string): TreeNode | null {
 }
 
 export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialogProps) {
+  const { t } = useLocale();
   const loadTree = useTreeStore((s) => s.loadTree);
   const selectPage = useTreeStore((s) => s.selectPage);
   const nodes = useTreeStore((s) => s.nodes);
@@ -146,7 +148,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Load Knowledge</DialogTitle>
+          <DialogTitle>{t("linkRepo:title")}</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={(event) => {
@@ -155,10 +157,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
           }}
           className="flex flex-col gap-3"
         >
-          <p className="text-xs text-muted-foreground">
-            Point Cabinet to any folder on your machine. Its contents will appear
-            in the Knowledge Base and be available to AI agents as context.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("linkRepo:intro")}</p>
 
           {parentHasContent && (
             <div className="flex items-start gap-2 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2">
@@ -236,7 +235,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
                     Remote URL
                   </label>
                   <Input
-                    placeholder="Auto-detect from git remote (optional)"
+                    placeholder={t("linkRepo:autoDetectPlaceholder")}
                     value={remote}
                     onChange={(event) => setRemote(event.target.value)}
                   />
@@ -247,7 +246,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
                     Description
                   </label>
                   <Input
-                    placeholder="Optional short summary for agents"
+                    placeholder={t("linkRepo:shortSummaryPlaceholder")}
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
                   />
@@ -268,7 +267,7 @@ export function LinkRepoDialog({ open, onOpenChange, parentPath }: LinkRepoDialo
               Cancel
             </Button>
             <Button type="submit" disabled={!localPath.trim() || creating}>
-              {creating ? "Loading..." : "Load"}
+              {creating ? "Connecting…" : "Connect"}
             </Button>
           </div>
         </form>

@@ -1,20 +1,34 @@
-import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import { createRequire } from "module";
+import type DatabaseConstructor from "better-sqlite3";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 import { runFileMigrationsSync } from "@/lib/system/file-migrations";
 import { runSqlMigrations } from "@/lib/system/sql-migrations";
+import { ensureBetterSqlite3 } from "@/lib/system/preflight-sqlite";
+
+const localRequire = createRequire(import.meta.url);
 
 const DB_PATH = path.join(DATA_DIR, ".cabinet.db");
 const MIGRATIONS_DIR = path.join(process.cwd(), "server", "migrations");
 
-let _db: Database.Database | null = null;
+type DBInstance = DatabaseConstructor.Database;
+
+let _db: DBInstance | null = null;
+let _Database: typeof DatabaseConstructor | null = null;
+
+function loadDatabaseClass(): typeof DatabaseConstructor {
+  if (_Database) return _Database;
+  ensureBetterSqlite3();
+  _Database = localRequire("better-sqlite3") as typeof DatabaseConstructor;
+  return _Database;
+}
 
 /**
  * Get the singleton database connection for use in Next.js API routes.
  * Initializes the database and runs pending migrations on first call.
  */
-export function getDb(): Database.Database {
+export function getDb(): DBInstance {
   if (_db) return _db;
 
   if (!fs.existsSync(DATA_DIR)) {
@@ -23,6 +37,7 @@ export function getDb(): Database.Database {
 
   runFileMigrationsSync();
 
+  const Database = loadDatabaseClass();
   _db = new Database(DB_PATH);
 
   _db.pragma("journal_mode = WAL");
@@ -33,7 +48,7 @@ export function getDb(): Database.Database {
   return _db;
 }
 
-function runMigrations(db: Database.Database): void {
+function runMigrations(db: DBInstance): void {
   runSqlMigrations(db, MIGRATIONS_DIR);
 }
 

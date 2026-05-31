@@ -5,6 +5,7 @@ import { Gauge, Plus, RefreshCw, Zap, MessageSquare, Loader2, BookOpen, Power, P
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/stores/app-store";
+import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { PulseStrip } from "./pulse-strip";
@@ -16,6 +17,7 @@ import { AgentDetailPanel } from "./agent-detail-panel";
 import { GoalBar } from "./goal-bar";
 import { WorkspaceGallery } from "./workspace-gallery";
 import type { GoalMetric } from "@/types/agents";
+import { useLocale } from "@/i18n/use-locale";
 
 interface AgentSummary {
   name: string;
@@ -39,6 +41,7 @@ interface DepartmentGroup {
 }
 
 export function MissionControl() {
+  const { t } = useLocale();
   const [agents, setAgents] = useState<AgentSummary[]>([]);
   const [alertCount, setAlertCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -61,7 +64,7 @@ export function MissionControl() {
 
   // Load company name from config
   useEffect(() => {
-    fetch("/api/agents/config")
+    dedupFetch("/api/agents/config")
       .then((r) => r.json())
       .then((d) => {
         const name = d.company?.name || d.company || "";
@@ -156,74 +159,84 @@ export function MissionControl() {
   useEffect(() => {
     loadAgents();
 
-    // SSE connection for real-time updates
-    let es: EventSource | null = null;
-    try {
-      es = new EventSource("/api/agents/events");
-      es.addEventListener("agent_status", (e) => {
-        try {
-          const statuses: { slug: string; active: boolean; running?: boolean; lastHeartbeat?: string; nextHeartbeat?: string }[] = JSON.parse(e.data);
-          setAgents((prev) =>
-            prev.map((a) => {
-              const s = statuses.find((st) => st.slug === a.slug);
-              if (!s) return a;
-              return { ...a, active: s.active, running: s.running, lastHeartbeat: s.lastHeartbeat, nextHeartbeat: s.nextHeartbeat };
-            })
-          );
-        } catch { /* ignore parse errors */ }
-      });
-      es.addEventListener("pulse", (e) => {
-        try {
-          const pulse = JSON.parse(e.data);
-          setSchedulerRunning(pulse.scheduledAgents > 0);
-          setScheduledCount(pulse.scheduledAgents);
-        } catch { /* ignore */ }
-      });
-      // Clear responding indicator when no agent_responding event is received
-      // (handled by the agent_responding listener above — when it receives an empty array
-      // or stops receiving events, the typing indicators naturally clear)
-      es.addEventListener("agent_responding", (e) => {
-        try {
-          const agents = JSON.parse(e.data);
-          window.dispatchEvent(new CustomEvent("cabinet:agent-responding", { detail: agents }));
-        } catch { /* ignore */ }
-      });
-      es.addEventListener("slack_activity", (e) => {
-        // Trigger a lightweight refresh of Slack panel
-        window.dispatchEvent(new CustomEvent("cabinet:slack-refresh"));
-
-        // Browser notifications for #alerts and @human mentions
-        try {
-          const data = JSON.parse(e.data);
-          if ("Notification" in window && Notification.permission === "granted") {
-            if (data.channel === "alerts" && data.preview) {
-              new Notification("Cabinet Alert", {
-                body: `${data.agentEmoji || "⚠️"} ${data.agentName || "Agent"}: ${data.preview}`,
-                icon: "/favicon.ico",
-                tag: `cabinet-alert-${Date.now()}`,
-              });
-            } else if (data.hasHumanMention && data.preview) {
-              new Notification("Agent needs your attention", {
-                body: `${data.agentEmoji || "🤖"} ${data.agentName || "Agent"} in #${data.channel}: ${data.preview}`,
-                icon: "/favicon.ico",
-                tag: `cabinet-mention-${Date.now()}`,
-              });
-            }
-          }
-        } catch { /* ignore */ }
-      });
-      es.onerror = () => {
-        // Reconnect on error — EventSource auto-reconnects
+    // SSE events are received by app-shell's single subscription and
+    // re-dispatched as `cabinet:agents/<event>` window events so we can
+    // listen here without opening a second EventSource to the same endpoint.
+    const handleAgentStatus = (e: Event) => {
+      const statuses = (e as CustomEvent).detail as {
+        slug: string;
+        active: boolean;
+        running?: boolean;
+        lastHeartbeat?: string;
+        nextHeartbeat?: string;
+      }[];
+      setAgents((prev) =>
+        prev.map((a) => {
+          const s = statuses.find((st) => st.slug === a.slug);
+          if (!s) return a;
+          return {
+            ...a,
+            active: s.active,
+            running: s.running,
+            lastHeartbeat: s.lastHeartbeat,
+            nextHeartbeat: s.nextHeartbeat,
+          };
+        })
+      );
+    };
+    const handlePulse = (e: Event) => {
+      const pulse = (e as CustomEvent).detail as { scheduledAgents: number };
+      setSchedulerRunning(pulse.scheduledAgents > 0);
+      setScheduledCount(pulse.scheduledAgents);
+    };
+    const handleResponding = (e: Event) => {
+      const agents = (e as CustomEvent).detail;
+      window.dispatchEvent(
+        new CustomEvent("cabinet:agent-responding", { detail: agents })
+      );
+    };
+    const handleSlack = (e: Event) => {
+      window.dispatchEvent(new CustomEvent("cabinet:slack-refresh"));
+      const data = (e as CustomEvent).detail as {
+        channel?: string;
+        preview?: string;
+        agentEmoji?: string;
+        agentName?: string;
+        hasHumanMention?: boolean;
       };
-    } catch {
-      // SSE not supported, fall back to polling
-    }
+      if (
+        "Notification" in window &&
+        Notification.permission === "granted"
+      ) {
+        if (data.channel === "alerts" && data.preview) {
+          new Notification("Cabinet Alert", {
+            body: `${data.agentEmoji || "⚠️"} ${data.agentName || "Agent"}: ${data.preview}`,
+            icon: "/favicon.ico",
+            tag: `cabinet-alert-${Date.now()}`,
+          });
+        } else if (data.hasHumanMention && data.preview) {
+          new Notification("Agent needs your attention", {
+            body: `${data.agentEmoji || "🤖"} ${data.agentName || "Agent"} in #${data.channel}: ${data.preview}`,
+            icon: "/favicon.ico",
+            tag: `cabinet-mention-${Date.now()}`,
+          });
+        }
+      }
+    };
+
+    window.addEventListener("cabinet:agents/agent_status", handleAgentStatus);
+    window.addEventListener("cabinet:agents/pulse", handlePulse);
+    window.addEventListener("cabinet:agents/agent_responding", handleResponding);
+    window.addEventListener("cabinet:agents/slack_activity", handleSlack);
 
     // Fallback: still poll every 30s as a safety net
     const interval = setInterval(loadAgents, 30000);
     return () => {
       clearInterval(interval);
-      es?.close();
+      window.removeEventListener("cabinet:agents/agent_status", handleAgentStatus);
+      window.removeEventListener("cabinet:agents/pulse", handlePulse);
+      window.removeEventListener("cabinet:agents/agent_responding", handleResponding);
+      window.removeEventListener("cabinet:agents/slack_activity", handleSlack);
     };
   }, [loadAgents]);
 
@@ -477,7 +490,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
             onClick={() => setShowGallery(!showGallery)}
           >
             <FolderOpen className="h-3 w-3" />
-            <span className="hidden md:inline">Gallery</span>
+            <span className="hidden md:inline">{t("agents:missionControl.gallery")}</span>
           </Button>
           <Button
             variant="ghost"
@@ -495,7 +508,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
             onClick={() => setCreateOpen(true)}
           >
             <Plus className="h-3 w-3" />
-            <span className="hidden sm:inline">New Agent</span>
+            <span className="hidden sm:inline">{t("agents:missionControl.newAgent")}</span>
           </Button>
         </div>
       </div>
@@ -516,7 +529,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
       {showGoalSummary && (
         <div className="px-4 py-3 border-b border-border bg-muted/10 space-y-3 max-h-[200px] overflow-y-auto shrink-0">
           <div className="flex items-center justify-between">
-            <h3 className="text-[12px] font-semibold text-muted-foreground">All Goals</h3>
+            <h3 className="text-[12px] font-semibold text-muted-foreground">{t("agents:missionControl.allGoals")}</h3>
             <button
               onClick={() => setShowGoalSummary(false)}
               className="text-[10px] text-muted-foreground/50 hover:text-foreground"
@@ -545,7 +558,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
               </div>
             ))}
             {mcAgents.filter((a) => a.goals.length > 0).length === 0 && (
-              <p className="text-[11px] text-muted-foreground/50 col-span-full">No agents have goals configured.</p>
+              <p className="text-[11px] text-muted-foreground/50 col-span-full">{t("agents:missionControl.noGoals")}</p>
             )}
           </div>
         </div>
@@ -636,7 +649,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
                       className="flex-1 max-w-[120px] py-2 px-3 rounded-lg border border-border/50 hover:border-primary/30 hover:bg-primary/[0.03] transition-colors text-center"
                     >
                       <Zap className="h-4 w-4 mx-auto mb-1 text-amber-500/60" />
-                      <p className="text-[11px] font-medium text-muted-foreground">From Scratch</p>
+                      <p className="text-[11px] font-medium text-muted-foreground">{t("agents:missionControl.fromScratch")}</p>
                     </button>
                     <button
                       onClick={() => {
@@ -646,7 +659,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
                       className="flex-1 max-w-[120px] py-2 px-3 rounded-lg border border-border/50 hover:border-primary/30 hover:bg-primary/[0.03] transition-colors text-center"
                     >
                       <MessageSquare className="h-4 w-4 mx-auto mb-1 text-primary/60" />
-                      <p className="text-[11px] font-medium text-muted-foreground">Describe It</p>
+                      <p className="text-[11px] font-medium text-muted-foreground">{t("agents:missionControl.describeIt")}</p>
                     </button>
                     <button
                       onClick={() => {
@@ -674,7 +687,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
                       className="flex-1 max-w-[120px] py-2 px-3 rounded-lg border border-border/50 hover:border-primary/30 hover:bg-primary/[0.03] transition-colors text-center"
                     >
                       <Upload className="h-4 w-4 mx-auto mb-1 text-cyan-500/60" />
-                      <p className="text-[11px] font-medium text-muted-foreground">Import</p>
+                      <p className="text-[11px] font-medium text-muted-foreground">{t("agents:missionControl.import")}</p>
                     </button>
                   </div>
                 </div>
@@ -710,10 +723,15 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
       {/* Natural language agent creation dialog */}
       {nlOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/40" onClick={() => !nlGenerating && setNlOpen(false)} />
+          <button
+            type="button"
+            aria-label={t("agents:missionControl.closeDialog")}
+            className="fixed inset-0 bg-black/40"
+            onClick={() => !nlGenerating && setNlOpen(false)}
+          />
           <div className="relative bg-background border border-border rounded-xl shadow-2xl w-[440px] max-w-[90vw] p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div>
-              <h2 className="text-[15px] font-semibold">Describe Your Agent</h2>
+              <h2 className="text-[15px] font-semibold">{t("agents:missionControl.describeYourAgent")}</h2>
               <p className="text-[12px] text-muted-foreground/60 mt-1">
                 Tell us what you need and we&apos;ll create the agent for you.
               </p>
@@ -721,7 +739,7 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
             <textarea
               value={nlInput}
               onChange={(e) => setNlInput(e.target.value)}
-              placeholder="I need an agent that monitors Hacker News for GPU-related posts and writes thoughtful comments linking to our blog posts..."
+              placeholder={t("agents:missionControl.describePlaceholder")}
               className="w-full h-28 text-[13px] bg-muted/30 border border-border/50 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground/40"
               disabled={nlGenerating}
               autoFocus
@@ -770,7 +788,12 @@ Choose an appropriate department. Pick a descriptive emoji. Make the body a comp
       {/* Confirm start dialog */}
       {confirmStart && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/40" onClick={() => setConfirmStart(false)} />
+          <button
+            type="button"
+            aria-label={t("agents:missionControl.closeDialog")}
+            className="fixed inset-0 bg-black/40"
+            onClick={() => setConfirmStart(false)}
+          />
           <div className="relative bg-background border border-border rounded-xl shadow-2xl w-[380px] max-w-[90vw] p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div>
               <h2 className="text-[15px] font-semibold flex items-center gap-2">

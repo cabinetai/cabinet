@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Создать агента",
+      "avatar": "Аватар",
+      "namePlaceholder": "Маркетинговый агент",
+      "rolePlaceholder": "Специалист по контенту",
+      "department": "Отдел",
+      "specialist": "Специалист",
+      "departmentLead": "Руководитель отдела",
+      "provider": "Провайдер",
+      "runtime": "Среда выполнения",
+      "promptPlaceholder": "Вы — маркетинговый агент для…",
+      "addAgentTitle": "Добавить агента в команду",
+      "addAgentDescription": "Выберите специалиста из библиотеки. Вы сможете изменить его имя, роль и инструкции после добавления.",
+      "createFromScratchTitle": "Создать с нуля",
+      "createFromScratchDescription": "Создайте нового агента с собственной идентичностью, ролью и инструкциями.",
+      "searchLibraryPlaceholder": "Поиск по библиотеке",
+      "errorLoadLibrary": "Не удалось загрузить библиотеку агентов.",
+      "errorAddAgent": "Не удалось добавить этого агента."
+    },
+    "metric": {
+      "name": "Название метрики",
+      "namePlaceholder": "reddit_ответы",
+      "target": "Цель",
+      "targetPlaceholder": "ответов/неделя",
+      "floor": "Минимум",
+      "period": "Период",
+      "daily": "Ежедневно",
+      "weekly": "Еженедельно",
+      "monthly": "Ежемесячно"
+    },
+    "workspace": {
+      "promise": "Обещание",
+      "orgChart": "Оргструктура",
+      "jobDetails": "Детали работы",
+      "heartbeat": "Пульс",
+      "workspace": "Рабочая область",
+      "editAgent": "Редактировать агента",
+      "instructions": "Инструкции",
+      "instructionsPlaceholder": "Напишите инструкции для этого агента в формате Markdown.",
+      "newAgent": "Новый агент",
+      "routines": "Рутины",
+      "browseLibrary": "Просмотреть библиотеку агентов",
+      "editYourOwn": "Редактировать своего агента",
+      "editorPlaceholder": "Редактор",
+      "productAgentPlaceholder": "Агент по продуктовому копирайтингу",
+      "instructionsBodyPlaceholder": "Определите, как этот агент должен работать в Cabinet и базе знаний.",
+      "perAgentPrompts": "Регулярные запросы для агента",
+      "runNow": "Запустить сейчас",
+      "delete": "Удалить",
+      "viewOrgChart": "Просмотреть эту команду как оргструктуру (открывается на весь экран)",
+      "hideIntro": "Скрыть это введение",
+      "sharedAcrossCabinets": "Общий для всех Cabinet",
+      "expandSchedule": "Развернуть расписание",
+      "heartbeatsOnAgentPage": "Пульсы настраиваются на странице каждого агента",
+      "exitFullscreen": "Выйти из полноэкранного режима",
+      "refresh": "Обновить",
+      "editHeartbeat": "Изменить пульс",
+      "newRoutine": "Новая процедура",
+      "configureHeartbeat": "Настроить пульс",
+      "openOrgChart": "Открыть оргструктуру",
+      "pickAnAgent": "Выбрать агента",
+      "dismiss": "Закрыть",
+      "lockedHeartbeatTip": "Этот агент остановлен. Запустите его на вкладке «Агенты», чтобы включить пульс.",
+      "lockedRoutineTip": "Этот агент остановлен. Запустите его на вкладке «Агенты», чтобы включить его процедуры.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Нажмите, чтобы выключить.",
+      "loadError": "Не удалось загрузить этого агента.",
+      "retry": "Повторить",
+      "color": "Цвет",
+      "customColor": "Свой цвет",
+      "preset": "Предустановка",
+      "editIconColor": "Изменить значок, цвет или аватар",
+      "sharedAcrossCabinetsHint": "Общий для всех cabinet — изменения применяются везде",
+      "inbox": "Входящие",
+      "conversations": "Беседы",
+      "recentWork": "Недавняя работа",
+      "schedule": "Расписание",
+      "heartbeat": "Пульс",
+      "runNow": "Запустить сейчас",
+      "editRoutine": "Изменить процедуру",
+      "addRoutine": "Добавить процедуру",
+      "details": "Подробности",
+      "editingGlobalAgent": "Редактирование глобального агента",
+      "displayName": "Отображаемое имя",
+      "role": "Роль",
+      "department": "Отдел",
+      "type": "Тип",
+      "workspace": "Рабочая область",
+      "tags": "Теги",
+      "openSkillsSettings": "Открыть Настройки → Навыки",
+      "notInCatalog": "Не найдено в каталоге — нажмите, чтобы удалить",
+      "recommendedForRole": "Рекомендуется для этой роли — нажмите, чтобы прикрепить",
+      "promise": "Обещание",
+      "saved": "Сохранено",
+      "iconLabel": "Значок"
+    },
+    "missionControl": {
+      "gallery": "Галерея",
+      "newAgent": "Новый агент",
+      "allGoals": "Все цели",
+      "noGoals": "Ни у одного агента нет настроенных целей.",
+      "fromScratch": "С нуля",
+      "describeIt": "Описать",
+      "import": "Импорт",
+      "closeDialog": "Закрыть диалог",
+      "describeYourAgent": "Опишите своего агента",
+      "describePlaceholder": "Мне нужен агент, который отслеживает Hacker News на предмет постов, связанных с GPU, и пишет вдумчивые комментарии со ссылками на наши записи в блоге…"
+    },
+    "pulseStrip": {
+      "agents": "Агенты",
+      "running": "Активные",
+      "goals": "Цели",
+      "alerts": "Оповещения",
+      "cost": "Стоимость",
+      "runningPlays": "Активные сценарии",
+      "noRunning": "В данный момент агенты не запущены.",
+      "costBreakdown": "Детализация затрат",
+      "noUsage": "API пока не использовалось.",
+      "totalEstimated": "Общая оценка"
+    },
+    "routine": {
+      "runNowTitle": "Запустить эту процедуру сейчас (однократно, вне расписания)",
+      "deletePermanently": "Удалить эту процедуру навсегда",
+      "promptPlaceholder": "Что должна делать эта процедура? Например: Суммировать вчерашнюю активность…",
+      "jobName": "Имя задания",
+      "jobNamePlaceholder": "Еженедельный стратегический дайджест",
+      "jobId": "ID задания",
+      "schedule": "Расписание",
+      "model": "Модель",
+      "enabled": "Включено"
+    }
+  },
+  "registry": {
+    "loading": "Загрузка из реестра…",
+    "readyToImport": "Готовы импортировать этот cabinet?",
+    "organization": "Организация",
+    "agents": "Агенты",
+    "scheduledJobs": "Запланированные задания",
+    "about": "О программе",
+    "cabinetName": "Имя cabinet",
+    "cabinetNamePlaceholder": "Имя cabinet…",
+    "searchPlaceholder": "Поиск cabinet…",
+    "noResults": "Ни один cabinet не соответствует вашему запросу."
+  },
+  "tasksBoard": {
+    "title": "Задачи",
+    "manualTooltip": "Вручную — задачи, запущенные вами напрямую",
+    "jobsTooltip": "Задания — запланированные повторяющиеся запуски",
+    "heartbeatTooltip": "Пульс — самостоятельные запуски агентов",
+    "clearSelection": "Снять выделение (Esc)",
+    "createTask": "Создать новую задачу",
+    "moreNewTypes": "Другие типы новых элементов",
+    "newTask": "Новая задача",
+    "newRoutine": "Новая процедура",
+    "viewKanban": "Канбан",
+    "viewList": "Список",
+    "viewSchedule": "Расписание",
+    "viewKanbanHint": "Вид доски — задачи, сгруппированные по: Входящие / Ваша очередь / Выполняются / Завершено / Архив",
+    "viewListHint": "Плоский список всех задач, сначала новейшая активность",
+    "viewScheduleHint": "Календарь запланированных процедур и предстоящих запусков",
+    "filterByAgent": "Фильтр по агенту: {{name}}",
+    "noToDeleteTitle": "Нет задач для удаления",
+    "noToDeleteFiltered": "Ничего не соответствует {{filter}}. Очистите фильтр, выберите другой вид или создайте новую задачу.",
+    "noToDeleteEmpty": "На доске пока нет задач. Создайте ее с помощью кнопки «+ Новая задача».",
+    "gotIt": "Понятно",
+    "deleteCountTitle": "Удалить {{count}} задачу?",
+    "deleteCountTitlePlural": "Удалить {{count}} задач?",
+    "deleteBody": "Это безвозвратно удалит метаданные разговоров, стенограммы и артефакты для каждой отображаемой задачи. Это действие нельзя отменить.",
+    "deleteBodyFiltered": "Это безвозвратно удалит метаданные разговоров, стенограммы и артефакты для каждой задачи, отображаемой активными фильтрами. Это действие нельзя отменить.",
+    "deleteConfirm": "Удалить {{count}}",
+    "deleteAllShown": "Удалить {{count}} отображаемую задачу",
+    "deleteAllShownPlural": "Удалить все {{count}} отображаемые задачи",
+    "nothingToDelete": "В этом представлении нечего удалять",
+    "deleteAllAria": "Удалить все отображаемые задачи",
+    "noTasksAria": "В этом представлении нет задач",
+    "filterTrigger": "фильтр «{{trigger}}»",
+    "filterTriggerAndAgent": "фильтр «{{trigger}}» и выбранный агент",
+    "filterSelectedAgent": "фильтр выбранного агента"
+  },
+  "runtime": {
+    "noProvider": "Провайдер не выбран",
+    "modeAriaLabel": "Режим выполнения",
+    "nativeTranscriptTitle": "Нативная стенограмма Cabinet — структурированный JSON-поток, артефакты, сводка, полный пользовательский интерфейс",
+    "ptyWarningTitle": "Требуется ключ API OpenAI. Недоступно для аккаунтов Codex с планом ChatGPT — выбор этой модели завершится ошибкой «model not supported when using Codex with a ChatGPT account».",
+    "native": "Нативный",
+    "terminal": "Терминал",
+    "terminalTitle": "Запустить CLI в интерактивной PTY-сессии терминала (экспериментальный режим для хакеров)",
+    "providers": "Провайдеры",
+    "modelCol": "Модель",
+    "auto": "Авто",
+    "ready": "Готово",
+    "loginRequired": "Войти",
+    "notInstalled": "Не установлено",
+    "notAvailable": "Недоступно",
+    "defaultLabel": "По умолчанию",
+    "noProvidersAvailable": "Провайдеры недоступны",
+    "appDefault": "По умолчанию для приложения",
+    "selectAppDefault": "Выбрать по умолчанию для приложения",
+    "defaultModel": "Модель по умолчанию",
+    "selectedModelLabel": "Выбранная модель",
+    "loadingProviders": "Загрузка провайдеров...",
+    "loadingAvailableProviders": "Загрузка доступных провайдеров…",
+    "triggerSummary": "Модель: {{model}} · Усилие: {{effort}} · через {{provider}}",
+    "triggerSystemDefault": "Модель задачи — используется системная по умолчанию (нажмите, чтобы выбрать)",
+    "clickToLaunch": "Нажмите, чтобы запустить {{name}} в PTY-терминале"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Агенты запускаются с полным доступом.",
+    "backUp": "Регулярно создавайте резервные копии данных.",
+    "betaSoftware": "Бета-версия ПО. Возможны сбои.",
+    "iAccept": "Я прочитал и принимаю"
+  },
+  "skillAdd": {
+    "addSkill": "Добавить навык",
+    "auditTooltip": "Результат внешних аудитов skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Данные аудита skills.sh недоступны для этого навыка",
+    "preview": "Предпросмотр"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Команда ИИ",
+      "aiTeams": "Команды ИИ",
+      "routines": "Рутины"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Изменить конфигурацию агента",
+    "exportBundle": "Экспортировать пакет агента",
+    "goals": "Цели",
+    "workspace": "Рабочая область"
+  },
+  "scheduleRow": {
+    "deleteQ": "Удалить?",
+    "confirmDelete": "Подтвердить удаление",
+    "cancelDelete": "Отменить удаление",
+    "runNow": "Запустить сейчас"
+  },
+  "apiKeys": {
+    "addKey": "Добавить ключ",
+    "edit": "Изменить",
+    "remove": "Удалить",
+    "newApiKey": "Новый ключ API"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Обновления Cabinet",
+    "dataDirectory": "Каталог данных",
+    "backups": "Резервные копии"
+  },
+  "kanban": {
+    "stopAllInLane": "Остановить все запущенные задачи в этой полосе",
+    "restartAllInLane": "Перезапустить все задачи в этой полосе",
+    "newTask": "Новая задача",
+    "collapseColumn": "Свернуть столбец",
+    "kill": "Завершить",
+    "laneInbox": "Входящие",
+    "laneInboxHint": "Черновик — ждет вашего запуска",
+    "laneNeeds": "Ваш ход",
+    "laneNeedsHint": "Агент задал вопрос или требует подтверждения",
+    "laneRunning": "Выполняется",
+    "laneRunningHint": "Агенты работают прямо сейчас",
+    "laneDone": "Только что завершено",
+    "laneDoneHint": "Завершено за последний час",
+    "laneArchive": "Архив",
+    "laneArchiveHint": "Старые и подтвержденные"
+  },
+  "terminalTabs": {
+    "newTab": "Новая вкладка терминала",
+    "closeTab": "Закрыть терминал"
+  },
+  "newTaskButton": {
+    "createNew": "Создать новый…",
+    "newTask": "Новая задача",
+    "newRoutine": "Новая рутина"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Еженедельный обзор стратегии",
+    "schedule": "Расписание",
+    "jobId": "Идентификатор задания",
+    "enabled": "Включено — запускать по этому расписанию"
+  },
+  "editIdentity": {
+    "title": "Изменить агента",
+    "displayName": "Отображаемое имя",
+    "color": "Цвет",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Запустить всех агентов",
+    "startAllSubtitle": "Активировать пульсации и задания cron",
+    "stopAll": "Остановить всех агентов",
+    "stopAllSubtitle": "Приостановить пульсации и задания cron"
+  },
+  "skillLibrary": {
+    "readOnly": "Только для чтения — нельзя редактировать из Cabinet",
+    "noUpstream": "Создано непосредственно в этом cabinet — нет записи об исходном git-репозитории",
+    "executableWarning": "Пакет содержит исполняемые скрипты — проверьте перед утверждением",
+    "skills": "Навыки",
+    "imported": "Импортировано",
+    "importing": "Импорт…",
+    "import": "Импорт"
+  },
+  "embedPopover": {
+    "placeholder": "Вставьте ссылку (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify или любой URL)",
+    "notValidUrl": "Недействительный URL",
+    "anyUrlWorks": "Подойдет любой публичный URL.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Любой URL iframe"
+  },
+  "rowActions": {
+    "stop": "Остановить",
+    "stopHint": "Остановить выполнение сейчас (отправляет SIGTERM)",
+    "restart": "Перезапустить",
+    "restartHint": "Запустить снова с исходным запросом",
+    "runHint": "Начать эту задачу сейчас"
+  },
+  "schedulesPanel": {
+    "title": "Запланированные задания",
+    "noJobs": "Задания cabinet пока не настроены.",
+    "heartbeats": "Пульсации",
+    "noHeartbeats": "Пульсации пока не настроены."
+  },
+  "scheduleTab": {
+    "explainer1": "Все, что ваша команда делает на этой неделе, в одном календаре. Розовый — пульсация, зеленый — рутина. Нажмите на любой элемент, чтобы изменить его.",
+    "explainer2": "Используйте эту вкладку, чтобы выявить конфликты, найти свободные промежутки или просто быстро оценить загруженность команды.",
+    "aboutAria": "О расписании",
+    "modeDay": "День",
+    "modeWeek": "Неделя",
+    "modeMonth": "Месяц"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Уменьшить масштаб",
+    "zoomIn": "Увеличить масштаб",
+    "resetView": "Сбросить вид",
+    "syntaxError": "Синтаксическая ошибка диаграммы"
+  },
+  "helpPage": {
+    "keyboard": "Клавиатура",
+    "skills": "Навыки",
+    "apiKeys": "Ключи API",
+    "mcpServers": "Серверы MCP",
+    "title": "Помощь",
+    "howTo": "Как это сделать",
+    "heading": "Узнайте, как работает Cabinet",
+    "subheading": "Короткие демонстрации, пошаговые руководства и обзоры для максимального использования Cabinet.",
+    "ctaWatchTour": "Посмотреть обзор",
+    "ctaWatchDemo": "Посмотреть демонстрацию",
+    "ctaCheatSheet": "Открыть шпаргалку",
+    "ctaComingSoon": "Скоро",
+    "discordHeading": "Не нашли то, что искали?",
+    "discordSubheading": "Мы в Discord — заходите поздороваться, задать вопросы, поделиться своими проектами.",
+    "discordCta": "Присоединиться к Discord",
+    "items": {
+      "tour": {
+        "title": "Познакомьтесь с вашим <accent>Cabinet</accent>.",
+        "description": "Ваша команда ИИ. Ваша база знаний. Всё в одном месте."
+      },
+      "agents": {
+        "title": "Ваша <accent>команда ИИ</accent>.",
+        "description": "Нанимайте руководителей и специалистов. Объединяйте их в отделы. Позвольте им распределять задачи между собой."
+      },
+      "tasks": {
+        "title": "<accent>Доска задач</accent>.",
+        "description": "Представления: канбан, список, расписание. Фильтруйте по агенту или статусу. Выбирайте время выполнения для каждой задачи."
+      },
+      "knowledge": {
+        "title": "Ваша <accent>база знаний</accent>.",
+        "description": "Markdown, CSV, PDF, код, блокноты, mermaid, изображения, аудио — всё отображается прямо здесь. Ваши данные остаются на вашей машине; они ваши, а не наши."
+      },
+      "cabinets": {
+        "title": "Команда <accent>команд ИИ</accent>.",
+        "description": "Cabinet'ы вложены друг в друга. Каждый — это отдельная команда ИИ со своими данными, агентами и областью видимости, и они могут сотрудничать по всей иерархии."
+      },
+      "routines": {
+        "title": "<accent>Рутины</accent> и расписания.",
+        "description": "Запускайте задачу ежедневно в 9 утра, еженедельно по пятницам или один раз в следующий понедельник. Cron, календарь или естественный язык."
+      },
+      "conversations": {
+        "title": "Разговоры и <accent>утверждения</accent>.",
+        "description": "Агенты предлагают действия — запуск задачи, планирование работы — а вы утверждаете их до выполнения."
+      },
+      "themes": {
+        "title": "Сделайте это <accent>своим</accent>.",
+        "description": "Выбирайте из тщательно подобранных светлых и темных тем — Paper, Slate, Claude, Ink и других."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — используйте свой ИИ.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — используйте любых провайдеров, за которых вы уже платите. Выберите по умолчанию или переопределите для каждой задачи."
+      },
+      "shortcuts": {
+        "title": "<accent>Горячие клавиши</accent>.",
+        "description": "Все горячие клавиши Cabinet на одной карточке с поиском. Нажмите ? из любого места, чтобы открыть её снова. Фильтруйте по имени или клавише — для навигации, редактирования, задач, панелей и слеш-команд."
+      },
+      "skills": {
+        "title": "<accent>Навыки</accent> для ваших агентов.",
+        "description": "Устанавливаемые навыки агентов — сценарии, которые модель использует для задачи. Устанавливайте с GitHub или skills.sh, прикрепляйте к персоне или упоминайте через @ в любом редакторе для однократного запуска."
+      },
+      "apiKeysItem": {
+        "title": "<accent>Ключи API</accent> для ваших инструментов.",
+        "description": "Подключите свою учетную запись OpenAI, Anthropic или GitHub один раз — и каждый агент и навык в Cabinet будет её использовать. Вы оплачиваете свои счета, используете свою квоту, без посредников."
+      },
+      "integrations": {
+        "title": "<accent>Серверы MCP</accent> и интеграции.",
+        "description": "Серверы MCP, Slack, Telegram, Gmail и Calendar OAuth — подключите один раз, и Cabinet будет управлять токенами. Скоро."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Горячие клавиши",
+    "filterPlaceholder": "Фильтр…",
+    "close": "Закрыть"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Живой терминал",
+    "runningHeartbeat": "Пульс запущен…",
+    "memory": "Память",
+    "recentActivity": "Недавняя активность"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Ваш аватар",
+    "preset": "Предустановка",
+    "useInitials": "Использовать инициалы по умолчанию",
+    "custom": "Пользовательский"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Обнаружены изменения в локальном коде приложения"
+  },
+  "logsPanel": {
+    "classifiedError": "Классифицированная ошибка",
+    "session": "Сессия",
+    "noEvents": "Событий пока нет.",
+    "noTranscript": "Стенограммы пока нет."
+  },
+  "conversationResult": {
+    "prompt": "Промпт",
+    "result": "Результат",
+    "noSummary": "Сводка не создана."
+  },
+  "scheduleRowPlus": {
+    "delete": "Удалить"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Прикрепить файлы"
+  },
+  "demos": {
+    "aiTeam": "Команда ИИ",
+    "specialist": "Специалист",
+    "legal": "Юрист",
+    "global": "Глобальный",
+    "editor": "Редактор",
+    "slashMenu": "Слэш-меню"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · ДАННЫЕ",
+    "headlineSentence": "Ваш <accent>единый источник</accent> истины.",
+    "paragraphPrefix": "Markdown, PDF, таблицы, слайды, изображения, видео, аудио, связанные репозитории, встроенные веб-приложения, Google Docs. Упоминайте что угодно с помощью ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Одно место для всего — чтобы вы и ваша команда ИИ читали, редактировали и публиковали из ",
+    "sameFiles": "одних и тех же файлов",
+    "secondParagraphSuffix": ", а не копий копий.",
+    "mockTitle": "Cabinet Хилы"
+  },
+  "slideData": {
+    "thailandRootLabel": "Поездка в Таиланд",
+    "thailandCaption": "Просматривайте все свои файлы в одном месте.",
+    "videoTitle": "Ночной рынок.mp4",
+    "taxRootLabel": "Налоги 2026",
+    "taxCaption": "Налоги 2026 — веб-приложение с живым калькулятором, встроенное прямо в ваш cabinet.",
+    "calculatorTitle": "Калькулятор",
+    "liveAppBadge": "Живое приложение",
+    "taxEstimateLabel": "Оценка налога на 2026 год",
+    "income": "Доход",
+    "deductions": "Вычеты",
+    "taxBracket": "Налоговая ставка",
+    "estimatedTax": "Расчетный налог",
+    "healthRootLabel": "Здоровье",
+    "healthCaption": "Витамины и анализы — таблица, которая выглядит как страница.",
+    "csvTitle": "Ежедневные витамины.csv",
+    "csvColVitamin": "Витамин",
+    "csvColDose": "Доза",
+    "csvColTime": "Время",
+    "csvColDone": "Готово",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Кодовые базы — свяжите любой Git repo, доступный для поиска вашими агентами.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · ЗАДАЧИ",
+    "typedCommand": "Запустите 10 задач, каждая из которых пишет песню, сохраните в @Songs/",
+    "headlineSentence": "Готовы <accent>начать</accent>?",
+    "paragraphPrefix": "Напишите задачу. Запустите одну, запустите десять, запланируйте их навсегда. Упоминайте страницы с помощью ",
+    "paragraphSuffix": ", сохраняйте результат где угодно. Теперь вы — директор.",
+    "savingFolder": "Песни/"
+  },
+  "slideAgents": {
+    "persona": "Персона",
+    "heartbeat": "Пульс",
+    "jobs": "Задачи",
+    "aiTeam": "Команда ИИ",
+    "otherWriter": "Писатель",
+    "otherOrganizer": "Организатор",
+    "idle": "бездействует",
+    "researchAnalyst": "Аналитик-исследователь",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "активен",
+    "personaBody": "«Тщательный аналитик. Ссылается на источники. Отмечает противоречивые утверждения.»",
+    "heartbeatBody": "Сканирует @Market Research каждые 15 мин",
+    "jobsBody": "Пн 9:00 · Еженедельный обзор конкурентов",
+    "slideNum": "02 · АГЕНТЫ",
+    "paragraphPrefix": "У каждого агента есть ",
+    "personaWord": "персона",
+    "paragraphMiddle": ", свой ",
+    "scheduleWord": "график",
+    "paragraphMiddle2": ", и ",
+    "memoryWord": "память",
+    "paragraphSuffix": ". Ваши ИИ-агенты выполняют работу 24/7. Будьте человеком — они сделают все остальное.",
+    "aiTeamSentence": "Ваша <accent>команда ИИ</accent>."
+  },
+  "startWork": {
+    "close": "Закрыть",
+    "selectAgent": "Выбрать агента",
+    "titleNow": "Что нужно сделать?",
+    "titleRecurring": "Настроить повторяющуюся рутину",
+    "titleHeartbeat": "Запускать этого агента по расписанию",
+    "titleEdit": "Изменить задачу",
+    "submitStart": "Запустить",
+    "submitAddInbox": "Добавить во Входящие",
+    "submitSaveEdit": "Сохранить изменения",
+    "submitCreateRoutine": "Создать рутину",
+    "submitSaveHeartbeat": "Сохранить пульс",
+    "saving": "Сохранение…",
+    "current": "текущий",
+    "modeInboxLabel": "→ Входящие",
+    "modeInboxHint": "Сохранить во Входящие — запустить, когда будете готовы",
+    "modeNowLabel": "Запустить сейчас",
+    "modeNowHint": "Начать этот разговор немедленно",
+    "modeRecurringLabel": "По расписанию",
+    "modeRecurringHint": "Запускать этот запрос по расписанию",
+    "modeHeartbeatLabel": "Пульс",
+    "modeHeartbeatHint": "Запускать агента в его собственном ритме",
+    "agentFallback": "Агент",
+    "failedToStart": "Не удалось запустить",
+    "failedToSave": "Не удалось сохранить изменения",
+    "failedToSaveHeartbeat": "Не удалось сохранить пульс"
+  },
+  "googleDoc": {
+    "noUrl": "Не задан URL Google",
+    "anyoneWithLink": "Все, у кого есть ссылка",
+    "publishedToWeb": "Опубликовано в интернете"
+  },
+  "feedback": {
+    "close": "Закрыть",
+    "rolePlaceholder": "напр., инди-разработчик, PM в SaaS, студент-дизайнер, любитель…",
+    "joinDiscord": "Присоединиться к Discord",
+    "header": "Быстрая проверка от Хилы",
+    "howGoing": "Как успехи?",
+    "starsCount": "{{n}} звезда",
+    "starsCountPlural": "{{n}} звёзд",
+    "likeCabinet": "Нравится Cabinet?",
+    "starTooltipUnknown": "Поставьте звезду Cabinet на GitHub — если это полезно для вас, звезда очень поможет",
+    "starTooltipWithCount": "{{count}} звёзд на GitHub — нажмите, чтобы добавить свою",
+    "starLabel": "Поставить звезду",
+    "backgroundLabel": "Ваш род деятельности?",
+    "optional": "(необязательно)",
+    "discordCta": "Хотите пообщаться напрямую или с другими участниками Cabinet?",
+    "maybeLater": "Позже",
+    "send": "Отправить",
+    "thanksTitle": "Спасибо!",
+    "thanksBody": "Ваш отзыв определяет, что будет создано дальше.",
+    "copy2Lead": "Вы открывали Cabinet несколько раз. Спасибо! Cabinet — это проект с открытым исходным кодом, который только начинает развиваться, поэтому то, что вы здесь скажете, действительно повлияет на дальнейшую разработку.",
+    "copy2Q1": "Что вы пытались сделать в Cabinet сегодня?",
+    "copy2Q1Hint": "Достаточно одного предложения. Опишите, для чего вы его открыли, а не то, что вы хотели бы, чтобы он умел.",
+    "copy2Q2": "В прошлый раз, когда вы хотели это сделать, что вы использовали вместо Cabinet?",
+    "copy2Q2Hint": "Любой инструмент, приложение или документ, даже ручка и бумага.",
+    "copy6Lead": "Вы вернулись, и это самый важный сигнал. Я хочу услышать о недочётах, пока вы их не забыли.",
+    "copy6Q1": "Что вы пытались сделать в Cabinet сегодня?",
+    "copy6Q1Hint": "Достаточно одного предложения.",
+    "copy6Q2": "Что почти заставило вас перестать использовать Cabinet на этой неделе?",
+    "copy6Q2Hint": "Что вас больше всего раздражало. Будьте конкретны. «X сбивало с толку» лучше, чем «UX»."
+  },
+  "apiKeysSection": {
+    "cancel": "Отмена",
+    "pasteHere": "вставить сюда",
+    "pasteNewValue": "вставить новое значение"
+  },
+  "storageBackend": {
+    "title": "Хранилище данных",
+    "migrationFailed": "Миграция не удалась"
+  },
+  "linkRepo": {
+    "title": "Загрузить знания",
+    "intro": "Укажите Cabinet любую папку на вашем компьютере. Cabinet создаст символическую ссылку, чтобы содержимое папки отображалось в вашей Базе знаний и было доступно ИИ-агентам в качестве контекста. Исходная папка никогда не перемещается и не копируется.",
+    "symlinkNote": "Это создает символическую ссылку — файлы остаются на месте.",
+    "autoDetectPlaceholder": "Автоматическое определение из git remote (необязательно)",
+    "shortSummaryPlaceholder": "Необязательное краткое описание для агентов"
+  },
+  "recentTasks": {
+    "ptyMode": "Режим терминала (PTY)",
+    "revealOlder": "Показать больше старых задач",
+    "showOlder": "Показать старые"
+  },
+  "treeNode": {
+    "openCabinet": "Открыть представление Cabinet",
+    "pageTitlePlaceholder": "Заголовок страницы…",
+    "rename": "Переименовать",
+    "openBadge": "Открыть",
+    "sectionAdd": "Добавить к этому элементу",
+    "sectionThis": "Этот элемент",
+    "addSubPage": "Добавить подстраницу",
+    "newFolder": "Новая папка",
+    "createFile": "Создать новый файл…",
+    "connectKnowledge": "Подключить знания…",
+    "symlinkTag": "Символическая ссылка",
+    "importFile": "Импортировать файл…",
+    "importFolder": "Импортировать папку…",
+    "createCabinet": "Создать Cabinet здесь",
+    "editSymlink": "Изменить символическую ссылку…",
+    "settings": "Настройки…",
+    "moveTo": "Переместить в…",
+    "copyRelativePath": "Копировать относительный путь",
+    "copyFullPath": "Копировать полный путь",
+    "openInFinder": "Открыть в Finder",
+    "delete": "Удалить",
+    "unlink": "Отменить связь",
+    "folderNamePlaceholder": "Имя папки",
+    "creating": "Создание…",
+    "create": "Создать",
+    "addSubPageTitle": "Добавить подстраницу в «{{name}}»",
+    "newFolderTitle": "Новая папка в «{{name}}»"
+  },
+  "newFile": {
+    "title": "Создать новый файл",
+    "subtitle": "Выберите тип файла. Cabinet откроет его в редакторе, когда он будет готов.",
+    "groupNative": "Редактировать в Cabinet",
+    "groupOffice": "Office (пустой — редактировать извне)",
+    "groupGoogle": "Google (связанный)",
+    "namePlaceholder": "Имя файла",
+    "create": "Создать",
+    "creating": "Создание…",
+    "googleUrlLabel": "URL Google (необязательно)",
+    "googleUrlPlaceholder": "Вставьте ссылку Google для общего доступа или оставьте поле пустым, чтобы добавить позже",
+    "officeNote": "Cabinet показывает файлы Office только для чтения. Используйте «Открыть в Finder» для редактирования в настольном приложении.",
+    "types": {
+      "markdown": "Страница Markdown",
+      "markdownDesc": "Заметки в формате RTF, редактируемые в Cabinet",
+      "code": "Файл кода",
+      "codeDesc": "Любой исходный/текстовый файл — выберите расширение",
+      "mermaid": "Диаграмма Mermaid",
+      "mermaidDesc": "Блок-схемы и диаграммы в виде кода",
+      "csv": "Таблица CSV",
+      "csvDesc": "Табличные данные, разделённые запятыми",
+      "docx": "Документ Word",
+      "docxDesc": "Пустой .docx",
+      "xlsx": "Таблица Excel",
+      "xlsxDesc": "Пустой .xlsx",
+      "pptx": "PowerPoint",
+      "pptxDesc": "Пустой .pptx",
+      "gdoc": "Документ Google",
+      "gdocDesc": "Встроить Документ Google",
+      "gsheet": "Таблица Google",
+      "gsheetDesc": "Встроить Таблицу Google",
+      "gslides": "Презентация Google",
+      "gslidesDesc": "Встроить Презентацию Google"
+    },
+    "codeExtLabel": "Расширение",
+    "googleTag": "Google",
+    "extHint": "Просто введите имя — Cabinet добавит расширение {{ext}}.",
+    "createFailed": "Не удалось создать файл."
+  },
+  "fileSettings": {
+    "googleTitle": "Настройки встраивания Google",
+    "googleKindLabel": "Тип",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Доступ к документу должен быть «Все, у кого есть ссылка» или «Опубликовано в интернете», чтобы встраивание загрузилось.",
+    "openLink": "Открыть в Google",
+    "googleKinds": {
+      "docs": "Документы",
+      "sheets": "Таблицы",
+      "slides": "Презентации",
+      "forms": "Формы",
+      "drive": "Диск"
+    },
+    "appTitle": "Настройки веб-приложения",
+    "modeLabel": "Как это должно открываться?",
+    "modeWebsite": "Просмотр страницы",
+    "modeWebsiteDesc": "Открывается встроенно, с видимой боковой панелью и панелью ИИ.",
+    "modeApp": "Веб-приложение",
+    "modeAppDesc": "Открывается на весь экран; боковая панель и панель ИИ автоматически сворачиваются.",
+    "convertNote": "Это переключает файл-маркер .app в папке. Ваши файлы не изменяются.",
+    "save": "Сохранить",
+    "saving": "Сохранение…",
+    "cancel": "Отмена",
+    "saveFailed": "Не удалось сохранить настройки."
+  },
+  "editSymlink": {
+    "title": "Редактировать симлинк",
+    "intro": "Эта запись Базы знаний является символической ссылкой на папку в другом месте на вашем компьютере.",
+    "kbPathLabel": "Путь к Базе знаний",
+    "targetLabel": "Ссылается на (на диске)",
+    "brokenWarning": "Целевая папка больше не существует. Перенаправьте ее на действительную папку ниже.",
+    "repointLabel": "Перенаправить на новую папку",
+    "repointHint": "Cabinet заменит ссылку, чтобы она указывала сюда. Файлы никогда не перемещаются.",
+    "browse": "Обзор",
+    "nameLabel": "Название",
+    "descriptionLabel": "Описание",
+    "save": "Сохранить",
+    "saving": "Сохранение…",
+    "copyTarget": "Скопировать путь к целевой папке",
+    "saveFailed": "Не удалось обновить символическую ссылку."
+  },
+  "importFolder": {
+    "importing": "Импорт папки…",
+    "failed": "Не удалось импортировать папку: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Загрузка задач"
+  },
+  "agentList": {
+    "agentLibrary": "Библиотека агентов",
+    "newAgent": "Новый агент"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Ваша команда",
+    "lead": "Руководитель",
+    "specialist": "Специалист",
+    "tasks": "Задачи",
+    "todo": "Предстоит",
+    "doing": "В работе",
+    "done": "Выполнено",
+    "anythingGoes": "Что угодно",
+    "marketing": "Маркетинг",
+    "product": "Продукт",
+    "research": "Исследования",
+    "design": "Дизайн",
+    "routines": "Рутины",
+    "dailyReview": "Ежедневный обзор",
+    "weeklyDigest": "Еженедельный дайджест",
+    "conversation": "Беседа",
+    "userQuery": "Спланировать 2-недельную поездку в Таиланд…",
+    "agentReply": "Я отправлю библиотекаря и редактора.",
+    "pendingAction": "Ожидающее действие",
+    "approve": "Одобрить",
+    "decline": "Отклонить",
+    "themes": "Темы",
+    "providers": "Провайдеры",
+    "comingSoon": "Скоро"
+  },
+  "agentLive": {
+    "dismiss": "Закрыть",
+    "paused": "Агент приостановлен"
+  },
+  "conversationLive": {
+    "liveOutput": "Прямой вывод",
+    "waitingFirstChunk": "Ожидание первого фрагмента вывода…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Аватар",
+    "useIconInstead": "Использовать значок"
+  },
+  "pendingActions": {
+    "rejectAll": "Отклонить все ожидающие действия",
+    "approveAll": "Одобрить и отправить все действия без жестких блокировок"
+  },
+  "aiPanel": {
+    "clearSessions": "Очистить все сеансы",
+    "dismiss": "Закрыть"
+  },
+  "schedulerPlus": {
+    "restartAll": "Перезапустить всех агентов",
+    "restartSubtitle": "Остановить, затем повторно активировать все расписания"
+  },
+  "csvViewer": {
+    "downloadCsv": "Скачать CSV",
+    "deleteRow": "Удалить строку"
+  },
+  "resizableImage": {
+    "resizeLeft": "Изменить размер слева",
+    "resizeRight": "Изменить размер справа"
+  },
+  "folderIndex": {
+    "listView": "Список",
+    "galleryView": "Галерея"
+  },
+  "linkPopover": {
+    "openLink": "Открыть ссылку",
+    "removeLink": "Удалить ссылку"
+  },
+  "officeChrome": {
+    "openInFinder": "Открыть в Finder",
+    "downloadOriginal": "Скачать оригинал"
+  },
+  "sourceViewer": {
+    "copyContents": "Копировать содержимое файла",
+    "downloadFile": "Скачать файл"
+  },
+  "versionHistory": {
+    "title": "История версий"
+  },
+  "demoModal": {
+    "closeDemo": "Закрыть демо",
+    "close": "Закрыть"
+  },
+  "demosPlus": {
+    "anything": "Любое",
+    "yours": "Ваши",
+    "install": "Установить",
+    "attach": "Прикрепить"
+  },
+  "narrowViewport": {
+    "dismiss": "Скрыть подсказку о узком окне просмотра",
+    "dismissTitle": "Скрыть до следующей сессии",
+    "hintPrefix": "Cabinet лучше всего работает при ширине ",
+    "hintWidth": "≥960 пикс.",
+    "hintSuffix": ". Некоторые элементы интерфейса сжимаются при меньшей ширине."
+  },
+  "agentCard": {
+    "runHeartbeat": "Запустить проверку"
+  },
+  "schedulePicker": {
+    "frequency": "Частота",
+    "onDay": "В день",
+    "modeInterval": "Интервал",
+    "modeDaily": "Ежедневно",
+    "modeWeekdays": "По будням",
+    "modeWeekly": "Еженедельно",
+    "modeMonthly": "Ежемесячно",
+    "modeCustom": "Пользовательский",
+    "parse": "Разобрать",
+    "showCron": "Показать cron-выражение",
+    "hideCron": "Скрыть cron-выражение",
+    "weekdayMo": "Пн",
+    "weekdayTu": "Вт",
+    "weekdayWe": "Ср",
+    "weekdayTh": "Чт",
+    "weekdayFr": "Пт",
+    "weekdaySa": "Сб",
+    "weekdaySu": "Вс"
+  },
+  "slackPanel": {
+    "createChannel": "Создать канал",
+    "thread": "Ветка"
+  },
+  "uninstall": {
+    "title": "Удалить Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Ящики Cabinet",
+    "pageTitlePlaceholder": "Заголовок страницы…"
+  },
+  "skillAddPlus": {
+    "cancel": "Отмена"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Данные аудита недоступны с skills.sh для этого навыка",
+    "searchPlaceholder": "Поиск по skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Обновить",
+    "noSkills": "Навыков пока нет."
+  },
+  "taskDetail": {
+    "close": "Закрыть (Esc)",
+    "muteTask": "Отключить эту задачу — выполненные запуски сразу отправляются в Архив",
+    "unmuteTask": "Включить эту задачу — выполненные запуски снова появятся в разделе «Только что завершено»"
+  },
+  "rowActionsPlus": {
+    "edit": "Изменить",
+    "editHint": "Изменить этот сохраненный черновик до его запуска",
+    "delete": "Удалить",
+    "deleteHint": "Удалить безвозвратно — это действие нельзя отменить"
+  },
+  "taskCard": {
+    "ptyMode": "Работает в режиме терминала (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "Скрыть"
+  },
+  "terminalExited": {
+    "openDetails": "Открыть структурированные данные (запрос, артефакты, шаги)",
+    "reconnect": "Переподключиться к демону и транслировать запись PTY"
+  },
+  "terminalTabsPlus": {
+    "resize": "Изменить размер панели терминала"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Показать всех агентов",
+    "noRecentActivity": "Нет недавних действий",
+    "noAgents": "Нет агентов",
+    "noAgentsConfigured": "Агенты для этого cabinet еще не настроены.",
+    "cabinetScope": "Область cabinet:",
+    "depthDropdownHeader": "Область cabinet",
+    "depthOwnLabel": "Только этот cabinet",
+    "depthOwnShort": "Собственные",
+    "depthOwnDesc": "Страницы, агенты и задачи только из этого cabinet.",
+    "depthChildren1Label": "Включить прямых потомков",
+    "depthChildren1Desc": "Добавить один уровень дочерних cabinet'ов.",
+    "depthChildren2Label": "Включить два уровня cabinet'ов",
+    "depthChildren2Desc": "Добавить два уровня дочерних cabinet'ов.",
+    "depthAllLabel": "Включить всех потомков",
+    "depthAllShort": "Все",
+    "depthAllDesc": "Включить все поддерево.",
+    "scopeTooltip": "Область cabinet: {{label}}. Нажмите, чтобы изменить."
+  },
+  "composerExtras": {
+    "skillAttached": "Навык — привязан только к этому запуску",
+    "pageTitlePlaceholder": "Заголовок страницы…",
+    "active": "Активно — активировать агента по этому расписанию",
+    "pickCliPty": "Выберите CLI для запуска в PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Редактировать с ИИ",
+    "jupyterLab": "Копировать: jupyter lab <path>",
+    "exitApp": "Выйти из приложения"
+  },
+  "demosExtras": {
+    "aiAccounts": "Аккаунты ИИ",
+    "aiTeams": "Команды ИИ"
+  },
+  "whatsNew": {
+    "dismiss": "Закрыть",
+    "headerPrefix": "Что нового в v",
+    "readFull": "Прочитать полные примечания"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Я понимаю и хочу продолжить."
+  },
+  "daemonHealth": {
+    "dismiss": "Закрыть"
+  },
+  "tinyExtras": {
+    "light": "Светлая",
+    "home": "Главная",
+    "workspaceGallery": "Галерея рабочих пространств",
+    "savingTo": "Сохранение в",
+    "comingSoon": "Скоро",
+    "deleteSkill": "Удалить навык",
+    "skillsOffered": "Предлагаемые навыки:",
+    "allAgents": "Все агенты",
+    "noTranscript": "Транскрипт не найден",
+    "noDiff": "Различия недоступны.",
+    "headsUp": "Внимание:",
+    "back": "Назад",
+    "editYourAvatar": "Изменить аватар",
+    "openFullTaskViewer": "Открыть полный просмотр задач",
+    "close": "Закрыть",
+    "copyToClipboard": "Скопировать в буфер обмена",
+    "starOnGithub": "Поставить звезду Cabinet на GitHub",
+    "helpMoreFind": "Помогите большему числу людей найти сообщество",
+    "joinDiscord": "Присоединиться к Discord",
+    "chatWithBuilders": "Общайтесь с разработчиками Cabinet",
+    "joinWaitlist": "Присоединиться к списку ожидания Cabinet Cloud",
+    "emailPlaceholder": "you@company.com",
+    "namePlaceholder": "Джейн",
+    "addToInbox": "Добавить во Входящие",
+    "runTaskNow": "Запустить задачу сейчас",
+    "search": "Поиск",
+    "aiPanel": "Панель ИИ",
+    "drawers": "Ящики"
+  },
+  "dataLocations": {
+    "title": "Где хранятся ваши данные",
+    "whyThisMatters": "Почему это важно",
+    "location": "Расположение",
+    "contains": "Содержит",
+    "network": "Сеть",
+    "revealInFinder": "Показать в файловом менеджере",
+    "stored": "Сохранено",
+    "resetOnboarding": "Сбросить обучение"
+  },
+  "rooms": {
+    "switcherTitle": "Сменить комнату",
+    "switchRoom": "Комнаты",
+    "loading": "Загрузка…",
+    "defaultTag": "Главная",
+    "openInNewWindow": "Открыть в новом окне",
+    "opensBrowserWindow": "Открывает новое окно браузера",
+    "customizeRoom": "Редактировать комнату",
+    "addRoom": "Добавить комнату…",
+    "editTitle": "Редактировать комнату",
+    "editSubtitle": "Задайте имя, значок, цвет и тему этой комнаты.",
+    "nameLabel": "Отображаемое имя",
+    "slugHint": "Имя папки на диске останется как {{slug}}. Переименование папки — это отдельное, расширенное действие.",
+    "iconLabel": "Значок",
+    "colorLabel": "Цвет",
+    "colorAuto": "Авто",
+    "themeLabel": "Тема",
+    "themeGlobal": "Использовать глобальные значения по умолчанию",
+    "editFailed": "Не удалось сохранить комнату. Пожалуйста, попробуйте еще раз.",
+    "deleteRoom": "Удалить комнату…",
+    "deleteLastRoomDisabledHint": "Вы не можете удалить свою последнюю комнату.",
+    "deleteTitle": "Удалить эту комнату?",
+    "deleteSubtitle": "Эта комната и все ее содержимое будут перемещены в корзину.",
+    "deleteWarningIntro": "Перемещение комнаты в корзину также удаляет:",
+    "deleteWarningPages": "Страницы и файлы в этой комнате",
+    "deleteWarningAgents": "Агенты, беседы и память, привязанные к этой комнате",
+    "deleteWarningJobs": "Запланированные задания и рутины в этой комнате",
+    "deleteWarningChat": "История командного чата для этой комнаты",
+    "deleteWarningSearch": "Поисковый индекс комнаты (автоматически перестраивается при восстановлении)",
+    "deleteRecoveryNote": "Восстановление: комната перемещена в data/.trash/ — восстановите ее, переместив папку обратно в data/.",
+    "deleteConfirmLabel": "Введите {{slug}} для подтверждения",
+    "deleteConfirmButton": "Удалить комнату",
+    "deleting": "Удаление…",
+    "deleteFailed": "Не удалось удалить комнату. Пожалуйста, попробуйте еще раз."
+  },
+  "common": {
+    "actions": {
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "delete": "Удалить",
+      "confirm": "Подтвердить",
+      "close": "Закрыть",
+      "open": "Открыть",
+      "back": "Назад",
+      "next": "Далее",
+      "done": "Готово"
+    },
+    "nav": {
+      "goBack": "Назад",
+      "goForward": "Вперед"
+    },
+    "aiPanel": {
+      "open": "Открыть панель ИИ",
+      "close": "Закрыть панель ИИ"
+    },
+    "states": {
+      "loading": "Загрузка…",
+      "saving": "Сохранение…",
+      "saved": "Сохранено",
+      "error": "Что-то пошло не так"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Новая страница",
+      "title": "Создать новую страницу",
+      "placeholder": "Название страницы…",
+      "create": "Создать",
+      "creating": "Создание…"
+    },
+    "newCabinet": {
+      "trigger": "Новый Cabinet",
+      "title": "Создать новый Cabinet",
+      "subtitle": "Cabinet — это рабочее пространство со своими агентами, задачами и знаниями.",
+      "importFromRegistry": "Импортировать из Реестра",
+      "nameLabel": "Название Cabinet",
+      "namePlaceholder": "напр. Мой стартап, Команда маркетинга, Исследовательская лаборатория…",
+      "selectAgents": "Выбрать агентов",
+      "selectedCount": "{{count}} выбрано",
+      "createCabinet": "Создать Cabinet",
+      "creating": "Создание…",
+      "createFailed": "Не удалось создать cabinet"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Экспортировать страницу",
+      "copyMarkdown": "Копировать Markdown",
+      "copyForLlms": "Копировать для LLM",
+      "copyAsHtml": "Копировать как HTML",
+      "downloadMarkdown": "Скачать .md",
+      "downloadPdf": "Скачать PDF",
+      "copiedForLlmToast": "Скопировано {{size}} Markdown для LLM"
+    },
+    "toolbar": {
+      "heading1": "Заголовок 1",
+      "heading2": "Заголовок 2",
+      "heading3": "Заголовок 3",
+      "bold": "Жирный",
+      "italic": "Курсив",
+      "underline": "Подчеркнутый",
+      "strikethrough": "Зачеркнутый",
+      "inlineCode": "Строчный код",
+      "link": "Ссылка",
+      "textColor": "Цвет текста",
+      "highlight": "Подсветка",
+      "background": "Фон",
+      "bulletList": "Маркированный список",
+      "orderedList": "Нумерованный список",
+      "blockquote": "Цитата",
+      "checklist": "Список задач",
+      "codeBlock": "Блок кода",
+      "divider": "Разделитель",
+      "alignLeft": "По левому краю",
+      "alignCenter": "По центру",
+      "alignRight": "По правому краю",
+      "justify": "По ширине",
+      "align": "Выравнивание",
+      "table": {
+        "selectCellText": "Выбрать текст ячейки",
+        "addRowAbove": "Добавить строку сверху",
+        "addRowBelow": "Добавить строку снизу",
+        "moveRowUp": "Переместить строку вверх",
+        "moveRowDown": "Переместить строку вниз",
+        "deleteRow": "Удалить строку",
+        "addColumnBefore": "Добавить столбец слева",
+        "addColumnAfter": "Добавить столбец справа",
+        "moveColumnLeft": "Переместить столбец влево",
+        "moveColumnRight": "Переместить столбец вправо",
+        "deleteColumn": "Удалить столбец",
+        "toggleHeaderRow": "Переключить строку заголовков",
+        "toggleHeaderColumn": "Переключить столбец заголовков",
+        "deleteTable": "Удалить таблицу"
+      },
+      "superscript": "Надстрочный индекс",
+      "subscript": "Подстрочный индекс",
+      "insertImage": "Вставить изображение",
+      "insertVideo": "Вставить видео",
+      "embed": "Встроить",
+      "undo": "Отменить",
+      "redo": "Повторить",
+      "switchToLtr": "Переключить на LTR",
+      "switchToRtl": "Переключить на RTL",
+      "scrollLeft": "Прокрутить панель влево",
+      "scrollRight": "Прокрутить панель вправо",
+      "markdown": "Markdown",
+      "preview": "Предпросмотр"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Имя Cabinet…",
+      "renameWarning": "Имена Cabinet нельзя будет переименовать позже (пока). Выбирайте с умом."
+    },
+    "templates": {
+      "header": "Начать с шаблона",
+      "browseAll": "Просмотреть все →"
+    },
+    "quickActions": {
+      "shuffle": "Показать другие предложения",
+      "launch10Songs": "Запустить 10 редакторов для написания песен",
+      "dailyReview9am": "Ежедневный обзор в 9 утра",
+      "weeklyReview": "Еженедельный обзор в следующий понедельник",
+      "thailandTrip": "Спланировать мою поездку в Таиланд",
+      "physicsApp": "Создать мне приложение для изучения физики",
+      "summariseRecent": "Обобщить мою недавнюю работу",
+      "recruiterReply": "Составить ответ рекрутеру",
+      "mapArticles": "Отобразить связи между статьями",
+      "physicsCourse": "Создать курс физики из 6 модулей",
+      "shortStory": "Составить план короткого рассказа",
+      "hourlyStandup": "Ежечасное напоминание о стендапе",
+      "researchPhone": "Подобрать мой следующий телефон",
+      "translateToSpanish": "Перевести этот cabinet на испанский",
+      "refactorNotes": "Реорганизовать мою систему заметок",
+      "birthdayParty": "Спланировать вечеринку по случаю дня рождения",
+      "boardUpdate": "Составить отчет для совета директоров",
+      "customerInterviews": "Смоделировать 5 интервью с клиентами"
+    },
+    "goodMorning": "Доброе утро",
+    "goodAfternoon": "Добрый день",
+    "goodEvening": "Добрый вечер",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Я хочу создать...",
+    "composerDaemonDown": "Агент-демон не в сети — перезапустите для отправки"
+  },
+  "onboarding": {
+    "launchHeading": "Запустите свой <accent>Cabinet</accent>",
+    "intro": {
+      "tagline1": "Ваша база знаний.",
+      "tagline2": "Ваша команда ИИ.",
+      "getStarted": "Начать"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Офис",
+        "study": "Кабинет",
+        "lab": "Лаборатория",
+        "library": "Библиотека",
+        "kitchen": "Кухня",
+        "family": "Семья",
+        "dining": "Столовая",
+        "studio": "Студия"
+      }
+    },
+    "welcome": {
+      "paragraph": "Ваш Дом — это ваше пространство. В нем вы создадите комнаты для разных сфер жизни: работы, второго мозга, исследований, семьи. И в каждой комнате есть cabinet: ваши заметки, файлы и команда ИИ, незаметно выполняющая задачи в фоновом режиме.",
+      "namePrompt": "Как вас зовут?",
+      "heading": "Добро пожаловать <accent>домой</accent>"
+    },
+    "welcomeBack": {
+      "heading": "С возвращением",
+      "headingNamed": "С возвращением в {{cabinet}}",
+      "subtitle": "Мы нашли существующий cabinet. Давайте завершим его настройку.",
+      "continue": "Продолжить"
+    },
+    "verify": {
+      "passed": "Пройдено",
+      "notInstalled": "Не установлено",
+      "authRequired": "Требуется авторизация",
+      "paymentRequired": "Требуется оплата",
+      "quotaExceeded": "Лимит запросов",
+      "error": "Ошибка"
+    },
+    "providerStatus": {
+      "ready": "Готово",
+      "loginRequired": "Требуется вход",
+      "notInstalled": "Не установлено"
+    },
+    "actions": {
+      "back": "Назад",
+      "next": "Далее",
+      "continue": "Продолжить",
+      "skip": "Пропустить",
+      "finish": "Завершить",
+      "complete": "Завершить настройку",
+      "copyToClipboard": "Копировать в буфер обмена"
+    },
+    "cabinetCreated": {
+      "continue": "Продолжить настройку",
+      "heading": "Ваш Cabinet создан",
+      "subtitle": "Всё настроено и готово к работе.",
+      "agentsReady_one": "{{count}} агент готов к работе",
+      "agentsReady_other": "{{count}} агентов готовы к работе",
+      "scheduledJobs_one": "{{count}} запланированное задание",
+      "scheduledJobs_other": "{{count}} запланированных заданий",
+      "subCabinets_one": "{{count}} под-Cabinet",
+      "subCabinets_other": "{{count}} под-Cabinets",
+      "agentsReady": "{{count}} агентов готовы к работе",
+      "scheduledJobs": "{{count}} запланированных заданий",
+      "subCabinets": "{{count}} под-Cabinets"
+    },
+    "cloud": {
+      "alreadyOnList": "Вы уже в списке — мы свяжемся с вами.",
+      "aside": "Cabinet Cloud скоро появится. Тот же продукт, но без сложностей с самостоятельным размещением.",
+      "description": "Открывайте свой Cabinet с любого устройства, пока ваши ИИ-агенты продолжают работать — составлять черновики, исследовать, организовывать — даже когда ваш ноутбук закрыт.",
+      "error": "Что-то пошло не так. Проверьте почту и попробуйте снова.",
+      "joinWaitlist": "Присоединиться к списку ожидания",
+      "onList": "Вы в списке. Мы сообщим вам по электронной почте, когда Cabinet Cloud станет доступен.",
+      "sending": "Отправка…",
+      "title": "Ваш Cabinet, где угодно. Ваша команда ИИ, всегда на связи.",
+      "waitlistSubtitle": "Подключайтесь откуда угодно. Ваша команда ИИ работает 24/7."
+    },
+    "discord": {
+      "aside": "Если вы хотите получать новые функции первыми и предпочитаете «поболтать» вместо «пожалуйста, отправьте заявку», то это ваша комната.",
+      "description": "Здесь обратная связь превращается в функции, скриншоты — в дискуссии, и кто-то обычно находит крайний случай, прежде чем он найдет вас.",
+      "joinBadge": "Присоединиться",
+      "title": "Discord — это место, где происходит хорошее безумие."
+    },
+    "github": {
+      "aside": "Cabinet — это открытый исходный код. Если вам нравится наша идея, помогите нам распространить информацию.",
+      "description": "Звезда на GitHub помогает большему числу людей открыть для себя Cabinet и присоединиться к сообществу.",
+      "starsLabel": "{{stars}} звёзд GitHub",
+      "title": "Помогите сообществу Cabinet расти"
+    },
+    "launch": {
+      "beforeYouLaunch": "Перед запуском",
+      "defaultCabinetName": "Ваш Cabinet",
+      "defaultDescription": "База знаний + команда ИИ",
+      "knowledgeBaseLabel": "База знаний",
+      "aiTeamLabel": "Команда ИИ",
+      "launchCabinet": "Запустить Cabinet",
+      "settingUp": "Настройка...",
+      "disclaimerAccess": "<strong>Агенты работают с полным доступом.</strong> Cabinet использует <flag>--dangerously-skip-permissions</flag> (Claude Code) и эквивалентные флаги у других провайдеров. Это идентично запуску этих инструментов CLI из вашего собственного терминала. Любые настроенные вами серверы или инструменты MCP могут быть автоматически вызваны агентами.",
+      "disclaimerBackup": "<strong>Регулярно создавайте резервные копии данных.</strong> Агенты могут читать, записывать и удалять файлы в вашей базе знаний и связанных репозиториях. Cabinet не несет ответственности за потерю данных. Вы несете ответственность за выбранных вами поставщиков ИИ и их условия обслуживания.",
+      "disclaimerBeta": "<strong>Бета-версия. Возможны сбои.</strong> Мы выпускаем обновления быстро. Критические изменения могут появиться без предупреждения.",
+      "legalNotice": "Продолжая, вы соглашаетесь с нашими <terms>Условиями</terms> и <privacy>Политикой конфиденциальности</privacy>. Cabinet — это <oss>проект с открытым исходным кодом</oss>.",
+      "keepInTouch": "Оставайтесь на связи. Cabinet — это проект с открытым исходным кодом, и мы хотели бы узнать, что создавать дальше. Без спама, обещаем."
+    },
+    "provider": {
+      "agentType": "Агент {{type}}",
+      "close": "Закрыть",
+      "comingSoon": "Скоро",
+      "guide": "Руководство",
+      "heading": "Провайдер агентов",
+      "moreModels": "Больше ИИ",
+      "install": "Установить",
+      "logIn": "Войти",
+      "openTerminalButton": "Открыть терминал",
+      "openTerminalDetail": "Для выполнения следующих шагов потребуется терминал.",
+      "openTerminalError": "Не удалось открыть терминал автоматически. Откройте системный терминал вручную.",
+      "openTerminalTitle": "Открыть терминал",
+      "recheck": "Повторно проверить провайдеров",
+      "rerunVerify": "Повторно запустить проверку",
+      "runVerify": "Запустить проверку",
+      "setupTitle": "Настройка {{name}}",
+      "skipForNow": "Пропустить пока",
+      "subtitle": "Cabinet требуется CLI ИИ для работы ваших агентов.",
+      "verifyExplanation": "Проверка запускает безголовый запрос провайдера от начала до конца и классифицирует любую ошибку, чтобы вы знали, какой шаг нужно пересмотреть.",
+      "verifying": "Проверка…",
+      "failedAtStep": "Сбой на шаге: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Для чего этот cabinet? Каждая комната поставляется со своей командой ИИ.",
+      "heading": "Выберите <accent>комнату</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Что такое Cabinet?",
+      "body": "Cabinet — это сфокусированное рабочее пространство для одной области вашей жизни или работы. Оно хранит ваши файлы, заметки, инструменты, агентов и задачи, чтобы ваша команда ИИ имела необходимый контекст для реальной помощи.",
+      "examplesLabel": "Как люди используют Cabinet",
+      "example1": "ваш стартап",
+      "example2": "репозиторий GitHub",
+      "example3": "ваша маркетинговая работа",
+      "example4": "клиентский проект",
+      "example5": "ваша личная база знаний"
+    },
+    "access": {
+      "heading": "К чему {{name}} имеет доступ?",
+      "subtitle": "Выберите знания и инструменты, которые может использовать этот агент. Вы можете изменить это в любое время.",
+      "defaultAgent": "ваш агент",
+      "files": "Файлы и знания",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Серверы MCP",
+      "plugins": "Плагины",
+      "skills": "Навыки",
+      "placeholderNote": "Вы можете настроить доступ позже в настройках агента."
+    },
+    "heartbeat": {
+      "heading": "Должен ли {{name}} работать по расписанию?",
+      "subtitle": "Расписание позволяет агенту проверять и выполнять работу самостоятельно по графику.",
+      "off": "Выкл.",
+      "offHint": "Работает только по вашему запросу. Рекомендуется для начала.",
+      "daily": "Ежедневно",
+      "dailyHint": "Проверяет один раз в день.",
+      "weekly": "Еженедельно",
+      "weeklyHint": "Проверяет один раз в неделю.",
+      "tokenNote": "Внимание: расписание запускает агента автоматически, что использует токены ИИ (и вашу квоту провайдера) при каждом запуске. Вы можете изменить или отключить это в любое время."
+    },
+    "firstTask": {
+      "heading": "Поставьте свою первую задачу",
+      "subtitle": "Задачи — это способ передать работу {{name}}. Напишите одну сейчас, и она появится в вашем cabinet, готовая к выполнению.",
+      "label": "Что {{name}} должен сделать первым?",
+      "placeholder": "Например: Напишите приветственное письмо для новых клиентов",
+      "example1": "Резюмируйте мои последние заметки",
+      "example2": "Составьте план проекта",
+      "example3": "Изучите наших 3 главных конкурентов",
+      "note": "Вы можете оставить это поле пустым и добавить задачи позже. Ничего не будет работать, пока вы не подключите провайдера ИИ."
+    },
+    "rail": {
+      "untitled": "Ваш Cabinet",
+      "dataCaption": "Все файлы и заметки вашего проекта находятся здесь.",
+      "teamEmpty": "Пока нет агентов.",
+      "teamCaption": "Ваша команда ИИ работает здесь.",
+      "tasksEmpty": "Пока нет задач.",
+      "tasksCaption": "Задачи, которые вы поручаете команде, отображаются здесь.",
+      "assignedTo": "Назначено {{name}}",
+      "you": "Вы"
+    },
+    "rooms": {
+      "office": {
+        "label": "Офис",
+        "tagline": "Управляйте бизнесом, стартапом или сторонним проектом.",
+        "workspaceLabel": "Название компании или проекта",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Чем вы занимаетесь?",
+        "descriptionPlaceholder": "Мы создаем подкаст об ИИ-стартапах",
+        "departmentNoun": "Отдел",
+        "teamSizeLabel": "Размер команды",
+        "exampleAgents": {
+          "0": "Генеральный директор",
+          "1": "Редактор"
+        }
+      },
+      "study": {
+        "label": "Кабинет",
+        "tagline": "Ваш второй мозг — для письма, заметок, личного помощника.",
+        "workspaceLabel": "Назовите свой кабинет",
+        "workspacePlaceholder": "Мой кабинет",
+        "descriptionLabel": "В каких сферах жизни вам нужна помощь?",
+        "descriptionPlaceholder": "Письмо, разбор почты, календарь, отслеживание привычек",
+        "departmentNoun": "Сфера",
+        "exampleAgents": {
+          "0": "Ассистент",
+          "1": "Библиотекарь"
+        }
+      },
+      "lab": {
+        "label": "Исследовательская лаборатория",
+        "tagline": "Академическая работа, литература, преподавание, диссертация.",
+        "workspaceLabel": "Название рабочего пространства",
+        "workspacePlaceholder": "Философия сознания",
+        "descriptionLabel": "Какова ваша область или что вы исследуете?",
+        "descriptionPlaceholder": "Феноменология, сознание, преподавание Введения в философию",
+        "departmentNoun": "Область",
+        "exampleAgents": {
+          "0": "Руководитель исследований",
+          "1": "Библиотекарь"
+        }
+      },
+      "family-room": {
+        "label": "Семейная комната",
+        "tagline": "Домашнее хозяйство, семейный календарь, еда, дети.",
+        "workspaceLabel": "Название домохозяйства",
+        "workspacePlaceholder": "Семья Нгуен",
+        "descriptionLabel": "Кто здесь живет и чем вы занимаетесь?",
+        "descriptionPlaceholder": "Двое родителей, трое детей, две школы, одна собака",
+        "departmentNoun": "Раздел",
+        "teamSizeLabel": "Размер домохозяйства",
+        "exampleAgents": {
+          "0": "Домашний менеджер",
+          "1": "Планировщик"
+        }
+      },
+      "blank": {
+        "label": "Пустая комната",
+        "tagline": "Пока ничего нет. Добавьте своих агентов, придайте свою форму.",
+        "workspaceLabel": "Назовите свой cabinet",
+        "workspacePlaceholder": "Мой Cabinet",
+        "descriptionLabel": "Для чего это?",
+        "descriptionPlaceholder": "Что угодно — оставьте пустым, если пока не уверены",
+        "departmentNoun": "Группа",
+        "exampleAgents": {
+          "0": "На ваше усмотрение"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Руководство",
+      "marketing": "Маркетинг",
+      "content": "Контент",
+      "engineering": "Разработка",
+      "product-and-design": "Продукт и дизайн",
+      "business": "Бизнес",
+      "research": "Исследования",
+      "finance-and-ops": "Финансы и операции",
+      "personal": "Личное",
+      "second-brain": "Второй мозг",
+      "writing": "Письмо",
+      "tools": "Инструменты",
+      "life-admin": "Управление жизнью",
+      "from-the-office": "Из офиса",
+      "writing-and-notes": "Письмо и заметки",
+      "other": "Другое",
+      "household": "Домохозяйство",
+      "admin": "Администрирование",
+      "money": "Деньги",
+      "product": "Продукт",
+      "design": "Дизайн",
+      "sales": "Продажи",
+      "support": "Поддержка",
+      "analytics": "Аналитика",
+      "finance": "Финансы",
+      "legal": "Юридические вопросы",
+      "people": "Персонал"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Доброе утро, команда! Добро пожаловать в {{workspace}}. Приступим к работе.",
+        "study": "Доброе утро. Ваш второй мозг онлайн — добро пожаловать обратно в {{home}}.",
+        "lab": "Рабочий стол для исследований готов — «{{workspace}}». Что будем изучать сегодня?",
+        "family-room": "Домашний штаб запускается — {{home}}. Давайте распределим всех по местам.",
+        "blank": "Чистый лист — «{{workspace}}». Что вы хотите здесь создать, {{home}}?"
+      },
+      "assign": "{{name}}, можешь заняться {{topic}}?",
+      "fallbackTopic": "что дальше",
+      "office": {
+        "replies": {
+          "0": "Занимаюсь. Обзор ситуации будет готов к концу дня.",
+          "1": "Уже составляю план. Скоро поделюсь им в #content.",
+          "2": "Настраиваю основные рабочие процессы. Пока все хорошо."
+        },
+        "topics": {
+          "0": "исследование конкурентов",
+          "1": "контент-план",
+          "2": "план запуска"
+        },
+        "closing": "Отличная энергия, коллеги. Сделаем эту первую неделю продуктивной."
+      },
+      "study": {
+        "replies": {
+          "0": "Разберу входящие и выделю то, что требует твоего внимания.",
+          "1": "Календарь свободен до 15:00 — хорошее время для письма.",
+          "2": "Уже привязал три новые заметки к индексу 'Ежедневно'."
+        },
+        "topics": {
+          "0": "сегодняшний разбор входящих",
+          "1": "написание на этой неделе",
+          "2": "мой список для чтения"
+        },
+        "closing": "Хорошо. Напиши мне, если что-то понадобится — иначе я не буду мешать."
+      },
+      "lab": {
+        "replies": {
+          "0": "Ищу последнюю статью по этой теме — черновик резюме через час.",
+          "1": "После этого синхронизирую библиографию и отмечу дубликаты.",
+          "2": "План лекции на четверг почти готов к проверке."
+        },
+        "topics": {
+          "0": "обзор литературы",
+          "1": "подготовка к лекции в четверг",
+          "2": "список источников"
+        },
+        "closing": "Держи меня в курсе. Просмотрю все, что ты отправишь, к концу дня."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Расписание свободно после 16:00. Отмечаю пересекающиеся высадки.",
+          "1": "Меню на неделю составлено — список продуктов готов к проверке.",
+          "2": "Детские занятия синхронизированы. Вечер DnD в пятницу в силе."
+        },
+        "topics": {
+          "0": "расписание на сегодня",
+          "1": "план питания",
+          "2": "детские занятия"
+        },
+        "closing": "Всем спасибо. Напишите мне, если что-то изменится в течение дня."
+      },
+      "blank": {
+        "replies": {
+          "0": "Понял. Готов, когда ты будешь готов.",
+          "1": "В готовности.",
+          "2": "Буду ждать указаний."
+        },
+        "topics": {
+          "0": "первое дело",
+          "1": "следующее",
+          "2": "открытый вопрос"
+        },
+        "closing": "Когда будешь готов, скажи, что делать."
+      }
+    },
+    "team": {
+      "browseAll": "Просмотреть все",
+      "browseCabinets": "Просмотреть cabinets",
+      "cabinetNameLabel": "Имя cabinet",
+      "cancel": "Отмена",
+      "importButton": "Импорт",
+      "importFailed": "Импорт не удался",
+      "importFailedConnection": "Импорт не удался. Проверьте соединение.",
+      "importTitle": "Импортировать {{name}}",
+      "pickAgents": "Выберите агентов",
+      "required": "Обязательно",
+      "subtitle": "Каждый cabinet — это команда ИИ: агенты, задачи и общая база знаний, работающие вместе как единое целое.",
+      "heading": "Создайте <accent>свою</accent> команду",
+      "nameLabel": "Имя агента",
+      "namePlaceholder": "напр. Редактор, Исследователь, Ассистент",
+      "roleLabel": "Роль",
+      "rolePlaceholder": "напр. Ассистент по написанию",
+      "instructionsLabel": "Что должен делать этот агент?",
+      "instructionsPlaceholder": "Опишите, как он должен помогать. Например: Создавать и редактировать мои страницы, поддерживать ясный и дружелюбный тон и предлагать улучшения.",
+      "agentOptionalHint": "Необязательно. Вы можете пропустить это и добавить агентов позже из комнаты.",
+      "agentCount_one": "{{count}} агент",
+      "agentCount_other": "{{count}} агентов",
+      "jobCount_one": "{{count}} заданий",
+      "jobCount_other": "{{count}} заданий",
+      "subCabinetCount_one": "{{count}} подкабинет",
+      "subCabinetCount_other": "{{count}} подкабинетов",
+      "cabinetsImported_one": "{{count}} кабинет импортирован",
+      "cabinetsImported_other": "{{count}} кабинетов импортировано",
+      "agentCount": "{{count}} агентов",
+      "cabinetsImported": "{{count}} кабинетов импортировано",
+      "jobCount": "{{count}} заданий",
+      "subCabinetCount": "{{count}} подкабинетов"
+    }
+  },
+  "search": {
+    "title": "Поиск",
+    "placeholder": "Поиск страниц, агентов, задач…",
+    "clearQuery": "Очистить запрос",
+    "noCommands": "Нет подходящих команд.",
+    "scopes": {
+      "all": "Все",
+      "pages": "Страницы",
+      "agents": "Агенты",
+      "tasks": "Задачи"
+    },
+    "groups": {
+      "pages": "Страницы",
+      "agents": "Агенты",
+      "tasks": "Задачи"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Язык",
+      "description": "Изменяет язык и направление чтения. Существующие страницы сохраняют свое направление.",
+      "english": "Английский",
+      "hebrew": "Иврит",
+      "chineseSimplified": "Упрощенный китайский",
+      "chineseTraditional": "Традиционный китайский",
+      "moreLanguages": "Больше языков",
+      "moreLanguagesHint": "Нажмите, чтобы сообщить нам, что вы хотите Cabinet на этом языке — мы отдадим приоритет наиболее запрашиваемым.",
+      "comingSoon": "Скоро",
+      "requestSubmitted": "Спасибо! Мы учли ваш запрос на {{language}}. Мы отдадим приоритет наиболее запрашиваемым языкам.",
+      "requestFailed": "Не удалось связаться с сервером. Пожалуйста, попробуйте еще раз через некоторое время."
+    },
+    "appearance": {
+      "title": "Внешний вид",
+      "theme": "Тема",
+      "themeDescription": "Выберите тему для интерфейса.",
+      "matchSystem": "Как в системе",
+      "matchSystemDescription": "Автоматически переключаться в соответствии с оформлением ОС.",
+      "lightThemes": "Светлые темы",
+      "darkThemes": "Темные темы",
+      "lightVariant": "Светлый вариант",
+      "darkVariant": "Темный вариант",
+      "sidebar": "Боковая панель",
+      "showHiddenFiles": "Показывать скрытые файлы",
+      "sidebarDescription": "Настройте отображение файлов в боковой панели.",
+      "showHiddenFilesHint": "Отображать файлы и папки, начинающиеся с точки (например, .env, .git)"
+    },
+    "tabs": {
+      "profile": "Профиль",
+      "providers": "Провайдеры",
+      "skills": "Навыки",
+      "storage": "Хранилище",
+      "integrations": "Интеграции",
+      "notifications": "Уведомления",
+      "appearance": "Внешний вид",
+      "updates": "Обновления",
+      "about": "О программе"
+    },
+    "page": {
+      "title": "Настройки",
+      "refresh": "Обновить",
+      "groupYou": "Вы",
+      "groupWorkspace": "Рабочая область",
+      "groupApp": "Приложение"
+    },
+    "common": {
+      "copyToClipboard": "Скопировать в буфер обмена",
+      "categoriesAriaLabel": "Категории настроек",
+      "loading": "Загрузка…",
+      "connect": "Подключить",
+      "recommended": "Рекомендуется"
+    },
+    "integrationsPreview": {
+      "comingSoon": "Скоро",
+      "hint": "Подключение внешних интеграций и встроенных инструментов уже в пути."
+    },
+    "storage": {
+      "dataDirectory": "Каталог данных",
+      "restartRequired": "Требуется перезапуск",
+      "dataDirectoryDescription": "Весь контент базы знаний хранится в этом каталоге. Изменение пути требует перезапуска.",
+      "restartHint": "Каталог данных изменится после перезапуска Cabinet.",
+      "currentPath": "Текущий путь",
+      "loadingPath": "Загрузка...",
+      "changeDirectory": "Изменить каталог",
+      "directoryPlaceholder": "/путь/к/данным",
+      "browse": "Обзор",
+      "save": "Сохранить",
+      "openInFinder": "Открыть в Finder",
+      "envVarHint1": "Вы также можете установить ",
+      "envVarHint2": " переменную среды, которая имеет приоритет над этой настройкой.",
+      "failedToSave": "Не удалось сохранить.",
+      "failedToSaveDir": "Не удалось сохранить каталог данных."
+    },
+    "updates": {
+      "checking": "Проверка обновлений Cabinet…"
+    },
+    "providers": {
+      "title": "Провайдеры агентов",
+      "defaultModel": "Модель по умолчанию",
+      "setupGuide": "Руководство по настройке",
+      "troubleshoot": "Устранение неполадок провайдеров ИИ",
+      "subtitle": "Настройте поставщиков ИИ-агентов. CLI-агенты запускаются через терминал, API-агенты используют прямые вызовы API.",
+      "defaultRuntime": "Среда выполнения по умолчанию",
+      "defaultRuntimeHint": "Общие диалоги и резервные запуски используют этого поставщика/модель/уровень усилий.",
+      "cliAgents": "CLI-агенты",
+      "apiAgents": "API-агенты",
+      "ready": "Готово",
+      "installedNotLoggedIn": "Установлено, но не выполнен вход",
+      "notInstalled": "Не установлено",
+      "emptyMatrix": "Поставщики не настроены. Добавьте одного ниже."
+    },
+    "notifications": {
+      "channels": "Каналы уведомлений",
+      "alertRules": "Правила оповещений",
+      "alwaysOn": "Всегда включено",
+      "comingSoon": "Скоро",
+      "emailPlaceholder": "you@company.com",
+      "channelsHint": "Настройте получение оповещений, когда агентам требуется ваше внимание.",
+      "rulesHint": "Уведомления срабатывают автоматически для следующих событий:",
+      "previewHint": "Push-уведомления в браузере, Telegram, Slack и уведомления по электронной почте.",
+      "channelPushName": "Push-уведомления в браузере",
+      "channelPushDesc": "Мгновенные оповещения, когда вкладка Cabinet открыта или PWA установлено",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Мгновенные мобильные уведомления через Telegram-бота",
+      "channelSlackName": "Вебхук Slack",
+      "channelSlackDesc": "Пересылать оповещения в канал Slack вашей команды",
+      "channelEmailName": "Дайджест по электронной почте",
+      "channelEmailDesc": "Пакетная сводка оповещений и активности агентов",
+      "ruleAlertsEvent": "Сообщения канала #alerts",
+      "ruleAlertsDesc": "Любой агент, публикующий сообщения в канал оповещений",
+      "ruleMentionsEvent": "Упоминания @human",
+      "ruleMentionsDesc": "Когда агент упоминает @human в любом канале",
+      "ruleFloorEvent": "Превышен нижний порог цели",
+      "ruleFloorDesc": "Цель опускается ниже минимального порога",
+      "ruleHealthEvent": "Состояние агента ухудшилось",
+      "ruleHealthDesc": "3+ последовательных сбоя пульса"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Версия",
+      "release": "Выпуск",
+      "framework": "Фреймворк",
+      "storage": "Хранилище",
+      "privacy": "Конфиденциальность",
+      "telemetry": "Анонимная телеметрия использования",
+      "tagline": "ИИ-ориентированная, самостоятельно размещаемая база знаний и ОС для стартапов.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Локальная файловая система",
+      "aiLabel": "ИИ",
+      "aiValue": "Работает на базе локальных ИИ CLI",
+      "philosophy": "Весь контент хранится в виде файлов Markdown на диске. Люди определяют намерения. Агенты выполняют работу. База знаний — это общая память между ними.",
+      "privacyBody": "Cabinet отправляет анонимную телеметрию использования, чтобы помочь нам улучшить продукт. Содержимое файлов, пути, запросы или секреты не собираются.",
+      "privacyLink": "Что собирается?",
+      "telemetryEnvDisabled": "Отключено переменной среды CABINET_TELEMETRY_DISABLED=1.",
+      "telemetryHint": "Только количество событий, версии и информация о платформе. Отключите, чтобы прекратить отправку.",
+      "cabinetCloud": "Cabinet Облако",
+      "cloudBody": "Подключайтесь к своему Cabinet из любой точки мира, пока ваша команда ИИ работает для вас 24/7. Оставьте свой email ниже, и мы сообщим вам, когда Cabinet Cloud станет доступен.",
+      "cloudAlready": "Вы уже в списке — мы свяжемся с вами.",
+      "cloudSuccess": "Вы в списке. Мы сообщим вам по email, когда Cabinet Cloud станет доступен.",
+      "cloudSending": "Отправка…",
+      "cloudJoinWaitlist": "Присоединиться к списку ожидания",
+      "cloudError": "Что-то пошло не так. Проверьте email и попробуйте снова.",
+      "connectTitle": "Подключить",
+      "connectBody": "Получите помощь, поделитесь отзывом или просто поздоровайтесь.",
+      "joinDiscord": "Присоединиться к Discord"
+    },
+    "profile": {
+      "title": "Профиль",
+      "name": "Имя",
+      "namePlaceholder": "Jane",
+      "displayName": "Отображаемое имя",
+      "role": "Роль",
+      "rolePlaceholder": "Создатель",
+      "avatar": "Аватар",
+      "accentColor": "Акцентный цвет",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Запасная иконка",
+      "useIconInstead": "Использовать иконку",
+      "searchAvatars": "Поиск аватаров…",
+      "searchIcons": "Поиск иконок…",
+      "howAppear": "Как вы выглядите в чатах и во всем приложении.",
+      "youFallback": "Вы",
+      "displayNameHint": "Отображается в чатах. По умолчанию — Имя.",
+      "iconHint": "Используется, если изображение аватара не установлено. Нажмите еще раз, чтобы очистить.",
+      "tintHint": "Окрашивает запасной аватар, если изображение не установлено.",
+      "save": "Сохранить",
+      "saving": "Сохранение…",
+      "saved": "Сохранено",
+      "browseAll": "Просмотреть все ({{count}})",
+      "showFavorites": "Показать избранное",
+      "showFewer": "Показать меньше"
+    },
+    "workspace": {
+      "title": "Рабочее пространство",
+      "name": "Название рабочего пространства",
+      "namePlaceholder": "Мой Cabinet",
+      "description": "Описание",
+      "descriptionPlaceholder": "Чем вы занимаетесь?",
+      "teamSize": "Размер команды",
+      "teamSizePlaceholder": "Соло / 2–5 / 6–20 / 20+",
+      "subtitle": "Заполняется при регистрации. Агенты используют эту информацию при планировании работы."
+    }
+  },
+  "sidebar": {
+    "settings": "Настройки",
+    "createPage": "Создать страницу",
+    "newPage": "Новая страница",
+    "newAgent": "Новый Агент",
+    "newTask": "Новая задача",
+    "archive": "Архив",
+    "trash": "Корзина",
+    "search": "Поиск",
+    "agents": "Агенты",
+    "tasks": "Задачи",
+    "missions": "Миссии",
+    "drawerData": "Данные",
+    "drawerAgents": "Команда",
+    "drawerTasks": "Задачи",
+    "goHome": "На главную",
+    "brandWord": "",
+    "refresh": "Обновить боковую панель",
+    "refreshDescription": "Обновить боковую панель (перечитать папку данных)",
+    "collapseSidebar": "Свернуть боковую панель",
+    "expandSidebar": "Развернуть боковую панель",
+    "resizeHandle": "Изменить размер боковой панели — двойной клик для сброса",
+    "resetWidth": "Двойной клик для сброса ширины",
+    "refreshedNoChanges": "Обновлено — без изменений.",
+    "refreshedWithChanges": "Обновлено — добавлено: {{added}}, удалено: {{removed}}.",
+    "refreshFailed": "Ошибка обновления.",
+    "searchPlaceholder": "Поиск файлов…",
+    "searchSearching": "Поиск…",
+    "searchNoResults": "Файлы по запросу «{{query}}» не найдены"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Строка состояния",
+      "askAiAriaLabel": "Попросить ИИ отредактировать эту страницу",
+      "askAiPlaceholder": "Как отредактировать эту страницу?",
+      "sendHint": "↵ для отправки"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Статус сервера — нажмите для деталей",
+      "checking": "Проверка статуса сервера…",
+      "allRunning": "Все системы работают",
+      "appNotResponding": "Сервер приложения не отвечает",
+      "daemonDownNoProviders": "Демон не отвечает; нет доступных поставщиков агентов",
+      "daemonDown": "Демон не отвечает",
+      "noProviders": "Нет доступных поставщиков агентов",
+      "checkingShort": "Проверка…",
+      "online": "Онлайн",
+      "offline": "Офлайн",
+      "degraded": "Снижена производительность",
+      "allSystemsRunning": "Все системы работают",
+      "serviceDisruption": "Сбой службы",
+      "appServer": "Сервер приложения",
+      "daemon": "Демон",
+      "agentProviders": "Поставщики агентов",
+      "running": "Работает",
+      "down": "Не работает",
+      "lastSeen": "Последний раз замечен: {{when}}",
+      "appWorking": "Страницы, редактор, поиск и управление файлами работают.",
+      "appDown": "Страницы, редактор, поиск и сохранение недоступны. Вы по-прежнему можете читать кэшированный контент.",
+      "daemonWorking": "AI-агенты, запланированные задачи и веб-терминал работают.",
+      "daemonDownDescription": "AI-агенты, запланированные задачи и веб-терминал недоступны. Редактирование страниц по-прежнему работает.",
+      "available": "Доступно",
+      "noneReady": "Нет готовых",
+      "providerReady": "Готово",
+      "providerNotLoggedIn": "Не выполнен вход",
+      "providerNotInstalled": "Не установлено",
+      "install": "Установить",
+      "howToFix": "Как исправить"
+    },
+    "save": {
+      "retryTitle": "Нажмите, чтобы повторить неудачное сохранение",
+      "retryAriaLabel": "Сохранение не удалось — нажмите, чтобы повторить",
+      "autoSaving": "Автосохранение…",
+      "forceSave": "Принудительное сохранение: ⌘S",
+      "editing": "Редактирование — автосохранение запустится при паузе",
+      "wordCountTitle": "Количество слов на этой странице (синтаксис Markdown исключен)",
+      "savedJustNow": "только что",
+      "savedNever": "никогда",
+      "savedAgoSeconds": "{{n}} с назад",
+      "savedAgoMinutes": "{{n}} м назад",
+      "savedAgoHours": "{{n}} ч назад",
+      "savedAgoDays": "{{n}} д назад",
+      "saveFailedRetry": "Сохранение не удалось — повторите",
+      "savingText": "Сохранение…",
+      "savedText": "Сохранено",
+      "editingText": "Редактирование…",
+      "savedAgo": "Сохранено · {{ago}}",
+      "word": "слово",
+      "words": "слов"
+    },
+    "git": {
+      "statusModified": "Изменено",
+      "statusNew": "Новое",
+      "statusAdded": "Добавлено",
+      "statusDeleted": "Удалено",
+      "statusRenamed": "Переименовано",
+      "commitMessageAriaLabel": "Сообщение коммита"
+    },
+    "help": {
+      "menuAriaLabel": "Открыть меню «Помощь и сообщество»",
+      "menuTitle": "Помощь и сообщество",
+      "demos": "Демо, видео и руководства",
+      "discord": "Чат в Discord",
+      "discordSubtitle": "Поддержка и обратная связь",
+      "github": "Внести вклад на GitHub",
+      "githubSubtitle": "Исходный код, проблемы, PR",
+      "ifUseful": "Если вы найдете это полезным",
+      "label": "Помощь",
+      "starsAriaLabel": "{{count}} звезд на GitHub — открыть Cabinet на GitHub",
+      "starsTitle": "{{count}} звезд на GitHub — поставить звезду Cabinet на GitHub",
+      "share": "Поделиться",
+      "shareSubtitle": "Скопировать ссылку-приглашение и рассказать другим",
+      "shareCopied": "Вы великолепны, {{name}} 🩷 Спасибо, что приводите будущих участников Cabinet. Ссылка скопирована, делитесь любовью!",
+      "shareFailed": "Не удалось скопировать ссылку",
+      "friend": "друг"
+    },
+    "git2": {
+      "allCommitted": "Все зафиксировано",
+      "uncommittedFile": "{{count}} незафиксированный файл",
+      "uncommittedFiles": "{{count}} незафиксированных файлов",
+      "uncommittedFilesAria": "{{count}} незафиксированны файл — нажмите, чтобы увидеть список",
+      "uncommittedFileTip": "Нажмите, чтобы просмотреть незафиксированный файл",
+      "uncommittedFilesTip": "Нажмите, чтобы просмотреть незафиксированные файлы",
+      "uncommittedFilesHeading": "{{count}} незафиксированный файл",
+      "uncommittedFilesHeadingPlural": "{{count}} незафиксированных файлов",
+      "truncatedHint": "Показаны только первые {{count}} файлов — запустите `git status` для полного списка.",
+      "commitDefault": "Обновить {{count}} файл",
+      "commitDefaultPlural": "Обновить {{count}} файлов",
+      "committing": "Фиксация…",
+      "commit": "Зафиксировать",
+      "commitFailed": "Фиксация не удалась",
+      "sync": "Синхронизировать",
+      "syncTitle": "Получить последние с GitHub и обновить",
+      "syncTitleWithLast": "Получить последние с GitHub и обновить. Последняя синхронизация: {{when}}.",
+      "syncAriaLabel": "Получить последние изменения с GitHub и обновить",
+      "syncAriaLabelWithLast": "Получить последние изменения с GitHub и обновить. Последняя синхронизация: {{when}}.",
+      "terminal": "Терминал",
+      "openTerminal": "Открыть терминал",
+      "newTerminalTab": "Новая вкладка терминала",
+      "pulling": "Загрузка…",
+      "pulled": "Обновлено с сервера",
+      "upToDate": "Актуально",
+      "pullFailed": "Сбой загрузки"
+    },
+    "update2": {
+      "updateAvailable": "Доступно обновление {{version}}",
+      "updateAvailableTip": "Доступна версия Cabinet {{version}}"
+    },
+    "common": {
+      "dismiss": "Отклонить",
+      "close": "Закрыть",
+      "openSettings": "Открыть настройки, чтобы просмотреть установленное обновление"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Перезапустите для завершения обновления"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Перезапустить эту задачу с исходного запроса",
+      "markAsDone": "Отметить эту задачу как выполненную",
+      "viewAriaLabel": "Вид задачи",
+      "terminal": "Терминал",
+      "transcript": "Транскрипт",
+      "details": "Подробности",
+      "transcriptTitle": "Нативный сеанс Claude Code JSONL",
+      "transcriptHint": "Читает ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Назад",
+      "copyPrompt": "Скопировать исходный запрос",
+      "gracefulExit": "Корректно закрыть CLI (записывает /exit в PTY)",
+      "sendSigterm": "Отправить SIGTERM запущенному процессу PTY",
+      "moreActions": "Дополнительные действия",
+      "ptyMode": "Работает в режиме терминала (PTY)",
+      "compactContext": "Свернуть предыдущие шаги в дайджест, чтобы освободить контекстное окно",
+      "noSummary": "Сводки пока нет.",
+      "sessionEnded": "Сеанс завершен — введите текст, чтобы продолжить в том же терминале.",
+      "terminalLive": "Терминал активен. Ваш следующий запрос будет поставлен в очередь после завершения этого шага."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Начните знакомство с Cabinet",
+    "skip": "Пропустить",
+    "skipAriaLabel": "Пропустить тур",
+    "back": "Назад",
+    "next": "Далее",
+    "writeFirstTask": "Напишите свою первую задачу",
+    "goToSlide": "Перейти к слайду {{n}}",
+    "starterTask": "Обсудим мои цели и зафиксируем их на новой странице «О программе».",
+    "savingTo": "Сохранение в ",
+    "introTitle": "Познакомьтесь с вашим <accent>Cabinet</accent>.",
+    "introSubtitle": "Ваша команда ИИ. Ваша база знаний. В одном месте.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Недавние и текущие задачи",
+    "hide": "Скрыть панель задач",
+    "show": "Показать панель задач",
+    "empty": "Нет задач",
+    "itemRunning": "{{title}} · выполняется · {{when}}",
+    "itemNeedsReply": "{{title}} · требуется ответ",
+    "itemFailed": "{{title}} · не удалось · {{when}}",
+    "itemDone": "{{title}} · готово · {{when}}",
+    "itemArchived": "{{title}} · в архиве",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} выполняется — показать панель задач"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Главная",
+      "agents": "Агенты",
+      "tasks": "Задачи",
+      "ai": "ИИ",
+      "menu": "Меню",
+      "primaryAriaLabel": "Основной"
+    },
+    "returnTo": {
+      "task": "Задача",
+      "tasks": "Задачи",
+      "agent": "Агент",
+      "agents": "Агенты",
+      "cabinet": "Cabinet",
+      "home": "Главная",
+      "settings": "Настройки",
+      "registry": "Реестр",
+      "back": "Назад",
+      "backTo": "Назад к {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "По умолчанию",
+      "dark": "Темный",
+      "darkThemes": "Темные темы",
+      "lightThemes": "Светлые темы"
+    },
+    "update": {
+      "restartTitle": "Перезапустите Cabinet, чтобы завершить обновление",
+      "availableTitle": "Доступна версия Cabinet {{version}}",
+      "updatesTitle": "Обновления Cabinet",
+      "description": "Cabinet автоматически проверяет наличие новых версий. Пока продукт находится на стадии экспериментальной разработки, сохраняйте копию своих данных перед установкой обновлений.",
+      "later": "Позже",
+      "releaseNotes": "Примечания к выпуску"
+    },
+    "daemon": {
+      "fixHintElectron": "Закройте и перезапустите Cabinet, чтобы перезапустить демон агента.",
+      "fixHintDev": "Запустите `npm run dev:daemon` (или перезапустите `npm run dev:all`), чтобы восстановить работу демона агента.",
+      "notResponding": "Демон агента не отвечает.",
+      "willFail": "Агенты, задачи и запросы ИИ будут завершаться с ошибкой, пока он не восстановится. {{fixHint}}"
+    }
+  }
+}

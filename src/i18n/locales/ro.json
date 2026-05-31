@@ -1,0 +1,2005 @@
+{
+  "agents": {
+    "dialog": {
+      "createAgent": "Creare agent",
+      "avatar": "Avatar",
+      "namePlaceholder": "Agent de marketing",
+      "rolePlaceholder": "Specialist conținut",
+      "department": "Departament",
+      "specialist": "Specialist",
+      "departmentLead": "Coordonator departament",
+      "provider": "Furnizor",
+      "runtime": "Timp de execuție",
+      "promptPlaceholder": "Ești un agent de marketing pentru…",
+      "addAgentTitle": "Adaugă un agent în echipa ta",
+      "addAgentDescription": "Alege un specialist din bibliotecă. Îi poți edita numele, rolul și instrucțiunile după ce a fost adăugat.",
+      "createFromScratchTitle": "Creează de la zero",
+      "createFromScratchDescription": "Construiește un agent nou cu propria identitate, rol și instrucțiuni.",
+      "searchLibraryPlaceholder": "Căută în bibliotecă",
+      "errorLoadLibrary": "Nu s-a putut încărca biblioteca de agenți.",
+      "errorAddAgent": "Nu s-a putut adăuga acest agent."
+    },
+    "metric": {
+      "name": "Nume metrică",
+      "namePlaceholder": "răspunsuri_reddit",
+      "target": "Țintă",
+      "targetPlaceholder": "răspunsuri/săptămână",
+      "floor": "Prag minim",
+      "period": "Perioadă",
+      "daily": "Zilnic",
+      "weekly": "Săptămânal",
+      "monthly": "Lunar"
+    },
+    "workspace": {
+      "promise": "Angajament",
+      "orgChart": "Organigramă",
+      "jobDetails": "Detalii post",
+      "heartbeat": "Monitorizare",
+      "workspace": "Spațiu de lucru",
+      "editAgent": "Editează agent",
+      "instructions": "Instrucțiuni",
+      "instructionsPlaceholder": "Scrie markdown pentru instrucțiunile acestui agent.",
+      "newAgent": "Agent nou",
+      "routines": "Rutine",
+      "browseLibrary": "Răsfoiește biblioteca de agenți",
+      "editYourOwn": "Editează-ți propriul agent",
+      "editorPlaceholder": "Editor",
+      "productAgentPlaceholder": "Agent de scriere de produs",
+      "instructionsBodyPlaceholder": "Definește cum ar trebui să funcționeze acest agent în Cabinet și în baza de cunoștințe.",
+      "perAgentPrompts": "Solicitări recurente per agent",
+      "runNow": "Rulează acum",
+      "delete": "Șterge",
+      "viewOrgChart": "Vizualizează această echipă ca o organigramă (se deschide pe tot ecranul)",
+      "hideIntro": "Ascunde această introducere",
+      "sharedAcrossCabinets": "Partajat în toate cabinet-urile",
+      "expandSchedule": "Extinde programul",
+      "heartbeatsOnAgentPage": "Heartbeat-urile sunt configurate pe pagina fiecărui agent",
+      "exitFullscreen": "Ieși din modul ecran complet",
+      "refresh": "Reîmprospătează",
+      "editHeartbeat": "Editează heartbeat-ul",
+      "newRoutine": "Rutină nouă",
+      "configureHeartbeat": "Configurează heartbeat-ul",
+      "openOrgChart": "Deschide organigrama",
+      "pickAnAgent": "Alege un agent",
+      "dismiss": "Închide",
+      "lockedHeartbeatTip": "Acest agent este oprit. Pornește-l din fila Agenți pentru a activa heartbeat-ul.",
+      "lockedRoutineTip": "Acest agent este oprit. Pornește-l din fila Agenți pentru a-i activa rutinele.",
+      "avatar": "workspace.avatar"
+    },
+    "detail": {
+      "clickToTurnOff": "Apasă pentru a dezactiva.",
+      "loadError": "Nu s-a putut încărca acest agent.",
+      "retry": "Reîncearcă",
+      "color": "Culoare",
+      "customColor": "Culoare personalizată",
+      "preset": "Predefinit",
+      "editIconColor": "Editează pictograma, culoarea sau avatarul",
+      "sharedAcrossCabinetsHint": "Partajat între toate cabinetele — modificările se aplică peste tot",
+      "inbox": "Mesaje primite",
+      "conversations": "Conversații",
+      "recentWork": "Activitate recentă",
+      "schedule": "Program",
+      "heartbeat": "Puls",
+      "runNow": "Rulează acum",
+      "editRoutine": "Editează rutina",
+      "addRoutine": "Adaugă rutină",
+      "details": "Detalii",
+      "editingGlobalAgent": "Editare agent global",
+      "displayName": "Nume afișat",
+      "role": "Rol",
+      "department": "Departament",
+      "type": "Tip",
+      "workspace": "Spațiu de lucru",
+      "tags": "Etichete",
+      "openSkillsSettings": "Deschide Setări → Abilități",
+      "notInCatalog": "Nu a fost găsit în catalog — clic pentru a elimina",
+      "recommendedForRole": "Recomandat pentru acest rol — clic pentru a atașa",
+      "promise": "Promisiune",
+      "saved": "Salvat",
+      "iconLabel": "Pictogramă"
+    },
+    "missionControl": {
+      "gallery": "Galerie",
+      "newAgent": "Agent nou",
+      "allGoals": "Toate obiectivele",
+      "noGoals": "Niciun agent nu are obiective configurate.",
+      "fromScratch": "De la zero",
+      "describeIt": "Descrie-l",
+      "import": "Importă",
+      "closeDialog": "Închide dialogul",
+      "describeYourAgent": "Descrie agentul tău",
+      "describePlaceholder": "Am nevoie de un agent care monitorizează Hacker News pentru postări legate de GPU și scrie comentarii pertinente care fac legătura cu postările noastre de blog…"
+    },
+    "pulseStrip": {
+      "agents": "Agenți",
+      "running": "În execuție",
+      "goals": "Obiective",
+      "alerts": "Alerte",
+      "cost": "Cost",
+      "runningPlays": "Rutine în execuție",
+      "noRunning": "Niciun agent nu rulează în prezent.",
+      "costBreakdown": "Defalcare costuri",
+      "noUsage": "Nicio utilizare API încă.",
+      "totalEstimated": "Total estimat"
+    },
+    "routine": {
+      "runNowTitle": "Rulează această rutină acum (o singură dată, în afara programului său)",
+      "deletePermanently": "Șterge definitiv această rutină",
+      "promptPlaceholder": "Ce ar trebui să facă această rutină? ex: Rezumă activitatea de ieri…",
+      "jobName": "Nume job",
+      "jobNamePlaceholder": "Rezumat săptămânal de strategie",
+      "jobId": "ID job",
+      "schedule": "Program",
+      "model": "Model",
+      "enabled": "Activat"
+    }
+  },
+  "registry": {
+    "loading": "Se încarcă din registru…",
+    "readyToImport": "Gata de importat acest cabinet?",
+    "organization": "Organizație",
+    "agents": "Agenți",
+    "scheduledJobs": "Joburi programate",
+    "about": "Despre",
+    "cabinetName": "Nume cabinet",
+    "cabinetNamePlaceholder": "Nume cabinet…",
+    "searchPlaceholder": "Căutați cabinete…",
+    "noResults": "Niciun cabinet nu corespunde căutării dvs."
+  },
+  "tasksBoard": {
+    "title": "Sarcini",
+    "manualTooltip": "Manual — sarcini lansate direct de dvs.",
+    "jobsTooltip": "Joburi — rulări recurente programate",
+    "heartbeatTooltip": "Heartbeat — rulări de agent autodirijate",
+    "clearSelection": "Anulează selecția (Esc)",
+    "createTask": "Creează o sarcină nouă",
+    "moreNewTypes": "Mai multe tipuri de elemente noi",
+    "newTask": "Sarcină nouă",
+    "newRoutine": "Rutină nouă",
+    "viewKanban": "Kanban",
+    "viewList": "Listă",
+    "viewSchedule": "Calendar",
+    "viewKanbanHint": "Vizualizare tabelă — sarcini grupate în Inbox / Rândul tău / În execuție / Tocmai finalizate / Arhivă",
+    "viewListHint": "Listă simplă cu toate sarcinile, activitatea cea mai recentă prima",
+    "viewScheduleHint": "Calendar cu rutine programate și rulări viitoare",
+    "filterByAgent": "Filtrează după agent: {{name}}",
+    "noToDeleteTitle": "Nicio sarcină de șters",
+    "noToDeleteFiltered": "Nimic nu se potrivește cu {{filter}}. Șterge filtrul, alege o altă vizualizare sau creează o sarcină nouă.",
+    "noToDeleteEmpty": "Nu există încă sarcini pe tabelă. Creează una cu butonul + Sarcină nouă.",
+    "gotIt": "Am înțeles",
+    "deleteCountTitle": "Ștergi {{count}} sarcină?",
+    "deleteCountTitlePlural": "Ștergi {{count}} sarcini?",
+    "deleteBody": "Aceasta elimină permanent metadatele conversației, transcrierile și artefactele pentru fiecare sarcină afișată în prezent. Această acțiune nu poate fi anulată.",
+    "deleteBodyFiltered": "Aceasta elimină permanent metadatele conversației, transcrierile și artefactele pentru fiecare sarcină afișată în prezent de filtrele active. Această acțiune nu poate fi anulată.",
+    "deleteConfirm": "Șterge {{count}}",
+    "deleteAllShown": "Șterge toate cele {{count}} sarcini afișate",
+    "deleteAllShownPlural": "Șterge toate cele {{count}} sarcini afișate",
+    "nothingToDelete": "Nimic de șters în această vizualizare",
+    "deleteAllAria": "Șterge toate sarcinile afișate",
+    "noTasksAria": "Nicio sarcină în această vizualizare",
+    "filterTrigger": "filtrul {{trigger}}",
+    "filterTriggerAndAgent": "filtrul {{trigger}} și agentul selectat",
+    "filterSelectedAgent": "filtrul agentului selectat"
+  },
+  "runtime": {
+    "noProvider": "Niciun furnizor selectat",
+    "modeAriaLabel": "Mod de rulare",
+    "nativeTranscriptTitle": "Transcrierea nativă Cabinet — flux JSON structurat, artefacte, rezumat, UX completă",
+    "ptyWarningTitle": "Necesită o cheie API OpenAI. Nu este disponibil pentru conturile Codex cu plan ChatGPT — selectarea acestui model va eșua cu mesajul 'model not supported when using Codex with a ChatGPT account'.",
+    "native": "Nativ",
+    "terminal": "Terminal",
+    "terminalTitle": "Rulează CLI-ul într-o sesiune de terminal PTY live (mod experimental pentru hackeri)",
+    "providers": "Furnizori",
+    "modelCol": "Model",
+    "auto": "Automat",
+    "ready": "Gata",
+    "loginRequired": "Conectare",
+    "notInstalled": "Nu este instalat",
+    "notAvailable": "Nu este disponibil",
+    "defaultLabel": "Implicit",
+    "noProvidersAvailable": "Niciun furnizor disponibil",
+    "appDefault": "Implicit aplicație",
+    "selectAppDefault": "Selectează implicit aplicație",
+    "defaultModel": "Model implicit",
+    "selectedModelLabel": "Model selectat",
+    "loadingProviders": "Se încarcă furnizorii...",
+    "loadingAvailableProviders": "Se încarcă furnizorii disponibili…",
+    "triggerSummary": "Model: {{model}} · Efort: {{effort}} · via {{provider}}",
+    "triggerSystemDefault": "Model sarcină — folosind implicitul sistemului (clic pentru a alege)",
+    "clickToLaunch": "Clic pentru a lansa {{name}} într-un terminal PTY"
+  },
+  "breakingChanges": {
+    "agentsFullAccess": "Agenții rulează cu acces complet.",
+    "backUp": "Faceți backup datelor regulat.",
+    "betaSoftware": "Software beta. Pot apărea erori.",
+    "iAccept": "Am citit și accept"
+  },
+  "skillAdd": {
+    "addSkill": "Adaugă abilitate",
+    "auditTooltip": "Rezultat din auditurile externe skills.sh (Alibaba Threat Hunter, Socket, Snyk, zeroleaks)",
+    "auditUnavailable": "Datele de audit skills.sh nu sunt disponibile pentru această abilitate",
+    "preview": "Previzualizare"
+  },
+  "help": {
+    "page": {
+      "cabinet": "Cabinet",
+      "aiTeam": "Echipă AI",
+      "aiTeams": "Echipe AI",
+      "routines": "Rutine"
+    }
+  },
+  "agentDetailPanel": {
+    "editConfig": "Editează configurația agentului",
+    "exportBundle": "Exportă pachetul agentului",
+    "goals": "Obiective",
+    "workspace": "Spațiu de lucru"
+  },
+  "scheduleRow": {
+    "deleteQ": "Ștergi?",
+    "confirmDelete": "Confirmă ștergerea",
+    "cancelDelete": "Anulează ștergerea",
+    "runNow": "Rulează acum"
+  },
+  "apiKeys": {
+    "addKey": "Adaugă cheie",
+    "edit": "Editează",
+    "remove": "Elimină",
+    "newApiKey": "Cheie API nouă"
+  },
+  "updateSummary": {
+    "cabinetUpdates": "Actualizări Cabinet",
+    "dataDirectory": "Director de date",
+    "backups": "Copii de rezervă"
+  },
+  "kanban": {
+    "stopAllInLane": "Oprește toate sarcinile în execuție din această bandă",
+    "restartAllInLane": "Repornește toate sarcinile din această bandă",
+    "newTask": "Sarcină nouă",
+    "collapseColumn": "Restrânge coloana",
+    "kill": "Oprește forțat",
+    "laneInbox": "Intrare",
+    "laneInboxHint": "Ciornă — așteaptă să începi",
+    "laneNeeds": "Rândul tău",
+    "laneNeedsHint": "Agentul a pus o întrebare sau necesită aprobare",
+    "laneRunning": "În execuție",
+    "laneRunningHint": "Agenți care lucrează acum",
+    "laneDone": "Tocmai finalizat",
+    "laneDoneHint": "Finalizat în ultima oră",
+    "laneArchive": "Arhivare",
+    "laneArchiveHint": "Mai vechi și confirmate"
+  },
+  "terminalTabs": {
+    "newTab": "Filă terminal nouă",
+    "closeTab": "Închide terminalul"
+  },
+  "newTaskButton": {
+    "createNew": "Creează nou…",
+    "newTask": "Sarcină nouă",
+    "newRoutine": "Rutină nouă"
+  },
+  "schedulingFields": {
+    "jobNamePlaceholder": "Rezumat săptămânal al strategiei",
+    "schedule": "Programare",
+    "jobId": "ID lucrare",
+    "enabled": "Activat — rulează conform acestui program"
+  },
+  "editIdentity": {
+    "title": "Editează agent",
+    "displayName": "Nume afișat",
+    "color": "Culoare",
+    "hexPlaceholder": "#hex"
+  },
+  "cabinetScheduler": {
+    "startAll": "Pornește toți agenții",
+    "startAllSubtitle": "Activează heartbeat-uri și joburi cron",
+    "stopAll": "Oprește toți agenții",
+    "stopAllSubtitle": "Întrerupe heartbeat-urile și joburile cron"
+  },
+  "skillLibrary": {
+    "readOnly": "Doar pentru citire — nu se poate edita din Cabinet",
+    "noUpstream": "Creat direct în acest cabinet — nicio sursă git upstream înregistrată",
+    "executableWarning": "Pachetul include scripturi executabile — revizuiți înainte de aprobare",
+    "skills": "Abilități",
+    "imported": "Importat",
+    "importing": "Se importă…",
+    "import": "Importă"
+  },
+  "embedPopover": {
+    "placeholder": "Lipește un link (YouTube, X, Vimeo, Loom, TikTok, Facebook, Instagram, Spotify sau orice URL)",
+    "notValidUrl": "Nu este un URL valid",
+    "anyUrlWorks": "Orice URL public funcționează.",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "spotify": "Spotify",
+    "anyIframe": "Orice adresă URL de iframe"
+  },
+  "rowActions": {
+    "stop": "Oprește",
+    "stopHint": "Oprește această rulare acum (trimite SIGTERM)",
+    "restart": "Repornește",
+    "restartHint": "Rulează din nou de la promptul original",
+    "runHint": "Începe această sarcină acum"
+  },
+  "schedulesPanel": {
+    "title": "Sarcini programate",
+    "noJobs": "Nicio sarcină Cabinet configurată încă.",
+    "heartbeats": "Verificări periodice",
+    "noHeartbeats": "Nicio verificare periodică configurată încă."
+  },
+  "scheduleTab": {
+    "explainer1": "Tot ce face echipa ta săptămâna aceasta, într-un singur calendar. Rozul este o verificare periodică, verdele este o rutină. Apasă pe orice element pentru a-l edita.",
+    "explainer2": "Folosește această filă pentru a identifica conflicte, a găsi perioade liniștite sau pur și simplu pentru a vedea dintr-o privire cât de ocupată este echipa.",
+    "aboutAria": "Despre program",
+    "modeDay": "Zi",
+    "modeWeek": "Săptămână",
+    "modeMonth": "Lună"
+  },
+  "mermaidViewer": {
+    "zoomOut": "Micșorează",
+    "zoomIn": "Mărește",
+    "resetView": "Resetează vizualizarea",
+    "syntaxError": "Eroare de sintaxă a diagramei"
+  },
+  "helpPage": {
+    "keyboard": "Tastatură",
+    "skills": "Competențe",
+    "apiKeys": "Chei API",
+    "mcpServers": "Servere MCP",
+    "title": "Ajutor",
+    "howTo": "Cum să",
+    "heading": "Află cum funcționează Cabinet",
+    "subheading": "Scurte demonstrații, ghiduri și previzualizări pentru a profita la maximum de Cabinet.",
+    "ctaWatchTour": "Vizionează turul",
+    "ctaWatchDemo": "Vizionează demonstrația",
+    "ctaCheatSheet": "Deschide fișa rapidă",
+    "ctaComingSoon": "În curând",
+    "discordHeading": "Nu ai găsit ce cauți?",
+    "discordSubheading": "Suntem pe Discord — vino să saluți, pune întrebări, împărtășește ce construiești.",
+    "discordCta": "Alătură-te pe Discord",
+    "items": {
+      "tour": {
+        "title": "Descoperă-ți <accent>Cabinet</accent>.",
+        "description": "Echipa ta AI. Baza ta de cunoștințe. Un singur loc."
+      },
+      "agents": {
+        "title": "Echipa ta <accent>AI</accent>.",
+        "description": "Angajează lideri și specialiști. Grupează-i în departamente. Lasă-i să-și distribuie munca reciproc."
+      },
+      "tasks": {
+        "title": "Panoul de <accent>sarcini</accent>.",
+        "description": "Vizualizări Kanban, listă și program. Filtrează după agent sau stare. Alege un timp de execuție per sarcină."
+      },
+      "knowledge": {
+        "title": "Baza ta de <accent>cunoștințe</accent>.",
+        "description": "Markdown, CSV, PDF, cod, notebook-uri, mermaid, imagini, audio — totul se randează inline. Datele tale rămân pe mașina ta; sunt ale tale, nu ale noastre."
+      },
+      "cabinets": {
+        "title": "O echipă de <accent>echipe AI</accent>.",
+        "description": "Cabinetele se imbrică în cabinete. Fiecare este propria sa echipă AI cu propriile date, agenți și scop de vizibilitate — și pot colabora în sus și în josul arborelui."
+      },
+      "routines": {
+        "title": "<accent>Rutine</accent> & programe.",
+        "description": "Rulează o sarcină zilnic la 9 dimineața, săptămânal vinerea sau o singură dată lunea viitoare. Cron, calendar sau limbaj natural."
+      },
+      "conversations": {
+        "title": "Conversații & <accent>aprobări</accent>.",
+        "description": "Agenții propun acțiuni — lansează o sarcină, programează un job — și tu aprobi înainte ca orice să ruleze."
+      },
+      "themes": {
+        "title": "Fă-l <accent>al tău</accent>.",
+        "description": "Alege dintr-o selecție curată de teme deschise și întunecate — Paper, Slate, Claude, Ink și altele."
+      },
+      "providers": {
+        "title": "<accent>BYOAI</accent> — adu-ți propria AI.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — adu orice furnizori pentru care plătești deja. Alege o valoare implicită sau suprascrie per sarcină."
+      },
+      "shortcuts": {
+        "title": "<accent>Scurtături de tastatură</accent>.",
+        "description": "Fiecare scurtătură Cabinet pe o singură carte căutabilă. Apasă ? de oriunde pentru a o redeschide. Filtrează după nume sau tastă — valabil pentru navigare, editare, sarcini, panouri și comenzi slash."
+      },
+      "skills": {
+        "title": "<accent>Abilități</accent> pentru agenții tăi.",
+        "description": "Abilități de Agent Instalabile — ghiduri pe care modelul le folosește pentru o sarcină. Instalează de pe GitHub sau skills.sh, atașează unei personalități sau @-menționează una în orice editor pentru o singură execuție."
+      },
+      "apiKeysItem": {
+        "title": "<accent>Chei API</accent> pentru instrumentele tale.",
+        "description": "Conectează-ți contul OpenAI, Anthropic sau GitHub o singură dată — fiecare agent și abilitate din Cabinet îl va folosi. Îți plătești propriile facturi, folosești propria cotă, fără intermediari."
+      },
+      "integrations": {
+        "title": "<accent>Servere MCP</accent> & integrări.",
+        "description": "Servere MCP, Slack, Telegram, Gmail și Calendar OAuth — conectează-te o singură dată și Cabinet gestionează token-urile. În curând."
+      }
+    }
+  },
+  "keyboardShortcuts": {
+    "title": "Scurtături de tastatură",
+    "filterPlaceholder": "Filtrează…",
+    "close": "Închide"
+  },
+  "agentDetailPanelPlus": {
+    "liveTerminal": "Terminal live",
+    "runningHeartbeat": "Rulăm heartbeat…",
+    "memory": "Memorie",
+    "recentActivity": "Activitate recentă"
+  },
+  "editUserAvatar": {
+    "yourAvatar": "Avatarul tău",
+    "preset": "Presetare",
+    "useInitials": "Folosește inițialele ca alternativă",
+    "custom": "Personalizat"
+  },
+  "updateSummaryPlus": {
+    "dirtyDetected": "Modificări locale ale codului aplicației detectate"
+  },
+  "logsPanel": {
+    "classifiedError": "Eroare clasificată",
+    "session": "Sesiune",
+    "noEvents": "Niciun eveniment încă.",
+    "noTranscript": "Nicio transcriere încă."
+  },
+  "conversationResult": {
+    "prompt": "Prompt",
+    "result": "Rezultat",
+    "noSummary": "Niciun rezumat capturat."
+  },
+  "scheduleRowPlus": {
+    "delete": "Șterge"
+  },
+  "attachmentPicker": {
+    "attachFiles": "Atașează fișiere"
+  },
+  "demos": {
+    "aiTeam": "Echipa AI",
+    "specialist": "Specialist",
+    "legal": "Juridic",
+    "global": "Global",
+    "editor": "Editor",
+    "slashMenu": "Meniu slash"
+  },
+  "slideDataCopy": {
+    "slideNum": "01 · DATE",
+    "headlineSentence": "Sursa ta <accent>unică</accent> de adevăr.",
+    "paragraphPrefix": "Markdown, PDF-uri, foi de calcul, prezentări, imagini, video, audio, depozite legate, aplicații web încorporate, Google Docs. Menționează oricare dintre ele cu ",
+    "paragraphSuffix": ".",
+    "secondParagraphPrefix": "Un singur loc pentru tot — astfel încât tu și echipa ta AI să citiți, editați și livrați din ",
+    "sameFiles": "aceleași fișiere",
+    "secondParagraphSuffix": ", nu copii ale copiilor.",
+    "mockTitle": "Cabinetul Hilei"
+  },
+  "slideData": {
+    "thailandRootLabel": "Călătorie în Thailanda",
+    "thailandCaption": "Vizualizați toate fișierele într-un singur loc.",
+    "videoTitle": "Piața de noapte.mp4",
+    "taxRootLabel": "Impozit 2026",
+    "taxCaption": "Impozit 2026 — o aplicație web de calcul live, integrată direct în cabinetul tău.",
+    "calculatorTitle": "Calculator",
+    "liveAppBadge": "Aplicație live",
+    "taxEstimateLabel": "Estimare impozit 2026",
+    "income": "Venit",
+    "deductions": "Deduceri",
+    "taxBracket": "Grilă de impozitare",
+    "estimatedTax": "Impozit estimat",
+    "healthRootLabel": "Sănătate",
+    "healthCaption": "Vitamine și analize — o foaie de calcul care se simte ca o pagină.",
+    "csvTitle": "Vitamine zilnice.csv",
+    "csvColVitamin": "Vitamină",
+    "csvColDose": "Doză",
+    "csvColTime": "Ora",
+    "csvColDone": "Gata",
+    "repoRootLabel": "cabinet-repo",
+    "repoCaption": "Baze de cod — conectează orice repo Git, ce poate fi căutat de agenții tăi.",
+    "schemaTitle": "schema.ts",
+    "tsBadge": "TS"
+  },
+  "slideTasks": {
+    "slideNum": "03 · SARCINI",
+    "typedCommand": "Rulează 10 sarcini, fiecare scriind un cântec, salvează în @Songs/",
+    "headlineSentence": "Ești gata să <accent>începi</accent>?",
+    "paragraphPrefix": "Scrie o sarcină. Rulează una, rulează zece, programează-le pe termen nelimitat. Menționează pagini cu ",
+    "paragraphSuffix": ", salvează rezultatul oriunde dorești. Tu ești directorul acum.",
+    "savingFolder": "Cântece/"
+  },
+  "slideAgents": {
+    "persona": "Profil",
+    "heartbeat": "Puls",
+    "jobs": "Sarcini",
+    "aiTeam": "Echipă AI",
+    "otherWriter": "Scriitor",
+    "otherOrganizer": "Organizator",
+    "idle": "inactiv",
+    "researchAnalyst": "Analist de Cercetare",
+    "modelLine": "Claude · Sonnet 4.6",
+    "live": "activ",
+    "personaBody": "\"Analist riguros. Citează surse. Semnalează afirmațiile contradictorii.\"",
+    "heartbeatBody": "Scanează @Market Research la fiecare 15 min",
+    "jobsBody": "Lun 9:00 · Rezumat săptămânal al concurenței",
+    "slideNum": "02 · AGENȚI",
+    "paragraphPrefix": "Fiecare agent are o ",
+    "personaWord": "personalitate",
+    "paragraphMiddle": ", propriul său ",
+    "scheduleWord": "program",
+    "paragraphMiddle2": ", și o ",
+    "memoryWord": "memorie",
+    "paragraphSuffix": ". Agenții tăi AI îndeplinesc sarcinile, 24/7. Fii om — ei se ocupă de restul.",
+    "aiTeamSentence": "Echipa ta <accent>AI</accent>."
+  },
+  "startWork": {
+    "close": "Închide",
+    "selectAgent": "Selectează agent",
+    "titleNow": "Ce trebuie făcut?",
+    "titleRecurring": "Setează o rutină recurentă",
+    "titleHeartbeat": "Activează acest agent conform unui program",
+    "titleEdit": "Editează sarcină",
+    "submitStart": "Pornire",
+    "submitAddInbox": "Adaugă în Inbox",
+    "submitSaveEdit": "Salvează modificările",
+    "submitCreateRoutine": "Creează rutină",
+    "submitSaveHeartbeat": "Salvează pulsul",
+    "saving": "Se salvează…",
+    "current": "actual",
+    "modeInboxLabel": "→ Mesaje primite",
+    "modeInboxHint": "Salvează în Inbox — începe când ești gata",
+    "modeNowLabel": "Rulează acum",
+    "modeNowHint": "Începe această conversație imediat",
+    "modeRecurringLabel": "Programat",
+    "modeRecurringHint": "Rulează acest prompt conform unui program",
+    "modeHeartbeatLabel": "Puls",
+    "modeHeartbeatHint": "Activează agentul în ritmul său",
+    "agentFallback": "Agent",
+    "failedToStart": "Pornire eșuată",
+    "failedToSave": "Salvarea modificărilor a eșuat",
+    "failedToSaveHeartbeat": "Salvarea heartbeat-ului a eșuat"
+  },
+  "googleDoc": {
+    "noUrl": "Niciun URL Google setat",
+    "anyoneWithLink": "Oricine cu linkul",
+    "publishedToWeb": "Publicat pe web"
+  },
+  "feedback": {
+    "close": "Închide",
+    "rolePlaceholder": "ex: indie hacker, PM la un SaaS, student la design, pasionat…",
+    "joinDiscord": "Alătură-te pe Discord",
+    "header": "O scurtă verificare de la Jane",
+    "howGoing": "Cum merge până acum?",
+    "starsCount": "{{n}} stea",
+    "starsCountPlural": "{{n}} stele",
+    "likeCabinet": "Îți place Cabinet?",
+    "starTooltipUnknown": "Dă star la Cabinet pe GitHub — dacă îți este util, un star ajută mult",
+    "starTooltipWithCount": "{{count}} staruri GitHub — apasă pentru a-l adăuga pe al tău",
+    "starLabel": "Stea",
+    "backgroundLabel": "Care este background-ul tău?",
+    "optional": "(opțional)",
+    "discordCta": "Vrei să vorbești direct sau să socializezi cu alți membri Cabinet?",
+    "maybeLater": "Poate mai târziu",
+    "send": "Trimite",
+    "thanksTitle": "Mulțumim!",
+    "thanksBody": "Feedback-ul tău modelează ce vom construi în continuare.",
+    "copy2Lead": "Ai deschis Cabinet de câteva ori. Mulțumim! Cabinet este open source și abia la început, așa că ceea ce spui aici chiar influențează ce se va construi în continuare.",
+    "copy2Q1": "Ce încercai să faci în Cabinet astăzi?",
+    "copy2Q1Hint": "O singură propoziție este suficientă. Motivul pentru care ai deschis-o, nu ce ai fi vrut să facă.",
+    "copy2Q2": "Ultima dată când ai vrut să faci asta, ce ai folosit în loc de Cabinet?",
+    "copy2Q2Hint": "Orice instrument, aplicație sau document, chiar și pix și hârtie.",
+    "copy6Lead": "Te-ai întors, iar acesta este semnalul cel mai important. Vreau să aud despre aspectele mai puțin șlefuite înainte să le uiți.",
+    "copy6Q1": "Ce încercai să faci în Cabinet astăzi?",
+    "copy6Q1Hint": "O singură propoziție este suficientă.",
+    "copy6Q2": "Care este singurul lucru care aproape te-a făcut să nu mai folosești Cabinet săptămâna aceasta?",
+    "copy6Q2Hint": "Lucrul care te-a deranjat cel mai mult. Fii specific. \"X a fost confuz\" e mai util decât \"UX-ul\"."
+  },
+  "apiKeysSection": {
+    "cancel": "Anulează",
+    "pasteHere": "lipește aici",
+    "pasteNewValue": "lipește valoarea nouă"
+  },
+  "storageBackend": {
+    "title": "Backend de stocare",
+    "migrationFailed": "Migrare eșuată"
+  },
+  "linkRepo": {
+    "title": "Încarcă Cunoștințe",
+    "intro": "Indică Cabinet către orice folder de pe mașina ta. Cabinet creează o legătură simbolică, astfel încât conținutul folderului să apară în Baza ta de Cunoștințe și să fie disponibil agenților AI ca și context. Folderul original nu este niciodată mutat sau copiat.",
+    "symlinkNote": "Aceasta creează o legătură simbolică — fișierele rămân unde sunt.",
+    "autoDetectPlaceholder": "Detectare automată din git remote (opțional)",
+    "shortSummaryPlaceholder": "Scurt rezumat opțional pentru agenți"
+  },
+  "recentTasks": {
+    "ptyMode": "Mod Terminal (PTY)",
+    "revealOlder": "Afișează mai multe sarcini mai vechi",
+    "showOlder": "Afișează mai vechi"
+  },
+  "treeNode": {
+    "openCabinet": "Deschide vizualizarea Cabinet",
+    "pageTitlePlaceholder": "Titlul paginii…",
+    "rename": "Redenumește",
+    "openBadge": "Deschide",
+    "sectionAdd": "Adaugă la acest element",
+    "sectionThis": "Acest element",
+    "addSubPage": "Adaugă subpagină",
+    "newFolder": "Folder nou",
+    "createFile": "Creează fișier nou…",
+    "connectKnowledge": "Conectează cunoștințe…",
+    "symlinkTag": "Legătură simbolică",
+    "importFile": "Importă fișier…",
+    "importFolder": "Importă folder…",
+    "createCabinet": "Creează Cabinet aici",
+    "editSymlink": "Editează legătura simbolică…",
+    "settings": "Setări…",
+    "moveTo": "Mută în…",
+    "copyRelativePath": "Copiază calea relativă",
+    "copyFullPath": "Copiază calea completă",
+    "openInFinder": "Deschide în Finder",
+    "delete": "Șterge",
+    "unlink": "Deconectează",
+    "folderNamePlaceholder": "Nume folder",
+    "creating": "Se creează…",
+    "create": "Creează",
+    "addSubPageTitle": "Adaugă subpagină la „{{name}}”",
+    "newFolderTitle": "Dosar nou în „{{name}}”"
+  },
+  "newFile": {
+    "title": "Creează fișier nou",
+    "subtitle": "Alege un tip de fișier. Cabinet îl va deschide în editor când este gata.",
+    "groupNative": "Editează în Cabinet",
+    "groupOffice": "Office (gol — editează extern)",
+    "groupGoogle": "Google (conectat)",
+    "namePlaceholder": "Nume fișier",
+    "create": "Creează",
+    "creating": "Se creează…",
+    "googleUrlLabel": "URL Google (opțional)",
+    "googleUrlPlaceholder": "Lipește un link Google partajabil, sau lasă gol pentru a adăuga mai târziu",
+    "officeNote": "Cabinet afișează fișierele Office doar în modul citire. Folosește „Deschide în Finder” pentru a edita în aplicația desktop.",
+    "types": {
+      "markdown": "Pagină Markdown",
+      "markdownDesc": "Notițe text îmbogățit, editabile în Cabinet",
+      "code": "Fișier cod",
+      "codeDesc": "Orice fișier sursă/text — alege extensia",
+      "mermaid": "Diagramă Mermaid",
+      "mermaidDesc": "Diagrame flux și diagrame ca și cod",
+      "csv": "Tabel CSV",
+      "csvDesc": "Date tabelare separate prin virgulă",
+      "docx": "Document Word",
+      "docxDesc": ".docx gol",
+      "xlsx": "Foaie de calcul Excel",
+      "xlsxDesc": ".xlsx gol",
+      "pptx": "PowerPoint",
+      "pptxDesc": ".pptx gol",
+      "gdoc": "Document Google",
+      "gdocDesc": "Încorporează un Document Google",
+      "gsheet": "Foaie de calcul Google",
+      "gsheetDesc": "Încorporează o Foaie de calcul Google",
+      "gslides": "Prezentare Google Slides",
+      "gslidesDesc": "Încorporează Prezentare Google Slides"
+    },
+    "codeExtLabel": "Extensie",
+    "googleTag": "Google",
+    "extHint": "Doar tastează numele — Cabinet adaugă extensia {{ext}}.",
+    "createFailed": "Nu s-a putut crea fișierul."
+  },
+  "fileSettings": {
+    "googleTitle": "Setări încorporare Google",
+    "googleKindLabel": "Tip",
+    "googleUrlLabel": "URL Google",
+    "googleUrlPlaceholder": "https://docs.google.com/…",
+    "googleNote": "Partajarea documentului trebuie să fie „Oricine cu linkul” sau „Publicat pe web” pentru ca încorporarea să se încarce.",
+    "openLink": "Deschide în Google",
+    "googleKinds": {
+      "docs": "Documente",
+      "sheets": "Foi de calcul",
+      "slides": "Prezentări",
+      "forms": "Formulare",
+      "drive": "Drive"
+    },
+    "appTitle": "Setări aplicație web",
+    "modeLabel": "Cum ar trebui să se deschidă?",
+    "modeWebsite": "Vizualizare pagină",
+    "modeWebsiteDesc": "Se deschide în linie, cu bara laterală și panoul AI vizibile.",
+    "modeApp": "Aplicație web",
+    "modeAppDesc": "Se deschide pe tot ecranul; bara laterală și panoul AI se restrâng automat.",
+    "convertNote": "Aceasta comută fișierul marcator .app din folder. Fișierele dumneavoastră nu sunt modificate.",
+    "save": "Salvează",
+    "saving": "Se salvează…",
+    "cancel": "Anulează",
+    "saveFailed": "Nu s-au putut salva setările."
+  },
+  "editSymlink": {
+    "title": "Editează legătura simbolică",
+    "intro": "Această intrare din Baza de cunoștințe este o legătură simbolică către un folder aflat în altă parte pe mașina dumneavoastră.",
+    "kbPathLabel": "Calea Bazei de cunoștințe",
+    "targetLabel": "Se leagă la (pe disc)",
+    "brokenWarning": "Folderul țintă nu mai există. Redirecționați-l către un folder valid de mai jos.",
+    "repointLabel": "Redirecționează către un folder nou",
+    "repointHint": "Cabinet va înlocui legătura pentru a indica aici. Fișierele nu sunt niciodată mutate.",
+    "browse": "Răsfoiește",
+    "nameLabel": "Nume",
+    "descriptionLabel": "Descriere",
+    "save": "Salvează",
+    "saving": "Se salvează…",
+    "copyTarget": "Copiază calea țintă",
+    "saveFailed": "Nu s-a putut actualiza legătura simbolică."
+  },
+  "importFolder": {
+    "importing": "Se importă folderul…",
+    "failed": "Importul folderului a eșuat: {{message}}"
+  },
+  "boardSkeleton": {
+    "loadingTasks": "Se încarcă sarcinile"
+  },
+  "agentList": {
+    "agentLibrary": "Bibliotecă de agenți",
+    "newAgent": "Agent nou"
+  },
+  "helpVisuals": {
+    "cabinet": "Cabinet",
+    "yourTeam": "Echipa ta",
+    "lead": "Lider",
+    "specialist": "Specialist",
+    "tasks": "Sarcini",
+    "todo": "De făcut",
+    "doing": "În lucru",
+    "done": "Finalizat",
+    "anythingGoes": "Orice e permis",
+    "marketing": "Marketing",
+    "product": "Produs",
+    "research": "Cercetare",
+    "design": "Design",
+    "routines": "Rutine",
+    "dailyReview": "Revizuire zilnică",
+    "weeklyDigest": "Rezumat săptămânal",
+    "conversation": "Conversație",
+    "userQuery": "Planifică o călătorie de 2 săptămâni în Thailanda…",
+    "agentReply": "Voi trimite bibliotecarul și editorul.",
+    "pendingAction": "Acțiune în așteptare",
+    "approve": "Aprobă",
+    "decline": "Refuză",
+    "themes": "Teme",
+    "providers": "Furnizori",
+    "comingSoon": "În curând"
+  },
+  "agentLive": {
+    "dismiss": "Ignoră",
+    "paused": "Agentul este în pauză"
+  },
+  "conversationLive": {
+    "liveOutput": "Rezultat live",
+    "waitingFirstChunk": "Se așteaptă primul fragment de ieșire…"
+  },
+  "editIdentityPlus": {
+    "avatar": "Avatar",
+    "useIconInstead": "Folosește o pictogramă în schimb"
+  },
+  "pendingActions": {
+    "rejectAll": "Respinge toate acțiunile în așteptare",
+    "approveAll": "Aprobă și expediază toate acțiunile fără blocaje majore"
+  },
+  "aiPanel": {
+    "clearSessions": "Șterge toate sesiunile",
+    "dismiss": "Ignoră"
+  },
+  "schedulerPlus": {
+    "restartAll": "Repornește toți agenții",
+    "restartSubtitle": "Oprește și apoi reactivează toate programările"
+  },
+  "csvViewer": {
+    "downloadCsv": "Descarcă CSV",
+    "deleteRow": "Șterge rândul"
+  },
+  "resizableImage": {
+    "resizeLeft": "Redimensionează din stânga",
+    "resizeRight": "Redimensionează din dreapta"
+  },
+  "folderIndex": {
+    "listView": "Vizualizare listă",
+    "galleryView": "Vizualizare galerie"
+  },
+  "linkPopover": {
+    "openLink": "Deschide linkul",
+    "removeLink": "Elimină linkul"
+  },
+  "officeChrome": {
+    "openInFinder": "Deschide în Finder",
+    "downloadOriginal": "Descarcă originalul"
+  },
+  "sourceViewer": {
+    "copyContents": "Copiază conținutul fișierului",
+    "downloadFile": "Descarcă fișierul"
+  },
+  "versionHistory": {
+    "title": "Istoric versiuni"
+  },
+  "demoModal": {
+    "closeDemo": "Închide demo-ul",
+    "close": "Închide"
+  },
+  "demosPlus": {
+    "anything": "Orice",
+    "yours": "Ale tale",
+    "install": "Instalează",
+    "attach": "Atașează"
+  },
+  "narrowViewport": {
+    "dismiss": "Ignoră sugestia de vizualizare îngustă",
+    "dismissTitle": "Ignoră până la următoarea sesiune",
+    "hintPrefix": "Cabinet funcționează cel mai bine la ",
+    "hintWidth": "≥960 px",
+    "hintSuffix": " lățime. Unele suprafețe se înghesuie la lățimi mai mici."
+  },
+  "agentCard": {
+    "runHeartbeat": "Rulează heartbeat"
+  },
+  "schedulePicker": {
+    "frequency": "Frecvență",
+    "onDay": "În ziua",
+    "modeInterval": "Interval",
+    "modeDaily": "Zilnic",
+    "modeWeekdays": "Zile lucrătoare",
+    "modeWeekly": "Săptămânal",
+    "modeMonthly": "Lunar",
+    "modeCustom": "Personalizat",
+    "parse": "Analizează",
+    "showCron": "Afișează expresia cron",
+    "hideCron": "Ascunde expresia cron",
+    "weekdayMo": "Lu",
+    "weekdayTu": "Ma",
+    "weekdayWe": "Mi",
+    "weekdayTh": "Jo",
+    "weekdayFr": "Vi",
+    "weekdaySa": "Sâ",
+    "weekdaySu": "Du"
+  },
+  "slackPanel": {
+    "createChannel": "Creează canal",
+    "thread": "Conversație"
+  },
+  "uninstall": {
+    "title": "Dezinstalează Cabinet"
+  },
+  "treeView": {
+    "drawersAriaLabel": "Sertarele Cabinet",
+    "pageTitlePlaceholder": "Titlul paginii…"
+  },
+  "skillAddPlus": {
+    "cancel": "Anulează"
+  },
+  "skillCatalog": {
+    "auditUnavailable": "Datele de audit nu sunt disponibile de la skills.sh pentru această abilitate",
+    "searchPlaceholder": "Căută skills.sh"
+  },
+  "skillLibraryPlus": {
+    "refresh": "Reîmprospătează",
+    "noSkills": "Încă nu există abilități."
+  },
+  "taskDetail": {
+    "close": "Închide (Esc)",
+    "muteTask": "Ignoră această sarcină – execuțiile finalizate merg direct în Arhivă",
+    "unmuteTask": "Anulează ignorarea acestei sarcini – execuțiile finalizate reapar în Tocmai Finalizate"
+  },
+  "rowActionsPlus": {
+    "edit": "Editează",
+    "editHint": "Editează această schiță salvată înainte de a începe",
+    "delete": "Șterge",
+    "deleteHint": "Șterge definitiv — această acțiune nu poate fi anulată"
+  },
+  "taskCard": {
+    "ptyMode": "Rulează în modul terminal (PTY)"
+  },
+  "undoToast": {
+    "dismiss": "Ignoră"
+  },
+  "terminalExited": {
+    "openDetails": "Deschide detalii structurate (prompt, artefacte, interacțiuni)",
+    "reconnect": "Reconectează-te la daemon și redă în flux înregistrarea PTY brută"
+  },
+  "terminalTabsPlus": {
+    "resize": "Redimensionează panoul terminalului"
+  },
+  "cabinetsExtras": {
+    "showAllAgents": "Arată toți agenții",
+    "noRecentActivity": "Nicio activitate recentă",
+    "noAgents": "Niciun agent",
+    "noAgentsConfigured": "Niciun agent configurat încă pentru acest cabinet.",
+    "cabinetScope": "Domeniul cabinetului:",
+    "depthDropdownHeader": "Domeniul cabinetului",
+    "depthOwnLabel": "Doar acest cabinet",
+    "depthOwnShort": "Propriu",
+    "depthOwnDesc": "Pagini, agenți și sarcini doar din acest cabinet.",
+    "depthChildren1Label": "Include copii direcți",
+    "depthChildren1Desc": "Adaugă un nivel de sub-cabinete.",
+    "depthChildren2Label": "Include două niveluri de cabinet",
+    "depthChildren2Desc": "Adaugă două niveluri de sub-cabinete.",
+    "depthAllLabel": "Include toți descendenții",
+    "depthAllShort": "Toate",
+    "depthAllDesc": "Include întregul sub-arbore.",
+    "scopeTooltip": "Domeniul cabinetului: {{label}}. Click pentru a schimba."
+  },
+  "composerExtras": {
+    "skillAttached": "Abilitate — atașată doar acestei rulări",
+    "pageTitlePlaceholder": "Titlul paginii…",
+    "active": "Activ — trezește agentul conform acestui program",
+    "pickCliPty": "Alege un CLI de lansat într-un PTY:"
+  },
+  "editorExtras": {
+    "editWithAi": "Editează cu AI",
+    "jupyterLab": "Copiază: jupyter lab <path>",
+    "exitApp": "Ieși din aplicație"
+  },
+  "demosExtras": {
+    "aiAccounts": "Conturi AI",
+    "aiTeams": "Echipe AI"
+  },
+  "whatsNew": {
+    "dismiss": "Ignoră",
+    "headerPrefix": "Ce e nou în v",
+    "readFull": "Citește notele complete de lansare"
+  },
+  "breakingChangesPlus": {
+    "iUnderstand": "Înțeleg și vreau să continui."
+  },
+  "daemonHealth": {
+    "dismiss": "Închide"
+  },
+  "tinyExtras": {
+    "light": "Luminos",
+    "home": "Acasă",
+    "workspaceGallery": "Galerie spații de lucru",
+    "savingTo": "Se salvează în",
+    "comingSoon": "În curând",
+    "deleteSkill": "Șterge abilitatea",
+    "skillsOffered": "Abilități oferite:",
+    "allAgents": "Toți agenții",
+    "noTranscript": "Niciun transcript găsit",
+    "noDiff": "Nicio diferență disponibilă.",
+    "headsUp": "Atenție:",
+    "back": "Înapoi",
+    "editYourAvatar": "Editează-ți avatarul",
+    "openFullTaskViewer": "Deschide vizualizatorul complet de sarcini",
+    "close": "Închide",
+    "copyToClipboard": "Copiază în clipboard",
+    "starOnGithub": "Marchează Cabinet pe GitHub",
+    "helpMoreFind": "Ajută mai mulți oameni să găsească comunitatea",
+    "joinDiscord": "Alătură-te pe Discord",
+    "chatWithBuilders": "Discută cu persoanele care construiesc Cabinet",
+    "joinWaitlist": "Alătură-te listei de așteptare Cabinet Cloud",
+    "emailPlaceholder": "tu@companie.com",
+    "namePlaceholder": "Jane",
+    "addToInbox": "Adaugă în Inbox",
+    "runTaskNow": "Rulează sarcina acum",
+    "search": "Căutare",
+    "aiPanel": "Panou AI",
+    "drawers": "Sertare"
+  },
+  "dataLocations": {
+    "title": "Unde sunt stocate datele tale",
+    "whyThisMatters": "De ce contează asta",
+    "location": "Locație",
+    "contains": "Conține",
+    "network": "Rețea",
+    "revealInFinder": "Arată în managerul de fișiere",
+    "stored": "Stocat",
+    "resetOnboarding": "Resetează ghidul de inițiere"
+  },
+  "rooms": {
+    "switcherTitle": "Schimbă camera",
+    "switchRoom": "Camere",
+    "loading": "Se încarcă…",
+    "defaultTag": "Acasă",
+    "openInNewWindow": "Deschide într-o fereastră nouă",
+    "opensBrowserWindow": "Deschide o nouă fereastră de browser",
+    "customizeRoom": "Editează camera",
+    "addRoom": "Adaugă cameră…",
+    "editTitle": "Editează camera",
+    "editSubtitle": "Setează numele, pictograma, culoarea și tema acestei camere.",
+    "nameLabel": "Nume afișat",
+    "slugHint": "Numele folderului pe disc rămâne {{slug}}. Redenumirea folderului este o acțiune separată, avansată.",
+    "iconLabel": "Pictogramă",
+    "colorLabel": "Culoare",
+    "colorAuto": "Automat",
+    "themeLabel": "Temă",
+    "themeGlobal": "Folosește implicitul global",
+    "editFailed": "Nu s-a putut salva camera. Te rugăm să încerci din nou.",
+    "deleteRoom": "Șterge camera…",
+    "deleteLastRoomDisabledHint": "Nu poți șterge ultima ta cameră.",
+    "deleteTitle": "Ștergi această cameră?",
+    "deleteSubtitle": "Această cameră și tot ce conține vor fi mutate în coșul de gunoi.",
+    "deleteWarningIntro": "Mutarea camerei în coșul de gunoi elimină și:",
+    "deleteWarningPages": "Pagini și fișiere din această cameră",
+    "deleteWarningAgents": "Agenți, conversații și memorie asociate acestei camere",
+    "deleteWarningJobs": "Sarcini și rutine programate în această cameră",
+    "deleteWarningChat": "Istoricul chat-ului de echipă pentru această cameră",
+    "deleteWarningSearch": "Indexul de căutare al camerei (reconstruit automat dacă este restaurată)",
+    "deleteRecoveryNote": "Recuperare: camera este mutată în data/.trash/ — restaurați-o mutând folderul înapoi în data/.",
+    "deleteConfirmLabel": "Tastează {{slug}} pentru a confirma",
+    "deleteConfirmButton": "Șterge camera",
+    "deleting": "Se șterge…",
+    "deleteFailed": "Nu s-a putut șterge camera. Te rugăm să încerci din nou."
+  },
+  "common": {
+    "actions": {
+      "save": "Salvează",
+      "cancel": "Anulează",
+      "delete": "Șterge",
+      "confirm": "Confirmă",
+      "close": "Închide",
+      "open": "Deschide",
+      "back": "Înapoi",
+      "next": "Următorul",
+      "done": "Gata"
+    },
+    "nav": {
+      "goBack": "Mergi înapoi",
+      "goForward": "Mergi înainte"
+    },
+    "aiPanel": {
+      "open": "Deschide panoul AI",
+      "close": "Închide panoul AI"
+    },
+    "states": {
+      "loading": "Se încarcă…",
+      "saving": "Se salvează…",
+      "saved": "Salvat",
+      "error": "A apărut o eroare"
+    }
+  },
+  "dialogs": {
+    "newPage": {
+      "trigger": "Pagină nouă",
+      "title": "Creează pagină nouă",
+      "placeholder": "Titlul paginii…",
+      "create": "Creează",
+      "creating": "Se creează…"
+    },
+    "newCabinet": {
+      "trigger": "Cabinet nou",
+      "title": "Creează Cabinet nou",
+      "subtitle": "Un cabinet este un spațiu de lucru cu propriii agenți, sarcini și cunoștințe.",
+      "importFromRegistry": "Importă din Registru",
+      "nameLabel": "Nume Cabinet",
+      "namePlaceholder": "ex. Startup-ul meu, Echipa de Marketing, Laborator de Cercetare…",
+      "selectAgents": "Selectează agenți",
+      "selectedCount": "{{count}} selectați",
+      "createCabinet": "Creează Cabinet",
+      "creating": "Se creează…",
+      "createFailed": "Eșec la crearea cabinetului"
+    }
+  },
+  "editor": {
+    "header": {
+      "exportPage": "Exportă pagina",
+      "copyMarkdown": "Copiază Markdown",
+      "copyForLlms": "Copiază pentru LLM-uri",
+      "copyAsHtml": "Copiază ca HTML",
+      "downloadMarkdown": "Descarcă .md",
+      "downloadPdf": "Descarcă PDF",
+      "copiedForLlmToast": "S-a copiat {{size}} de Markdown pentru LLM"
+    },
+    "toolbar": {
+      "heading1": "Titlu 1",
+      "heading2": "Titlu 2",
+      "heading3": "Titlu 3",
+      "bold": "Aldin",
+      "italic": "Cursiv",
+      "underline": "Subliniat",
+      "strikethrough": "Tăiat",
+      "inlineCode": "Cod inline",
+      "link": "Link",
+      "textColor": "Culoare text",
+      "highlight": "Evidențiere",
+      "background": "Fundal",
+      "bulletList": "Listă cu marcatori",
+      "orderedList": "Listă numerotată",
+      "blockquote": "Citat",
+      "checklist": "Listă de verificare",
+      "codeBlock": "Bloc de cod",
+      "divider": "Separator",
+      "alignLeft": "Aliniere stânga",
+      "alignCenter": "Aliniere centru",
+      "alignRight": "Aliniere dreapta",
+      "justify": "Justificare",
+      "align": "Aliniere",
+      "table": {
+        "selectCellText": "Selectează textul celulei",
+        "addRowAbove": "Adaugă rând deasupra",
+        "addRowBelow": "Adaugă rând dedesubt",
+        "moveRowUp": "Mută rândul în sus",
+        "moveRowDown": "Mută rândul în jos",
+        "deleteRow": "Șterge rândul",
+        "addColumnBefore": "Adaugă coloană înainte",
+        "addColumnAfter": "Adaugă coloană după",
+        "moveColumnLeft": "Mută coloana la stânga",
+        "moveColumnRight": "Mută coloana la dreapta",
+        "deleteColumn": "Șterge coloana",
+        "toggleHeaderRow": "Comută rândul antet",
+        "toggleHeaderColumn": "Comută coloana antet",
+        "deleteTable": "Șterge tabelul"
+      },
+      "superscript": "Exponent",
+      "subscript": "Indice",
+      "insertImage": "Inserează imagine",
+      "insertVideo": "Inserează video",
+      "embed": "Încorporează",
+      "undo": "Anulează",
+      "redo": "Refă",
+      "switchToLtr": "Comută la LTR",
+      "switchToRtl": "Comută la RTL",
+      "scrollLeft": "Derulează bara de instrumente la stânga",
+      "scrollRight": "Derulează bara de instrumente la dreapta",
+      "markdown": "Markdown",
+      "preview": "Previzualizare"
+    }
+  },
+  "home": {
+    "newCabinet": {
+      "namePlaceholder": "Nume Cabinet…",
+      "renameWarning": "Numele Cabinetului nu poate fi redenumit ulterior (momentan). Alege cu înțelepciune."
+    },
+    "templates": {
+      "header": "Începe de la un șablon",
+      "browseAll": "Vezi tot →"
+    },
+    "quickActions": {
+      "shuffle": "Arată alte sugestii",
+      "launch10Songs": "Lansează 10 editori de compoziție muzicală",
+      "dailyReview9am": "Revizuire zilnică la 9 dimineața",
+      "weeklyReview": "Revizuire săptămânală lunea viitoare",
+      "thailandTrip": "Planifică-mi călătoria în Thailanda",
+      "physicsApp": "Creează-mi o aplicație de studiu fizică",
+      "summariseRecent": "Rezumă-mi munca recentă",
+      "recruiterReply": "Elaborează un răspuns pentru recrutor",
+      "mapArticles": "Cartografiază conexiunile articolelor",
+      "physicsCourse": "Creează un curs de fizică cu 6 module",
+      "shortStory": "Schitează o poveste scurtă",
+      "hourlyStandup": "Memento orar pentru stand-up",
+      "researchPhone": "Cercetează-mi următorul telefon",
+      "translateToSpanish": "Traduce acest cabinet în spaniolă",
+      "refactorNotes": "Refactorizează-mi sistemul de luare a notițelor",
+      "birthdayParty": "Planifică o petrecere de ziua de naștere",
+      "boardUpdate": "Elaborează o actualizare pentru consiliu",
+      "customerInterviews": "Simulează 5 interviuri cu clienți"
+    },
+    "goodMorning": "Bună dimineața",
+    "goodAfternoon": "Bună ziua",
+    "goodEvening": "Bună seara",
+    "greetingWithName": "{{greeting}}, {{name}}.",
+    "greetingNoName": "{{greeting}}.",
+    "composerPlaceholder": "Vreau să creez...",
+    "composerDaemonDown": "Agent daemon offline — repornește pentru a trimite"
+  },
+  "onboarding": {
+    "launchHeading": "Pornește-ți <accent>Cabinetul</accent>",
+    "intro": {
+      "tagline1": "Baza ta de cunoștințe.",
+      "tagline2": "Echipa ta AI.",
+      "getStarted": "Începeți"
+    },
+    "blueprint": {
+      "rooms": {
+        "office": "Birou",
+        "study": "Studiu",
+        "lab": "Laborator",
+        "library": "Bibliotecă",
+        "kitchen": "Bucătărie",
+        "family": "Familie",
+        "dining": "Sufragerie",
+        "studio": "Studio"
+      }
+    },
+    "welcome": {
+      "paragraph": "Acasă vă aparține. În ea, veți configura camere pentru diferite aspecte ale vieții dumneavoastră: muncă, al doilea creier, cercetare, familie. Și fiecare cameră are dulapuri: notițele dumneavoastră, fișierele dumneavoastră și o echipă AI care lucrează discret în fundal.",
+      "namePrompt": "Cum te numești?",
+      "heading": "Bun venit <accent>acasă</accent>"
+    },
+    "welcomeBack": {
+      "heading": "Bun venit înapoi",
+      "headingNamed": "Bun venit înapoi la {{cabinet}}",
+      "subtitle": "Am găsit un cabinet existent aici. Să terminăm configurarea.",
+      "continue": "Continuă"
+    },
+    "verify": {
+      "passed": "Reușit",
+      "notInstalled": "Nu este instalat",
+      "authRequired": "Autentificare necesară",
+      "paymentRequired": "Plată necesară",
+      "quotaExceeded": "Cotă / limită de rată",
+      "error": "Eroare"
+    },
+    "providerStatus": {
+      "ready": "Gata",
+      "loginRequired": "Autentificare necesară",
+      "notInstalled": "Nu este instalat"
+    },
+    "actions": {
+      "back": "Înapoi",
+      "next": "Următorul",
+      "continue": "Continuă",
+      "skip": "Omite",
+      "finish": "Finalizează",
+      "complete": "Finalizează configurarea",
+      "copyToClipboard": "Copiază în clipboard"
+    },
+    "cabinetCreated": {
+      "continue": "Continuă configurarea",
+      "heading": "Cabinetul tău a fost creat",
+      "subtitle": "Totul este configurat și gata de utilizare.",
+      "agentsReady_one": "{{count}} agent gata de lucru",
+      "agentsReady_other": "{{count}} agenți gata de lucru",
+      "scheduledJobs_one": "{{count}} sarcină programată",
+      "scheduledJobs_other": "{{count}} sarcini programate",
+      "subCabinets_one": "{{count}} sub-cabinet",
+      "subCabinets_other": "{{count}} sub-cabinete",
+      "agentsReady": "{{count}} agenți gata de lucru",
+      "scheduledJobs": "{{count}} sarcini programate",
+      "subCabinets": "{{count}} sub-cabinete"
+    },
+    "cloud": {
+      "alreadyOnList": "Ești deja pe listă — te vom contacta.",
+      "aside": "Cabinet Cloud va fi disponibil în curând. Același produs, fără complexitatea auto-găzduirii.",
+      "description": "Accesează-ți Cabinet de pe orice dispozitiv în timp ce agenții tăi AI continuă să lucreze — redactând, cercetând, organizând — chiar și când laptopul este închis.",
+      "error": "Ceva nu a mers bine. Verifică adresa de email și încearcă din nou.",
+      "joinWaitlist": "Înscrie-te pe lista de așteptare",
+      "onList": "Ești pe listă. Te vom anunța prin email când Cabinet Cloud va fi disponibil.",
+      "sending": "Se trimite…",
+      "title": "Cabinetul tău, oriunde. Echipa ta AI, mereu activă.",
+      "waitlistSubtitle": "Conectează-te de oriunde. Echipa ta AI lucrează 24/7."
+    },
+    "discord": {
+      "aside": "Dacă vrei funcționalități noi în primul rând și preferi 'hai să discutăm' în loc de 'te rugăm să trimiți un tichet', aceasta este camera ta.",
+      "description": "Aici feedback-ul devine funcționalități, capturile de ecran devin dezbateri, iar cineva găsește de obicei cazul limită înainte ca acesta să te găsească pe tine.",
+      "joinBadge": "Alătură-te",
+      "title": "Discord este locul unde se întâmplă lucrurile bune și neobișnuite."
+    },
+    "github": {
+      "aside": "Cabinet este open source. Dacă îți place viziunea, ajută-ne să o facem cunoscută.",
+      "description": "O stea pe GitHub ajută mai mulți oameni să descopere Cabinet și să se alăture comunității.",
+      "starsLabel": "{{stars}} stele GitHub",
+      "title": "Ajută comunitatea Cabinet să crească"
+    },
+    "launch": {
+      "beforeYouLaunch": "Înainte de lansare",
+      "defaultCabinetName": "Cabinetul tău",
+      "defaultDescription": "Bază de cunoștințe + echipă AI",
+      "knowledgeBaseLabel": "Bază de cunoștințe",
+      "aiTeamLabel": "Echipă AI",
+      "launchCabinet": "Lansează Cabinet",
+      "settingUp": "Se configurează...",
+      "disclaimerAccess": "<strong>Agenții rulează cu acces complet.</strong> Cabinet utilizează <flag>--dangerously-skip-permissions</flag> (Claude Code) și flag-uri echivalente la alți furnizori. Acest lucru este identic cu rularea acestor instrumente CLI din propriul terminal. Orice servere sau instrumente MCP pe care le-ați configurat pot fi invocate automat de agenți.",
+      "disclaimerBackup": "<strong>Fă backup datelor tale regulat.</strong> Agenții pot citi, scrie și șterge fișiere din baza ta de cunoștințe (KB) și din depozitele legate. Cabinet nu este responsabil pentru pierderea datelor. Ești responsabil pentru furnizorii AI pe care îi alegi și pentru termenii lor de serviciu.",
+      "disclaimerBeta": "<strong>Software beta. Pot apărea erori.</strong> Livrăm rapid. Modificările majore pot apărea fără notificare.",
+      "legalNotice": "Continuând, ești de acord cu <terms>Termenii</terms> și <privacy>Confidențialitatea</privacy> noastră. Cabinet este un <oss>proiect open-source</oss>.",
+      "keepInTouch": "Ține-mă la curent. Cabinet este open source și dezvoltat transparent, și ne-ar plăcea să aflăm ce să construim în continuare. Fără spam, promitem."
+    },
+    "provider": {
+      "agentType": "Agent {{type}}",
+      "close": "Închide",
+      "comingSoon": "În curând",
+      "guide": "Ghid",
+      "heading": "Furnizor agent",
+      "moreModels": "Mai multe AI-uri",
+      "install": "Instalează",
+      "logIn": "Autentificare",
+      "openTerminalButton": "Deschide terminalul",
+      "openTerminalDetail": "Vei avea nevoie de un terminal pentru a rula pașii următori.",
+      "openTerminalError": "Nu s-a putut deschide terminalul automat. Deschide manual terminalul sistemului tău.",
+      "openTerminalTitle": "Deschide un terminal",
+      "recheck": "Verifică din nou furnizorii",
+      "rerunVerify": "Rulează din nou verificarea",
+      "runVerify": "Rulează verificarea",
+      "setupTitle": "Configurare {{name}}",
+      "skipForNow": "Omite pentru moment",
+      "subtitle": "Cabinet are nevoie de un AI CLI pentru a-ți alimenta agenții.",
+      "verifyExplanation": "Verificarea rulează promptul headless al furnizorului de la un capăt la altul și clasifică orice eșec, astfel încât să știi ce pas să revizitezi.",
+      "verifying": "Se verifică…",
+      "failedAtStep": "Eșuat la pasul: <strong>{{step}}</strong>"
+    },
+    "roomSetup": {
+      "subtitle": "Pentru ce este acest cabinet? Fiecare cameră vine cu propria echipă AI.",
+      "heading": "Alege o <accent>cameră</accent>"
+    },
+    "whatIsCabinet": {
+      "heading": "Ce este un Cabinet?",
+      "body": "Un Cabinet este un spațiu de lucru concentrat pentru o anumită zonă a vieții sau muncii tale. Acesta conține fișierele, notițele, instrumentele, agenții și sarcinile tale, astfel încât echipa ta AI să aibă contextul necesar pentru a te ajuta cu adevărat.",
+      "examplesLabel": "Cum folosesc oamenii Cabinet",
+      "example1": "startup-ul tău",
+      "example2": "un repo GitHub",
+      "example3": "munca ta de marketing",
+      "example4": "un proiect de client",
+      "example5": "baza ta personală de cunoștințe"
+    },
+    "access": {
+      "heading": "Ce poate accesa {{name}}?",
+      "subtitle": "Alege cunoștințele și instrumentele pe care le poate folosi acest agent. Poți schimba asta oricând.",
+      "defaultAgent": "agentul tău",
+      "files": "Fișiere și cunoștințe",
+      "github": "GitHub",
+      "slack": "Slack",
+      "mcp": "Servere MCP",
+      "plugins": "Pluginuri",
+      "skills": "Abilități",
+      "placeholderNote": "Poți ajusta accesul ulterior în setările agentului."
+    },
+    "heartbeat": {
+      "heading": "Ar trebui ca {{name}} să ruleze conform unui program?",
+      "subtitle": "Un program regulat permite agentului să se conecteze și să lucreze autonom.",
+      "off": "Oprit",
+      "offHint": "Rulează doar la cerere. Recomandat pentru început.",
+      "daily": "Zilnic",
+      "dailyHint": "Se conectează o dată pe zi.",
+      "weekly": "Săptămânal",
+      "weeklyHint": "Se conectează o dată pe săptămână.",
+      "tokenNote": "Atenție: un program regulat rulează agentul automat, ceea ce consumă tokenuri AI (și cota furnizorului tău) de fiecare dată când se activează. Poți schimba sau dezactiva oricând."
+    },
+    "firstTask": {
+      "heading": "Înregistrează prima ta sarcină",
+      "subtitle": "Sarcinile sunt modul în care îi încredințezi muncă lui {{name}}. Scrie una acum și va ajunge în cabinetul tău, gata de rulare.",
+      "label": "Ce ar trebui să facă {{name}} mai întâi?",
+      "placeholder": "ex: Redactează un e-mail de bun venit pentru clienții noi",
+      "example1": "Rezumă-mi cele mai recente notițe",
+      "example2": "Redactează un plan de proiect",
+      "example3": "Cercetează primii noștri 3 concurenți",
+      "note": "Poți lăsa acest câmp gol și adăuga sarcini mai târziu. Nimic nu rulează până nu conectezi un furnizor AI."
+    },
+    "rail": {
+      "untitled": "Cabinetul tău",
+      "dataCaption": "Toate fișierele și notițele proiectului tău se află aici.",
+      "teamEmpty": "Niciun agent încă.",
+      "teamCaption": "Echipa ta AI lucrează aici.",
+      "tasksEmpty": "Nicio sarcină încă.",
+      "tasksCaption": "Munca pe care o încredințezi echipei tale apare aici.",
+      "assignedTo": "Atribuit lui {{name}}",
+      "you": "Tu"
+    },
+    "rooms": {
+      "office": {
+        "label": "Biroul",
+        "tagline": "Gestionează o afacere, un startup sau un proiect secundar.",
+        "workspaceLabel": "Numele companiei sau proiectului",
+        "workspacePlaceholder": "Acme Corp",
+        "descriptionLabel": "Ce faceți?",
+        "descriptionPlaceholder": "Realizăm un podcast despre startup-uri AI",
+        "departmentNoun": "Departament",
+        "teamSizeLabel": "Dimensiunea echipei",
+        "exampleAgents": {
+          "0": "CEO",
+          "1": "Editor"
+        }
+      },
+      "study": {
+        "label": "Studiu",
+        "tagline": "Al doilea creier — scriere, notițe, asistent personal.",
+        "workspaceLabel": "Numește-ți cabinetul",
+        "workspacePlaceholder": "Studiul meu",
+        "descriptionLabel": "În ce domenii ale vieții dorești ajutor?",
+        "descriptionPlaceholder": "Scriere, triaj e-mail, calendar, urmărirea obiceiurilor",
+        "departmentNoun": "Domeniu",
+        "exampleAgents": {
+          "0": "Asistent",
+          "1": "Bibliotecar"
+        }
+      },
+      "lab": {
+        "label": "Laborator de Cercetare",
+        "tagline": "Muncă academică, literatură, predare, teză.",
+        "workspaceLabel": "Numele spațiului de lucru",
+        "workspacePlaceholder": "Filosofia minții",
+        "descriptionLabel": "Care este domeniul tău sau ce cercetezi?",
+        "descriptionPlaceholder": "Fenomenologie, conștiință, predare Introducere în Filosofie",
+        "departmentNoun": "Domeniu",
+        "exampleAgents": {
+          "0": "Coordonator Cercetare",
+          "1": "Bibliotecar"
+        }
+      },
+      "family-room": {
+        "label": "Cameră de Familie",
+        "tagline": "Gospodărie, calendar familial, mese, copii.",
+        "workspaceLabel": "Numele gospodăriei",
+        "workspacePlaceholder": "Familia Nguyen",
+        "descriptionLabel": "Cine locuiește aici și ce gestionați?",
+        "descriptionPlaceholder": "Doi părinți, trei copii, două școli, un câine",
+        "departmentNoun": "Domeniu",
+        "teamSizeLabel": "Dimensiunea gospodăriei",
+        "exampleAgents": {
+          "0": "Manager de Casă",
+          "1": "Planificator"
+        }
+      },
+      "blank": {
+        "label": "Cameră goală",
+        "tagline": "Nimic încă. Adu-ți proprii agenți, propria formă.",
+        "workspaceLabel": "Numește-ți cabinetul",
+        "workspacePlaceholder": "Cabinetul meu",
+        "descriptionLabel": "Pentru ce este?",
+        "descriptionPlaceholder": "Orice — lasă gol dacă nu ești sigur încă",
+        "departmentNoun": "Grup",
+        "exampleAgents": {
+          "0": "Decizia ta"
+        }
+      }
+    },
+    "departments": {
+      "leadership": "Conducere",
+      "marketing": "Marketing",
+      "content": "Conținut",
+      "engineering": "Inginerie",
+      "product-and-design": "Produs și Design",
+      "business": "Afaceri",
+      "research": "Cercetare",
+      "finance-and-ops": "Finanțe și Operațiuni",
+      "personal": "Personal",
+      "second-brain": "Al doilea creier",
+      "writing": "Scriere",
+      "tools": "Instrumente",
+      "life-admin": "Administrare personală",
+      "from-the-office": "De la Birou",
+      "writing-and-notes": "Scriere și notițe",
+      "other": "Altele",
+      "household": "Gospodărie",
+      "admin": "Administrare",
+      "money": "Bani",
+      "product": "Produs",
+      "design": "Design",
+      "sales": "Vânzări",
+      "support": "Suport",
+      "analytics": "Analiză",
+      "finance": "Finanțe",
+      "legal": "Juridic",
+      "people": "Oameni"
+    },
+    "demo": {
+      "greeting": {
+        "office": "Bună dimineața, echipă! Bun venit la {{workspace}}. Să începem în forță.",
+        "study": "Bună dimineața. Al doilea creier este online — bun venit înapoi la {{home}}.",
+        "lab": "Biroul de cercetare este gata — „{{workspace}}”. Ce explorăm azi?",
+        "family-room": "Sediul central pornește — {{home}}. Să ne asigurăm că toată lumea ajunge unde trebuie.",
+        "blank": "Pagină albă — „{{workspace}}”. Ce vrei să construiești aici, {{home}}?"
+      },
+      "assign": "{{name}}, te poți ocupa de {{topic}}?",
+      "fallbackTopic": "ce urmează",
+      "office": {
+        "replies": {
+          "0": "Mă ocup. Voi avea o prezentare generală gata până la sfârșitul zilei.",
+          "1": "Deja schițez un plan. Îl voi distribui în #content în scurt timp.",
+          "2": "Configurez fluxurile de lucru fundamentale acum. Arată bine până acum."
+        },
+        "topics": {
+          "0": "cercetare concurență",
+          "1": "calendarul de conținut",
+          "2": "planul de lansare"
+        },
+        "closing": "Energie grozavă, tuturor. Să facem din aceasta o primă săptămână puternică."
+      },
+      "study": {
+        "replies": {
+          "0": "Voi tria inbox-ul și voi scoate la iveală ce necesită intervenția ta.",
+          "1": "Calendarul este liber până la ora 15:00 — o fereastră bună pentru scris.",
+          "2": "Am legat deja trei notițe noi la indexul 'Zilnic'."
+        },
+        "topics": {
+          "0": "triage-ul inbox-ului de azi",
+          "1": "scrisul de săptămâna aceasta",
+          "2": "lista mea de lectură"
+        },
+        "closing": "Bine. Anunță-mă dacă e nevoie de mine — altfel, nu te voi deranja."
+      },
+      "lab": {
+        "replies": {
+          "0": "Extrag cea mai recentă lucrare pe acest subiect acum — rezumatul schiță într-o oră.",
+          "1": "Voi sincroniza bibliografia după aceasta și voi semnala duplicatele.",
+          "2": "Schița prelegerii pentru joi este aproape gata de revizuire."
+        },
+        "topics": {
+          "0": "revizuirea literaturii",
+          "1": "Pregătirea prelegerii de joi",
+          "2": "lista de referințe"
+        },
+        "closing": "Ține-mă la curent. Voi revizui tot ce trimiți până la sfârșitul zilei."
+      },
+      "family-room": {
+        "replies": {
+          "0": "Programul pare liber după ora 4. Semnalizez suprapunerile la predări.",
+          "1": "Meniul săptămânal schițat — lista de cumpărături e gata de revizuit.",
+          "2": "Activitățile copiilor sincronizate. Seara de DnD rămâne vineri."
+        },
+        "topics": {
+          "0": "programul de azi",
+          "1": "planul de mese",
+          "2": "activitățile copiilor"
+        },
+        "closing": "Mulțumesc tuturor. Anunță-mă dacă se schimbă ceva pe parcursul zilei."
+      },
+      "blank": {
+        "replies": {
+          "0": "Am înțeles. Gata oricând ești și tu.",
+          "1": "În așteptare.",
+          "2": "Voi aștepta instrucțiuni."
+        },
+        "topics": {
+          "0": "primul lucru",
+          "1": "ce urmează",
+          "2": "întrebarea deschisă"
+        },
+        "closing": "Când ești gata, spune-ne ce să facem."
+      }
+    },
+    "team": {
+      "browseAll": "Răsfoiește tot",
+      "browseCabinets": "Răsfoiește cabinete",
+      "cabinetNameLabel": "Nume cabinet",
+      "cancel": "Anulează",
+      "importButton": "Importă",
+      "importFailed": "Import eșuat",
+      "importFailedConnection": "Import eșuat. Verifică-ți conexiunea.",
+      "importTitle": "Importă {{name}}",
+      "pickAgents": "Alege-ți agenții",
+      "required": "Obligatoriu",
+      "subtitle": "Fiecare cabinet este o echipă AI — agenți, sarcini și o bază de cunoștințe partajată, lucrând împreună ca un tot unitar.",
+      "heading": "Construiește-ți <accent>echipa</accent>",
+      "nameLabel": "Nume agent",
+      "namePlaceholder": "ex: Editor, Cercetător, Asistent",
+      "roleLabel": "Rol",
+      "rolePlaceholder": "ex: Asistent de scriere",
+      "instructionsLabel": "Ce ar trebui să facă acest agent?",
+      "instructionsPlaceholder": "Descrie cum ar trebui să ajute. De exemplu: Redactează și editează paginile mele, menține tonul clar și prietenos și sugerează îmbunătățiri.",
+      "agentOptionalHint": "Opțional. Poți sări peste acest pas și adăuga agenți mai târziu din interiorul camerei.",
+      "agentCount_one": "{{count}} agent",
+      "agentCount_other": "{{count}} agenți",
+      "jobCount_one": "{{count}} sarcină",
+      "jobCount_other": "{{count}} sarcini",
+      "subCabinetCount_one": "{{count}} sub-cabinet",
+      "subCabinetCount_other": "{{count}} sub-cabinete",
+      "cabinetsImported_one": "{{count}} cabinet importat",
+      "cabinetsImported_other": "{{count}} cabinete importate",
+      "agentCount": "{{count}} agenți",
+      "cabinetsImported": "{{count}} cabinete importate",
+      "jobCount": "{{count}} sarcini",
+      "subCabinetCount": "{{count}} sub-cabinete"
+    }
+  },
+  "search": {
+    "title": "Căutare",
+    "placeholder": "Căutați pagini, agenți, sarcini…",
+    "clearQuery": "Șterge interogarea",
+    "noCommands": "Nicio comandă nu se potrivește.",
+    "scopes": {
+      "all": "Toate",
+      "pages": "Pagini",
+      "agents": "Agenți",
+      "tasks": "Sarcini"
+    },
+    "groups": {
+      "pages": "Pagini",
+      "agents": "Agenți",
+      "tasks": "Sarcini"
+    }
+  },
+  "settings": {
+    "language": {
+      "title": "Limbă",
+      "description": "Schimbă limba și direcția de citire. Paginile existente își păstrează direcția per document.",
+      "english": "Engleză",
+      "hebrew": "Ebraică",
+      "chineseSimplified": "Chineză simplificată",
+      "chineseTraditional": "Chineză tradițională",
+      "moreLanguages": "Mai multe limbi",
+      "moreLanguagesHint": "Apasă pe oricare pentru a ne spune că dorești Cabinet în acea limbă — le vom prioritiza pe cele mai solicitate.",
+      "comingSoon": "În curând",
+      "requestSubmitted": "Mulțumim! Am notat solicitarea ta pentru {{language}}. Vom prioritiza limbile cele mai solicitate.",
+      "requestFailed": "Nu s-a putut contacta serverul. Te rugăm să încerci din nou într-un moment."
+    },
+    "appearance": {
+      "title": "Aspect",
+      "theme": "Temă",
+      "themeDescription": "Alege o temă pentru interfață.",
+      "matchSystem": "Potrivește cu sistemul",
+      "matchSystemDescription": "Comută automat cu aspectul sistemului de operare.",
+      "lightThemes": "Teme deschise",
+      "darkThemes": "Teme închise",
+      "lightVariant": "Variantă deschisă",
+      "darkVariant": "Variantă închisă",
+      "sidebar": "Bară laterală",
+      "showHiddenFiles": "Afișează fișierele ascunse",
+      "sidebarDescription": "Configurează modul în care fișierele sunt afișate în bara laterală.",
+      "showHiddenFilesHint": "Afișează fișierele și folderele care încep cu un punct (ex. .env, .git)"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "providers": "Furnizori",
+      "skills": "Abilități",
+      "storage": "Stocare",
+      "integrations": "Integrări",
+      "notifications": "Notificări",
+      "appearance": "Aspect",
+      "updates": "Actualizări",
+      "about": "Despre"
+    },
+    "page": {
+      "title": "Setări",
+      "refresh": "Reîmprospătare",
+      "groupYou": "Tu",
+      "groupWorkspace": "Spațiu de lucru",
+      "groupApp": "Aplicație"
+    },
+    "common": {
+      "copyToClipboard": "Copiază în clipboard",
+      "categoriesAriaLabel": "Categorii de setări",
+      "loading": "Se încarcă…",
+      "connect": "Conectare",
+      "recommended": "Recomandat"
+    },
+    "integrationsPreview": {
+      "comingSoon": "În curând",
+      "hint": "Conectarea integrărilor externe și a instrumentelor încorporate este pe drum."
+    },
+    "storage": {
+      "dataDirectory": "Director de date",
+      "restartRequired": "Este necesară repornirea",
+      "dataDirectoryDescription": "Tot conținutul Bazei de cunoștințe este stocat în acest director. Modificarea căii necesită o repornire.",
+      "restartHint": "Directorul de date se va schimba după ce reporniți Cabinet.",
+      "currentPath": "Cale curentă",
+      "loadingPath": "Se încarcă...",
+      "changeDirectory": "Schimbă directorul",
+      "directoryPlaceholder": "/cale/către/date",
+      "browse": "Răsfoiește",
+      "save": "Salvează",
+      "openInFinder": "Deschide în Finder",
+      "envVarHint1": "Puteți seta și ",
+      "envVarHint2": " variabila de mediu, care are prioritate față de această setare.",
+      "failedToSave": "Salvare eșuată.",
+      "failedToSaveDir": "Salvarea directorului de date a eșuat."
+    },
+    "updates": {
+      "checking": "Se verifică actualizări pentru Cabinet…"
+    },
+    "providers": {
+      "title": "Furnizori de agenți",
+      "defaultModel": "Model implicit",
+      "setupGuide": "Ghid de configurare",
+      "troubleshoot": "Depanare furnizori AI",
+      "subtitle": "Configurează furnizorii de agenți AI. Agenții CLI rulează prin terminal, agenții API folosesc apeluri API directe.",
+      "defaultRuntime": "Execuție implicită",
+      "defaultRuntimeHint": "Conversațiile generale și rulările de rezervă folosesc acest furnizor/model/efort.",
+      "cliAgents": "Agenți CLI",
+      "apiAgents": "Agenți API",
+      "ready": "Gata",
+      "installedNotLoggedIn": "Instalat, dar nu autentificat",
+      "notInstalled": "Neinstalat",
+      "emptyMatrix": "Niciun furnizor nu este configurat. Adaugă unul mai jos."
+    },
+    "notifications": {
+      "channels": "Canale de notificare",
+      "alertRules": "Reguli de alertă",
+      "alwaysOn": "Întotdeauna activ",
+      "comingSoon": "În curând",
+      "emailPlaceholder": "tu@companie.com",
+      "channelsHint": "Configurează cum primești alerte când agenții necesită atenția ta.",
+      "rulesHint": "Notificările sunt declanșate automat pentru aceste evenimente:",
+      "previewHint": "Notificări push în browser, Telegram, Slack și e-mail.",
+      "channelPushName": "Notificări push în browser",
+      "channelPushDesc": "Alerte instantanee când fila Cabinet este deschisă sau PWA este instalat",
+      "channelTelegramName": "Telegram",
+      "channelTelegramDesc": "Notificări mobile instantanee prin botul Telegram",
+      "channelSlackName": "Webhook Slack",
+      "channelSlackDesc": "Redirecționează alertele către canalul Slack al echipei tale",
+      "channelEmailName": "Rezumat e-mail",
+      "channelEmailDesc": "Rezumat grupat al alertelor și activității agenților",
+      "ruleAlertsEvent": "Mesaje pe canalul #alerts",
+      "ruleAlertsDesc": "Orice agent care postează pe canalul de alerte",
+      "ruleMentionsEvent": "Mențiuni @human",
+      "ruleMentionsDesc": "Când un agent menționează @human pe orice canal",
+      "ruleFloorEvent": "Pragul minim al obiectivului depășit",
+      "ruleFloorDesc": "Un obiectiv scade sub pragul său minim",
+      "ruleHealthEvent": "Sănătatea agentului s-a degradat",
+      "ruleHealthDesc": "3+ eșecuri consecutive de heartbeat"
+    },
+    "about": {
+      "cabinet": "Cabinet",
+      "version": "Versiune",
+      "release": "Lansare",
+      "framework": "Cadru",
+      "storage": "Stocare",
+      "privacy": "Confidențialitate",
+      "telemetry": "Telemetrie anonimă de utilizare",
+      "tagline": "Bază de cunoștințe AI-first auto-găzduită și sistem de operare pentru startup-uri.",
+      "frameworkValue": "Next.js (App Router)",
+      "storageValue": "Sistem de fișiere local",
+      "aiLabel": "AI",
+      "aiValue": "Susținut de CLI-uri AI locale",
+      "philosophy": "Tot conținutul este stocat ca fișiere markdown pe disc. Oamenii definesc intenția. Agenții fac treaba. Baza de cunoștințe este memoria partajată între ambele.",
+      "privacyBody": "Cabinet trimite telemetrie anonimă de utilizare pentru a ne ajuta să îmbunătățim produsul. Nu sunt colectate conținuturi de fișiere, căi, prompturi sau secrete.",
+      "privacyLink": "Ce se colectează?",
+      "telemetryEnvDisabled": "Dezactivat de CABINET_TELEMETRY_DISABLED=1 (variabilă de mediu).",
+      "telemetryHint": "Doar numărul de evenimente, versiuni și informații despre platformă. Dezactivați pentru a opri trimiterea.",
+      "cabinetCloud": "Cabinet Cloud",
+      "cloudBody": "Conectați-vă la Cabinet de oriunde, în timp ce echipa dvs. AI lucrează 24/7 pentru dvs. Introduceți-vă e-mailul mai jos și vă vom anunța când Cabinet Cloud va fi disponibil.",
+      "cloudAlready": "Sunteți deja pe listă — vă vom contacta.",
+      "cloudSuccess": "Sunteți pe listă. Vă vom trimite un e-mail când Cabinet Cloud va fi disponibil.",
+      "cloudSending": "Se trimite…",
+      "cloudJoinWaitlist": "Alăturați-vă listei de așteptare",
+      "cloudError": "Ceva nu a mers bine. Verificați e-mailul și încercați din nou.",
+      "connectTitle": "Conectare",
+      "connectBody": "Obțineți ajutor, oferiți feedback sau doar salutați.",
+      "joinDiscord": "Alăturați-vă pe Discord"
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Nume",
+      "namePlaceholder": "Jane",
+      "displayName": "Nume afișat",
+      "role": "Rol",
+      "rolePlaceholder": "Constructor",
+      "avatar": "Avatar",
+      "accentColor": "Culoare de accent",
+      "hexPlaceholder": "#hex",
+      "fallbackIcon": "Pictogramă de rezervă",
+      "useIconInstead": "Folosește pictograma în loc",
+      "searchAvatars": "Căutați avatare…",
+      "searchIcons": "Căutați pictograme…",
+      "howAppear": "Cum apari în conversații și în aplicație.",
+      "youFallback": "Tu",
+      "displayNameHint": "Afișat în conversații. Implicit este Nume.",
+      "iconHint": "Folosit când nu este setată nicio imagine de avatar. Faceți clic din nou pentru a șterge.",
+      "tintHint": "Colorează avatarul de rezervă când nu este setată nicio imagine.",
+      "save": "Salvează",
+      "saving": "Se salvează…",
+      "saved": "Salvat",
+      "browseAll": "Răsfoiește tot ({{count}})",
+      "showFavorites": "Arată favoritele",
+      "showFewer": "Arată mai puține"
+    },
+    "workspace": {
+      "title": "Spațiu de lucru",
+      "name": "Nume spațiu de lucru",
+      "namePlaceholder": "Cabinetul meu",
+      "description": "Descriere",
+      "descriptionPlaceholder": "Ce faci?",
+      "teamSize": "Dimensiune echipă",
+      "teamSizePlaceholder": "Solo / 2–5 / 6–20 / 20+",
+      "subtitle": "Capturat în timpul integrării. Agenții le citesc când planifică munca."
+    }
+  },
+  "sidebar": {
+    "settings": "Setări",
+    "createPage": "Creează pagină",
+    "newPage": "Pagină nouă",
+    "newAgent": "Agent nou",
+    "newTask": "Sarcină nouă",
+    "archive": "Arhivă",
+    "trash": "Coș de gunoi",
+    "search": "Căutare",
+    "agents": "Agenți",
+    "tasks": "Sarcini",
+    "missions": "Misiuni",
+    "drawerData": "Date",
+    "drawerAgents": "Echipă",
+    "drawerTasks": "Sarcini",
+    "goHome": "Mergi la pagina principală",
+    "brandWord": "",
+    "refresh": "Reîmprospătează bara laterală",
+    "refreshDescription": "Reîmprospătează bara laterală (recitește folderul de date)",
+    "collapseSidebar": "Restrânge bara laterală",
+    "expandSidebar": "Extinde bara laterală",
+    "resizeHandle": "Redimensionează bara laterală — dublu clic pentru a reseta",
+    "resetWidth": "Dublu clic pentru a reseta lățimea",
+    "refreshedNoChanges": "Reîmprospătat — fără modificări.",
+    "refreshedWithChanges": "Reîmprospătat — {{added}} adăugate, {{removed}} eliminate.",
+    "refreshFailed": "Reîmprospătare eșuată.",
+    "searchPlaceholder": "Căută fișiere…",
+    "searchSearching": "Se caută…",
+    "searchNoResults": "Niciun fișier nu corespunde cu „{{query}}”"
+  },
+  "status": {
+    "bar": {
+      "ariaLabel": "Bară de stare",
+      "askAiAriaLabel": "Cere AI-ului să editeze această pagină",
+      "askAiPlaceholder": "Cum editez această pagină?",
+      "sendHint": "↵ pentru a trimite"
+    },
+    "server": {
+      "serverStatusAriaLabel": "Stare server — clic pentru detalii",
+      "checking": "Se verifică starea serverului…",
+      "allRunning": "Toate sistemele funcționează",
+      "appNotResponding": "Serverul aplicației nu răspunde",
+      "daemonDownNoProviders": "Daemonul nu răspunde; niciun furnizor de agenți disponibil",
+      "daemonDown": "Daemonul nu răspunde",
+      "noProviders": "Niciun furnizor de agenți disponibil",
+      "checkingShort": "Verificare…",
+      "online": "Online",
+      "offline": "Offline",
+      "degraded": "Degradat",
+      "allSystemsRunning": "Toate sistemele funcționează",
+      "serviceDisruption": "Întrerupere serviciu",
+      "appServer": "Server aplicație",
+      "daemon": "Daemon",
+      "agentProviders": "Furnizori de agenți",
+      "running": "Funcționează",
+      "down": "Inactiv",
+      "lastSeen": "Ultima vizualizare: {{when}}",
+      "appWorking": "Paginile, editorul, căutarea și gestionarea fișierelor funcționează.",
+      "appDown": "Paginile, editorul, căutarea și salvarea sunt indisponibile. Puteți citi în continuare conținutul cache.",
+      "daemonWorking": "Agenții AI, sarcinile programate și terminalul web funcționează.",
+      "daemonDownDescription": "Agenții AI, sarcinile programate și terminalul web sunt indisponibile. Editarea paginilor funcționează în continuare.",
+      "available": "Disponibil",
+      "noneReady": "Niciunul pregătit",
+      "providerReady": "Pregătit",
+      "providerNotLoggedIn": "Nu sunteți autentificat",
+      "providerNotInstalled": "Nu este instalat",
+      "install": "Instalează",
+      "howToFix": "Cum se remediază"
+    },
+    "save": {
+      "retryTitle": "Faceți clic pentru a reîncerca salvarea eșuată",
+      "retryAriaLabel": "Salvare eșuată — faceți clic pentru a reîncerca",
+      "autoSaving": "Salvare automată…",
+      "forceSave": "Salvare forțată: ⌘S",
+      "editing": "Editare — salvarea automată va rula când întrerupeți",
+      "wordCountTitle": "Număr de cuvinte pentru această pagină (sintaxa markdown exclusă)",
+      "savedJustNow": "chiar acum",
+      "savedNever": "niciodată",
+      "savedAgoSeconds": "acum {{n}}s",
+      "savedAgoMinutes": "acum {{n}}m",
+      "savedAgoHours": "acum {{n}}h",
+      "savedAgoDays": "acum {{n}}z",
+      "saveFailedRetry": "Salvare eșuată — reîncearcă",
+      "savingText": "Se salvează…",
+      "savedText": "Salvat",
+      "editingText": "Se editează…",
+      "savedAgo": "Salvat · {{ago}}",
+      "word": "cuvânt",
+      "words": "cuvinte"
+    },
+    "git": {
+      "statusModified": "Modificat",
+      "statusNew": "Nou",
+      "statusAdded": "Adăugat",
+      "statusDeleted": "Șters",
+      "statusRenamed": "Redenumit",
+      "commitMessageAriaLabel": "Mesaj de commit"
+    },
+    "help": {
+      "menuAriaLabel": "Deschide meniul Ajutor și comunitate",
+      "menuTitle": "Ajutor și comunitate",
+      "demos": "Demo-uri, videoclipuri și ghiduri",
+      "discord": "Discută pe Discord",
+      "discordSubtitle": "Suport și feedback",
+      "github": "Contribuie pe GitHub",
+      "githubSubtitle": "Sursă, probleme, PR-uri",
+      "ifUseful": "Dacă ți se pare util",
+      "label": "Ajutor",
+      "starsAriaLabel": "{{count}} stele GitHub — deschide Cabinet pe GitHub",
+      "starsTitle": "{{count}} stele GitHub — dă star Cabinet pe GitHub",
+      "share": "Distribuie",
+      "shareSubtitle": "Copiază un link de invitație și răspândește vestea",
+      "shareCopied": "Ești minunat, {{name}} 🩷 Mulțumim că aduci viitori membri Cabinet. Link copiat, distribuie-l!",
+      "shareFailed": "Nu s-a putut copia linkul",
+      "friend": "prieten"
+    },
+    "git2": {
+      "allCommitted": "Totul comitat",
+      "uncommittedFile": "{{count}} fișier necomitat",
+      "uncommittedFiles": "{{count}} fișiere necomitate",
+      "uncommittedFilesAria": "{{count}} fișier(e) necomitat(e) — apasă pentru a vedea lista",
+      "uncommittedFileTip": "Click pentru a vedea fișierul necomitat",
+      "uncommittedFilesTip": "Click pentru a vedea fișierele necomitate",
+      "uncommittedFilesHeading": "{{count}} fișier necomitat",
+      "uncommittedFilesHeadingPlural": "{{count}} fișiere necomitate",
+      "truncatedHint": "Doar primele {{count}} fișiere sunt afișate — rulează `git status` pentru lista completă.",
+      "commitDefault": "Actualizează {{count}} fișier",
+      "commitDefaultPlural": "Actualizează {{count}} fișiere",
+      "committing": "Se comite…",
+      "commit": "Comite",
+      "commitFailed": "Comitere eșuată",
+      "sync": "Sincronizează",
+      "syncTitle": "Preia cele mai recente de pe GitHub & reîmprospătează",
+      "syncTitleWithLast": "Preia cele mai recente de pe GitHub & reîmprospătează. Ultima sincronizare: {{when}}.",
+      "syncAriaLabel": "Preia cele mai recente modificări de pe GitHub și reîmprospătează",
+      "syncAriaLabelWithLast": "Preia cele mai recente modificări de pe GitHub și reîmprospătează. Ultima sincronizare: {{when}}.",
+      "terminal": "Terminal",
+      "openTerminal": "Deschide terminalul",
+      "newTerminalTab": "Filă terminal nouă",
+      "pulling": "Se extrage…",
+      "pulled": "Actualizat de la distanță",
+      "upToDate": "La zi",
+      "pullFailed": "Extragere eșuată"
+    },
+    "update2": {
+      "updateAvailable": "Actualizare {{version}} disponibilă",
+      "updateAvailableTip": "Cabinet {{version}} este disponibil"
+    },
+    "common": {
+      "dismiss": "Ignoră",
+      "close": "Închide",
+      "openSettings": "Deschide Setări pentru a revizui actualizarea instalată"
+    },
+    "misc": {
+      "restartToFinishUpdate": "Reporniți pentru a finaliza actualizarea"
+    }
+  },
+  "tasks": {
+    "conversation": {
+      "restartFromOriginal": "Repornește această sarcină de la promptul inițial",
+      "markAsDone": "Marchează această sarcină ca finalizată",
+      "viewAriaLabel": "Vizualizare sarcină",
+      "terminal": "Terminal",
+      "transcript": "Transcrierea",
+      "details": "Detalii",
+      "transcriptTitle": "Sesiune nativă Claude Code JSONL",
+      "transcriptHint": "Citește ~/.claude/projects/<slug>/<session>.jsonl",
+      "back": "Înapoi",
+      "copyPrompt": "Copiază promptul original",
+      "gracefulExit": "Închide grațios CLI-ul (scrie /exit în PTY)",
+      "sendSigterm": "Trimite SIGTERM procesului PTY în execuție",
+      "moreActions": "Mai multe acțiuni",
+      "ptyMode": "Rulează în modul terminal (PTY)",
+      "compactContext": "Comprimă interacțiunile anterioare într-un rezumat pentru a elibera fereastra de context",
+      "noSummary": "Niciun rezumat încă.",
+      "sessionEnded": "Sesiune încheiată — tastează pentru a continua în același terminal.",
+      "terminalLive": "Terminal activ. Următorul tău prompt va fi pus în coadă după finalizarea acestei interacțiuni."
+    }
+  },
+  "tour": {
+    "ariaLabel": "Descoperă turul Cabinet",
+    "skip": "Omite",
+    "skipAriaLabel": "Omite turul",
+    "back": "Înapoi",
+    "next": "Următorul",
+    "writeFirstTask": "Scrie prima ta sarcină",
+    "goToSlide": "Mergi la diapozitivul {{n}}",
+    "starterTask": "Hai să discutăm despre obiectivele mele și ce vreau să realizez aici, apoi să le înregistrăm într-o nouă pagină Despre.",
+    "savingTo": "Se salvează în ",
+    "introTitle": "Descoperă-ți <accent>Cabinet</accent>.",
+    "introSubtitle": "Echipa ta AI. Baza ta de cunoștințe. Un singur loc.",
+    "cabinetTitle": "Cabinet"
+  },
+  "taskRail": {
+    "title": "Sarcini recente și în execuție",
+    "hide": "Ascunde bara de sarcini",
+    "show": "Afișează bara de sarcini",
+    "empty": "Nicio sarcină",
+    "itemRunning": "{{title}} · în execuție · {{when}}",
+    "itemNeedsReply": "{{title}} · necesită răspuns",
+    "itemFailed": "{{title}} · eșuat · {{when}}",
+    "itemDone": "{{title}} · finalizat · {{when}}",
+    "itemArchived": "{{title}} · arhivat",
+    "itemDefault": "{{title}} · {{when}}",
+    "toggleRunning": "{{count}} în execuție — afișează bara de sarcini"
+  },
+  "chrome": {
+    "nav": {
+      "home": "Acasă",
+      "agents": "Agenți",
+      "tasks": "Sarcini",
+      "ai": "AI",
+      "menu": "Meniu",
+      "primaryAriaLabel": "Principal"
+    },
+    "returnTo": {
+      "task": "Sarcină",
+      "tasks": "Sarcini",
+      "agent": "Agent",
+      "agents": "Agenți",
+      "cabinet": "Cabinet",
+      "home": "Acasă",
+      "settings": "Setări",
+      "registry": "Registru",
+      "back": "Înapoi",
+      "backTo": "Înapoi la {{label}}"
+    },
+    "theme": {
+      "defaultHeader": "Implicit",
+      "dark": "Întunecat",
+      "darkThemes": "Teme întunecate",
+      "lightThemes": "Teme luminoase"
+    },
+    "update": {
+      "restartTitle": "Reporniți Cabinet pentru a finaliza actualizarea",
+      "availableTitle": "Cabinet {{version}} este disponibil",
+      "updatesTitle": "Actualizări Cabinet",
+      "description": "Cabinet verifică automat dacă există versiuni noi. Deși produsul este încă experimental, păstrați o copie a datelor înainte de a instala actualizări.",
+      "later": "Mai târziu",
+      "releaseNotes": "Note de versiune"
+    },
+    "daemon": {
+      "fixHintElectron": "Închideți și relansați Cabinet pentru a reporni demonul agentului.",
+      "fixHintDev": "Rulați `npm run dev:daemon` (sau reporniți `npm run dev:all`) pentru a reporni demonul agentului.",
+      "notResponding": "Demonul agentului nu răspunde.",
+      "willFail": "Agenții, sarcinile și cererile AI vor eșua până când acesta va reveni. {{fixHint}}"
+    }
+  }
+}

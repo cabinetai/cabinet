@@ -52,7 +52,52 @@ cd cabinet
 npm run dev:all
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The onboarding wizard builds your custom AI team in 5 questions.
+Open [http://localhost:4000](http://localhost:4000). The onboarding wizard builds your custom AI team in 5 questions.
+
+---
+
+## Install, update, uninstall
+
+Cabinet runs entirely through `npx` — no global install needed. The CLI is the [`cabinetai`](https://www.npmjs.com/package/cabinetai) package; `create-cabinet` is a thin wrapper around it.
+
+### Install / create
+
+```bash
+npx create-cabinet@latest          # create a cabinet and start it
+npx cabinetai create my-startup    # just create, don't start
+npx cabinetai run                  # start Cabinet in the current dir
+```
+
+On first run, Cabinet downloads the app to `~/.cabinet/app/v{version}/` and installs its dependencies there. Your cabinet directory is just a folder of markdown files — put it anywhere.
+
+### Update
+
+```bash
+npx cabinetai update               # check for and install a newer app version
+```
+
+The CLI compares your installed app version against `cabinet-release.json` from the latest GitHub Release.
+
+### Uninstall / remove
+
+```bash
+npx cabinetai uninstall            # remove cached app versions only
+npx cabinetai uninstall --all      # also remove global state + telemetry data
+npx cabinetai uninstall --yes      # skip the confirmation prompt
+npx cabinetai remove               # alias for uninstall
+```
+
+The command prints a summary of what will be deleted and asks for confirmation before doing anything. **Your cabinet directories and their data are never touched — those you'd delete manually.**
+
+`--all` additionally removes the platform-specific telemetry directory:
+
+- macOS: `~/Library/Application Support/cabinet-telemetry/`
+- Windows: `%APPDATA%\cabinet-telemetry\`
+- Linux: `$XDG_CONFIG_HOME/cabinet/` (falls back to `~/.config/cabinet/`)
+
+To wipe Cabinet completely, run `uninstall --all` and then `rm -rf` your cabinet directories yourself.
+
+See [docs/CABINETAI.md](docs/CABINETAI.md) for the full CLI reference.
 
 ---
 
@@ -85,9 +130,10 @@ Cabinet is built around a few principles that we think matter deeply for the fut
 |---|---|
 | **WYSIWYG + Markdown** | Rich text editing with Tiptap. Tables, code blocks, slash commands. |
 | **AI Agents** | Each has goals, skills, scheduled jobs. Watch them work like a real team. |
+| **Skills** | Browse and install from skills.sh or any GitHub repo. Attach per agent, or `@`-mention in the composer to scope to a single task. |
 | **Scheduled Jobs** | Cron-based agent automation. Reddit scout every 6 hours. Weekly reports on Monday. |
 | **Embedded HTML Apps** | Drop an `index.html` in any folder — it renders as an iframe. Full-screen mode. |
-| **Web Terminal** | Full local AI CLI terminal in the browser. xterm.js + node-pty. |
+| **Web Terminal** | Interactive local AI CLI terminal in the browser. Kept for direct sessions, debugging, and future terminal-native features such as tmux-style Cabinet workflows. |
 | **File-Based Everything** | No database. Markdown on disk. Your data is always yours, always portable. |
 | **Git-Backed History** | Every save auto-commits. Full diff viewer. Restore any page to any point in time. |
 | **Missions & Tasks** | Break goals into missions. Track progress with Kanban boards. |
@@ -121,7 +167,7 @@ This is the biggest difference between Cabinet and tools like Obsidian or Notion
 
 ## Hire your AI team in 5 questions
 
-Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs, and a workspace in the knowledge base.
+Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs, recommended skills, and a workspace in the knowledge base.
 
 | Department | Agents |
 |---|---|
@@ -144,6 +190,17 @@ Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs
 
 ---
 
+## AI Runtime Today
+
+Cabinet no longer treats the browser terminal as the only way to run AI work.
+
+- **Tasks, jobs, and heartbeats** now run through a provider adapter layer with persisted conversations and transcript-driven live views.
+- **Per-run overrides** can choose provider, model, and reasoning effort, while personas and jobs can still inherit defaults.
+- **Current defaults** are structured local adapters: `claude_local` for Claude Code and `codex_local` for Codex CLI.
+- **The web terminal is staying** as a first-class interactive surface for direct CLI sessions and future terminal-native features such as Cabinet-managed tmux-like workspaces.
+
+---
+
 ## Architecture
 
 ```
@@ -154,7 +211,8 @@ cabinet/
     stores/          -> Zustand state management
     lib/             -> Storage, markdown, git, agents, jobs
   server/
-    cabinet-daemon.ts -> WebSocket + job scheduler + agent executor
+    cabinet-daemon.ts -> WebSocket + job scheduler + structured adapters + agent executor
+    pty/              -> PTY session module (spawn, Claude lifecycle, ansi)
   data/
     .agents/.library/ -> 20 pre-built agent templates
     getting-started/  -> Default KB page
@@ -166,7 +224,7 @@ cabinet/
 
 ## Requirements
 
-- **Node.js** 20+
+- **Node.js** 22+ (LTS). The repo ships an `.nvmrc` — run `nvm use` to auto-switch. Node 20 still works but produces an `EBADENGINE` warning from a transitive `chevrotain@12` pulled in by mermaid.
 - At least one supported CLI provider:
   - **Claude Code CLI** (`npm install -g @anthropic-ai/claude-code`)
   - **Codex CLI** (`npm install -g @openai/codex` or `brew install --cask codex`)
@@ -186,8 +244,8 @@ cp .env.example .env.local
 ## Commands
 
 ```bash
-npm run dev          # Next.js dev server (port 3000)
-npm run dev:daemon   # Terminal + job scheduler (port 3001)
+npm run dev          # Next.js dev server (port 4000 by default)
+npm run dev:daemon   # Unified daemon: structured runs, terminal sessions, WebSockets, scheduler (port 4100 by default)
 npm run dev:all      # Both servers
 npm run build        # Production build
 npm run start        # Production mode (both servers)
@@ -210,6 +268,24 @@ npx create-cabinet my-startup
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for breaking changes, or follow the full release history on the [documentation site](https://runcabinet.com).
+
+## Privacy
+
+Cabinet sends anonymous usage telemetry by default (event counts, versions,
+platform — never file contents, paths, prompts, or secrets).
+
+To turn it off, pick one:
+
+```bash
+export CABINET_TELEMETRY_DISABLED=1   # env var (any shell session)
+```
+
+…or open **Settings → Privacy** and toggle **Send anonymous usage telemetry**
+off. To also wipe the local install ID and queue, run
+`npx cabinetai uninstall --all`.
+
+See [TELEMETRY.md](TELEMETRY.md) for the full event list, payload schema,
+and where data is stored.
 
 ## Community
 
