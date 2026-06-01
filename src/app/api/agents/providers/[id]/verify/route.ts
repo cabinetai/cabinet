@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import { NextResponse } from "next/server";
 import { providerRegistry } from "@/lib/agents/provider-registry";
-import { ADAPTER_RUNTIME_PATH } from "@/lib/agents/adapters/utils";
+import { withAdapterRuntimeEnv } from "@/lib/agents/adapters/utils";
 import {
   getConfiguredDefaultProviderId,
   readProviderSettings,
@@ -199,10 +199,7 @@ function runShellCommand(command: string): Promise<{
 }> {
   return new Promise((resolve) => {
     const child = spawn("/bin/sh", ["-c", command], {
-      env: {
-        ...process.env,
-        PATH: ADAPTER_RUNTIME_PATH,
-      },
+      env: withAdapterRuntimeEnv(process.env),
       stdio: ["ignore", "pipe", "pipe"],
     });
 
