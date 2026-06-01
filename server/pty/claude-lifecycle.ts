@@ -180,7 +180,11 @@ async function runStreamCabinetExtraction(session: PtySession): Promise<void> {
     type: "task.updated",
     taskId: session.id,
     cabinetPath: meta.cabinetPath,
-    payload: { streaming: true, streamExtracted: true },
+    payload: {
+      streaming: true,
+      streamExtracted: true,
+      summary: parsed.summary,
+    },
   });
 }
 

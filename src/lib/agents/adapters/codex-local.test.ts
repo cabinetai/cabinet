@@ -111,6 +111,33 @@ exit 1
   assert.match(classified?.hint ?? "", /available on this account's plan/i);
 });
 
+test("codexLocalAdapter surfaces reasoning-only turns when no agent_message arrives", async () => {
+  const scriptPath = await createExecutableScript(`#!/bin/sh
+cat >/dev/null
+printf '%s\n' \
+  '{"type":"thread.started","thread_id":"thread-reason"}' \
+  '{"type":"turn.started"}' \
+  '{"type":"item.completed","item":{"id":"item_0","type":"reasoning","text":"**Drafting a short reply**"}}' \
+  '{"type":"item.completed","item":{"id":"item_1","type":"reasoning","text":"**Finalizing answer**"}}' \
+  '{"type":"turn.completed","usage":{"input_tokens":10,"output_tokens":4}}'
+`);
+
+  const result = await codexLocalAdapter.execute?.({
+    runId: "run-reason",
+    adapterType: "codex_local",
+    config: { command: scriptPath, model: "gpt-5.4-mini" },
+    prompt: "Say hi",
+    cwd: process.cwd(),
+    onLog: async () => {},
+  });
+
+  assert.ok(result);
+  assert.equal(result.exitCode, 0);
+  assert.match(result.output || "", /Drafting a short reply/i);
+  assert.match(result.output || "", /Finalizing answer/i);
+  assert.equal(result.summary, "Finalizing answer");
+});
+
 test("codexLocalAdapter suppresses codex tracing diagnostics (skill-load errors) from stderr", async () => {
   // Repro for the first-run report: a malformed host skill (invalid
   // SKILL.md YAML) makes codex log `<ts> ERROR codex_core::session: failed

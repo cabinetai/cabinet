@@ -26,6 +26,10 @@ import {
 } from "./conversation-turns";
 import { publishConversationEvent } from "./conversation-events";
 import { isLegacyAdapterType } from "./adapters/legacy-ids";
+import {
+  extractCodexJsonlDisplay,
+  resolveCodexConversationOutput,
+} from "./adapters/codex-stream";
 import { agentAdapterRegistry } from "./adapters/registry";
 import { discoverCabinetPaths } from "../cabinets/discovery";
 import { buildConversationInstanceKey } from "./conversation-identity";
@@ -1065,6 +1069,43 @@ function transcriptShowsStructuredFailure(
 }
 
 /**
+ * Structured runs can leave `meta.status === "running"` while `meta.summary`
+ * (stream/finalize) and/or transcript output are already present — Codex JSONL
+ * often has no ```cabinet``` fence in transcript.txt.
+ */
+export function inferStructuredStaleTerminalStatus(
+  meta: ConversationMeta,
+  transcript: string,
+  prompt: string
+): ConversationStatus | null {
+  if (meta.status !== "running") return null;
+  if (isLegacyAdapterType(meta.adapterType)) return null;
+
+  if (transcriptShowsStructuredFailure(transcript, meta.adapterType)) {
+    return "failed";
+  }
+
+  if (meta.summary?.trim() && !isPlaceholderCabinetValue(meta.summary)) {
+    return "completed";
+  }
+
+  if (transcriptShowsCompletedRun(transcript, prompt)) {
+    return "completed";
+  }
+
+  if (isCodexStructuredAdapter(meta.adapterType)) {
+    const display = extractCodexJsonlDisplay(transcript);
+    if (display.trim().length > 0) return "completed";
+  }
+
+  if (extractAgentTurnContent(transcript, prompt).trim().length > 0) {
+    return "completed";
+  }
+
+  return null;
+}
+
+/**
  * Heal conversations whose meta.json still says `running` after the daemon
  * session has already exited. `finalizeSessionConversation` can fail silently
  * (`.catch(() => {})` in the daemon); structured adapters like codex_local
@@ -1155,6 +1196,36 @@ async function reconcileStaleRunningMeta(
     const healed = await tryHeal(primary, "primary-session");
     if (healed) return healed;
 
+    const promptEarly = (await fileExists(promptPathFs(meta.id, meta.cabinetPath)))
+      ? await readFileContent(promptPathFs(meta.id, meta.cabinetPath))
+      : "";
+    const transcriptEarly = await readConversationTranscript(
+      meta.id,
+      meta.cabinetPath
+    );
+    const inferredEarly = inferStructuredStaleTerminalStatus(
+      meta,
+      transcriptEarly,
+      promptEarly
+    );
+    if (inferredEarly && primary.status === "running") {
+      const sessionsEarly = await listDaemonSessions();
+      const relatedEarly = sessionsEarly.filter(
+        (s) => s.id === meta.id || s.id.startsWith(`${meta.id}::`)
+      );
+      if (!relatedEarly.some((s) => !s.exited)) {
+        const healedInferred = await finalizeMetaFromDaemonOutput(
+          meta,
+          {
+            status: inferredEarly,
+            output: transcriptEarly.trim() || primary.output,
+          },
+          "structured-inferred-terminal"
+        );
+        if (healedInferred) return healedInferred;
+      }
+    }
+
     // Continue-turn runs use synthetic ids (`convId::tN::uuid`). The
     // conversation id poll won't see them via the primary lookup above.
     const sessions = await listDaemonSessions();
@@ -1220,18 +1291,20 @@ async function reconcileStaleRunningMeta(
         meta.id,
         meta.cabinetPath
       );
-      if (transcript.trim()) {
-        const completedRun = transcriptShowsCompletedRun(
-          transcript,
-          (await fileExists(promptPathFs(meta.id, meta.cabinetPath)))
-            ? await readFileContent(promptPathFs(meta.id, meta.cabinetPath))
-            : ""
-        );
+      const prompt = (await fileExists(promptPathFs(meta.id, meta.cabinetPath)))
+        ? await readFileContent(promptPathFs(meta.id, meta.cabinetPath))
+        : "";
+      const inferred = inferStructuredStaleTerminalStatus(
+        meta,
+        transcript,
+        prompt
+      );
+      if (inferred && (transcript.trim() || meta.summary?.trim())) {
         return finalizeMetaFromDaemonOutput(
           meta,
           {
-            status: completedRun ? "completed" : "failed",
-            output: transcript,
+            status: inferred,
+            output: transcript.trim() || undefined,
           },
           "structured-transcript-fallback"
         );
@@ -1292,6 +1365,20 @@ async function maybeResolveCompletedConversation(
         )) || meta
       );
     }
+    const inferred = inferStructuredStaleTerminalStatus(meta, transcript, prompt);
+    if (inferred) {
+      return (
+        (await finalizeConversation(
+          meta.id,
+          {
+            status: inferred,
+            output: transcript,
+            exitCode: inferred === "completed" ? 0 : 1,
+          },
+          cabinetPath
+        )) || meta
+      );
+    }
     return meta;
   }
   const parsed = parseCabinetBlock(transcript, prompt);
@@ -1331,6 +1418,30 @@ export async function writeConversationMeta(meta: ConversationMeta): Promise<voi
 // conversation so the UI refetch cadence stays sane.
 const TRANSCRIPT_EVENT_THROTTLE_MS = 500;
 const transcriptEventThrottle = new Map<string, number>();
+
+/**
+ * Ensure transcript.txt contains the full run output. Used on finalize and by
+ * the daemon before persisting meta so chat turn-1 reads are not stuck behind
+ * in-flight append chunks.
+ */
+export async function syncConversationTranscriptFromOutput(
+  id: string,
+  fullOutput: string,
+  cabinetPath?: string,
+  options?: { force?: boolean }
+): Promise<void> {
+  const trimmed = fullOutput.trim();
+  if (!trimmed) return;
+  await ensureDirectory(conversationDir(id, cabinetPath));
+  if (options?.force) {
+    await writeFileContent(transcriptPathFs(id, cabinetPath), fullOutput);
+    return;
+  }
+  const prior = await readConversationTranscript(id, cabinetPath);
+  if (!prior.trim() || trimmed.length >= prior.trim().length) {
+    await writeFileContent(transcriptPathFs(id, cabinetPath), fullOutput);
+  }
+}
 
 export async function appendConversationTranscript(
   id: string,
@@ -1400,6 +1511,8 @@ export async function finalizeConversation(
     status: ConversationStatus;
     exitCode?: number | null;
     output?: string;
+    /** Adapter one-liner when stdout display was empty (Codex `summary` field). */
+    adapterSummary?: string | null;
     /** Token usage for this first-turn run, written to `meta.tokens`. */
     tokens?: ConversationTokens;
     errorKind?: ConversationErrorKind | null;
@@ -1414,14 +1527,28 @@ export async function finalizeConversation(
 
   const hasPrompt = await fileExists(promptPathFs(id, cp));
   const priorTranscript = await readConversationTranscript(id, cp);
+  let resolvedOutput = input.output?.trim() ? input.output : "";
+  if (isCodexStructuredAdapter(meta.adapterType)) {
+    if (resolvedOutput.trim()) {
+      resolvedOutput = resolveCodexConversationOutput(resolvedOutput);
+    } else if (priorTranscript.trim().includes('{"type"')) {
+      resolvedOutput = extractCodexJsonlDisplay(priorTranscript) || resolvedOutput;
+    }
+  }
   const [output, prompt] = await Promise.all([
-    input.output ? Promise.resolve(input.output) : Promise.resolve(priorTranscript),
+    resolvedOutput
+      ? Promise.resolve(resolvedOutput)
+      : Promise.resolve(priorTranscript),
     hasPrompt ? readFileContent(promptPathFs(id, cp)) : Promise.resolve(""),
   ]);
-  // Quick failures often finalize from daemon output before stream chunks
-  // landed in transcript.txt — persist so turn-1 reads show the error.
-  if (input.output?.trim() && !priorTranscript.trim()) {
-    await writeFileContent(transcriptPathFs(id, cp), input.output);
+  // Stream chunks append via fire-and-forget `syncConversationChunk`; finalize
+  // can run while the file is still empty or shorter than in-memory output.
+  // Always persist the authoritative full output when it is at least as long
+  // as what is on disk so turn-1 reads match the completed run.
+  if (resolvedOutput.trim()) {
+    await syncConversationTranscriptFromOutput(id, resolvedOutput, cp, {
+      force: input.status === "completed" || input.status === "failed",
+    });
   }
   const cleanedOutput = cleanConversationOutputForParsing(output, prompt);
   const parsed = parseCabinetBlock(cleanedOutput, prompt);
@@ -1471,6 +1598,8 @@ export async function finalizeConversation(
   // summaries and artifactPaths full of prompt-echo fragments.
   if (parsed.summary) {
     meta.summary = parsed.summary;
+  } else if (input.adapterSummary?.trim() && !isPlaceholderCabinetValue(input.adapterSummary)) {
+    meta.summary = input.adapterSummary.trim();
   } else if (!meta.summary) {
     meta.summary = makeSummaryFromOutput(cleanedOutput);
   }
@@ -1548,6 +1677,7 @@ export async function finalizeConversation(
     status: meta.status,
     artifactPaths: meta.artifactPaths,
   };
+  if (meta.summary?.trim()) taskUpdatedPayload.summary = meta.summary.trim();
   if (meta.errorKind) taskUpdatedPayload.errorKind = meta.errorKind;
   if (meta.errorHint) taskUpdatedPayload.errorHint = meta.errorHint;
 
@@ -1977,12 +2107,28 @@ function failedAgentMessageFromMeta(meta: ConversationMeta): string {
   return "The agent run failed before producing a response.";
 }
 
+function isCodexStructuredAdapter(adapterType?: string | null): boolean {
+  return adapterType === "codex_local" || adapterType === "codex_cli_legacy";
+}
+
 function resolveAgentTurnOneContent(
   meta: ConversationMeta,
   transcript: string,
   prompt: string
 ): string {
-  const fromTranscript = extractAgentTurnContent(transcript, prompt);
+  let fromTranscript = "";
+  if (
+    isCodexStructuredAdapter(meta.adapterType) &&
+    transcript.trim().includes('{"type"')
+  ) {
+    fromTranscript = extractCodexJsonlDisplay(transcript);
+  }
+  if (!fromTranscript.trim()) {
+    fromTranscript = extractAgentTurnContent(transcript, prompt);
+  }
+  if (!fromTranscript.trim() && isCodexStructuredAdapter(meta.adapterType)) {
+    fromTranscript = resolveCodexConversationOutput(transcript) || fromTranscript;
+  }
   if (fromTranscript.trim()) return fromTranscript;
   const rawTranscript = stripAnsiText(transcript).trim();
   if (rawTranscript && meta.status === "failed") return rawTranscript;
@@ -1990,6 +2136,40 @@ function resolveAgentTurnOneContent(
     return failedAgentMessageFromMeta(meta);
   }
   return "";
+}
+
+/** When transcript/meta lag behind the daemon, use its accumulated output. */
+async function resolveAgentTurnOneContentWithDaemonFallback(
+  id: string,
+  meta: ConversationMeta,
+  transcript: string,
+  prompt: string,
+  cabinetPath?: string
+): Promise<string> {
+  let content = resolveAgentTurnOneContent(meta, transcript, prompt);
+  if (content.trim()) return content;
+  if (meta.status !== "completed" && meta.status !== "failed") return content;
+
+  try {
+    const { getDaemonSessionOutput } = await import("./daemon-client");
+    const data = await getDaemonSessionOutput(id);
+    let output = data.output?.trim();
+    if (!output) return content;
+    if (isCodexStructuredAdapter(meta.adapterType)) {
+      output = resolveCodexConversationOutput(output) || output;
+    }
+    content =
+      resolveAgentTurnOneContent(meta, output, prompt) ||
+      extractAgentTurnContent(output, prompt) ||
+      output;
+    if (content.trim()) {
+      const cp = meta.cabinetPath || cabinetPath;
+      await syncConversationTranscriptFromOutput(id, output, cp, { force: true });
+    }
+  } catch {
+    // daemon unreachable — leave content empty
+  }
+  return content;
 }
 
 async function readTurnOne(
@@ -2052,10 +2232,35 @@ async function readTurnOne(
       };
       return { user, agent };
     }
+    const daemonOnly = await resolveAgentTurnOneContentWithDaemonFallback(
+      id,
+      meta,
+      "",
+      prompt,
+      cp
+    );
+    if (daemonOnly.trim()) {
+      const agent: ConversationTurn = {
+        id: `${id}-t1a`,
+        turn: 1,
+        role: "agent",
+        ts: meta.completedAt || meta.startedAt,
+        content: daemonOnly,
+        exitCode: meta.exitCode,
+        artifacts: meta.artifactPaths,
+      };
+      return { user, agent };
+    }
     return { user, agent: null };
   }
 
-  const agentContent = resolveAgentTurnOneContent(meta, transcript, prompt);
+  const agentContent = await resolveAgentTurnOneContentWithDaemonFallback(
+    id,
+    meta,
+    transcript,
+    prompt,
+    cp
+  );
   const agent: ConversationTurn = {
     id: `${id}-t1a`,
     turn: 1,

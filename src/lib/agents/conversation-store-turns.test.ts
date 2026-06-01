@@ -78,6 +78,131 @@ test("readConversationTurns returns only user turn 1 when the conversation is st
   assert.equal(turns[0].role, "user");
 });
 
+test("conversationToTaskView keeps meta.summary off the agent chat bubble", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "Summary only",
+    trigger: "manual",
+    prompt: "User request:\nHi",
+  });
+  await store.writeConversationMeta({
+    ...meta,
+    status: "completed",
+    completedAt: new Date().toISOString(),
+    summary: "The model answered in one line.",
+  });
+  const detail = await store.readConversationDetail(meta.id, meta.cabinetPath, {
+    withTurns: true,
+  });
+  assert.ok(detail);
+  const { conversationToTaskView } = await import("./conversation-to-task-view");
+  const task = conversationToTaskView(detail);
+  assert.equal(task.meta.summary, "The model answered in one line.");
+  const agent = task.turns.find((t) => t.role === "agent");
+  if (agent) {
+    assert.notEqual(agent.content.trim(), task.meta.summary);
+  }
+});
+
+test("readConversationTurns extracts Codex command output from JSONL transcript", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "JSONL command only",
+    trigger: "manual",
+    prompt: "User request:\nWhat time is it?",
+    providerId: "codex-cli",
+    adapterType: "codex_local",
+  });
+  const jsonl = [
+    '{"type":"item.completed","item":{"id":"i0","type":"agent_message","text":"Checking the clock."}}',
+    '{"type":"item.completed","item":{"id":"i1","type":"command_execution","aggregated_output":"Sat May 31 09:20:47 EDT 2026"}}',
+  ].join("\n");
+  await store.appendConversationTranscript(meta.id, jsonl);
+  await store.writeConversationMeta({
+    ...meta,
+    status: "completed",
+    completedAt: new Date().toISOString(),
+  });
+  const turns = await store.readConversationTurns(meta.id);
+  assert.match(turns[1].content, /Checking the clock/);
+});
+
+test("readConversationTurns extracts Codex JSONL transcript when display text was never written", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "JSONL on disk",
+    trigger: "manual",
+    prompt: "User request:\nHi",
+    providerId: "codex-cli",
+    adapterType: "codex_local",
+  });
+  const jsonl = [
+    '{"type":"item.completed","item":{"id":"i0","type":"reasoning","text":"**Working**"}}',
+    '{"type":"item.completed","item":{"id":"i1","type":"agent_message","text":"Here is the answer."}}',
+  ].join("\n");
+  await store.appendConversationTranscript(meta.id, jsonl);
+  await store.writeConversationMeta({
+    ...meta,
+    status: "completed",
+    completedAt: new Date().toISOString(),
+  });
+  const turns = await store.readConversationTurns(meta.id);
+  assert.equal(turns.length, 2);
+  assert.match(turns[1].content, /Here is the answer/);
+});
+
+test("finalizeConversation force-overwrites a longer stale transcript on terminal sync", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "Stale file",
+    trigger: "manual",
+    prompt: "User request:\nHi",
+    providerId: "codex-cli",
+    adapterType: "codex_local",
+  });
+  const stale = '{"type":"item.completed","item":{"type":"agent_message","text":"partial"}}\n'.repeat(
+    20
+  );
+  await store.appendConversationTranscript(meta.id, stale);
+  const displayOutput = "Here is the real answer.\n```cabinet\nSUMMARY: Done.\n```";
+  await store.finalizeConversation(meta.id, {
+    status: "completed",
+    exitCode: 0,
+    output: displayOutput,
+  });
+  const onDisk = await store.readConversationTranscript(meta.id);
+  assert.equal(onDisk, displayOutput);
+});
+
+test("finalizeConversation syncs full output when stream left a partial transcript", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "Race",
+    trigger: "manual",
+    prompt: "User request:\nHello",
+    providerId: "codex-cli",
+    adapterType: "codex_local",
+  });
+  await store.appendConversationTranscript(meta.id, "partial chunk");
+  const fullOutput = [
+    "partial chunk and the full answer.",
+    "",
+    "```cabinet",
+    "SUMMARY: Answered the user.",
+    "```",
+  ].join("\n");
+  await store.finalizeConversation(meta.id, {
+    status: "completed",
+    exitCode: 0,
+    output: fullOutput,
+  });
+  const onDisk = await store.readConversationTranscript(meta.id);
+  assert.equal(onDisk, fullOutput);
+  const turns = await store.readConversationTurns(meta.id);
+  assert.equal(turns.length, 2);
+  assert.match(turns[1].content, /full answer/);
+});
+
 test("appendUserTurn + appendAgentTurn build up multi-turn state and aggregate tokens", async () => {
   const meta = await makeSingleShotConversation(
     "Start",

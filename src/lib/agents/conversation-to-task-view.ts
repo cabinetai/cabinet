@@ -100,7 +100,7 @@ export function conversationToTaskView(
   detail: ConversationDetail & { turns?: ConversationTurn[]; session?: SessionHandle | null }
 ): Task {
   const meta = conversationMetaToTaskMeta(detail.meta);
-  const turns = (detail.turns ?? []).map(conversationTurnToTaskTurn);
+  const turns = (detail.turns ?? []).map((turn) => conversationTurnToTaskTurn(turn));
 
   // Build the artifacts index from meta.artifactPaths (KB files only).
   const filesEdited = Array.from(new Set(detail.meta.artifactPaths ?? []));

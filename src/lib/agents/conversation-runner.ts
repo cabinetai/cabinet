@@ -13,6 +13,7 @@ import type { AdapterExecutionContext } from "./adapters/types";
 import { buildSkillIndex, resolveDesiredSkills } from "./skills/loader";
 import { prepareSkillMount } from "./skills/sync";
 import { supportsTerminalResume } from "./adapters/legacy-ids";
+import { resolveCodexConversationOutput } from "./adapters/codex-stream";
 import {
   appendAgentTurn,
   appendConversationTranscript,
@@ -770,13 +771,18 @@ export async function waitForConversationCompletion(
       const normalizedStatus = data.status === "completed" ? "completed" : "failed";
       const currentMeta = await readConversationMeta(conversationId);
       const cp = currentMeta?.cabinetPath;
+      const resolvedOutput =
+        currentMeta?.adapterType === "codex_local" ||
+        currentMeta?.adapterType === "codex_cli_legacy"
+          ? resolveCodexConversationOutput(data.output || "") || data.output
+          : data.output;
       let finalMeta =
         currentMeta?.status === "running"
           ? await finalizeConversation(
               conversationId,
               {
                 status: normalizedStatus,
-                output: data.output,
+                output: resolvedOutput,
                 exitCode: normalizedStatus === "completed" ? 0 : 1,
                 tokens: data.adapterUsage
                   ? {
@@ -800,7 +806,7 @@ export async function waitForConversationCompletion(
         finalMeta &&
         normalizedStatus === "failed" &&
         !finalMeta.errorHint?.trim() &&
-        (data.adapterErrorHint?.trim() || data.output?.trim())
+        (data.adapterErrorHint?.trim() || resolvedOutput?.trim())
       ) {
         finalMeta =
           (await finalizeConversation(
@@ -808,7 +814,7 @@ export async function waitForConversationCompletion(
             {
               status: "failed",
               exitCode: 1,
-              output: data.output,
+              output: resolvedOutput,
               errorKind: data.adapterErrorKind ?? undefined,
               errorHint: data.adapterErrorHint ?? undefined,
               errorRetryAfterSec: data.adapterErrorRetryAfterSec ?? undefined,
@@ -828,7 +834,8 @@ export async function waitForConversationCompletion(
       // fallback would have. One retry only; a second miss is recorded as-is.
       if (
         normalizedStatus === "completed" &&
-        isCabinetBlockMissing(data.output || "")
+        (resolvedOutput || "").trim() &&
+        isCabinetBlockMissing(resolvedOutput || "")
       ) {
         try {
           const retryMeta = await continueConversationRun(conversationId, {
@@ -857,6 +864,9 @@ export async function waitForConversationCompletion(
         payload: {
           status: finalMeta.status,
           artifactPaths: finalMeta.artifactPaths,
+          ...(finalMeta.summary?.trim()
+            ? { summary: finalMeta.summary.trim() }
+            : {}),
           ...(finalMeta.errorKind ? { errorKind: finalMeta.errorKind } : {}),
           ...(finalMeta.errorHint ? { errorHint: finalMeta.errorHint } : {}),
         },

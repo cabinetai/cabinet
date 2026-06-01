@@ -26,6 +26,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { isLegacyAdapterType } from "@/lib/agents/adapters/legacy-ids";
+import { resolveCodexConversationOutput } from "@/lib/agents/adapters/codex-stream";
 import { WebTerminal } from "@/components/terminal/web-terminal";
 import { TerminalExitedView } from "@/components/terminal/terminal-exited-view";
 import { ClaudeTranscriptView } from "@/components/tasks/conversation/claude-transcript-view";
@@ -77,6 +78,28 @@ function conversationStatusToTaskStatus(status: string): TaskStatus | null {
   return null;
 }
 
+/** Agent bubble was filled with meta.summary before transcript caught up. */
+function agentTurnIsSummaryStub(task: Task): boolean {
+  const summary = task.meta.summary?.trim();
+  if (!summary) return false;
+  return task.turns.some(
+    (t) => t.role === "agent" && !t.pending && t.content.trim() === summary
+  );
+}
+
+/** True when the task finished but the chat still has no agent body to show. */
+function taskMissingAgentContent(task: Task): boolean {
+  if (agentTurnIsSummaryStub(task)) return true;
+  if (task.meta.status === "running" || task.meta.status === "awaiting-input") {
+    return false;
+  }
+  const agentTurns = task.turns.filter((t) => t.role === "agent");
+  if (agentTurns.length === 0) {
+    return task.meta.status === "idle" || task.meta.status === "failed";
+  }
+  return agentTurns.some((t) => !t.content.trim() && !t.pending);
+}
+
 /** Clear pending and backfill empty agent bubbles on quick failures. */
 function fillEmptyAgentTurnContent(task: Task, status: TaskStatus): Task {
   const failedFallback =
@@ -91,9 +114,294 @@ function fillEmptyAgentTurnContent(task: Task, status: TaskStatus): Task {
       const content =
         turn.content.trim() ||
         (status === "failed" ? failedFallback : turn.content);
-      return { ...turn, pending: undefined, content };
+      const settled = content.trim().length > 0;
+      // Keep the typing indicator only while the run is still in flight.
+      return {
+        ...turn,
+        content: settled ? content : turn.content,
+        pending: settled
+          ? undefined
+          : shouldKeepAgentPendingWhileEmpty(task)
+            ? true
+            : undefined,
+      };
     }),
   };
+}
+
+/** Only show the typing indicator while the run is still in flight. */
+function shouldKeepAgentPendingWhileEmpty(task: Task): boolean {
+  return (
+    task.meta.status === "running" || task.meta.status === "awaiting-input"
+  );
+}
+
+/** While a running task still has no agent body, show the pending indicator. */
+function ensureAgentTurnPendingWhileEmpty(task: Task): Task {
+  if (!taskMissingAgentContent(task) || !shouldKeepAgentPendingWhileEmpty(task)) {
+    return task;
+  }
+  const hasAgent = task.turns.some((t) => t.role === "agent");
+  const ts =
+    task.meta.completedAt || task.meta.lastActivityAt || new Date().toISOString();
+  if (!hasAgent) {
+    const turnNum = task.turns.find((t) => t.role === "user")?.turn ?? 1;
+    return {
+      ...task,
+      turns: [
+        ...task.turns,
+        {
+          id: `${task.meta.id}-t1a-wait`,
+          turn: turnNum,
+          role: "agent" as const,
+          ts,
+          content: "",
+          pending: true,
+        },
+      ],
+    };
+  }
+  return {
+    ...task,
+    turns: task.turns.map((turn) =>
+      turn.role === "agent" && !turn.content.trim()
+        ? { ...turn, pending: true }
+        : turn
+    ),
+  };
+}
+
+function agentContentLength(task: Task): number {
+  return task.turns
+    .filter((t) => t.role === "agent")
+    .reduce((n, t) => n + t.content.trim().length, 0);
+}
+
+/**
+ * meta.summary can appear while meta.status is still `running` (finalize lag).
+ * Once we have summary plus daemon/output body, show idle in the drawer.
+ */
+function reconcileStaleRunningInTask(
+  task: Task,
+  daemon: DaemonSessionSnapshot | null
+): Task {
+  if (task.meta.status !== "running" && task.meta.status !== "awaiting-input") {
+    return task;
+  }
+  const summary = task.meta.summary?.trim();
+  if (!summary) return task;
+
+  const daemonDone =
+    daemon?.status === "completed" || daemon?.status === "failed";
+  let next = task;
+  if (daemon?.output?.trim() && agentContentLength(next) === 0) {
+    next = hydrateTaskFromDaemonOutput(next, daemon);
+  }
+  const hasBody = agentContentLength(next) > 0;
+  if (!daemonDone && !hasBody) return task;
+
+  const taskStatus: TaskStatus =
+    daemon?.status === "failed" ? "failed" : "idle";
+  return {
+    ...next,
+    meta: { ...next.meta, status: taskStatus },
+    turns: next.turns.map((turn) =>
+      turn.role === "agent" ? { ...turn, pending: undefined } : turn
+    ),
+  };
+}
+
+function mergeHydratedTask(prev: Task | null, fresh: Task): Task {
+  if (!prev) return fresh;
+  const prevLen = agentContentLength(prev);
+  const freshLen = agentContentLength(fresh);
+  const summaryChanged =
+    (fresh.meta.summary?.trim() ?? "") !== (prev.meta.summary?.trim() ?? "");
+
+  if (freshLen > prevLen) return fresh;
+  if (taskMissingAgentContent(prev) && !taskMissingAgentContent(fresh)) {
+    return fresh;
+  }
+  if (taskMissingAgentContent(prev) && freshLen > 0) {
+    return fresh;
+  }
+  if (summaryChanged) {
+    return {
+      ...prev,
+      meta: { ...prev.meta, ...fresh.meta },
+      turns: freshLen > prevLen ? fresh.turns : prev.turns,
+    };
+  }
+  if (taskMissingAgentContent(prev)) return prev;
+  return isSameTaskPollState(prev, fresh) ? prev : fresh;
+}
+
+/** Merge summary from a task.updated payload into the drawer immediately. */
+function applyPartialPayloadToTask(
+  prev: Task,
+  payload: Record<string, unknown> | undefined
+): Task | null {
+  if (!payload) return null;
+  const summary =
+    typeof payload.summary === "string" && payload.summary.trim()
+      ? payload.summary.trim()
+      : undefined;
+  if (!summary || summary === prev.meta.summary?.trim()) return null;
+  return { ...prev, meta: { ...prev.meta, summary } };
+}
+
+function payloadRequestsAgentHydration(
+  payload: Record<string, unknown> | undefined
+): boolean {
+  if (!payload) return false;
+  if (payload.streaming === true) return true;
+  if (payload.streamExtracted === true) return true;
+  if (typeof payload.summary === "string" && payload.summary.trim()) return true;
+  return isTerminalTaskUpdatedPayload(payload);
+}
+
+type DaemonSessionSnapshot = {
+  status?: string;
+  output?: string;
+  adapterErrorHint?: string | null;
+  adapterErrorKind?: string | null;
+};
+
+/** Patch agent turns from daemon output when transcript reads lag behind the run. */
+function hydrateTaskFromDaemonOutput(
+  task: Task,
+  daemon: DaemonSessionSnapshot | null
+): Task {
+  let output = daemon?.output?.trim() || "";
+  if (
+    output &&
+    (task.meta.adapterType === "codex_local" ||
+      task.meta.adapterType === "codex_cli_legacy")
+  ) {
+    output = resolveCodexConversationOutput(output) || output;
+  }
+  if (!output) return task;
+
+  const agentTurn = task.turns.find((t) => t.role === "agent");
+  const currentLen = agentTurn?.content.trim().length ?? 0;
+  if (
+    currentLen >= output.length &&
+    !agentTurnIsSummaryStub(task) &&
+    !agentTurn?.pending
+  ) {
+    return task;
+  }
+
+  const stillRunning =
+    task.meta.status === "running" || task.meta.status === "awaiting-input";
+
+  let patched = false;
+  const turns = task.turns.map((turn) => {
+    if (turn.role !== "agent") return turn;
+    if (
+      turn.content.trim().length >= output.length &&
+      !agentTurnIsSummaryStub(task)
+    ) {
+      return turn;
+    }
+    patched = true;
+    return {
+      ...turn,
+      content: output,
+      // Show streamed text immediately; never leave pending:true blocking fills.
+      pending: stillRunning && output.length === 0 ? true : undefined,
+    };
+  });
+
+  if (patched) {
+    return { ...task, turns };
+  }
+
+  const turnNum = task.turns.find((t) => t.role === "user")?.turn ?? 1;
+  return {
+    ...task,
+    turns: [
+      ...task.turns,
+      {
+        id: `${task.meta.id}-t1a-hydrate`,
+        turn: turnNum,
+        role: "agent" as const,
+        ts:
+          task.meta.completedAt ||
+          task.meta.lastActivityAt ||
+          new Date().toISOString(),
+        content: output,
+        pending: undefined,
+      },
+    ],
+  };
+}
+
+const DAEMON_OUTPUT_FETCH_MS = 2_500;
+
+/** Best-effort daemon output; never blocks the task drawer on a hung daemon. */
+async function fetchDaemonSessionOutput(
+  taskId: string
+): Promise<DaemonSessionSnapshot | null> {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), DAEMON_OUTPUT_FETCH_MS);
+  try {
+    const res = await fetch(
+      `/api/daemon/session/${encodeURIComponent(taskId)}/output`,
+      { signal: controller.signal }
+    );
+    if (!res.ok) return null;
+    return (await res.json()) as DaemonSessionSnapshot;
+  } catch {
+    return null;
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
+async function loadTaskHydrated(
+  taskId: string,
+  cabinetPath: string | undefined
+): Promise<Task> {
+  const fresh = await fetchTask(taskId, cabinetPath);
+  const daemonRes = await fetchDaemonSessionOutput(taskId);
+  let task = hydrateTaskFromDaemonOutput(fresh, daemonRes);
+  task = reconcileStaleRunningInTask(task, daemonRes);
+  if (
+    taskMissingAgentContent(task) &&
+    shouldKeepAgentPendingWhileEmpty(task) &&
+    agentContentLength(task) === 0
+  ) {
+    task = ensureAgentTurnPendingWhileEmpty(task);
+  }
+  return task;
+}
+
+/** Refetch after terminal events until transcript/turns catch up on disk. */
+function scheduleTaskHydrationRefetches(
+  taskId: string,
+  cabinetPath: string | undefined,
+  setTask: React.Dispatch<React.SetStateAction<Task | null>>
+): void {
+  for (const delay of [0, 250, 600, 1500, 3000, 5000, 8000, 12000, 20000]) {
+    window.setTimeout(() => {
+      void loadTaskHydrated(taskId, cabinetPath)
+        .then((fresh) => {
+          setTask((prev) => mergeHydratedTask(prev, fresh));
+        })
+        .catch(() => {});
+    }, delay);
+  }
+}
+
+function isTerminalTaskUpdatedPayload(
+  payload: Record<string, unknown> | undefined
+): boolean {
+  if (!payload || payload.streaming === true) return false;
+  const raw = payload.status;
+  if (typeof raw !== "string") return false;
+  const taskStatus = conversationStatusToTaskStatus(raw);
+  return !!taskStatus && taskStatus !== "running";
 }
 
 /** True when a safety-poll refetch would not change drawer-visible state. */
@@ -103,6 +411,7 @@ function isSameTaskPollState(prev: Task | null | undefined, next: Task): boolean
   const nm = next.meta;
   if (
     pm.status !== nm.status ||
+    pm.summary !== nm.summary ||
     pm.errorHint !== nm.errorHint ||
     pm.errorKind !== nm.errorKind ||
     pm.lastActivityAt !== nm.lastActivityAt ||
@@ -151,20 +460,29 @@ function applyTerminalPayloadToTask(
     typeof payload.errorKind === "string"
       ? payload.errorKind
       : prev.meta.errorKind;
+  const summary =
+    typeof payload.summary === "string" && payload.summary.trim()
+      ? payload.summary.trim()
+      : prev.meta.summary;
   if (
     prev.meta.status === taskStatus &&
     prev.meta.errorHint === errorHint &&
-    prev.meta.errorKind === errorKind
+    prev.meta.errorKind === errorKind &&
+    prev.meta.summary === summary
   ) {
     return null;
   }
-  return fillEmptyAgentTurnContent(
-    {
-      ...prev,
-      meta: { ...prev.meta, status: taskStatus, errorHint, errorKind },
-    },
-    taskStatus
-  );
+  const withMeta = {
+    ...prev,
+    meta: { ...prev.meta, status: taskStatus, errorHint, errorKind, summary },
+  };
+  if (taskStatus === "failed") {
+    return fillEmptyAgentTurnContent(withMeta, taskStatus);
+  }
+  if (taskMissingAgentContent(withMeta)) {
+    return ensureAgentTurnPendingWhileEmpty(withMeta);
+  }
+  return withMeta;
 }
 
 const STATUS_META: Record<
@@ -667,11 +985,26 @@ export function TaskConversationPage({
     }, 8000);
     fetchTask(taskId, cabinetPath || undefined)
       .then((t) => {
-        if (!cancelled) {
-          setTask(t);
-          setConnectTimedOut(false);
-          clearTimeout(watchdog);
-        }
+        if (cancelled) return;
+        setTask(t);
+        setConnectTimedOut(false);
+        clearTimeout(watchdog);
+        void fetchDaemonSessionOutput(taskId)
+          .then((daemonRes) => {
+            if (cancelled || !daemonRes) return;
+            setTask((prev) => {
+              if (!prev) return prev;
+              let next = hydrateTaskFromDaemonOutput(prev, daemonRes);
+              if (
+                shouldKeepAgentPendingWhileEmpty(next) &&
+                agentContentLength(next) === 0
+              ) {
+                next = ensureAgentTurnPendingWhileEmpty(next);
+              }
+              return mergeHydratedTask(prev, next);
+            });
+          })
+          .catch(() => {});
       })
       .catch((e: Error) => {
         if (!cancelled) {
@@ -736,11 +1069,25 @@ export function TaskConversationPage({
             : undefined;
         setTask((prev) => {
           if (!prev) return prev;
-          return applyTerminalPayloadToTask(prev, eventPayload) ?? prev;
+          let next = applyPartialPayloadToTask(prev, eventPayload) ?? prev;
+          next = applyTerminalPayloadToTask(next, eventPayload) ?? next;
+          return taskMissingAgentContent(next) &&
+            shouldKeepAgentPendingWhileEmpty(next)
+            ? ensureAgentTurnPendingWhileEmpty(next)
+            : next;
         });
-        // Re-fetch on any task/turn event — simple, durable
-        const fresh = await fetchTask(taskId, cabinetPath || undefined);
-        setTask(fresh);
+        if (payloadRequestsAgentHydration(eventPayload)) {
+          scheduleTaskHydrationRefetches(
+            taskId,
+            cabinetPath || undefined,
+            setTask
+          );
+        }
+        const fresh = await loadTaskHydrated(
+          taskId,
+          cabinetPath || undefined
+        );
+        setTask((prev) => mergeHydratedTask(prev, fresh));
       } catch {
         // ignore malformed frames / transient fetch errors
       }
@@ -760,15 +1107,31 @@ export function TaskConversationPage({
     if (isDemo) return;
     const es = new EventSource("/api/agents/conversations/events");
     let debounce: ReturnType<typeof setTimeout> | null = null;
-    const scheduleRefetch = (_reason: string) => {
-      if (debounce) clearTimeout(debounce);
-      debounce = setTimeout(() => {
-        void fetchTask(taskId, cabinetPath || undefined)
+    const scheduleRefetch = (
+      eventPayload: Record<string, unknown> | undefined
+    ) => {
+      const hydrateNow = () => {
+        void loadTaskHydrated(taskId, cabinetPath || undefined)
           .then((fresh) => {
-            setTask(fresh);
+            setTask((prev) => mergeHydratedTask(prev, fresh));
           })
           .catch(() => {});
-      }, 200);
+      };
+      if (
+        isTerminalTaskUpdatedPayload(eventPayload) ||
+        eventPayload?.streamExtracted === true ||
+        typeof eventPayload?.summary === "string"
+      ) {
+        scheduleTaskHydrationRefetches(
+          taskId,
+          cabinetPath || undefined,
+          setTask
+        );
+        hydrateNow();
+        return;
+      }
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(hydrateNow, 200);
     };
     es.onmessage = (msg) => {
       try {
@@ -781,9 +1144,14 @@ export function TaskConversationPage({
             : undefined;
         setTask((prev) => {
           if (!prev) return prev;
-          return applyTerminalPayloadToTask(prev, eventPayload) ?? prev;
+          let next = applyPartialPayloadToTask(prev, eventPayload) ?? prev;
+          next = applyTerminalPayloadToTask(next, eventPayload) ?? next;
+          return taskMissingAgentContent(next) &&
+            shouldKeepAgentPendingWhileEmpty(next)
+            ? ensureAgentTurnPendingWhileEmpty(next)
+            : next;
         });
-        scheduleRefetch(event.type);
+        scheduleRefetch(eventPayload);
       } catch {
         // ignore malformed frames
       }
@@ -808,13 +1176,23 @@ export function TaskConversationPage({
       if (!match) return;
       setTask((prev) => {
         if (!prev) return prev;
-        return (
-          applyTerminalPayloadToTask(prev, { status: match.status }) ?? prev
-        );
+        const patched =
+          applyTerminalPayloadToTask(prev, { status: match.status }) ?? prev;
+        return taskMissingAgentContent(patched) &&
+          shouldKeepAgentPendingWhileEmpty(patched)
+          ? ensureAgentTurnPendingWhileEmpty(patched)
+          : patched;
       });
-      void fetchTask(taskId, cabinetPath || undefined)
-        .then((fresh) => setTask(fresh))
+      void loadTaskHydrated(taskId, cabinetPath || undefined)
+        .then((fresh) => {
+          setTask((prev) => mergeHydratedTask(prev, fresh));
+        })
         .catch(() => {});
+      scheduleTaskHydrationRefetches(
+        taskId,
+        cabinetPath || undefined,
+        setTask
+      );
     };
     window.addEventListener("cabinet:conversation-completed", handler);
     return () =>
@@ -827,24 +1205,26 @@ export function TaskConversationPage({
   useEffect(() => {
     if (isDemo) return;
     const status = task?.meta.status;
+    const missingAgentContent = task ? taskMissingAgentContent(task) : false;
     const shouldPoll =
-      !task || status === "running" || status === "awaiting-input";
+      !task ||
+      status === "running" ||
+      status === "awaiting-input" ||
+      missingAgentContent;
     if (!shouldPoll) return;
 
     const tick = () => {
       void (async () => {
         try {
-          const [fresh, daemonRes] = await Promise.all([
-            fetchTask(taskId, cabinetPath || undefined),
-            fetch(`/api/daemon/session/${encodeURIComponent(taskId)}/output`).then(
-              (r) => (r.ok ? r.json() : null)
-            ) as Promise<{
-              status?: string;
-              adapterErrorHint?: string | null;
-              adapterErrorKind?: string | null;
-            } | null>,
-          ]);
-          let next = fresh;
+          const fresh = await fetchTask(taskId, cabinetPath || undefined);
+          const daemonRes = await fetchDaemonSessionOutput(taskId);
+          let next = hydrateTaskFromDaemonOutput(fresh, daemonRes);
+          if (
+            shouldKeepAgentPendingWhileEmpty(next) &&
+            agentContentLength(next) === 0
+          ) {
+            next = ensureAgentTurnPendingWhileEmpty(next);
+          }
           // When meta.json is stale but the daemon already knows the session
           // ended, reflect the terminal status immediately in the drawer.
           if (
@@ -856,24 +1236,24 @@ export function TaskConversationPage({
               daemonRes.status === "completed" ? "idle" : "failed";
             next = fillEmptyAgentTurnContent(
               {
-                ...fresh,
+                ...next,
                 meta: {
-                  ...fresh.meta,
+                  ...next.meta,
                   status: taskStatus,
                   errorHint:
                     daemonRes.adapterErrorHint?.trim() ||
-                    fresh.meta.errorHint,
+                    next.meta.errorHint,
                   errorKind:
                     daemonRes.adapterErrorKind ||
-                    fresh.meta.errorKind,
+                    next.meta.errorKind,
                 },
               },
               taskStatus
             );
+            next = hydrateTaskFromDaemonOutput(next, daemonRes);
           }
-          setTask((prev) =>
-            isSameTaskPollState(prev, next) ? prev : next
-          );
+          next = reconcileStaleRunningInTask(next, daemonRes);
+          setTask((prev) => mergeHydratedTask(prev, next));
         } catch {
           // ignore transient poll failures
         }
@@ -895,7 +1275,7 @@ export function TaskConversationPage({
       if (slowInterval) window.clearInterval(slowInterval);
       window.clearTimeout(slowSwitch);
     };
-  }, [isDemo, taskId, cabinetPath, task?.meta.status]);
+  }, [isDemo, taskId, cabinetPath, task?.meta.status, task?.turns]);
 
   // Cleanup demo settle timer
   useEffect(() => {

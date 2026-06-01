@@ -46,11 +46,14 @@ import {
   agentAdapterRegistry,
   resolveLegacyExecutionProviderId,
 } from "../src/lib/agents/adapters";
+import { resolveCodexConversationOutput } from "../src/lib/agents/adapters/codex-stream";
 import { getNvmNodeBin } from "../src/lib/agents/nvm-path";
 import {
   appendConversationTranscript,
   cleanupStaleStagingAttachments,
   finalizeConversation,
+  inferStructuredStaleTerminalStatus,
+  syncConversationTranscriptFromOutput,
   listConversationMetas,
   readConversationMeta,
   readConversationTranscript,
@@ -374,6 +377,11 @@ interface StructuredSession extends BaseSession {
   adapterErrorRetryAfterSec?: number | null;
   /** Buffered stderr, used by classifyError on completion. */
   stderrBuffer?: string;
+  /**
+   * Last adapter execute() payload when streamed stdout was empty — Codex often
+   * sets `summary` / `output` here without emitting display chunks.
+   */
+  adapterFallbackOutput?: string | null;
 }
 
 type ActiveSession = PtySession | StructuredSession;
@@ -462,6 +470,33 @@ function emitSessionOutput(
   }
 }
 
+function isCodexStructuredSession(session: ActiveSession): boolean {
+  return (
+    session.kind === "structured" &&
+    (session.adapterType === "codex_local" ||
+      session.adapterType === "codex_cli_legacy")
+  );
+}
+
+function enrichCodexSessionOutput(text: string, session: ActiveSession): string {
+  if (!isCodexStructuredSession(session)) return text;
+  return resolveCodexConversationOutput(text) || text;
+}
+
+function resolveSessionPlainOutput(session: ActiveSession): string {
+  const plain = stripAnsi(session.output.join(""));
+  if (plain.trim()) {
+    return enrichCodexSessionOutput(plain, session);
+  }
+  if (session.kind === "structured") {
+    const fallback = session.adapterFallbackOutput?.trim();
+    if (fallback) {
+      return enrichCodexSessionOutput(fallback, session);
+    }
+  }
+  return plain;
+}
+
 async function finalizeSessionConversation(session: ActiveSession): Promise<void> {
   const meta = await readConversationMeta(session.id);
   if (!meta) {
@@ -471,7 +506,7 @@ async function finalizeSessionConversation(session: ActiveSession): Promise<void
     return;
   }
 
-  const plain = stripAnsi(session.output.join(""));
+  const plain = resolveSessionPlainOutput(session);
   const adapterUsage =
     session.kind === "structured" ? session.adapterUsage ?? null : null;
   const adapterErrorKind =
@@ -494,6 +529,54 @@ async function finalizeSessionConversation(session: ActiveSession): Promise<void
 
   if (meta.status !== "running") {
     completedOutput.set(session.id, completedPayload);
+    // Next.js may have finalized first with empty output while the adapter
+    // was still flushing — backfill transcript/summary when we have text now.
+    if (plain.trim()) {
+      const priorTranscript = await readConversationTranscript(
+        session.id,
+        meta.cabinetPath
+      ).catch(() => "");
+      await syncConversationTranscriptFromOutput(session.id, plain, meta.cabinetPath, {
+        force: true,
+      }).catch((err) => {
+        console.warn(
+          `[cabinet-daemon] failed to backfill transcript for ${session.id}:`,
+          err
+        );
+      });
+      if (!priorTranscript.trim() || plain.length > priorTranscript.trim().length) {
+        await finalizeConversation(
+          session.id,
+          {
+            status: completedPayload.status,
+            exitCode: session.exitCode ?? meta.exitCode ?? 0,
+            output: plain,
+            adapterSummary:
+              session.kind === "structured"
+                ? session.adapterFallbackOutput ?? null
+                : null,
+            tokens: adapterUsage
+              ? {
+                  input: adapterUsage.inputTokens,
+                  output: adapterUsage.outputTokens,
+                  cache: adapterUsage.cachedInputTokens,
+                  total:
+                    adapterUsage.inputTokens + adapterUsage.outputTokens,
+                }
+              : undefined,
+            errorKind: adapterErrorKind ?? undefined,
+            errorHint: adapterErrorHint ?? undefined,
+            errorRetryAfterSec: adapterErrorRetryAfterSec ?? undefined,
+          },
+          meta.cabinetPath
+        ).catch((err) => {
+          console.warn(
+            `[cabinet-daemon] failed to backfill finalize for ${session.id}:`,
+            err
+          );
+        });
+      }
+    }
     // Transcript-driven finalize can flip meta to failed before the adapter
     // child exits and classification runs — patch missing hints here.
     if (
@@ -531,10 +614,23 @@ async function finalizeSessionConversation(session: ActiveSession): Promise<void
       ? distillPtyOutput(plain, session.exitCode, session.providerId)
       : plain;
 
+  if (plain.trim()) {
+    await syncConversationTranscriptFromOutput(session.id, plain, meta.cabinetPath, {
+      force: true,
+    }).catch((err) => {
+    console.warn(
+      `[cabinet-daemon] failed to sync transcript before finalize for ${session.id}:`,
+      err
+    );
+    });
+  }
+
   await finalizeConversation(session.id, {
     status: session.resolvedStatus || (session.exitCode === 0 ? "completed" : "failed"),
     exitCode: session.resolvedStatus === "completed" ? 0 : session.exitCode,
     output: summaryOutput,
+    adapterSummary:
+      session.kind === "structured" ? session.adapterFallbackOutput ?? null : null,
     tokens: adapterUsage
       ? {
           input: adapterUsage.inputTokens,
@@ -909,6 +1005,11 @@ function createStructuredSession(input: {
       session.adapterSessionId = result.sessionId ?? null;
       session.adapterSessionParams = result.sessionParams ?? null;
       session.adapterUsage = result.usage ?? null;
+      session.adapterFallbackOutput =
+        result.output?.trim() ||
+        result.summary?.trim() ||
+        (session.resolvedStatus === "failed" ? result.errorMessage?.trim() : null) ||
+        null;
 
       // Classify failures so the UI can surface an actionable hint.
       // Prefer stderrBuffer, but fall back to the adapter-reported
@@ -940,11 +1041,12 @@ function createStructuredSession(input: {
       }
       clearSessionStopFallbackTimer(session);
 
-      if (!session.output.length && result.output) {
-        emitSessionOutput(session, result.output, input.onData);
+      const adapterText = session.adapterFallbackOutput?.trim() || "";
+      if (!session.output.length && adapterText) {
+        emitSessionOutput(session, `${adapterText}\n`, input.onData);
       }
 
-      const plain = stripAnsi(session.output.join(""));
+      const plain = resolveSessionPlainOutput(session);
       completedOutput.set(input.sessionId, {
         output: plain,
         completedAt: Date.now(),
@@ -1439,8 +1541,7 @@ const server = http.createServer(async (req, res) => {
 
     const active = sessions.get(sessionId);
     if (active) {
-      const raw = active.output.join("");
-      const plain = stripAnsi(raw);
+      const plain = resolveSessionPlainOutput(active);
       if (
         active.kind === "pty" &&
         active.readyStrategy === "claude" &&
@@ -1542,12 +1643,40 @@ const server = http.createServer(async (req, res) => {
         );
         return;
       }
+      let resolvedOutput = plainTranscript;
+      if (
+        (conversationMeta.adapterType === "codex_local" ||
+          conversationMeta.adapterType === "codex_cli_legacy") &&
+        resolvedOutput.trim()
+      ) {
+        resolvedOutput = resolveCodexConversationOutput(resolvedOutput);
+      }
+      const inferredStatus = inferStructuredStaleTerminalStatus(
+        conversationMeta,
+        plainTranscript,
+        prompt
+      );
+      let status = conversationMeta.status;
+      if (inferredStatus) {
+        status = inferredStatus;
+        if (conversationMeta.status === "running") {
+          void finalizeConversation(
+            sessionId,
+            {
+              status: inferredStatus,
+              exitCode: inferredStatus === "completed" ? 0 : 1,
+              output: resolvedOutput || plainTranscript,
+            },
+            conversationMeta.cabinetPath
+          ).catch(() => null);
+        }
+      }
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify({
           sessionId,
-          status: conversationMeta.status,
-          output: plainTranscript,
+          status,
+          output: resolvedOutput,
         })
       );
       return;

@@ -64,6 +64,20 @@ function normalizeAgentMessage(text: string): string {
   return `${trimmed}\n`;
 }
 
+/** Reasoning breadcrumbs (Codex `item.type === "reasoning"`). */
+function normalizeReasoningLine(text: string): string {
+  const trimmed = text.trim().replace(/\*\*/g, "").trim();
+  if (!trimmed) return "";
+  return `${trimmed}\n\n`;
+}
+
+function rememberAgentText(accumulator: CodexStreamAccumulator, raw: string): void {
+  const trimmed = raw.trim().replace(/\*\*/g, "").trim();
+  if (trimmed) {
+    accumulator.lastAgentMessage = trimmed;
+  }
+}
+
 function normalizeCommandStart(command: string): string {
   const trimmed = command.trim();
   if (!trimmed) return "";
@@ -179,11 +193,36 @@ function consumeCodexEvent(
       );
     }
 
-    if (payload.type === "item.completed" && payload.item.type === "agent_message") {
-      const text = normalizeAgentMessage(payload.item.text || "");
+    if (
+      payload.type === "item.completed" &&
+      (payload.item.type === "agent_message" ||
+        payload.item.type === "message")
+    ) {
+      const raw = parseCodexItemText(payload.item);
+      const text = normalizeAgentMessage(raw);
       if (!text) return "";
-      accumulator.lastAgentMessage = payload.item.text?.trim() || null;
+      rememberAgentText(accumulator, raw);
       return appendDisplay(accumulator, text);
+    }
+
+    if (payload.type === "item.completed" && payload.item.type === "reasoning") {
+      const text = normalizeReasoningLine(payload.item.text || "");
+      if (!text) return "";
+      // Some Codex models (e.g. gpt-5.4-mini) emit reasoning lines but no
+      // final agent_message — keep the last reasoning as a fallback answer.
+      rememberAgentText(accumulator, payload.item.text || "");
+      return appendDisplay(accumulator, text);
+    }
+
+    if (payload.type === "item.completed" && payload.item.type === "error") {
+      const message = extractErrorMessage(
+        (payload.item as { message?: string }).message
+      );
+      if (!message) return "";
+      if (!accumulator.errorMessage) {
+        accumulator.errorMessage = message;
+      }
+      return appendDisplay(accumulator, `${message}\n`);
     }
 
     if (payload.type === "item.completed" && payload.item.type === "command_execution") {
@@ -199,9 +238,34 @@ function consumeCodexEvent(
       return appendDisplay(accumulator, display);
     }
   } catch {
+    // Codex may print a plain-text final line after the JSONL stream.
+    if (!trimmed.startsWith("{")) {
+      rememberAgentText(accumulator, trimmed);
+      return appendDisplay(accumulator, normalizeAgentMessage(trimmed));
+    }
     return "";
   }
 
+  return "";
+}
+
+function parseCodexItemText(item: CodexItemPayload["item"]): string {
+  if (!item) return "";
+  if (typeof item.text === "string" && item.text.trim()) {
+    return item.text.trim();
+  }
+  const content = (item as { content?: unknown }).content;
+  if (Array.isArray(content)) {
+    const parts: string[] = [];
+    for (const part of content) {
+      if (!part || typeof part !== "object") continue;
+      const text = (part as { text?: string }).text;
+      if (typeof text === "string" && text.trim()) {
+        parts.push(text.trim());
+      }
+    }
+    if (parts.length > 0) return parts.join("\n");
+  }
   return "";
 }
 
@@ -243,6 +307,101 @@ export function flushCodexJsonStream(
   const buffered = accumulator.buffer;
   accumulator.buffer = "";
   return consumeCodexEvent(accumulator, buffered);
+}
+
+/**
+ * Reconstruct display text from a raw Codex JSONL transcript on disk. Used when
+ * stream chunks never made it into `display` but JSON lines were appended.
+ */
+export function extractCodexJsonlDisplay(transcript: string): string {
+  const agentMessages: string[] = [];
+  const reasoning: string[] = [];
+  const commandOutputs: string[] = [];
+  const plainLines: string[] = [];
+
+  for (const line of transcript.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    if (!trimmed.startsWith("{")) {
+      plainLines.push(trimmed);
+      continue;
+    }
+    try {
+      const event = JSON.parse(trimmed) as CodexItemPayload & {
+        item?: CodexItemPayload["item"] & { message?: string };
+      };
+      if (event.type !== "item.completed" || !event.item?.type) continue;
+      const text = parseCodexItemText(event.item);
+      const message = (event.item as { message?: string }).message?.trim();
+      if (event.item.type === "agent_message" || event.item.type === "message") {
+        if (text) agentMessages.push(text);
+      } else if (event.item.type === "reasoning") {
+        if (text) reasoning.push(text.replace(/\*\*/g, "").trim());
+      } else if (event.item.type === "command_execution") {
+        const output = event.item.aggregated_output?.trim();
+        if (output) commandOutputs.push(output);
+      } else if (event.item.type === "error" && (message || text)) {
+        agentMessages.push(message || text);
+      }
+    } catch {
+      // not JSONL
+    }
+  }
+
+  if (agentMessages.length > 0) {
+    return agentMessages.join("\n\n");
+  }
+  if (commandOutputs.length > 0) {
+    return commandOutputs[commandOutputs.length - 1];
+  }
+  if (reasoning.length > 0) {
+    return reasoning[reasoning.length - 1];
+  }
+  if (plainLines.length > 0) {
+    return plainLines.join("\n");
+  }
+  return "";
+}
+
+/** Recover display text from raw stdout when the live accumulator stayed empty. */
+/** Normalize Codex stdout/transcript for storage and turn rendering. */
+export function resolveCodexConversationOutput(output: string): string {
+  const trimmed = output.trim();
+  if (!trimmed) return "";
+  const fromJsonl = extractCodexJsonlDisplay(trimmed);
+  if (fromJsonl.trim()) return fromJsonl;
+  return trimmed;
+}
+
+export function recoverCodexStdoutOutput(
+  rawStdout: string,
+  accumulator?: CodexStreamAccumulator | null
+): string {
+  const fromAccumulator = accumulator
+    ? resolveCodexDisplayOutput(accumulator)
+    : "";
+  if (fromAccumulator.trim()) return fromAccumulator;
+
+  const fromJsonl = extractCodexJsonlDisplay(rawStdout);
+  if (fromJsonl.trim()) return fromJsonl;
+
+  const plainLines: string[] = [];
+  for (const line of rawStdout.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("{")) continue;
+    plainLines.push(trimmed);
+  }
+  return plainLines.join("\n").trim();
+}
+
+export function resolveCodexDisplayOutput(
+  accumulator: CodexStreamAccumulator
+): string {
+  return (
+    accumulator.display.trim() ||
+    accumulator.lastAgentMessage?.trim() ||
+    ""
+  );
 }
 
 const CODEX_STDERR_NOISE_PATTERNS = [

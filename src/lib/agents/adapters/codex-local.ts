@@ -1,3 +1,6 @@
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { codexCliProvider } from "../providers/codex-cli";
 import { resolveCliCommand } from "../provider-cli";
 import { providerStatusToEnvironmentTest } from "./environment";
@@ -8,6 +11,7 @@ import {
   createCodexStreamAccumulator,
   flushCodexJsonStream,
   flushCodexStderr,
+  recoverCodexStdoutOutput,
 } from "./codex-stream";
 import {
   classifyChain,
@@ -87,7 +91,10 @@ function firstNonEmptyLine(text: string): string | null {
   );
 }
 
-function buildCodexArgs(config: Record<string, unknown>): string[] {
+function buildCodexArgs(
+  config: Record<string, unknown>,
+  outputLastMessagePath?: string
+): string[] {
   const args = [
     "exec",
     "--json",
@@ -95,6 +102,10 @@ function buildCodexArgs(config: Record<string, unknown>): string[] {
     "--skip-git-repo-check",
     "--dangerously-bypass-approvals-and-sandbox",
   ];
+
+  if (outputLastMessagePath) {
+    args.push("-o", outputLastMessagePath);
+  }
 
   const model = readStringConfig(config, "model");
   if (model) {
@@ -157,7 +168,11 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
   async execute(ctx) {
     const command =
       readStringConfig(ctx.config, "command") || resolveCliCommand(codexCliProvider);
-    const args = buildCodexArgs(ctx.config);
+    const lastMessagePath = path.join(
+      os.tmpdir(),
+      `cabinet-codex-${ctx.runId.replace(/[^a-zA-Z0-9._-]/g, "_")}.txt`
+    );
+    const args = buildCodexArgs(ctx.config, lastMessagePath);
     const stdoutAccumulator = createCodexStreamAccumulator();
     const stderrAccumulator = createCodexStderrAccumulator();
 
@@ -199,9 +214,22 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
     }
 
     const filteredStderr = filterCodexStderr(result.stderr);
-    const output = stdoutAccumulator.display.trim() || null;
+    let output =
+      recoverCodexStdoutOutput(result.stdout, stdoutAccumulator) || null;
+    try {
+      const lastMessage = (await fs.readFile(lastMessagePath, "utf8")).trim();
+      if (lastMessage && (!output || lastMessage.length > output.length)) {
+        output = lastMessage;
+      }
+    } catch {
+      // --output-last-message is best-effort
+    } finally {
+      await fs.unlink(lastMessagePath).catch(() => {});
+    }
     const summaryLine =
-      firstNonEmptyLine(stdoutAccumulator.lastAgentMessage || output || "")?.slice(0, 300) || null;
+      firstNonEmptyLine(
+        stdoutAccumulator.lastAgentMessage || output || ""
+      )?.slice(0, 300) || null;
     const streamError = stdoutAccumulator.errorMessage?.trim() || null;
     const synthesizedExitCode =
       streamError && (result.exitCode ?? 0) === 0 && !result.timedOut
