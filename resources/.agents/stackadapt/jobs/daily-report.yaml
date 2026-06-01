@@ -1,0 +1,24 @@
+id: daily-report
+name: StackAdapt Daily Report
+enabled: true
+schedule: "0 7 * * *"
+provider: claude-code
+timeout: 300
+prompt: |
+  Run the StackAdapt connector to pull the last 14 days of campaign delivery
+  (spend, impressions, clicks, conversions, ROAS, and pacing) and generate a
+  daily markdown report.
+
+  Execute exactly this command using your Bash tool, from the repository root:
+
+      npx tsx server/connectors/stackadapt.ts
+
+  The script reads the StackAdapt API token from environment variables and
+  writes a report to `data/reports/stackadapt-YYYY-MM-DD.md`. Do not modify the
+  script and do not edit any files. The only commands you may run are the
+  connector command above and a single read-only check (e.g. `ls -l` or `stat`)
+  to verify the output file.
+
+  When the command finishes:
+  - If it exits with code 0, run one read-only check to confirm the report file exists and report its path and file size.
+  - If it exits with a non-zero code, report the stderr output verbatim so the failure is visible in the job run history.
