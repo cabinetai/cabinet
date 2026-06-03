@@ -23,6 +23,12 @@ export const minimaxApiProvider: AgentProvider = {
   ],
   models: [
     {
+      id: "MiniMax-M3",
+      name: "MiniMax M3",
+      description:
+        "Latest model. 512K context, up to 128K output, image input support",
+    },
+    {
       id: "MiniMax-M2.7",
       name: "MiniMax M2.7",
       description: "Peak Performance. Ultimate Value. Master the Complex",
@@ -99,7 +105,7 @@ export const minimaxApiProvider: AgentProvider = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "MiniMax-M2.7",
+        model: "MiniMax-M3",
         messages: [{ role: "user", content: prompt }],
         temperature: 1.0,
         max_tokens: 4096,

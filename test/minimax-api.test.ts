@@ -12,12 +12,18 @@ test("MiniMax provider has correct id and name", () => {
 test("MiniMax provider exposes the correct models", () => {
   const models = minimaxApiProvider.models ?? [];
   const modelIds = models.map((m) => m.id);
+  assert.ok(modelIds.includes("MiniMax-M3"), "should include MiniMax-M3");
   assert.ok(modelIds.includes("MiniMax-M2.7"), "should include MiniMax-M2.7");
   assert.ok(
     modelIds.includes("MiniMax-M2.7-highspeed"),
     "should include MiniMax-M2.7-highspeed"
   );
-  assert.equal(models.length, 2, "should expose exactly two models");
+  assert.equal(models.length, 3, "should expose exactly three models");
+  assert.equal(
+    models[0].id,
+    "MiniMax-M3",
+    "MiniMax-M3 should be the first (default) model"
+  );
 });
 
 test("MiniMax provider sets apiKeyEnvVar to MINIMAX_API_KEY", () => {
