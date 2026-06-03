@@ -16,6 +16,7 @@ import { supportsTerminalResume } from "./adapters/legacy-ids";
 import {
   appendAgentTurn,
   appendConversationTranscript,
+  appendEventLog,
   appendUserTurn,
   createConversation,
   enqueueConversationNotification,
@@ -768,6 +769,45 @@ export async function waitForConversationCompletion(
 
       const normalizedStatus = data.status === "completed" ? "completed" : "failed";
       const currentMeta = await readConversationMeta(conversationId);
+
+      // ── Fast-path: mark the task done and notify the UI immediately ──────
+      // finalizeConversation does expensive synchronous parsing (ANSI stripping,
+      // cabinet-block regex, action proposals) that blocks the Node.js event loop.
+      // If we run it first, the SSE flush can't happen until it finishes, so the
+      // browser doesn't receive the terminal event for tens of seconds despite the
+      // actual response being ready. Instead: write minimal completion state now,
+      // publish the event, yield so the SSE stream flushes and the task window
+      // updates instantly — then do the full finalization in the background.
+      if (currentMeta && currentMeta.status === "running") {
+        const quickMeta = {
+          ...currentMeta,
+          status: normalizedStatus as import("@/types/conversations").ConversationStatus,
+          completedAt: new Date().toISOString(),
+          exitCode: normalizedStatus === "completed" ? 0 : 1,
+        };
+        await writeConversationMeta(quickMeta);
+        const quickSeq = await appendEventLog(conversationId, { type: "task.updated" }, currentMeta.cabinetPath);
+        publishConversationEvent({
+          type: "task.updated",
+          taskId: conversationId,
+          cabinetPath: currentMeta.cabinetPath,
+          seq: quickSeq ?? undefined,
+          payload: { status: normalizedStatus },
+        });
+        enqueueConversationNotification({
+          id: conversationId,
+          agentSlug: currentMeta.agentSlug,
+          cabinetPath: currentMeta.cabinetPath,
+          title: currentMeta.summary || currentMeta.agentSlug,
+          status: normalizedStatus,
+          completedAt: new Date().toISOString(),
+        });
+      }
+
+      // Yield — lets the SSE stream flush the event above so the browser
+      // receives it and updates the task window before we start parsing.
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
       let finalMeta =
         currentMeta?.status === "running"
           ? await finalizeConversation(conversationId, {
@@ -798,10 +838,9 @@ export async function waitForConversationCompletion(
       // agent still has full context of the work it just did, so the retry is
       // scoped to this conversation — no cross-agent bleed like a git-diff
       // fallback would have. One retry only; a second miss is recorded as-is.
-      if (
-        normalizedStatus === "completed" &&
-        isCabinetBlockMissing(data.output || "")
-      ) {
+      // Cap to last 100 KB — the cabinet block is always at the end of output.
+      const outputTail = (data.output || "").slice(-100_000);
+      if (normalizedStatus === "completed" && isCabinetBlockMissing(outputTail)) {
         try {
           const retryMeta = await continueConversationRun(conversationId, {
             userMessage: CABINET_BLOCK_RETRY_PROMPT,
@@ -1200,6 +1239,11 @@ async function runContinueInProcess(input: {
     if (failed) {
       resumeOutcome = "failed";
     }
+
+    // Drain any in-flight partial flush before writing the final state.
+    // A stale flush completing after the final updateAgentTurn would revert
+    // pending to true and meta.status back to "running".
+    if (flushInFlight) await flushInFlight;
 
     // Classify failure via the adapter. Falls back to "unknown" if the
     // adapter doesn't implement classifyError (shouldn't happen post-G10).
@@ -1772,6 +1816,10 @@ export async function continueConversationRun(
     }
 
     try {
+      // Track the last in-flight partial update so we can drain it before
+      // writing the final state. A stale partial completing after the final
+      // updateAgentTurn would revert pending to true and status to "running".
+      let lastPartialUpdate: Promise<unknown> = Promise.resolve();
       const result = await pollDaemonSessionUntilDone(runId, {
         intervalMs: 700,
         deadlineMs: input.timeoutMs ?? 15 * 60 * 1000,
@@ -1779,7 +1827,7 @@ export async function continueConversationRun(
           const partial =
             extractAgentTurnContent(output) || output.trim();
           if (!partial) return;
-          void updateAgentTurn(
+          lastPartialUpdate = updateAgentTurn(
             conversationId,
             pendingTurnNumber,
             { content: partial, pending: true },
@@ -1787,6 +1835,8 @@ export async function continueConversationRun(
           ).catch(() => null);
         },
       });
+      // Drain any in-flight partial before proceeding to finalize.
+      await lastPartialUpdate;
       const status = result.status === "completed" ? "completed" : "failed";
       return {
         status,

@@ -344,6 +344,8 @@ export function TaskConversationPage({
   const isDemo = taskId === "demo";
   const isCompact = variant === "compact";
   const [task, setTask] = useState<Task | null>(isDemo ? MOCK_TASK : null);
+  // DEBUG: temporary log to trace status/pending updates
+  const [debugLog, setDebugLog] = useState<string[]>([]);
   const [turnAgent, setTurnAgent] = useState<TurnBlockAgent | null>(null);
   const userState = useUserProfile();
   const turnUser =
@@ -360,6 +362,9 @@ export function TaskConversationPage({
   const [busy, setBusy] = useState(false);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  // Shared across SSE effect re-mounts (React StrictMode double-invocation)
+  // so two EventSources don't fire concurrent fetchTask calls.
+  const sseFetchInFlight = useRef(false);
 
   // Callback ref on the panel root: scroll doesn't bubble, so we listen in
   // the capture phase to catch scrolling inside any tab's content. A
@@ -613,30 +618,90 @@ export function TaskConversationPage({
     };
   }, [task?.meta.agentSlug, task?.meta.cabinetPath]);
 
+  // DEBUG: log every task state change
+  useEffect(() => {
+    if (!task) return;
+    const lastTurn = task.turns[task.turns.length - 1];
+    const entry = `${new Date().toISOString().slice(11, 23)} | status=${task.meta.status} | turns=${task.turns.length} | last=${lastTurn?.role ?? "—"} pending=${String(lastTurn?.pending ?? false)} content="${(lastTurn?.content ?? "").slice(0, 40).replace(/\n/g, "↵")}"`;
+    setDebugLog((log) => [...log.slice(-29), entry]);
+  }, [task]);
+
   // SSE subscription (skip for demo)
   useEffect(() => {
     if (isDemo) return;
-    const url = `/api/agents/conversations/${encodeURIComponent(taskId)}/events`;
+    const qs = cabinetPath ? `?cabinetPath=${encodeURIComponent(cabinetPath)}` : "";
+    const url = `/api/agents/conversations/${encodeURIComponent(taskId)}/events${qs}`;
     const es = new EventSource(url);
-    es.onmessage = async (msg) => {
+    const sseStart = Date.now();
+    setDebugLog((log) => [...log.slice(-29), `${new Date().toISOString().slice(11, 23)} | SSE connecting: ${url}`]);
+    es.onopen = () => {
+      setDebugLog((log) => [...log.slice(-29), `${new Date().toISOString().slice(11, 23)} | SSE opened`]);
+    };
+
+    // Debounce fetchTask to at most 1 request/second during streaming.
+    // Without this, onPartial fires every 700ms → SSE event → fetchTask per
+    // event → hundreds of queued HTTP requests exhaust the browser's 6-slot
+    // HTTP/1.1 connection pool for the duration of the agent run.
+    // sseFetchInFlight is a ref (not local) so React StrictMode's double-mount
+    // doesn't create two concurrent fetchTask calls from two EventSources.
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const DEBOUNCE_MS = 1000;
+
+    const doFetch = async () => {
+      if (sseFetchInFlight.current) return;
+      sseFetchInFlight.current = true;
+      const fetchT0 = Date.now();
+      try {
+        const fresh = await fetchTask(taskId, cabinetPath || undefined);
+        const fetchMs = Date.now() - fetchT0;
+        const doneTs = new Date().toISOString().slice(11, 23);
+        setDebugLog((log) => [...log.slice(-29), `${doneTs} | fetchTask OK in ${fetchMs}ms status=${fresh.meta.status}`]);
+        setTask(fresh);
+      } catch (fetchErr) {
+        const fetchMs = Date.now() - fetchT0;
+        const doneTs = new Date().toISOString().slice(11, 23);
+        setDebugLog((log) => [...log.slice(-29), `${doneTs} | fetchTask FAILED in ${fetchMs}ms: ${String(fetchErr)}`]);
+      } finally {
+        sseFetchInFlight.current = false;
+      }
+    };
+
+    const scheduleFetch = (immediate: boolean) => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      if (immediate) {
+        void doFetch();
+      } else {
+        debounceTimer = setTimeout(() => { void doFetch(); }, DEBOUNCE_MS);
+      }
+    };
+
+    es.onmessage = (msg) => {
+      const ts = new Date().toISOString().slice(11, 23);
       try {
         const event = JSON.parse(msg.data) as TaskEvent | { type: "ping" };
-        if (event.type === "ping") return;
+        if (event.type === "ping") {
+          setDebugLog((log) => [...log.slice(-29), `${ts} | SSE ping (+${Math.round((Date.now()-sseStart)/1000)}s)`]);
+          return;
+        }
         if (event.type === "task.deleted") return;
-        // Re-fetch on any task/turn event — simple, durable
-        const fresh = await fetchTask(taskId);
-        setTask(fresh);
+        // Fetch immediately on completion/error events; debounce streaming updates.
+        const isTerminal = event.type === "task.updated" &&
+          typeof (event as { payload?: { streaming?: boolean } }).payload?.streaming !== "boolean";
+        const isTurnSettled = event.type === "turn.updated";
+        setDebugLog((log) => [...log.slice(-29), `${ts} | SSE ${event.type} terminal=${isTerminal} settled=${isTurnSettled}`]);
+        scheduleFetch(isTerminal || isTurnSettled);
       } catch {
-        // ignore malformed events
+        setDebugLog((log) => [...log.slice(-29), `${new Date().toISOString().slice(11, 23)} | SSE parse error`]);
       }
     };
     es.onerror = () => {
-      // Browser will auto-reconnect; nothing to do
+      setDebugLog((log) => [...log.slice(-29), `${new Date().toISOString().slice(11, 23)} | SSE error/reconnect`]);
     };
     return () => {
       es.close();
+      if (debounceTimer) clearTimeout(debounceTimer);
     };
-  }, [isDemo, taskId]);
+  }, [isDemo, taskId, cabinetPath]);
 
   // Cleanup demo settle timer
   useEffect(() => {
@@ -1471,6 +1536,15 @@ export function TaskConversationPage({
       ref={setPanelRoot}
       className="flex h-full flex-col bg-background text-foreground"
     >
+      {/* DEBUG overlay — remove when bug is fixed */}
+      {debugLog.length > 0 && (
+        <div className="z-50 max-h-56 overflow-y-auto border-b border-yellow-500/50 bg-yellow-950/90 px-3 py-1.5 font-mono text-[10px] text-yellow-300">
+          <div className="mb-0.5 font-bold text-yellow-400">DEBUG task state log:</div>
+          {debugLog.map((line, i) => (
+            <div key={i}>{line}</div>
+          ))}
+        </div>
+      )}
       {/* Header — owned here and rendered in every variant so Stop / Done /
           Status / Compact / menu stay identical everywhere. Compact embeds
           (the drawer) get a denser, collapse-on-scroll layout; the full page

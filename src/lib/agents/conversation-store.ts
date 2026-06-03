@@ -674,7 +674,10 @@ async function resolveConversationCabinetPath(
 function stripAnsiText(str: string): string {
   return str
     .replace(/\u001B\][^\u0007]*(?:\u0007|\u001B\\)/g, "")
-    .replace(/\u001B[P^_][\s\S]*?\u001B\\/g, "")
+    // DCS/PM/APC: ESC[P^_]...ESC\ — the lazy [\s\S]*? causes catastrophic
+    // backtracking O(N×M) when the ESC\ terminator is absent (daemon chunk splits).
+    // Replaced with a non-backtracking form that never re-scans already-consumed chars.
+    .replace(/\u001B[P^_][^\u001B]*(\u001B(?![\\])[^\u001B]*)*/g, "")
     // Replace cursor-movement CSI sequences with a space to preserve word boundaries
     .replace(/\u001B\[\d*[CGHID]/g, " ")
     // Strip remaining CSI sequences (colors, formatting, erasing)
@@ -708,9 +711,20 @@ function buildPromptEchoMatchers(prompt?: string): PromptEchoMatchers {
     };
   }
 
+  // isPromptEchoLine iterates normalizedLines for every transcript line (O(n²)).
+  // For continue turns, `prompt` is the full replayPrompt — system prompt +
+  // conversation history + tool definitions — which can be megabytes with tens
+  // of thousands of lines, making the loop take minutes. The echo lines that
+  // matter (cabinet format instructions) appear at the start of the system
+  // prompt, so capping at 20 KB is sufficient and keeps the loop fast.
+  const MAX_PROMPT_CHARS = 20_000;
+  const promptHead = prompt.length > MAX_PROMPT_CHARS
+    ? prompt.slice(0, MAX_PROMPT_CHARS)
+    : prompt;
+
   const normalizedLines = new Set<string>();
   const compactLines = new Set<string>();
-  for (const line of stripAnsiText(prompt).replace(/\r+/g, "\n").split("\n")) {
+  for (const line of stripAnsiText(promptHead).replace(/\r+/g, "\n").split("\n")) {
     const normalized = normalizeDisplayLine(line);
     if (normalized.length >= 4) {
       normalizedLines.add(normalized);
@@ -850,7 +864,11 @@ export function extractAgentTurnContent(
   transcript: string,
   prompt?: string
 ): string {
-  const cleaned = cleanConversationOutputForParsing(transcript, prompt);
+  // Limit to last 100 KB — the agent turn content and cabinet block are always
+  // at the end; parsing the full multi-MB transcript blocks the event loop.
+  const TAIL = 100_000;
+  const tail = transcript.length > TAIL ? transcript.slice(transcript.length - TAIL) : transcript;
+  const cleaned = cleanConversationOutputForParsing(tail, prompt);
   const withoutCabinet = cleaned.replace(/```cabinet[\s\S]*?```/gi, "").trim();
   const unwrapped = withoutCabinet.replace(
     /<ask_user>([\s\S]*?)<\/ask_user>/gi,
@@ -989,24 +1007,35 @@ async function maybeResolveCompletedConversation(
 ): Promise<ConversationMeta | null> {
   if (!meta) return meta;
 
+  // Running tasks are being actively managed by the runner. Skip the expensive
+  // transcript read + parseCabinetBlock call — those block the Node.js event
+  // loop for seconds on large transcripts and serialize all concurrent fetchTask
+  // requests behind them. The runner calls finalizeConversation directly when
+  // the task completes; we don't need to race it here.
+  if (meta.status === "running") {
+    return meta;
+  }
+
+  // Recently finalized tasks (within 60s) are returned as-is. The runner just
+  // wrote the meta; re-parsing the transcript is redundant and expensive.
+  if (meta.completedAt) {
+    const age = Date.now() - new Date(meta.completedAt).getTime();
+    if (age < 60_000) return meta;
+  }
+
   const cabinetPath = meta.cabinetPath;
   const transcript = await readConversationTranscript(meta.id, cabinetPath);
   const prompt = (await fileExists(promptPathFs(meta.id, cabinetPath)))
     ? await readFileContent(promptPathFs(meta.id, cabinetPath))
     : "";
-  // Manual terminal-mode sessions stay "running" until the user closes
-  // them explicitly (Done button or /exit in the xterm). An idle CLI
-  // prompt is awaiting-input, not completed. Never silently flip these
-  // to status=completed from a detail-fetch side effect.
-  if (meta.status === "running" && meta.trigger === "manual") {
-    return meta;
-  }
-  if (meta.status === "running" && !transcriptShowsCompletedRun(transcript, prompt)) {
-    return meta;
-  }
-  const parsed = parseCabinetBlock(transcript, prompt);
+  // Only repair completed/failed tasks whose metadata looks stale or corrupt
+  // (e.g. a task whose runner crashed before finalizing). Running tasks are
+  // handled above by the early return. Cap to 100 KB tail — same as finalizeConversation.
+  const TAIL = 100_000;
+  const transcriptTail =
+    transcript.length > TAIL ? transcript.slice(transcript.length - TAIL) : transcript;
+  const parsed = parseCabinetBlock(transcriptTail, prompt);
   const needsRepair =
-    meta.status === "running" ||
     isPlaceholderCabinetValue(meta.summary) ||
     isPlaceholderCabinetValue(meta.contextSummary) ||
     meta.artifactPaths.some((artifactPath) => isPlaceholderCabinetValue(artifactPath)) ||
@@ -1021,8 +1050,8 @@ async function maybeResolveCompletedConversation(
 
   return (
     await finalizeConversation(meta.id, {
-      status: meta.status === "running" ? "completed" : meta.status,
-      exitCode: meta.status === "running" ? 0 : meta.exitCode,
+      status: meta.status,
+      exitCode: meta.exitCode,
       output: transcript,
     }, cabinetPath)
   ) || meta;
@@ -1127,7 +1156,20 @@ export async function finalizeConversation(
     input.output ? Promise.resolve(input.output) : readConversationTranscript(id, cp),
     hasPrompt ? readFileContent(promptPathFs(id, cp)) : Promise.resolve(""),
   ]);
-  const cleanedOutput = cleanConversationOutputForParsing(output, prompt);
+  // Cap the output fed to the expensive parsing pipeline. cleanConversationOutputForParsing
+  // runs stripAnsiText (several regex passes) + stripPromptEchoFromTranscript (O(lines²))
+  // on the full raw transcript. For agents that write large files, the transcript can be
+  // millions of characters and block the Node.js event loop for minutes. The cabinet
+  // block is always at the END of the output, so the last 100 KB is sufficient.
+  // Yield to the event loop before any synchronous parsing so that HTTP
+  // requests already queued (e.g. fetchTask from the SSE terminal event) can
+  // be served before we consume the event loop with regex/string operations.
+  await new Promise<void>((resolve) => setImmediate(resolve));
+
+  const PARSE_TAIL_LIMIT = 100_000;
+  const outputForParsing =
+    output.length > PARSE_TAIL_LIMIT ? output.slice(output.length - PARSE_TAIL_LIMIT) : output;
+  const cleanedOutput = cleanConversationOutputForParsing(outputForParsing, prompt);
   const parsed = parseCabinetBlock(cleanedOutput, prompt);
   const artifacts = parsed.artifactPaths.map((artifactPath) => ({
     path: artifactPath,
@@ -1143,7 +1185,8 @@ export async function finalizeConversation(
     // because it appears verbatim in the system prompt, which would hide
     // the entire JSON block from the parser. The parser has its own
     // action-level echo filter via fingerprintsFromPrompt.
-    const pending = await proposePendingActions(meta, output, prompt);
+    // Use the same 100 KB tail — cabinet-actions blocks are always near the end.
+    const pending = await proposePendingActions(meta, outputForParsing, prompt);
     if (pending.length > 0) {
       const existing = new Set<string>();
       for (const p of meta.pendingActions || []) existing.add(fingerprint(p.action));
