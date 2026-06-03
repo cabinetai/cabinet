@@ -36,9 +36,17 @@ export async function POST(request: NextRequest) {
 
     const db = getDb();
     const id = randomUUID();
-    db.prepare(
-      "INSERT INTO google_drive_mounts (id, abs_path, folder_name, enabled, added_at) VALUES (?, ?, ?, 1, datetime('now'))"
-    ).run(id, absPath, folderName);
+    try {
+      db.prepare(
+        "INSERT INTO google_drive_mounts (id, abs_path, folder_name, enabled, added_at) VALUES (?, ?, ?, 1, datetime('now'))"
+      ).run(id, absPath, folderName);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("UNIQUE constraint failed")) {
+        return NextResponse.json({ error: "This folder is already mounted" }, { status: 409 });
+      }
+      throw err;
+    }
 
     return NextResponse.json({ id, absPath, folderName }, { status: 201 });
   } catch (error) {
