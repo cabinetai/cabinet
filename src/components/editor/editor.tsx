@@ -322,6 +322,14 @@ export function KBEditor() {
   const prevPathRef = useRef<string | null>(null);
   const renderedKeyRef = useRef<string | null>(null);
   const [renderedPath, setRenderedPath] = useState<string | null>(null);
+  // Tracks whether the *current* renderedKeyRef came from a loadStatus="ok"
+  // render. Without this, an early empty-content paint (cached paint where
+  // isLoading flipped false before the real fetch resolved, or any other
+  // transient `content=""` state) could lock renderedKeyRef = "<path>\0",
+  // and a later state echo that re-evaluates to the same (path, "") tuple
+  // would early-return via the dedupe check and never re-render the real
+  // content — surfacing as a permanently blank editor.
+  const renderedOkRef = useRef<boolean>(false);
   useEffect(() => {
     if (!editor || currentPath === null) return;
     // Skip if content hasn't actually changed (same path, dirty edit)
@@ -331,10 +339,16 @@ export function KBEditor() {
     // pure waste — every extension runs a full schema pass twice per
     // navigation. Skip until the real content arrives.
     if (isLoading && content === "") return;
+    // Don't commit an empty render for a path whose fetch hasn't reported
+    // success yet. If a cached paint or transient state lands `content=""`
+    // before loadStatus flips to "ok", waiting prevents the dedupe check
+    // below from locking in the empty key for this path.
+    if (content === "" && loadStatus !== "ok") return;
     // Dedupe identical (path, content) renders — e.g. cached paint followed
-    // by a fresh fetch that returned the same markdown.
+    // by a fresh fetch that returned the same markdown. Gated on
+    // renderedOkRef so a stale empty render never blocks a real one.
     const key = `${currentPath}\u0000${content}`;
-    if (renderedKeyRef.current === key) {
+    if (renderedKeyRef.current === key && renderedOkRef.current) {
       if (renderedPath !== currentPath) setRenderedPath(currentPath);
       return;
     }
@@ -342,17 +356,52 @@ export function KBEditor() {
 
     const setContent = async () => {
       isLoadingRef.current = true;
-      const html = await markdownToHtml(content, currentPath);
-      editor.commands.setContent(html);
-      renderedKeyRef.current = key;
-      setRenderedPath(currentPath);
-      setTimeout(() => {
-        isLoadingRef.current = false;
-      }, 50);
+      try {
+        const html = await markdownToHtml(content, currentPath);
+        editor.commands.setContent(html);
+        renderedKeyRef.current = key;
+        renderedOkRef.current = loadStatus === "ok";
+        setRenderedPath(currentPath);
+        // Surface a known-bad state instead of silently rendering blank: the
+        // store says we have content, but ProseMirror parsed it down to
+        // nothing. Almost always means a schema/extension mismatch (unknown
+        // element, malformed table, ...) — log so it's debuggable rather
+        // than leaving the user staring at an empty page.
+        if (content && editor.isEmpty) {
+          console.warn(
+            "[KBEditor] rendered empty document despite non-empty markdown",
+            { path: currentPath, contentLength: content.length },
+          );
+        }
+      } catch (err) {
+        // Clear the dedupe so the next state tick can retry instead of
+        // being blocked by a stale key from a failed render.
+        renderedKeyRef.current = null;
+        renderedOkRef.current = false;
+        console.error("[KBEditor] failed to render markdown", err, {
+          path: currentPath,
+          contentLength: content.length,
+        });
+      } finally {
+        setTimeout(() => {
+          isLoadingRef.current = false;
+        }, 50);
+      }
     };
 
     setContent();
-  }, [editor, content, currentPath, isLoading, renderedPath]);
+  }, [editor, content, currentPath, isLoading, loadStatus, renderedPath]);
+
+  // Source mode snapshots the markdown when toggled on, but doesn't listen
+  // for store updates — so navigating to a new page while source mode is
+  // open used to leave the textarea showing the previous page's content.
+  // Re-sync whenever the store's content changes for this path and the user
+  // hasn't started editing.
+  useEffect(() => {
+    if (!sourceMode) return;
+    if (useEditorStore.getState().isDirty) return;
+    setSourceText(content);
+  }, [sourceMode, content, currentPath]);
 
   // Push frontmatter.dir into the ProseMirror contenteditable element so list
   // indentation, table cell alignment, and block direction all flip when the
