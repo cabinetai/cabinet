@@ -5,6 +5,7 @@ import { ChevronRight, Pause, Sparkles, User } from "lucide-react";
 import {
   artifactPathToTreePath,
   inferPageTypeFromPath,
+  isExternalArtifactPath,
   pageTypeColor,
   pageTypeIcon,
 } from "@/lib/ui/page-type-icons";
@@ -152,6 +153,17 @@ function KbArtifactRow({
     <button
       type="button"
       onClick={() => {
+        if (isExternalArtifactPath(path)) {
+          window.dispatchEvent(
+            new CustomEvent("cabinet:toast", {
+              detail: {
+                kind: "info",
+                message: `Outside cabinet — ${path}`,
+              },
+            }),
+          );
+          return;
+        }
         const from = returnContext ?? useAppStore.getState().section;
         const treePath = artifactPathToTreePath(path, from.cabinetPath);
         focusPath(treePath);

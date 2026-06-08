@@ -2,7 +2,7 @@ import { useAppStore, type SelectedSection } from "@/stores/app-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { findNodeByPath } from "@/lib/cabinets/tree";
-import { artifactPathToTreePath } from "@/lib/ui/page-type-icons";
+import { artifactPathToTreePath, isExternalArtifactPath } from "@/lib/ui/page-type-icons";
 
 const NON_TEXT_ARTIFACT_EXTENSIONS = [
   ".pdf",
@@ -42,6 +42,17 @@ export async function openArtifactPath(
   path: string,
   section: SelectedSection
 ): Promise<void> {
+  if (isExternalArtifactPath(path)) {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("cabinet:toast", {
+          detail: { kind: "info", message: `Outside cabinet — ${path}` },
+        }),
+      );
+    }
+    return;
+  }
+
   const { setSection } = useAppStore.getState();
   const { focusPath, loadTree } = useTreeStore.getState();
   const { loadPage } = useEditorStore.getState();
