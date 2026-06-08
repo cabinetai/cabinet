@@ -96,9 +96,18 @@ export function inferPageTypeFromPath(path: string): PageTypeKind {
  * drop `.md` / `/index.md` extensions, so e.g. `data/have-fun/bellatrix.md`
  * must be rewritten to `have-fun/bellatrix` before calling `selectPage`.
  *
- * Idempotent — safe to apply twice.
+ * Agents writing inside a sub-cabinet record paths CABINET-relative
+ * ("kb/reports/foo.md"), not DATA_DIR-relative
+ * ("zeropoint-capital/kb/reports/foo.md"). Pass `cabinetPath` so the
+ * cabinet prefix gets added when it's missing — without this,
+ * `loadPage("kb/reports/foo")` fetches `/api/pages/kb/...` which 404s
+ * under any non-root cabinet (manifested as a permanently blank editor
+ * when an artifact is clicked from a task panel).
+ *
+ * Idempotent — safe to apply twice. Safe to call with `cabinetPath`
+ * omitted for root-cabinet (".") paths.
  */
-export function artifactPathToTreePath(path: string): string {
+export function artifactPathToTreePath(path: string, cabinetPath?: string): string {
   if (!path) return path;
   let next = path.trim();
   next = next.replace(/^\/+/, "");
@@ -106,5 +115,13 @@ export function artifactPathToTreePath(path: string): string {
   next = next.replace(/\/index\.md$/, "");
   next = next.replace(/\/index\.html$/, "");
   next = next.replace(/\.md$/, "");
+  if (
+    cabinetPath &&
+    cabinetPath !== "." &&
+    next !== cabinetPath &&
+    !next.startsWith(`${cabinetPath}/`)
+  ) {
+    next = `${cabinetPath}/${next}`;
+  }
   return next;
 }

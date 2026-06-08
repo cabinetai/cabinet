@@ -376,7 +376,7 @@ export function RecentTasks({
                       key={path}
                       type="button"
                       onClick={() => {
-                        const treePath = artifactPathToTreePath(path);
+                        const treePath = artifactPathToTreePath(path, task.cabinetPath);
                         focusPath(treePath);
                         setSection({
                           type: "page",

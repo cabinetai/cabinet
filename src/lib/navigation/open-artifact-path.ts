@@ -46,7 +46,7 @@ export async function openArtifactPath(
   const { focusPath, loadTree } = useTreeStore.getState();
   const { loadPage } = useEditorStore.getState();
 
-  const treePath = artifactPathToTreePath(path);
+  const treePath = artifactPathToTreePath(path, section.cabinetPath);
 
   setSection(section);
   focusPath(treePath);

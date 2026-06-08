@@ -79,8 +79,8 @@ export function ArtifactsList({
             key={path}
             type="button"
             onClick={() => {
-              const treePath = artifactPathToTreePath(path);
               const from = returnContext ?? useAppStore.getState().section;
+              const treePath = artifactPathToTreePath(path, from.cabinetPath);
               focusPath(treePath);
               pushSection({ type: "page", cabinetPath: from.cabinetPath }, from);
               void loadPage(treePath);

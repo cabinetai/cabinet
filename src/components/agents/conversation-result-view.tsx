@@ -54,8 +54,8 @@ export function ConversationResultView({
   const promptText = detail.request || detail.meta.title;
   const [promptHtml, setPromptHtml] = useState("");
   const artifactTreePaths = useMemo(
-    () => detail.artifacts.map((a) => artifactPathToTreePath(a.path)),
-    [detail.artifacts]
+    () => detail.artifacts.map((a) => artifactPathToTreePath(a.path, detail.meta.cabinetPath)),
+    [detail.artifacts, detail.meta.cabinetPath]
   );
   const artifactMeta = usePageMeta(artifactTreePaths);
 
@@ -189,7 +189,7 @@ export function ConversationResultView({
           {detail.artifacts.length > 0 ? (
             <div className="space-y-2">
               {detail.artifacts.map((artifact) => {
-                const treePath = artifactPathToTreePath(artifact.path);
+                const treePath = artifactPathToTreePath(artifact.path, detail.meta.cabinetPath);
                 const kind = artifactMeta.get(treePath)?.type ?? inferPageTypeFromPath(artifact.path);
                 const Icon = pageTypeIcon(kind);
                 const color = pageTypeColor(kind);
