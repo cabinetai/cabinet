@@ -883,7 +883,7 @@ export function TaskConversationPage({
     // Fast ticks for the first 30s after open — that's when quick failures
     // happen and the user is staring at the drawer waiting.
     tick();
-    let slowInterval: ReturnType<typeof setInterval> | null = null;
+    let slowInterval: number | null = null;
     const fastInterval = window.setInterval(tick, 500);
     const slowSwitch = window.setTimeout(() => {
       window.clearInterval(fastInterval);
