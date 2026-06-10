@@ -201,6 +201,65 @@ Cabinet no longer treats the browser terminal as the only way to run AI work.
 
 ---
 
+## Atlas Cloud (BYOAI provider)
+
+<p align="center">
+  <a href="https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=cabinet" target="_blank" rel="noopener noreferrer">
+    <img src="docs/atlas-cloud-logo.png" alt="Atlas Cloud" width="200">
+  </a>
+</p>
+
+Cabinet's BYOAI philosophy means you can point it at any model backend you control. [Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=cabinet) is a full-modal AI inference platform that exposes a single OpenAI-compatible API for 300+ curated LLM, image, and video models. You connect once and keep your data, keys, and choice of model entirely in your hands. No vendor lock-in, which is exactly how Cabinet is meant to work.
+
+Because Atlas Cloud speaks the OpenAI protocol, it plugs into Cabinet through the **OpenCode** provider (already one of the built-in CLI runtimes), which routes to any OpenAI-compatible backend. Bring your own Atlas Cloud key and route through it:
+
+```bash
+# 1. Install the OpenCode CLI runtime (one of Cabinet's built-in providers)
+npm i -g opencode-ai
+
+# 2. Point OpenCode at Atlas Cloud's OpenAI-compatible endpoint.
+#    Use your own key from https://www.atlascloud.ai/ and never commit it.
+export OPENAI_BASE_URL="https://api.atlascloud.ai/v1"
+export OPENAI_API_KEY="your-atlas-cloud-api-key"
+
+# 3. Verify the runtime, then pick OpenCode + an Atlas model in Cabinet's
+#    composer (Native/Terminal runtime picker) or Settings -> Providers.
+opencode run 'Reply with exactly OK'
+```
+
+Your data never leaves a backend you chose, and you can swap models per run using Cabinet's existing provider, model, and effort overrides.
+
+<details>
+<summary><strong>Atlas Cloud model catalog</strong> (synced with <a href="https://www.atlascloud.ai/zh/models/list/llm">the official list</a>)</summary>
+
+Reach all of these through the single OpenAI-compatible base URL `https://api.atlascloud.ai/v1`:
+
+**LLMs**
+
+- Anthropic (Claude): `anthropic/claude-haiku-4.5-20251001`, `anthropic/claude-opus-4.8`, `anthropic/claude-sonnet-4.6`
+- OpenAI (GPT): `openai/gpt-5.4`, `openai/gpt-5.5`
+- Google (Gemini): `google/gemini-3.1-flash-lite`, `google/gemini-3.1-pro-preview`, `google/gemini-3.5-flash`
+- Alibaba (Qwen): `Qwen/Qwen3-235B-A22B-Instruct-2507`, `qwen/qwen3-coder-next`, `qwen/qwen3-max-2026-01-23`, `Qwen/Qwen3-Next-80B-A3B-Instruct`, `Qwen/Qwen3-VL-235B-A22B-Instruct`, `qwen/qwen3.6-plus`
+- DeepSeek: `deepseek-ai/DeepSeek-V3-0324`, `deepseek-ai/DeepSeek-V3.2-Exp`, `deepseek-ai/deepseek-v4-pro`, `deepseek-ai/deepseek-r1-0528`
+- Moonshot (Kimi): `moonshotai/Kimi-K2-Thinking`, `moonshotai/kimi-k2.6`
+- Zhipu (GLM): `zai-org/GLM-4.6`, `zai-org/glm-5`, `zai-org/glm-5.1`
+- MiniMax: `MiniMaxAI/MiniMax-M2`, `minimaxai/minimax-m2.7`
+- xAI: `xai/grok-4.3`
+- Kuaishou (KAT): `kwaipilot/kat-coder-pro-v2`
+
+**Image / video (for the multi-modal side of your knowledge base)**
+
+- Text-to-image: `qwen/qwen-image-2.0/text-to-image`, `openai/gpt-image-2/text-to-image`
+- Image-to-image: `qwen/qwen-image-2.0/edit`, `openai/gpt-image-2/edit`
+- Text-to-video: `bytedance/seedance-2.0-fast/text-to-video`, `google/veo3.1/text-to-video`
+- Image-to-video: `bytedance/seedance-2.0-fast/image-to-video`, `google/veo3.1/image-to-video`
+
+For budget-friendly API access, see the Atlas Cloud [coding plan](https://www.atlascloud.ai/console/coding-plan).
+
+</details>
+
+---
+
 ## Architecture
 
 ```
