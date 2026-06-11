@@ -8,7 +8,7 @@
 #      (the repo's existing .dockerignore already excludes node_modules,
 #      .next, .git, data, and most *.md files from the build context).
 #   2. From that repo's root:
-#        docker build -t ghcr.io/j0nathontayl0r/cabinet:0.4.6 .
+#        docker build -t ghcr.io/j0nathontayl0r/cabinet:0.4.7 .
 #
 # Runtime model:
 #   - The image's default CMD starts BOTH the Next.js app (`npm run
@@ -70,13 +70,15 @@ FROM node:22-bookworm-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Cabinet auto-commits knowledge-base edits via simple-git, which shells out to
-# the `git` binary at runtime — node:22-bookworm-slim does not ship it. Without
-# this, Cabinet's per-edit commits and in-app version history silently fail
-# (the workspace still reaches GitHub via the separate git-sync CronJob, but at
-# coarser 15-minute granularity).
+# git: Cabinet auto-commits knowledge-base edits via simple-git (shells out to
+# the `git` binary), and the in-app skills installer runs `git clone` over
+# HTTPS. node:22-bookworm-slim ships neither git nor a CA bundle.
+# ca-certificates is REQUIRED for the HTTPS clones — without it git uses the
+# empty system CA store and every `git clone https://...` fails with "server
+# certificate verification failed. CAfile: none". (Node's own fetch() is
+# unaffected because Node bundles its own CAs; this only bites the git binary.)
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # AI agent CLIs that Cabinet drives as subprocesses. Installed globally to
