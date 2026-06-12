@@ -22,6 +22,12 @@ ensureBetterSqlite3();
 import { loadCabinetEnv } from "../src/lib/runtime/cabinet-env";
 loadCabinetEnv();
 
+// Mark this process as the daemon itself. conversation-runner reads this to
+// route continued turns through the daemon's session machinery (addressable,
+// stoppable run ids) instead of the un-cancellable in-process path — the
+// Telegram gateway depends on that for /stop and partial streaming.
+process.env.CABINET_DAEMON_SELF = "1";
+
 import { WebSocketServer, WebSocket } from "ws";
 import path from "path";
 import http from "http";
@@ -79,6 +85,10 @@ import type { BaseSession, CompletedOutputEntry, PtySession } from "./pty/types"
 import { SearchIndex, buildPageRecord, walkDataDir } from "./search/index-builder";
 import { runSearch } from "./search/search-service";
 import { startWatcher } from "./search/watcher";
+import {
+  initTelegramGateway,
+  shutdownTelegramGateway,
+} from "./telegram/gateway";
 import { loadAgentDocs, loadTaskDocs } from "./search/index-agents-tasks";
 import type { SearchScope } from "./search/types";
 import {
@@ -1219,34 +1229,39 @@ function scheduleJob(job: JobConfig): void {
   const task = cron.schedule(job.schedule, () => {
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering scheduled job ${key} @ ${scheduledAt}`);
+    // Disable a one-shot after it has fired — on BOTH success and failure. A
+    // one-off cron (`m h dom mon *`) would otherwise re-match a year later; a
+    // failed run must not leave it armed for that rollover.
+    const disableIfOneShot = async () => {
+      if (!job.oneShot) return;
+      try {
+        await putJson(
+          `${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`,
+          {
+            action: "update",
+            cabinetPath: job.cabinetPath,
+            enabled: false,
+          }
+        );
+      } catch (error) {
+        console.error(`Failed to disable one-shot job ${key}:`, error);
+      }
+      const existing = scheduledJobs.get(key);
+      if (existing) existing.stop();
+      scheduledJobs.delete(key);
+      console.log(`  One-shot job fired and disabled: ${key}`);
+    };
     void putJson(`${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`, {
       action: "run",
       source: "scheduler",
       cabinetPath: job.cabinetPath,
       scheduledAt,
     })
-      .then(async () => {
-        if (job.oneShot) {
-          try {
-            await putJson(
-              `${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`,
-              {
-                action: "update",
-                cabinetPath: job.cabinetPath,
-                enabled: false,
-              }
-            );
-          } catch (error) {
-            console.error(`Failed to disable one-shot job ${key}:`, error);
-          }
-          const existing = scheduledJobs.get(key);
-          if (existing) existing.stop();
-          scheduledJobs.delete(key);
-          console.log(`  One-shot job fired and disabled: ${key}`);
-        }
-      })
       .catch((error) => {
         console.error(`Failed to trigger scheduled job ${key}:`, error);
+      })
+      .finally(() => {
+        void disableIfOneShot();
       });
   });
 
@@ -2035,6 +2050,21 @@ server.listen(PORT, () => {
   void guardAgainstBigTree().then(() =>
     bootstrapSearchIndex().then(() => startSearchWatcher())
   );
+  // Telegram remote-control gateway (docs/TELEGRAM_REMOTE_CONTROL_PRD.md).
+  // No-op unless TELEGRAM_BOT_TOKEN + TELEGRAM_ALLOWED_USERS are set; watches
+  // .cabinet.env so connecting from the UI takes effect without a restart.
+  initTelegramGateway({
+    boundPort: PORT,
+    getSearchSources: async () => {
+      const [agents, tasks] = await Promise.all([loadAgentDocs(), loadTaskDocs()]);
+      return {
+        pages: searchIndex,
+        agents: () => agents,
+        tasks: () => tasks,
+        indexReady: () => searchIndexReady,
+      };
+    },
+  });
   void (async () => {
     try {
       const { loadExternalAdapters } = await import(
@@ -2068,6 +2098,7 @@ function shutdown(): void {
     } catch {}
   }
   void scheduleWatcher.close();
+  void shutdownTelegramGateway();
   closeDb();
   server.close();
   process.exit(0);

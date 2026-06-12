@@ -25,7 +25,7 @@ import { useAgentsContext } from "./agents-context";
 import { AgentsTab } from "./agents-tab";
 import { RoutinesTab } from "./routines-tab";
 import { HeartbeatsTab } from "./heartbeats-tab";
-import { ScheduleTab } from "./schedule-tab";
+import { ScheduleView } from "@/components/cabinets/schedule-view";
 
 export type AgentsTabKey = "agents" | "routines" | "heartbeats" | "schedule";
 
@@ -46,13 +46,70 @@ export function TabsLayout({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <TopBar tab={tab} onTabChange={onTabChange} />
-      <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-4 sm:px-6">
-        {tab === "agents" && <AgentsTab />}
-        {tab === "routines" && <RoutinesTab />}
-        {tab === "heartbeats" && <HeartbeatsTab />}
-        {tab === "schedule" && <ScheduleTab />}
-      </div>
+      {tab === "schedule" ? (
+        // Full-bleed: the calendar fills the area below the tab bar.
+        <div className="min-h-0 flex-1">
+          <ScheduleMount />
+        </div>
+      ) : (
+        <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-4 sm:px-6">
+          {tab === "agents" && <AgentsTab />}
+          {tab === "routines" && <RoutinesTab />}
+          {tab === "heartbeats" && <HeartbeatsTab />}
+        </div>
+      )}
     </div>
+  );
+}
+
+/** Schedule tab → the canonical full-bleed ScheduleView, wired to the
+ *  workspace's routine/heartbeat dialogs. */
+function ScheduleMount() {
+  const {
+    agents,
+    jobs,
+    cabinetPath,
+    refresh,
+    setRoutineDialog,
+    setHeartbeatDialog,
+  } = useAgentsContext();
+  return (
+    <ScheduleView
+      fullBleed
+      cabinetPath={cabinetPath}
+      agents={agents}
+      jobs={jobs}
+      onMutated={() => void refresh()}
+      onJobClick={(job, agent) =>
+        setRoutineDialog({
+          agent: {
+            slug: agent.slug,
+            name: agent.name,
+            role: agent.role,
+            cabinetPath: agent.cabinetPath || cabinetPath,
+          },
+          existingJob: {
+            id: job.id,
+            name: job.name,
+            schedule: job.schedule,
+            enabled: job.enabled,
+            prompt: job.prompt,
+          },
+        })
+      }
+      onHeartbeatClick={(agent) =>
+        setHeartbeatDialog({
+          agent: {
+            slug: agent.slug,
+            name: agent.name,
+            role: agent.role,
+            cabinetPath: agent.cabinetPath || cabinetPath,
+          },
+          initialHeartbeat: agent.heartbeat || undefined,
+          initialEnabled: agent.heartbeatEnabled !== false,
+        })
+      }
+    />
   );
 }
 

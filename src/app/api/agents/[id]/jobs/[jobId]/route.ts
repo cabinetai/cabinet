@@ -11,6 +11,8 @@ import {
   normalizeJobConfig,
 } from "@/lib/jobs/job-normalization";
 import { normalizeCabinetPath } from "@/lib/cabinets/paths";
+import { minuteIso } from "@/lib/agents/cron-compute";
+import { withinSeriesWindow } from "@/lib/agents/one-off";
 
 export async function GET(
   req: NextRequest,
@@ -58,6 +60,38 @@ export async function PUT(
       if (cabinetPath) existing.cabinetPath = cabinetPath;
       const scheduledAt =
         typeof body.scheduledAt === "string" ? body.scheduledAt : undefined;
+      // Per-occurrence exception (EXDATE): a recurring job whose owner moved
+      // THIS occurrence elsewhere records the original instant in `exceptions`.
+      // The cron still fires on that minute, so suppress the run here — hiding
+      // it in the calendar alone would let the original occurrence still run.
+      if (
+        scheduledAt &&
+        Array.isArray(existing.exceptions) &&
+        existing.exceptions.some((iso) => minuteIso(iso) === minuteIso(scheduledAt))
+      ) {
+        return NextResponse.json({ ok: true, skipped: "exception" });
+      }
+      // Recurring-series window ("this and following"): node-cron has no
+      // end-date, so a series capped with `until` (or a fork that has not
+      // reached its `since`) keeps firing. Suppress out-of-window runs here —
+      // hiding them in the calendar alone would let the original cron execute.
+      if (scheduledAt && !withinSeriesWindow(existing, scheduledAt)) {
+        // If the series has fully ended (its `until` is now in the past, so
+        // every future fire is dead), retire the zombie cron so the daemon
+        // stops firing it daily. Occurrences before `until` already ran.
+        if (
+          existing.until &&
+          new Date(existing.until).getTime() <= Date.now() &&
+          existing.enabled
+        ) {
+          existing.enabled = false;
+          existing.updatedAt = new Date().toISOString();
+          await saveAgentJob(slug, existing, cabinetPath || existing.cabinetPath);
+          await reloadDaemonSchedules().catch(() => {});
+          return NextResponse.json({ ok: true, skipped: "series-ended", disabled: true });
+        }
+        return NextResponse.json({ ok: true, skipped: "series-window" });
+      }
       const run = await executeJob(existing, { scheduledAt });
       return NextResponse.json({ ok: true, run });
     }

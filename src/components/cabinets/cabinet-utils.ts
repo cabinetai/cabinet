@@ -11,6 +11,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { createElement } from "react";
+import { TelegramMark } from "@/components/integrations/telegram-mark";
 
 /* ─── String helpers ─── */
 
@@ -64,6 +65,7 @@ export const TRIGGER_STYLES: Record<ConversationMeta["trigger"], string> = {
   job: "bg-emerald-500/12 text-emerald-400 ring-1 ring-emerald-500/20",
   heartbeat: "bg-pink-500/12 text-pink-400 ring-1 ring-pink-500/20",
   agent: "bg-violet-500/12 text-violet-400 ring-1 ring-violet-500/20",
+  telegram: "bg-cyan-500/12 text-cyan-400 ring-1 ring-cyan-500/20",
 };
 
 export const TRIGGER_LABELS: Record<ConversationMeta["trigger"], string> = {
@@ -71,6 +73,7 @@ export const TRIGGER_LABELS: Record<ConversationMeta["trigger"], string> = {
   job: "Job",
   heartbeat: "Heartbeat",
   agent: "Agent",
+  telegram: "Telegram",
 };
 
 /* ─── Icon components ─── */
@@ -78,6 +81,7 @@ export const TRIGGER_LABELS: Record<ConversationMeta["trigger"], string> = {
 export function TriggerIcon({ trigger }: { trigger: ConversationMeta["trigger"] }) {
   if (trigger === "job") return createElement(Clock3, { className: "h-2.5 w-2.5" });
   if (trigger === "heartbeat") return createElement(HeartPulse, { className: "h-2.5 w-2.5" });
+  if (trigger === "telegram") return createElement(TelegramMark, { className: "h-2.5 w-2.5" });
   return createElement(Bot, { className: "h-2.5 w-2.5" });
 }
 

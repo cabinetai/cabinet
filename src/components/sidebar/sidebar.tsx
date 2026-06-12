@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
+  Blocks,
   PanelLeftClose,
   PanelLeft,
   Plus,
@@ -304,6 +305,22 @@ export function Sidebar() {
               <span className="min-w-0 truncate">{t("sidebar:newTask")}</span>
             </button>
           )}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Integrations"
+            title="Integrations"
+            className={cn(
+              "h-7 w-7 shrink-0",
+              section.type === "integrations" && "bg-accent text-foreground"
+            )}
+            onClick={() => {
+              setSection({ type: "integrations" });
+              setCollapsed(true);
+            }}
+          >
+            <Blocks className="h-3.5 w-3.5" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"

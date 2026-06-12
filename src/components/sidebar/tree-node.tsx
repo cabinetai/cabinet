@@ -138,6 +138,7 @@ function TreeNodeImpl({
     (s) => hasChildren && s.expandedPaths.has(node.path)
   );
   const focusTick = useTreeStore((s) => s.focusTick);
+  const isChanged = useTreeStore((s) => s.recentlyChanged.has(node.path));
   const toggleExpand = useTreeStore((s) => s.toggleExpand);
   const expandPath = useTreeStore((s) => s.expandPath);
   const selectPage = useTreeStore((s) => s.selectPage);
@@ -632,6 +633,9 @@ function TreeNodeImpl({
               // right edge in RTL and stays rounded on its inner side.
               isSelected &&
                 "bg-accent/70 text-accent-foreground font-semibold before:absolute before:start-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-e-full before:bg-primary",
+              // Recently created/changed by a task — subtle tint until opened.
+              isChanged && !isSelected &&
+                "bg-emerald-500/[0.06] before:absolute before:start-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-e-full before:bg-emerald-500/70",
               showInto &&
                 "bg-primary/10 ring-1 ring-primary/30 ring-inset",
               blink && "cabinet-tree-blink",
@@ -729,6 +733,13 @@ function TreeNodeImpl({
             >
               {title}
             </span>
+            {isChanged && !isMoving && node.type !== "cabinet" && (
+              <span
+                className="ms-auto h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
+                aria-label="New or changed"
+                title="New or changed"
+              />
+            )}
             {isMoving && (
               <Loader2 className="ms-auto h-3 w-3 shrink-0 animate-spin text-muted-foreground" />
             )}

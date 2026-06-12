@@ -33,7 +33,7 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useBoardData } from "./use-board-data";
 import { KanbanView } from "./kanban-view";
 import { ListView } from "./list-view";
-import { ScheduleView } from "./schedule-view";
+import { ScheduleView } from "@/components/cabinets/schedule-view";
 import { ViewToggle, type BoardViewMode } from "./view-toggle";
 import { DensityToggle, type BoardDensity } from "./density-toggle";
 import {
@@ -704,6 +704,9 @@ export function TasksBoard({
             )}
             {view === "schedule" && (
               <ScheduleView
+                cabinetPath={cabinetPath}
+                onMutated={refresh}
+                defaultAgentSlug={agentFilter || undefined}
                 agents={
                   agentFilter
                     ? (overview?.agents ?? []).filter((a) => a.slug === agentFilter)

@@ -49,6 +49,14 @@ export interface PageData {
   path: string;
   content: string;
   frontmatter: FrontMatter;
+  /**
+   * Directory whose files relative asset refs (./img.png, img.png) resolve
+   * against. Equals `path` for directory pages (assets live next to
+   * index.md); the PARENT directory for standalone .md pages (assets are
+   * siblings of the file). Empty string = data root. Absent on older cached
+   * payloads — consumers fall back to `path`.
+   */
+  assetBase?: string;
 }
 
 export type SaveStatus = "idle" | "saving" | "saved" | "error";

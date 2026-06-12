@@ -117,6 +117,19 @@ export function normalizeJobConfig(
     ...(typeof input.runAfter === "string" && input.runAfter.trim()
       ? { runAfter: input.runAfter.trim() }
       : {}),
+    ...(Array.isArray(input.exceptions) && input.exceptions.length > 0
+      ? {
+          exceptions: input.exceptions.filter(
+            (iso): iso is string => typeof iso === "string" && iso.trim().length > 0,
+          ),
+        }
+      : {}),
+    ...(typeof input.since === "string" && input.since.trim()
+      ? { since: input.since.trim() }
+      : {}),
+    ...(typeof input.until === "string" && input.until.trim()
+      ? { until: input.until.trim() }
+      : {}),
     ...(typeof input.ownerTaskId === "string" && input.ownerTaskId.trim()
       ? { ownerTaskId: input.ownerTaskId.trim() }
       : {}),

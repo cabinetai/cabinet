@@ -826,8 +826,20 @@ export async function waitForConversationCompletion(
       // agent still has full context of the work it just did, so the retry is
       // scoped to this conversation — no cross-agent bleed like a git-diff
       // fallback would have. One retry only; a second miss is recorded as-is.
+      //
+      // Only applies to Claude adapters: the cabinet block is a Claude Code
+      // convention injected via the system prompt epilogue. Non-Claude providers
+      // (opencode/pi/codex/gemini/etc.) don't produce this block and never will,
+      // so triggering the retry for them desynchronises the daemon session status
+      // from meta.status ("running" during retry vs "completed" original session),
+      // which causes the safety poll to prematurely mark the task idle and
+      // prevents live updates in the task detail view.
+      const adapterSupportsCabinetBlock =
+        finalMeta.adapterType === "claude_local" ||
+        finalMeta.adapterType === "claude_code_legacy";
       if (
         normalizedStatus === "completed" &&
+        adapterSupportsCabinetBlock &&
         isCabinetBlockMissing(data.output || "")
       ) {
         try {
@@ -1736,7 +1748,11 @@ export async function continueConversationRun(
 
   const useDaemon =
     process.env.CABINET_TASK_RUNNER !== "inprocess" &&
-    !!process.env.NEXT_RUNTIME; // only when running inside Next.js server
+    // Next.js server, or the daemon itself (CABINET_DAEMON_SELF, set at daemon
+    // boot). The daemon routes its own continues through its session machinery
+    // so callers like the Telegram gateway get an addressable run id they can
+    // poll for partials and stop — runContinueInProcess has no abort hook.
+    (!!process.env.NEXT_RUNTIME || process.env.CABINET_DAEMON_SELF === "1");
 
   if (!useDaemon) {
     return await runContinueInProcess({

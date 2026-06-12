@@ -56,8 +56,18 @@ export async function readPage(virtualPath: string): Promise<PageData> {
     const raw = await readFileContent(filePath);
     const { data, content } = matter(raw);
 
+    // Directory pages (index.md) keep their assets inside the directory, so
+    // relative refs resolve against the page path itself. Standalone .md
+    // pages keep assets as SIBLINGS of the file, so refs resolve against the
+    // parent directory ("" = data root).
+    const isDirectoryPage = filePath === indexPath;
+    const parentDir = virtualPath.includes("/")
+      ? virtualPath.slice(0, virtualPath.lastIndexOf("/"))
+      : "";
+
     return {
       path: virtualPath,
+      assetBase: isDirectoryPage ? virtualPath : parentDir,
       content: content.trim(),
       frontmatter: {
         title: data.title || path.basename(virtualPath, ".md"),

@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { SkillEntry, SkillOrigin } from "@/lib/agents/skills/types";
+import { BrandLogo } from "@/components/integrations/brand-logo";
 import { SkillAddDialog } from "./skill-add-dialog";
 import { SkillDetail } from "./skill-detail";
 import { useLocale } from "@/i18n/use-locale";
@@ -106,7 +107,8 @@ function SkillCard({
   const pluginLabel = pluginBadgeLabel(skill);
   const inner = (
     <div className="bg-card border border-border rounded-lg p-4 flex flex-col gap-2 hover:border-primary/30 transition-colors">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start gap-3">
+        <BrandLogo parts={[skill.name, skill.key]} className="mt-0.5" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h3 className="text-[13px] font-semibold truncate">{skill.name}</h3>

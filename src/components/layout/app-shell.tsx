@@ -104,6 +104,13 @@ const RegistryBrowser = dynamic(
     import("@/components/registry/registry-browser").then((m) => m.RegistryBrowser),
   { ssr: false }
 );
+const IntegrationsHubPage = dynamic(
+  () =>
+    import("@/components/integrations/hub/integrations-hub-page").then(
+      (m) => m.IntegrationsHubPage
+    ),
+  { ssr: false }
+);
 const OnboardingWizard = dynamic(
   () =>
     import("@/components/onboarding/onboarding-wizard").then(
@@ -114,6 +121,7 @@ const OnboardingWizard = dynamic(
 import { findNodeByPath } from "@/lib/cabinets/tree";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useHashRoute } from "@/hooks/use-hash-route";
+import { useTaskFileSync } from "@/hooks/use-task-file-sync";
 import { useTreeStore } from "@/stores/tree-store";
 import { useAppStore } from "@/stores/app-store";
 import { useEditorStore } from "@/stores/editor-store";
@@ -172,6 +180,9 @@ export function AppShell() {
 
   // Sync navigation state with URL hash + localStorage
   useHashRoute();
+
+  // Live-refresh the tree + open page when agent tasks create/change files.
+  useTaskFileSync();
 
   // Onboarding wizard state. We initialize to `null` on both server and first
   // client render to avoid a hydration mismatch, then synchronously rehydrate
@@ -386,6 +397,9 @@ export function AppShell() {
         break;
       case "registry":
         title = `Registry — ${base}`;
+        break;
+      case "integrations":
+        title = `Integrations — ${base}`;
         break;
       default:
         title = base;
@@ -725,6 +739,7 @@ export function AppShell() {
     if (section.type === "home") return <HomeScreen />;
     if (section.type === "registry") return <RegistryBrowser />;
     if (section.type === "settings") return <SettingsPage />;
+    if (section.type === "integrations") return <IntegrationsHubPage />;
     if (section.type === "help") return <HelpPage />;
     if (section.type === "cabinet" && section.cabinetPath) {
       return <CabinetView cabinetPath={section.cabinetPath} />;

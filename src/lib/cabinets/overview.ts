@@ -220,6 +220,15 @@ function normalizeJob(
     enabled: parsed.enabled !== false,
     schedule: trimString(parsed.schedule) || "",
     prompt: trimString(parsed.prompt),
+    oneShot: parsed.oneShot === true ? true : undefined,
+    runAfter: trimString(parsed.runAfter) || undefined,
+    exceptions: Array.isArray(parsed.exceptions)
+      ? parsed.exceptions.filter(
+          (iso): iso is string => typeof iso === "string" && iso.trim().length > 0,
+        )
+      : undefined,
+    since: trimString(parsed.since) || undefined,
+    until: trimString(parsed.until) || undefined,
     cabinetPath,
     cabinetName,
     cabinetDepth,

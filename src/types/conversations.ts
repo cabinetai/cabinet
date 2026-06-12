@@ -1,6 +1,6 @@
 import type { DispatchedAction, PendingAction } from "./actions";
 
-export type ConversationTrigger = "manual" | "job" | "heartbeat" | "agent";
+export type ConversationTrigger = "manual" | "job" | "heartbeat" | "agent" | "telegram";
 export type ConversationSource = "manual" | "editor";
 
 export type ConversationStatus =

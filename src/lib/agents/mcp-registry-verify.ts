@@ -122,6 +122,9 @@ export function verifyTier(
   registryId: string | undefined,
   presence: Record<string, boolean>,
 ): TrustTier {
+  // First-party, Cabinet-maintained servers stand on their own — they don't
+  // claim a vendor/registry badge, so there's nothing to corroborate.
+  if (declared === "cabinet") return "cabinet";
   if (declared === "community" || !registryId) return "community";
   const corroborated = presence[registryId] === true;
   if (corroborated) return declared; // official | registry

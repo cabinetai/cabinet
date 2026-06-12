@@ -21,6 +21,7 @@ export type SectionType =
   | "task"
   | "settings"
   | "registry"
+  | "integrations"
   | "help";
 
 const CABINET_VISIBILITY_STORAGE_KEY = "cabinet.visibility.modes";

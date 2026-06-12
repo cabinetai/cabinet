@@ -8,6 +8,7 @@ import { MCP_PROVIDERS } from "@/lib/agents/mcp-providers";
 import { getSelectedEnvironments } from "@/lib/agents/integration-environments";
 import { getRegistryPresence, verifyTier } from "@/lib/agents/mcp-registry-verify";
 import { getDeploymentMode, resolveAuthBackend } from "@/lib/agents/deployment-mode";
+import { getConfiguredDefaultProviderId } from "@/lib/agents/provider-settings";
 
 /**
  * `/api/agents/config/mcp-catalog` — Integrations Hub data source.
@@ -20,6 +21,7 @@ export async function GET(): Promise<NextResponse> {
   const mode = getDeploymentMode();
   const presence = await getRegistryPresence();
   const selectedEnvironments = await getSelectedEnvironments();
+  const defaultProvider = getConfiguredDefaultProviderId();
 
   const providers = MCP_PROVIDERS.map((p) => ({
     id: p.id,
@@ -55,7 +57,7 @@ export async function GET(): Promise<NextResponse> {
   });
 
   return NextResponse.json(
-    { deploymentMode: mode, providers, selectedEnvironments, approved, builtins: BUILT_IN_TOOLS },
+    { deploymentMode: mode, providers, selectedEnvironments, defaultProvider, approved, builtins: BUILT_IN_TOOLS },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

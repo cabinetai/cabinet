@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
  * displayed or written into any CLI config.
  */
 
-type Tier = "official" | "registry" | "community";
+type Tier = "official" | "registry" | "cabinet" | "community";
 
 interface Credential {
   envKey: string;
@@ -119,6 +119,10 @@ const TIER_BADGE: Record<Tier, { label: string; cls: string }> = {
   registry: {
     label: "Registry-listed",
     cls: "bg-sky-500/20 text-sky-700 dark:text-sky-300 ring-1 ring-sky-500/30",
+  },
+  cabinet: {
+    label: "Maintained by Cabinet",
+    cls: "bg-foreground/10 text-foreground/80 ring-1 ring-foreground/15",
   },
   community: {
     label: "Community",

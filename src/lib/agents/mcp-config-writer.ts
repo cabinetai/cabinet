@@ -23,7 +23,8 @@
 import fs from "fs";
 import path from "path";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
-import { getCabinetEnvSnapshot } from "@/lib/runtime/cabinet-env";
+import { getCabinetEnvSnapshot, readCabinetEnvFile } from "@/lib/runtime/cabinet-env";
+import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
 import {
   MCP_PROVIDERS,
   getMcpProvider,
@@ -35,8 +36,26 @@ import type { CatalogEntry } from "./mcp-catalog";
 /** The server entry written into a CLI config (never contains secrets). */
 function buildServerEntry(entry: CatalogEntry): Record<string, unknown> {
   if (entry.transport === "http") {
-    if (!entry.url) throw new Error(`Catalog entry ${entry.id} is http but has no url`);
-    return { type: "http", url: entry.url };
+    // Per-account / bring-your-own remotes (Zapier, Make, ServiceNow, community
+    // endpoints) supply the URL as a credential the user pastes; it lands in
+    // .cabinet.env and becomes the server URL here.
+    let url = entry.url;
+    if (!url && entry.urlCredentialKey) {
+      url = readCabinetEnvFile().values[entry.urlCredentialKey];
+    }
+    if (!url) throw new Error(`Catalog entry ${entry.id} is http but has no url`);
+    return { type: "http", url };
+  }
+  // Dev bootstrap: a first-party server whose local build exists in the source
+  // tree runs directly via `node`, instead of an npm package that may not be
+  // published yet. In a packaged build the path is absent → fall through to npx.
+  if (entry.localBuild) {
+    const local = path.join(PROJECT_ROOT, entry.localBuild);
+    if (fs.existsSync(local)) {
+      const out: Record<string, unknown> = { command: "node", args: [local] };
+      if (entry.serverEnv) out.env = { ...entry.serverEnv }; // ${ENVKEY} placeholders only
+      return out;
+    }
   }
   const out: Record<string, unknown> = { command: entry.command };
   if (entry.args) out.args = entry.args;

@@ -1,6 +1,7 @@
 import type { CabinetAgentSummary, CabinetJobSummary } from "@/types/cabinets";
 import type { ConversationMeta, ConversationStatus } from "@/types/conversations";
 import { AGENT_PALETTE } from "@/lib/themes";
+import { isOneOffJob } from "@/lib/agents/one-off";
 
 /* ─── Cron → next run computation ─── */
 
@@ -146,14 +147,70 @@ export function getScheduleEvents(
       : job.ownerAgent
       ? agentMap.get(job.ownerAgent)
       : undefined;
+    const slug = owner?.slug || job.ownerAgent || "";
+
+    // One-off: render a single event at its `runAfter` instant and skip the
+    // recurring cron loop entirely. This keeps fired one-offs visible in the
+    // past (instead of vanishing) and avoids a yearly cron-rollover ghost.
+    if (isOneOffJob(job)) {
+      const when = job.runAfter ? new Date(job.runAfter) : null;
+      if (
+        when &&
+        !Number.isNaN(when.getTime()) &&
+        when.getTime() >= rangeStart.getTime() &&
+        when.getTime() < rangeEnd.getTime()
+      ) {
+        const key = dedupKey(slug, "job", job.scopedId, when, job.schedule);
+        if (!seen.has(key)) {
+          seen.add(key);
+          events.push({
+            id: `job:${job.scopedId}:${when.toISOString()}`,
+            sourceType: "job",
+            sourceId: job.scopedId,
+            label: job.name,
+            agentEmoji: owner?.emoji || "🤖",
+            agentName: owner?.name || job.ownerAgent || "Unknown",
+            agentSlug: slug,
+            enabled: job.enabled && owner?.active !== false,
+            cronExpr: job.schedule,
+            time: when,
+            jobRef: job,
+            agentRef: owner,
+          });
+        }
+      }
+      continue;
+    }
+
+    const exceptionKeys =
+      Array.isArray(job.exceptions) && job.exceptions.length > 0
+        ? new Set(job.exceptions.map((iso) => minuteIso(iso)))
+        : null;
+
+    // Recurring-series window ("this and following"): emit nothing before
+    // `since` or at/after `until`. Occurrences walk forward in time, so `until`
+    // lets us stop early; `since` skips the leading occurrences.
+    const sinceMs = job.since ? new Date(job.since).getTime() : NaN;
+    const untilMs = job.until ? new Date(job.until).getTime() : NaN;
 
     let cursor = new Date(rangeStart.getTime() - 60000); // 1 minute before range
     let count = 0;
     while (count < MAX_EVENTS_PER_SOURCE) {
       const next = computeNextCronRun(job.schedule, cursor);
       if (!next || next.getTime() >= rangeEnd.getTime()) break;
+      if (!Number.isNaN(untilMs) && next.getTime() >= untilMs) break;
       if (next.getTime() >= rangeStart.getTime()) {
-        const slug = owner?.slug || job.ownerAgent || "";
+        if (!Number.isNaN(sinceMs) && next.getTime() < sinceMs) {
+          cursor = next;
+          count++;
+          continue;
+        }
+        // Per-occurrence exception (EXDATE): this occurrence was moved/suppressed.
+        if (exceptionKeys && exceptionKeys.has(minuteIso(next))) {
+          cursor = next;
+          count++;
+          continue;
+        }
         const key = dedupKey(slug, "job", job.scopedId, next, job.schedule);
         if (!seen.has(key)) {
           seen.add(key);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import {
   buildScheduledKey,
@@ -61,6 +62,17 @@ function formatTime(d: Date): string {
 
 export type CalendarMode = "day" | "week" | "month";
 
+interface DragMove {
+  eventId: string;
+  event: ScheduleEvent;
+  ghostColIdx: number;
+  ghostTop: number;
+  newTime: Date;
+  moved: boolean;
+  startX: number;
+  startY: number;
+}
+
 interface ScheduleCalendarProps {
   mode: CalendarMode;
   anchor: Date;
@@ -83,6 +95,27 @@ interface ScheduleCalendarProps {
   scheduledConversations?: Map<string, ConversationMeta>;
   onEventClick: (event: ScheduleEvent) => void;
   onDayClick: (date: Date) => void;
+  /**
+   * Drag a future job event to a new time. When provided, job pills in the
+   * day/week time grid become draggable; dropping calls this with the snapped
+   * (15-min) target time. Heartbeat/manual events stay click-only.
+   */
+  onEventMove?: (event: ScheduleEvent, newTime: Date) => void;
+  /**
+   * Click an empty time slot in day/week to create something at that instant
+   * (15-min snapped). `anchor` is the viewport point of the click so callers can
+   * anchor a popover to the slot. When omitted, empty clicks do nothing.
+   */
+  onCreateAt?: (date: Date, anchor?: { x: number; y: number }) => void;
+  /**
+   * Fired when the user tries to drag an event that can't be rescheduled
+   * (a past run, or a heartbeat). The message explains why.
+   */
+  onBlockedDrag?: (message: string) => void;
+  /** Right-click on an event pill. */
+  onEventContextMenu?: (event: ScheduleEvent, x: number, y: number) => void;
+  /** Right-click on an empty slot (carries the snapped instant). */
+  onEmptyContextMenu?: (date: Date, x: number, y: number) => void;
 }
 
 function isEventMissed(
@@ -112,24 +145,49 @@ function EventPill({
   showTime,
   wide,
   missed,
+  dragHandlers,
+  dragging,
+  blocked,
+  onContextMenu,
 }: {
   event: ScheduleEvent;
   onClick: () => void;
   showTime?: boolean;
   wide?: boolean;
   missed?: boolean;
+  /** When present, these pointer handlers replace the default click. */
+  dragHandlers?: HTMLAttributes<HTMLButtonElement>;
+  /** True while this pill is the one being dragged (dim the original). */
+  dragging?: boolean;
+  /** Draggable-but-not-movable (past/heartbeat): show a not-allowed cursor. */
+  blocked?: boolean;
+  onContextMenu?: HTMLAttributes<HTMLButtonElement>["onContextMenu"];
 }) {
   const color = getAgentColor(event.agentSlug);
+  const defaultHandlers: HTMLAttributes<HTMLButtonElement> = {
+    onClick: (e) => {
+      e.stopPropagation();
+      onClick();
+    },
+  };
+  const cursorClass = blocked
+    ? "cursor-not-allowed touch-none"
+    : dragHandlers
+      ? "cursor-grab touch-none active:cursor-grabbing"
+      : undefined;
   return (
     <button
       type="button"
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
-      title={`${event.label} · ${event.agentName} · ${formatTime(event.time)}${missed ? " · no run logged — click to run now" : ""}`}
+      {...(dragHandlers ?? defaultHandlers)}
+      onContextMenu={onContextMenu}
+      title={`${event.label} · ${event.agentName} · ${formatTime(event.time)}${dragHandlers && !blocked ? " · drag to reschedule" : ""}${missed ? " · no run logged — click to run now" : ""}`}
       className={cn(
         "flex items-center gap-1 rounded-md px-1.5 text-left transition-all",
         "hover:ring-1 hover:ring-foreground/20 hover:shadow-sm",
         !event.enabled && "opacity-40",
-        missed && "bg-muted/40 text-muted-foreground"
+        missed && "bg-muted/40 text-muted-foreground",
+        cursorClass,
+        dragging && "opacity-30"
       )}
       style={{
         height: PILL_HEIGHT,
@@ -233,6 +291,11 @@ function TimeGridView({
   onVisibleHoursChange,
   scheduledConversations,
   onEventClick,
+  onEventMove,
+  onCreateAt,
+  onBlockedDrag,
+  onEventContextMenu,
+  onEmptyContextMenu,
 }: {
   events: ScheduleEvent[];
   days: Date[];
@@ -243,6 +306,11 @@ function TimeGridView({
   onVisibleHoursChange?: (next: { start: number; end: number }) => void;
   scheduledConversations?: Map<string, ConversationMeta>;
   onEventClick: (event: ScheduleEvent) => void;
+  onEventMove?: (event: ScheduleEvent, newTime: Date) => void;
+  onCreateAt?: (date: Date, anchor?: { x: number; y: number }) => void;
+  onBlockedDrag?: (message: string) => void;
+  onEventContextMenu?: (event: ScheduleEvent, x: number, y: number) => void;
+  onEmptyContextMenu?: (date: Date, x: number, y: number) => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [now, setNow] = useState(() => new Date());
@@ -362,6 +430,191 @@ function TimeGridView({
     ...dayColumns.map((c) => c.columnHeight)
   );
 
+  // ─── Drag / create / hover controller ───
+  const colRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const suppressClickRef = useRef(false);
+  // `drag` is read inside the pointer handlers, which are recreated on every
+  // render so they always close over the latest value — no ref needed.
+  const [drag, setDrag] = useState<DragMove | null>(null);
+  // Faint "click to create" ghost following the cursor over empty grid.
+  const [hoverSlot, setHoverSlot] = useState<{ colIdx: number; top: number; time: Date } | null>(null);
+  // Tracks a drag attempt on a non-movable (past/heartbeat) pill so we can toast once.
+  const blockedRef = useRef<{ id: string; x: number; y: number; toasted: boolean } | null>(null);
+
+  const snapMinutes = (
+    clientY: number,
+    colIdx: number
+  ): { date: Date; topPx: number } => {
+    const rect = colRefs.current[colIdx]?.getBoundingClientRect();
+    const localY = rect ? clientY - rect.top : 0;
+    const clampedY = Math.max(0, Math.min(localY, gridHeight));
+    let minutes = visibleStartHour * 60 + (clampedY / HOUR_HEIGHT) * 60;
+    minutes = Math.round(minutes / 15) * 15;
+    minutes = Math.max(0, Math.min(minutes, 24 * 60 - 15));
+    const date = new Date(days[colIdx] ?? days[0]);
+    date.setHours(0, 0, 0, 0);
+    date.setMinutes(minutes);
+    const topPx = (minutes / 60 - visibleStartHour) * HOUR_HEIGHT;
+    return { date, topPx };
+  };
+
+  const colIdxAtX = (clientX: number): number => {
+    for (let i = 0; i < days.length; i++) {
+      const r = colRefs.current[i]?.getBoundingClientRect();
+      if (r && clientX >= r.left && clientX <= r.right) return i;
+    }
+    return drag?.ghostColIdx ?? 0;
+  };
+
+  // A future job event can be rescheduled; anything else (past run, heartbeat)
+  // is draggable-blocked: grabbing it explains why instead of moving it.
+  const isMovable = (event: ScheduleEvent): boolean =>
+    !!onEventMove && event.sourceType === "job" && event.time.getTime() >= now.getTime();
+
+  const blockedReason = (event: ScheduleEvent): string => {
+    if (event.sourceType === "heartbeat")
+      return "Heartbeats are set per agent — open the agent to change its check-in time.";
+    if (event.sourceType === "manual")
+      return "Past runs can't be moved — click to open the log.";
+    return "This run already happened — it can't be rescheduled.";
+  };
+
+  const makeMoveHandlers = (
+    event: ScheduleEvent,
+    colIdx: number
+  ): HTMLAttributes<HTMLButtonElement> => ({
+    onPointerDown: (e) => {
+      e.stopPropagation();
+      setHoverSlot(null);
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {
+        /* capture is best-effort */
+      }
+      const top =
+        ((event.time.getHours() * 60 + event.time.getMinutes()) / 60 -
+          visibleStartHour) *
+        HOUR_HEIGHT;
+      setDrag({
+        eventId: event.id,
+        event,
+        ghostColIdx: colIdx,
+        ghostTop: top,
+        newTime: event.time,
+        moved: false,
+        startX: e.clientX,
+        startY: e.clientY,
+      });
+    },
+    onPointerMove: (e) => {
+      const d = drag;
+      if (!d || d.eventId !== event.id) return;
+      const dist = Math.hypot(e.clientX - d.startX, e.clientY - d.startY);
+      if (!d.moved && dist < 4) return;
+      const col = isMultiDay ? colIdxAtX(e.clientX) : 0;
+      const { date, topPx } = snapMinutes(e.clientY, col);
+      setDrag({ ...d, ghostColIdx: col, ghostTop: topPx, newTime: date, moved: true });
+    },
+    onPointerUp: (e) => {
+      const d = drag;
+      if (!d || d.eventId !== event.id) return;
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {
+        /* capture may already be released */
+      }
+      if (d.moved) {
+        suppressClickRef.current = true;
+        onEventMove?.(d.event, d.newTime);
+      } else {
+        onEventClick(event);
+      }
+      setDrag(null);
+    },
+    onClick: (e) => {
+      // Action handled in pointerup; swallow the synthetic click.
+      e.stopPropagation();
+    },
+  });
+
+  const makeBlockedHandlers = (
+    event: ScheduleEvent
+  ): HTMLAttributes<HTMLButtonElement> => ({
+    onPointerDown: (e) => {
+      e.stopPropagation();
+      blockedRef.current = { id: event.id, x: e.clientX, y: e.clientY, toasted: false };
+    },
+    onPointerMove: (e) => {
+      const b = blockedRef.current;
+      if (!b || b.id !== event.id || b.toasted) return;
+      if (Math.hypot(e.clientX - b.x, e.clientY - b.y) > 4) {
+        b.toasted = true;
+        onBlockedDrag?.(blockedReason(event));
+      }
+    },
+    onPointerUp: () => {
+      const b = blockedRef.current;
+      blockedRef.current = null;
+      if (b && !b.toasted) onEventClick(event); // a plain click → open
+    },
+    onClick: (e) => e.stopPropagation(),
+  });
+
+  const pillDragProps = (
+    event: ScheduleEvent,
+    colIdx: number
+  ): { handlers: HTMLAttributes<HTMLButtonElement> | undefined; blocked: boolean } => {
+    if (!onEventMove) return { handlers: undefined, blocked: false };
+    if (isMovable(event)) return { handlers: makeMoveHandlers(event, colIdx), blocked: false };
+    return { handlers: makeBlockedHandlers(event), blocked: true };
+  };
+
+  const pillContextHandler = (event: ScheduleEvent) =>
+    onEventContextMenu
+      ? (e: { preventDefault: () => void; stopPropagation: () => void; clientX: number; clientY: number }) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onEventContextMenu(event, e.clientX, e.clientY);
+        }
+      : undefined;
+
+  const handleColumnCreate = (colIdx: number, e: { clientX: number; clientY: number }) => {
+    if (!onCreateAt) return;
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+    const { date } = snapMinutes(e.clientY, colIdx);
+    onCreateAt(date, { x: e.clientX, y: e.clientY });
+  };
+
+  const handleColumnHover = (colIdx: number, e: { target: EventTarget | null; clientY: number }) => {
+    if (!onCreateAt || drag) {
+      if (hoverSlot) setHoverSlot(null);
+      return;
+    }
+    // Suppress the ghost when the cursor is over an existing pill/dot.
+    if ((e.target as HTMLElement | null)?.closest("button")) {
+      if (hoverSlot) setHoverSlot(null);
+      return;
+    }
+    const { date, topPx } = snapMinutes(e.clientY, colIdx);
+    if (!hoverSlot || hoverSlot.colIdx !== colIdx || hoverSlot.top !== topPx) {
+      setHoverSlot({ colIdx, top: topPx, time: date });
+    }
+  };
+
+  const handleColumnContextMenu = (
+    colIdx: number,
+    e: { preventDefault: () => void; target: EventTarget | null; clientX: number; clientY: number }
+  ) => {
+    if (!onEmptyContextMenu) return;
+    if ((e.target as HTMLElement | null)?.closest("button")) return; // pill handles its own
+    e.preventDefault();
+    const { date } = snapMinutes(e.clientY, colIdx);
+    onEmptyContextMenu(date, e.clientX, e.clientY);
+  };
+
   // Current time position
   const nowTop = (now.getHours() - visibleStartHour) * HOUR_HEIGHT + (now.getMinutes() / 60) * HOUR_HEIGHT;
   const showNowLine = now.getHours() >= visibleStartHour && now.getHours() < visibleEndHour;
@@ -431,7 +684,10 @@ function TimeGridView({
       {/* Time grid */}
       <div
         ref={scrollRef}
-        className="relative min-h-0 flex-1 overflow-y-auto"
+        className={cn(
+          "relative min-h-0 flex-1 overflow-y-auto",
+          drag?.moved && "select-none"
+        )}
       >
         <div
           className="relative grid"
@@ -459,19 +715,58 @@ function TimeGridView({
             return (
               <div
                 key={colIdx}
+                ref={(el) => {
+                  colRefs.current[colIdx] = el;
+                }}
+                onClick={(e) => handleColumnCreate(colIdx, e)}
+                onPointerMove={(e) => handleColumnHover(colIdx, e)}
+                onPointerLeave={() => hoverSlot?.colIdx === colIdx && setHoverSlot(null)}
+                onContextMenu={(e) => handleColumnContextMenu(colIdx, e)}
                 className={cn(
                   "relative border-e border-border/30 last:border-e-0",
-                  isToday && "bg-amber-500/[0.03]"
+                  isToday && "bg-amber-500/[0.03]",
+                  onCreateAt && "cursor-copy"
                 )}
               >
                 {/* Hour grid lines */}
                 {Array.from({ length: TOTAL_HOURS }, (_, i) => (
                   <div
                     key={i}
-                    className="absolute left-0 right-0 border-t border-border/20"
+                    className="pointer-events-none absolute left-0 right-0 border-t border-border/20"
                     style={{ top: i * HOUR_HEIGHT }}
                   />
                 ))}
+
+                {/* Hover "click to create" ghost */}
+                {hoverSlot && hoverSlot.colIdx === colIdx && !drag && (
+                  <div
+                    className="pointer-events-none absolute left-0.5 right-0.5 z-10"
+                    style={{ top: hoverSlot.top }}
+                  >
+                    <div
+                      className="flex items-center gap-1 overflow-hidden rounded-md border border-primary/40 bg-primary/15 px-1.5 text-[10px] font-medium text-primary"
+                      style={{ height: PILL_HEIGHT }}
+                    >
+                      <span className="shrink-0">+</span>
+                      <span className="truncate">New task · {formatTime(hoverSlot.time)}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Drag ghost */}
+                {drag?.moved && drag.ghostColIdx === colIdx && (
+                  <div
+                    className="pointer-events-none absolute left-0.5 right-0.5 z-20"
+                    style={{ top: drag.ghostTop }}
+                  >
+                    <div
+                      className="flex items-center justify-center rounded-md border border-primary bg-primary/30 px-1.5 text-[10px] font-semibold text-foreground shadow-sm"
+                      style={{ height: PILL_HEIGHT }}
+                    >
+                      {formatTime(drag.newTime)}
+                    </div>
+                  </div>
+                )}
 
                 {/* Event buckets */}
                 {buckets.map((bucket, bIdx) => {
@@ -483,16 +778,23 @@ function TimeGridView({
                         className="absolute left-0.5 right-0.5 flex flex-col gap-[2px]"
                         style={{ top: bucket.top }}
                       >
-                        {bucket.events.map((event) => (
-                          <EventPill
-                            key={event.id}
-                            event={event}
-                            onClick={() => onEventClick(event)}
-                            showTime={!isMultiDay}
-                            wide={!isMultiDay}
-                            missed={isEventMissed(event, now, scheduledConversations)}
-                          />
-                        ))}
+                        {bucket.events.map((event) => {
+                          const dp = pillDragProps(event, colIdx);
+                          return (
+                            <EventPill
+                              key={event.id}
+                              event={event}
+                              onClick={() => onEventClick(event)}
+                              showTime={!isMultiDay}
+                              wide={!isMultiDay}
+                              missed={isEventMissed(event, now, scheduledConversations)}
+                              dragHandlers={dp.handlers}
+                              blocked={dp.blocked}
+                              dragging={drag?.eventId === event.id && drag.moved}
+                              onContextMenu={pillContextHandler(event)}
+                            />
+                          );
+                        })}
                       </div>
                     );
                   }
@@ -570,12 +872,16 @@ function MonthView({
   scheduledConversations,
   onEventClick,
   onDayClick,
+  onEventContextMenu,
+  onEmptyContextMenu,
 }: {
   events: ScheduleEvent[];
   anchor: Date;
   scheduledConversations?: Map<string, ConversationMeta>;
   onEventClick: (event: ScheduleEvent) => void;
   onDayClick: (date: Date) => void;
+  onEventContextMenu?: (event: ScheduleEvent, x: number, y: number) => void;
+  onEmptyContextMenu?: (date: Date, x: number, y: number) => void;
 }) {
   const now = new Date();
   const year = anchor.getFullYear();
@@ -658,6 +964,14 @@ function MonthView({
               role="button"
               tabIndex={0}
               onClick={() => onDayClick(day)}
+              onContextMenu={(e) => {
+                if (!onEmptyContextMenu) return;
+                if ((e.target as HTMLElement).closest("[data-month-event]")) return;
+                e.preventDefault();
+                const d = new Date(day);
+                d.setHours(9, 0, 0, 0);
+                onEmptyContextMenu(d, e.clientX, e.clientY);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -712,6 +1026,7 @@ function MonthView({
                     return (
                       <div
                         key={event.id}
+                        data-month-event
                         className={cn(
                           "flex items-center gap-1 rounded px-1 py-0.5 text-[9px] font-medium",
                           !event.enabled && "opacity-40",
@@ -725,6 +1040,15 @@ function MonthView({
                           e.stopPropagation();
                           onEventClick(event);
                         }}
+                        onContextMenu={
+                          onEventContextMenu
+                            ? (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onEventContextMenu(event, e.clientX, e.clientY);
+                              }
+                            : undefined
+                        }
                       >
                         {/* Audit #019: muted, not amber. */}
                         <span className="shrink-0 text-[8px]">{event.agentEmoji}</span>
@@ -762,6 +1086,11 @@ export function ScheduleCalendar({
   scheduledConversations,
   onEventClick,
   onDayClick,
+  onEventMove,
+  onCreateAt,
+  onBlockedDrag,
+  onEventContextMenu,
+  onEmptyContextMenu,
 }: ScheduleCalendarProps) {
   const { start, end } = useMemo(() => getViewRange(mode, anchor), [mode, anchor]);
 
@@ -795,6 +1124,8 @@ export function ScheduleCalendar({
           scheduledConversations={scheduledConversations}
           onEventClick={onEventClick}
           onDayClick={onDayClick}
+          onEventContextMenu={onEventContextMenu}
+          onEmptyContextMenu={onEmptyContextMenu}
         />
       </TooltipProvider>
     );
@@ -812,6 +1143,11 @@ export function ScheduleCalendar({
         onVisibleHoursChange={onVisibleHoursChange}
         scheduledConversations={scheduledConversations}
         onEventClick={onEventClick}
+        onEventMove={onEventMove}
+        onCreateAt={onCreateAt}
+        onBlockedDrag={onBlockedDrag}
+        onEventContextMenu={onEventContextMenu}
+        onEmptyContextMenu={onEmptyContextMenu}
       />
     </TooltipProvider>
   );

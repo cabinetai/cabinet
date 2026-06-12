@@ -837,7 +837,7 @@ export function TaskConversationPage({
           const [fresh, daemonRes] = await Promise.all([
             fetchTask(taskId, cabinetPath || undefined),
             fetch(`/api/daemon/session/${encodeURIComponent(taskId)}/output`).then(
-              (r) => (r.ok ? r.json() : null)
+              (r) => r.ok ? r.json() : null
             ) as Promise<{
               status?: string;
               adapterErrorHint?: string | null;
@@ -883,7 +883,7 @@ export function TaskConversationPage({
     // Fast ticks for the first 30s after open — that's when quick failures
     // happen and the user is staring at the drawer waiting.
     tick();
-    let slowInterval: ReturnType<typeof setInterval> | null = null;
+    let slowInterval: number | null = null;
     const fastInterval = window.setInterval(tick, 500);
     const slowSwitch = window.setTimeout(() => {
       window.clearInterval(fastInterval);

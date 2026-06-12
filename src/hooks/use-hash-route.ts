@@ -21,6 +21,8 @@ import { useEditorStore } from "@/stores/editor-store";
  *   #/tasks/{taskId}         ← task detail (root cabinet)
  *   #/settings
  *   #/settings/{tab}
+ *   #/integrations           ← integrations hub
+ *   #/integrations/{id}      ← integration detail (e.g. discord)
  *   #/help
  *
  * Named sub-cabinets (cabinet path explicit):
@@ -117,6 +119,12 @@ function buildHash(section: SectionState, pagePath: string | null): string {
     return section.slug
       ? `#/settings/${encodePathSegment(section.slug)}`
       : "#/settings";
+  }
+  if (section.type === "integrations") {
+    // `slug` carries the selected integration id (e.g. "discord").
+    return section.slug
+      ? `#/integrations/${encodePathSegment(section.slug)}`
+      : "#/integrations";
   }
   if (section.type === "help") return "#/help";
   if (section.type === "home") return "#/home";
@@ -245,6 +253,17 @@ function parseHash(hash: string): RouteState {
     return {
       section: {
         type: "settings",
+        slug: parts[1] ? decodePathSegment(parts[1]) : undefined,
+      },
+      pagePath: null,
+    };
+  }
+
+  if (parts[0] === "integrations") {
+    // `#/integrations` (hub) or `#/integrations/{id}` (detail) — id in `slug`.
+    return {
+      section: {
+        type: "integrations",
         slug: parts[1] ? decodePathSegment(parts[1]) : undefined,
       },
       pagePath: null,

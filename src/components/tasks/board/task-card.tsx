@@ -1,6 +1,7 @@
 "use client";
 
 import { HeartPulse, MessageCircleQuestion, ShieldCheck, Terminal } from "lucide-react";
+import { TelegramMark } from "@/components/integrations/telegram-mark";
 import { cn } from "@/lib/utils";
 import { isLegacyAdapterType } from "@/lib/agents/adapters/legacy-ids";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
@@ -137,6 +138,11 @@ export function TaskCard({
             <span className="inline-flex items-center rounded bg-destructive/10 px-1.5 py-0.5 text-[9px] font-semibold text-destructive opacity-75">
               Failed
             </span>
+          </IconHint>
+        )}
+        {task.trigger === "telegram" && (
+          <IconHint label="Started from Telegram">
+            <TelegramMark className="size-3.5 shrink-0" />
           </IconHint>
         )}
         {groupSize > 0 && (

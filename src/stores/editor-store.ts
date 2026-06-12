@@ -11,6 +11,12 @@ export type LoadStatus = "idle" | "loading" | "ok" | "missing" | "error";
 
 interface EditorState {
   currentPath: string | null;
+  /**
+   * Asset-resolution base for relative refs in the page body (see
+   * PageData.assetBase). Null until the fetch lands; consumers fall back to
+   * currentPath, which is correct for directory pages.
+   */
+  assetBase: string | null;
   content: string;
   frontmatter: FrontMatter | null;
   saveStatus: SaveStatus;
@@ -65,6 +71,7 @@ function saveCachedPage(page: CachedPage) {
 
 export const useEditorStore = create<EditorState>((set, get) => ({
   currentPath: null,
+  assetBase: null,
   content: "",
   frontmatter: null,
   saveStatus: "idle",
@@ -87,6 +94,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     if (prevPath !== path) {
       set({
         currentPath: path,
+        assetBase: null,
         content: "",
         frontmatter: null,
         saveStatus: "idle",
@@ -121,6 +129,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       if (get().currentPath !== path) return;
       set({
         currentPath: path,
+        assetBase: page.assetBase ?? path,
         content: page.content,
         frontmatter: page.frontmatter,
         saveStatus: "idle",

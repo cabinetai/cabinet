@@ -58,7 +58,7 @@ export function BuiltInToolsSection(): React.ReactElement | null {
   if (!items || items.length === 0) return null;
 
   return (
-    <section className="border-t border-border pt-6">
+    <section>
       <div className="flex items-baseline justify-between mb-1">
         <h3 className="text-[14px] font-semibold flex items-center gap-1.5">
           <Wrench className="h-3.5 w-3.5 text-muted-foreground" />
@@ -76,7 +76,7 @@ export function BuiltInToolsSection(): React.ReactElement | null {
         {items.map((tool) => {
           const Icon = ICONS[tool.icon] ?? Wrench;
           const inner = (
-            <div className="flex items-start gap-2.5 bg-card border border-border rounded-lg px-3 py-2.5 h-full">
+            <div className="flex items-start gap-2.5 bg-foreground/[0.03] rounded-xl px-3 py-2.5 h-full transition-colors hover:bg-foreground/[0.06]">
               <Icon className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
               <div className="min-w-0">
                 <div className="text-[12.5px] font-medium">{tool.label}</div>

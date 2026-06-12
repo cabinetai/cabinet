@@ -10,7 +10,6 @@ import {
   RefreshCw,
   Sparkles,
   Bell,
-  Plug,
   Cpu,
   Stethoscope,
   Eye,
@@ -41,12 +40,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SkillLibrary } from "@/components/skills/skill-library";
-import { ApiKeysSection } from "@/components/settings/api-keys-section";
 import { DataLocationsSection } from "@/components/settings/data-locations-section";
 import { UninstallSection } from "@/components/settings/uninstall-section";
-import { CliMcpSection } from "@/components/settings/cli-mcp-section";
-import { IntegrationsHubSection } from "@/components/settings/integrations-hub-section";
-import { BuiltInToolsSection } from "@/components/settings/built-in-tools-section";
 import { UpdateSummary } from "@/components/system/update-summary";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useTheme } from "@/components/theme-provider";
@@ -132,7 +127,7 @@ interface IntegrationConfig {
   };
 }
 
-type Tab = "profile" | "providers" | "skills" | "storage" | "integrations" | "notifications" | "appearance" | "updates" | "about";
+type Tab = "profile" | "providers" | "skills" | "storage" | "notifications" | "appearance" | "updates" | "about";
 
 function TerminalCommand({ command }: { command: string }) {
   const { t } = useLocale();
@@ -418,7 +413,7 @@ export function SettingsPage() {
   const [dataDirBrowsing, setDataDirBrowsing] = useState(false);
   const [dataDirSaving, setDataDirSaving] = useState(false);
   const [dataDirRestartNeeded, setDataDirRestartNeeded] = useState(false);
-  const VALID_TABS: Tab[] = ["profile", "providers", "skills", "storage", "integrations", "notifications", "appearance", "updates", "about"];
+  const VALID_TABS: Tab[] = ["profile", "providers", "skills", "storage", "notifications", "appearance", "updates", "about"];
   const initialTab = (() => {
     const slug = useAppStore.getState().section.slug as Tab | undefined;
     return slug && VALID_TABS.includes(slug) ? slug : "profile";
@@ -785,7 +780,6 @@ export function SettingsPage() {
         { id: "providers", label: t("settings:tabs.providers"), icon: <Cpu className="h-3.5 w-3.5" /> },
         { id: "skills", label: t("settings:tabs.skills"), icon: <Sparkles className="h-3.5 w-3.5" /> },
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
-        { id: "integrations", label: t("settings:tabs.integrations"), icon: <Plug className="h-3.5 w-3.5" /> },
       ],
     },
     {
@@ -1668,34 +1662,6 @@ export function SettingsPage() {
 
           {/* Skills Tab */}
           {tab === "skills" && <SkillsSettings />}
-
-          {/* Integrations Tab */}
-          {tab === "integrations" && (
-            <div className="space-y-8">
-              <ApiKeysSection />
-
-              {/* Integrations + Built-in tools — coming soon (blurred preview) */}
-              <div className="relative">
-                <div className="pointer-events-none select-none blur-[2px] opacity-70 space-y-8" aria-hidden="true">
-                  <IntegrationsHubSection />
-                  <BuiltInToolsSection />
-                </div>
-
-                {/* Coming Soon overlay */}
-                <div className="absolute inset-0 flex items-start justify-center pt-10">
-                  <div className="flex flex-col items-center gap-2 bg-background/80 backdrop-blur-sm rounded-xl px-8 py-6 border border-border shadow-lg">
-                    <Plug className="h-6 w-6 text-muted-foreground/50" />
-                    <span className="text-[13px] font-semibold">{t("settings:integrationsPreview.comingSoon")}</span>
-                    <p className="text-[12px] text-muted-foreground text-center max-w-[220px]">
-                      {t("settings:integrationsPreview.hint")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <CliMcpSection />
-            </div>
-          )}
 
           {/* Notifications Tab */}
           {tab === "notifications" && (

@@ -1,0 +1,228 @@
+"use client";
+
+import { useState } from "react";
+import { ArrowLeft, Check, Sparkles, ShieldCheck, Bell, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { showSuccess } from "@/lib/ui/toast";
+import { ConnectPanel } from "@/components/integrations/hub/connect-panel";
+import { SetupGuide } from "@/components/integrations/hub/setup-guide";
+import { stepArtFor } from "@/components/integrations/hub/generic-setup-art";
+import { getCatalogEntry } from "@/lib/agents/mcp-catalog";
+import {
+  CATEGORY_META,
+  type IntegrationItem,
+} from "@/lib/integrations/preview-catalog";
+import {
+  LogoTile,
+  brandFace,
+} from "@/components/integrations/hub/integration-visuals";
+
+/**
+ * Full-page configuration view for a single integration. Opened in place of
+ * the browse grid (no modal) when a card is clicked.
+ *
+ * Built for non-developers: a high-contrast logo tile, a friendly trust note
+ * (the MCP/CLI detail tucked into a "For developers" disclosure), and a
+ * step-by-step setup guide with mini-mockups of the third-party UI. The static
+ * connect data (steps, tier) is read straight from the MCP catalog; the
+ * ConnectPanel handles the live runtime state.
+ */
+export function IntegrationDetailPage({
+  item,
+  onBack,
+}: {
+  item: IntegrationItem;
+  onBack: () => void;
+}) {
+  const category = CATEGORY_META[item.category].label;
+  const entry = getCatalogEntry(item.id);
+
+  return (
+    <div className="h-full overflow-y-auto bg-background">
+      {/* Hero with brand-tinted backdrop */}
+      <div className="relative border-b border-border" style={{ background: brandFace(item.brand) }}>
+        <div className="mx-auto max-w-4xl px-6 pb-8 pt-5">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            All integrations
+          </button>
+
+          <div className="flex items-start gap-5">
+            {/* White tile keeps the mark high-contrast on any brand colour. */}
+            <LogoTile
+              item={item}
+              size={80}
+              logoSize={44}
+              className="rounded-3xl shadow-lg ring-1 ring-black/5"
+            />
+
+            <div className="min-w-0 flex-1 pt-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+                  {item.name}
+                </h1>
+                {item.implemented ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                    <Check className="h-3 w-3" /> Available now
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-foreground/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
+                    Coming soon
+                  </span>
+                )}
+                {entry && <TierBadge tier={entry.trustTier} />}
+              </div>
+              <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">
+                {item.blurb}
+              </p>
+              <p className="mt-2 text-[12px] font-medium uppercase tracking-wide text-muted-foreground/70">
+                {category}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="mx-auto grid max-w-4xl gap-8 px-6 py-8 lg:grid-cols-[1fr_320px]">
+        {/* Left: capabilities + guide */}
+        <div>
+          <h2 className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
+            What your agents can do
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {item.actions.map((action) => (
+              <li key={action} className="flex items-start gap-3">
+                <span
+                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                  style={{ background: `${item.brand}1f` }}
+                >
+                  <Check className="h-3 w-3" style={{ color: item.brand }} />
+                </span>
+                <span className="text-[14px] text-foreground">{action}</span>
+              </li>
+            ))}
+          </ul>
+
+          {entry?.setupSteps?.length ? (
+            <SetupGuide
+              steps={entry.setupSteps}
+              brand={item.brand}
+              art={stepArtFor({
+                id: item.id,
+                label: item.name,
+                brand: item.brand,
+                authBackend: entry.authBackend,
+                transport: entry.transport,
+                hasUrlCredential: !!entry.urlCredentialKey,
+              })}
+            />
+          ) : null}
+
+          {entry ? <TrustNote /> : null}
+        </div>
+
+        {/* Right: config / status panel */}
+        <aside>
+          {item.implemented ? (
+            <ConnectPanel item={item} />
+          ) : (
+            <div className="rounded-2xl border border-dashed border-border bg-card/40 p-5 text-center">
+              <div
+                className="mx-auto flex h-10 w-10 items-center justify-center rounded-full"
+                style={{ background: `${item.brand}1f` }}
+              >
+                <Sparkles className="h-5 w-5" style={{ color: item.brand }} />
+              </div>
+              <h3 className="mt-3 text-[14px] font-semibold text-foreground">
+                Not available yet
+              </h3>
+              <p className="mt-1 text-[13px] text-muted-foreground">
+                We&apos;re building this connector. Want it sooner?
+              </p>
+              <Button
+                variant="outline"
+                className="mt-4 w-full"
+                onClick={() => showSuccess(`We'll let you know when ${item.name} is ready`)}
+              >
+                <Bell className="mr-1.5 h-3.5 w-3.5" />
+                Notify me
+              </Button>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+/** Trust-tier pill shown in the hero next to the availability badge. */
+function TierBadge({ tier }: { tier: string }) {
+  if (tier === "official") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+        <ShieldCheck className="h-3 w-3" /> Official
+      </span>
+    );
+  }
+  if (tier === "cabinet") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.05] px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+        <Sparkles className="h-3 w-3" /> Maintained by Cabinet
+      </span>
+    );
+  }
+  if (tier === "registry") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-medium text-sky-600 dark:text-sky-400">
+        <ShieldCheck className="h-3 w-3" /> Registry-listed
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center rounded-full bg-foreground/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
+      Community
+    </span>
+  );
+}
+
+/**
+ * Friendly, non-scary reassurance up front; the MCP/CLI/`.cabinet.env` detail
+ * lives behind a "For developers" disclosure for the people who want it.
+ */
+function TrustNote() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mt-8 rounded-xl border border-border bg-card/50 p-4">
+      <div className="flex items-center gap-2 text-[13px] font-medium text-foreground">
+        <ShieldCheck className="h-4 w-4 text-emerald-500" />
+        Your token stays on this device
+      </div>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+        Cabinet saves it locally on your computer and never uploads it anywhere.
+      </p>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="mt-2 inline-flex items-center gap-1 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
+        For developers
+      </button>
+      {open && (
+        <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
+          Cabinet registers this as an MCP server in your agent CLI&apos;s config. The
+          secret is stored in{" "}
+          <code className="rounded bg-foreground/[0.06] px-1 py-0.5 text-[11px]">.cabinet.env</code>{" "}
+          (file perms 0600) and injected into the agent process at spawn — never
+          written into the config file itself.
+        </p>
+      )}
+    </div>
+  );
+}

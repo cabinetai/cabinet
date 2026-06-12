@@ -15,6 +15,7 @@ import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { conversationMetaToTaskMeta } from "@/lib/agents/conversation-to-task-view";
 import { getAgentColor, tintFromHex } from "@/lib/agents/cron-compute";
 import { isLegacyAdapterType } from "@/lib/agents/adapters/legacy-ids";
+import { TelegramMark } from "@/components/integrations/telegram-mark";
 import type { ConversationMeta } from "@/types/conversations";
 import type { TaskMeta } from "@/types/tasks";
 import { useLocale } from "@/i18n/use-locale";
@@ -318,6 +319,9 @@ export function RecentTasks({
                     style={dotStyle}
                   />
                 </span>
+                {task.trigger === "telegram" && (
+                  <TelegramMark className="size-3 shrink-0" />
+                )}
                 <span className="truncate">{task.title}</span>
                 {isLegacyAdapterType(task.adapterType) && (
                   <Terminal

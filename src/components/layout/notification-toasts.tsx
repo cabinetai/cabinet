@@ -115,6 +115,7 @@ function startToastSubtitle(toast: TaskNotification): string {
   }
   if (toast.trigger === "heartbeat") return "Heartbeat";
   if (toast.trigger === "agent") return "Spawned by another agent";
+  if (toast.trigger === "telegram") return "From Telegram";
   return toast.agentName;
 }
 

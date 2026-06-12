@@ -61,6 +61,11 @@ cabinetai/node_modules/
 # local install config (per-machine dataDir)
 .cabinet-install.json
 
+# per-machine cabinet/repo runtime metadata (written when dogfooding Cabinet on
+# this repo — .repo.yaml hardcodes a local absolute path; never track these)
+.cabinet-meta
+.repo.yaml
+
 # skills lock (per-machine; runtime-managed)
 skills-lock.json
 

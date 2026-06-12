@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plug, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/integrations/brand-logo";
 
 /**
  * Settings → Integrations → "MCP Servers".
@@ -80,7 +81,7 @@ export function CliMcpSection() {
   }, []);
 
   return (
-    <section className="border-t border-border pt-6">
+    <section>
       <div className="flex items-baseline justify-between mb-1">
         <h3 className="text-[14px] font-semibold flex items-center gap-1.5">
           <Plug className="h-3.5 w-3.5 text-muted-foreground" />
@@ -146,7 +147,7 @@ function ProviderBlock({ provider }: { provider: ProviderResult }) {
       )}
 
       {!empty && (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {provider.servers.map((server, i) => (
             <ServerRow key={`${provider.id}-${server.name}-${i}`} server={server} />
           ))}
@@ -159,8 +160,12 @@ function ProviderBlock({ provider }: { provider: ProviderResult }) {
 function ServerRow({ server }: { server: ServerEntry }) {
   const cmd = commandLine(server);
   return (
-    <div className="bg-card border border-border rounded-lg px-3 py-2">
+    <div className="rounded-xl bg-foreground/[0.03] px-3.5 py-2.5 transition-colors hover:bg-foreground/[0.06]">
       <div className="flex items-center justify-between gap-3">
+        <BrandLogo
+          parts={[server.name, server.command, ...(server.args ?? []), server.url]}
+          fallbackIcon={Plug}
+        />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="text-[13px] font-medium truncate">{server.name}</span>

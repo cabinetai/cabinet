@@ -10,6 +10,7 @@ import type { JobConfig } from "@/types/jobs";
 import { readPersona, type AgentPersona } from "./persona-manager";
 import { startConversationRun } from "./conversation-runner";
 import { saveAgentJob } from "@/lib/jobs/job-manager";
+import { isoToCronExpression } from "./one-off";
 import { reloadDaemonSchedules } from "./daemon-client";
 import { readConversationMeta, writeConversationMeta } from "./conversation-store";
 import { normalizeRuntimeOverride } from "./runtime-overrides";
@@ -337,17 +338,4 @@ async function dispatchScheduleTask(
     status: "dispatched",
     jobId: saved.id,
   });
-}
-
-/**
- * Convert a specific point in time into a single-fire cron expression.
- * Format: "minute hour dayOfMonth month *". The daemon's one-shot wrapper
- * disables the job after its first run so year rollover doesn't refire it.
- */
-function isoToCronExpression(when: Date): string {
-  const minute = when.getMinutes();
-  const hour = when.getHours();
-  const dom = when.getDate();
-  const month = when.getMonth() + 1;
-  return `${minute} ${hour} ${dom} ${month} *`;
 }

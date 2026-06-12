@@ -1,6 +1,7 @@
 "use client";
 
 import { Bot, Clock3, HeartPulse } from "lucide-react";
+import { TelegramMark } from "@/components/integrations/telegram-mark";
 import { cn } from "@/lib/utils";
 import type { TaskMeta } from "@/types/tasks";
 import type { CabinetAgentSummary } from "@/types/cabinets";
@@ -49,6 +50,10 @@ const TRIGGER_STYLES: Record<
     label: "Agent",
     className: "bg-muted text-muted-foreground ring-1 ring-border/60",
   },
+  telegram: {
+    label: "Telegram",
+    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
+  },
 };
 
 function TriggerBadge({ trigger }: { trigger: TaskMeta["trigger"] }) {
@@ -65,7 +70,11 @@ function TriggerBadge({ trigger }: { trigger: TaskMeta["trigger"] }) {
         style.className
       )}
     >
-      <Icon className="size-2.75" />
+      {trigger === "telegram" ? (
+        <TelegramMark className="size-3" />
+      ) : (
+        <Icon className="size-2.75" />
+      )}
     </span>
   );
 }

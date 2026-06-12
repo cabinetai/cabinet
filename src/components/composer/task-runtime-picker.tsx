@@ -10,6 +10,7 @@ import {
   Search,
   Sparkles,
   Terminal,
+  X,
 } from "lucide-react";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
 import { cn } from "@/lib/utils";
@@ -1624,33 +1625,48 @@ export function TaskRuntimePicker({
             }}
             className="mx-1.5 mt-1.5"
             trailing={
-              <button
-                type="button"
-                className={cn(
-                  "shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-medium transition-colors",
-                  sameSelection(normalizedValue, appDefaultSelection)
-                    ? "border-foreground/20 bg-accent text-accent-foreground"
-                    : "border-border/70 bg-background text-muted-foreground hover:text-foreground"
-                )}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  resetToDefault();
-                }}
-                title={[
-                  appDefaultModelInfo?.name || t("runtime:defaultModel"),
-                  appDefaultSelection.effort
-                    ? formatEffortName(appDefaultSelection.effort)
-                    : t("runtime:auto"),
-                  appDefaultProvider?.name || null,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              >
-                {sameSelection(normalizedValue, appDefaultSelection)
-                  ? t("runtime:appDefault")
-                  : t("runtime:selectAppDefault")}
-              </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  className={cn(
+                    "shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-medium transition-colors",
+                    sameSelection(normalizedValue, appDefaultSelection)
+                      ? "border-foreground/20 bg-accent text-accent-foreground"
+                      : "border-border/70 bg-background text-muted-foreground hover:text-foreground"
+                  )}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    resetToDefault();
+                  }}
+                  title={[
+                    appDefaultModelInfo?.name || t("runtime:defaultModel"),
+                    appDefaultSelection.effort
+                      ? formatEffortName(appDefaultSelection.effort)
+                      : t("runtime:auto"),
+                    appDefaultProvider?.name || null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                >
+                  {sameSelection(normalizedValue, appDefaultSelection)
+                    ? t("runtime:appDefault")
+                    : t("runtime:selectAppDefault")}
+                </button>
+                <button
+                  type="button"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setOpen(false);
+                  }}
+                  title={t("startWork:close")}
+                  aria-label={t("startWork:close")}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             }
           />
         </DropdownMenuGroup>

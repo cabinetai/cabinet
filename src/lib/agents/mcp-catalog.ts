@@ -13,8 +13,9 @@
  * Trust tiers are honest: `official` is only claimed when the server is
  * vendor-published / present in the Official MCP Registry, and that claim is
  * *verified* at runtime by `mcp-registry-verify.ts` (never self-asserted in
- * the UI without verification). Discord has no first-party server, so it is
- * `community`.
+ * the UI without verification). `cabinet` = a first-party server we build and
+ * maintain (e.g. Discord) — first-party but NOT vendor-official, so it gets its
+ * own label rather than borrowing "official" or hiding under "community".
  *
  * Auth backends are deployment-aware (see `deployment-mode.ts`):
  *   - `cli-pkce`  — official remote HTTP server; the CLI performs PKCE
@@ -27,7 +28,7 @@
  *                   secret server-side). Not used by the local build.
  */
 
-export type TrustTier = "official" | "registry" | "community";
+export type TrustTier = "official" | "registry" | "cabinet" | "community";
 
 export type AuthBackend = "cli-pkce" | "user-app" | "token" | "cabinet-broker";
 
@@ -83,6 +84,19 @@ export interface CatalogEntry {
   /** stdio transport */
   command?: string;
   args?: string[];
+  /**
+   * Relative path (from the repo root) to a first-party server's local build.
+   * When it exists — i.e. Cabinet is running from source — the config writer
+   * runs `node <abs path>` instead of `command`/`args`, so a not-yet-published
+   * server still works in dev. Absent in packaged builds → falls back to npx.
+   */
+  localBuild?: string;
+  /**
+   * http entry whose URL comes from a user-supplied credential — per-account
+   * remotes (Zapier, Make, ServiceNow) or bring-your-own community endpoints.
+   * The value pasted into `.cabinet.env` becomes the server URL at connect.
+   */
+  urlCredentialKey?: string;
   /**
    * env block written into the CLI config for stdio servers. Values are
    * `${ENVKEY}` placeholders — the real secret stays only in `.cabinet.env`
@@ -198,21 +212,347 @@ const GOOGLE_WORKSPACE: CatalogEntry = {
   ],
 };
 
+const NOTION: CatalogEntry = {
+  id: "notion",
+  label: "Notion",
+  blurb: "Search, read, and update your Notion pages and databases.",
+  iconSlug: "notion",
+  bgImage: "/integrations/notion-bg.webp",
+  logo: "/logos/notion.svg",
+  sourceUrl: "https://developers.notion.com/guides/mcp/get-started-with-mcp",
+  // Official hosted server (mcp.notion.com). OAuth-only — no bearer token — so
+  // the CLI drives a one-click public-client OAuth; nothing to paste.
+  registryId: "notion",
+  trustTier: "official",
+  authBackend: "cli-pkce",
+  transport: "http",
+  mcpServerName: "cabinet-notion",
+  url: "https://mcp.notion.com/mcp",
+  credentials: [],
+  actions: [
+    "Search across your workspace",
+    "Read & create pages",
+    "Query & update databases",
+    "Add comments",
+  ],
+  setupSteps: [
+    {
+      title: "Sign in with Notion",
+      body: "Click Connect & sign in — your agent's CLI opens Notion in the browser. Approve access and pick which pages or databases to share.",
+    },
+    {
+      title: "Choose what to share",
+      body: "Access is scoped to exactly the pages/databases you select while authorizing. You can change this anytime in Notion → Settings → Connections.",
+      href: "https://www.notion.so/my-integrations",
+    },
+  ],
+};
+
+const GITHUB: CatalogEntry = {
+  id: "github",
+  label: "GitHub",
+  blurb: "Search and act on your repos, issues, and pull requests.",
+  iconSlug: "github",
+  bgImage: "/integrations/github-bg.webp",
+  logo: "/logos/github.svg",
+  sourceUrl: "https://github.com/github/github-mcp-server",
+  // Official GitHub remote MCP server; the CLI performs GitHub OAuth on first
+  // use (a fine-grained PAT fallback can be added later as a user-app cred).
+  registryId: "github",
+  trustTier: "official",
+  authBackend: "cli-pkce",
+  transport: "http",
+  mcpServerName: "cabinet-github",
+  url: "https://api.githubcopilot.com/mcp/",
+  credentials: [],
+  actions: [
+    "Search code, issues & PRs",
+    "Read & comment on issues and PRs",
+    "Open issues and pull requests",
+    "Read file contents & repo metadata",
+  ],
+  setupSteps: [
+    {
+      title: "Sign in with GitHub",
+      body: "Click Connect & sign in — your agent's CLI opens GitHub in the browser. Authorize access and choose which organizations/repositories to grant.",
+    },
+    {
+      title: "Scope the access",
+      body: "Grant only the orgs/repos the agent needs. Review or revoke anytime in GitHub → Settings → Applications.",
+      href: "https://github.com/settings/applications",
+    },
+  ],
+};
+
+const LINEAR: CatalogEntry = {
+  id: "linear",
+  label: "Linear",
+  blurb: "Create, search, and update Linear issues and projects.",
+  iconSlug: "linear",
+  bgImage: "/integrations/linear-bg.webp",
+  logo: "/logos/linear.webp",
+  sourceUrl: "https://linear.app/docs/mcp",
+  registryId: "linear",
+  trustTier: "official",
+  authBackend: "cli-pkce",
+  transport: "http",
+  mcpServerName: "cabinet-linear",
+  url: "https://mcp.linear.app/mcp",
+  credentials: [],
+  actions: [
+    "Search issues & projects",
+    "Create & update issues",
+    "Comment and manage cycles",
+    "Summarize project status",
+  ],
+  setupSteps: [
+    {
+      title: "Sign in with Linear",
+      body: "Click Connect & sign in — your agent's CLI opens Linear in the browser. Approve access to your workspace.",
+    },
+  ],
+};
+
+const ATLASSIAN: CatalogEntry = {
+  id: "jira",
+  label: "Jira & Confluence",
+  blurb: "Search and act on Jira issues and Confluence pages.",
+  iconSlug: "jira",
+  bgImage: "/integrations/jira-bg.webp",
+  logo: "/logos/jira.webp",
+  // One official Atlassian remote server covers both Jira and Confluence.
+  sourceUrl: "https://www.atlassian.com/platform/remote-mcp-server",
+  registryId: "atlassian",
+  trustTier: "official",
+  authBackend: "cli-pkce",
+  transport: "http",
+  mcpServerName: "cabinet-atlassian",
+  url: "https://mcp.atlassian.com/v1/mcp",
+  credentials: [],
+  actions: [
+    "Search Jira issues & Confluence pages",
+    "Create & update issues",
+    "Draft & edit Confluence pages",
+    "Summarize and bulk-manage",
+  ],
+  setupSteps: [
+    {
+      title: "Sign in with Atlassian",
+      body: "Click Connect & sign in — your agent's CLI opens Atlassian in the browser. Approve access to your Jira / Confluence site.",
+    },
+  ],
+};
+
+const STRIPE: CatalogEntry = {
+  id: "stripe",
+  label: "Stripe",
+  blurb: "Query payments, customers, and invoices — and take action.",
+  iconSlug: "stripe",
+  bgImage: "/integrations/stripe-bg.webp",
+  logo: "/logos/stripe.svg",
+  sourceUrl: "https://docs.stripe.com/mcp",
+  registryId: "stripe",
+  trustTier: "official",
+  authBackend: "cli-pkce",
+  transport: "http",
+  mcpServerName: "cabinet-stripe",
+  url: "https://mcp.stripe.com",
+  credentials: [],
+  actions: [
+    "Search customers, payments & invoices",
+    "Create payment links & invoices",
+    "Issue refunds",
+    "Read balances & disputes",
+  ],
+  setupSteps: [
+    {
+      title: "Sign in with Stripe",
+      body: "Click Connect & sign in — your agent's CLI opens Stripe in the browser and authorizes access (scoped by a restricted key under the hood).",
+    },
+  ],
+};
+
+const MICROSOFT_365: CatalogEntry = {
+  id: "microsoft-365",
+  label: "Microsoft 365",
+  blurb: "Outlook mail & calendar, Teams, and SharePoint / OneDrive via Microsoft Graph.",
+  iconSlug: "microsoft-365",
+  bgImage: "/integrations/microsoft-365-bg.webp",
+  logo: "/logos/microsoft-365.svg",
+  // Microsoft's official MCP servers are gated to Agent 365 / Copilot Studio, so
+  // we register the MIT community Graph server (covers Outlook/Teams/SharePoint).
+  // Swap to an official public remote when one lands — the AuthBackend
+  // abstraction makes that a near-no-op. Env var names follow ms-365-mcp-server.
+  sourceUrl: "https://github.com/softeria/ms-365-mcp-server",
+  trustTier: "community",
+  authBackend: "user-app",
+  transport: "stdio",
+  mcpServerName: "cabinet-microsoft-365",
+  command: "npx",
+  args: ["-y", "@softeria/ms-365-mcp-server"],
+  serverEnv: {
+    MS365_MCP_CLIENT_ID: "${MS365_MCP_CLIENT_ID}",
+    MS365_MCP_TENANT_ID: "${MS365_MCP_TENANT_ID}",
+    MS365_MCP_CLIENT_SECRET: "${MS365_MCP_CLIENT_SECRET}",
+  },
+  credentials: [
+    {
+      envKey: "MS365_MCP_CLIENT_ID",
+      label: "Azure app Client ID",
+      kind: "plain",
+      required: true,
+      placeholder: "00000000-0000-0000-0000-000000000000",
+      hint: "From your Microsoft Entra (Azure AD) app registration.",
+    },
+    {
+      envKey: "MS365_MCP_TENANT_ID",
+      label: "Tenant ID",
+      kind: "plain",
+      required: true,
+      placeholder: "common (or your tenant id)",
+      hint: "Use 'common' for multi-tenant, or your directory (tenant) id.",
+    },
+    {
+      envKey: "MS365_MCP_CLIENT_SECRET",
+      label: "Client Secret",
+      kind: "secret",
+      required: true,
+      placeholder: "••••••••",
+      hint: "Saved securely on this device only — never uploaded.",
+    },
+  ],
+  actions: [
+    "Read & send Outlook mail",
+    "Manage Calendar events",
+    "Read & post Teams messages",
+    "Browse SharePoint & OneDrive files",
+  ],
+  setupSteps: [
+    {
+      title: "Register a Microsoft Entra app",
+      body: "Azure Portal → App registrations → New registration. Note the Application (client) ID and Directory (tenant) ID.",
+      href: "https://portal.azure.com",
+    },
+    {
+      title: "Add Microsoft Graph permissions",
+      body: "API permissions → Microsoft Graph → Delegated. Add the scopes for what you need, then grant admin consent.",
+      copy: "Mail.ReadWrite Calendars.ReadWrite Chat.ReadWrite Sites.Read.All Files.Read.All",
+    },
+    {
+      title: "Create a client secret",
+      body: "Certificates & secrets → New client secret → copy the value, then paste the Client ID, Tenant ID, and Secret below.",
+    },
+  ],
+};
+
+const TELEGRAM: CatalogEntry = {
+  id: "telegram",
+  label: "Telegram",
+  blurb:
+    "Send messages, react, and manage the chats your bot is in. Allowlist yourself to drive Cabinet from Telegram: run agents and search your knowledge base from your phone.",
+  iconSlug: "telegram",
+  bgImage: "/integrations/telegram-bg.webp",
+  logo: "/logos/telegram.svg",
+  // No official MCP; community ones are MTProto (full user-account). We ship our
+  // own Bot-API server (mcps/mcp-telegram/) — safe-by-default, like Discord.
+  sourceUrl: "https://github.com/hilash/cabinet/tree/main/mcps/mcp-telegram",
+  trustTier: "cabinet",
+  authBackend: "token",
+  transport: "stdio",
+  mcpServerName: "cabinet-telegram",
+  command: "npx",
+  args: ["-y", "cabinet-mcp-telegram@0.1.0"],
+  localBuild: "mcps/mcp-telegram/dist/index.js",
+  serverEnv: { TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN}" },
+  credentials: [
+    {
+      envKey: "TELEGRAM_BOT_TOKEN",
+      label: "Bot token",
+      kind: "secret",
+      required: true,
+      placeholder: "123456:ABC-DEF…",
+      hint: "Saved securely on this device only — never uploaded.",
+    },
+    {
+      envKey: "TELEGRAM_CHAT_ID",
+      label: "Chat ID or @username (recommended)",
+      kind: "plain",
+      required: false,
+      placeholder: "@yourchannel or -1001234567890",
+      hint: "Pins every action to this one chat so the bot can't touch other chats it's in.",
+    },
+    {
+      envKey: "TELEGRAM_ALLOWED_USERS",
+      label: "Remote control: allowed user IDs",
+      kind: "plain",
+      required: false,
+      placeholder: "123456789, 987654321",
+      hint: "Numeric Telegram user IDs allowed to drive Cabinet from Telegram (message @userinfobot to find yours). Leave empty to keep remote control off.",
+    },
+    {
+      envKey: "TELEGRAM_DEFAULT_AGENT",
+      label: "Remote control: default agent (optional)",
+      kind: "plain",
+      required: false,
+      placeholder: "brain",
+      hint: "Agent slug that handles plain messages from Telegram. Empty = auto-pick an orchestrator.",
+    },
+  ],
+  actions: [
+    "Send messages & announcements",
+    "Reply in topics / threads",
+    "React to messages",
+    "Edit or delete the bot's own messages",
+    "Remote control: run agents & search Cabinet from Telegram",
+  ],
+  setupSteps: [
+    {
+      title: "Create a bot with @BotFather",
+      body: "Open @BotFather in Telegram → /newbot → choose a name and username → copy the bot token it gives you.",
+      href: "https://t.me/BotFather",
+    },
+    {
+      title: "Paste the bot token",
+      body: "Paste the token below — it's stored only on this device.",
+    },
+    {
+      title: "Add the bot to your chat",
+      body: "Add the bot to your group or channel (make it an admin if it needs to post to a channel). The bot only ever sees chats it's added to.",
+    },
+    {
+      title: "Scope it to one chat (recommended)",
+      body: "Paste your chat's id or @username so every action is pinned there. Group ids are negative numbers, e.g. -1001234567890.",
+    },
+    {
+      title: "Allow yourself to drive Cabinet (optional)",
+      body: "Message @userinfobot to get your numeric Telegram user id and paste it into the allowed-users field. Then DM your bot: plain messages run your orchestrator agent, /search queries the knowledge base, /help lists everything.",
+      href: "https://t.me/userinfobot",
+    },
+  ],
+};
+
 const DISCORD: CatalogEntry = {
   id: "discord",
   label: "Discord",
-  blurb: "Send messages and read channels in your Discord server.",
+  blurb: "Send messages, read channels, and manage threads in your Discord server.",
   iconSlug: "discord",
   bgImage: "/integrations/discord-bg.webp",
   logo: "/integrations/discord-logo.png",
-  sourceUrl: "https://github.com/barryyip0625/mcp-discord",
-  // No first-party Discord MCP server exists — honestly community-tier.
-  trustTier: "community",
+  // Cabinet maintains its own server (mcps/mcp-discord/ in this repo): Discord has no
+  // first-party MCP, and the community ones hand the model 60–139 tools incl.
+  // destructive admin by default. Ours is a curated read+post+threads surface
+  // with admin gated behind DISCORD_ALLOW_ADMIN. Tier `cabinet` = first-party,
+  // Cabinet-maintained (distinct from vendor-`official`). The server is released
+  // on its own cadence (NOT coupled to the app's CI) — bump this pin when a new
+  // cabinet-mcp-discord is published to npm.
+  sourceUrl: "https://github.com/hilash/cabinet/tree/main/mcps/mcp-discord",
+  trustTier: "cabinet",
   authBackend: "token",
   transport: "stdio",
   mcpServerName: "cabinet-discord",
   command: "npx",
-  args: ["-y", "mcp-discord"],
+  args: ["-y", "cabinet-mcp-discord@0.1.0"],
+  localBuild: "mcps/mcp-discord/dist/index.js",
   serverEnv: { DISCORD_TOKEN: "${DISCORD_TOKEN}" },
   credentials: [
     {
@@ -221,10 +561,23 @@ const DISCORD: CatalogEntry = {
       kind: "secret",
       required: true,
       placeholder: "your bot token",
-      hint: "Stored in .cabinet.env (0600). Never written into the CLI config.",
+      hint: "Saved securely on this device only — never uploaded.",
+    },
+    {
+      envKey: "DISCORD_GUILD_ID",
+      label: "Server ID (recommended)",
+      kind: "plain",
+      required: false,
+      placeholder: "123456789012345678",
+      hint: "Pins every action to this one server so the bot can't touch other servers it's in. Enable Developer Mode, then right-click your server → Copy Server ID.",
     },
   ],
-  actions: ["Send messages to channels", "Read channel history", "Manage server content"],
+  actions: [
+    "Read channel history & search recent messages",
+    "Send messages and reply in threads",
+    "Create threads and add reactions",
+    "Edit or delete the bot's own messages",
+  ],
   setupSteps: [
     {
       title: "Create a Discord application",
@@ -237,16 +590,244 @@ const DISCORD: CatalogEntry = {
     },
     {
       title: "Enable Message Content Intent",
-      body: "Under Bot → Privileged Gateway Intents, enable Message Content Intent so the bot can read messages.",
+      body: "Under Bot → Privileged Gateway Intents, enable Message Content Intent so the bot can read message text. Leave Server Members off — Cabinet's server never lists members.",
     },
     {
-      title: "Invite the bot",
-      body: "In OAuth2 → URL Generator pick the `bot` scope and the channel permissions you want, then open the generated URL to add it to your server.",
+      title: "Invite the bot to your server",
+      body: "Open OAuth2 → URL Generator. Tick the `bot` scope, then under Bot Permissions tick what it needs (View Channels, Read Message History, Send Messages, Create Public Threads, Add Reactions). Copy the URL it builds at the bottom, open it in a browser, choose your server, and click Authorize. (This step is easy to miss — the panel will warn you if the bot isn't in the server yet.)",
+      href: "https://discord.com/developers/applications",
+    },
+    {
+      title: "Copy your Server ID",
+      body: "In Discord, open User Settings (the gear) → Advanced and turn on Developer Mode. Then right-click your server's icon on the far left and choose \"Copy Server ID\". Paste it into the Server ID box on the right.",
     },
   ],
 };
 
-export const MCP_CATALOG: CatalogEntry[] = [SLACK, GOOGLE_WORKSPACE, DISCORD];
+const LINKEDIN: CatalogEntry = {
+  id: "linkedin",
+  label: "LinkedIn",
+  blurb: "Research profiles & companies, search people and jobs, and run your own outreach.",
+  iconSlug: "linkedin",
+  bgImage: "/integrations/linkedin-bg.webp",
+  logo: "/logos/linkedin.svg",
+  // LinkedIn has no official MCP. This is the community Patchright-based server
+  // (stickerdaniel/linkedin-mcp-server, PyPI `linkedin-scraper-mcp`): it drives a
+  // real browser under YOUR own login rather than an API. Powerful but
+  // unofficial, and scraping can run against LinkedIn's ToS — so `community`
+  // tier, personal use. Auth is a local browser profile (~/.linkedin-mcp) created
+  // by `--login`; there is no token/cookie to paste (env-var cookies were dropped
+  // upstream 02/2026), hence empty credentials + no serverEnv. Runs via uvx, so
+  // `uv` must be installed (flagged in the setup steps, like Salesforce's CLI).
+  sourceUrl: "https://github.com/stickerdaniel/linkedin-mcp-server",
+  trustTier: "community",
+  authBackend: "token",
+  transport: "stdio",
+  mcpServerName: "cabinet-linkedin",
+  command: "uvx",
+  args: ["linkedin-scraper-mcp"],
+  credentials: [],
+  actions: [
+    "Research people & company profiles",
+    "Search people and jobs by keyword + location",
+    "Read your messaging inbox & conversations",
+    "Send messages & connection requests on your own account",
+  ],
+  setupSteps: [
+    {
+      title: "Install uv (one-time)",
+      body: "The LinkedIn server runs locally through uv. Install it once, then Cabinet can launch the server for your agents.",
+      href: "https://docs.astral.sh/uv/getting-started/installation/",
+      copy: "curl -LsSf https://astral.sh/uv/install.sh | sh",
+    },
+    {
+      title: "Log in to LinkedIn once",
+      body: "Run the login command in a terminal. A browser window opens — sign in (handle any 2FA / captcha) and it saves a private session profile under ~/.linkedin-mcp on this device. Nothing to paste here.",
+      copy: "uvx linkedin-scraper-mcp --login",
+    },
+    {
+      title: "Connect",
+      body: "Click Connect — Cabinet registers the server with your agent's CLI. It drives your own logged-in session locally; your credentials never leave this device. It's an unofficial scraper for personal use — mind LinkedIn's terms and go easy on volume.",
+    },
+  ],
+};
+
+/** Official public remote (HTTP + the CLI's PKCE OAuth). Nothing to paste. */
+function officialRemote(o: {
+  id: string;
+  label: string;
+  blurb: string;
+  logo: string;
+  url: string;
+  registryId?: string;
+  sourceUrl: string;
+  actions: string[];
+}): CatalogEntry {
+  return {
+    id: o.id,
+    label: o.label,
+    blurb: o.blurb,
+    iconSlug: o.id,
+    bgImage: `/integrations/${o.id}-bg.webp`,
+    logo: o.logo,
+    sourceUrl: o.sourceUrl,
+    registryId: o.registryId,
+    trustTier: "official",
+    authBackend: "cli-pkce",
+    transport: "http",
+    mcpServerName: `cabinet-${o.id}`,
+    url: o.url,
+    credentials: [],
+    actions: o.actions,
+    setupSteps: [
+      {
+        title: `Sign in with ${o.label}`,
+        body: `Click Connect & sign in — your agent's CLI opens ${o.label} in the browser to authorize access. Nothing to paste.`,
+      },
+    ],
+  };
+}
+
+/**
+ * Remote whose URL is per-account / bring-your-own (Zapier, Make, ServiceNow,
+ * or a community-hosted endpoint). The user pastes their server URL; it's kept
+ * in `.cabinet.env` and written as the server URL at connect.
+ */
+function byoRemote(o: {
+  id: string;
+  label: string;
+  blurb: string;
+  logo: string;
+  sourceUrl: string;
+  actions: string[];
+  tier: TrustTier;
+  registryId?: string;
+  where: string;
+}): CatalogEntry {
+  const key = `${o.id.toUpperCase().replace(/-/g, "_")}_MCP_URL`;
+  return {
+    id: o.id,
+    label: o.label,
+    blurb: o.blurb,
+    iconSlug: o.id,
+    bgImage: `/integrations/${o.id}-bg.webp`,
+    logo: o.logo,
+    sourceUrl: o.sourceUrl,
+    registryId: o.registryId,
+    trustTier: o.tier,
+    authBackend: "token",
+    transport: "http",
+    mcpServerName: `cabinet-${o.id}`,
+    urlCredentialKey: key,
+    credentials: [
+      {
+        envKey: key,
+        label: `${o.label} MCP server URL`,
+        kind: "secret",
+        required: true,
+        placeholder: "https://…/mcp",
+        hint: "Stored on this device; written into your agent CLI's config.",
+      },
+    ],
+    actions: o.actions,
+    setupSteps: [
+      { title: `Get your ${o.label} MCP URL`, body: o.where },
+      { title: "Paste the server URL", body: "Paste it below — it's stored only on this device." },
+    ],
+  };
+}
+
+/** Integrations added via the helpers (official remotes + bring-your-own). */
+const EXTENDED: CatalogEntry[] = [
+  // Official public remotes (one-click OAuth)
+  officialRemote({ id: "sentry", label: "Sentry", blurb: "Triage errors, issues, and releases.", logo: "/logos/sentry.svg", url: "https://mcp.sentry.dev/mcp", registryId: "sentry", sourceUrl: "https://mcp.sentry.dev", actions: ["Search issues & errors", "Read stack traces & events", "Triage and resolve", "Inspect releases"] }),
+  officialRemote({ id: "asana", label: "Asana", blurb: "Create, search, and update tasks and projects.", logo: "/logos/asana.webp", url: "https://mcp.asana.com/v2/mcp", registryId: "asana", sourceUrl: "https://developers.asana.com/docs/using-asanas-mcp-server", actions: ["Search tasks & projects", "Create & update tasks", "Comment & assign", "Summarize projects"] }),
+  officialRemote({ id: "hubspot", label: "HubSpot", blurb: "Work with contacts, deals, and tickets in your CRM.", logo: "/logos/hubspot.svg", url: "https://mcp.hubspot.com", registryId: "hubspot", sourceUrl: "https://developers.hubspot.com/mcp", actions: ["Search contacts, deals & companies", "Create & update records", "Read & log activity", "Manage tickets"] }),
+  officialRemote({ id: "clickup", label: "ClickUp", blurb: "Manage tasks, lists, docs, and goals.", logo: "/logos/clickup.webp", url: "https://mcp.clickup.com/mcp", registryId: "clickup", sourceUrl: "https://developer.clickup.com/docs/connect-an-ai-assistant-to-clickups-mcp-server", actions: ["Search & create tasks", "Update status & assignees", "Read docs & lists", "Track time & goals"] }),
+  officialRemote({ id: "box", label: "Box", blurb: "Search and read your enterprise content in Box.", logo: "/logos/box.webp", url: "https://mcp.box.com", registryId: "box", sourceUrl: "https://developer.box.com/guides/box-mcp", actions: ["Search files & folders", "Read documents", "Use as agent context", "Read metadata"] }),
+  officialRemote({ id: "monday", label: "monday.com", blurb: "Read and update boards, items, and updates.", logo: "/logos/monday.svg", url: "https://mcp.monday.com/mcp", registryId: "monday", sourceUrl: "https://github.com/mondaycom/mcp", actions: ["Search boards & items", "Create & update items", "Post updates", "Summarize boards"] }),
+
+  // Official, special transport
+  {
+    id: "shopify", label: "Shopify", blurb: "Build on Shopify — search the dev docs & GraphQL schema.",
+    iconSlug: "shopify", bgImage: "/integrations/shopify-bg.webp", logo: "/logos/shopify.svg",
+    sourceUrl: "https://github.com/Shopify/dev-mcp", registryId: "shopify", trustTier: "official",
+    authBackend: "token", transport: "stdio", mcpServerName: "cabinet-shopify",
+    command: "npx", args: ["-y", "@shopify/dev-mcp@latest"], credentials: [],
+    actions: ["Search Shopify.dev docs", "Explore the Admin GraphQL schema", "Validate queries", "Reference APIs"],
+    setupSteps: [{ title: "Connect", body: "No sign-in needed — runs Shopify's official dev MCP locally via npx (docs + GraphQL schema). For live store data, use a storefront/admin MCP URL via the bring-your-own option." }],
+  },
+  {
+    id: "figma", label: "Figma", blurb: "Pull design context and generate code from frames.",
+    iconSlug: "figma", bgImage: "/integrations/figma-bg.webp", logo: "/logos/figma.svg",
+    sourceUrl: "https://developers.figma.com/docs/figma-mcp-server/", registryId: "figma", trustTier: "official",
+    authBackend: "token", transport: "http", mcpServerName: "cabinet-figma",
+    url: "http://127.0.0.1:3845/mcp", credentials: [],
+    actions: ["Read selected frames & layers", "Extract design context", "Generate code from designs", "Fetch comments"],
+    setupSteps: [{ title: "Enable Dev Mode MCP in Figma", body: "In the Figma desktop app, enable the Dev Mode MCP Server (Preferences). It serves locally at 127.0.0.1:3845, then connect here.", href: "https://help.figma.com/hc/en-us/articles/32132100833559" }],
+  },
+  {
+    id: "salesforce", label: "Salesforce", blurb: "Query and update CRM data with the official DX MCP.",
+    iconSlug: "salesforce", bgImage: "/integrations/salesforce-bg.webp", logo: "/logos/salesforce.webp",
+    sourceUrl: "https://github.com/salesforcecli/mcp", registryId: "salesforce", trustTier: "official",
+    authBackend: "token", transport: "stdio", mcpServerName: "cabinet-salesforce",
+    command: "npx", args: ["-y", "@salesforce/mcp", "--orgs", "DEFAULT_TARGET_ORG", "--toolsets", "all"], credentials: [],
+    actions: ["Query records (SOQL)", "Create & update records", "Run Apex & tests", "Inspect org metadata"],
+    setupSteps: [{ title: "Authorize an org first", body: "Install the Salesforce CLI and run `sf org login web`, then connect here. The MCP uses your CLI's default org.", href: "https://developer.salesforce.com/tools/salesforcecli" }],
+  },
+
+  // Per-account official remotes (paste your URL)
+  byoRemote({ id: "zapier", label: "Zapier", blurb: "Reach 8,000+ apps through your Zapier MCP endpoint.", logo: "/logos/zapier.svg", sourceUrl: "https://zapier.com/mcp", tier: "official", registryId: "zapier", actions: ["Run actions across 8,000+ apps", "Trigger Zaps", "Search connected-app data"], where: "Go to mcp.zapier.com → pick/create your server → Connect tab → copy your server URL." }),
+  byoRemote({ id: "make", label: "Make", blurb: "Run Make scenarios and connect 2,000+ apps.", logo: "/logos/make.svg", sourceUrl: "https://www.make.com/", tier: "official", registryId: "make", actions: ["Trigger scenarios", "Run app actions", "Read scenario data"], where: "In Make → your API/MCP settings, copy your MCP server URL." }),
+  byoRemote({ id: "servicenow", label: "ServiceNow", blurb: "Incidents, requests, and records via your instance MCP.", logo: "/logos/servicenow.svg", sourceUrl: "https://www.servicenow.com/", tier: "official", registryId: "servicenow", actions: ["Search & create incidents", "Update records", "Run governed actions"], where: "From your ServiceNow instance admin → MCP Server, copy the instance MCP URL." }),
+
+  // Community / bring-your-own remote (paste a hosted MCP URL from Composio, Pipedream, Zapier, or self-host)
+  byoRemote({ id: "pipedrive", label: "Pipedrive", blurb: "Deals, contacts, and pipelines in your CRM.", logo: "/logos/pipedrive.svg", sourceUrl: "https://www.coupler.io/mcp/pipedrive", tier: "community", actions: ["Search deals & contacts", "Create & update deals", "Move pipeline stages"], where: "Use a hosted Pipedrive MCP URL (Composio/Coupler/Pipedream) or self-host." }),
+  byoRemote({ id: "zendesk", label: "Zendesk", blurb: "Tickets, customers, and help-center content.", logo: "/logos/zendesk.svg", sourceUrl: "https://zapier.com/mcp/zendesk", tier: "community", actions: ["Search & update tickets", "Read customer context", "Draft replies"], where: "Use a hosted Zendesk MCP URL (Zapier/Composio) or self-host." }),
+  byoRemote({ id: "intercom", label: "Intercom", blurb: "Conversations, contacts, and help articles.", logo: "/logos/intercom.svg", sourceUrl: "https://www.intercom.com/", tier: "community", actions: ["Read conversations", "Search contacts & companies", "Find help articles"], where: "Use a hosted Intercom MCP URL (Composio/Pipedream) or self-host." }),
+  byoRemote({ id: "gitlab", label: "GitLab", blurb: "Repos, merge requests, issues, and pipelines.", logo: "/logos/gitlab.webp", sourceUrl: "https://docs.gitlab.com/", tier: "community", actions: ["Read code & issues", "Review merge requests", "Track pipelines"], where: "Use GitLab's MCP endpoint or a hosted GitLab MCP URL." }),
+  byoRemote({ id: "calendly", label: "Calendly", blurb: "Bookings, event types, and availability.", logo: "/logos/calendly.webp", sourceUrl: "https://zapier.com/mcp/calendly", tier: "community", actions: ["List bookings & invitees", "Read event types", "Prep meeting briefs"], where: "Use a hosted Calendly MCP URL (Zapier/Composio) or self-host." }),
+  byoRemote({ id: "zoom", label: "Zoom", blurb: "Meetings, recordings, and transcripts.", logo: "/logos/zoom.webp", sourceUrl: "https://marketplace.zoom.us/", tier: "community", actions: ["List meetings", "Fetch recordings & transcripts", "Summarize calls"], where: "Use a hosted Zoom MCP URL (Composio/Pipedream) or self-host." }),
+  byoRemote({ id: "loom", label: "Loom", blurb: "Video library, transcripts, and shares.", logo: "/logos/loom.svg", sourceUrl: "https://www.loom.com/", tier: "community", actions: ["Search videos", "Read transcripts", "Summarize recordings"], where: "Use a hosted Loom MCP URL or self-host." }),
+  byoRemote({ id: "motion", label: "Motion", blurb: "AI calendar, tasks, and auto-scheduling.", logo: "/logos/motion.svg", sourceUrl: "https://www.usemotion.com/", tier: "community", actions: ["Read schedule & tasks", "Create tasks", "Find time"], where: "Use a hosted Motion MCP URL or self-host." }),
+  byoRemote({ id: "clockwise", label: "Clockwise", blurb: "Focus time and smart calendar optimization.", logo: "/logos/clockwise.svg", sourceUrl: "https://www.getclockwise.com/", tier: "community", actions: ["Read calendar", "Find focus time", "Optimize schedule"], where: "Use a hosted Clockwise MCP URL or self-host." }),
+  byoRemote({ id: "miro", label: "Miro", blurb: "Boards, frames, and sticky notes.", logo: "/logos/miro.svg", sourceUrl: "https://miro.com/", tier: "community", actions: ["Read boards & frames", "Create items", "Summarize boards"], where: "Use a hosted Miro MCP URL (Composio/Pipedream) or self-host." }),
+  byoRemote({ id: "trello", label: "Trello", blurb: "Boards, lists, and cards.", logo: "/logos/trello.svg", sourceUrl: "https://trello.com/", tier: "community", actions: ["Read boards & cards", "Create & move cards", "Comment"], where: "Use a hosted Trello MCP URL or self-host." }),
+  byoRemote({ id: "dropbox", label: "Dropbox", blurb: "Browse and read files in Dropbox.", logo: "/logos/dropbox.webp", sourceUrl: "https://www.dropbox.com/developers", tier: "community", actions: ["Browse folders", "Read files", "Use as agent context"], where: "Use a hosted Dropbox MCP URL or self-host." }),
+  byoRemote({ id: "pagerduty", label: "PagerDuty", blurb: "Incidents, services, schedules, and on-call.", logo: "/logos/pagerduty.svg", sourceUrl: "https://www.pagerduty.com/", tier: "community", actions: ["Read & create incidents", "Check on-call", "Read schedules"], where: "Use a hosted PagerDuty MCP URL or self-host." }),
+  byoRemote({ id: "quickbooks", label: "QuickBooks", blurb: "Invoices, expenses, and P&L reports.", logo: "/logos/quickbooks.webp", sourceUrl: "https://www.cdata.com/drivers/quickbooks/mcp/", tier: "community", actions: ["Read invoices & expenses", "Create invoices", "Pull P&L"], where: "Use a hosted QuickBooks MCP URL (CData/Zapier) or self-host." }),
+  byoRemote({ id: "expensify", label: "Expensify", blurb: "Expense reports and reimbursements.", logo: "/logos/expensify.svg", sourceUrl: "https://www.expensify.com/", tier: "community", actions: ["Read expense reports", "Create expenses", "Check status"], where: "Use a hosted Expensify MCP URL or self-host." }),
+  byoRemote({ id: "docusign", label: "DocuSign", blurb: "Envelopes, signatures, and templates.", logo: "/logos/docusign.webp", sourceUrl: "https://www.docusign.com/", tier: "community", actions: ["Send envelopes", "Check signature status", "Use templates"], where: "Use a hosted DocuSign MCP URL or self-host." }),
+  byoRemote({ id: "workday", label: "Workday", blurb: "HR records, time off, and org data.", logo: "/logos/workday.svg", sourceUrl: "https://www.workday.com/", tier: "community", actions: ["Read worker & org data", "Check time off", "Look up policies"], where: "Use a hosted Workday MCP URL or self-host." }),
+  byoRemote({ id: "bamboohr", label: "BambooHR", blurb: "Employees, time off, and HR data.", logo: "/logos/bamboohr.svg", sourceUrl: "https://www.bamboohr.com/", tier: "community", actions: ["Read employee data", "Check time off", "Look up directory"], where: "Use a hosted BambooHR MCP URL or self-host." }),
+  byoRemote({ id: "snowflake", label: "Snowflake", blurb: "Query your data warehouse with Cortex.", logo: "/logos/snowflake.svg", sourceUrl: "https://docs.snowflake.com/", tier: "community", actions: ["Run SQL queries", "Explore schemas", "Summarize results"], where: "Use Snowflake's Cortex MCP endpoint or a hosted URL." }),
+  byoRemote({ id: "bigquery", label: "BigQuery", blurb: "Query datasets in Google BigQuery.", logo: "/logos/bigquery.svg", sourceUrl: "https://cloud.google.com/bigquery", tier: "community", actions: ["Run SQL queries", "Explore datasets", "Summarize results"], where: "Use a hosted BigQuery MCP URL or self-host." }),
+  byoRemote({ id: "amplitude", label: "Amplitude", blurb: "Product analytics, charts, and cohorts.", logo: "/logos/amplitude.svg", sourceUrl: "https://amplitude.com/", tier: "community", actions: ["Query charts & events", "Read cohorts", "Summarize trends"], where: "Use a hosted Amplitude MCP URL or self-host." }),
+  byoRemote({ id: "airtable", label: "Airtable", blurb: "Read and write records across your bases.", logo: "/logos/airtable.svg", sourceUrl: "https://airtable.com/developers", tier: "community", actions: ["Query tables", "Create & update records", "Read schemas"], where: "Use a hosted Airtable MCP URL (Composio/Pipedream) or self-host." }),
+  byoRemote({ id: "datadog", label: "Datadog", blurb: "Metrics, monitors, logs, and dashboards.", logo: "/logos/datadog.svg", sourceUrl: "https://www.datadoghq.com/", tier: "community", actions: ["Search metrics & logs", "Read monitors", "Inspect dashboards"], where: "Use a hosted Datadog MCP URL or self-host." }),
+  byoRemote({ id: "gong", label: "Gong", blurb: "Call recordings, transcripts, and deal insights.", logo: "/logos/gong.svg", sourceUrl: "https://www.gong.io/", tier: "community", actions: ["Read call transcripts", "Search calls", "Surface deal insights"], where: "Use a hosted Gong MCP URL or self-host." }),
+  byoRemote({ id: "greenhouse", label: "Greenhouse", blurb: "Candidates, jobs, and interview pipelines.", logo: "/logos/greenhouse.svg", sourceUrl: "https://www.greenhouse.io/", tier: "community", actions: ["Search candidates", "Read jobs & stages", "Summarize pipelines"], where: "Use a hosted Greenhouse MCP URL or self-host." }),
+  byoRemote({ id: "brex", label: "Brex", blurb: "Card transactions, expenses, and budgets.", logo: "/logos/brex.svg", sourceUrl: "https://www.brex.com/", tier: "community", actions: ["Read transactions", "Check budgets", "Summarize spend"], where: "Use a hosted Brex MCP URL or self-host." }),
+  byoRemote({ id: "databricks", label: "Databricks", blurb: "Query lakehouse data and run notebooks.", logo: "/logos/databricks.svg", sourceUrl: "https://www.databricks.com/", tier: "community", actions: ["Run SQL queries", "Explore catalogs", "Summarize results"], where: "Use a hosted Databricks MCP URL or self-host." }),
+  byoRemote({ id: "looker", label: "Looker", blurb: "Explore dashboards and run Looks.", logo: "/logos/looker.svg", sourceUrl: "https://cloud.google.com/looker", tier: "community", actions: ["Run Looks & queries", "Read dashboards", "Summarize metrics"], where: "Use a hosted Looker MCP URL or self-host." }),
+  byoRemote({ id: "tableau", label: "Tableau", blurb: "Read workbooks, views, and data sources.", logo: "/logos/tableau.svg", sourceUrl: "https://www.tableau.com/", tier: "community", actions: ["Read workbooks & views", "Query data sources", "Summarize dashboards"], where: "Use a hosted Tableau MCP URL or self-host." }),
+  byoRemote({ id: "mixpanel", label: "Mixpanel", blurb: "Query events, funnels, and cohorts.", logo: "/logos/mixpanel.svg", sourceUrl: "https://mixpanel.com/", tier: "community", actions: ["Query events & funnels", "Read cohorts", "Summarize trends"], where: "Use a hosted Mixpanel MCP URL or self-host." }),
+];
+
+export const MCP_CATALOG: CatalogEntry[] = [
+  SLACK,
+  GOOGLE_WORKSPACE,
+  MICROSOFT_365,
+  NOTION,
+  GITHUB,
+  LINEAR,
+  ATLASSIAN,
+  STRIPE,
+  DISCORD,
+  TELEGRAM,
+  LINKEDIN,
+  ...EXTENDED,
+];
 
 export function getCatalogEntry(id: string): CatalogEntry | undefined {
   return MCP_CATALOG.find((e) => e.id === id);

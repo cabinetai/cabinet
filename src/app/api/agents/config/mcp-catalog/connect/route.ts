@@ -8,7 +8,7 @@ import {
 } from "@/lib/agents/mcp-config-writer";
 import { resolveAuthBackend } from "@/lib/agents/deployment-mode";
 import { getSelectedEnvironments } from "@/lib/agents/integration-environments";
-import { isValidKey, upsertCabinetEnv } from "@/lib/runtime/cabinet-env";
+import { isValidKey, upsertCabinetEnv, getCabinetEnvSnapshot } from "@/lib/runtime/cabinet-env";
 
 /**
  * `/api/agents/config/mcp-catalog/connect`
@@ -54,17 +54,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // Persist credentials for token / user-app backends. Validate required ones.
   if (backend === "token" || backend === "user-app") {
+    // A required credential already saved in .cabinet.env doesn't need to be
+    // re-entered — otherwise "Update" (e.g. changing environments or Server ID)
+    // would demand re-pasting the secret every time.
+    const savedKeys = new Set(
+      getCabinetEnvSnapshot().filter((s) => s.hasValue).map((s) => s.key),
+    );
     for (const c of entry.credentials) {
       const raw = creds[c.envKey];
       const value = typeof raw === "string" ? raw.trim() : "";
       if (!value) {
-        if (c.required) {
+        if (c.required && !savedKeys.has(c.envKey)) {
           return NextResponse.json(
             { error: `Missing required credential: ${c.label}` },
             { status: 400 },
           );
         }
-        continue;
+        continue; // optional, or already saved → keep the existing value
       }
       if (!isValidKey(c.envKey)) {
         return NextResponse.json(
@@ -94,7 +100,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
+  // When the caller passes an explicit provider list (the connect panel
+  // always does), treat it as the DESIRED set and reconcile: unchecking an
+  // environment + "Update" must remove the entry there, not just add to the
+  // checked ones. Without this the panel's checkboxes snap back on reload
+  // because connectedProviderIds never shrinks. The fallback path (no
+  // explicit list) stays additive for callers that just mean "install".
+  const explicitSelection = Array.isArray(providers);
+  const previouslyConnected = explicitSelection ? connectedProvidersForEntry(entry) : [];
+
   const results: ProviderWriteResult[] = targets.map((pid) => writeEntry(pid, entry));
+  const removedResults: ProviderWriteResult[] = previouslyConnected
+    .filter((pid) => !targets.includes(pid))
+    .map((pid) => removeEntry(pid, entry));
   const anyOk = results.some((r) => r.ok);
   const next =
     backend === "cli-pkce" || backend === "user-app" || entry.transport === "http"
@@ -105,12 +123,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     {
       ok: anyOk,
       results,
+      removedResults,
       connectedProviderIds: connectedProvidersForEntry(entry),
       next,
       message: anyOk
         ? next === "cli-oauth"
           ? "Registered. Each environment's CLI opens a browser to finish sign-in the first time it uses this."
-          : "Connected and ready to use."
+          : removedResults.length > 0
+            ? "Environments updated."
+            : "Connected and ready to use."
         : "Could not register in any selected environment.",
     },
     { status: anyOk ? 200 : 500 },

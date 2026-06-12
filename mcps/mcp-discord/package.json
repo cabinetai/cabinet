@@ -1,0 +1,42 @@
+{
+  "name": "cabinet-mcp-discord",
+  "version": "0.1.0",
+  "description": "Cabinet-maintained, agent-shaped Discord MCP server. Safe-by-default tool surface (read + post + threads) with optional, gated admin.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "cabinet-mcp-discord": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "smoke": "npm run build && node scripts/smoke.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "discord",
+    "cabinet",
+    "agent"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "discord.js": "^14.16.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "esbuild": "^0.24.0",
+    "typescript": "^5"
+  }
+}

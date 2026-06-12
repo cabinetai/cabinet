@@ -118,7 +118,7 @@ function resolveInternalLink(
 
 export function KBEditor() {
   const { t } = useLocale();
-  const { currentPath, content, saveStatus, frontmatter, isLoading, loadStatus, createMissingPage } = useEditorStore();
+  const { currentPath, assetBase, content, saveStatus, frontmatter, isLoading, loadStatus, createMissingPage } = useEditorStore();
   const nodes = useTreeStore((s) => s.nodes);
   const isRtl = frontmatter?.dir === "rtl";
   const isLoadingRef = useRef(false);
@@ -333,7 +333,10 @@ export function KBEditor() {
     if (isLoading && content === "") return;
     // Dedupe identical (path, content) renders — e.g. cached paint followed
     // by a fresh fetch that returned the same markdown.
-    const key = `${currentPath}\u0000${content}`;
+    // assetBase is in the key so a cached paint (assetBase null -> path
+    // fallback) re-renders once the fetch reveals a standalone page's real
+    // asset base.
+    const key = `${currentPath}\u0000${assetBase ?? ""}\u0000${content}`;
     if (renderedKeyRef.current === key) {
       if (renderedPath !== currentPath) setRenderedPath(currentPath);
       return;
@@ -342,7 +345,9 @@ export function KBEditor() {
 
     const setContent = async () => {
       isLoadingRef.current = true;
-      const html = await markdownToHtml(content, currentPath);
+      // assetBase (parent dir for standalone .md pages) resolves relative
+      // image refs; currentPath is only correct for directory pages.
+      const html = await markdownToHtml(content, assetBase ?? currentPath);
       editor.commands.setContent(html);
       renderedKeyRef.current = key;
       setRenderedPath(currentPath);
@@ -352,7 +357,7 @@ export function KBEditor() {
     };
 
     setContent();
-  }, [editor, content, currentPath, isLoading, renderedPath]);
+  }, [editor, content, currentPath, assetBase, isLoading, renderedPath]);
 
   // Push frontmatter.dir into the ProseMirror contenteditable element so list
   // indentation, table cell alignment, and block direction all flip when the
@@ -447,7 +452,7 @@ export function KBEditor() {
       useEditorStore.getState().updateContent(sourceText);
       if (editor) {
         isLoadingRef.current = true;
-        const html = await markdownToHtml(sourceText, currentPath ?? undefined);
+        const html = await markdownToHtml(sourceText, assetBase ?? currentPath ?? undefined);
         editor.commands.setContent(html);
         setTimeout(() => { isLoadingRef.current = false; }, 50);
       }
