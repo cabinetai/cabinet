@@ -12,10 +12,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Try both directory index.md and standalone .md
+    // Directory index.md, standalone .md, or the exact file (non-markdown
+    // viewers — CSV, source, assets — restore too).
     const candidates = [
       path.join(pagePath, "index.md"),
       `${pagePath}.md`,
+      pagePath,
     ];
 
     let restored = false;
@@ -29,6 +31,13 @@ export async function POST(req: NextRequest) {
         { error: "Failed to restore — file may not exist at that commit" },
         { status: 404 }
       );
+    }
+
+    try {
+      const { emit } = await import("@/lib/telemetry");
+      emit("history.restored", { source: "panel" });
+    } catch {
+      // telemetry optional
     }
 
     return NextResponse.json({ ok: true });

@@ -127,6 +127,15 @@ function resolveManagedDataDir() {
 }
 
 const managedDataDir = resolveManagedDataDir();
+
+// Diagnostic logging: console capture + crash markers into
+// <dataDir>/.cabinet-state/logs/electron.log (LOGGING_AND_FILE_HISTORY_PRD §3).
+try {
+  require("./logger.cjs").initElectronLogging(managedDataDir);
+} catch (err) {
+  console.error("electron: initElectronLogging failed", err);
+}
+
 const updateStatusPath = path.join(managedDataDir, ".cabinet-state", "update-status.json");
 let mainWindow = null;
 let backendChildren = [];

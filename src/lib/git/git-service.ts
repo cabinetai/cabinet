@@ -20,31 +20,34 @@ async function getGit(): Promise<SimpleGit | null> {
     await git.init();
     await git.addConfig("user.email", "kb@cabinet.dev");
     await git.addConfig("user.name", "Cabinet");
+    // Repo provenance marker (PRD §4.4) + scale guards (§4.8).
+    await git.addConfig("cabinet.managed", "true");
+    await git.addConfig("core.untrackedCache", "true");
     return git;
   } catch {
     return null;
   }
 }
 
-let commitTimer: ReturnType<typeof setTimeout> | null = null;
-
-export async function autoCommit(pagePath: string, action: "Update" | "Add" | "Delete") {
-  // Debounce commits — batch within 5 seconds
-  if (commitTimer) clearTimeout(commitTimer);
-  commitTimer = setTimeout(async () => {
-    try {
-      const g = await getGit();
-      if (!g) return;
-
-      await g.add(".");
-      const status = await g.status();
-      if (status.staged.length === 0 && status.modified.length === 0) return;
-
-      await g.commit(`${action} ${pagePath}`);
-    } catch (error) {
+/**
+ * Attributed, path-scoped auto-commit (LOGGING_AND_FILE_HISTORY_PRD §4.2).
+ * Delegates to the history engine: journals the event per room, stages ONLY
+ * the affected paths (never `git add .` — that used to sweep agent edits
+ * into mislabeled user commits), and authors the commit as the local user
+ * profile. Same signature as the legacy version so call sites are untouched.
+ */
+export function autoCommit(pagePath: string, action: "Update" | "Add" | "Delete") {
+  void import("@/lib/history/engine")
+    .then(({ recordMutation }) =>
+      recordMutation({
+        op: action === "Add" ? "create" : action === "Delete" ? "delete" : "write",
+        virtualPath: pagePath,
+        message: `${action} ${pagePath || "index"}`,
+      })
+    )
+    .catch((error) => {
       console.error("Auto-commit failed:", error);
-    }
-  }, 5000);
+    });
 }
 
 export interface GitLogEntry {
@@ -52,6 +55,29 @@ export interface GitLogEntry {
   date: string;
   message: string;
   author: string;
+  /** Distinguishes person vs agent commits (agent@cabinet.local). */
+  authorEmail?: string;
+  /** Parsed from the Cabinet-Agent trailer: `<cabinetPath>#<slug>`. */
+  agent?: { cabinetPath: string; slug: string } | null;
+  /** Parsed from the Cabinet-Run trailer: the conversation id. */
+  runId?: string | null;
+}
+
+/** Parse the PRD §4.2 trailers out of a commit body. */
+function parseHistoryTrailers(body: string | undefined): {
+  agent: { cabinetPath: string; slug: string } | null;
+  runId: string | null;
+} {
+  if (!body) return { agent: null, runId: null };
+  let agent: { cabinetPath: string; slug: string } | null = null;
+  let runId: string | null = null;
+  for (const line of body.split("\n")) {
+    const agentMatch = /^Cabinet-Agent:\s*(.+)#([^#\s]+)\s*$/.exec(line);
+    if (agentMatch) agent = { cabinetPath: agentMatch[1], slug: agentMatch[2] };
+    const runMatch = /^Cabinet-Run:\s*(\S+)\s*$/.exec(line);
+    if (runMatch) runId = runMatch[1];
+  }
+  return { agent, runId };
 }
 
 export async function getPageHistory(virtualPath: string): Promise<GitLogEntry[]> {
@@ -70,12 +96,19 @@ export async function getPageHistory(virtualPath: string): Promise<GitLogEntry[]
       try {
         const log = await g.log({ file: candidate, maxCount: 50 });
         if (log.all.length > 0) {
-          return log.all.map((entry) => ({
-            hash: entry.hash,
-            date: entry.date,
-            message: entry.message,
-            author: entry.author_name,
-          }));
+          return log.all.map((entry) => {
+            const { agent, runId } = parseHistoryTrailers(entry.body);
+            return {
+              hash: entry.hash,
+              date: entry.date,
+              // strip trailers from the visible message
+              message: entry.message,
+              author: entry.author_name,
+              authorEmail: entry.author_email,
+              agent,
+              runId,
+            };
+          });
         }
       } catch {
         continue;
@@ -195,12 +228,27 @@ function isInternalPath(p: string): boolean {
   return INTERNAL_PATH_PATTERNS.some((re) => re.test(p));
 }
 
-export async function getStatus(): Promise<{ uncommitted: number; files: UncommittedFile[]; truncated: boolean; isGit: boolean }> {
+// PRD §4.8: the status-bar poll is the one full-status consumer. If a scan
+// blows the time budget the cabinet is flagged `large` (once per process)
+// so we can see how often real installs hit the degradation ladder.
+let largeTierReported = false;
+const STATUS_BUDGET_MS = 2000;
+
+export async function getStatus(): Promise<{ uncommitted: number; files: UncommittedFile[]; truncated: boolean; isGit: boolean; large?: boolean }> {
   const g = await getGit();
   if (!g) return { uncommitted: 0, files: [], truncated: false, isGit: false };
 
   try {
+    const startedAt = Date.now();
     const status = await g.status();
+    const elapsed = Date.now() - startedAt;
+    if (elapsed > STATUS_BUDGET_MS && !largeTierReported) {
+      largeTierReported = true;
+      console.warn(`[history] git status took ${elapsed}ms — large-repo tier`);
+      void import("@/lib/telemetry")
+        .then(({ emit }) => emit("history.tier", { tier: "large" }))
+        .catch(() => {});
+    }
     // Audit #015: include the file list so the status bar can show it on
     // hover/click, not just a bare count. Capped at 50 entries to keep
     // payloads small; UI surfaces a "+N more" hint when truncated.
@@ -221,6 +269,7 @@ export async function getStatus(): Promise<{ uncommitted: number; files: Uncommi
       files: files.slice(0, MAX_UNCOMMITTED_LIST),
       truncated: files.length > MAX_UNCOMMITTED_LIST,
       isGit: true,
+      large: largeTierReported || undefined,
     };
   } catch {
     return { uncommitted: 0, files: [], truncated: false, isGit: false };

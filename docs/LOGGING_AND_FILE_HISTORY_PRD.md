@@ -1,8 +1,6 @@
 # Logging & File Edit History — PRD
 
-**Status:** Draft v2 (2026-06-12 — review decisions applied: logging ships
-first; binary versioning is a per-cabinet threshold defaulting to text-only;
-journal is per-room; Activity view is file-events-only in v1)
+**Status:** Final (2026-06-12 — all open questions resolved in review, see §7)
 **Owner:** hilash
 **Scope:** Two related observability gaps: (1) app diagnostics — when something breaks, users have nothing to look at or send us; (2) file edit history — users want to know *who* (them, or which agent/task) touched *what* file, *when*.
 
@@ -86,8 +84,10 @@ the discovery fix in `946150d`.)
 
 **Non-goals**
 
-- No new telemetry, no remote log shipping, no auto-upload. Local-first:
-  logs leave the machine only when the user exports and sends them.
+- No remote log shipping, no auto-upload, no automatic crash reporting.
+  Local-first: log content leaves the machine only by explicit user
+  action — exporting a bundle (§3.4) or checking "Attach recent logs" on
+  a feedback report (§3.5).
 - No realtime per-keystroke versioning; git-commit granularity is enough.
 - No replacement of `events.log`/`audit.log`/`feedback.jsonl`.
 - No syncing/merging of histories across machines.
@@ -175,7 +175,34 @@ common secret shapes (`sk-…`, `xox…`, `ghp_…`, 32+ char hex/base64 after
 `token|key|secret=`) → `[redacted]`. Defense-in-depth on top of "we never
 log values" discipline.
 
-### 3.5 What gets logged where (policy)
+### 3.5 Error feedback — one click, logs optional
+
+Every user-facing error surface (error toasts, the composer's send-failure
+banner, task-failed states, the crash-on-last-launch prompt) gets a
+**Feedback** button at the bottom. Clicking it opens the existing feedback
+dialog, pre-filled with context the user shouldn't have to retype:
+
+- the error message and scope (e.g. `conversation-runner`, `daemon`),
+- app version, platform, and — when relevant — the conversation id.
+
+Below the text field, one checkbox: **"Attach recent logs"** (checked by
+default — the user is explicitly reporting a problem — with a *preview*
+link showing exactly what will be sent). When checked, the submission
+includes the **redacted tail** of the relevant log streams: last ~500
+lines per process, §3.4 redaction pass applied, gzipped, hard-capped at
+1 MB. Unchecked → not a single log byte leaves the machine.
+
+Transport reuses the existing feedback path unchanged: always written
+locally to `.cabinet-meta/feedback.jsonl` first, then best-effort POST to
+the feedback backend; the log attachment rides along only on the POST
+(the local jsonl records `logsAttached: true`, not the bytes). Offline →
+queued exactly like feedback is today.
+
+This is deliberately *not* automatic crash reporting: nothing is sent
+without the user pressing the button, and the checkbox + preview keep the
+log attachment visible and revocable per report.
+
+### 3.6 What gets logged where (policy)
 
 - `error`: anything that surfaces to the user as a failure, all caught
   exceptions at API boundaries, daemon session spawn/finalize failures.
@@ -186,6 +213,19 @@ log values" discipline.
 - `debug`: per-request traces, poll loops, watcher events.
 - **Never, at any level:** secret values, full prompts, page contents,
   message bodies. Paths are allowed (local file, unlike telemetry).
+
+### 3.7 Telemetry (minimal, allowlisted)
+
+Four new events join the allowlist in `src/lib/telemetry/catalog.ts` (and
+the `TELEMETRY.md` table) — same privacy rules as every other event: no
+paths, no content, no stacks:
+
+| Event | Payload keys | Why |
+| --- | --- | --- |
+| `crash.detected` | `proc` (`next`/`daemon`/`electron`/`renderer`) | the one signal we can't get any other way |
+| `diagnostics.exported` | — | are users actually using the escape hatch |
+| `history.restored` | `source` (`panel`/`activity`) | is restore earning its place |
+| `history.tier` | `tier` (`large`/`journal-only`) | how often real installs hit the §4.8 ladder |
 
 ---
 
@@ -201,7 +241,11 @@ path**. So:
   overflow — no homegrown snapshot store).
 - A new **journal** stores one event per mutation with actor metadata, and
   is what the UI reads (fast, no git subprocess per render). It is
-  **per-room**: `<cabinetRoot>/.cabinet-meta/file-history.jsonl` — matching
+  **per-room**: `<cabinetRoot>/.cabinet-state/file-history.jsonl`
+  (implementation note: NOT `.cabinet-meta` as originally drafted —
+  `.cabinet-meta` is the link-metadata FILE in linked cabinets, so a
+  directory by that name collides; `.cabinet-state` is the existing
+  per-room internal-state convention) — matching
   Rooms v3 isolation (rooms are sibling cabinets; one room's activity must
   not leak into another) and the per-root git repos of §4.4, so a
   symlink-mounted cabinet's history travels with it. A cross-room feed, if
@@ -229,9 +273,12 @@ from day one so orgs/companies slot in without a migration:
   becomes the org user id, and `name`/`email` come from the signed-in
   identity. Nothing else in the design changes.
 - Display: **You** (single-user) → the member's name + avatar (org mode).
-- A local profile (Settings → Profile: name, optional email; defaults to
-  the OS username) feeds both display and git authorship now, and is
-  superseded by the account identity later.
+- Identity source: the **existing user profile** —
+  `.agents/.config/user.json` (`src/lib/user/profile-io.ts`), already
+  captured during onboarding (name, optional email, avatar) and editable
+  in Settings. `displayName || name` + `email` (fallback
+  `<name>@local`) feed display and git authorship; the org account
+  identity supersedes it later. No new profile UI needed.
 
 **Agent.** A slug is **not** an identity — slugs are only unique *per
 cabinet* (`persona-manager.ts` reads them from each cabinet's `.agents/`
@@ -267,7 +314,8 @@ authoritative long-term record; the journal is a regenerable index.
    unrelated dirty state into mislabeled commits).
 2. **Per-commit author** via `--author` — git authorship is used exactly
    the way git designed it: the human or bot who made the change.
-   - Person: their real identity — `<profile name> <profile email>` (e.g.
+   - Person: their real identity from `readUserProfile()` —
+     `<displayName || name> <email || name@local>` (e.g.
      `hilash <hilash@local>`), and in org mode the signed-in member's
      name/email. This is precisely the multi-user story: a shared repo
      where each member's commits already carry their identity needs no
@@ -343,11 +391,14 @@ This mirrors the discovery-symlink fix: same realpath resolution, same
 
 ### 4.5 UI
 
-- **Per-file:** right-click → **History** (sidebar + editor header). Panel
-  lists journal events with an actor chip — *You* (the member's name +
-  avatar in org mode), or the agent's avatar + `displayName` + room (e.g.
-  *Steve · dev*) linking to the conversation — backed by `git log --follow`
-  for the diff/restore actions that already exist.
+- **Per-file:** the **existing Version History panel** (clock icon →
+  restore from git) is extended, not duplicated: entries gain an actor
+  chip — *You* (the member's name + avatar in org mode), or the agent's
+  avatar + `displayName` + room (e.g. *Steve · dev*) linking to the
+  conversation — and journal-backed events (e.g. heavy files that were
+  never committed) appear inline. Diff/restore stay exactly where users
+  already know them; a sidebar right-click → **History** opens the same
+  panel. One surface, no parallel UI.
 - **Global:** an **Activity** view (per room) — reverse-chron journal feed,
   filterable by actor and path prefix. This is also the natural answer to
   "what did that agent just do to my files?".
@@ -458,7 +509,7 @@ everything is attributed, and nothing is ever doubled on disk.
 | Phase | Contents | Risk |
 | --- | --- | --- |
 | **1. Logger core** | `src/lib/log/logger.ts` + CJS twin, console capture in daemon/Next/Electron, crash handlers, rotation. No UI. | Low — additive; tee preserves dev terminal output. |
-| **2. Diagnostics UX** | `POST /api/system/client-log`, renderer capture, Settings "Export diagnostics" + verbose toggle, crash-on-last-run prompt. | Low. |
+| **2. Diagnostics UX** | `POST /api/system/client-log`, renderer capture, Settings "Export diagnostics" + verbose toggle, crash-on-last-run prompt, Feedback button on error surfaces with "Attach recent logs" checkbox (§3.5). | Low. |
 | **3. History engine** | actor-aware `autoCommit` (scoped staging!), run-end agent commits, journal, `getGitFor` symlink handling, index.lock retry. | Medium — touches the write path; needs the §4.3 race documented + tested. |
 | **4. History UX** | File History panel, Activity view, task artifacts upgrade, storage usage in Settings. | Low. |
 
@@ -473,6 +524,10 @@ rewrite of old history.
   all of it without touching a terminal.
 - Bundle zip contains zero secret values when `.cabinet.env` is fully
   populated (test asserts on the redaction pass output).
+- Triggering any error toast shows a Feedback button; submitting with the
+  checkbox on delivers a report whose log attachment is ≤ 1 MB, redacted,
+  and matches the preview; with the checkbox off, the request body
+  contains no log content.
 - Agent run that edits 3 files → one commit whose author shows the agent's
   display name + room and whose `Cabinet-Agent` trailer carries
   `<cabinetPath>#<slug>`; 3 journal events with the conversation id. A user
@@ -487,9 +542,7 @@ rewrite of old history.
 - `du -sh` of logs (40 MB cap) plus any room's journal (5 MB cap each)
   never exceeds its ceiling regardless of runtime.
 
-## 7. Decisions & open questions
-
-Resolved in review (2026-06-12):
+## 7. Decisions (all resolved in review, 2026-06-12)
 
 1. **Ship order:** logging first (Phases 1–2), then the history engine.
 2. **Activity view:** file events only in v1; folding in `audit.log` UI
@@ -498,9 +551,16 @@ Resolved in review (2026-06-12):
    Rooms v3 isolation and traveling with symlink-mounted cabinets (§4.1).
 4. **Binary versioning:** per-cabinet threshold, default text-only —
    `off / ≤2 MB / ≤5 MB` (§4.7).
-
-Still open:
-
-1. Retention for git history — offer "trim history older than N months"
-   eventually, or leave to `gc`? (Lean: leave it; deltas on markdown are
-   tiny.)
+5. **Git retention:** keep everything forever; `gc` only. No trim tool —
+   revisit only if real installs show `.git` bloat.
+6. **User identity:** the existing onboarding-captured profile
+   (`.agents/.config/user.json`), editable in Settings — no new profile
+   UI (§4.1, §4.2).
+7. **History UI:** extend the existing Version History panel with actors
+   and journal events; no second per-file history surface (§4.5).
+8. **Telemetry:** four minimal allowlisted events — `crash.detected`,
+   `diagnostics.exported`, `history.restored`, `history.tier` (§3.7).
+9. **Error feedback** (added post-review): every error surface gets a
+   Feedback button pre-filled with error context, plus an
+   "Attach recent logs" checkbox — redacted tails, 1 MB cap, reusing the
+   existing feedback transport (§3.5).

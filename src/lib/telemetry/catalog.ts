@@ -16,6 +16,10 @@ export const ALLOWED_EVENTS = [
   "cabinet.switched",
   "template.installed",
   "theme.changed",
+  "crash.detected",
+  "diagnostics.exported",
+  "history.restored",
+  "history.tier",
 ] as const;
 
 export type EventName = (typeof ALLOWED_EVENTS)[number];
@@ -50,4 +54,8 @@ export const EVENT_PAYLOAD_KEYS: Record<EventName, readonly string[]> = {
   "cabinet.switched": [],
   "template.installed": ["templateKind", "templateSlug"],
   "theme.changed": ["themeName"],
+  "crash.detected": ["proc"],
+  "diagnostics.exported": [],
+  "history.restored": ["source"],
+  "history.tier": ["tier"],
 };

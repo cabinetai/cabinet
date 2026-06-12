@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore } from "@/stores/editor-store";
-import { VersionHistory } from "@/components/editor/version-history";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { useLocale } from "@/i18n/use-locale";
 
@@ -117,7 +116,6 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-      {currentPath && <VersionHistory />}
     </ViewerToolbar>
   );
 }

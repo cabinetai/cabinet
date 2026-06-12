@@ -22,6 +22,11 @@ ensureBetterSqlite3();
 import { loadCabinetEnv } from "../src/lib/runtime/cabinet-env";
 loadCabinetEnv();
 
+// Diagnostic logging: console capture + crash markers into
+// .cabinet-state/logs/daemon.log (docs/LOGGING_AND_FILE_HISTORY_PRD.md §3).
+import { initProcessLogging } from "../src/lib/log/logger";
+initProcessLogging("daemon");
+
 // Mark this process as the daemon itself. conversation-runner reads this to
 // route continued turns through the daemon's session machinery (addressable,
 // stoppable run ids) instead of the un-cancellable in-process path — the

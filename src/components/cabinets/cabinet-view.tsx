@@ -247,7 +247,7 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
               ownAgents={ownAgents}
               onRefresh={() => void loadOverview()}
             />
-            <VersionHistory />
+            <VersionHistory path={cabinetPath === "." ? "index" : cabinetPath} />
             <HeaderActions />
           </div>
         </header>

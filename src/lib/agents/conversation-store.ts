@@ -1541,6 +1541,18 @@ export async function finalizeConversation(
     sanitizeArtifactCabinetBlocks(meta.artifactPaths),
   ]);
 
+  // File-history capture (LOGGING_AND_FILE_HISTORY_PRD §4.3): at run end,
+  // observe what actually changed in the cabinet, commit it as the agent,
+  // and journal per-file events. Fire-and-forget — history capture must
+  // never fail or delay a finalize.
+  if (input.status === "completed" || input.status === "failed") {
+    void import("@/lib/history/agent-commit")
+      .then(({ commitAgentRun }) => commitAgentRun(meta))
+      .catch((err) => {
+        console.error(`[history] run capture failed for ${id}:`, err);
+      });
+  }
+
   // Broadcast a task.updated so every subscribed surface (task page, tasks
   // board, sidebar file tree) can refresh without waiting on an explicit
   // turn.appended event (first-turn runs never hit that path).

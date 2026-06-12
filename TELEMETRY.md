@@ -58,6 +58,10 @@ dropped at the source (see `src/lib/telemetry/catalog.ts`):
 | `cabinet.switched` | — |
 | `template.installed` | `templateKind`, `templateSlug` |
 | `theme.changed` | `themeName` |
+| `crash.detected` | `proc` |
+| `diagnostics.exported` | — |
+| `history.restored` | `source` |
+| `history.tier` | `tier` |
 
 Payload values are coerced to strings/numbers/booleans, capped at 256 chars
 each, and any key not in the per-event allowlist is stripped before send.

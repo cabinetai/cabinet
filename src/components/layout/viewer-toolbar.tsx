@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { HeaderActions } from "@/components/layout/header-actions";
+import { VersionHistory } from "@/components/editor/version-history";
 import { ReturnToChip } from "@/components/layout/return-to-chip";
 import { ViewerBreadcrumb } from "@/components/layout/viewer-breadcrumb";
 import { NewTaskButton } from "@/components/composer/new-task-button";
@@ -61,6 +62,8 @@ export function ViewerToolbar({
       </div>
       <div className="flex shrink-0 items-center gap-1">
         {children}
+        {/* File History on every viewer, not just the markdown editor. */}
+        {path ? <VersionHistory path={path} /> : null}
         <HeaderActions />
         <NewTaskButton />
       </div>

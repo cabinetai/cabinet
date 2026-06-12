@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { readPage, writePage, createPage, deletePage, movePage, renamePage } from "@/lib/storage/page-io";
 import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
+import { recordMutation } from "@/lib/history/engine";
 
 type RouteParams = { params: Promise<{ path: string[] }> };
 
@@ -56,6 +57,12 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     if (body.rename) {
       const { newPath, references } = await renamePage(virtualPath, body.rename);
       invalidateTreeCache();
+      void recordMutation({
+        op: "rename",
+        virtualPath: newPath,
+        fromVirtualPath: virtualPath,
+        message: `Rename ${virtualPath} to ${newPath}`,
+      });
       return NextResponse.json({ ok: true, newPath, references });
     }
     const fromParent = virtualPath.split("/").slice(0, -1).join("/");
@@ -66,6 +73,14 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
       nextName: body.nextName ?? undefined,
     });
     invalidateTreeCache();
+    if (newPath !== virtualPath) {
+      void recordMutation({
+        op: "move",
+        virtualPath: newPath,
+        fromVirtualPath: virtualPath,
+        message: `Move ${virtualPath} to ${newPath}`,
+      });
+    }
     return NextResponse.json({ ok: true, newPath });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

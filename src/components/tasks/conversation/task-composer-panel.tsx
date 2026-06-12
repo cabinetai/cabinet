@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AlertCircle, Terminal } from "lucide-react";
+import {
+  ErrorFeedbackDialog,
+  type ErrorFeedbackContext,
+} from "@/components/feedback/error-feedback-dialog";
 import { ComposerInput } from "@/components/composer/composer-input";
 import {
   TaskRuntimePicker,
@@ -128,6 +132,9 @@ export function TaskComposerPanel({
   compact = false,
 }: TaskComposerPanelProps) {
   const { t } = useLocale();
+  // Error-feedback dialog (PRD §3.5), opened from the send-error banner.
+  const [feedbackContext, setFeedbackContext] =
+    useState<ErrorFeedbackContext | null>(null);
   // We don't seed with initialRuntime directly — that way, when the parent
   // re-renders with fresh meta (SSE → fetchTask), the displayed runtime
   // stays in sync until the user explicitly picks one. When they pick, that
@@ -297,8 +304,22 @@ export function TaskComposerPanel({
       {sendError ? (
         <div className="mb-2 flex items-start gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1 text-[11px] font-medium text-red-700 dark:text-red-400">
           <AlertCircle className="size-3 mt-[2px] shrink-0" />
-          <span>{sendError}</span>
+          <span className="flex-1">{sendError}</span>
+          <button
+            type="button"
+            className="shrink-0 underline decoration-red-500/50 underline-offset-2 hover:decoration-red-500"
+            onClick={() => setFeedbackContext({ errorMessage: sendError, errorScope: "composer", conversationId })}
+          >
+            Feedback
+          </button>
         </div>
+      ) : null}
+
+      {feedbackContext ? (
+        <ErrorFeedbackDialog
+          context={feedbackContext}
+          onClose={() => setFeedbackContext(null)}
+        />
       ) : null}
 
       {effectiveRuntime.runtimeMode === "terminal" ? (

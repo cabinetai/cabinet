@@ -76,6 +76,7 @@ import {
 import { ICON_PICKER_KEYS, getIconByKey, friendlyIconName } from "@/lib/agents/icon-catalog";
 import { AGENT_PALETTE } from "@/lib/themes";
 import { StorageBackendSection } from "@/components/settings/storage-backend-section";
+import { DiagnosticsSection } from "@/components/settings/diagnostics-section";
 import { version as pkgVersion } from "../../../package.json";
 import releaseJson from "../../../cabinet-release.json";
 import {
@@ -1250,6 +1251,8 @@ export function SettingsPage() {
               <div className="border-t border-border pt-6">
                 <DataLocationsSection />
               </div>
+
+              <DiagnosticsSection />
             </div>
           )}
 

@@ -14,6 +14,34 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // Error-report flavor (PRD §3.5): pre-filled error context + optional
+    // user message. The local row records logsAttached as a FLAG only; the
+    // log bytes ride exclusively on the client's best-effort backend POST.
+    if (body?.kind === "error") {
+      const row = {
+        ts: new Date().toISOString(),
+        kind: "error" as const,
+        message: typeof body?.message === "string" ? body.message.trim().slice(0, 2000) : "",
+        errorMessage:
+          typeof body?.errorMessage === "string" ? body.errorMessage.slice(0, 1000) : "",
+        errorScope: typeof body?.errorScope === "string" ? body.errorScope.slice(0, 100) : "",
+        conversationId:
+          typeof body?.conversationId === "string" ? body.conversationId.slice(0, 200) : null,
+        logsAttached: body?.logsAttached === true,
+        appVersion: typeof body?.appVersion === "string" ? body.appVersion : null,
+        platform: typeof body?.platform === "string" ? body.platform : null,
+      };
+      const metaDir = path.join(DATA_DIR, ".cabinet-meta");
+      await fs.mkdir(metaDir, { recursive: true });
+      await fs.appendFile(
+        path.join(metaDir, "feedback.jsonl"),
+        JSON.stringify(row) + "\n",
+        "utf-8"
+      );
+      return NextResponse.json({ ok: true });
+    }
+
     const rating = Number(body?.rating);
     const promptedAt = Number(body?.promptedAt);
     const q1 = typeof body?.q1 === "string" ? body.q1.trim() : "";
