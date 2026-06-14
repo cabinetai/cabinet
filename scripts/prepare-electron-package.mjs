@@ -1,5 +1,4 @@
 import { build as bundle } from "esbuild";
-import { execFileSync } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 
@@ -15,7 +14,13 @@ const daemonMigrationsDir = path.join(standaloneServerDir, "migrations");
 const stagedNativeDir = path.join(standaloneDir, ".native");
 const stagedNodePtyDir = path.join(stagedNativeDir, "node-pty");
 const stagedSeedDir = path.join(standaloneDir, ".seed");
-const bundledNodeBinaryPath = path.join(standaloneBinDir, "node");
+const targetPlatform =
+  process.env.CABINET_ELECTRON_TARGET_PLATFORM ||
+  process.env.npm_config_platform ||
+  process.argv.find((arg) => arg.startsWith("--platform="))?.split("=", 2)[1] ||
+  process.platform;
+const bundledNodeBinaryName = targetPlatform === "win32" ? "node.exe" : "node";
+const bundledNodeBinaryPath = path.join(standaloneBinDir, bundledNodeBinaryName);
 const rootNodePtyDir = path.join(projectRoot, "node_modules", "node-pty");
 const dataDir = path.join(projectRoot, "data");
 const resourcesDir = path.join(projectRoot, "resources");
@@ -76,7 +81,24 @@ async function pathExists(targetPath) {
 }
 
 async function removePath(targetPath) {
-  await fs.rm(targetPath, { recursive: true, force: true });
+  const maxAttempts = process.platform === "win32" ? 6 : 1;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await fs.rm(targetPath, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      const code = error && typeof error === "object" ? error.code : undefined;
+      if (
+        attempt === maxAttempts ||
+        (code !== "EBUSY" && code !== "ENOTEMPTY" && code !== "EPERM")
+      ) {
+        throw error;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, attempt * 250));
+    }
+  }
 }
 
 async function copyDirectory(fromPath, toPath) {
@@ -142,18 +164,33 @@ async function stageDaemonRuntime() {
   await copyDirectory(path.join(projectRoot, "server", "migrations"), daemonMigrationsDir);
 
   // Stage node-pty into .native/ (NOT node_modules/) so it ships inside the
-  // app bundle but is not resolvable by require().  At runtime, main.cjs
-  // copies it to userData where macOS allows execution.
+  // app bundle but is not resolvable by require(). On macOS main.cjs copies it
+  // to userData for Gatekeeper; on Windows the packaged .native directory is
+  // used directly via NODE_PATH.
+  const prebuildDirs =
+    targetPlatform === "win32"
+      ? ["win32-x64", "win32-arm64"]
+      : ["darwin-arm64", "darwin-x64"];
+
   await Promise.all([
     copyDirectory(path.join(rootNodePtyDir, "lib"), path.join(stagedNodePtyDir, "lib")),
-    copyDirectory(
-      path.join(rootNodePtyDir, "prebuilds", "darwin-arm64"),
-      path.join(stagedNodePtyDir, "prebuilds", "darwin-arm64")
+    ...prebuildDirs.map((dirName) =>
+      copyDirectory(
+        path.join(rootNodePtyDir, "prebuilds", dirName),
+        path.join(stagedNodePtyDir, "prebuilds", dirName)
+      )
     ),
     copyFile(path.join(rootNodePtyDir, "package.json"), path.join(stagedNodePtyDir, "package.json")),
   ]);
 
-  await fs.chmod(path.join(stagedNodePtyDir, "prebuilds", "darwin-arm64", "spawn-helper"), 0o755);
+  if (targetPlatform === "darwin") {
+    for (const dirName of ["darwin-arm64", "darwin-x64"]) {
+      const helperPath = path.join(stagedNodePtyDir, "prebuilds", dirName, "spawn-helper");
+      if (await pathExists(helperPath)) {
+        await fs.chmod(helperPath, 0o755);
+      }
+    }
+  }
 }
 
 async function stageBundledNodeRuntime() {

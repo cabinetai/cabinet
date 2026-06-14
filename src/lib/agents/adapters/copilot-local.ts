@@ -6,7 +6,7 @@ import {
   classifyCommonError,
 } from "./error-classification";
 import type { AgentExecutionAdapter } from "./types";
-import { ADAPTER_RUNTIME_PATH, runChildProcess } from "./utils";
+import { getAdapterRuntimePath, runChildProcess } from "./utils";
 import { readStringConfig } from "./_shared/cli-args";
 
 function readStringArrayConfig(
@@ -80,7 +80,7 @@ export const copilotLocalAdapter: AgentExecutionAdapter = {
       command,
       commandArgs: args,
       cwd: ctx.cwd,
-      env: { PATH: ADAPTER_RUNTIME_PATH },
+      env: { PATH: getAdapterRuntimePath() },
     });
 
     let forwardedStdout = "";

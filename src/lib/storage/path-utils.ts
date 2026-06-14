@@ -1,5 +1,6 @@
 import path from "path";
 import { getManagedDataDir, isElectronRuntime, PROJECT_ROOT } from "@/lib/runtime/runtime-config";
+import { normalizeVirtualPath } from "@/lib/virtual-paths";
 
 export const DATA_DIR = getManagedDataDir();
 export const CABINET_INTERNAL_DIR = path.join(DATA_DIR, ".cabinet-state");
@@ -13,15 +14,17 @@ export const BACKUP_ROOT = isElectronRuntime()
   : path.resolve(PROJECT_ROOT, "..", ".cabinet-backups", path.basename(PROJECT_ROOT));
 
 export function resolveContentPath(virtualPath: string): string {
-  const resolved = path.resolve(DATA_DIR, virtualPath);
-  if (!resolved.startsWith(DATA_DIR)) {
+  const dataDir = path.resolve(DATA_DIR);
+  const resolved = path.resolve(dataDir, normalizeVirtualPath(virtualPath));
+  const relative = path.relative(dataDir, resolved);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
     throw new Error("Path traversal detected");
   }
   return resolved;
 }
 
 export function virtualPathFromFs(fsPath: string): string {
-  return fsPath.replace(DATA_DIR, "").replace(/^\//, "");
+  return normalizeVirtualPath(path.relative(DATA_DIR, fsPath));
 }
 
 export function sanitizeFilename(name: string): string {

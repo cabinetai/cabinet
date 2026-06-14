@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { execFileSync } = require("child_process");
+const fsSync = require("fs");
 const fs = require("fs/promises");
 const path = require("path");
 const { MakerZIP } = require("@electron-forge/maker-zip");
 const { MakerDMG } = require("@electron-forge/maker-dmg");
+const { MakerSquirrel } = require("@electron-forge/maker-squirrel");
 const { AutoUnpackNativesPlugin } = require("@electron-forge/plugin-auto-unpack-natives");
 const { PublisherGithub } = require("@electron-forge/publisher-github");
 
@@ -29,6 +31,16 @@ const PACKAGER_IGNORE = [
 ];
 
 const MACOS_LOCALES_TO_KEEP = new Set(["en.lproj", "en_GB.lproj", "he.lproj"]);
+
+// Windows packaging needs a .ico; we only ship .icns/.png today. Fall back to
+// no explicit icon on Windows when the .ico is absent so `electron-forge make`
+// still produces a (default-icon) build instead of failing. Drop a
+// cabinet-icon.ico next to the .icns to brand the Squirrel installer.
+const WINDOWS_ICON_PATH = path.join(__dirname, "electron", "assets", "cabinet-icon.ico");
+const packagerIcon =
+  process.platform === "win32" && !fsSync.existsSync(WINDOWS_ICON_PATH)
+    ? undefined
+    : "./electron/assets/cabinet-icon";
 
 async function pathExists(targetPath) {
   try {
@@ -143,13 +155,14 @@ function pruneMacLocales(buildPath, electronVersion, platform, arch, done) {
 module.exports = {
   packagerConfig: {
     name: "Cabinet",
-    icon: "./electron/assets/cabinet-icon",
+    icon: packagerIcon,
     appBundleId: "com.runcabinet.cabinet",
     appCopyright: "© 2026 Hila Shmuel",
     appCategoryType: "public.app-category.productivity",
     asar: {
       unpackDir: ".next/standalone",
     },
+    derefSymlinks: true,
     prune: true,
     ignore: PACKAGER_IGNORE,
     afterComplete: [codesignNativeBinaries, pruneMacLocales],
@@ -171,10 +184,18 @@ module.exports = {
   },
   makers: [
     new MakerZIP({}, ["darwin"]),
+    new MakerZIP({}, ["win32"]),
     new MakerDMG({
       format: "ULFO",
       icon: "./electron/assets/cabinet-icon.icns",
     }),
+    new MakerSquirrel(
+      {
+        name: "cabinet",
+        authors: "Hila Shmuel",
+      },
+      ["win32"]
+    ),
   ],
   plugins: [new AutoUnpackNativesPlugin({})],
   publishers: [

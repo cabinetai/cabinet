@@ -29,6 +29,7 @@ export {
 
 export {
   ADAPTER_RUNTIME_PATH,
+  getAdapterRuntimePath,
   resolveCommandFromCandidates,
   runChildProcess,
   withAdapterRuntimeEnv,

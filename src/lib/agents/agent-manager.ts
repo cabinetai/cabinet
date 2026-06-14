@@ -1,7 +1,9 @@
 import { spawn, type ChildProcess } from "child_process";
 import path from "path";
 import { DATA_DIR } from "@/lib/storage/path-utils";
+import { buildWindowsShellCommand, getRuntimePath } from "./provider-cli";
 import { getOneShotLaunchSpec } from "./provider-runtime";
+import { terminateChildProcess } from "./process-utils";
 
 export interface AgentSession {
   id: string;
@@ -85,14 +87,23 @@ export async function runAgent(
     prompt,
     workdir: cwd,
   });
-  const proc = spawn(launch.command, launch.args, {
-    cwd,
-    env: {
-      ...process.env,
-      PATH: `${process.env.HOME || ""}/.local/bin:${process.env.PATH || ""}`,
-    },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  const env = {
+    ...process.env,
+    PATH: getRuntimePath(),
+  };
+  const proc =
+    process.platform === "win32"
+      ? spawn(buildWindowsShellCommand(launch.command, launch.args), {
+          cwd,
+          env,
+          shell: true,
+          stdio: ["ignore", "pipe", "pipe"],
+        })
+      : spawn(launch.command, launch.args, {
+          cwd,
+          env,
+          stdio: ["ignore", "pipe", "pipe"],
+        });
 
   session.process = proc;
   sessions.set(id, session);
@@ -149,7 +160,7 @@ export function stopAgent(id: string): boolean {
   const session = sessions.get(id);
   if (!session || !session.process) return false;
 
-  session.process.kill();
+  void terminateChildProcess(session.process);
   session.status = "failed";
   session.completedAt = new Date().toISOString();
   delete session.process;

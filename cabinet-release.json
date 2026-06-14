@@ -17,6 +17,12 @@
       "arch": "arm64",
       "zipAssetName": "Cabinet-darwin-arm64-0.4.4.zip",
       "dmgAssetName": "Cabinet-0.4.4-arm64.dmg"
+    },
+    "windows": {
+      "zipAssetName": "Cabinet-win32-x64-0.4.4.zip",
+      "setupExeAssetName": "Cabinet-0.4.4 Setup.exe",
+      "nupkgAssetName": "cabinet-0.4.4-full.nupkg",
+      "releasesAssetName": "RELEASES"
     }
   }
 }

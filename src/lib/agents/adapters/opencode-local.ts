@@ -17,7 +17,7 @@ import type {
   AdapterSessionCodec,
   AgentExecutionAdapter,
 } from "./types";
-import { ADAPTER_RUNTIME_PATH, runChildProcess } from "./utils";
+import { getAdapterRuntimePath, runChildProcess } from "./utils";
 import { readStringConfig, readEffortConfig } from "./_shared/cli-args";
 
 function firstNonEmptyLine(text: string): string | null {
@@ -121,7 +121,7 @@ async function runOpenCodeOnce(
     commandArgs: args,
     cwd: ctx.cwd,
     env: {
-      PATH: ADAPTER_RUNTIME_PATH,
+      PATH: getAdapterRuntimePath(),
       OPENCODE_DISABLE_PROJECT_CONFIG: "true",
     },
   });

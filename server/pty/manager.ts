@@ -6,6 +6,7 @@ import {
   getSessionLaunchSpec,
   resolveProviderId,
 } from "../../src/lib/agents/provider-runtime";
+import { buildPtyCliInvocation } from "../../src/lib/agents/provider-cli";
 import { resolveLegacyExecutionProviderId } from "../../src/lib/agents/adapters";
 import { createClaudeStreamAccumulator } from "../../src/lib/agents/adapters/claude-stream";
 import { stripAnsi } from "./ansi";
@@ -97,7 +98,15 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
         ? input.adapterResumeId.trim()
         : undefined;
     let launch = isShell
-      ? { command: process.env.SHELL || "/bin/zsh", args: [] as string[], initialPrompt: undefined, readyStrategy: undefined }
+      ? {
+          command:
+            process.platform === "win32"
+              ? process.env.ComSpec || "cmd.exe"
+              : process.env.SHELL || "/bin/zsh",
+          args: [] as string[],
+          initialPrompt: undefined,
+          readyStrategy: undefined,
+        }
       : input.launchMode === "one-shot" && input.prompt?.trim()
         ? getOneShotLaunchSpec({
             providerId: executionProviderId,
@@ -146,7 +155,8 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
     // edited via the UI without a daemon restart. mtime-cached; cheap.
     // process.env wins over file values (shell-supplied keys debug-override).
     const cabinetEnvValues = readCabinetEnvFile().values;
-    const term = pty.spawn(launch.command, launch.args, {
+    const invocation = buildPtyCliInvocation(launch.command, launch.args);
+    const term = pty.spawn(invocation.command, invocation.args, {
       name: "xterm-256color",
       cols: 120,
       rows: 30,
@@ -168,7 +178,9 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
         // anything analogous. Neither affects the agent CLI itself —
         // these only matter if the CLI shells out. Skip for plain shell
         // sessions so the user's dotfiles load normally.
-        ...(!isShell ? { ZDOTDIR: "/dev/null", BASH_ENV: "" } : {}),
+        ...(!isShell && process.platform !== "win32"
+          ? { ZDOTDIR: "/dev/null", BASH_ENV: "" }
+          : {}),
       },
     });
 

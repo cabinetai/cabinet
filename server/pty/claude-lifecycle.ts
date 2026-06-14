@@ -65,6 +65,19 @@ export function flushStructuredOutput(session: PtySession): string {
   return flushClaudeStreamJson(session.structuredOutput);
 }
 
+// Windows conpty handling for the initial prompt (PR #42, re-homed). Windows
+// PTYs drop or re-order large single writes and frequently miss the submit
+// keystroke when Enter rides the same burst as the text, so on Windows we wrap
+// the prompt in bracketed-paste markers, write it in small delayed chunks, and
+// send Enter only after a longer settle delay. macOS/Linux keep the proven
+// single-write + 600ms path unchanged (no regression to the shipping behavior).
+const IS_WINDOWS = process.platform === "win32";
+const INITIAL_PROMPT_CHUNK_SIZE = 1024;
+const INITIAL_PROMPT_CHUNK_DELAY_MS = 12;
+const INITIAL_PROMPT_SUBMIT_DELAY_MS = 350;
+const BRACKETED_PASTE_START = "\x1b[200~";
+const BRACKETED_PASTE_END = "\x1b[201~";
+
 /**
  * Type the initial prompt into the CLI, then send Enter after the paste
  * window closes (see comment inline — Claude groups rapid input as a paste).
@@ -81,6 +94,11 @@ export function submitInitialPrompt(session: PtySession): void {
     delete session.initialPromptTimer;
   }
 
+  if (IS_WINDOWS) {
+    submitInitialPromptWindows(session, session.initialPrompt);
+    return;
+  }
+
   session.pty.write(session.initialPrompt);
   // Claude Code's TUI groups rapidly-arriving input into a `[Pasted text
   // #N +X lines]` block; while paste mode is active a trailing `\r`
@@ -93,6 +111,40 @@ export function submitInitialPrompt(session: PtySession): void {
       session.pty.write("\r");
     }
   }, 600);
+}
+
+/**
+ * Windows-only variant: bracketed-paste-wrapped, chunked write followed by a
+ * delayed Enter so conpty reliably delivers both the prompt and the submit.
+ */
+function submitInitialPromptWindows(session: PtySession, prompt: string): void {
+  const promptPayload = `${BRACKETED_PASTE_START}${prompt}${BRACKETED_PASTE_END}`;
+  let offset = 0;
+
+  const writeNextChunk = () => {
+    if (session.exited) {
+      return;
+    }
+
+    const chunk = promptPayload.slice(offset, offset + INITIAL_PROMPT_CHUNK_SIZE);
+    if (chunk) {
+      session.pty.write(chunk);
+      offset += chunk.length;
+      setTimeout(writeNextChunk, INITIAL_PROMPT_CHUNK_DELAY_MS);
+      return;
+    }
+
+    // Give Claude's TUI time to finish processing the bracketed paste before
+    // sending Enter. Without this, Windows PTYs can show the text but miss the
+    // submit keystroke.
+    setTimeout(() => {
+      if (!session.exited) {
+        session.pty.write("\r");
+      }
+    }, INITIAL_PROMPT_SUBMIT_DELAY_MS);
+  };
+
+  writeNextChunk();
 }
 
 /**

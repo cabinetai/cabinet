@@ -1,16 +1,43 @@
-import { execSync, spawn } from "child_process";
+import { execFile, execFileSync, spawn } from "child_process";
+import fs from "fs";
+import path from "path";
 import { getNvmNodeBin } from "../nvm-path";
 import { readCabinetEnvFile } from "@/lib/runtime/cabinet-env";
 
 const nvmBin = getNvmNodeBin();
 
-export const ADAPTER_RUNTIME_PATH = [
-  `${process.env.HOME || ""}/.local/bin`,
-  "/usr/local/bin",
-  "/opt/homebrew/bin",
-  ...(nvmBin ? [nvmBin] : []),
-  process.env.PATH || "",
-].filter(Boolean).join(":");
+function resolveHomeDir(env: NodeJS.ProcessEnv): string {
+  return env.USERPROFILE || env.HOME || process.cwd();
+}
+
+function buildAdapterRuntimePath(
+  platform: NodeJS.Platform = process.platform,
+  env: NodeJS.ProcessEnv = process.env
+): string {
+  if (platform === "win32") {
+    const homeDir = resolveHomeDir(env);
+    return [
+      env.APPDATA ? path.win32.join(env.APPDATA, "npm") : "",
+      path.win32.join(homeDir, ".local", "bin"),
+      ...(nvmBin ? [path.win32.normalize(nvmBin)] : []),
+      env.PATH || "",
+    ].filter(Boolean).join(";");
+  }
+
+  return [
+    `${env.HOME || ""}/.local/bin`,
+    "/usr/local/bin",
+    "/opt/homebrew/bin",
+    ...(nvmBin ? [path.posix.normalize(nvmBin)] : []),
+    env.PATH || "",
+  ].filter(Boolean).join(":");
+}
+
+export function getAdapterRuntimePath(): string {
+  return buildAdapterRuntimePath();
+}
+
+export const ADAPTER_RUNTIME_PATH = getAdapterRuntimePath();
 
 export interface RunChildProcessOptions {
   cwd: string;
@@ -47,7 +74,7 @@ export function withAdapterRuntimeEnv(
   return {
     ...fileValues,
     ...env,
-    PATH: ADAPTER_RUNTIME_PATH,
+    PATH: getAdapterRuntimePath(),
   };
 }
 
@@ -57,9 +84,13 @@ export function resolveCommandFromCandidates(
 ): string | null {
   for (const candidate of candidates) {
     if (!candidate) continue;
-    if (candidate.includes("/")) {
+    if (candidate.includes("/") || candidate.includes("\\") || /^[A-Za-z]:/.test(candidate)) {
+      if (process.platform === "win32") {
+        if (fs.existsSync(candidate)) return candidate;
+        continue;
+      }
       try {
-        const resolved = execSync(`test -x ${JSON.stringify(candidate)} && printf '%s' ${JSON.stringify(candidate)}`, {
+        const resolved = execFileSync("/bin/sh", ["-c", "test -x \"$1\" && printf '%s' \"$1\"", "sh", candidate], {
           encoding: "utf8",
           env: withAdapterRuntimeEnv(env),
           stdio: ["ignore", "pipe", "ignore"],
@@ -72,11 +103,18 @@ export function resolveCommandFromCandidates(
     }
 
     try {
-      const resolved = execSync(`command -v ${candidate}`, {
-        encoding: "utf8",
-        env: withAdapterRuntimeEnv(env),
-        stdio: ["ignore", "pipe", "ignore"],
-      }).trim();
+      const resolved =
+        process.platform === "win32"
+          ? execFileSync("where.exe", [candidate], {
+              encoding: "utf8",
+              env: withAdapterRuntimeEnv(env),
+              stdio: ["ignore", "pipe", "ignore"],
+            }).trim().split(/\r?\n/).find(Boolean) || ""
+          : execFileSync("/bin/sh", ["-c", "command -v \"$1\"", "sh", candidate], {
+              encoding: "utf8",
+              env: withAdapterRuntimeEnv(env),
+              stdio: ["ignore", "pipe", "ignore"],
+            }).trim();
       if (resolved) return resolved;
     } catch {
       // Ignore and keep trying.
@@ -84,6 +122,11 @@ export function resolveCommandFromCandidates(
   }
 
   return null;
+}
+
+function quoteWindowsCmdArg(value: string): string {
+  const escaped = value.replace(/"/g, '""').replace(/%/g, "%%");
+  return /[\s"&()^|<>]/.test(value) ? `"${escaped}"` : escaped;
 }
 
 function resolveProcessGroupId(pid: number | undefined): number | null {
@@ -97,14 +140,22 @@ export async function runChildProcess(
   options: RunChildProcessOptions
 ): Promise<RunChildProcessResult> {
   const startedAt = new Date().toISOString();
-  const child = spawn(command, args, {
-    cwd: options.cwd,
-    env: withAdapterRuntimeEnv({
-      ...process.env,
-      ...(options.env || {}),
-    }),
-    stdio: ["pipe", "pipe", "pipe"],
+  const env = withAdapterRuntimeEnv({
+    ...process.env,
+    ...(options.env || {}),
   });
+  const child =
+    process.platform === "win32"
+      ? spawn(env.ComSpec || "cmd.exe", ["/d", "/s", "/c", [command, ...args].map(quoteWindowsCmdArg).join(" ")], {
+          cwd: options.cwd,
+          env,
+          stdio: ["pipe", "pipe", "pipe"],
+        })
+      : spawn(command, args, {
+          cwd: options.cwd,
+          env,
+          stdio: ["pipe", "pipe", "pipe"],
+        });
 
   const processGroupId = resolveProcessGroupId(child.pid);
   if (typeof child.pid === "number" && child.pid > 0) {
@@ -127,6 +178,12 @@ export async function runChildProcess(
   };
 
   const signalChild = (signal: NodeJS.Signals) => {
+    if (process.platform === "win32" && typeof child.pid === "number" && child.pid > 0) {
+      execFile("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], () => {
+        if (!child.killed) child.kill(signal);
+      });
+      return;
+    }
     if (process.platform !== "win32" && processGroupId && processGroupId > 0) {
       try {
         process.kill(-processGroupId, signal);

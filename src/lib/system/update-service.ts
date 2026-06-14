@@ -18,6 +18,13 @@ function buildInstructions(installKind: InstallKind, updateAvailable: boolean, d
     ];
   }
 
+  if (installKind === "electron-windows") {
+    return [
+      "Windows portable Electron builds do not auto-update yet.",
+      "Download the latest portable zip and replace the desktop app files manually after backing up your data.",
+    ];
+  }
+
   if (installKind === "source-custom") {
     return [
       "This install is not recognized as a managed Cabinet source install.",

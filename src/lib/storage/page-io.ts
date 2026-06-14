@@ -32,6 +32,98 @@ function defaultFrontmatter(title: string): FrontMatter {
   return { title, created: now, modified: now, tags: [] };
 }
 
+type ResolvedPageEntry = {
+  fsPath: string;
+  virtualName: string;
+};
+
+function joinVirtualPath(parent: string, name: string): string {
+  return parent ? `${parent}/${name}` : name;
+}
+
+function isDescendantPath(parentPath: string, childPath: string): boolean {
+  const relative = path.relative(parentPath, childPath);
+  return relative !== "" && !relative.startsWith("..") && !path.isAbsolute(relative);
+}
+
+function shouldFallbackMove(error: unknown): error is NodeJS.ErrnoException {
+  if (!(error instanceof Error)) return false;
+  return ["EXDEV", "EPERM", "EACCES"].includes(
+    (error as NodeJS.ErrnoException).code ?? ""
+  );
+}
+
+async function resolveExistingPageEntry(
+  virtualPath: string
+): Promise<ResolvedPageEntry> {
+  const resolved = resolveContentPath(virtualPath);
+
+  if (await fileExists(resolved)) {
+    return {
+      fsPath: resolved,
+      virtualName: path.basename(resolved),
+    };
+  }
+
+  const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
+  if (await fileExists(mdPath)) {
+    return {
+      fsPath: mdPath,
+      virtualName: resolved.endsWith(".md")
+        ? path.basename(mdPath)
+        : path.basename(mdPath, ".md"),
+    };
+  }
+
+  throw new Error(`Page not found: ${virtualPath}`);
+}
+
+async function moveResolvedEntry(
+  fromResolved: string,
+  toResolved: string
+): Promise<void> {
+  try {
+    await fs.rename(fromResolved, toResolved);
+    return;
+  } catch (error) {
+    if (!shouldFallbackMove(error)) {
+      throw error;
+    }
+  }
+
+  const sourceStat = await fs.lstat(fromResolved);
+
+  if (sourceStat.isSymbolicLink()) {
+    const target = await fs.readlink(fromResolved);
+    const symlinkTarget = path.isAbsolute(target)
+      ? target
+      : path.relative(
+          path.dirname(toResolved),
+          path.resolve(path.dirname(fromResolved), target)
+        );
+    const targetStat = await fs.stat(fromResolved).catch(() => null);
+    const symlinkType = process.platform === "win32"
+      ? (targetStat?.isDirectory() ? "junction" : "file")
+      : undefined;
+    await fs.symlink(symlinkTarget, toResolved, symlinkType);
+    await fs.unlink(fromResolved);
+    return;
+  }
+
+  await fs.cp(fromResolved, toResolved, {
+    recursive: sourceStat.isDirectory(),
+    errorOnExist: true,
+    force: false,
+    preserveTimestamps: true,
+  });
+
+  if (sourceStat.isDirectory()) {
+    await fs.rm(fromResolved, { recursive: true, force: true });
+  } else {
+    await fs.unlink(fromResolved);
+  }
+}
+
 export async function readPage(virtualPath: string): Promise<PageData> {
   const resolved = resolveContentPath(virtualPath);
 
@@ -234,35 +326,23 @@ export async function movePage(
   toParentPath: string,
   options: { prevName?: string | null; nextName?: string | null } = {}
 ): Promise<string> {
-  const fromResolvedVirtual = resolveContentPath(fromPath);
-
-  // Tree-builder strips ".md" from standalone-markdown virtual paths, so the
-  // resolved path can point at a file that only exists with a ".md" suffix on
-  // disk. Resolve the real source (and its on-disk name) so the rename below
-  // doesn't ENOENT — and so the returned virtual path keeps tree-builder's
-  // extension-less shape for those files.
-  let fromResolved = fromResolvedVirtual;
-  let isStandaloneMd = false;
-  if (
-    !(await fileExists(fromResolvedVirtual)) &&
-    (await fileExists(`${fromResolvedVirtual}.md`))
-  ) {
-    fromResolved = `${fromResolvedVirtual}.md`;
-    isStandaloneMd = true;
-  }
-
-  const name = path.basename(fromResolved);
+  // resolveExistingPageEntry resolves the real on-disk source — including the
+  // standalone-".md" case the tree-builder addresses extension-less (it returns
+  // virtualName with ".md" stripped), and symlink-backed entries — so the move
+  // below doesn't ENOENT and the returned virtual path keeps the right shape.
+  const fromEntry = await resolveExistingPageEntry(fromPath);
   const toDir = toParentPath
     ? resolveContentPath(toParentPath)
     : resolveContentPath("");
-  const toResolved = path.join(toDir, name);
-
-  if (toResolved.startsWith(fromResolved + "/")) {
-    throw new Error("Cannot move a page into itself");
-  }
+  const toResolved = path.join(toDir, path.basename(fromEntry.fsPath));
+  const name = fromEntry.virtualName;
 
   const fromParentVirtual = fromPath.split("/").slice(0, -1).join("/");
-  const isReorder = fromResolved === toResolved;
+  const isReorder = fromEntry.fsPath === toResolved;
+
+  if (!isReorder && isDescendantPath(fromEntry.fsPath, toResolved)) {
+    throw new Error("Cannot move a page into itself");
+  }
 
   if (!isReorder) {
     if (await fileExists(toResolved)) {
@@ -280,31 +360,8 @@ export async function movePage(
       }
     }
     await ensureDirectory(toDir);
-    const fsp = await import("fs/promises");
-    try {
-      await fsp.rename(fromResolved, toResolved);
-    } catch (err) {
-      const code = (err as NodeJS.ErrnoException).code;
-      if (code === "EXDEV") {
-        // Cross-device move (e.g. linked external cabinet on another mount).
-        // Fall back to recursive copy + delete.
-        await fsp.cp(fromResolved, toResolved, { recursive: true });
-        await fsp.rm(fromResolved, { recursive: true, force: true });
-      } else if (code === "ENOTEMPTY" || code === "EEXIST") {
-        // Daemon recreated scaffolding between our hollow-orphan sweep and
-        // this rename. Surface the same friendly message rather than the raw
-        // errno — the user's options are the same either way.
-        throw new Error(
-          `An item named "${name}" already exists in ${
-            toParentPath ? `"${toParentPath}"` : "the root"
-          }. Rename or remove it first.`
-        );
-      } else {
-        throw err;
-      }
-    }
-    // Clean stale sidecar entry from source dir.
-    await removeSidecarEntry(fromParentVirtual, name).catch(() => {});
+    await moveResolvedEntry(fromEntry.fsPath, toResolved);
+    await removeSidecarEntry(fromParentVirtual, fromEntry.virtualName).catch(() => {});
   }
 
   const { prevName, nextName } = options;
@@ -322,10 +379,9 @@ export async function movePage(
     await setEntryOrder(toParentPath, name, order);
   }
 
-  // Mirror tree-builder's virtual-path shape: standalone .md files are
-  // addressed without their extension.
-  const virtualName = isStandaloneMd ? name.replace(/\.md$/, "") : name;
-  return toParentPath ? `${toParentPath}/${virtualName}` : virtualName;
+  // fromEntry.virtualName already mirrors the tree-builder shape (standalone
+  // .md addressed without its extension), so join it to the destination parent.
+  return joinVirtualPath(toParentPath, fromEntry.virtualName);
 }
 
 export interface RenameReferencesSummary {

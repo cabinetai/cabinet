@@ -198,10 +198,21 @@ function runShellCommand(command: string): Promise<{
   spawnError: string | null;
 }> {
   return new Promise((resolve) => {
-    const child = spawn("/bin/sh", ["-c", command], {
-      env: withAdapterRuntimeEnv(process.env),
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    // withAdapterRuntimeEnv merges .cabinet.env and sets PATH via the adapter
+    // runtime path (#108); the Windows branch runs through the shell since
+    // there's no /bin/sh on Windows (#130/#93).
+    const env = withAdapterRuntimeEnv(process.env);
+    const child =
+      process.platform === "win32"
+        ? spawn(command, {
+            env,
+            shell: true,
+            stdio: ["ignore", "pipe", "pipe"],
+          })
+        : spawn("/bin/sh", ["-c", command], {
+            env,
+            stdio: ["ignore", "pipe", "pipe"],
+          });
 
     let stdout = "";
     let stderr = "";

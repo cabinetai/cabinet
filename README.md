@@ -228,7 +228,8 @@ cabinet/
 - At least one supported CLI provider:
   - **Claude Code CLI** (`npm install -g @anthropic-ai/claude-code`)
   - **Codex CLI** (`npm install -g @openai/codex` or `brew install --cask codex`)
-- macOS or Linux (Windows via WSL)
+- **Source mode:** macOS, Linux, or Windows
+- **Electron desktop packaging:** macOS and Windows
 
 ## Configuration
 
@@ -247,8 +248,10 @@ cp .env.example .env.local
 npm run dev          # Next.js dev server (port 4000 by default)
 npm run dev:daemon   # Unified daemon: structured runs, terminal sessions, WebSockets, scheduler (port 4100 by default)
 npm run dev:all      # Both servers
+npm run electron:start   # Launch Electron desktop against the local dev servers
 npm run build        # Production build
 npm run start        # Production mode (both servers)
+npm run electron:make:win  # Build a portable Windows zip
 ```
 
 ---

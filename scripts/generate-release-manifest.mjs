@@ -22,10 +22,12 @@ const releaseDate = readArg("release-date", new Date().toISOString());
 const repositoryUrl = "https://github.com/hilash/cabinet";
 
 // Electron Forge default naming for Cabinet (productName "Cabinet"):
-//   MakerZIP (darwin):  Cabinet-darwin-${arch}-${version}.zip
-//   MakerDMG:           Cabinet-${version}-${arch}.dmg
-// arch is the build host arch — currently arm64 (electron-release.yml runs on macos-latest).
-// Confirm by running `npm run electron:make` locally if maker versions change.
+//   MakerZIP (darwin):     Cabinet-darwin-${arch}-${version}.zip
+//   MakerDMG:              Cabinet-${version}-${arch}.dmg
+//   MakerZIP (win32):      Cabinet-win32-x64-${version}.zip
+//   MakerSquirrel (win32): "Cabinet-${version} Setup.exe", cabinet-${version}-full.nupkg, RELEASES
+// arch is the macOS build host arch — currently arm64 (electron-release.yml runs on macos-latest).
+// Confirm by running `npm run electron:make` / `:make:win` locally if maker versions change.
 const arch = "arm64";
 
 const manifest = {
@@ -47,6 +49,12 @@ const manifest = {
       arch,
       zipAssetName: `Cabinet-darwin-${arch}-${version}.zip`,
       dmgAssetName: `Cabinet-${version}-${arch}.dmg`,
+    },
+    windows: {
+      zipAssetName: `Cabinet-win32-x64-${version}.zip`,
+      setupExeAssetName: `Cabinet-${version} Setup.exe`,
+      nupkgAssetName: `cabinet-${version}-full.nupkg`,
+      releasesAssetName: "RELEASES",
     },
   },
 };

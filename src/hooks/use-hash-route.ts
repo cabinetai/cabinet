@@ -5,6 +5,7 @@ import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import { buildTaskHash, buildTasksHash } from "@/lib/navigation/task-route";
 import { buildPath, parsePath, type CleanRoute } from "@/lib/navigation/route-scheme";
 import { findNodeByPath } from "@/lib/cabinets/tree";
+import { normalizeVirtualPath } from "@/lib/virtual-paths";
 import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
@@ -78,16 +79,22 @@ function isAgentsSubTab(value: string | undefined): value is AgentsSubTab {
   return !!value && (AGENTS_SUB_TABS as readonly string[]).includes(value);
 }
 
+function normalizeRoutePath(value: string): string {
+  if (value === ROOT_CABINET_PATH) return ROOT_CABINET_PATH;
+  return normalizeVirtualPath(value);
+}
+
 function buildHash(section: SectionState, pagePath: string | null): string {
-  const cabinetPath = section.cabinetPath || ROOT_CABINET_PATH;
+  const cabinetPath = normalizeRoutePath(section.cabinetPath || ROOT_CABINET_PATH);
+  const normalizedPagePath = pagePath ? normalizeRoutePath(pagePath) : null;
   const isRoot = cabinetPath === ROOT_CABINET_PATH;
 
-  if (section.type === "page" && pagePath) {
+  if (section.type === "page" && normalizedPagePath) {
     if (isRoot) {
       // Clean short form: #/p/data/audit-fix-progress
-      return `#/p/${encodePathSegment(pagePath)}`;
+      return `#/p/${encodePathSegment(normalizedPagePath)}`;
     }
-    return `#/cabinet/${encodePathSegment(cabinetPath)}/data/${encodePathSegment(pagePath)}`;
+    return `#/cabinet/${encodePathSegment(cabinetPath)}/data/${encodePathSegment(normalizedPagePath)}`;
   }
   if (section.type === "cabinet") {
     if (isRoot) return "#/home";
@@ -142,7 +149,7 @@ function parseHash(hash: string): RouteState {
   if (parts[0] === "p") {
     return {
       section: { type: "page", cabinetPath: ROOT_CABINET_PATH },
-      pagePath: decodePathSegment(parts.slice(1).join("/")),
+      pagePath: normalizeRoutePath(decodePathSegment(parts.slice(1).join("/"))),
     };
   }
 
@@ -169,7 +176,7 @@ function parseHash(hash: string): RouteState {
     // Legacy form — still accepted so old bookmarks keep working.
     return {
       section: { type: "page", cabinetPath: ROOT_CABINET_PATH },
-      pagePath: decodePathSegment(parts.slice(1).join("/")),
+      pagePath: normalizeRoutePath(decodePathSegment(parts.slice(1).join("/"))),
     };
   }
 
@@ -184,18 +191,23 @@ function parseHash(hash: string): RouteState {
     // not be named exactly `data`/`agents`/`tasks` (reserved). With no marker
     // the whole tail is a cabinet path (a cabinet-root view) — this is what
     // makes `#/cabinet/a/b/c` reload correctly instead of collapsing to `a`.
+    // Path outputs are run through normalizeRoutePath so Windows `\` separators
+    // (PR #93 / virtual-paths) collapse to `/` before they reach app state.
     const CABINET_MARKERS = new Set(["data", "agents", "tasks"]);
     const rest = parts.slice(1);
     const markerIdx = rest.findIndex((seg) => CABINET_MARKERS.has(seg));
 
     if (markerIdx === -1) {
       return {
-        section: { type: "cabinet", cabinetPath: decodePathSegment(rest.join("/")) },
+        section: {
+          type: "cabinet",
+          cabinetPath: normalizeRoutePath(decodePathSegment(rest.join("/"))),
+        },
         pagePath: null,
       };
     }
 
-    const cabinetPath = decodePathSegment(rest.slice(0, markerIdx).join("/"));
+    const cabinetPath = normalizeRoutePath(decodePathSegment(rest.slice(0, markerIdx).join("/")));
     const marker = rest[markerIdx];
     const after = rest.slice(markerIdx + 1);
 
@@ -205,7 +217,7 @@ function parseHash(hash: string): RouteState {
       }
       return {
         section: { type: "page", cabinetPath },
-        pagePath: decodePathSegment(after.join("/")),
+        pagePath: normalizeRoutePath(decodePathSegment(after.join("/"))),
       };
     }
 

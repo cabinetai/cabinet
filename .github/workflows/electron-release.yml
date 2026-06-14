@@ -1,8 +1,9 @@
 name: Electron Release (manual)
 
 # Triggered manually after npm publish + smoke tests pass.
-# Builds, signs, notarizes, and uploads the macOS Cabinet Electron app
-# to the existing GitHub release for the given tag.
+# macOS job: builds, signs, notarizes, and publishes the Cabinet Electron app.
+# Windows job: builds the ZIP + Squirrel installer via electron:make:win and
+# attaches them to the release. Both target the existing GitHub release for the tag.
 
 on:
   workflow_dispatch:
@@ -61,3 +62,45 @@ jobs:
       - name: Clean up keychain
         if: always()
         run: security delete-keychain "$RUNNER_TEMP/build.keychain-db" 2>/dev/null || true
+
+  electron-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Produces the portable ZIP (MakerZIP win32) and the Squirrel .exe
+      # installer (+ .nupkg + RELEASES) under out/make/. Failing here blocks
+      # the Windows release before any artifact is published.
+      - name: Build Windows Electron app (ZIP + Squirrel installer)
+        run: npm run electron:make:win
+
+      # Always keep the build for download/smoke-testing, even if the upload
+      # step below is skipped (e.g. the release doesn't exist yet).
+      - name: Upload Windows build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cabinet-windows-${{ inputs.tag }}
+          path: out/make/**
+          if-no-files-found: warn
+
+      - name: Attach Windows artifacts to the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          gh release upload "${{ inputs.tag }}" \
+            out/make/zip/win32/x64/* \
+            out/make/squirrel.windows/x64/* \
+            --clobber

@@ -1,7 +1,8 @@
 export type InstallKind =
   | "source-managed"
   | "source-custom"
-  | "electron-macos";
+  | "electron-macos"
+  | "electron-windows";
 
 export type UpdateState =
   | "idle"
@@ -32,6 +33,12 @@ export interface ReleaseManifest {
     macos?: {
       zipAssetName?: string;
       dmgAssetName?: string;
+    };
+    windows?: {
+      zipAssetName?: string;
+      setupExeAssetName?: string;
+      nupkgAssetName?: string;
+      releasesAssetName?: string;
     };
   };
 }

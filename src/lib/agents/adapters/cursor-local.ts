@@ -16,7 +16,7 @@ import type {
   AdapterSessionCodec,
   AgentExecutionAdapter,
 } from "./types";
-import { ADAPTER_RUNTIME_PATH, runChildProcess } from "./utils";
+import { getAdapterRuntimePath, runChildProcess } from "./utils";
 import { readStringConfig } from "./_shared/cli-args";
 
 function firstNonEmptyLine(text: string): string | null {
@@ -94,7 +94,7 @@ async function runCursorOnce(
     command,
     commandArgs: args,
     cwd: ctx.cwd,
-    env: { PATH: ADAPTER_RUNTIME_PATH },
+    env: { PATH: getAdapterRuntimePath() },
   });
 
   const result = await runChildProcess(command, args, {
