@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-async function hashToken(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + "cabinet-salt");
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-}
+import { hashKbToken, KB_AUTH_COOKIE } from "@/lib/auth/kb-auth";
 
 export async function proxy(req: NextRequest) {
   const password = process.env.KB_PASSWORD || "";
@@ -29,8 +22,8 @@ export async function proxy(req: NextRequest) {
   }
 
   // Check auth cookie
-  const token = req.cookies.get("kb-auth")?.value;
-  const expected = await hashToken(password);
+  const token = req.cookies.get(KB_AUTH_COOKIE)?.value;
+  const expected = await hashKbToken(password);
 
   if (token !== expected) {
     // API routes return 401

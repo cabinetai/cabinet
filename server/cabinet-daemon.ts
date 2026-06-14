@@ -43,6 +43,7 @@ import chokidar from "chokidar";
 import matter from "gray-matter";
 import { getDb, closeDb } from "./db";
 import { DATA_DIR, isHiddenEntry } from "../src/lib/storage/path-utils";
+import { hashKbToken, KB_AUTH_COOKIE } from "../src/lib/auth/kb-auth";
 import { discoverCabinetPathsSync } from "../src/lib/cabinets/discovery";
 import { resolveCabinetDir } from "../src/lib/cabinets/server-paths";
 import {
@@ -1195,10 +1196,48 @@ const scheduledJobs = new Map<string, ReturnType<typeof cron.schedule>>();
 const scheduledHeartbeats = new Map<string, ReturnType<typeof cron.schedule>>();
 let scheduleReloadTimer: NodeJS.Timeout | null = null;
 
+// The app gates every /api/* route behind KB_PASSWORD (src/proxy.ts). Next
+// auto-loads .env so the app has it, but the daemon does not — and the
+// production `start:daemon` path doesn't go through scripts/dev-daemon.mjs — so
+// resolve it here: prefer the process env, then fall back to reading .env from
+// the working directory (same file the app reads). Cached: like the app, a
+// changed password takes effect on restart.
+let cachedKbPassword: string | null = null;
+function resolveKbPassword(): string {
+  if (cachedKbPassword !== null) return cachedKbPassword;
+  let pw = process.env.KB_PASSWORD ?? "";
+  if (!pw) {
+    try {
+      const envRaw = fs.readFileSync(path.join(process.cwd(), ".env"), "utf-8");
+      for (const line of envRaw.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
+        const eq = trimmed.indexOf("=");
+        if (eq === -1 || trimmed.slice(0, eq).trim() !== "KB_PASSWORD") continue;
+        pw = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+        break;
+      }
+    } catch {
+      // No .env / unreadable — auth gate is presumably disabled.
+    }
+  }
+  cachedKbPassword = pw;
+  return pw;
+}
+
+// When the app's auth gate is active, server-to-server calls must carry the
+// same `kb-auth` cookie a logged-in browser would. Without this every
+// scheduled job and heartbeat trigger 401s silently and never runs.
+async function authCookieHeader(): Promise<Record<string, string>> {
+  const password = resolveKbPassword();
+  if (!password) return {};
+  return { Cookie: `${KB_AUTH_COOKIE}=${await hashKbToken(password)}` };
+}
+
 async function putJson(url: string, body: Record<string, unknown>): Promise<void> {
   const response = await fetch(url, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(await authCookieHeader()) },
     body: JSON.stringify(body),
   });
 
