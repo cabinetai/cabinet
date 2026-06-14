@@ -1196,6 +1196,31 @@ const scheduledJobs = new Map<string, ReturnType<typeof cron.schedule>>();
 const scheduledHeartbeats = new Map<string, ReturnType<typeof cron.schedule>>();
 let scheduleReloadTimer: NodeJS.Timeout | null = null;
 
+// Scheduler observability, surfaced on /health. A scheduler that fires but
+// whose every trigger fails (e.g. 401 from the app auth gate) is otherwise
+// invisible: scheduledJobs stays > 0 and the daemon looks healthy while no
+// job actually runs. These process-lifetime counters make that detectable
+// without scraping logs.
+const schedulerStats = {
+  lastTriggerAt: null as string | null,
+  lastSuccessfulTriggerAt: null as string | null,
+  lastFailedTriggerAt: null as string | null,
+  triggerFailures: 0,
+  lastTriggerError: null as string | null,
+};
+function recordTriggerAttempt(scheduledAt: string): void {
+  schedulerStats.lastTriggerAt = scheduledAt;
+}
+function recordTriggerSuccess(scheduledAt: string): void {
+  schedulerStats.lastSuccessfulTriggerAt = scheduledAt;
+}
+function recordTriggerFailure(error: unknown): void {
+  schedulerStats.triggerFailures += 1;
+  schedulerStats.lastFailedTriggerAt = new Date().toISOString();
+  schedulerStats.lastTriggerError =
+    error instanceof Error ? error.message : String(error);
+}
+
 // The app gates every /api/* route behind KB_PASSWORD (src/proxy.ts). Next
 // auto-loads .env so the app has it, but the daemon does not — and the
 // production `start:daemon` path doesn't go through scripts/dev-daemon.mjs — so
@@ -1266,6 +1291,7 @@ function scheduleJob(job: JobConfig): void {
   const task = cron.schedule(job.schedule, () => {
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering scheduled job ${key} @ ${scheduledAt}`);
+    recordTriggerAttempt(scheduledAt);
     // Disable a one-shot after it has fired — on BOTH success and failure. A
     // one-off cron (`m h dom mon *`) would otherwise re-match a year later; a
     // failed run must not leave it armed for that rollover.
@@ -1294,7 +1320,9 @@ function scheduleJob(job: JobConfig): void {
       cabinetPath: job.cabinetPath,
       scheduledAt,
     })
+      .then(() => recordTriggerSuccess(scheduledAt))
       .catch((error) => {
+        recordTriggerFailure(error);
         console.error(`Failed to trigger scheduled job ${key}:`, error);
       })
       .finally(() => {
@@ -1319,14 +1347,18 @@ function scheduleHeartbeat(slug: string, cronExpr: string, cabinetPath: string):
   const task = cron.schedule(cronExpr, () => {
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering heartbeat ${key} @ ${scheduledAt}`);
+    recordTriggerAttempt(scheduledAt);
     void putJson(`${getAppOrigin()}/api/agents/personas/${slug}`, {
       action: "run",
       source: "scheduler",
       cabinetPath,
       scheduledAt,
-    }).catch((error) => {
-      console.error(`Failed to trigger heartbeat ${key}:`, error);
-    });
+    })
+      .then(() => recordTriggerSuccess(scheduledAt))
+      .catch((error) => {
+        recordTriggerFailure(error);
+        console.error(`Failed to trigger heartbeat ${key}:`, error);
+      });
   });
 
   scheduledHeartbeats.set(key, task);
@@ -1884,6 +1916,11 @@ const server = http.createServer(async (req, res) => {
         scheduledJobs: scheduledJobs.size,
         scheduledHeartbeats: scheduledHeartbeats.size,
         subscribers: subscribers.length,
+        lastTriggerAt: schedulerStats.lastTriggerAt,
+        lastSuccessfulTriggerAt: schedulerStats.lastSuccessfulTriggerAt,
+        lastFailedTriggerAt: schedulerStats.lastFailedTriggerAt,
+        triggerFailures: schedulerStats.triggerFailures,
+        lastTriggerError: schedulerStats.lastTriggerError,
       })
     );
     return;
