@@ -81,5 +81,31 @@ export function mdxRegistryPromptText(): string {
       : `<${spec.name}${props ? " " + props : ""}>children</${spec.name}>`;
     return `- \`${tag}\` — ${spec.description}`;
   });
+
+  // Append live code block instructions for charts / dashboards.
+  lines.push(
+    "",
+    "## Live Code Blocks (Charts & Dashboards)",
+    "",
+    "Use fenced code blocks with ` ```jsx live ` for interactive charts.",
+    "The following components are available (no imports needed):",
+    "",
+    "**shadcn/ui chart wrappers:** ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent",
+    "**Recharts primitives:** BarChart, LineChart, AreaChart, PieChart, RadarChart, RadialBarChart, ScatterChart, " +
+      "XAxis, YAxis, CartesianGrid, Line, Bar, Area, Pie, Scatter, Radar, ResponsiveContainer, Tooltip, Legend, Cell",
+    "",
+    "Example:",
+    "```jsx live",
+    '<ChartContainer config={{ sales: { label: "Sales", color: "var(--chart-1)" } }} className="h-[300px]">',
+    "  <BarChart data={data}>",
+    '    <XAxis dataKey="month" />',
+    '    <Bar dataKey="sales" fill="var(--chart-1)" radius={4} />',
+    "  </BarChart>",
+    "</ChartContainer>",
+    "```",
+    "",
+    "Use CSS variables var(--chart-1) through var(--chart-5) for themed colors.",
+  );
+
   return lines.join("\n");
 }

@@ -17,13 +17,32 @@ const turndown = new TurndownService({
 // Add GFM support (tables, strikethrough, task lists)
 turndown.use(gfm);
 
+// Serialize live code blocks back to ```jsx live fenced blocks.
+// Must be registered BEFORE the generic codeBlock rule so it matches first.
+turndown.addRule("liveCodeBlock", {
+  filter: (node) => {
+    return (
+      node.nodeName === "PRE" &&
+      (node as HTMLElement).getAttribute("data-live-code") === "true"
+    );
+  },
+  replacement: (_content, node) => {
+    const el = node as HTMLElement;
+    const code = el.querySelector("code");
+    const text = code?.textContent ?? el.textContent ?? "";
+    return `\n\`\`\`jsx live\n${text}\n\`\`\`\n`;
+  },
+});
+
 // Preserve line breaks in code blocks
 turndown.addRule("codeBlock", {
   filter: (node) => {
     return (
       node.nodeName === "PRE" &&
       node.firstChild !== null &&
-      node.firstChild.nodeName === "CODE"
+      node.firstChild.nodeName === "CODE" &&
+      // Skip live code blocks — handled by the liveCodeBlock rule above.
+      (node as HTMLElement).getAttribute("data-live-code") !== "true"
     );
   },
   replacement: (_content, node) => {

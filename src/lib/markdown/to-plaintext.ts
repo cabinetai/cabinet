@@ -1,5 +1,16 @@
 import { stripMdxForPlaintext } from "@/lib/mdx/jsx";
 
+/**
+ * Replace ```jsx live (or ~~~jsx live) fenced code blocks with a plain-text
+ * placeholder so search indexing and RAG see semantic intent rather than raw
+ * JSX source code. Mirrors stripMdxForPlaintext's approach for MDX components.
+ */
+function stripLiveCodeBlocks(markdown: string): string {
+  const LIVE_CODE_FENCE =
+    /^(```|~~~)jsx\s+live[ \t]*\n[\s\S]*?^\1[ \t]*$/gm;
+  return markdown.replace(LIVE_CODE_FENCE, "[Live Chart]");
+}
+
 const LIST_MARKER = /^[\s]*(?:[-*+]|\d+\.)\s+/;
 const TASK_MARKER = /^\[[ xX]\]\s+/;
 const ATX_HEADING = /^#{1,6}\s+/;
@@ -21,7 +32,9 @@ export function markdownToPlaintext(markdown: string): PlaintextResult {
   // Replace verified MDX components with plain-text descriptions so search
   // indexing and agent RAG see semantic content, not raw JSX syntax.
   const withoutMdx = stripMdxForPlaintext(markdown);
-  const normalized = withoutMdx.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  // Replace live code blocks with [Live Chart] placeholders for the same reason.
+  const withoutLiveCode = stripLiveCodeBlocks(withoutMdx);
+  const normalized = withoutLiveCode.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
   const rawLines = normalized.split("\n");
 
   let inCodeFence = false;

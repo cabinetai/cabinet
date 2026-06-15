@@ -18,6 +18,7 @@ import { findNodeByPath } from "@/lib/cabinets/tree";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
 import { detectEmbed } from "@/lib/embeds/detect";
+import { stripImportsAndWrappers } from "@/lib/mdx/live-code-strip";
 import { cellAround, isInTable } from "@tiptap/pm/tables";
 import type { TreeNode } from "@/types";
 import { useLocale } from "@/i18n/use-locale";
@@ -36,6 +37,17 @@ async function uploadFile(pagePath: string, file: File): Promise<string | null> 
   } catch {
     return null;
   }
+}
+
+/**
+ * Heuristic: text looks like a React/JSX snippet copied from docs when it
+ * contains `import` statements AND JSX angle-bracket tags. This avoids false
+ * positives on plain HTML or regular code pastes.
+ */
+function looksLikeJsxWithImports(text: string): boolean {
+  const hasImport = /^\s*import\s+/m.test(text);
+  const hasJsxTag = /<[A-Z][A-Za-z0-9]*[\s/>]/.test(text);
+  return hasImport && hasJsxTag;
 }
 
 const WIDE_MODE_KEY = "kb-editor-wide-mode";
@@ -322,6 +334,16 @@ export function KBEditor() {
               editor.commands.setEmbed({ url: text });
               return true;
             }
+          }
+        }
+
+        // 3. JSX paste — auto-convert code with JSX tags + imports to a live
+        //    code block. This catches copy-pasted chart examples from docs.
+        if (text && editor && looksLikeJsxWithImports(text)) {
+          const stripped = stripImportsAndWrappers(text);
+          if (stripped.trim()) {
+            editor.commands.insertLiveCodeBlock({ code: stripped.trim() });
+            return true;
           }
         }
 

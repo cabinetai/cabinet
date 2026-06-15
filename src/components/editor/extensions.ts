@@ -27,6 +27,7 @@ import { CalloutExtension } from "./callout-extension";
 import { ResizableImage } from "./extensions/resizable-image";
 import { EmbedExtension } from "./extensions/embed-extension";
 import { MdxComponent } from "./extensions/mdx-component";
+import { LiveCodeBlock } from "./extensions/live-code-block";
 import { colorAndStyleExtensions } from "./extensions/color-highlight";
 import { DragHandle } from "./extensions/drag-handle";
 import { CabinetMath } from "./extensions/math-extension";
@@ -66,7 +67,25 @@ export const editorExtensions = [
     link: false,
     underline: false,
   }),
-  CodeBlockLowlight.configure({
+  CodeBlockLowlight.extend({
+    parseHTML() {
+      return [
+        {
+          tag: "pre",
+          preserveWhitespace: "full" as const,
+          getAttrs: (node) => {
+            // Skip live code blocks — handled by the LiveCodeBlock extension.
+            if (
+              (node as HTMLElement).getAttribute("data-live-code") === "true"
+            ) {
+              return false;
+            }
+            return null;
+          },
+        },
+      ];
+    },
+  }).configure({
     lowlight,
     HTMLAttributes: {
       class: "rounded-md bg-muted p-4 font-mono text-sm",
@@ -145,6 +164,7 @@ export const editorExtensions = [
   WikiLink,
   CalloutExtension,
   MdxComponent,
+  LiveCodeBlock,
   HeadingAnchors,
   AutoDirection,
   FindExtension,

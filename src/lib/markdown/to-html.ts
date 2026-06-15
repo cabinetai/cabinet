@@ -9,6 +9,45 @@ import { addHeadingIds } from "@/lib/markdown/heading-slug";
 import { transformMdxToHtml } from "@/lib/mdx/jsx";
 
 /**
+ * HTML-escape a string for safe embedding inside a `<code>` element.
+ * Prevents the remark pipeline from interpreting the code content as markup.
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Pre-process markdown to convert ```jsx live (or ~~~jsx live) fenced code
+ * blocks into `<pre data-live-code="true"><code>…</code></pre>` markers
+ * before the remark pipeline. Without this, remark treats them as ordinary
+ * code blocks and strips the `live` qualifier from the info string, losing
+ * the round-trip signal for the LiveCodeBlock Tiptap node.
+ *
+ * Applied BEFORE `transformMdxToHtml` so the regex doesn't collide with
+ * MDX component rewriting.
+ */
+function transformLiveCodeBlocks(markdown: string): string {
+  // Match ``` or ~~~ with info string "jsx live", followed by content, then
+  // the same fence character. The regex uses backreference \1 so the closing
+  // fence matches the opening one.
+  const LIVE_CODE_FENCE =
+    /^(```|~~~)jsx\s+live[ \t]*\n([\s\S]*?)^\1[ \t]*$/gm;
+
+  return markdown.replace(
+    LIVE_CODE_FENCE,
+    (_match, _fence: string, code: string) => {
+      // Trim one trailing newline that the fence syntax includes
+      const trimmed = code.replace(/\n$/, "");
+      return `\n\n<pre data-live-code="true"><code>${escapeHtml(trimmed)}</code></pre>\n\n`;
+    }
+  );
+}
+
+/**
  * Pre-process markdown to convert [[Wiki Links]] to HTML anchors
  * before the remark pipeline (which doesn't understand wiki-link syntax).
  */
@@ -150,10 +189,13 @@ const processor = unified()
   .freeze();
 
 export async function markdownToHtml(markdown: string, pagePath?: string): Promise<string> {
+  // Rewrite ```jsx live fenced code blocks into <pre data-live-code> markers
+  // before any other transform, so the remark pipeline preserves them as-is.
+  const withLiveCode = transformLiveCodeBlocks(markdown);
   // Rewrite registered MDX components (<Callout>, <VideoPlayer/>, …) into
   // <div data-mdx-component> markers before remark sees them — otherwise the
   // Markdown parser mangles the JSX into broken paragraphs.
-  const withMdx = transformMdxToHtml(markdown);
+  const withMdx = transformMdxToHtml(withLiveCode);
   // Pre-process wiki-links before remark (which would treat [[ as text)
   const preprocessed = convertWikiLinks(withMdx);
 

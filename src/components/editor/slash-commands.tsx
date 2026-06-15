@@ -22,6 +22,10 @@ import {
   Smile,
   Type,
   Puzzle,
+  BarChart3,
+  LineChart as LineChartIcon,
+  PieChart as PieChartIcon,
+  Zap,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import type { Editor } from "@tiptap/react";
@@ -53,6 +57,85 @@ interface SlashCommand {
     | { type: "popover"; kind: Exclude<PopoverKind, null> };
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Live code block templates for slash commands                               */
+/* -------------------------------------------------------------------------- */
+
+const BAR_CHART_TEMPLATE = `<ChartContainer
+  config={{
+    revenue: { label: "Revenue", color: "var(--chart-1)" },
+  }}
+  className="h-[300px] w-full"
+>
+  <BarChart data={[
+    { month: "Jan", revenue: 186 },
+    { month: "Feb", revenue: 305 },
+    { month: "Mar", revenue: 237 },
+    { month: "Apr", revenue: 203 },
+    { month: "May", revenue: 409 },
+    { month: "Jun", revenue: 314 },
+  ]}>
+    <CartesianGrid vertical={false} />
+    <XAxis dataKey="month" />
+    <Bar dataKey="revenue" fill="var(--chart-1)" radius={4} />
+    <ChartTooltip content={<ChartTooltipContent />} />
+  </BarChart>
+</ChartContainer>`;
+
+const LINE_CHART_TEMPLATE = `<ChartContainer
+  config={{
+    views: { label: "Page Views", color: "var(--chart-2)" },
+  }}
+  className="h-[300px] w-full"
+>
+  <LineChart data={[
+    { day: "Mon", views: 120 },
+    { day: "Tue", views: 210 },
+    { day: "Wed", views: 185 },
+    { day: "Thu", views: 290 },
+    { day: "Fri", views: 340 },
+    { day: "Sat", views: 180 },
+    { day: "Sun", views: 220 },
+  ]}>
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis dataKey="day" />
+    <YAxis />
+    <Line type="monotone" dataKey="views" stroke="var(--chart-2)" strokeWidth={2} dot={{ r: 4 }} />
+    <ChartTooltip content={<ChartTooltipContent />} />
+  </LineChart>
+</ChartContainer>`;
+
+const PIE_CHART_TEMPLATE = `<ChartContainer
+  config={{
+    chrome: { label: "Chrome", color: "var(--chart-1)" },
+    safari: { label: "Safari", color: "var(--chart-2)" },
+    firefox: { label: "Firefox", color: "var(--chart-3)" },
+    edge: { label: "Edge", color: "var(--chart-4)" },
+    other: { label: "Other", color: "var(--chart-5)" },
+  }}
+  className="h-[300px] w-full"
+>
+  <PieChart>
+    <Pie
+      data={[
+        { name: "Chrome", value: 63, fill: "var(--chart-1)" },
+        { name: "Safari", value: 19, fill: "var(--chart-2)" },
+        { name: "Firefox", value: 8, fill: "var(--chart-3)" },
+        { name: "Edge", value: 6, fill: "var(--chart-4)" },
+        { name: "Other", value: 4, fill: "var(--chart-5)" },
+      ]}
+      dataKey="value"
+      nameKey="name"
+      cx="50%"
+      cy="50%"
+      innerRadius={60}
+      outerRadius={100}
+    />
+    <ChartTooltip content={<ChartTooltipContent />} />
+    <ChartLegend content={<ChartLegendContent />} />
+  </PieChart>
+</ChartContainer>`;
+
 const commands: SlashCommand[] = [
   // Basic
   { label: "Text", icon: Type, description: "Start writing plain text", category: "basic", action: { type: "direct", run: (editor) => editor.chain().focus().setParagraph().run() } },
@@ -80,6 +163,12 @@ const commands: SlashCommand[] = [
   { label: "MDX Callout", icon: Puzzle, description: "Insert a verified MDX <Callout> component", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().insertMdxComponent({ name: "Callout", props: { type: "info" }, children: "Your message here." }).run() } },
   { label: "MDX Video", icon: Video, description: "Insert a verified MDX <VideoPlayer /> component", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().insertMdxComponent({ name: "VideoPlayer", props: { url: "" } }).run() } },
   { label: "Emoji", icon: Smile, description: "Pick an emoji", category: "advanced", action: { type: "popover", kind: { type: "emoji" } } },
+
+  // Live code blocks — charts & dashboards
+  { label: "Bar Chart", icon: BarChart3, description: "Insert a live bar chart (Recharts)", category: "advanced", action: { type: "direct", run: (editor) => editor.commands.insertLiveCodeBlock({ code: BAR_CHART_TEMPLATE }) } },
+  { label: "Line Chart", icon: LineChartIcon, description: "Insert a live line chart (Recharts)", category: "advanced", action: { type: "direct", run: (editor) => editor.commands.insertLiveCodeBlock({ code: LINE_CHART_TEMPLATE }) } },
+  { label: "Pie Chart", icon: PieChartIcon, description: "Insert a live pie/donut chart", category: "advanced", action: { type: "direct", run: (editor) => editor.commands.insertLiveCodeBlock({ code: PIE_CHART_TEMPLATE }) } },
+  { label: "Live Code", icon: Zap, description: "Insert an empty live JSX code block", category: "advanced", action: { type: "direct", run: (editor) => editor.commands.insertLiveCodeBlock({ code: "<div className=\"p-4\">\n  <p>Hello from a live block!</p>\n</div>" }) } },
 ];
 
 interface SlashCommandsProps {
