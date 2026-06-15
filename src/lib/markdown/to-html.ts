@@ -6,6 +6,7 @@ import rehypeStringify from "rehype-stringify";
 import { detectEmbed } from "@/lib/embeds/detect";
 import { slugifyPageName } from "@/lib/markdown/wiki-links";
 import { addHeadingIds } from "@/lib/markdown/heading-slug";
+import { transformMdxToHtml } from "@/lib/mdx/jsx";
 
 /**
  * Pre-process markdown to convert [[Wiki Links]] to HTML anchors
@@ -72,7 +73,7 @@ function addListAutoDir(html: string): string {
 function upgradeProviderVideos(html: string): string {
   return html.replace(
     /<video\b([^>]*)\bsrc="([^"]+)"([^>]*)><\/video>/gi,
-    (match, before: string, src: string, after: string) => {
+    (match, before: string, src: string) => {
       const detected = detectEmbed(src);
       if (!detected || detected.provider === "video") return match;
 
@@ -149,8 +150,12 @@ const processor = unified()
   .freeze();
 
 export async function markdownToHtml(markdown: string, pagePath?: string): Promise<string> {
+  // Rewrite registered MDX components (<Callout>, <VideoPlayer/>, …) into
+  // <div data-mdx-component> markers before remark sees them — otherwise the
+  // Markdown parser mangles the JSX into broken paragraphs.
+  const withMdx = transformMdxToHtml(markdown);
   // Pre-process wiki-links before remark (which would treat [[ as text)
-  const preprocessed = convertWikiLinks(markdown);
+  const preprocessed = convertWikiLinks(withMdx);
 
   const result = await processor.process(preprocessed);
 

@@ -2,6 +2,7 @@ import TurndownService from "turndown";
 // @ts-expect-error — no types available for this package
 import { gfm } from "turndown-plugin-gfm";
 import { detectEmbed } from "@/lib/embeds/detect";
+import { serializeMdxComponent, type MdxProps } from "@/lib/mdx/jsx";
 
 const turndown = new TurndownService({
   headingStyle: "atx",
@@ -125,6 +126,28 @@ turndown.addRule("video", {
       attrs.push(`${attr.name}="${attr.value.replace(/"/g, "&quot;")}"`);
     }
     return `<video${attrs.length ? " " + attrs.join(" ") : ""}></video>`;
+  },
+});
+
+// Serialize MDX component markers back to JSX. The editor stores each verified
+// component as <div data-mdx-component data-name data-props data-children>;
+// turndown turns it back into `<Name …/>` or `<Name …>children</Name>`.
+turndown.addRule("mdxComponent", {
+  filter: (node) =>
+    node.nodeName === "DIV" &&
+    (node as HTMLElement).hasAttribute("data-mdx-component"),
+  replacement: (_content, node) => {
+    const el = node as HTMLElement;
+    const name = el.getAttribute("data-name") ?? "";
+    if (!name) return "";
+    let props: MdxProps = {};
+    try {
+      props = JSON.parse(el.getAttribute("data-props") || "{}");
+    } catch {
+      props = {};
+    }
+    const children = el.getAttribute("data-children") ?? "";
+    return `\n${serializeMdxComponent(name, props, children)}\n`;
   },
 });
 

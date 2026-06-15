@@ -1,0 +1,242 @@
+"use client";
+
+import { Node, mergeAttributes } from "@tiptap/core";
+import {
+  ReactNodeViewRenderer,
+  NodeViewWrapper,
+  type NodeViewProps,
+} from "@tiptap/react";
+import { useState } from "react";
+import { Puzzle, Pencil, Check } from "lucide-react";
+import {
+  getMdxComponentSpec,
+  isAllowedMdxComponent,
+  type MdxPropSpec,
+} from "@/lib/mdx/registry";
+import type { MdxProps } from "@/lib/mdx/jsx";
+
+interface MdxComponentAttrs {
+  name: string;
+  props: MdxProps;
+  childrenString: string;
+}
+
+declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    mdxComponent: {
+      /**
+       * Insert a verified MDX component at the current selection. Routed
+       * through here so agents/tools never have to emit raw JSX strings.
+       */
+      insertMdxComponent: (options: {
+        name: string;
+        props?: MdxProps;
+        children?: string;
+      }) => ReturnType;
+    };
+  }
+}
+
+const CALLOUT_TONES: Record<string, string> = {
+  info: "border-sky-400/60 bg-sky-50 dark:bg-sky-950/30",
+  warning: "border-amber-400/60 bg-amber-50 dark:bg-amber-950/30",
+  error: "border-red-400/60 bg-red-50 dark:bg-red-950/30",
+  success: "border-emerald-400/60 bg-emerald-50 dark:bg-emerald-950/30",
+};
+
+/** Render a best-effort preview for known components, generic fallback else. */
+function ComponentPreview({ name, props, childrenString }: MdxComponentAttrs) {
+  if (name === "Callout") {
+    const tone = CALLOUT_TONES[String(props.type ?? "info")] ?? CALLOUT_TONES.info;
+    return (
+      <div className={`rounded-md border-l-4 px-3 py-2 text-sm ${tone}`}>
+        {props.title && <div className="font-semibold mb-0.5">{String(props.title)}</div>}
+        <div className="text-foreground/80 whitespace-pre-wrap">
+          {childrenString || "Empty callout"}
+        </div>
+      </div>
+    );
+  }
+
+  if (name === "VideoPlayer") {
+    const url = String(props.url ?? "");
+    return (
+      <div className="text-sm text-foreground/80">
+        {url ? (
+          <a href={url} className="text-primary underline break-all">
+            {url}
+          </a>
+        ) : (
+          "No video URL set"
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <p className="text-sm text-muted-foreground">
+      {String(props.title ?? "") || childrenString || "No preview available."}
+    </p>
+  );
+}
+
+function MdxComponentView(props: NodeViewProps) {
+  const attrs = props.node.attrs as MdxComponentAttrs;
+  const [editing, setEditing] = useState(false);
+  const spec = getMdxComponentSpec(attrs.name);
+  const known = isAllowedMdxComponent(attrs.name);
+
+  const setProp = (key: string, value: string) => {
+    props.updateAttributes({ props: { ...attrs.props, [key]: value } });
+  };
+
+  return (
+    <NodeViewWrapper
+      className="mdx-component-block my-2 rounded-md border border-border bg-muted/40 p-3"
+      data-mdx-name={attrs.name}
+    >
+      <div className="mb-2 flex items-center justify-between gap-2" contentEditable={false}>
+        <span className="inline-flex items-center gap-1.5 font-mono text-xs text-primary">
+          <Puzzle className="h-3.5 w-3.5" />
+          {`<${attrs.name} ${spec?.selfClosing ? "/" : ""}>`}
+          {!known && (
+            <span className="ml-1 rounded bg-amber-500/15 px-1 text-[10px] text-amber-600">
+              unregistered
+            </span>
+          )}
+        </span>
+        <button
+          type="button"
+          onClick={() => setEditing((v) => !v)}
+          className="inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-accent"
+          aria-label={editing ? "Done editing" : "Edit component props"}
+        >
+          {editing ? <Check className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
+        </button>
+      </div>
+
+      {editing ? (
+        <div className="space-y-2" contentEditable={false}>
+          {(spec?.props ?? Object.keys(attrs.props).map((name) => ({ name }))).map(
+            (p: MdxPropSpec) => (
+              <label key={p.name} className="flex items-center gap-2 text-xs">
+                <span className="w-24 shrink-0 font-mono text-muted-foreground">
+                  {p.name}
+                </span>
+                {"enum" in p && p.enum ? (
+                  <select
+                    value={String(attrs.props[p.name] ?? "")}
+                    onChange={(e) => setProp(p.name, e.target.value)}
+                    className="flex-1 rounded border border-border bg-background px-2 py-1"
+                  >
+                    <option value="">—</option>
+                    {p.enum.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={String(attrs.props[p.name] ?? "")}
+                    onChange={(e) => setProp(p.name, e.target.value)}
+                    className="flex-1 rounded border border-border bg-background px-2 py-1"
+                  />
+                )}
+              </label>
+            )
+          )}
+          {!spec?.selfClosing && (
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="font-mono text-muted-foreground">children</span>
+              <textarea
+                value={attrs.childrenString}
+                onChange={(e) =>
+                  props.updateAttributes({ childrenString: e.target.value })
+                }
+                rows={3}
+                className="rounded border border-border bg-background px-2 py-1"
+              />
+            </label>
+          )}
+        </div>
+      ) : (
+        <div className="component-preview" contentEditable={false}>
+          <ComponentPreview {...attrs} />
+        </div>
+      )}
+    </NodeViewWrapper>
+  );
+}
+
+export const MdxComponent = Node.create({
+  name: "mdxComponent",
+  group: "block",
+  atom: true,
+  draggable: true,
+  selectable: true,
+
+  addAttributes() {
+    return {
+      name: { default: null },
+      props: { default: {} },
+      childrenString: { default: "" },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: "div[data-mdx-component]",
+        getAttrs: (el) => {
+          const element = el as HTMLElement;
+          let parsedProps: MdxProps = {};
+          try {
+            parsedProps = JSON.parse(element.getAttribute("data-props") || "{}");
+          } catch {
+            parsedProps = {};
+          }
+          return {
+            name: element.getAttribute("data-name"),
+            props: parsedProps,
+            childrenString: element.getAttribute("data-children") || "",
+          };
+        },
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const name = (HTMLAttributes.name as string) ?? "";
+    const props = (HTMLAttributes.props as MdxProps) ?? {};
+    const childrenString = (HTMLAttributes.childrenString as string) ?? "";
+    return [
+      "div",
+      mergeAttributes(
+        {
+          "data-mdx-component": "true",
+          "data-name": name,
+          "data-props": JSON.stringify(props),
+          "data-children": childrenString,
+        }
+      ),
+    ];
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(MdxComponentView);
+  },
+
+  addCommands() {
+    return {
+      insertMdxComponent:
+        ({ name, props = {}, children = "" }) =>
+        ({ commands }) =>
+          commands.insertContent({
+            type: this.name,
+            attrs: { name, props, childrenString: children },
+          }),
+    };
+  },
+});

@@ -21,6 +21,7 @@ import {
   Sigma,
   Smile,
   Type,
+  Puzzle,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import type { Editor } from "@tiptap/react";
@@ -76,6 +77,8 @@ const commands: SlashCommand[] = [
   { label: "Callout", icon: Info, description: "Insert an info callout", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().wrapIn("callout", { type: "info" }).run() } },
   { label: "Warning", icon: AlertTriangle, description: "Insert a warning callout", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().wrapIn("callout", { type: "warning" }).run() } },
   { label: "Math", icon: Sigma, description: "Insert a LaTeX math expression", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().insertContent("$x=y$").run() } },
+  { label: "MDX Callout", icon: Puzzle, description: "Insert a verified MDX <Callout> component", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().insertMdxComponent({ name: "Callout", props: { type: "info" }, children: "Your message here." }).run() } },
+  { label: "MDX Video", icon: Video, description: "Insert a verified MDX <VideoPlayer /> component", category: "advanced", action: { type: "direct", run: (editor) => editor.chain().focus().insertMdxComponent({ name: "VideoPlayer", props: { url: "" } }).run() } },
   { label: "Emoji", icon: Smile, description: "Pick an emoji", category: "advanced", action: { type: "popover", kind: { type: "emoji" } } },
 ];
 
@@ -281,7 +284,7 @@ export function SlashCommands({ editor }: SlashCommandsProps) {
       {open && filtered.length > 0 && (
         <div
           ref={menuRef}
-          className="absolute z-50 w-[280px] bg-popover border border-border rounded-lg shadow-lg py-1 overflow-hidden max-h-[380px] overflow-y-auto"
+          className="absolute z-50 w-70 bg-popover border border-border rounded-lg shadow-lg py-1 overflow-hidden max-h-95 overflow-y-auto"
           style={{ top: position.top, left: position.left, right: position.right }}
         >
           {order.map((group) => {

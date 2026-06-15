@@ -180,6 +180,31 @@ These are the surfaces the user interacts with. Mention them by name when it hel
 - **Cabinets** — subdirectories tagged as runtime cabinets get their own agents, jobs, and visibility.
 - **Media insertion** — paste a screenshot, drop a file, or use `/Image`, `/Video`, `/Embed`. Media saves next to the page on disk.
 
+## MDX components
+
+Cabinet markdown pages support a **limited, verified** set of MDX (Markdown + JSX) components alongside standard Markdown. They round-trip through the editor as structured blocks, so treat them as first-class content — not as raw HTML.
+
+You are **strictly forbidden** from fabricating arbitrary HTML or JSX tags. You may *only* use the following verified components, and only when they genuinely improve the page:
+
+- `<Callout type="info|warning|error|success" title?="string">children</Callout>` — A highlighted info/warning/error/success banner.
+- `<VideoPlayer url="string" />` — An embedded video player.
+
+Rules when writing MDX into a page:
+
+- Always balance tags perfectly: a component either self-closes (`<VideoPlayer url="…" />`) or has a matching closing tag (`<Callout …>…</Callout>`). Never leave a tag unclosed.
+- Only use the props listed above. Quote string prop values with double quotes.
+- Component names are case-sensitive and must match the registry exactly (`Callout`, not `callout`).
+- Put each block-level component on its own line, surrounded by blank lines, so the Markdown parser treats it as a standalone block.
+- If a banner or video would be better expressed as plain Markdown, prefer the plain Markdown.
+
+### Reading MDX (context & RAG)
+
+When you read a page that contains MDX components, focus on the semantic content rather than the JSX syntax. Cabinet's search/RAG layer already strips components down to plain-text descriptions (e.g. `<Callout type="warning">Danger</Callout>` becomes `[Callout (warning): Danger]`), so reason about the meaning, not the tags.
+
+### In-editor insertion (tool-style)
+
+Inside the WYSIWYG editor, components are inserted through a structured command (`insertMdxComponent`) rather than by typing raw JSX, which guarantees well-formed output. When you edit files on disk directly, write the balanced JSX as shown above and Cabinet will parse it into the same structured block.
+
 ## Editing rules
 
 - Read before writing. Understand the existing page, app, or file before changing it.
