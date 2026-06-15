@@ -34,6 +34,7 @@ import {
   CheckCircle2,
   ShieldAlert,
   Blocks,
+  Plug,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,10 @@ import {
 import { SkillLibrary } from "@/components/skills/skill-library";
 import { DataLocationsSection } from "@/components/settings/data-locations-section";
 import { UninstallSection } from "@/components/settings/uninstall-section";
+import { ApiKeysSection } from "@/components/settings/api-keys-section";
+import { CliMcpSection } from "@/components/settings/cli-mcp-section";
+import { IntegrationsHubSection } from "@/components/settings/integrations-hub-section";
+import { BuiltInToolsSection } from "@/components/settings/built-in-tools-section";
 import { ExtensionsSection } from "@/components/settings/extensions-section";
 import { UpdateSummary } from "@/components/system/update-summary";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
@@ -910,6 +915,7 @@ export function SettingsPage() {
         { id: "providers", label: t("settings:tabs.providers"), icon: <Cpu className="h-3.5 w-3.5" /> },
         { id: "skills", label: t("settings:tabs.skills"), icon: <Sparkles className="h-3.5 w-3.5" /> },
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
+        { id: "integrations", label: t("settings:tabs.integrations"), icon: <Plug className="h-3.5 w-3.5" /> },
         { id: "extensions", label: "Extensions", icon: <Blocks className="h-3.5 w-3.5" /> },
       ],
     },
@@ -2033,6 +2039,34 @@ export function SettingsPage() {
 
           {/* Skills Tab */}
           {tab === "skills" && <SkillsSettings />}
+
+          {/* Integrations Tab */}
+          {tab === "integrations" && (
+            <div className="space-y-8">
+              <ApiKeysSection />
+
+              {/* Integrations + Built-in tools — coming soon (blurred preview) */}
+              <div className="relative">
+                <div className="pointer-events-none select-none blur-[2px] opacity-70 space-y-8" aria-hidden="true">
+                  <IntegrationsHubSection />
+                  <BuiltInToolsSection />
+                </div>
+
+                {/* Coming Soon overlay */}
+                <div className="absolute inset-0 flex items-start justify-center pt-10">
+                  <div className="flex flex-col items-center gap-2 bg-background/80 backdrop-blur-sm rounded-xl px-8 py-6 border border-border shadow-lg">
+                    <Plug className="h-6 w-6 text-muted-foreground/50" />
+                    <span className="text-[13px] font-semibold">{t("settings:integrationsPreview.comingSoon")}</span>
+                    <p className="text-[12px] text-muted-foreground text-center max-w-55">
+                      {t("settings:integrationsPreview.hint")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <CliMcpSection />
+            </div>
+          )}
 
           {/* Extensions Tab */}
           {tab === "extensions" && (
