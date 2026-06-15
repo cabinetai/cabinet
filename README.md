@@ -233,11 +233,11 @@ opencode run 'Reply with exactly OK'
 Your data never leaves a backend you chose, and you can swap models per run using Cabinet's existing provider, model, and effort overrides.
 
 <details>
-<summary><strong>Atlas Cloud model catalog</strong> (synced with <a href="https://www.atlascloud.ai/zh/models/list/llm">the official list</a>)</summary>
+<summary><strong>Atlas Cloud model catalog</strong> (synced with <a href="https://www.atlascloud.ai/models/list/llm">the official list</a>)</summary>
 
 Reach all of these through the single OpenAI-compatible base URL `https://api.atlascloud.ai/v1` (LLMs), or the async media API at `https://api.atlascloud.ai/api/v1/model` (image / video). Recommended default LLM: `deepseek-ai/deepseek-v4-pro`.
 
-**LLMs (59, the official `/zh/models/list/llm` list)**
+**LLMs (59, the official `/models/list/llm` list)**
 
 - Anthropic (Claude): `anthropic/claude-haiku-4.5-20251001`, `anthropic/claude-opus-4.8`, `anthropic/claude-sonnet-4.6`
 - OpenAI (GPT): `openai/gpt-5.4`, `openai/gpt-5.5`
