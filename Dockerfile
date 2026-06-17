@@ -109,6 +109,19 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/package.json ./package.json
 
+# Cabinet-root skill bundle(s) shipped in the image, plus a writable skills
+# tree. In production the container runs as the non-root `node` user (uid 1000,
+# via compose `user: "1000:1000"`), and the in-app skills installer
+# (/api/agents/skills/import) resolves the default "root" scope to
+# <PROJECT_ROOT>/.agents/skills (i.e. /app/.agents/skills) where it mkdtemp's a
+# temp clone dir. /app is root-owned from the build, so without this the
+# install fails with EACCES -> HTTP 500. Create the tree and hand it to `node`.
+# Note: root-scope skills live in the image layer and do NOT persist across
+# image rebuilds/container recreation; bind-mount this path to a host dir if
+# persistence is needed.
+COPY --chown=node:node --from=builder /app/.agents ./.agents
+RUN mkdir -p /app/.agents/skills && chown -R node:node /app/.agents
+
 # Default CMD: run both the Next.js app and the daemon as one container
 # process, forwarding signals to both. Plain `npm run start`'s
 # `&`-backgrounding does not propagate SIGTERM to its children, which would
