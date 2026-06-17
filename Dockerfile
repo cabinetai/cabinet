@@ -114,13 +114,20 @@ COPY --from=builder /app/package.json ./package.json
 # via compose `user: "1000:1000"`), and the in-app skills installer
 # (/api/agents/skills/import) resolves the default "root" scope to
 # <PROJECT_ROOT>/.agents/skills (i.e. /app/.agents/skills) where it mkdtemp's a
-# temp clone dir. /app is root-owned from the build, so without this the
-# install fails with EACCES -> HTTP 500. Create the tree and hand it to `node`.
-# Note: root-scope skills live in the image layer and do NOT persist across
-# image rebuilds/container recreation; bind-mount this path to a host dir if
-# persistence is needed.
+# temp clone dir. /app is root-owned from the build, so without the chown the
+# install fails with EACCES -> HTTP 500. Hand the tree to `node`.
+#
+# Persistence + seeding: in production /app/.agents/skills is bind-mounted to a
+# host dir (cabinet-storage) so user-installed skills survive rebuilds. But that
+# mount SHADOWS whatever skills this image ships at that path. To keep bundled
+# skills available — and to make NEW bundled skills from future images appear
+# automatically — copy a pristine bundle to /app/.agents/skills-seed, a sibling
+# path the bind-mount never covers. The startup script (below) merges seed ->
+# skills on every boot without clobbering user-installed skills.
 COPY --chown=node:node --from=builder /app/.agents ./.agents
-RUN mkdir -p /app/.agents/skills && chown -R node:node /app/.agents
+RUN mkdir -p /app/.agents/skills /app/.agents/skills-seed \
+    && cp -a /app/.agents/skills/. /app/.agents/skills-seed/ \
+    && chown -R node:node /app/.agents
 
 # Default CMD: run both the Next.js app and the daemon as one container
 # process, forwarding signals to both. Plain `npm run start`'s
@@ -137,6 +144,14 @@ RUN mkdir -p /app/.agents/skills && chown -R node:node /app/.agents
 RUN printf '%s\n' \
     '#!/bin/bash' \
     'set -e' \
+    '' \
+    '# Merge image-bundled skills into the (possibly bind-mounted) skills dir' \
+    '# without clobbering user-installed ones. skills-seed is baked into the' \
+    '# image at a path the runtime bind-mount does not cover, so NEW bundled' \
+    '# skills from a future image appear automatically on the next start, and' \
+    '# existing/user skills are left untouched (cp -n = no-clobber).' \
+    'mkdir -p /app/.agents/skills' \
+    'cp -rn /app/.agents/skills-seed/. /app/.agents/skills/ 2>/dev/null || true' \
     '' \
     'pids=()' \
     '' \
