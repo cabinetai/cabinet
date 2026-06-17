@@ -8,7 +8,7 @@
 #      (the repo's existing .dockerignore already excludes node_modules,
 #      .next, .git, data, and most *.md files from the build context).
 #   2. From that repo's root:
-#        docker build -t ghcr.io/j0nathontayl0r/cabinet:0.4.10 .
+#        docker build -t ghcr.io/j0nathontayl0r/cabinet:0.4.11 .
 #
 # Runtime model:
 #   - The image's default CMD starts BOTH the Next.js app (`npm run
@@ -24,7 +24,10 @@
 # ---------------------------------------------------------------------------
 # Stage: builder
 # ---------------------------------------------------------------------------
-FROM node:22-bookworm AS builder
+# Base image pinned by digest (DK1) — node:22-bookworm at capture time.
+# Re-pin deliberately when bumping Node; a bare tag let two builds from the
+# same commit diverge.
+FROM node:22-bookworm@sha256:2d178f2785b96dfbf62a416ca2e40f50e30150b4ff3320d706f0d96e90600eb3 AS builder
 
 WORKDIR /app
 
@@ -65,7 +68,9 @@ RUN npm prune --omit=dev
 # Same glibc family + Node major version as the builder so the
 # better-sqlite3/node-pty native bindings compiled above load without a
 # rebuild (ensureBetterSqlite3()'s NODE_MODULE_VERSION check passes).
-FROM node:22-bookworm-slim AS runtime
+# Runtime base pinned by digest (DK1) — node:22-bookworm-slim at capture time.
+# Keep the major version in lockstep with the builder digest above.
+FROM node:22-bookworm-slim@sha256:e21fc383b50d5347dc7a9f1cae45b8f4e2f0d39f7ade28e4eef7d2934522b752 AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
@@ -91,7 +96,10 @@ RUN apt-get update \
 # `codex login` run once in a terminal; CLAUDE_CONFIG_DIR / CODEX_HOME (set on
 # the daemon container) point their config dirs at the cabinet-agent-state PVC
 # so the OAuth tokens persist across pod restarts.
-RUN npm install -g @anthropic-ai/claude-code @openai/codex
+# Versions pinned (DK2). Note: at runtime the compose bind-mount overrides this
+# image's `claude` with the host binary, so the claude-code pin is for
+# reproducibility; the codex pin actually governs the runtime codex version.
+RUN npm install -g @anthropic-ai/claude-code@2.1.179 @openai/codex@0.140.0
 
 # Pruned production node_modules (tsx, node-pty, better-sqlite3, simple-git,
 # next, react, etc.) and the Next.js build output.
