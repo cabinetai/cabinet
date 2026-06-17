@@ -8,7 +8,7 @@
 #      (the repo's existing .dockerignore already excludes node_modules,
 #      .next, .git, data, and most *.md files from the build context).
 #   2. From that repo's root:
-#        docker build -t ghcr.io/j0nathontayl0r/cabinet:0.4.11 .
+#        docker build -t ghcr.io/j0nathontayl0r/cabinet:0.4.12 .
 #
 # Runtime model:
 #   - The image's default CMD starts BOTH the Next.js app (`npm run
@@ -100,6 +100,268 @@ RUN apt-get update \
 # image's `claude` with the host binary, so the claude-code pin is for
 # reproducibility; the codex pin actually governs the runtime codex version.
 RUN npm install -g @anthropic-ai/claude-code@2.1.179 @openai/codex@0.140.0
+
+# ===========================================================================
+# TOOL LAYER — curated CLI toolbox for the in-app AI agents
+# ===========================================================================
+# Cabinet's agents diagnose/lint/scan/build homelab GitOps changes by shelling
+# out to these CLIs. They are placed here (after the rarely-changing npm
+# globals, before the frequently-changing app-source COPYs below) so editing
+# Cabinet source never busts this expensive layer's cache.
+#
+# SECURITY POSTURE — this image is PUBLIC (the cabinet fork + ghcr package are
+# public; anyone can `docker pull` and inspect layers). This layer is therefore
+# strictly TOOLS-ONLY: no secrets, credentials, IPs, hostnames, API-server
+# URLs or cluster topology appear anywhere in it. The agents' only cluster
+# authority is a READ-ONLY ServiceAccount kubeconfig mounted at RUNTIME — never
+# baked here. Deliberately EXCLUDED: talosctl (node admin), any docker CLI /
+# socket access, and any terraform/cloud (aws/gcloud/az) CLI — the agents must
+# never gain node-admin or cloud authority.
+#
+# PINNING + INTEGRITY (matches this repo's DK1/DK2 digest-pinning discipline):
+# every tool is pinned to an explicit version via the ARG block below, and
+# every downloaded binary/tarball is verified against the PROJECT'S OWN
+# published checksum fetched at build time (never a hand-written hash). Each
+# tool's RUN block ends by invoking the tool, so a wrong version (-> 404 ->
+# missing/!verifying file) fails the build immediately (fail-closed).
+
+# --- Pinned tool versions (bump these; everything below is derived) ---------
+# kubectl tracks the cluster's Kubernetes minor (v1.35.x).
+ARG KUBECTL_VERSION=v1.35.6
+ARG HELM_VERSION=v3.21.1
+ARG ARGOCD_VERSION=v3.4.3
+ARG KUBECONFORM_VERSION=v0.8.0
+ARG KUBE_LINTER_VERSION=v0.8.3
+ARG YQ_VERSION=v4.53.2
+ARG TRIVY_VERSION=0.71.1
+ARG GITLEAKS_VERSION=8.30.1
+ARG TRUFFLEHOG_VERSION=3.95.5
+ARG HADOLINT_VERSION=2.14.0
+ARG ACTIONLINT_VERSION=1.7.12
+ARG GH_VERSION=2.94.0
+ARG GO_VERSION=1.26.4
+ARG CHECKOV_VERSION=3.3.1
+ARG YAMLLINT_VERSION=1.38.0
+ARG ZIZMOR_VERSION=1.25.2
+
+# --- Base OS tooling (single apt layer) -------------------------------------
+# python3 + venv/pip + pipx: pipx-installed Python linters (checkov, yamllint,
+#   zizmor) and ad-hoc agent scripting. (python3/make existed only in the
+#   builder stage; the runtime stage needs them too.)
+# build-essential + make: native builds for `go`/Makefile-driven repos and any
+#   tool the agents `make`. Intentional size cost per the plan.
+# jq: JSON wrangling (also used below to read go.dev's checksum JSON).
+# shellcheck: shell linting (Debian-packaged; tracks the distro, not pinned).
+# curl/wget/unzip/gnupg: fetch + unpack the release binaries pinned below.
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        python3 python3-venv python3-pip pipx \
+        build-essential make \
+        jq shellcheck \
+        curl wget unzip gnupg; \
+    rm -rf /var/lib/apt/lists/*; \
+    python3 --version; \
+    make --version; \
+    jq --version; \
+    shellcheck --version
+
+# --- Go toolchain (official tarball -> /usr/local/go) -----------------------
+# go.dev does not ship a per-file .sha256 sidecar, so we fetch the official
+# release manifest (go.dev/dl ?mode=json) and pull the published sha256 for the
+# exact pinned archive — still the project's own checksum, verified at build
+# time, no hand-written hash. GOTOOLCHAIN=local (set on PATH below) stops `go`
+# from fetching a different toolchain over the network at runtime.
+RUN set -eux; \
+    arch="$(dpkg --print-architecture)"; \
+    [ "$arch" = "amd64" ] || { echo "unsupported arch: $arch" >&2; exit 1; }; \
+    file="go${GO_VERSION}.linux-amd64.tar.gz"; \
+    curl -fsSL "https://go.dev/dl/${file}" -o "/tmp/${file}"; \
+    sum="$(curl -fsSL 'https://go.dev/dl/?mode=json&include=all' \
+        | jq -r --arg f "$file" \
+            '.[].files[] | select(.filename == $f) | .sha256')"; \
+    [ -n "$sum" ] || { echo "no published sha256 for ${file}" >&2; exit 1; }; \
+    echo "${sum}  /tmp/${file}" | sha256sum -c -; \
+    tar -C /usr/local -xzf "/tmp/${file}"; \
+    rm -f "/tmp/${file}"; \
+    # Symlink into /usr/local/bin so `go` resolves on the DEFAULT PATH too — a
+    # login shell (bash -l) sources /etc/profile and resets PATH to a system
+    # default that lacks /usr/local/go/bin, so the ENV PATH below isn't enough
+    # for the in-app Terminal. go resolves GOROOT via the real binary path, so
+    # the symlink is transparent. gofmt likewise.
+    ln -sf /usr/local/go/bin/go /usr/local/bin/go; \
+    ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt; \
+    /usr/local/go/bin/go version
+# Put Go on PATH for the runtime `node` user and pin the toolchain to local.
+ENV PATH="/usr/local/go/bin:${PATH}" \
+    GOTOOLCHAIN=local
+
+# --- kubectl (dl.k8s.io; bare-hash .sha256 sidecar) -------------------------
+RUN set -eux; \
+    base="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64"; \
+    curl -fsSL "${base}/kubectl" -o /tmp/kubectl; \
+    curl -fsSL "${base}/kubectl.sha256" -o /tmp/kubectl.sha256; \
+    echo "$(cat /tmp/kubectl.sha256)  /tmp/kubectl" | sha256sum -c -; \
+    install -m 0755 /tmp/kubectl /usr/local/bin/kubectl; \
+    rm -f /tmp/kubectl /tmp/kubectl.sha256; \
+    kubectl version --client
+
+# --- helm (get.helm.sh; .tar.gz.sha256sum sidecar) --------------------------
+RUN set -eux; \
+    file="helm-${HELM_VERSION}-linux-amd64.tar.gz"; \
+    curl -fsSL "https://get.helm.sh/${file}" -o "/tmp/${file}"; \
+    curl -fsSL "https://get.helm.sh/${file}.sha256sum" -o /tmp/helm.sha256sum; \
+    # sidecar already in "<hash>  <file>" form, but references the bare name.
+    ( cd /tmp && sha256sum -c helm.sha256sum ); \
+    tar -C /tmp -xzf "/tmp/${file}"; \
+    install -m 0755 /tmp/linux-amd64/helm /usr/local/bin/helm; \
+    rm -rf "/tmp/${file}" /tmp/helm.sha256sum /tmp/linux-amd64; \
+    helm version
+
+# --- argocd CLI (GitHub release; cli_checksums.txt) -------------------------
+RUN set -eux; \
+    base="https://github.com/argoproj/argo-cd/releases/download/${ARGOCD_VERSION}"; \
+    curl -fsSL "${base}/argocd-linux-amd64" -o /tmp/argocd; \
+    curl -fsSL "${base}/cli_checksums.txt" -o /tmp/argocd_checksums.txt; \
+    ( cd /tmp && grep ' argocd-linux-amd64$' argocd_checksums.txt \
+        | sed 's# argocd-linux-amd64# argocd#' | sha256sum -c - ); \
+    install -m 0755 /tmp/argocd /usr/local/bin/argocd; \
+    rm -f /tmp/argocd /tmp/argocd_checksums.txt; \
+    argocd version --client
+
+# --- kubeconform (GitHub release; CHECKSUMS) --------------------------------
+RUN set -eux; \
+    base="https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}"; \
+    curl -fsSL "${base}/kubeconform-linux-amd64.tar.gz" -o /tmp/kubeconform.tar.gz; \
+    curl -fsSL "${base}/CHECKSUMS" -o /tmp/kubeconform_checksums.txt; \
+    ( cd /tmp && grep ' kubeconform-linux-amd64.tar.gz$' kubeconform_checksums.txt \
+        | sed 's# kubeconform-linux-amd64.tar.gz# kubeconform.tar.gz#' \
+        | sha256sum -c - ); \
+    tar -C /tmp -xzf /tmp/kubeconform.tar.gz kubeconform; \
+    install -m 0755 /tmp/kubeconform /usr/local/bin/kubeconform; \
+    rm -f /tmp/kubeconform /tmp/kubeconform.tar.gz /tmp/kubeconform_checksums.txt; \
+    kubeconform -v
+
+# --- kube-linter (GitHub release) -------------------------------------------
+# EXCEPTION to the checksum-file rule: kube-linter v0.8.x ships ONLY Sigstore
+# attestations (kube-linter-linux.sigstore.json), no sha256/checksums asset
+# verifiable with sha256sum alone (cosign is intentionally not in this image).
+# We therefore fetch the pinned tarball over HTTPS from the official GitHub
+# release URL — the version pin + TLS are the integrity controls here.
+RUN set -eux; \
+    base="https://github.com/stackrox/kube-linter/releases/download/${KUBE_LINTER_VERSION}"; \
+    curl -fsSL "${base}/kube-linter-linux.tar.gz" -o /tmp/kube-linter.tar.gz; \
+    tar -C /tmp -xzf /tmp/kube-linter.tar.gz kube-linter; \
+    install -m 0755 /tmp/kube-linter /usr/local/bin/kube-linter; \
+    rm -f /tmp/kube-linter /tmp/kube-linter.tar.gz; \
+    kube-linter version
+
+# --- yq (built + verified via the Go module checksum database) --------------
+# yq's release "checksums" file is a multi-column-per-algorithm format and its
+# extract-checksum.sh helper emits a bare hash (not "<file>  <hash>"), which
+# makes portable `sha256sum -c` verification fragile. Since the Go toolchain is
+# already installed above, build yq from source pinned to the exact tag instead:
+# `go install pkg@version` verifies the module against go.sum / the public
+# transparency-log checksum database (sum.golang.org) — a stronger integrity
+# guarantee than a flat checksums file, with nothing to parse. GOBIN drops the
+# binary on PATH; clean the build/module caches after to keep the layer small
+# (the /usr/local/go toolchain itself is untouched, so `go` stays available).
+RUN set -eux; \
+    GOBIN=/usr/local/bin GOFLAGS=-trimpath \
+        go install "github.com/mikefarah/yq/v4@${YQ_VERSION}"; \
+    go clean -cache -modcache; \
+    yq --version
+
+# --- trivy (GitHub release; <name>_checksums.txt) ---------------------------
+RUN set -eux; \
+    base="https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}"; \
+    file="trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"; \
+    curl -fsSL "${base}/${file}" -o "/tmp/${file}"; \
+    curl -fsSL "${base}/trivy_${TRIVY_VERSION}_checksums.txt" -o /tmp/trivy_checksums.txt; \
+    ( cd /tmp && grep " ${file}\$" trivy_checksums.txt | sha256sum -c - ); \
+    tar -C /tmp -xzf "/tmp/${file}" trivy; \
+    install -m 0755 /tmp/trivy /usr/local/bin/trivy; \
+    rm -f "/tmp/${file}" /tmp/trivy /tmp/trivy_checksums.txt; \
+    trivy --version
+
+# --- gitleaks (GitHub release; <name>_checksums.txt) ------------------------
+# NB: gitleaks names the linux amd64 asset "..._linux_x64.tar.gz".
+RUN set -eux; \
+    base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"; \
+    file="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"; \
+    curl -fsSL "${base}/${file}" -o "/tmp/${file}"; \
+    curl -fsSL "${base}/gitleaks_${GITLEAKS_VERSION}_checksums.txt" -o /tmp/gitleaks_checksums.txt; \
+    ( cd /tmp && grep " ${file}\$" gitleaks_checksums.txt | sha256sum -c - ); \
+    tar -C /tmp -xzf "/tmp/${file}" gitleaks; \
+    install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks; \
+    rm -f "/tmp/${file}" /tmp/gitleaks /tmp/gitleaks_checksums.txt; \
+    gitleaks version
+
+# --- trufflehog (GitHub release; <name>_checksums.txt) ----------------------
+RUN set -eux; \
+    base="https://github.com/trufflesecurity/trufflehog/releases/download/v${TRUFFLEHOG_VERSION}"; \
+    file="trufflehog_${TRUFFLEHOG_VERSION}_linux_amd64.tar.gz"; \
+    curl -fsSL "${base}/${file}" -o "/tmp/${file}"; \
+    curl -fsSL "${base}/trufflehog_${TRUFFLEHOG_VERSION}_checksums.txt" -o /tmp/trufflehog_checksums.txt; \
+    ( cd /tmp && grep " ${file}\$" trufflehog_checksums.txt | sha256sum -c - ); \
+    tar -C /tmp -xzf "/tmp/${file}" trufflehog; \
+    install -m 0755 /tmp/trufflehog /usr/local/bin/trufflehog; \
+    rm -f "/tmp/${file}" /tmp/trufflehog /tmp/trufflehog_checksums.txt; \
+    trufflehog --version
+
+# --- hadolint (GitHub release; bare-hash .sha256 sidecar) -------------------
+RUN set -eux; \
+    base="https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}"; \
+    curl -fsSL "${base}/hadolint-linux-x86_64" -o /tmp/hadolint; \
+    curl -fsSL "${base}/hadolint-linux-x86_64.sha256" -o /tmp/hadolint.sha256; \
+    # sidecar is a bare hash; pair it with our local filename for sha256sum -c.
+    echo "$(awk '{print $1}' /tmp/hadolint.sha256)  /tmp/hadolint" | sha256sum -c -; \
+    install -m 0755 /tmp/hadolint /usr/local/bin/hadolint; \
+    rm -f /tmp/hadolint /tmp/hadolint.sha256; \
+    hadolint --version
+
+# --- actionlint (GitHub release; <name>_checksums.txt) ----------------------
+RUN set -eux; \
+    base="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}"; \
+    file="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"; \
+    curl -fsSL "${base}/${file}" -o "/tmp/${file}"; \
+    curl -fsSL "${base}/actionlint_${ACTIONLINT_VERSION}_checksums.txt" -o /tmp/actionlint_checksums.txt; \
+    ( cd /tmp && grep " ${file}\$" actionlint_checksums.txt | sha256sum -c - ); \
+    tar -C /tmp -xzf "/tmp/${file}" actionlint; \
+    install -m 0755 /tmp/actionlint /usr/local/bin/actionlint; \
+    rm -f "/tmp/${file}" /tmp/actionlint /tmp/actionlint_checksums.txt; \
+    actionlint --version
+
+# --- gh / GitHub CLI (GitHub release; <name>_checksums.txt) -----------------
+RUN set -eux; \
+    base="https://github.com/cli/cli/releases/download/v${GH_VERSION}"; \
+    file="gh_${GH_VERSION}_linux_amd64.tar.gz"; \
+    curl -fsSL "${base}/${file}" -o "/tmp/${file}"; \
+    curl -fsSL "${base}/gh_${GH_VERSION}_checksums.txt" -o /tmp/gh_checksums.txt; \
+    ( cd /tmp && grep " ${file}\$" gh_checksums.txt | sha256sum -c - ); \
+    tar -C /tmp -xzf "/tmp/${file}"; \
+    install -m 0755 "/tmp/gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh; \
+    rm -rf "/tmp/${file}" "/tmp/gh_${GH_VERSION}_linux_amd64" /tmp/gh_checksums.txt; \
+    gh --version
+
+# --- Python linters via pipx (checkov, yamllint, zizmor) --------------------
+# pipx runs as root here; root's ~/.local/bin is NOT on the runtime `node`
+# user's PATH. Point the shims at /usr/local/bin (already on PATH, world-exec)
+# so the agents resolve them. PIPX_HOME holds the per-tool venvs. pipx pins the
+# exact version (==) from PyPI; the trailing invoke fails the build if missing.
+ENV PIPX_HOME=/opt/pipx \
+    PIPX_BIN_DIR=/usr/local/bin
+RUN set -eux; \
+    pipx install "checkov==${CHECKOV_VERSION}"; \
+    pipx install "yamllint==${YAMLLINT_VERSION}"; \
+    pipx install "zizmor==${ZIZMOR_VERSION}"; \
+    checkov --version; \
+    yamllint --version; \
+    zizmor --version
+
+# ===========================================================================
+# END TOOL LAYER
+# ===========================================================================
 
 # Pruned production node_modules (tsx, node-pty, better-sqlite3, simple-git,
 # next, react, etc.) and the Next.js build output.
