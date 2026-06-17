@@ -32,11 +32,6 @@ function defaultFrontmatter(title: string): FrontMatter {
   return { type: "Untyped", title, created: now, modified: now, tags: [] };
 }
 
-type ResolvedPageEntry = {
-  fsPath: string;
-  virtualName: string;
-};
-
 function joinVirtualPath(parent: string, name: string): string {
   return parent ? `${parent}/${name}` : name;
 }
@@ -51,31 +46,6 @@ function shouldFallbackMove(error: unknown): error is NodeJS.ErrnoException {
   return ["EXDEV", "EPERM", "EACCES"].includes(
     (error as NodeJS.ErrnoException).code ?? ""
   );
-}
-
-async function resolveExistingPageEntry(
-  virtualPath: string
-): Promise<ResolvedPageEntry> {
-  const resolved = resolveContentPath(virtualPath);
-
-  if (await fileExists(resolved)) {
-    return {
-      fsPath: resolved,
-      virtualName: path.basename(resolved),
-    };
-  }
-
-  const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
-  if (await fileExists(mdPath)) {
-    return {
-      fsPath: mdPath,
-      virtualName: resolved.endsWith(".md")
-        ? path.basename(mdPath)
-        : path.basename(mdPath, ".md"),
-    };
-  }
-
-  throw new Error(`Page not found: ${virtualPath}`);
 }
 
 async function moveResolvedEntry(
@@ -132,10 +102,10 @@ export async function readPage(virtualPath: string): Promise<PageData> {
   const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
 
   let filePath: string | null = null;
-  if (await fileExists(indexPath)) {
-    filePath = indexPath;
-  } else if (await fileExists(mdPath)) {
+  if (await fileExists(mdPath)) {
     filePath = mdPath;
+  } else if (await fileExists(indexPath)) {
+    filePath = indexPath;
   } else if (await fileExists(resolved)) {
     // Could be a raw file or a directory — check for linked-folder metadata fallback.
     const stat = await fs.stat(resolved);
@@ -200,11 +170,29 @@ export async function readPage(virtualPath: string): Promise<PageData> {
     };
   }
 
+  // Container folder holding only sub-pages (no own `<name>.md`/index.md).
+  // Synthesize an empty page so clicking it in the sidebar still opens.
+  const resolvedStat = await fs.stat(resolved).catch(() => null);
+  if (resolvedStat?.isDirectory()) {
+    const now = new Date().toISOString();
+    return {
+      path: virtualPath,
+      assetBase: virtualPath,
+      content: "",
+      frontmatter: {
+        type: "Untyped",
+        title: path.basename(virtualPath),
+        created: now,
+        modified: now,
+        tags: [],
+      },
+    };
+  }
+
   throw new Error(`Page not found: ${virtualPath}`);
 }
 
 /**
- * Heuristic: if a doc's text is mostly Hebrew letters, return "rtl". Used to
  * auto-set frontmatter.dir on agent-generated notes so they render RTL on
  * load. Examines the first ~600 chars to avoid scanning huge files.
  */
@@ -228,15 +216,17 @@ export async function writePage(
   const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
 
   let filePath: string;
-  if (await fileExists(indexPath)) {
-    filePath = indexPath;
-  } else if (await fileExists(mdPath)) {
+  if (await fileExists(mdPath)) {
     filePath = mdPath;
-  } else if (await fileExists(resolved)) {
-    filePath = resolved;
-  } else {
-    // Default: if virtual path looks like a directory, use index.md
+  } else if (await fileExists(indexPath)) {
     filePath = indexPath;
+  } else if (await fileExists(resolved)) {
+    const stat = await fs.lstat(resolved).catch(() => null);
+    // A container folder writes its content to a sibling `<name>.md`.
+    filePath = stat?.isFile() ? resolved : mdPath;
+  } else {
+    // New page: write a sibling `<name>.md` (Sibling Pattern).
+    filePath = mdPath;
   }
 
   // Auto-detect RTL when the writer didn't set `dir` explicitly and the
@@ -262,14 +252,18 @@ export async function createPage(
   title: string
 ): Promise<void> {
   const resolved = resolveContentPath(virtualPath);
-  const dirPath = resolved;
-  const filePath = path.join(dirPath, "index.md");
+  // Sibling pattern: a page is a standalone `<name>.md` file. Sub-pages live in
+  // a sibling `<name>/` folder, so creating `marketing/sub` simply ensures
+  // `marketing/` exists and writes `marketing/sub.md`, leaving `marketing.md`
+  // untouched. Legacy `<name>/index.md` pages are still recognised on read.
+  const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
+  const indexPath = path.join(resolved, "index.md");
 
-  if (await fileExists(filePath)) {
+  if ((await fileExists(mdPath)) || (await fileExists(indexPath))) {
     throw new Error(`Page already exists: ${virtualPath}`);
   }
 
-  await ensureDirectory(dirPath);
+  await ensureDirectory(path.dirname(mdPath));
   const parentVirtual = virtualPath.split("/").slice(0, -1).join("/");
   const order = await appendOrder(parentVirtual);
   const fm: FrontMatter & { order?: number } = {
@@ -277,16 +271,23 @@ export async function createPage(
     order,
   };
   const output = matter.stringify(`\n# ${title}\n`, fm);
-  await writeFileContent(filePath, output);
+  await writeFileContent(mdPath, output);
 }
 
 export async function deletePage(virtualPath: string): Promise<void> {
   const resolved = resolveContentPath(virtualPath);
+  const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
+
+  // A sibling page may have BOTH `<name>.md` and a `<name>/` folder — remove
+  // each that exists so the whole page (and its sub-pages) goes away.
   const stat = await fs.lstat(resolved).catch(() => null);
   if (stat?.isSymbolicLink()) {
     await unlinkSymlink(resolved);
-  } else {
+  } else if (stat) {
     await deleteFileOrDir(resolved);
+  }
+  if (mdPath !== resolved && (await fileExists(mdPath))) {
+    await deleteFileOrDir(mdPath);
   }
 }
 
@@ -331,42 +332,66 @@ export async function movePage(
   toParentPath: string,
   options: { prevName?: string | null; nextName?: string | null } = {}
 ): Promise<string> {
-  // resolveExistingPageEntry resolves the real on-disk source — including the
-  // standalone-".md" case the tree-builder addresses extension-less (it returns
-  // virtualName with ".md" stripped), and symlink-backed entries — so the move
-  // below doesn't ENOENT and the returned virtual path keeps the right shape.
-  const fromEntry = await resolveExistingPageEntry(fromPath);
+  // A page may exist on disk as a sibling pair: `<name>.md` (content) plus a
+  // `<name>/` folder (sub-pages). Move BOTH together so the page and its
+  // children travel as one unit. Typed files and standalone .md pages have a
+  // single artifact; legacy `<name>/index.md` pages move as the folder.
+  const resolved = resolveContentPath(fromPath);
+  const mdPath = resolved.endsWith(".md") ? resolved : `${resolved}.md`;
+
   const toDir = toParentPath
     ? resolveContentPath(toParentPath)
     : resolveContentPath("");
-  const toResolved = path.join(toDir, path.basename(fromEntry.fsPath));
-  const name = fromEntry.virtualName;
+
+  const resolvedStat = await fs.lstat(resolved).catch(() => null);
+  const hasResolved = resolvedStat !== null;
+  const hasMd = mdPath !== resolved && (await fileExists(mdPath));
+  if (!hasResolved && !hasMd) {
+    throw new Error(`Page not found: ${fromPath}`);
+  }
+
+  // virtualName mirrors the tree-builder shape: extension stripped for markdown
+  // pages and directories, preserved for typed files (foo.pdf).
+  const name = path.basename(resolved);
 
   const fromParentVirtual = fromPath.split("/").slice(0, -1).join("/");
-  const isReorder = fromEntry.fsPath === toResolved;
+  const isReorder = toDir === path.dirname(resolved);
 
-  if (!isReorder && isDescendantPath(fromEntry.fsPath, toResolved)) {
+  const moves: { from: string; to: string }[] = [];
+  if (hasMd) moves.push({ from: mdPath, to: path.join(toDir, path.basename(mdPath)) });
+  if (hasResolved) moves.push({ from: resolved, to: path.join(toDir, name) });
+
+  if (
+    !isReorder &&
+    hasResolved &&
+    resolvedStat!.isDirectory() &&
+    isDescendantPath(resolved, path.join(toDir, name))
+  ) {
     throw new Error("Cannot move a page into itself");
   }
 
   if (!isReorder) {
-    if (await fileExists(toResolved)) {
-      // Destination may be empty .agents/ scaffolding the daemon recreated at
-      // the old path after a prior cabinet move — sweep it so rename succeeds.
-      if (await isHollowOrphanDir(toResolved)) {
-        const fsp = await import("fs/promises");
-        await fsp.rm(toResolved, { recursive: true, force: true });
-      } else {
-        throw new Error(
-          `An item named "${name}" already exists in ${
-            toParentPath ? `"${toParentPath}"` : "the root"
-          }. Rename or remove it first.`
-        );
+    await ensureDirectory(toDir);
+    for (const m of moves) {
+      if (await fileExists(m.to)) {
+        // Destination may be empty .agents/ scaffolding the daemon recreated at
+        // the old path after a prior cabinet move — sweep it so rename succeeds.
+        if (await isHollowOrphanDir(m.to)) {
+          const fsp = await import("fs/promises");
+          await fsp.rm(m.to, { recursive: true, force: true });
+        } else {
+          throw new Error(
+            `An item named "${name}" already exists in ${
+              toParentPath ? `"${toParentPath}"` : "the root"
+            }. Rename or remove it first.`
+          );
+        }
       }
     }
-    await ensureDirectory(toDir);
-    await moveResolvedEntry(fromEntry.fsPath, toResolved);
-    await removeSidecarEntry(fromParentVirtual, fromEntry.virtualName).catch(() => {});
+    for (const m of moves) {
+      await moveResolvedEntry(m.from, m.to);
+    }
+    await removeSidecarEntry(fromParentVirtual, name).catch(() => {});
   }
 
   const { prevName, nextName } = options;
@@ -384,9 +409,7 @@ export async function movePage(
     await setEntryOrder(toParentPath, name, order);
   }
 
-  // fromEntry.virtualName already mirrors the tree-builder shape (standalone
-  // .md addressed without its extension), so join it to the destination parent.
-  return joinVirtualPath(toParentPath, fromEntry.virtualName);
+  return joinVirtualPath(toParentPath, name);
 }
 
 export interface RenameReferencesSummary {
@@ -424,20 +447,30 @@ export async function renamePage(
   let kind: RenameKind;
   let fromResolved = fromResolvedVirtual;
   let preservedExt = "";
+  // Sibling pattern: a page that has BOTH `<name>.md` (content/title) and a
+  // `<name>/` folder (sub-pages). The `.md` carries the page; the folder rides
+  // along on rename. `siblingDir`/`siblingDirTo` are the folder's before/after.
+  let siblingDir: string | null = null;
 
   const fsp = await import("fs/promises");
   const directStat = await fsp.lstat(fromResolvedVirtual).catch(() => null);
-  if (directStat) {
-    if (directStat.isDirectory()) {
-      kind = "directory";
-    } else {
-      kind = "typed-file";
-      preservedExt = path.extname(fromResolvedVirtual);
-    }
-  } else if (await fileExists(`${fromResolvedVirtual}.md`)) {
+  const mdCompanion = `${fromResolvedVirtual}.md`;
+  const hasMdCompanion = await fileExists(mdCompanion);
+  if (directStat?.isDirectory() && hasMdCompanion) {
+    // Sibling page: rename the `.md` as the page and drag the folder with it.
+    fromResolved = mdCompanion;
+    kind = "md-file";
+    preservedExt = ".md";
+    siblingDir = fromResolvedVirtual;
+  } else if (directStat?.isDirectory()) {
+    kind = "directory";
+  } else if (directStat) {
+    kind = "typed-file";
+    preservedExt = path.extname(fromResolvedVirtual);
+  } else if (hasMdCompanion) {
     // Tree-builder strips ".md" from standalone-markdown paths, so the
     // virtual path resolves to a sibling that lives at <path>.md on disk.
-    fromResolved = `${fromResolvedVirtual}.md`;
+    fromResolved = mdCompanion;
     kind = "md-file";
     preservedExt = ".md";
   } else {
@@ -459,6 +492,8 @@ export async function renamePage(
   }
   const targetBase = kind === "directory" ? slug : `${slug}${typedExt}`;
   const toResolved = path.join(parentDir, targetBase);
+  // Where the companion folder lands (sibling pages only).
+  const siblingDirTo = siblingDir ? path.join(parentDir, slug) : null;
 
   // Wiki-links only ever resolve to .md-backed pages, so oldSlug only needs
   // to be meaningful for directory and md-file kinds — for typed files it
@@ -515,6 +550,13 @@ export async function renamePage(
       }. Pick a different name.`
     );
   }
+  if (siblingDirTo && siblingDirTo !== siblingDir && (await fileExists(siblingDirTo))) {
+    throw new Error(
+      `An item named "${slug}" already exists in ${
+        parentVirtual ? `"${parentVirtual}"` : "the root"
+      }. Pick a different name.`
+    );
+  }
 
   // Snapshot the page list *before* the move so wiki-link resolution reflects
   // the state the links were authored against. Typed-file renames don't touch
@@ -523,6 +565,9 @@ export async function renamePage(
     kind === "typed-file" ? [] : (await scanCabinet()).pages;
 
   await fsp.rename(fromResolved, toResolved);
+  if (siblingDir && siblingDirTo) {
+    await fsp.rename(siblingDir, siblingDirTo);
+  }
 
   // Update frontmatter title on whichever file backs this page's title.
   const titleHostAfter =
@@ -556,8 +601,10 @@ export async function renamePage(
       : await rewriteReferencesForRename({
           oldPagePath: virtualPath,
           newPagePath: newPath,
-          oldResolvedDir: fromResolved,
-          newResolvedDir: toResolved,
+          oldResolvedDir: siblingDir ?? fromResolved,
+          newResolvedDir: siblingDirTo ?? toResolved,
+          oldResolvedMd: siblingDir ? fromResolved : undefined,
+          newResolvedMd: siblingDir ? toResolved : undefined,
           oldSlug,
           newName,
           preRenamePages,
@@ -576,8 +623,12 @@ export async function renamePage(
   }
 
   const undoToken = recordRenameUndo({
-    dirFrom: toResolved,
-    dirTo: fromResolved,
+    dirFrom: siblingDirTo ?? toResolved,
+    dirTo: siblingDir ?? fromResolved,
+    extraMoves:
+      siblingDir && siblingDirTo
+        ? [{ from: toResolved, to: fromResolved }]
+        : undefined,
     files: Array.from(undoFiles, ([fsPath, before]) => ({ fsPath, before })),
     createdAt: Date.now(),
     oldName,

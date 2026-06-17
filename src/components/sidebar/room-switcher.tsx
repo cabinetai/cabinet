@@ -7,6 +7,7 @@ import {
   Check,
   ExternalLink,
   Pencil,
+  Library,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,13 +26,16 @@ import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { useRoomsStore, type RoomMetaClient } from "@/stores/rooms-store";
+import { useVaultsStore } from "@/stores/vaults-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import { RoomAvatar } from "@/lib/cabinets/room-icons";
 import { openRoomWindow } from "@/lib/cabinets/room-window";
 import { notifyRoomsChanged } from "@/lib/cabinets/rooms-events";
 import { invalidateCabinetOverview } from "@/lib/cabinets/overview-client";
+import { confirmDialog } from "@/lib/ui/confirm";
 import { useLocale } from "@/i18n/use-locale";
 import { NewCabinetDialog } from "./new-cabinet-dialog";
+import { NewVaultDialog } from "./new-vault-dialog";
 import { RoomEditDialog } from "./room-edit-dialog";
 import { RoomDeleteConfirm } from "./room-delete-confirm";
 
@@ -54,21 +58,30 @@ export function RoomSwitcher() {
   const defaultRoom = useRoomsStore((s) => s.defaultRoom);
   const load = useRoomsStore((s) => s.load);
   const loadTree = useTreeStore((s) => s.loadTree);
+  const vaults = useVaultsStore((s) => s.vaults);
+  const activeVault = useVaultsStore((s) => s.activeVault);
+  const loadVaults = useVaultsStore((s) => s.load);
+  const switchVault = useVaultsStore((s) => s.switchTo);
   const [open, setOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const [addVaultOpen, setAddVaultOpen] = useState(false);
   const [editing, setEditing] = useState<RoomMetaClient | null>(null);
   const [deleting, setDeleting] = useState<RoomMetaClient | null>(null);
 
   useEffect(() => {
     void load();
-  }, [load]);
+    void loadVaults();
+  }, [load, loadVaults]);
 
   // Refetch on dropdown open so a stale in-memory list can't outlive disk
   // changes that happened in another window / the CLI / the migration script.
   // load(true) is in-flight-guarded so spamming the trigger is cheap.
   useEffect(() => {
-    if (open) void load(true);
-  }, [open, load]);
+    if (open) {
+      void load(true);
+      void loadVaults(true);
+    }
+  }, [open, load, loadVaults]);
 
   const activePath = section.cabinetPath || ROOT_CABINET_PATH;
   // Rooms are top-level cabinets, so a deep path resolves to its first segment.
@@ -82,6 +95,24 @@ export function RoomSwitcher() {
     useTreeStore.getState().selectPage(null);
     useEditorStore.getState().clear();
     setSection({ type: "cabinet", cabinetPath: room.path });
+  }
+
+  async function handleVaultSwitch(name: string) {
+    if (name === activeVault) return;
+    // Switching vaults rebinds the server's content root, which only takes
+    // effect on a fresh process — so confirm before we restart the app.
+    const ok = await confirmDialog({
+      title: `Switch to “${name}”?`,
+      message:
+        "Cabinet will restart to open this vault. Any unsaved work in the " +
+        "current window should be saved first. Your bookmarks are shared and " +
+        "will carry over.",
+      confirmText: "Switch & restart",
+      cancelText: "Cancel",
+    });
+    if (!ok) return;
+    setOpen(false);
+    await switchVault(name);
   }
 
   function handleRoomSaved(updated: RoomMetaClient) {
@@ -177,6 +208,41 @@ export function RoomSwitcher() {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start" sideOffset={6} className="w-64">
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="gap-2">
+              <Library className="text-muted-foreground" />
+              <span className="min-w-0 flex-1 truncate">
+                {activeVault ?? "Vault"}
+              </span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>{"Switch vault"}</DropdownMenuLabel>
+                {vaults.map((vault) => (
+                  <DropdownMenuItem
+                    key={vault.name}
+                    onClick={() => void handleVaultSwitch(vault.name)}
+                    className="gap-2"
+                  >
+                    <Library className="text-muted-foreground" />
+                    <span className="min-w-0 flex-1 truncate">{vault.name}</span>
+                    {vault.active && <Check className="text-foreground" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setAddVaultOpen(true)}
+                className="gap-2"
+              >
+                <Plus className="text-muted-foreground" />
+                {"New vault"}
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSeparator />
+
           <DropdownMenuGroup>
             <DropdownMenuLabel>{t("rooms:switchRoom")}</DropdownMenuLabel>
             {rooms.map((room) => {
@@ -259,6 +325,10 @@ export function RoomSwitcher() {
           }}
           parentPath=""
         />
+      )}
+
+      {addVaultOpen && (
+        <NewVaultDialog open={addVaultOpen} onOpenChange={setAddVaultOpen} />
       )}
 
       {editing && (

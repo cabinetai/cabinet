@@ -35,6 +35,16 @@ export async function register(): Promise<void> {
   } catch (err) {
     console.error("instrumentation: ensureAuthSalt failed", err);
   }
+  // Ensure the active vault (root cabinet) exists before anything reads or
+  // writes content: on first run this moves loose top-level content into a
+  // default vault directory and records it as active. Must run before the
+  // global-agents bootstrap, which writes into the vault's content root.
+  try {
+    const { ensureVaultsMigrated } = await import("./lib/cabinets/vaults");
+    await ensureVaultsMigrated();
+  } catch (err) {
+    console.error("instrumentation: ensureVaultsMigrated failed", err);
+  }
   try {
     const { ensureGlobalAgents } = await import("./lib/agents/library-manager");
     await ensureGlobalAgents();

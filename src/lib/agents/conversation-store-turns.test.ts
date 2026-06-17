@@ -5,6 +5,8 @@ import os from "node:os";
 import path from "node:path";
 
 let tempRoot: string;
+/** The vault content root the store resolves to (parent/<activeVault>). */
+let contentRoot: string;
 type Store = typeof import("./conversation-store");
 let store: Store;
 
@@ -14,6 +16,10 @@ before(async () => {
   );
   process.env.CABINET_DATA_DIR = tempRoot;
   store = await import("./conversation-store");
+  // CABINET_DATA_DIR is the PARENT data folder; the active vault nests content
+  // one level down. Read the resolved content root so the raw-path assertions
+  // below target the same place the store writes to.
+  ({ DATA_DIR: contentRoot } = await import("@/lib/storage/path-utils"));
 });
 
 after(async () => {
@@ -191,7 +197,7 @@ test("finalizeConversation preserves artifacts merged from later turns", async (
   ]);
 
   const artifactFile = await fs.readFile(
-    path.join(tempRoot, ".agents", ".conversations", meta.id, "artifacts.json"),
+    path.join(contentRoot, ".agents", ".conversations", meta.id, "artifacts.json"),
     "utf8"
   );
   assert.deepEqual(JSON.parse(artifactFile), [
@@ -221,7 +227,7 @@ test("read-repair strips placeholder artifacts and then stays idempotent", async
   // that `needsRepair` flags via isPlaceholderCabinetValue. (Matches
   // PLACEHOLDER_ARTIFACT_HINT in conversation-store.ts.)
   const metaFile = path.join(
-    tempRoot, ".agents", ".conversations", meta.id, "meta.json"
+    contentRoot, ".agents", ".conversations", meta.id, "meta.json"
   );
   const stored = JSON.parse(await fs.readFile(metaFile, "utf8"));
   stored.artifactPaths = [
@@ -237,7 +243,7 @@ test("read-repair strips placeholder artifacts and then stays idempotent", async
 
   // artifacts.json mirrors the cleaned list.
   const artifactFile = await fs.readFile(
-    path.join(tempRoot, ".agents", ".conversations", meta.id, "artifacts.json"),
+    path.join(contentRoot, ".agents", ".conversations", meta.id, "artifacts.json"),
     "utf8"
   );
   assert.deepEqual(JSON.parse(artifactFile), [{ path: "reports/real.md" }]);

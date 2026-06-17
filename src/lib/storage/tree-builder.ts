@@ -144,11 +144,26 @@ async function buildTreeRecursive(
   const entries = await listDirectory(dirPath);
   const nodes: TreeNode[] = [];
 
-  // Collect directory names so we can skip standalone .md files that collide.
+  // Collect directory names so we can merge sibling .md files into folders.
   const dirNames = new Set(
     entries
       .filter((e) => e.isDirectory && (!isHiddenEntry(e.name) || showHidden))
       .map((e) => e.name)
+  );
+
+  // Names that have a sibling `<name>.md` — Sibling Pattern. The markdown file
+  // is the canonical page node; its same-named folder is merged into it (skip
+  // emitting a separate directory node so children attach to the .md node).
+  const mdBaseNames = new Set(
+    entries
+      .filter(
+        (e) =>
+          !e.isDirectory &&
+          (!isHiddenEntry(e.name) || showHidden) &&
+          e.name.endsWith(".md") &&
+          e.name !== "index.md"
+      )
+      .map((e) => e.name.replace(/\.md$/, ""))
   );
 
   // Read order sidecar for non-frontmatter files.
@@ -177,6 +192,9 @@ async function buildTreeRecursive(
     const vPath = virtualPathFromFs(fullPath);
 
     if (entry.isDirectory) {
+      // Sibling Pattern: a `<name>/` folder paired with `<name>.md` is merged
+      // into the markdown node below — skip it here to avoid a duplicate.
+      if (mdBaseNames.has(entry.name)) continue;
       const indexMd = path.join(fullPath, "index.md");
       const indexHtml = path.join(fullPath, "index.html");
       const hasIndexMd = await fileExists(indexMd);
@@ -267,21 +285,34 @@ async function buildTreeRecursive(
     }
 
     if (entry.name.endsWith(".md") && entry.name !== "index.md") {
-      // Skip standalone .md if a same-named directory exists (avoids duplicate keys).
+      // Sibling Pattern: `<name>.md` is the page; if a `<name>/` folder exists
+      // alongside it, merge the folder's entries in as this node's children so
+      // the page renders as one expandable item (content + sub-pages).
       const baseName = entry.name.replace(/\.md$/, "");
-      if (dirNames.has(baseName)) continue;
+      const hasSiblingDir = dirNames.has(baseName);
 
       const fm = await readFrontmatter(fullPath);
+      let children: TreeNode[] | undefined;
+      let nodeType: TreeNode["type"] = "file";
+      if (hasSiblingDir) {
+        children = await buildTreeRecursive(
+          path.join(dirPath, baseName),
+          nextAncestorRealPaths,
+          showHidden
+        );
+        nodeType = children.length > 0 ? "directory" : "file";
+      }
       nodes.push({
         name: entry.name,
         path: vPath.replace(/\.md$/, ""),
-        type: "file",
+        type: nodeType,
         frontmatter: {
-          title: (fm.title as string) || entry.name.replace(/\.md$/, ""),
+          title: (fm.title as string) || baseName,
           icon: fm.icon as string | undefined,
           order: fm.order as number | undefined,
           google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
         },
+        ...(children ? { children } : {}),
       });
     }
   }

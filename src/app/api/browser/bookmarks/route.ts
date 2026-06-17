@@ -2,7 +2,7 @@ import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
-import { DATA_DIR } from "@/lib/storage/path-utils";
+import { DATA_PARENT_DIR } from "@/lib/storage/path-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +65,7 @@ type ResolveTitlePayload = {
 
 type PostPayload = AddBookmarkPayload | CreateFolderPayload | MarkUsedPayload | ResolveTitlePayload;
 
-const BOOKMARKS_PATH = path.join(DATA_DIR, "bookmarks.json");
+const BOOKMARKS_PATH = path.join(DATA_PARENT_DIR, "bookmarks.json");
 const EPOCH_OFFSET_US = BigInt("11644473600000000");
 
 function chromeNow(): string {

@@ -316,10 +316,13 @@ function TreeNodeImpl({
     const browseFileUrl =
       node.type === "website" || node.type === "app"
         ? `${assetUrl}/index.html`
-        : node.type === "directory" || node.type === "cabinet"
-          ? `${assetUrl}/index.md`
-          : node.type === "file" && node.name.toLowerCase().endsWith(".md")
-            ? `${assetUrl}.md`
+        : // Sibling Pattern: a `<name>.md` page can carry sub-pages and so be
+          // typed "directory", but its content still lives at `<name>.md`, not
+          // an `index.md` inside the folder — match the markdown name first.
+          node.name.toLowerCase().endsWith(".md")
+          ? `${assetUrl}.md`
+          : node.type === "directory" || node.type === "cabinet"
+            ? `${assetUrl}/index.md`
             : assetUrl;
 
     if (appMode === "browse") {

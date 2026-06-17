@@ -90,6 +90,11 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
    */
   uninstallApp: () => ipcRenderer.invoke("cabinet:uninstall-app"),
   /**
+   * Restart the desktop app so the embedded server rebinds to the active
+   * vault's content root. Called after switching vaults via PATCH /api/vaults.
+   */
+  relaunch: () => ipcRenderer.invoke("cabinet:relaunch"),
+  /**
    * The OS keyboard / input languages, most-preferred first, plus the
    * Electron app + system locale. Used on the first onboarding screen to
    * localize Cabinet out of the box. Renderer maps these BCP-47 tags onto a

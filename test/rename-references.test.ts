@@ -149,6 +149,67 @@ test("renaming a typed file with a new extension uses the provided extension", a
   }
 });
 
+async function writeSiblingPage(
+  root: string,
+  rel: string,
+  title: string,
+  body: string
+) {
+  const mdPath = path.join(DATA_DIR, root, `${rel}.md`);
+  await fs.mkdir(path.dirname(mdPath), { recursive: true });
+  await fs.writeFile(mdPath, `---\ntitle: ${title}\n---\n\n${body}\n`, "utf8");
+}
+
+test("sibling-pattern rename moves the .md and its companion folder together", async () => {
+  const root = uniqueRoot();
+  try {
+    // `parent.md` is the page; `parent/` holds its sub-pages (Sibling Pattern).
+    await writeSiblingPage(root, "parent", "Parent", "# Parent");
+    await writeSiblingPage(root, "parent/child", "Child", "Up to [[Parent]].");
+    await writeSiblingPage(root, "beta", "Beta", "See [[Parent]] page.");
+
+    const { newPath, references } = await renamePage(
+      `${root}/parent`,
+      "Parent Renamed"
+    );
+
+    assert.equal(newPath, `${root}/parent-renamed`);
+
+    // Both artifacts moved; the old ones are gone.
+    await fs.stat(path.join(DATA_DIR, root, "parent-renamed.md"));
+    await fs.stat(path.join(DATA_DIR, root, "parent-renamed", "child.md"));
+    await assert.rejects(() => fs.stat(path.join(DATA_DIR, root, "parent.md")));
+    await assert.rejects(() => fs.stat(path.join(DATA_DIR, root, "parent")));
+
+    // Inbound links from both the sub-page and an outside page are rewritten.
+    const beta = await fs.readFile(
+      path.join(DATA_DIR, root, "beta.md"),
+      "utf8"
+    );
+    assert.match(beta, /\[\[Parent Renamed\]\]/);
+    const child = await fs.readFile(
+      path.join(DATA_DIR, root, "parent-renamed", "child.md"),
+      "utf8"
+    );
+    assert.match(child, /\[\[Parent Renamed\]\]/);
+
+    // Undo restores the original on-disk shape and link bytes.
+    assert.ok(references.undoToken);
+    const outcome = await undoRename(references.undoToken!);
+    assert.equal(outcome.ok, true);
+    await fs.stat(path.join(DATA_DIR, root, "parent.md"));
+    await fs.stat(path.join(DATA_DIR, root, "parent", "child.md"));
+    const betaBack = await fs.readFile(
+      path.join(DATA_DIR, root, "beta.md"),
+      "utf8"
+    );
+    assert.match(betaBack, /\[\[Parent\]\]/);
+    assert.ok(!/Renamed/.test(betaBack));
+  } finally {
+    await fs.rm(path.join(DATA_DIR, root), { recursive: true, force: true });
+  }
+});
+
 test("no-op rename (same slug) reports nothing and no undo token", async () => {
   const root = uniqueRoot();
   try {

@@ -70,7 +70,7 @@ function flattenTree(nodes: TreeNode[]): { path: string; name: string }[] {
 function findPageBySlug(slug: string, currentPath: string | null, nodes: TreeNode[]): string | null {
   const allPages = flattenTree(nodes);
   // The slug matches the last segment of the path
-  const matches = allPages.filter((p) => p.name === slug || p.path.endsWith("/" + slug));
+  const matches = allPages.filter((p) => p.name === slug || p.path === slug || p.path.endsWith("/" + slug));
   if (matches.length === 0) return null;
   if (matches.length === 1) return matches[0].path;
 

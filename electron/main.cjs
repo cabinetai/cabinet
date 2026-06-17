@@ -159,6 +159,29 @@ function resolveManagedDataDir() {
 
 const managedDataDir = resolveManagedDataDir();
 
+// `managedDataDir` is the PARENT data folder; the active vault is a root folder
+// directly beneath it (Obsidian-style). Content (cabinets, agents, assets)
+// lives under the vault, while shared state (.home, .cabinet-state, bookmarks)
+// stays at the parent. The active vault name is persisted by the server in
+// .home/home.json — read it here so asset deep-link resolution targets the
+// same content root the server serves from. Falls back to "Cabinet".
+const DEFAULT_VAULT_NAME = "Cabinet";
+
+function resolveContentDir() {
+  try {
+    const homePath = path.join(managedDataDir, ".home", "home.json");
+    const raw = fs.readFileSync(homePath, "utf8");
+    const parsed = JSON.parse(raw);
+    const name =
+      parsed && typeof parsed.activeVault === "string" && parsed.activeVault.trim()
+        ? parsed.activeVault.trim()
+        : DEFAULT_VAULT_NAME;
+    return path.join(managedDataDir, name);
+  } catch {
+    return path.join(managedDataDir, DEFAULT_VAULT_NAME);
+  }
+}
+
 // Diagnostic logging: console capture + crash markers into
 // <dataDir>/.cabinet-state/logs/electron.log (LOGGING_AND_FILE_HISTORY_PRD §3).
 try {
@@ -776,6 +799,21 @@ ipcMain.handle("cabinet:uninstall-app", () => {
   return macosUninstallApp();
 });
 
+// Restart the whole desktop app. Switching the active vault changes the
+// content root that the embedded Next server resolves at boot (DATA_DIR is a
+// load-time constant), so the only safe way to rebind it is a full relaunch —
+// this mirrors how Obsidian reloads when you open a different vault. The new
+// process re-reads `.home/home.json` `activeVault` on start.
+ipcMain.handle("cabinet:relaunch", () => {
+  try {
+    app.relaunch();
+    app.exit(0);
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) };
+  }
+});
+
 // OS keyboard / input language for first-run locale auto-detection.
 // getPreferredSystemLanguages() reflects the user's macOS/Windows language &
 // keyboard ordering; getLocale()/getSystemLocale() are conservative fallbacks.
@@ -837,7 +875,7 @@ function resolveAssetFsPath(value) {
     const decodedPath = decodePathPart(encodedPath);
     return {
       ext: path.extname(decodedPath).toLowerCase(),
-      fsPath: path.join(managedDataDir, ...encodedPath.split("/").map((entry) => decodePathPart(entry))),
+      fsPath: path.join(resolveContentDir(), ...encodedPath.split("/").map((entry) => decodePathPart(entry))),
     };
   } catch {
     return null;
@@ -877,7 +915,7 @@ function resolveBrowserTarget(value) {
     const decodedSuffix = decodePathPart(suffixPathOnly);
     const ext = path.extname(decodedSuffix).toLowerCase();
     const fsPath = path.join(
-      managedDataDir,
+      resolveContentDir(),
       ...suffixPathOnly.split("/").map((segment) => decodePathPart(segment))
     );
     const fileUrl = pathToFileURL(fsPath).toString();

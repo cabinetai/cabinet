@@ -56,6 +56,14 @@ export function isElectronRuntime(): boolean {
 /** Path to the project-root config file that persists settings like dataDir. */
 export const INSTALL_CONFIG_PATH = path.join(PROJECT_ROOT, ".cabinet-install.json");
 
+/**
+ * Name of the vault used when none is configured yet (fresh install) and the
+ * target the one-time migration moves loose root content into. A "vault" is a
+ * root cabinet: a named directory directly under the data folder. The active
+ * vault's directory is the content root (see `getManagedDataDir`).
+ */
+export const DEFAULT_VAULT_NAME = "Cabinet";
+
 function readPersistedDataDir(): string | null {
   try {
     const raw = fs.readFileSync(INSTALL_CONFIG_PATH, "utf-8");
@@ -67,7 +75,13 @@ function readPersistedDataDir(): string | null {
   }
 }
 
-export function getManagedDataDir(): string {
+/**
+ * The shared data folder: the parent that holds every vault plus the state
+ * that is shared across vaults (`bookmarks.json`, `.home/`, `.cabinet-state/`,
+ * backups). This is the directory historically returned as DATA_DIR; the
+ * content root now lives one level deeper, inside the active vault.
+ */
+export function getManagedDataParentDir(): string {
   // 1. Env var takes highest priority
   const configured = process.env.CABINET_DATA_DIR?.trim();
   if (configured) {
@@ -88,8 +102,43 @@ export function getManagedDataDir(): string {
   return path.join(PROJECT_ROOT, "data");
 }
 
+let cachedActiveVault: string | null = null;
+
+/**
+ * Name of the active vault (root cabinet) for this process. Read synchronously
+ * from `<dataParent>/.home/home.json` so it can seed the load-time DATA_DIR
+ * const, and cached for the process lifetime — switching the active vault
+ * rewrites home.json and restarts the server (Obsidian-style), so a stale
+ * cache can never outlive a switch.
+ */
+export function getActiveVaultName(): string {
+  if (cachedActiveVault) return cachedActiveVault;
+  let resolved = DEFAULT_VAULT_NAME;
+  try {
+    const homePath = path.join(getManagedDataParentDir(), ".home", "home.json");
+    const parsed = JSON.parse(fs.readFileSync(homePath, "utf-8"));
+    const name =
+      typeof parsed?.activeVault === "string" ? parsed.activeVault.trim() : "";
+    if (name) resolved = name;
+  } catch {
+    // no config yet → default vault
+  }
+  cachedActiveVault = resolved;
+  return resolved;
+}
+
+/**
+ * Content root for the active vault: `<dataParent>/<activeVault>`. Exported as
+ * DATA_DIR by path-utils, so the entire content/cabinet/agents tree is scoped
+ * to the active vault with no per-call-site changes.
+ */
+export function getManagedDataDir(): string {
+  return path.join(getManagedDataParentDir(), getActiveVaultName());
+}
+
 function getRuntimePortsPath(): string {
-  return path.join(getManagedDataDir(), ".cabinet-state", "runtime-ports.json");
+  // Runtime ports are a single-server, vault-independent concern → shared dir.
+  return path.join(getManagedDataParentDir(), ".cabinet-state", "runtime-ports.json");
 }
 
 function readRuntimePorts(): RuntimePortsState {
