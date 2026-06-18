@@ -79,9 +79,9 @@ async function buildHeartbeatContext(slug: string, cabinetPath?: string): Promis
 
   let focusContext = "";
   for (const focusPath of persona.focus) {
-    const indexPath = path.join(DATA_DIR, focusPath, "index.md");
-    if (await fileExists(indexPath)) {
-      const content = await readFileContent(indexPath);
+    const mdPath = path.join(DATA_DIR, `${focusPath}.md`);
+    if (await fileExists(mdPath)) {
+      const content = await readFileContent(mdPath);
       focusContext += `\n### ${focusPath}\n${content.slice(0, 500)}...\n`;
     }
   }
@@ -333,7 +333,7 @@ async function processHeartbeatOutput(
   const timestamp = new Date().toISOString();
   await recordHeartbeat({ agentSlug: slug, timestamp, duration, status, summary: output.slice(0, 500), cabinetPath });
 
-  // Auto-generate workspace index
+  // Auto-generate workspace metadata
   try {
     const fs = await import("fs/promises");
     const agentsDir = cabinetPath ? path.join(DATA_DIR, cabinetPath, ".agents") : path.join(DATA_DIR, ".agents");
@@ -341,13 +341,13 @@ async function processHeartbeatOutput(
     const stats = await fs.stat(wsDir).catch(() => null);
     if (stats?.isDirectory()) {
       const entries = await fs.readdir(wsDir, { withFileTypes: true });
-      const files = entries.filter((e) => !e.name.startsWith(".") && e.name !== "index.md");
+      const files = entries.filter((e) => !e.name.startsWith(".") && e.name !== "workspace.md");
       if (files.length > 0) {
-        const indexPath = path.join(wsDir, "index.md");
-        const exists = await fs.stat(indexPath).catch(() => null);
+        const wsPath = path.join(wsDir, "workspace.md");
+        const exists = await fs.stat(wsPath).catch(() => null);
         if (!exists) {
           const fileList = files.map((f) => f.isDirectory() ? `- [${f.name}/](./${f.name}/)` : `- [${f.name}](./${f.name})`).join("\n");
-          await fs.writeFile(indexPath, `---\ntitle: "${persona.name} — Workspace"\nmodified: "${timestamp}"\n---\n\n# ${persona.name} Workspace\n\n## Files\n${fileList}\n`, "utf-8");
+          await fs.writeFile(wsPath, `---\ntitle: "${persona.name} — Workspace"\nmodified: "${timestamp}"\n---\n\n# ${persona.name} Workspace\n\n## Files\n${fileList}\n`, "utf-8");
         }
       }
     }

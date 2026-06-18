@@ -16,7 +16,7 @@ import { blankOffice, type BlankOfficeKind } from "@/lib/storage/office-template
 
 export const dynamic = "force-dynamic";
 
-// Types that become a *page* (directory + index.md) rather than a flat file.
+// Types that become a *page* (standalone .md file) rather than a flat file.
 const PAGE_TYPES = new Set(["markdown", "gdoc", "gsheet", "gslides"]);
 const GOOGLE_KIND: Record<string, "docs" | "sheets" | "slides"> = {
   gdoc: "docs",
@@ -88,7 +88,8 @@ export async function POST(req: NextRequest) {
       }
       const virtualPath = parentPath ? `${parentPath}/${slug}` : slug;
       const resolved = resolveContentPath(virtualPath);
-      if (await fileExists(path.join(resolved, "index.md"))) {
+      const mdPath = `${resolved}.md`;
+      if (await fileExists(mdPath)) {
         return NextResponse.json(
           { error: `A page named "${slug}" already exists here.` },
           { status: 409 }
@@ -98,23 +99,22 @@ export async function POST(req: NextRequest) {
       if (type === "markdown") {
         await createPage(virtualPath, rawName);
       } else {
-        // Google embed page: write index.md with google: frontmatter.
         const kind = GOOGLE_KIND[type];
         const url = (body.googleUrl || "").trim();
-        await ensureDirectory(resolved);
-        const now = new Date().toISOString();
         const fm = {
           title: rawName,
-          created: now,
-          modified: now,
+          created: new Date().toISOString(),
+          modified: new Date().toISOString(),
           tags: [] as string[],
           google: { kind, ...(url ? { url } : { url: "" }) },
         };
         const content = url
           ? `\n# ${rawName}\n`
           : `\n# ${rawName}\n\n> Paste a shareable Google link in this page's settings to embed it.\n`;
+        const mdPath = `${resolved}.md`;
+        await ensureDirectory(path.dirname(mdPath));
         await writeFileContent(
-          path.join(resolved, "index.md"),
+          mdPath,
           matter.stringify(content, fm)
         );
       }
