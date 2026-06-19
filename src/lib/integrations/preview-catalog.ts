@@ -14,7 +14,7 @@
  * brand marks under /public/integrations.
  */
 
-import { MCP_CATALOG } from "@/lib/agents/mcp-catalog";
+import { MCP_CATALOG, type CatalogSetupStep } from "@/lib/agents/mcp-catalog";
 
 export type IntegrationCategory =
   | "communication"
@@ -40,8 +40,20 @@ export interface IntegrationItem {
   brand: string;
   /** false → rendered dimmed as "coming soon". */
   implemented: boolean;
+  /**
+   * Cabinet-native integration: configured by an in-app UI (the detail page
+   * renders a custom panel), NOT an MCP/OAuth connector. Always treated as
+   * available and opens itself (no suite redirect, no connect gate).
+   */
+  native?: boolean;
   /** Shown on the detail page: concrete agent capabilities. */
   actions: string[];
+  /**
+   * Tutorial steps for the detail page. MCP connectors get these from the MCP
+   * catalog; native integrations (no catalog entry) carry them here so the
+   * detail page can still show a full setup guide.
+   */
+  setupSteps?: CatalogSetupStep[];
   /**
    * Sub-product that connects through a suite's single OAuth (e.g. Gmail →
    * google-workspace, Teams → microsoft-365). Opening the card opens the suite.
@@ -232,7 +244,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     blurb: "Triage, search, and draft replies to email.",
     brand: "#ea4335",
     implemented: false,
-    actions: ["Search inbox", "Summarise threads", "Draft replies"],
+    actions: ["Search inbox", "Summarise threads", "Send & reply (with approval)"],
   },
 
   // ── Files & Storage ─────────────────────────────────────────────
@@ -244,7 +256,27 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     blurb: "Browse, read, and reference Drive files as context.",
     brand: "#1fa463",
     implemented: false,
+    native: true,
     actions: ["Search files", "Read docs & sheets", "Use as agent context"],
+    setupSteps: [
+      {
+        title: "Install Google Drive for Desktop",
+        body: "Download Google Drive for Desktop for your OS (macOS or Windows) and sign in. It mounts your Drive as a local folder Cabinet can read — no OAuth or Google Cloud setup needed.",
+        href: "https://support.google.com/a/users/answer/13022292?hl=en",
+      },
+      {
+        title: "Make folders available offline (recommended)",
+        body: "In Drive for Desktop, right-click the folders you want and choose \"Available offline\" so the files are on disk. Streaming-only files still appear but open more slowly.",
+      },
+      {
+        title: "Pick folders to show in Cabinet",
+        body: "In the panel on the right, choose which Drive folders to mount. They appear in the sidebar under a \"Google Drive\" section.",
+      },
+      {
+        title: "Open files in Cabinet",
+        body: "Click any mounted file to view it inline — PDFs, images, Office docs, and native Google Docs/Sheets/Slides all render in Cabinet's viewers.",
+      },
+    ],
   },
   {
     id: "onedrive",
@@ -590,7 +622,9 @@ const CONNECTABLE = new Set(MCP_CATALOG.map((e) => e.id));
 const COVERED_BY: Record<string, string> = {
   gmail: "google-workspace",
   "google-calendar": "google-workspace",
-  "google-drive": "google-workspace",
+  // NOTE: "google-drive" is intentionally NOT covered by google-workspace —
+  // it's a Cabinet-native (Drive for Desktop) integration with its own UI,
+  // distinct from the future OAuth-based Workspace MCP. See `native` above.
   "google-meet": "google-workspace",
   "microsoft-teams": "microsoft-365",
   onedrive: "microsoft-365",
@@ -602,7 +636,13 @@ const COVERED_BY: Record<string, string> = {
 // shown grayed-out + unclickable with a "Soon" badge, even if it already has
 // an MCP catalog entry. Widen this set (or drop it back to the CONNECTABLE
 // derivation below) as connectors are ready to ship.
-const LAUNCHED = new Set(["telegram", "discord", "microsoft-365"]);
+const LAUNCHED = new Set([
+  "telegram",
+  "discord",
+  "google-drive",
+  "gmail",
+  "microsoft-365",
+]);
 
 export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) => {
   const coveredBy = COVERED_BY[i.id];
@@ -611,7 +651,9 @@ export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) 
   return {
     ...i,
     coveredBy,
-    implemented: connectable && LAUNCHED.has(i.id),
+    // Native integrations are always available (in-app UI). MCP/OAuth connectors
+    // are gated by the launch list until their connect flow is ready.
+    implemented: i.native ? true : connectable && LAUNCHED.has(i.id),
   };
 });
 

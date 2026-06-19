@@ -4,7 +4,9 @@ import type {
   LaunchTaskAction,
   ScheduleJobAction,
   ScheduleTaskAction,
+  SendEmailAction,
 } from "@/types/actions";
+import { sendEmail } from "@/lib/gmail/smtp-client";
 import type { ConversationMeta } from "@/types/conversations";
 import type { JobConfig } from "@/types/jobs";
 import { readPersona, type AgentPersona } from "./persona-manager";
@@ -159,6 +161,8 @@ export async function dispatchApprovedActions(
         const out = await dispatchScheduleTask(meta, item);
         results.push(out);
         if (out.status === "dispatched" && out.jobId) scheduledAny = true;
+      } else if (item.action.type === "SEND_EMAIL") {
+        results.push(await dispatchSendEmail(item));
       }
     } catch (err) {
       const reason = err instanceof Error ? err.message : "dispatch failed";
@@ -178,6 +182,29 @@ export async function dispatchApprovedActions(
   }
 
   return results;
+}
+
+/**
+ * Send an approved email over Gmail SMTP. Reaches this point only after the
+ * user explicitly approved the SEND_EMAIL action in the pending-actions panel
+ * (the agent can never send silently). Credential lookup and the actual
+ * dispatch live in the SMTP client; a missing connection surfaces as a
+ * "Gmail not connected" rejection via the caller's try/catch.
+ */
+async function dispatchSendEmail(item: DispatchInput): Promise<DispatchedAction> {
+  const action = item.action as SendEmailAction;
+  await sendEmail({
+    to: action.to,
+    cc: action.cc,
+    subject: action.subject,
+    body: action.body,
+    replyToMessageId: action.replyToMessageId,
+  });
+  return makeDispatched({
+    id: item.id,
+    action,
+    status: "dispatched",
+  });
 }
 
 async function dispatchLaunchTask(

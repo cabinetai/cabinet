@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Header } from "@/components/layout/header";
 import { KBEditor } from "@/components/editor/editor";
@@ -157,6 +158,7 @@ export function AppShell() {
   const loadTree = useTreeStore((s) => s.loadTree);
   const nodes = useTreeStore((s) => s.nodes);
   const selectedPath = useTreeStore((s) => s.selectedPath);
+  const driveNode = useTreeStore((s) => s.driveNode);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const terminalOpen = useAppStore((s) => s.terminalOpen);
@@ -695,7 +697,23 @@ export function AppShell() {
     setUpdateDialogOpen(false);
   }
 
-  const selectedNode = selectedPath ? findNodeByPath(nodes, selectedPath) : null;
+  const driveLoading = useTreeStore((s) => s.driveLoading);
+  const setDriveLoading = useTreeStore((s) => s.setDriveLoading);
+
+  // Clear the Drive loading state after a short delay once the skeleton has
+  // rendered — gives the viewer time to mount and start its own fetch/render.
+  // driveNode?.path is included so selecting a different file while a timer is
+  // already running cancels the old timer and starts a fresh one for the new file.
+  const driveNodePath = driveNode?.path;
+  useEffect(() => {
+    if (!driveLoading) return;
+    const t = window.setTimeout(() => setDriveLoading(false), 400);
+    return () => window.clearTimeout(t);
+  }, [driveLoading, driveNodePath, setDriveLoading]);
+
+  const localNode = selectedPath ? findNodeByPath(nodes, selectedPath) : null;
+  // Fall back to the Drive node when the selected path is not in the local tree.
+  const selectedNode = localNode ?? (driveNode?.path === selectedPath ? driveNode : null);
   // For paths not in the tree (e.g. .agents/ workspace files, or artifact
   // paths opened from a conversation panel), infer type from extension so
   // we route to the right viewer instead of treating everything as markdown.
@@ -857,6 +875,23 @@ export function AppShell() {
       );
     }
 
+    // Google Drive file loading skeleton
+    if (driveLoading && driveNode) {
+      return (
+        <div className="flex flex-1 flex-col">
+          <div className="flex shrink-0 items-center gap-3 border-b border-border/70 bg-background px-4 py-2 md:h-12">
+            <div className="h-3 w-3 rounded-full bg-muted animate-pulse" />
+            <div className="h-3 w-32 rounded bg-muted animate-pulse" />
+            <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+          </div>
+          <div className="flex flex-1 items-center justify-center gap-3 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading from Google Drive…
+          </div>
+        </div>
+      );
+    }
+
     // Page-based views (when a KB page is selected)
     // A cabinet's own markdown can be opened as a data page, so only render
     // the dashboard when navigation explicitly targets the cabinet section.
@@ -883,12 +918,7 @@ export function AppShell() {
     if (isPdf && (selectedNode || selectedPath)) {
       const pdfPath = selectedNode?.path || selectedPath!;
       const pdfTitle = selectedNode?.frontmatter?.title || selectedNode?.name || pdfPath.split("/").pop() || "PDF";
-      return (
-        <PdfViewer
-          path={pdfPath}
-          title={pdfTitle}
-        />
-      );
+      return <PdfViewer path={pdfPath} title={pdfTitle} />;
     }
     if (isWebsite && selectedNode) {
       return (

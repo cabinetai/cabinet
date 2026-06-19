@@ -36,6 +36,9 @@ interface RuntimeOverride {
 }
 
 function actionHeadline(action: AgentAction): string {
+  if (action.type === "SEND_EMAIL") {
+    return `Send email · ${action.subject} · ${action.to.join(", ")}`;
+  }
   if (action.type === "SCHEDULE_JOB") {
     return `${action.agent} · ${action.name} · ${action.schedule}`;
   }
@@ -53,9 +56,11 @@ function mergedRuntime(
   action: AgentAction,
   override: RuntimeOverride | undefined
 ): RuntimeOverride {
+  const actionModel = action.type !== "SEND_EMAIL" ? action.model : undefined;
+  const actionEffort = action.type !== "SEND_EMAIL" ? action.effort : undefined;
   return {
-    model: override?.model ?? action.model,
-    effort: override?.effort ?? action.effort,
+    model: override?.model ?? actionModel,
+    effort: override?.effort ?? actionEffort,
   };
 }
 
@@ -313,9 +318,9 @@ export function PendingActionsPanel({
       const over = overrides[id];
       if (!over) continue;
       const patch: Partial<AgentAction> = {};
-      if (over.model) patch.model = over.model;
-      if (over.effort) patch.effort = over.effort;
-      if (patch.model || patch.effort) edits[id] = patch;
+      if (over.model) (patch as Record<string, unknown>).model = over.model;
+      if (over.effort) (patch as Record<string, unknown>).effort = over.effort;
+      if ((patch as Record<string, unknown>).model || (patch as Record<string, unknown>).effort) edits[id] = patch;
     }
     return Object.keys(edits).length > 0 ? edits : undefined;
   };
@@ -514,7 +519,7 @@ export function PendingActionsPanel({
                     {actionHeadline(item.action)}
                   </div>
                   <div className="mt-0.5 whitespace-pre-wrap break-words text-[11.5px] text-foreground/70">
-                    {item.action.prompt}
+                    {item.action.type !== "SEND_EMAIL" ? item.action.prompt : item.action.body}
                   </div>
                   {item.warnings.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">
@@ -583,7 +588,7 @@ export function PendingActionsPanel({
                   {entry.status}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-foreground/80">
-                  {entry.action.type} → {entry.action.agent}
+                  {entry.action.type}{entry.action.type !== "SEND_EMAIL" ? ` → ${entry.action.agent}` : ` → ${entry.action.to.join(", ")}`}
                 </span>
                 {entry.conversationId && (
                   <a

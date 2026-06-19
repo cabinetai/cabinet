@@ -3,6 +3,8 @@ import path from "path";
 import { resolveContentPath } from "@/lib/storage/path-utils";
 import { fileExists } from "@/lib/storage/fs-operations";
 import { autoCommit } from "@/lib/git/git-service";
+import { getDb } from "@/lib/db";
+import { decodeDrivePath } from "@/lib/google-drive/paths";
 import fs from "fs/promises";
 
 const MIME_TYPES: Record<string, string> = {
@@ -47,6 +49,101 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
     const { path: segments } = await params;
     const virtualPath = segments.join("/");
+
+    // Google Drive file: path starts with "gdrive:" — validate against mounts and serve directly.
+    const driveAbsPath = decodeDrivePath(virtualPath);
+    if (driveAbsPath !== null) {
+      const normalized = path.normalize(driveAbsPath);
+      if (normalized.includes("..")) {
+        return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      }
+
+      // Resolve symlinks before the mount check so a symlink inside a mount
+      // cannot point outside it (e.g. /mount/link -> /etc/passwd).
+      let realNormalized: string;
+      try {
+        realNormalized = await fs.realpath(normalized);
+      } catch {
+        return NextResponse.json({ error: "File not found" }, { status: 404 });
+      }
+
+      const db = getDb();
+      const mounts = db.prepare("SELECT abs_path FROM google_drive_mounts WHERE enabled = 1").all() as { abs_path: string }[];
+
+      // Resolve each mount's real path for an apples-to-apples comparison.
+      const mountRealpaths = await Promise.all(
+        mounts.map(async (m) => {
+          try { return await fs.realpath(m.abs_path); } catch { return m.abs_path; }
+        })
+      );
+      const inMount = mountRealpaths.some(
+        (mp) => realNormalized.startsWith(mp + path.sep) || realNormalized === mp
+      );
+      if (!inMount) {
+        return NextResponse.json({ error: "Path is not within a mounted folder" }, { status: 403 });
+      }
+
+      try {
+        const stat = await fs.stat(realNormalized);
+        const totalSize = stat.size;
+        const ext = path.extname(realNormalized).toLowerCase();
+        const contentType = MIME_TYPES[ext] || "application/octet-stream";
+
+        const rangeHeader = req.headers.get("range");
+        if (rangeHeader) {
+          const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
+          if (match) {
+            const startRaw = match[1];
+            const endRaw = match[2];
+            const start = startRaw === "" ? Math.max(0, totalSize - Number(endRaw || 0)) : Number(startRaw);
+            const end = startRaw === "" ? totalSize - 1 : endRaw === "" ? totalSize - 1 : Number(endRaw);
+            if (
+              Number.isFinite(start) &&
+              Number.isFinite(end) &&
+              start >= 0 &&
+              end < totalSize &&
+              start <= end
+            ) {
+              const fh = await fs.open(realNormalized, "r");
+              try {
+                const size = end - start + 1;
+                const buf = Buffer.alloc(size);
+                await fh.read(buf, 0, size, start);
+                return new NextResponse(buf, {
+                  status: 206,
+                  headers: {
+                    "Content-Type": contentType,
+                    "Content-Length": String(size),
+                    "Content-Range": `bytes ${start}-${end}/${totalSize}`,
+                    "Accept-Ranges": "bytes",
+                    "Cache-Control": "private, max-age=60",
+                  },
+                });
+              } finally {
+                await fh.close();
+              }
+            }
+            return new NextResponse(null, {
+              status: 416,
+              headers: { "Content-Range": `bytes */${totalSize}` },
+            });
+          }
+        }
+
+        const buffer = await fs.readFile(realNormalized);
+        return new NextResponse(buffer, {
+          headers: {
+            "Content-Type": contentType,
+            "Content-Length": String(totalSize),
+            "Accept-Ranges": "bytes",
+            "Cache-Control": "private, max-age=60",
+          },
+        });
+      } catch {
+        return NextResponse.json({ error: "File not found" }, { status: 404 });
+      }
+    }
+
     const resolved = resolveContentPath(virtualPath);
 
     if (!(await fileExists(resolved))) {

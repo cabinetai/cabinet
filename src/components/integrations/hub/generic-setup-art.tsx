@@ -7,6 +7,7 @@
 import type { ReactNode } from "react";
 import { DiscordStepArt } from "@/components/integrations/hub/discord-setup-art";
 import { TelegramStepArt } from "@/components/integrations/hub/telegram-setup-art";
+import { GoogleDriveStepArt } from "@/components/integrations/hub/google-drive-setup-art";
 import {
   Avatar,
   BtnMock,
@@ -46,6 +47,7 @@ export function stepArtFor(opts: {
 
   if (id === "discord") return (i) => <DiscordStepArt step={i} brand={brand} />;
   if (id === "telegram") return (i) => <TelegramStepArt step={i} brand={brand} />;
+  if (id === "google-drive") return (i) => <GoogleDriveStepArt step={i} brand={brand} />;
   if (id === "microsoft-365") return (i) => <MicrosoftArt step={i} brand={brand} />;
   if (id === "shopify") return () => <ShopifyArt brand={brand} />;
   if (id === "figma") return () => <FigmaArt brand={brand} />;

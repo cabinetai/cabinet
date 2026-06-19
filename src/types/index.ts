@@ -41,8 +41,17 @@ export interface TreeNode {
     | "unknown";
   hasRepo?: boolean;
   isLinked?: boolean;
+  /** "google-drive" when the node comes from a Drive for Desktop mount. */
+  source?: "google-drive";
   frontmatter?: Partial<FrontMatter>;
   children?: TreeNode[];
+}
+
+export interface GoogleDriveSection {
+  mountId: string;
+  folderName: string;
+  absPath: string;
+  children: TreeNode[];
 }
 
 export interface PageData {

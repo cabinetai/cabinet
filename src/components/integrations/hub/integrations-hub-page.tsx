@@ -144,7 +144,16 @@ export function IntegrationsHubPage() {
             items={filtered}
             connectedIds={connectedIds}
             onOpen={(id) =>
-              setSection({ type: "integrations", slug: connectTargetFor(id) })
+              setSection({
+                type: "integrations",
+                // Google Drive (Drive-for-Desktop) and Gmail (IMAP) each have
+                // their own detail page rather than folding into the Google
+                // Workspace OAuth suite.
+                slug:
+                  id === "google-drive" || id === "gmail"
+                    ? id
+                    : connectTargetFor(id),
+              })
             }
           />
         )}

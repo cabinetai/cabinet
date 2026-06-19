@@ -21,6 +21,7 @@ test("dispatch epilogue contains no concretely-dispatchable example", async () =
   // echoes it verbatim, computeWarnings flags unknown_agent and blocks it.
   const { actions } = parseAgentActions(epilogue);
   for (const action of actions) {
+    if (action.type === "SEND_EMAIL") continue;
     assert.ok(
       action.agent.startsWith("<"),
       `epilogue example resolved to a real-looking agent slug: ${action.agent}`

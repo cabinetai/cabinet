@@ -177,11 +177,13 @@ function ActionsBlock({ block }: { block: Extract<Block, { type: "actions" }> })
           ACTION_BADGE_COLORS[action.type] ||
           "bg-muted/30 text-muted-foreground border-border";
         const headline =
-          action.type === "SCHEDULE_JOB"
-            ? `${action.agent} · ${action.name} · ${action.schedule}`
-            : action.type === "SCHEDULE_TASK"
-              ? `${action.agent} · ${action.title} · ${action.when}`
-              : `${action.agent} · ${action.title}`;
+          action.type === "SEND_EMAIL"
+            ? `${action.subject} · ${action.to.join(", ")}`
+            : action.type === "SCHEDULE_JOB"
+              ? `${action.agent} · ${action.name} · ${action.schedule}`
+              : action.type === "SCHEDULE_TASK"
+                ? `${action.agent} · ${action.title} · ${action.when}`
+                : `${action.agent} · ${action.title}`;
         return (
           <div key={index} className="flex items-start gap-2">
             <span
@@ -200,7 +202,7 @@ function ActionsBlock({ block }: { block: Extract<Block, { type: "actions" }> })
                 dir="auto"
                 className="mt-0.5 whitespace-pre-wrap break-words text-[11px] text-foreground/70 [unicode-bidi:plaintext]"
               >
-                {action.prompt}
+                {action.type !== "SEND_EMAIL" ? action.prompt : action.body}
               </div>
             </div>
           </div>

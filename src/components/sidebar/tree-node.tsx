@@ -39,6 +39,7 @@ import {
   Sheet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { decodeDrivePath } from "@/lib/google-drive/paths";
 import type { TreeNode as TreeNodeType } from "@/types";
 import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
@@ -199,15 +200,40 @@ function TreeNodeImpl({
   // Shared action bodies — referenced by both the context menu and the
   // selected-row keyboard shortcuts so the two stay in lockstep.
   const doCopyRelative = useCallback(() => {
+    // For Drive nodes the virtual path is meaningless to the user — copy the
+    // filename instead (same as what "Copy Full Path" gives minus the directory).
+    const driveAbsPath = decodeDrivePath(node.path);
+    if (driveAbsPath !== null) {
+      void navigator.clipboard.writeText(driveAbsPath.split(/[/\\]/).pop() ?? driveAbsPath);
+      return;
+    }
     void navigator.clipboard.writeText(node.path);
   }, [node.path]);
 
   const doCopyFull = useCallback(async () => {
+    // Drive nodes encode the absolute path directly — decode it instead of
+    // prepending the local data directory.
+    const driveAbsPath = decodeDrivePath(node.path);
+    if (driveAbsPath !== null) {
+      void navigator.clipboard.writeText(driveAbsPath);
+      return;
+    }
     const dir = await getDataDir();
     void navigator.clipboard.writeText(`${dir}/${node.path}`);
   }, [node.path]);
 
   const doOpenInFinder = useCallback(() => {
+    // Drive nodes: reveal via the Drive-specific route which validates against
+    // mounts and uses the correct reveal command per platform
+    // (open -R on macOS, explorer /select, on Windows, xdg-open parent on Linux).
+    if (decodeDrivePath(node.path) !== null) {
+      void fetch("/api/google-drive/reveal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: node.path }),
+      });
+      return;
+    }
     void fetch("/api/system/open-data-dir", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

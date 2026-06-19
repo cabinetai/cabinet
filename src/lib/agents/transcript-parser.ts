@@ -23,7 +23,7 @@ export type DiffLine = {
 
 const DIFF_START = /^diff --git /;
 const STRUCTURED_RE =
-  /^(SUMMARY|CONTEXT|CONTEXT_UPDATE|ARTIFACT|DECISION|LEARNING|GOAL_UPDATE|MESSAGE_TO|LAUNCH_TASK|SCHEDULE_JOB|SCHEDULE_TASK)\s*(?:\[([^\]]*)\])?:\s*(.*)$/;
+  /^(SUMMARY|CONTEXT|CONTEXT_UPDATE|ARTIFACT|DECISION|LEARNING|GOAL_UPDATE|MESSAGE_TO|LAUNCH_TASK|SCHEDULE_JOB|SCHEDULE_TASK|SEND_EMAIL)\s*(?:\[([^\]]*)\])?:\s*(.*)$/;
 const TOKENS_RE = /^[\d,]+$/;
 
 function preprocess(text: string): string {
@@ -144,7 +144,7 @@ function parseCodeBlock(
 }
 
 const STRUCTURED_LABELS =
-  "SUMMARY|CONTEXT|CONTEXT_UPDATE|ARTIFACT|DECISION|LEARNING|GOAL_UPDATE|MESSAGE_TO|LAUNCH_TASK|SCHEDULE_JOB|SCHEDULE_TASK";
+  "SUMMARY|CONTEXT|CONTEXT_UPDATE|ARTIFACT|DECISION|LEARNING|GOAL_UPDATE|MESSAGE_TO|LAUNCH_TASK|SCHEDULE_JOB|SCHEDULE_TASK|SEND_EMAIL";
 // A label token at line start or after whitespace. No `:\s+` requirement —
 // agents (esp. with RTL/CJK values) emit `SUMMARY:value` with no space,
 // which must still be recognized as a meta field instead of leaking into

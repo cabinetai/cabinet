@@ -22,6 +22,11 @@ export function computeWarnings(
 ): ActionWarning[] {
   const warnings: ActionWarning[] = [];
 
+  // SEND_EMAIL does not route through agent dispatch — skip agent-specific checks.
+  if (action.type === "SEND_EMAIL") {
+    return warnings;
+  }
+
   if (!dispatcher || !personaCanDispatch(dispatcher)) {
     warnings.push({
       code: "persona_cannot_dispatch",

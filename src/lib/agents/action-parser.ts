@@ -4,7 +4,7 @@ import { MAX_ACTIONS_PER_TURN } from "@/types/actions";
 const CABINET_ACTIONS_RE = /```cabinet-actions\s*([\s\S]*?)```/gi;
 const CABINET_BLOCK_RE = /```cabinet\s*([\s\S]*?)```/gi;
 const INLINE_RE =
-  /^(LAUNCH_TASK|SCHEDULE_JOB|SCHEDULE_TASK)\s*:\s*(.+)$/;
+  /^(LAUNCH_TASK|SCHEDULE_JOB|SCHEDULE_TASK|SEND_EMAIL)\s*:\s*(.+)$/;
 
 export interface ParseAgentActionsResult {
   actions: AgentAction[];
@@ -147,6 +147,16 @@ function parseInlineLine(rawLine: string): AgentAction | null {
   const type = match[1] as AgentActionType;
   const parts = splitPipe(match[2]);
 
+  // SEND_EMAIL: to@example.com | Subject line | Body text
+  if (type === "SEND_EMAIL") {
+    if (parts.length < 2) return null;
+    const [toRaw, subject, ...bodyParts] = parts;
+    const to = toRaw.split(",").map((e) => e.trim()).filter(Boolean);
+    const body = bodyParts.join(" | ").trim();
+    if (!to.length || !subject) return null;
+    return { type, to, subject, body };
+  }
+
   if (type === "LAUNCH_TASK") {
     if (parts.length < 3) return null;
     const [agent, title, ...rest] = parts;
@@ -174,6 +184,23 @@ function parseInlineLine(rawLine: string): AgentAction | null {
 function coerceJsonAction(raw: unknown): AgentAction | null {
   if (!isRecord(raw)) return null;
   const type = String(raw.type || "").toUpperCase() as AgentActionType;
+
+  // SEND_EMAIL does not have an agent field — handle before the agent check.
+  if (type === "SEND_EMAIL") {
+    const toRaw = raw.to;
+    const to: string[] = Array.isArray(toRaw)
+      ? toRaw.filter((x): x is string => typeof x === "string")
+      : typeof toRaw === "string" ? toRaw.split(",").map((e) => e.trim()).filter(Boolean) : [];
+    const cc: string[] | undefined = Array.isArray(raw.cc)
+      ? (raw.cc as unknown[]).filter((x): x is string => typeof x === "string")
+      : undefined;
+    const subject = pickString(raw, ["subject", "title"]);
+    const body = pickString(raw, ["body", "content", "text", "message"]);
+    const replyToMessageId = pickString(raw, ["replyToMessageId", "inReplyTo"]) || undefined;
+    if (!to.length || !subject) return null;
+    return { type, to, ...(cc ? { cc } : {}), subject, body, ...(replyToMessageId ? { replyToMessageId } : {}) };
+  }
+
   const agent = pickString(raw, ["agent", "agentSlug", "to", "target"]);
   if (!agent) return null;
 
@@ -230,6 +257,9 @@ function splitPipe(value: string): string[] {
 }
 
 export function fingerprint(action: AgentAction): string {
+  if (action.type === "SEND_EMAIL") {
+    return `SEND_EMAIL:${action.to.join(",")}:${(action.cc ?? []).join(",")}:${action.subject}:${action.body.slice(0, 80)}:${action.replyToMessageId ?? ""}`;
+  }
   const runtime = `${action.providerId ?? ""}:${action.adapterType ?? ""}:${action.model ?? ""}:${action.effort ?? ""}`;
   switch (action.type) {
     case "LAUNCH_TASK":

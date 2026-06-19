@@ -1,7 +1,8 @@
 export type AgentActionType =
   | "LAUNCH_TASK"
   | "SCHEDULE_JOB"
-  | "SCHEDULE_TASK";
+  | "SCHEDULE_TASK"
+  | "SEND_EMAIL";
 
 export interface LaunchTaskAction {
   type: "LAUNCH_TASK";
@@ -38,10 +39,20 @@ export interface ScheduleTaskAction {
   effort?: string;
 }
 
+export interface SendEmailAction {
+  type: "SEND_EMAIL";
+  to: string[];
+  cc?: string[];
+  subject: string;
+  body: string;
+  replyToMessageId?: string;
+}
+
 export type AgentAction =
   | LaunchTaskAction
   | ScheduleJobAction
-  | ScheduleTaskAction;
+  | ScheduleTaskAction
+  | SendEmailAction;
 
 export type ActionWarningCode =
   | "unknown_agent"

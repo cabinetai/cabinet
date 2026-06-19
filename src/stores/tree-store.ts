@@ -16,6 +16,10 @@ export type DragZone = "before" | "into" | "after";
 interface TreeState {
   nodes: TreeNode[];
   selectedPath: string | null;
+  /** The Drive node currently selected, when it's not in the local tree. */
+  driveNode: TreeNode | null;
+  /** True while a Drive file is loading after being clicked. */
+  driveLoading: boolean;
   expandedPaths: Set<string>;
   loading: boolean;
   dragOverPath: string | null;
@@ -30,6 +34,8 @@ interface TreeState {
 
   /** Reload the file tree. Pass `{ fresh: true }` to bypass the server's
    *  short-TTL cache — needed right after an agent task writes files. */
+  setDriveNode: (node: TreeNode | null) => void;
+  setDriveLoading: (loading: boolean) => void;
   loadTree: (opts?: { fresh?: boolean }) => Promise<void>;
   selectPage: (path: string | null) => void;
   /** Expand all ancestor paths, select the leaf, and bump focusTick. */
@@ -107,6 +113,8 @@ function saveCachedTree(nodes: TreeNode[], showHidden: boolean) {
 export const useTreeStore = create<TreeState>((set, get) => ({
   nodes: [],
   selectedPath: null,
+  driveNode: null,
+  driveLoading: false,
   expandedPaths: loadExpandedPaths(),
   loading: false,
   dragOverPath: null,
@@ -115,6 +123,9 @@ export const useTreeStore = create<TreeState>((set, get) => ({
   showHiddenFiles: loadShowHiddenFiles(),
   focusTick: 0,
   recentlyChanged: new Set<string>(),
+
+  setDriveNode: (node) => set({ driveNode: node }),
+  setDriveLoading: (loading) => set({ driveLoading: loading }),
 
   loadTree: async (opts) => {
     const { showHiddenFiles, nodes: existing } = get();

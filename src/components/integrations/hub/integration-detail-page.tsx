@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { showSuccess } from "@/lib/ui/toast";
 import { ConnectPanel } from "@/components/integrations/hub/connect-panel";
+import { GoogleDriveSection } from "@/components/settings/google-drive-section";
+import { GmailSection } from "@/components/settings/gmail-section";
 import { SetupGuide } from "@/components/integrations/hub/setup-guide";
 import { stepArtFor } from "@/components/integrations/hub/generic-setup-art";
 import { getCatalogEntry } from "@/lib/agents/mcp-catalog";
@@ -47,6 +49,9 @@ export function IntegrationDetailPage({
   const agentActions = m365Personal
     ? ["Outlook mail & calendar", "OneDrive files"]
     : item.actions;
+  // MCP connectors get setup steps from the catalog; native integrations carry
+  // their own on the catalog item.
+  const setupSteps = entry?.setupSteps ?? item.setupSteps;
 
   return (
     <div className="h-full overflow-y-auto bg-background">
@@ -141,17 +146,19 @@ export function IntegrationDetailPage({
                 if you need to use your organization&apos;s Azure app registration.
               </p>
             </div>
-          ) : entry?.setupSteps?.length ? (
+          ) : setupSteps?.length ? (
             <SetupGuide
-              steps={entry.setupSteps}
+              steps={setupSteps}
               brand={item.brand}
               art={stepArtFor({
                 id: item.id,
                 label: item.name,
                 brand: item.brand,
-                authBackend: entry.authBackend,
-                transport: entry.transport,
-                hasUrlCredential: !!entry.urlCredentialKey,
+                // Native integrations have no MCP catalog entry; stepArtFor
+                // matches them by id (e.g. google-drive) before these fields.
+                authBackend: entry?.authBackend ?? "",
+                transport: entry?.transport ?? "",
+                hasUrlCredential: !!entry?.urlCredentialKey,
               })}
             />
           ) : null}
@@ -167,7 +174,20 @@ export function IntegrationDetailPage({
 
         {/* Right: config / status panel */}
         <aside>
-          {item.implemented ? (
+          {item.id === "google-drive" ? (
+            // Drive connects via Google Drive for Desktop (folder mounts), not
+            // the generic MCP connect flow. OAuth support is noted as upcoming
+            // inside this section.
+            <div className="rounded-2xl border border-border bg-card/40 p-5">
+              <GoogleDriveSection />
+            </div>
+          ) : item.id === "gmail" ? (
+            // Gmail connects over IMAP with a Google App Password (its own
+            // routes + skill), not the generic MCP connect flow.
+            <div className="rounded-2xl border border-border bg-card/40 p-5">
+              <GmailSection />
+            </div>
+          ) : item.implemented ? (
             <ConnectPanel item={item} msMode={msMode} onMsModeChange={setMsMode} />
           ) : (
             <div className="rounded-2xl border border-dashed border-border bg-card/40 p-5 text-center">

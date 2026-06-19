@@ -48,7 +48,11 @@ import {
   Copy,
   Trash2,
   TriangleAlert,
+  Cloud,
+  RefreshCw,
+  Settings,
 } from "lucide-react";
+import { GoogleDriveTreeSection } from "./google-drive-tree";
 import { cn } from "@/lib/utils";
 import { AgentAvatar, getAgentDisplayName } from "@/components/agents/agent-avatar";
 import { EditAgentIdentityDialog } from "@/components/agents/edit-agent-identity-dialog";
@@ -832,6 +836,15 @@ export function TreeView() {
                     />
                   ))
                 )}
+                {/* Mounted Drive folders flow inline right after the cabinet
+                    files. Rendered inside SidebarSearch so they sit with the
+                    file list rather than below its flex-1 slack (which would
+                    pin them to the bottom when collapsed). stopPropagation keeps
+                    a right-click on a Drive node from also opening the cabinet
+                    context menu. */}
+                <div onContextMenu={(e) => e.stopPropagation()}>
+                  <GoogleDriveTreeSection depth={1} padFn={pad} itemClass={itemClass} />
+                </div>
               </SidebarSearch>
                   </div>
                 </ContextMenuTrigger>
