@@ -49,7 +49,6 @@ import { postMessage } from "./channels-manager";
 import { getGoalState, updateGoal } from "./goal-manager";
 import { startConversationRun } from "./conversation-runner";
 import { reloadDaemonSchedules } from "./daemon-client";
-import { getDaemonUrl, getOrCreateDaemonToken } from "./daemon-auth";
 import {
   defaultAdapterTypeForProvider,
   resolveExecutionProviderId,
@@ -525,7 +524,7 @@ export async function runQuickResponse(
 ## Context
 
 You are responding to a human message in team channel #${channel}.
-Keep your response concise, helpful, and on-topic. Do NOT include any \`\`\`memory blocks — this is a direct conversation, not a heartbeat.
+Keep your response concise, helpful, and on-topic.
 
 ### Your Memory (recent context)
 ${context ? context.slice(-1500) : "(no previous context)"}
@@ -546,58 +545,56 @@ ${humanMessage}
 
 ---
 
-Respond naturally as ${persona.name}. Be concise (1-3 short paragraphs max). Reference specific data, KB pages, or workspace files when relevant. If asked about status or progress, reference your actual goal numbers.`;
+Respond naturally as ${persona.name}. Be concise (1-3 short paragraphs max). Reference specific data, KB pages, or workspace files when relevant. If asked about status or progress, reference your actual goal numbers.
 
-  let response = "";
-  try {
-    const sessionId = `chat-${slug}-${Date.now()}`;
-    const token = await getOrCreateDaemonToken();
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
+IMPORTANT: You may think or check files first, but put ONLY your final reply to the human between <reply> and </reply> tags — no preamble, no tool output, nothing else inside the tags.`;
 
-    await fetch(`${getDaemonUrl()}/sessions`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        id: sessionId,
-        args: ["--dangerously-skip-permissions", "-p", prompt, "--output-format", "text"],
-      }),
-    });
+  // Run through the structured conversation-runner — the same path heartbeats
+  // use — instead of a raw PTY/TUI session (which never exits and only yields
+  // terminal escape codes). It produces clean text and tracks completion. The
+  // reply is posted from onComplete; this returns once the run is kicked off
+  // (the route calls it fire-and-forget).
+  const cwd = cabinetPath ? path.join(DATA_DIR, cabinetPath) : DATA_DIR;
+  const providerId = resolveExecutionProviderId({
+    adapterType: persona.adapterType,
+    providerId: persona.provider,
+  });
 
-    const deadline = Date.now() + 120_000; // 2 min timeout
-    while (Date.now() < deadline) {
-      await new Promise((r) => setTimeout(r, 2000));
-      try {
-        const res = await fetch(`${getDaemonUrl()}/session/${sessionId}/output`, {
-          headers,
-        });
-        if (res.ok) {
-          const data = await res.json() as { status: string; output: string };
-          if (data.status === "completed") { response = data.output; break; }
-        }
-      } catch { /* retry */ }
-    }
-  } catch (err) {
-    response = err instanceof Error
-      ? `Sorry, I encountered an error: ${err.message}`
-      : "Sorry, I encountered an error processing your request.";
-  }
+  await startConversationRun({
+    agentSlug: slug,
+    title: `${persona.name} · reply in #${channel}`,
+    trigger: "manual",
+    prompt,
+    adapterType: persona.adapterType || defaultAdapterTypeForProvider(providerId),
+    adapterConfig: persona.adapterConfig,
+    providerId,
+    cabinetPath,
+    cwd,
+    timeoutSeconds: 180,
+    onComplete: async (completion) => {
+      // The agent wraps its final answer in <reply>…</reply>; extract just that
+      // so the channel shows clean prose, not the run's thinking/tool output.
+      // Fall back to the whole output (minus the ```cabinet block) if absent.
+      const raw = completion.output || "";
+      const tagged = [...raw.matchAll(/<reply>([\s\S]*?)<\/reply>/gi)].at(-1);
+      const reply =
+        (tagged ? tagged[1] : raw.replace(/```cabinet[\s\S]*?```/gi, "")).trim() ||
+        `_(${persona.name} couldn't reply just now. Try again in a moment.)_`;
+      await postMessage(
+        {
+          channel,
+          agent: slug,
+          emoji: persona.emoji,
+          displayName: persona.name,
+          type: "message",
+          content: reply,
+          mentions: [],
+          kbRefs: [],
+        },
+        cabinetPath,
+      );
+    },
+  });
 
-  // Post the response to the channel
-  if (response) {
-    await postMessage({
-      channel,
-      agent: slug,
-      emoji: persona.emoji,
-      displayName: persona.name,
-      type: "message",
-      content: response,
-      mentions: [],
-      kbRefs: [],
-    }, cabinetPath);
-  }
-
-  return response;
+  return "";
 }
