@@ -8,18 +8,7 @@ import {
 import { sendMessage, listPersonas } from "@/lib/agents/persona-manager";
 import { sendNotification, shouldNotify } from "@/lib/agents/notification-service";
 import { runQuickResponse } from "@/lib/agents/heartbeat";
-
-// Track which agents are currently responding (for typing indicator)
-const respondingAgents = new Map<string, { channel: string; since: number }>();
-
-export function getRespondingAgents(): Map<string, { channel: string; since: number }> {
-  // Clean up stale entries (older than 3 minutes)
-  const now = Date.now();
-  for (const [slug, info] of respondingAgents) {
-    if (now - info.since > 180_000) respondingAgents.delete(slug);
-  }
-  return respondingAgents;
-}
+import { setResponding, clearResponding } from "@/lib/agents/responding-state";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -100,10 +89,10 @@ export async function POST(req: NextRequest) {
       // Trigger a quick response from the first valid mentioned agent (fire-and-forget)
       const respondingSlug = mentionedSlugs.find((s) => slugSet.has(s));
       if (respondingSlug) {
-        respondingAgents.set(respondingSlug, { channel, since: Date.now() });
+        setResponding(respondingSlug, channel);
         runQuickResponse(respondingSlug, content, channel, cabinetPath)
           .catch(() => {})
-          .finally(() => respondingAgents.delete(respondingSlug));
+          .finally(() => clearResponding(respondingSlug));
       }
     } else {
       // No specific @mention — route to the department lead for this channel
@@ -121,10 +110,10 @@ export async function POST(req: NextRequest) {
           (p) => p.department === targetDept && p.type === "lead"
         );
         if (lead) {
-          respondingAgents.set(lead.slug, { channel, since: Date.now() });
+          setResponding(lead.slug, channel);
           runQuickResponse(lead.slug, content, channel, cabinetPath)
             .catch(() => {})
-            .finally(() => respondingAgents.delete(lead.slug));
+            .finally(() => clearResponding(lead.slug));
         }
       }
     }

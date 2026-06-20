@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { listAllPersonas } from "@/lib/agents/persona-manager";
 import { getGoalState } from "@/lib/agents/goal-manager";
 import { getMessages } from "@/lib/agents/channels-manager";
-import { getRespondingAgents } from "@/app/api/agents/channels/route";
+import { getRespondingAgents } from "@/lib/agents/responding-state";
 import fs from "fs/promises";
 import path from "path";
 import { DATA_DIR } from "@/lib/storage/path-utils";

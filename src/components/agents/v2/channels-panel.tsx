@@ -139,6 +139,12 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
   const [messagesByChannel, setMessagesByChannel] = useState<Record<string, ChannelMessage[]>>({});
   const [channels, setChannels] = useState<string[]>([]);
   const [respondingAgents, setRespondingAgents] = useState<RespondingAgent[]>([]);
+  // Optimistic "is typing": set the instant you @mention an agent, cleared when
+  // its reply lands (or after 3 min). Client-side, so it's immediate and doesn't
+  // depend on server round-trips.
+  const [localTyping, setLocalTyping] = useState<
+    { slug: string; channel: string; name: string; emoji: string; since: number }[]
+  >([]);
   const [activeChannel, setActiveChannel] = useState("general");
   const [input, setInput] = useState("");
   const [panelHeight, setPanelHeight] = useState(initialHeight);
@@ -159,6 +165,29 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
     () => messagesByChannel[activeChannel] ?? [],
     [messagesByChannel, activeChannel]
   );
+
+  // Agents to show as "typing" in the active channel: optimistic local entries
+  // (dropped once their reply lands or after 3 min) plus any the server reports,
+  // deduped by slug.
+  const typingHere = useMemo(() => {
+    const seen = new Set<string>();
+    const out: { slug: string; name: string; emoji: string }[] = [];
+    for (const t of localTyping) {
+      if (t.channel !== activeChannel || seen.has(t.slug)) continue;
+      const replied = (messagesByChannel[t.channel] ?? []).some(
+        (m) => m.agent === t.slug && new Date(m.timestamp).getTime() > t.since
+      );
+      if (replied) continue;
+      seen.add(t.slug);
+      out.push({ slug: t.slug, name: t.name, emoji: t.emoji });
+    }
+    for (const a of respondingAgents) {
+      if (a.channel !== activeChannel || seen.has(a.slug)) continue;
+      seen.add(a.slug);
+      out.push({ slug: a.slug, name: a.name, emoji: a.emoji });
+    }
+    return out;
+  }, [localTyping, respondingAgents, messagesByChannel, activeChannel]);
 
   // Listen for Cmd+Shift+A to toggle the channels panel (dock mode only)
   useEffect(() => {
@@ -269,9 +298,9 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
       });
   }, [cabParam]);
 
-  // Load agents for @mention autocomplete
+  // Load this room's agents for @mention autocomplete + the typing indicator.
   useEffect(() => {
-    fetch("/api/agents/personas")
+    fetch(`/api/agents/personas${cabinetPath ? `?cabinetPath=${encodeURIComponent(cabinetPath)}` : ""}`)
       .then((r) => r.json())
       .then((d) => {
         setAgents(
@@ -283,7 +312,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
         );
       })
       .catch(() => {});
-  }, []);
+  }, [cabinetPath]);
 
   useEffect(() => {
     // App-shell forwards the SSE `channel_activity` event here when an agent
@@ -310,7 +339,27 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    const text = input.trim();
+    if (!text) return;
+    // Show "<agent> is typing…" immediately for any agent we @mention here.
+    const mentioned = [...text.matchAll(/@([\w-]+)/g)].map((m) => m[1]);
+    const started = agents
+      .filter((a) => mentioned.includes(a.slug))
+      .map((a) => ({ slug: a.slug, channel: activeChannel, name: a.name, emoji: a.emoji, since: Date.now() }));
+    if (started.length) {
+      setLocalTyping((prev) => [
+        ...prev.filter((t) => !started.some((s) => s.slug === t.slug && s.channel === t.channel)),
+        ...started,
+      ]);
+      // Safety net: clear these entries after 3 min even if no reply is detected.
+      const ch = activeChannel;
+      const slugs = started.map((s) => s.slug);
+      setTimeout(() => {
+        setLocalTyping((prev) =>
+          prev.filter((t) => !(t.channel === ch && slugs.includes(t.slug)))
+        );
+      }, 180_000);
+    }
     try {
       await fetch("/api/agents/channels", {
         method: "POST",
@@ -319,7 +368,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
           channel: activeChannel,
           agent: "human",
           type: "message",
-          content: input.trim(),
+          content: text,
           cabinetPath,
           ...(threadId ? { thread: threadId } : {}),
         }),
@@ -612,17 +661,15 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
       </div>
 
       {/* Typing indicator */}
-      {respondingAgents.filter((a) => a.channel === activeChannel).length > 0 && (
+      {typingHere.length > 0 && (
         <div className="px-3 py-1.5 border-t border-border/30 shrink-0">
           <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
-            {respondingAgents
-              .filter((a) => a.channel === activeChannel)
-              .map((a) => (
-                <span key={a.slug} className="flex items-center gap-1">
-                  <span className="text-[10px]">{a.emoji}</span>
-                  <span className="font-medium">{a.name}</span>
-                </span>
-              ))}
+            {typingHere.map((a) => (
+              <span key={a.slug} className="flex items-center gap-1">
+                <span className="text-[10px]">{a.emoji}</span>
+                <span className="font-medium">{a.name}</span>
+              </span>
+            ))}
             <span className="text-muted-foreground/50">is typing</span>
             <span className="flex gap-0.5">
               <span className="h-1 w-1 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
