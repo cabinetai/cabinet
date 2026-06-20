@@ -173,6 +173,10 @@ export function KBEditor() {
   const handleUpdate = useCallback(
     ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
       if (isLoadingRef.current || !editor) return;
+      // Ignore updates until the page has loaded — a transaction fired while the
+      // fetch is still in flight (e.g. editor mount/normalization on a fresh
+      // open) must not mark the page dirty with the empty loading state.
+      if (useEditorStore.getState().loadStatus !== "ok") return;
       const html = editor.getHTML();
       const md = htmlToMarkdown(html);
       useEditorStore.getState().updateContent(md);

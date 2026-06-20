@@ -201,8 +201,12 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
 
   save: async () => {
-    const { currentPath, content, frontmatter, isDirty } = get();
-    if (!currentPath || !isDirty) return;
+    const { currentPath, content, frontmatter, isDirty, loadStatus } = get();
+    // Only persist a page that actually loaded. Without this, a stray editor
+    // update fired during navigation (empty editor, fetch still in flight) could
+    // autosave the blank loading state over a real page — wiping its content and
+    // frontmatter. A genuine "user cleared the page" still saves (loadStatus ok).
+    if (!currentPath || !isDirty || loadStatus !== "ok") return;
 
     set({ saveStatus: "saving" });
     try {
