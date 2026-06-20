@@ -276,10 +276,34 @@ export async function writePage(
   await writeFileContent(filePath, output);
 }
 
+/**
+ * Make `dirPath` (a page's container directory, absolute) able to hold
+ * sub-pages. If the page currently exists as a standalone `<name>.md`, promote
+ * it to `<name>/index.md` so its content isn't orphaned once the `<name>/`
+ * directory appears — the tree shadows a `<name>.md` whenever a `<name>/` dir
+ * exists, so without this the original page silently vanishes. Idempotent: a
+ * no-op when there's no sibling `.md` or the container already has an index.md.
+ * Also heals already-broken pairs (dir present, sibling `.md`, no index.md).
+ */
+export async function ensureContainerDir(dirPath: string): Promise<void> {
+  const mdPath = `${dirPath}.md`;
+  if (!(await fileExists(mdPath))) return;
+  const indexPath = path.join(dirPath, "index.md");
+  if (await fileExists(indexPath)) return;
+  await ensureDirectory(dirPath);
+  await moveResolvedEntry(mdPath, indexPath);
+}
+
 export async function createPage(
   virtualPath: string,
   title: string
 ): Promise<void> {
+  // A sub-page under a standalone page must first turn that page into a
+  // container; otherwise the new `<parent>/` dir shadows and orphans the
+  // original `<parent>.md`. Do this before creating the child directory.
+  const parentVirtual = virtualPath.split("/").slice(0, -1).join("/");
+  if (parentVirtual) await ensureContainerDir(resolveContentPath(parentVirtual));
+
   const resolved = resolveContentPath(virtualPath);
   const dirPath = resolved;
   const filePath = path.join(dirPath, "index.md");
@@ -289,7 +313,6 @@ export async function createPage(
   }
 
   await ensureDirectory(dirPath);
-  const parentVirtual = virtualPath.split("/").slice(0, -1).join("/");
   const order = await appendOrder(parentVirtual);
   const fm: FrontMatter & { order?: number } = {
     ...defaultFrontmatter(title),
