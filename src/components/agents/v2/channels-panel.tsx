@@ -623,7 +623,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
                   <span className="font-medium">{a.name}</span>
                 </span>
               ))}
-            <span className="text-muted-foreground/50">is thinking</span>
+            <span className="text-muted-foreground/50">is typing</span>
             <span className="flex gap-0.5">
               <span className="h-1 w-1 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
               <span className="h-1 w-1 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
