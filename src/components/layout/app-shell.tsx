@@ -465,8 +465,8 @@ export function AppShell() {
 
   // Single /api/agents/events subscription for the whole app. Re-dispatches
   // each SSE event as a `cabinet:agents/<event>` window event so other panels
-  // (mission control, tree view, slack) can listen without each opening their
-  // own EventSource. Previously both app-shell and mission-control subscribed
+  // (channels, tree view) can listen without each opening their own
+  // EventSource. Previously both app-shell and mission-control subscribed
   // independently, creating two concurrent SSE streams.
   useEffect(() => {
     let es: EventSource | null = null;
@@ -491,7 +491,7 @@ export function AppShell() {
         "agent_status",
         "pulse",
         "agent_responding",
-        "slack_activity",
+        "channel_activity",
         "goal_update",
       ] as const;
       for (const name of forwardedEvents) {

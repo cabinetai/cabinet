@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { listAllPersonas } from "@/lib/agents/persona-manager";
 import { getGoalState } from "@/lib/agents/goal-manager";
-import { getMessages } from "@/lib/agents/slack-manager";
-import { getRespondingAgents } from "@/app/api/agents/slack/route";
+import { getMessages } from "@/lib/agents/channels-manager";
+import { getRespondingAgents } from "@/app/api/agents/channels/route";
 import fs from "fs/promises";
 import path from "path";
 import { DATA_DIR } from "@/lib/storage/path-utils";
@@ -29,8 +29,8 @@ async function getDataDirVersion(): Promise<string> {
 }
 
 /**
- * GET /api/agents/events — Server-Sent Events for real-time Mission Control updates.
- * Pushes agent status, goal progress, and new Slack messages every 3 seconds.
+ * GET /api/agents/events — Server-Sent Events for real-time agent workspace updates.
+ * Pushes agent status, goal progress, and new channel messages every 3 seconds.
  */
 export async function GET() {
   const encoder = new TextEncoder();
@@ -48,7 +48,7 @@ export async function GET() {
       };
 
       // Track last known state for diffing
-      let lastSlackCounts: Record<string, number> = {};
+      let lastChannelCounts: Record<string, number> = {};
       let lastDataVersion = await getDataDirVersion();
 
       const tick = async () => {
@@ -138,10 +138,10 @@ export async function GET() {
             send("goal_update", goalUpdates);
           }
 
-          // New Slack messages — fetch all channels in parallel and reuse the
+          // New channel messages — fetch all channels in parallel and reuse the
           // message list for both the count diff and the @human preview.
           const channels = ["general", "marketing", "engineering", "operations", "alerts"];
-          const slackResults = await Promise.all(
+          const channelResults = await Promise.all(
             channels.map(async (ch) => {
               try {
                 return { ch, msgs: await getMessages(ch, 1) };
@@ -150,19 +150,19 @@ export async function GET() {
               }
             })
           );
-          const newSlackCounts: Record<string, number> = {};
-          for (const { ch, msgs } of slackResults) {
+          const newChannelCounts: Record<string, number> = {};
+          for (const { ch, msgs } of channelResults) {
             const count = msgs.length > 0 ? msgs.length : 0;
-            newSlackCounts[ch] = count;
+            newChannelCounts[ch] = count;
             if (
-              lastSlackCounts[ch] !== undefined &&
-              count > lastSlackCounts[ch]
+              lastChannelCounts[ch] !== undefined &&
+              count > lastChannelCounts[ch]
             ) {
               const latest = msgs[msgs.length - 1];
               const hasHumanMention =
                 latest?.content?.includes("@human") ||
                 latest?.mentions?.includes("human");
-              send("slack_activity", {
+              send("channel_activity", {
                 channel: ch,
                 hasHumanMention,
                 agentName: latest?.displayName || latest?.agent,
@@ -171,7 +171,7 @@ export async function GET() {
               });
             }
           }
-          lastSlackCounts = newSlackCounts;
+          lastChannelCounts = newChannelCounts;
 
           // Pulse metrics summary
           const allGoals = personas.flatMap((p) => p.goals || []);
@@ -180,7 +180,7 @@ export async function GET() {
             return (g.current ?? 0) / g.target >= 0.4;
           }).length;
 
-          // Responding agents (typing indicator for Slack)
+          // Responding agents (typing indicator for channels)
           const responding = getRespondingAgents();
           const respondingList = [...responding.entries()].map(([slug, info]) => {
             const p = personas.find((a) => a.slug === slug);

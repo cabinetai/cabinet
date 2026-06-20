@@ -45,7 +45,7 @@ async function buildPersonaPromptBody(persona: AgentPersona): Promise<string> {
 }
 import { readFileContent, fileExists } from "@/lib/storage/fs-operations";
 import { autoCommit } from "@/lib/git/git-service";
-import { postMessage } from "./slack-manager";
+import { postMessage } from "./channels-manager";
 import { getGoalState, updateGoal } from "./goal-manager";
 import { startConversationRun } from "./conversation-runner";
 import { reloadDaemonSchedules } from "./daemon-client";
@@ -161,7 +161,7 @@ DECISION: (optional) Any key decision made, with reasoning.
 LEARNING: (optional) Any new insight to remember long-term.
 GOAL_UPDATE [metric_name]: +N (report progress on goals, e.g. GOAL_UPDATE [reddit_replies]: +3)
 MESSAGE_TO [agent-slug]: (optional) A message to send to another agent.
-SLACK [channel-name]: (optional) A message to post to Agent Slack. Use this to report your activity.
+CHANNEL [channel-name]: (optional) A message to post to a team channel. Use this to report your activity.
 TASK_CREATE [target-agent-slug] [priority 1-5]: title | description (optional — create a structured task handoff to another agent)
 TASK_COMPLETE [task-id]: result summary (mark a pending task as completed)
 \`\`\`
@@ -235,8 +235,9 @@ async function processHeartbeatOutput(
       await sendMessage(slug, match[1], match[2].trim(), cabinetPath);
     }
 
-    const slackMatches = memoryBlock.matchAll(/SLACK\s+\[([^\]]+)\]:\s*(.*)/g);
-    for (const match of slackMatches) {
+    // Accept the legacy SLACK token too, so an agent mid-habit still posts.
+    const channelMatches = memoryBlock.matchAll(/(?:CHANNEL|SLACK)\s+\[([^\]]+)\]:\s*(.*)/g);
+    for (const match of channelMatches) {
       await postMessage({
         channel: match[1],
         agent: slug,
@@ -466,11 +467,11 @@ export async function startManualHeartbeat(
 }
 
 /**
- * Run a quick response to a human message in Agent Slack.
+ * Run a quick response to a human message in a team channel.
  * Lightweight variant of runHeartbeat — focused on responding to the human,
  * not executing full jobs or heartbeat duties.
  *
- * Returns the agent's response text (also posted to Slack).
+ * Returns the agent's response text (also posted to the channel).
  */
 export async function runQuickResponse(
   slug: string,
@@ -498,10 +499,10 @@ export async function runQuickResponse(
       .join("\n");
   }
 
-  // Load recent Slack messages from this channel for conversation context
+  // Load recent channel messages from this channel for conversation context
   let recentMessages = "";
   try {
-    const { getMessages } = await import("./slack-manager");
+    const { getMessages } = await import("./channels-manager");
     const msgs = await getMessages(channel, 10);
     if (msgs.length > 0) {
       recentMessages = msgs
@@ -522,7 +523,7 @@ export async function runQuickResponse(
 
 ## Context
 
-You are responding to a human message in Agent Slack channel #${channel}.
+You are responding to a human message in team channel #${channel}.
 Keep your response concise, helpful, and on-topic. Do NOT include any \`\`\`memory blocks — this is a direct conversation, not a heartbeat.
 
 ### Your Memory (recent context)
@@ -548,7 +549,7 @@ Respond naturally as ${persona.name}. Be concise (1-3 short paragraphs max). Ref
 
   let response = "";
   try {
-    const sessionId = `slack-${slug}-${Date.now()}`;
+    const sessionId = `chat-${slug}-${Date.now()}`;
     const token = await getOrCreateDaemonToken();
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -583,7 +584,7 @@ Respond naturally as ${persona.name}. Be concise (1-3 short paragraphs max). Ref
       : "Sorry, I encountered an error processing your request.";
   }
 
-  // Post the response to Slack
+  // Post the response to the channel
   if (response) {
     await postMessage({
       channel,

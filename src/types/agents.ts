@@ -11,7 +11,7 @@ export interface GoalMetric {
 }
 
 
-export interface SlackMessage {
+export interface ChannelMessage {
   id: string;
   channel: string;
   agent: string;        // agent slug or "human"

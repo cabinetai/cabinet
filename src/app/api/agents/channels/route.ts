@@ -4,7 +4,7 @@ import {
   getMessages,
   getRecentMessages,
   listChannels,
-} from "@/lib/agents/slack-manager";
+} from "@/lib/agents/channels-manager";
 import { sendMessage, listPersonas } from "@/lib/agents/persona-manager";
 import { sendNotification, shouldNotify } from "@/lib/agents/notification-service";
 import { runQuickResponse } from "@/lib/agents/heartbeat";
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       // Specific @mentions — respond with the first mentioned agent
       for (const mentioned of mentionedSlugs) {
         if (slugSet.has(mentioned)) {
-          await sendMessage("human", mentioned, `[Slack #${channel}] ${content}`);
+          await sendMessage("human", mentioned, `[#${channel}] ${content}`);
         }
       }
 

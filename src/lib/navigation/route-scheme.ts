@@ -21,7 +21,7 @@ import type { SelectedSection } from "@/stores/app-store";
  * a `content` route and the apply layer decides overview vs editor.
  */
 
-export type AgentsTab = "agents" | "routines" | "heartbeats" | "schedule";
+export type AgentsTab = "agents" | "routines" | "heartbeats" | "schedule" | "channels";
 
 export type CleanRoute =
   | { kind: "home" }
@@ -38,7 +38,7 @@ export type CleanRoute =
 const VIEW_MARKER = "-";
 
 function isAgentsTab(v: string | undefined): v is AgentsTab {
-  return v === "agents" || v === "routines" || v === "heartbeats" || v === "schedule";
+  return v === "agents" || v === "routines" || v === "heartbeats" || v === "schedule" || v === "channels";
 }
 
 /** Encode each path segment individually so the joining `/` stays literal. */

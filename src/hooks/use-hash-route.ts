@@ -72,7 +72,7 @@ function decodePathSegment(value?: string): string {
   }
 }
 
-const AGENTS_SUB_TABS = ["agents", "routines", "heartbeats", "schedule"] as const;
+const AGENTS_SUB_TABS = ["agents", "routines", "heartbeats", "schedule", "channels"] as const;
 type AgentsSubTab = (typeof AGENTS_SUB_TABS)[number];
 
 function isAgentsSubTab(value: string | undefined): value is AgentsSubTab {

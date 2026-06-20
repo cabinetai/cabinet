@@ -3,12 +3,14 @@
 import {
   Calendar as CalendarIcon,
   Clock3,
+  Hash,
   HeartPulse,
   Loader2,
   Plus,
   RefreshCw,
   Users,
 } from "lucide-react";
+import { ChannelsPanel } from "@/components/agents/v2/channels-panel";
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 import { cn } from "@/lib/utils";
 import { DepthDropdown } from "@/components/cabinets/depth-dropdown";
@@ -27,13 +29,14 @@ import { RoutinesTab } from "./routines-tab";
 import { HeartbeatsTab } from "./heartbeats-tab";
 import { ScheduleView } from "@/components/cabinets/schedule-view";
 
-export type AgentsTabKey = "agents" | "routines" | "heartbeats" | "schedule";
+export type AgentsTabKey = "agents" | "routines" | "heartbeats" | "schedule" | "channels";
 
 const TABS: { key: AgentsTabKey; label: string; icon: typeof Users }[] = [
   { key: "agents", label: "Agents", icon: Users },
   { key: "routines", label: "Routines", icon: Clock3 },
   { key: "heartbeats", label: "Heartbeats", icon: HeartPulse },
   { key: "schedule", label: "Schedule", icon: CalendarIcon },
+  { key: "channels", label: "Channels", icon: Hash },
 ];
 
 export function TabsLayout({
@@ -50,6 +53,13 @@ export function TabsLayout({
         // Full-bleed: the calendar fills the area below the tab bar.
         <div className="min-h-0 flex-1">
           <ScheduleMount />
+        </div>
+      ) : tab === "channels" ? (
+        // Full-bleed: the team channels viewer fills the area below the tab bar.
+        // ponytail: onOpenFile omitted → in-message file links are inert (add a
+        // nav handler if users want to click through to KB pages).
+        <div className="min-h-0 flex-1">
+          <ChannelsPanel fill />
         </div>
       ) : (
         <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-4 sm:px-6">
@@ -268,6 +278,7 @@ function TabStrip({
     routines: jobs.length,
     heartbeats: agents.filter((a) => !!a.heartbeat).length,
     schedule: undefined,
+    channels: undefined,
   };
   return (
     <nav

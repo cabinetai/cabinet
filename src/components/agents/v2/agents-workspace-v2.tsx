@@ -16,6 +16,7 @@ const ALL_TABS: readonly AgentsTabKey[] = [
   "routines",
   "heartbeats",
   "schedule",
+  "channels",
 ];
 
 function isTab(value: string | undefined): value is AgentsTabKey {
