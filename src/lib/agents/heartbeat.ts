@@ -247,7 +247,7 @@ async function processHeartbeatOutput(
         content: match[2].trim(),
         mentions: [],
         kbRefs: [],
-      });
+      }, cabinetPath);
     }
 
     const goalMatches = memoryBlock.matchAll(/GOAL_UPDATE\s+\[([^\]]+)\]:\s*\+?(\d+)/g);
@@ -276,7 +276,7 @@ async function processHeartbeatOutput(
         type: "task",
         content: `📋 Task created for **@${toAgent}**: ${title}${description ? ` — ${description}` : ""}`,
         mentions: [toAgent], kbRefs: [],
-      });
+      }, cabinetPath);
     }
 
     const taskCompleteMatches = memoryBlock.matchAll(/TASK_COMPLETE\s+\[([^\]]+)\]:\s*(.*)/g);
@@ -311,7 +311,7 @@ async function processHeartbeatOutput(
                 type: "alert",
                 content: `**${g.metric}** at ${current}/${g.target} (floor: ${g.floor}) with ${Math.round(((endDate - Date.now()) / 86400000))}d left. @human`,
                 mentions: ["human"], kbRefs: [],
-              });
+              }, cabinetPath);
             }
           }
         }
@@ -325,7 +325,7 @@ async function processHeartbeatOutput(
     await postMessage({
       channel: persona.channels[0], agent: slug, emoji: persona.emoji, displayName: persona.name,
       type: "report", content: summaryLine, mentions: [], kbRefs: [],
-    });
+    }, cabinetPath);
   }
 
   if (inbox.length > 0 && status === "completed") await clearInbox(slug, cabinetPath);
@@ -369,7 +369,7 @@ async function processHeartbeatOutput(
         type: "alert",
         content: `Auto-paused after 3 consecutive failures. Last error: ${output.slice(0, 150)}. @human`,
         mentions: ["human"], kbRefs: [],
-      });
+      }, cabinetPath);
     }
   }
 
@@ -431,7 +431,7 @@ export async function runHeartbeat(
             type: "alert",
             content: `Heartbeat timed out or failed for ${slug}. @human`,
             mentions: ["human"], kbRefs: [],
-          });
+          }, cabinetPath);
         }
 
         await processHeartbeatOutput(
@@ -477,13 +477,14 @@ export async function runQuickResponse(
   slug: string,
   humanMessage: string,
   channel: string,
+  cabinetPath?: string,
 ): Promise<string> {
-  const persona = await readPersona(slug);
+  const persona = await readPersona(slug, cabinetPath);
   if (!persona) return "";
 
   // Load memory for context
-  const context = await readMemory(slug, "context.md");
-  const learnings = await readMemory(slug, "learnings.md");
+  const context = await readMemory(slug, "context.md", cabinetPath);
+  const learnings = await readMemory(slug, "learnings.md", cabinetPath);
 
   // Load goal state for context
   let goalsContext = "";
@@ -503,7 +504,7 @@ export async function runQuickResponse(
   let recentMessages = "";
   try {
     const { getMessages } = await import("./channels-manager");
-    const msgs = await getMessages(channel, 10);
+    const msgs = await getMessages(channel, 10, cabinetPath);
     if (msgs.length > 0) {
       recentMessages = msgs
         .map(
@@ -595,7 +596,7 @@ Respond naturally as ${persona.name}. Be concise (1-3 short paragraphs max). Ref
       content: response,
       mentions: [],
       kbRefs: [],
-    });
+    }, cabinetPath);
   }
 
   return response;

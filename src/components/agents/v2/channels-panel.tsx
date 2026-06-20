@@ -125,10 +125,14 @@ interface ChannelsPanelProps {
   onOpenFile?: (path: string) => void;
   /** Fill the parent (tab mode) instead of being a fixed-height resizable dock. */
   fill?: boolean;
+  /** Room/cabinet whose channels to show. Channels are per-room. */
+  cabinetPath?: string;
 }
 
-export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = false }: ChannelsPanelProps) {
+export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = false, cabinetPath }: ChannelsPanelProps) {
   const { t } = useLocale();
+  // Channels are per-room; scope every request to this cabinet.
+  const cabParam = cabinetPath ? `&cabinetPath=${encodeURIComponent(cabinetPath)}` : "";
   // Messages kept per-channel so switching paints instantly from the last-seen
   // list (the map IS the cache) while a fresh fetch lands; `messages` is the
   // derived view for the active channel.
@@ -182,14 +186,14 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
   // continuation so we never setState synchronously in an effect body).
   const fetchMessages = useCallback(async (): Promise<ChannelMessage[] | null> => {
     try {
-      const res = await fetch(`/api/agents/channels?channel=${activeChannel}&limit=50`);
+      const res = await fetch(`/api/agents/channels?channel=${activeChannel}&limit=50${cabParam}`);
       if (!res.ok) return null;
       const data = await res.json();
       return data.messages || [];
     } catch {
       return null;
     }
-  }, [activeChannel]);
+  }, [activeChannel, cabParam]);
 
   const applyMessages = useCallback(
     (msgs: ChannelMessage[] | null) => {
@@ -221,7 +225,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
       channels.map(async (ch) => {
         const empty = [ch, { count: 0, lastTs: "" }] as const;
         try {
-          const res = await fetch(`/api/agents/channels?channel=${ch}&limit=100`);
+          const res = await fetch(`/api/agents/channels?channel=${ch}&limit=100${cabParam}`);
           if (!res.ok) return empty;
           const data = await res.json();
           const msgs = data.messages || [];
@@ -234,7 +238,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
       })
     );
     return Object.fromEntries(entries);
-  }, [channels]);
+  }, [channels, cabParam]);
 
   useEffect(() => { fetchChannelMeta().then(setChannelMeta); }, [fetchChannelMeta]);
 
@@ -248,9 +252,9 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
     [channels, channelMeta]
   );
 
-  // Load the channel list once on mount (same setState-in-continuation shape).
+  // Load the channel list (re-runs when the room changes; setState in continuation).
   useEffect(() => {
-    fetch("/api/agents/channels?channels=true")
+    fetch(`/api/agents/channels?channels=true${cabParam}`)
       .then(async (res) => {
         if (!res.ok) return;
         const data = await res.json();
@@ -263,7 +267,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
       .catch(() => {
         setChannels(["general", "marketing", "engineering", "operations", "alerts"]);
       });
-  }, []);
+  }, [cabParam]);
 
   // Load agents for @mention autocomplete
   useEffect(() => {
@@ -316,6 +320,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
           agent: "human",
           type: "message",
           content: input.trim(),
+          cabinetPath,
           ...(threadId ? { thread: threadId } : {}),
         }),
       });
@@ -340,6 +345,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
         agent: "system",
         type: "message",
         content: `Channel #${name} created`,
+        cabinetPath,
       }),
     }).then(() => {
       setChannels((prev) => [...prev, name]);

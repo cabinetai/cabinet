@@ -59,7 +59,7 @@ export function TabsLayout({
         // ponytail: onOpenFile omitted → in-message file links are inert (add a
         // nav handler if users want to click through to KB pages).
         <div className="min-h-0 flex-1">
-          <ChannelsPanel fill />
+          <ChannelsMount />
         </div>
       ) : (
         <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-4 sm:px-6">
@@ -70,6 +70,12 @@ export function TabsLayout({
       )}
     </div>
   );
+}
+
+/** Channels tab → per-room team-chat board, scoped to the active cabinet. */
+function ChannelsMount() {
+  const { cabinetPath } = useAgentsContext();
+  return <ChannelsPanel fill cabinetPath={cabinetPath} />;
 }
 
 /** Schedule tab → the canonical full-bleed ScheduleView, wired to the

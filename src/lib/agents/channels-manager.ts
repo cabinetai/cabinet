@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs/promises";
-import { DATA_DIR } from "@/lib/storage/path-utils";
+import { resolveCabinetDir } from "@/lib/cabinets/server-paths";
 import {
   readFileContent,
   fileExists,
@@ -9,28 +9,38 @@ import {
 } from "@/lib/storage/fs-operations";
 import type { ChannelMessage } from "@/types/agents";
 
-const AGENTS_DIR = path.join(DATA_DIR, ".agents");
-// ponytail: on-disk dir stays `.slack` so existing channel history keeps
-// resolving — it's a hidden storage detail, not user-facing. Rename + migrate
-// only if we ever need the path itself to be slack-free.
-const CHANNELS_DIR = path.join(AGENTS_DIR, ".slack");
-
-// ---------------------------------------------------------------------------
-// Init
-// ---------------------------------------------------------------------------
-
-export async function initChannelsDir(): Promise<void> {
-  await ensureDirectory(CHANNELS_DIR);
+// Channels are per-cabinet (per room): each cabinet keeps its own board under
+// <cabinet>/.agents/.channels/<channel>.jsonl. The home/root cabinet (".")
+// resolves to the data root. Pass the cabinetPath of the room being read or
+// written; omit it for the home board.
+function channelsDir(cabinetPath?: string): string {
+  return path.join(resolveCabinetDir(cabinetPath), ".agents", ".channels");
 }
 
-// ---------------------------------------------------------------------------
-// Post a message
-// ---------------------------------------------------------------------------
+// Older builds stored a single global board at <cabinet>/.agents/.slack. Rename
+// it to .channels on first access (per cabinet), preserving history. Idempotent
+// and race-safe: once .channels exists we never touch .slack again.
+export async function initChannelsDir(cabinetPath?: string): Promise<void> {
+  const dir = channelsDir(cabinetPath);
+  if (!(await fileExists(dir))) {
+    const legacy = path.join(resolveCabinetDir(cabinetPath), ".agents", ".slack");
+    if (await fileExists(legacy)) {
+      try {
+        await fs.rename(legacy, dir);
+        return;
+      } catch {
+        // raced with another writer / partially moved — fall through to ensure.
+      }
+    }
+  }
+  await ensureDirectory(dir);
+}
 
 export async function postMessage(
-  msg: Omit<ChannelMessage, "id" | "timestamp">
+  msg: Omit<ChannelMessage, "id" | "timestamp">,
+  cabinetPath?: string
 ): Promise<ChannelMessage> {
-  await initChannelsDir();
+  await initChannelsDir(cabinetPath);
 
   const full: ChannelMessage = {
     ...msg,
@@ -38,22 +48,19 @@ export async function postMessage(
     timestamp: new Date().toISOString(),
   };
 
-  const channelFile = path.join(CHANNELS_DIR, `${full.channel}.jsonl`);
+  const channelFile = path.join(channelsDir(cabinetPath), `${full.channel}.jsonl`);
   const line = JSON.stringify(full) + "\n";
   await fs.appendFile(channelFile, line, "utf-8");
 
   return full;
 }
 
-// ---------------------------------------------------------------------------
-// Read messages from a single channel
-// ---------------------------------------------------------------------------
-
 export async function getMessages(
   channel: string,
-  limit: number = 50
+  limit: number = 50,
+  cabinetPath?: string
 ): Promise<ChannelMessage[]> {
-  const channelFile = path.join(CHANNELS_DIR, `${channel}.jsonl`);
+  const channelFile = path.join(channelsDir(cabinetPath), `${channel}.jsonl`);
   if (!(await fileExists(channelFile))) return [];
 
   const raw = await readFileContent(channelFile);
@@ -76,20 +83,17 @@ export async function getMessages(
   return limit > 0 ? messages.slice(-limit) : messages;
 }
 
-// ---------------------------------------------------------------------------
-// Read recent messages across ALL channels
-// ---------------------------------------------------------------------------
-
 export async function getRecentMessages(
-  limit: number = 50
+  limit: number = 50,
+  cabinetPath?: string
 ): Promise<ChannelMessage[]> {
-  await initChannelsDir();
+  await initChannelsDir(cabinetPath);
 
-  const channels = await listChannels();
+  const channels = await listChannels(cabinetPath);
   const allMessages: ChannelMessage[] = [];
 
   for (const channel of channels) {
-    const msgs = await getMessages(channel, 0); // 0 = get all
+    const msgs = await getMessages(channel, 0, cabinetPath); // 0 = get all
     allMessages.push(...msgs);
   }
 
@@ -99,33 +103,29 @@ export async function getRecentMessages(
   return limit > 0 ? allMessages.slice(-limit) : allMessages;
 }
 
-// ---------------------------------------------------------------------------
-// List all channels
-// ---------------------------------------------------------------------------
+export async function listChannels(cabinetPath?: string): Promise<string[]> {
+  await initChannelsDir(cabinetPath);
 
-export async function listChannels(): Promise<string[]> {
-  await initChannelsDir();
-
-  const entries = await listDirectory(CHANNELS_DIR);
+  const entries = await listDirectory(channelsDir(cabinetPath));
   return entries
     .filter((e) => !e.isDirectory && e.name.endsWith(".jsonl"))
     .map((e) => e.name.replace(/\.jsonl$/, ""));
 }
 
-// ---------------------------------------------------------------------------
-// Post a system message (convenience helper)
-// ---------------------------------------------------------------------------
-
 export async function postSystemMessage(
   channel: string,
-  content: string
+  content: string,
+  cabinetPath?: string
 ): Promise<ChannelMessage> {
-  return postMessage({
-    channel,
-    agent: "system",
-    type: "message",
-    content,
-    mentions: [],
-    kbRefs: [],
-  });
+  return postMessage(
+    {
+      channel,
+      agent: "system",
+      type: "message",
+      content,
+      mentions: [],
+      kbRefs: [],
+    },
+    cabinetPath
+  );
 }
