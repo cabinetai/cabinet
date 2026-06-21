@@ -100,14 +100,28 @@ export function Header() {
               const imgData = await toPng(editorEl as HTMLElement, {
                 backgroundColor: "#ffffff",
                 pixelRatio: 2,
+                skipFonts: true,
               });
               const img = new Image();
               img.src = imgData;
               await new Promise((resolve) => { img.onload = resolve; });
               const pdf = new jsPDF("p", "mm", "a4");
               const pdfWidth = pdf.internal.pageSize.getWidth();
-              const pdfHeight = (img.height * pdfWidth) / img.width;
-              pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+              const pdfHeight = pdf.internal.pageSize.getHeight();
+              // Total height of the rendered image when scaled to the page width.
+              const imgHeight = (img.height * pdfWidth) / img.width;
+              let remaining = imgHeight;
+              let position = 0;
+              pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+              remaining -= pdfHeight;
+              // Add a new page for each additional page-height slice, shifting the
+              // image up so the next slice lines up with the top of the page.
+              while (remaining > 0) {
+                position -= pdfHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+                remaining -= pdfHeight;
+              }
               pdf.save(`${frontmatter?.title || "page"}.pdf`);
             }}>
               <FileDown className="h-4 w-4 mr-2" />
