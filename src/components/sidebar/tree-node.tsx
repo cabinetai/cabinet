@@ -753,6 +753,8 @@ function TreeNodeImpl({
               <NotebookText className="h-3.5 w-3.5 shrink-0 text-[#F37626]" />
             ) : node.type === "latex" ? (
               <Sigma className="h-3.5 w-3.5 shrink-0 text-indigo-400" />
+            ) : node.type === "typst" ? (
+              <Sigma className="h-3.5 w-3.5 shrink-0 text-sky-400" />
             ) : node.type === "unknown" ? (
               <File className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
             ) : node.type === "cabinet" ? (

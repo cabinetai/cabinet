@@ -107,7 +107,8 @@ function isPreviewFile(node: TreeNode): boolean {
     node.type === "video" ||
     node.type === "pdf" ||
     node.type === "csv" ||
-    node.type === "latex"
+    node.type === "latex" ||
+    node.type === "typst"
   );
 }
 
@@ -399,7 +400,7 @@ function fitCardSizeToContent(
     };
   }
 
-  if (node.type === "file" || node.type === "code" || node.type === "latex") {
+  if (node.type === "file" || node.type === "code" || node.type === "latex" || node.type === "typst") {
     return {
       width: clamp(CARD_MARKDOWN_WIDTH, CARD_MIN_WIDTH, CARD_MAX_WIDTH),
       height: clamp(CARD_MARKDOWN_HEIGHT, CARD_MIN_HEIGHT, CARD_MAX_HEIGHT),
@@ -1468,7 +1469,7 @@ export function CanvasView() {
     let cancelled = false;
 
     const contentPaths = boardCards
-      .filter((node) => node.type === "file" || node.type === "code" || isFolderObject(node) || node.type === "csv" || node.type === "latex")
+      .filter((node) => node.type === "file" || node.type === "code" || isFolderObject(node) || node.type === "csv" || node.type === "latex" || node.type === "typst")
       .slice(0, 300)
       .map((node) => node.path);
 
@@ -1486,7 +1487,7 @@ export function CanvasView() {
             return [nodePath, data.content] as const;
           } catch {
             const lower = nodePath.toLowerCase();
-            if (!lower.endsWith(".csv") && !lower.endsWith(".tex") && !lower.endsWith(".latex")) {
+            if (!lower.endsWith(".csv") && !lower.endsWith(".tex") && !lower.endsWith(".latex") && !lower.endsWith(".typ")) {
               return [nodePath, ""] as const;
             }
             try {
@@ -1573,7 +1574,7 @@ export function CanvasView() {
         const hasText = (pageContentByPath[node.path] ?? "").length > 0;
         if (node.type === "image" || node.type === "video") {
           if (!measured || measured.width <= 0 || measured.height <= 0) continue;
-        } else if (node.type === "csv" || node.type === "file" || node.type === "code" || node.type === "pdf" || node.type === "latex") {
+        } else if (node.type === "csv" || node.type === "file" || node.type === "code" || node.type === "pdf" || node.type === "latex" || node.type === "typst") {
           if (!hasText && node.type !== "pdf") continue;
         }
         next[scopedPath] = true;

@@ -43,6 +43,7 @@ export interface TreeNode {
     | "pptx"
     | "notebook"
     | "latex"
+    | "typst"
     | "unknown";
   hasRepo?: boolean;
   isLinked?: boolean;
