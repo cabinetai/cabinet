@@ -237,8 +237,8 @@ const NOTION: CatalogEntry = {
   ],
   setupSteps: [
     {
-      title: "Sign in with Notion",
-      body: "Click Connect & sign in — your agent's CLI opens Notion in the browser. Approve access and pick which pages or databases to share.",
+      title: "Connect Notion",
+      body: "Click Connect to register Notion. The first time an agent uses it, its CLI opens Notion in the browser — approve access and pick which pages or databases to share.",
     },
     {
       title: "Choose what to share",

@@ -642,6 +642,7 @@ const LAUNCHED = new Set([
   "google-drive",
   "gmail",
   "microsoft-365",
+  "notion",
 ]);
 
 export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) => {

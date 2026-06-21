@@ -114,6 +114,20 @@ export function ConnectPanel({
     code?: string;
     error?: string;
   }>({ state: "idle" });
+  // Generic HTTP/OAuth sign-in (Notion, GitHub, Linear, …) driven through
+  // Claude Code at connect-time, so the token is cached before any agent runs.
+  const [oauthLogin, setOauthLogin] = useState<{
+    state: "idle" | "starting" | "pending" | "success" | "error";
+    sessionId?: string;
+    url?: string;
+    error?: string;
+  }>({ state: "idle" });
+  const [callbackPaste, setCallbackPaste] = useState("");
+  // True OAuth auth state (registration alone ≠ authenticated). "unknown" until
+  // the first check resolves, so we don't flash a misleading button.
+  const [authState, setAuthState] = useState<"unknown" | "authenticated" | "needs-auth">(
+    "unknown",
+  );
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -156,6 +170,31 @@ export function ConnectPanel({
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Resolve true OAuth auth state for HTTP servers (skips non-http / M365, which
+  // have their own flows). Lets the panel show "signed in" vs "needs sign-in".
+  const refreshAuthState = useCallback(async () => {
+    if (isM365) {
+      setAuthState("unknown");
+      return;
+    }
+    try {
+      const res = await fetch(
+        `/api/agents/config/mcp-catalog/oauth/login?id=${encodeURIComponent(item.id)}`,
+        { cache: "no-store" },
+      );
+      const j = await res.json();
+      setAuthState(
+        !j.applicable ? "unknown" : j.authenticated ? "authenticated" : "needs-auth",
+      );
+    } catch {
+      setAuthState("unknown");
+    }
+  }, [isM365, item.id]);
+
+  useEffect(() => {
+    void refreshAuthState();
+  }, [refreshAuthState]);
 
   // If the user already saved their own Entra credentials, open in "work" mode
   // so the fields show (and aren't silently bypassed by the personal default).
@@ -241,6 +280,12 @@ export function ConnectPanel({
   // For M365, the credential fields only show in "work" mode; personal mode is
   // field-free (built-in app + device-code sign-in).
   const showMsCreds = !isM365 || msAccountMode === "work";
+  // Other HTTP/OAuth servers can be signed in at connect-time, but only via
+  // Claude Code (it's the CLI we drive). When it's unchecked we fall back to the
+  // deferred (first agent use) flow. M365 has its own device-code path above.
+  const claudeSelected = targets.has("claude-code");
+  const canConnectTimeSignin =
+    entry.transport === "http" && !isM365 && claudeSelected;
 
   const toggle = (id: string) =>
     setTargets((prev) => {
@@ -372,6 +417,116 @@ export function ConnectPanel({
         state: "error",
         error: err instanceof Error ? err.message : "Could not start sign-in",
       });
+    }
+  };
+
+  const OAUTH_URL = "/api/agents/config/mcp-catalog/oauth/login";
+
+  const cancelOauthLogin = () => {
+    stopPolling();
+    if (oauthLogin.sessionId) {
+      void fetch(`${OAUTH_URL}?sessionId=${encodeURIComponent(oauthLogin.sessionId)}`, {
+        method: "DELETE",
+      }).catch(() => {});
+    }
+    setOauthLogin({ state: "idle" });
+    setCallbackPaste("");
+  };
+
+  const pollOauthLogin = (sessionId: string) => {
+    pollRef.current = setInterval(async () => {
+      try {
+        const s = await fetch(`${OAUTH_URL}?sessionId=${encodeURIComponent(sessionId)}`, {
+          cache: "no-store",
+        });
+        const sj = await s.json();
+        if (sj.status === "success") {
+          stopPolling();
+          setOauthLogin({ state: "success", sessionId });
+          setAuthState("authenticated");
+          showSuccess(`Signed in to ${item.name}.`);
+          await load(); // connected state is driven by load()
+          setOauthLogin({ state: "idle" });
+          setCallbackPaste("");
+        } else if (sj.status === "error" || sj.status === "expired") {
+          stopPolling();
+          setOauthLogin({
+            state: "error",
+            error:
+              sj.error ||
+              (sj.status === "expired"
+                ? "Sign-in timed out before you finished. Try again."
+                : "Sign-in failed."),
+          });
+        }
+      } catch {
+        /* transient — keep polling */
+      }
+    }, 3000);
+  };
+
+  // Register the server (so the CLI exposes its authenticate tool), then drive
+  // the OAuth sign-in through Claude Code while keeping its loopback alive.
+  const startOauthLogin = async () => {
+    if (targets.size === 0) {
+      showError("Pick at least one environment.");
+      return;
+    }
+    stopPolling();
+    setOauthLogin({ state: "starting" });
+    try {
+      const reg = await fetch("/api/agents/config/mcp-catalog/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: entry.id, providers: [...targets] }),
+      });
+      const regJson = await reg.json();
+      if (!reg.ok || !regJson.ok)
+        throw new Error(regJson.error || regJson.message || "Connect failed");
+
+      const res = await fetch(OAUTH_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: entry.id }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error || "Could not start sign-in");
+      if (json.alreadyAuthenticated) {
+        setOauthLogin({ state: "success" });
+        setAuthState("authenticated");
+        showSuccess(`${item.name} connected.`);
+        await load();
+        setOauthLogin({ state: "idle" });
+        return;
+      }
+      setOauthLogin({ state: "pending", sessionId: json.sessionId, url: json.authorizeUrl });
+      pollOauthLogin(json.sessionId);
+    } catch (err) {
+      setOauthLogin({
+        state: "error",
+        error: err instanceof Error ? err.message : "Could not start sign-in",
+      });
+    }
+  };
+
+  // Fallback when the browser can't reach the loopback: submit the pasted
+  // callback URL; the poll then flips to success.
+  const submitOauthCallback = async () => {
+    if (!oauthLogin.sessionId || !callbackPaste.trim()) return;
+    try {
+      const res = await fetch(OAUTH_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: oauthLogin.sessionId,
+          callbackUrl: callbackPaste.trim(),
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error || "Could not submit callback URL");
+      showSuccess("Finishing sign-in…");
+    } catch (err) {
+      showError(err instanceof Error ? err.message : "Could not submit callback URL");
     }
   };
 
@@ -589,6 +744,81 @@ export function ConnectPanel({
             <p className="mt-2 text-[12px] text-destructive">{msLogin.error}</p>
           )}
         </div>
+      ) : canConnectTimeSignin && authState !== "authenticated" ? (
+        <div className="mt-4">
+          {authState === "unknown" && oauthLogin.state !== "pending" ? (
+            <Button className="w-full" disabled>
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </Button>
+          ) : oauthLogin.state === "pending" ? (
+            <div className="rounded-lg border border-border bg-background p-3">
+              <p className="text-[12px] font-medium text-foreground">
+                Approve access in your browser
+              </p>
+              <a
+                href={oauthLogin.url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-[13px] font-medium text-foreground hover:bg-accent"
+              >
+                Open {item.name} sign-in <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+              <p className="mt-3 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Waiting for you to
+                finish…
+              </p>
+              <details className="mt-3">
+                <summary className="cursor-pointer text-[11px] text-muted-foreground hover:text-foreground">
+                  Stuck on a &ldquo;can&apos;t be reached&rdquo; page?
+                </summary>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  That page is harmless. Copy its full address-bar URL (it starts
+                  with <code>http://localhost</code>) and paste it here:
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={callbackPaste}
+                    onChange={(e) => setCallbackPaste(e.target.value)}
+                    placeholder="http://localhost:…/callback?code=…"
+                    className="h-8 flex-1 rounded-md border border-border bg-background px-2.5 text-[12px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={submitOauthCallback}
+                    disabled={!callbackPaste.trim()}
+                    className="shrink-0 rounded-md border border-border px-3 py-2 text-[12px] font-medium text-foreground hover:bg-accent disabled:opacity-50"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </details>
+              <button
+                type="button"
+                onClick={cancelOauthLogin}
+                className="mt-3 text-[12px] text-muted-foreground hover:text-destructive"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <Button
+              className="w-full"
+              disabled={targets.size === 0 || oauthLogin.state === "starting" || busy}
+              onClick={startOauthLogin}
+            >
+              {oauthLogin.state === "starting" || busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isConnected ? (
+                "Sign in"
+              ) : (
+                "Connect & sign in"
+              )}
+            </Button>
+          )}
+          {oauthLogin.state === "error" && (
+            <p className="mt-2 text-[12px] text-destructive">{oauthLogin.error}</p>
+          )}
+        </div>
       ) : (
         <Button
           className="mt-4 w-full"
@@ -605,6 +835,12 @@ export function ConnectPanel({
         </Button>
       )}
 
+      {entry.transport === "http" && !isM365 && authState === "authenticated" && (
+        <p className="mt-2 flex items-center gap-1.5 text-[12px] text-emerald-600 dark:text-emerald-400">
+          <Check className="h-3.5 w-3.5 shrink-0" /> Signed in — ready for your agents.
+        </p>
+      )}
+
       {isConnected && (
         <button
           type="button"
@@ -616,10 +852,11 @@ export function ConnectPanel({
         </button>
       )}
 
-      {entry.transport === "http" && (
+      {entry.transport === "http" && !isM365 && !canConnectTimeSignin && !isConnected && (
         <p className="mt-3 flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0" />
-          The CLI opens a browser to finish sign-in the first time an agent uses it.
+          Select Claude Code above to sign in now. Otherwise the CLI prompts for
+          sign-in the first time an agent uses it.
         </p>
       )}
 
