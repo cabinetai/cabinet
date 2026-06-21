@@ -100,7 +100,14 @@ const itemClass = (active: boolean) =>
 
 export function TreeView() {
   const { t } = useLocale();
-  const { nodes, loading } = useTreeStore();
+  const {
+    nodes,
+    loading,
+    pendingMove,
+    setPendingMove,
+    executeMovePage,
+    setSortAlphabetical,
+  } = useTreeStore();
   const selectPage = useTreeStore((s) => s.selectPage);
   const createPage = useTreeStore((s) => s.createPage);
   const deletePage = useTreeStore((s) => s.deletePage);
@@ -1035,6 +1042,48 @@ export function TreeView() {
             }}
           >
             Delete
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog open={!!pendingMove} onOpenChange={(open) => !open && setPendingMove(null)}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Disable Alphabetical Sorting?</DialogTitle>
+          <DialogDescription>
+            You are manually reordering files or folders, but alphabetical auto-sorting is currently enabled.
+            Would you like to disable alphabetical sorting to apply your manual ordering?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="mt-2 flex gap-2 sm:justify-end">
+          <Button variant="outline" onClick={() => setPendingMove(null)}>
+            Cancel
+          </Button>
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (pendingMove) {
+                const move = pendingMove;
+                setPendingMove(null);
+                await executeMovePage(move);
+              }
+            }}
+          >
+            Keep Auto-Sorting
+          </Button>
+          <Button
+            variant="default"
+            onClick={async () => {
+              if (pendingMove) {
+                const move = pendingMove;
+                setPendingMove(null);
+                setSortAlphabetical(false);
+                await executeMovePage(move);
+              }
+            }}
+          >
+            Disable Auto-Sorting & Move
           </Button>
         </DialogFooter>
       </DialogContent>

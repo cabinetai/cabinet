@@ -131,6 +131,7 @@ export async function readPage(virtualPath: string): Promise<PageData> {
         assetBase: nativeParent,
         content: "",
         frontmatter: {
+          type: "Untyped",
           title: path
             .basename(virtualPath)
             .replace(/\.(gdoc|gsheet|gslide|gslides|gform)$/i, ""),
@@ -382,6 +383,11 @@ export async function deletePage(virtualPath: string): Promise<void> {
   if (mdPath !== resolved && (await fileExists(mdPath))) {
     await deleteFileOrDir(mdPath);
   }
+
+  const segments = virtualPath.split("/");
+  const parentVirtual = segments.slice(0, -1).join("/");
+  const name = segments[segments.length - 1];
+  await removeSidecarEntry(parentVirtual, name).catch(() => {});
 }
 
 // Hidden dirs scaffolded next to every cabinet (cabinet-scaffold.ts:95-97).

@@ -5,6 +5,7 @@ import { resolveContentPath, sanitizeFilename } from "@/lib/storage/path-utils";
 import { ensureDirectory, fileExists } from "@/lib/storage/fs-operations";
 import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
+import { appendOrder, setEntryOrder } from "@/lib/storage/order-store";
 
 export const dynamic = "force-dynamic";
 
@@ -92,6 +93,14 @@ export async function POST(req: NextRequest) {
     const destResolved = resolveContentPath(virtualPath);
 
     await copyDir(resolvedSource, destResolved, { bytes: 0, files: 0 });
+
+    // Assign order to the newly imported folder
+    try {
+      const order = await appendOrder(parentPath);
+      await setEntryOrder(parentPath, folderName, order);
+    } catch (err) {
+      console.error("Failed to assign order to imported folder:", err);
+    }
 
     invalidateTreeCache();
     autoCommit(virtualPath, "Add");

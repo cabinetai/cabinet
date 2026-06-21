@@ -13,6 +13,7 @@ import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 import { slugifyFileName } from "@/lib/markdown/wiki-links";
 import { blankOffice, type BlankOfficeKind } from "@/lib/storage/office-templates";
+import { appendOrder, setEntryOrder } from "@/lib/storage/order-store";
 
 export const dynamic = "force-dynamic";
 
@@ -101,11 +102,14 @@ export async function POST(req: NextRequest) {
       } else {
         const kind = GOOGLE_KIND[type];
         const url = (body.googleUrl || "").trim();
+        const order = await appendOrder(parentPath);
         const fm = {
+          type: "Untyped",
           title: rawName,
           created: new Date().toISOString(),
           modified: new Date().toISOString(),
           tags: [] as string[],
+          order,
           google: { kind, ...(url ? { url } : { url: "" }) },
         };
         const content = url
@@ -154,6 +158,12 @@ export async function POST(req: NextRequest) {
     }
 
     const virtualPath = parentPath ? `${parentPath}/${filename}` : filename;
+    try {
+      const order = await appendOrder(parentPath);
+      await setEntryOrder(parentPath, filename, order);
+    } catch (err) {
+      console.error("Failed to assign order to created file:", err);
+    }
     invalidateTreeCache();
     autoCommit(virtualPath, "Add");
     return NextResponse.json({ ok: true, path: virtualPath, isPage: false });

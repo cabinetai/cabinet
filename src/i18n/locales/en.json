@@ -1625,7 +1625,11 @@
       "sidebar": "Sidebar",
       "showHiddenFiles": "Show hidden files",
       "sidebarDescription": "Configure how files are displayed in the sidebar.",
-      "showHiddenFilesHint": "Display files and folders starting with a dot (e.g. .env, .git)"
+      "showHiddenFilesHint": "Display files and folders starting with a dot (e.g. .env, .git)",
+      "autoSortAlphabetical": "Sort alphabetically",
+      "autoSortAlphabeticalHint": "Auto-sort files and folders alphabetically by name.",
+      "foldersFirst": "Folders first",
+      "foldersFirstHint": "Position all folders above files in the same directory."
     },
     "tabs": {
       "profile": "Profile",
