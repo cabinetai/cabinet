@@ -104,7 +104,10 @@ export function Header() {
               });
               const img = new Image();
               img.src = imgData;
-              await new Promise((resolve) => { img.onload = resolve; });
+              await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = () => reject(new Error("Failed to load rendered page image for PDF export"));
+              });
               const pdf = new jsPDF("p", "mm", "a4");
               const pdfWidth = pdf.internal.pageSize.getWidth();
               const pdfHeight = pdf.internal.pageSize.getHeight();
