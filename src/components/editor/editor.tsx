@@ -19,6 +19,7 @@ import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
 import { slugifyPageName } from "@/lib/markdown/wiki-links";
 import { detectEmbed } from "@/lib/embeds/detect";
+import { openLocalFileUrl } from "@/lib/runtime/open-local-file";
 import { cellAround, isInTable } from "@tiptap/pm/tables";
 import type { TreeNode } from "@/types";
 import { useLocale } from "@/i18n/use-locale";
@@ -265,6 +266,19 @@ export function KBEditor() {
                 `${window.location.pathname}${href}`
               );
             }
+            return true;
+          }
+
+          // Local file links: open with the OS default app (Electron) or
+          // surface the path (browser). file:// can't load in a webview.
+          if (href.startsWith("file://")) {
+            event.preventDefault();
+            event.stopPropagation();
+            const pathPart = href.slice("file://".length);
+            const encoded = pathPart.includes("%20") || !pathPart.includes(" ")
+              ? href
+              : "file://" + encodeURI(pathPart);
+            openLocalFileUrl(encoded);
             return true;
           }
 

@@ -26,6 +26,20 @@ interface TreeState {
   dragOverZone: DragZone | null;
   movingPaths: Set<string>;
   showHiddenFiles: boolean;
+  /** Sort the tree alphabetically by name instead of by manual `order`. */
+  sortAlphabetical: boolean;
+  /** When alphabetical sorting is on, place folders above files. */
+  foldersFirst: boolean;
+  /** The unsorted tree as returned by the server — `nodes` is the sorted
+   *  view derived from this, so toggling sort doesn't need a server refetch. */
+  rawNodes: TreeNode[];
+  /** A drag-move awaiting confirmation because alphabetical sorting is on
+   *  (manual ordering would otherwise be overridden by the sort). */
+  pendingMove: {
+    fromPath: string;
+    toParentPath: string;
+    neighbors?: { prevName?: string | null; nextName?: string | null };
+  } | null;
   /** Bumped whenever we want the sidebar to scroll to + blink the selected row. */
   focusTick: number;
   /** Tree paths an agent task recently created/changed — highlighted in the
@@ -53,6 +67,20 @@ interface TreeState {
   setDragOver: (path: string | null, zone?: DragZone | null) => void;
   setShowHiddenFiles: (show: boolean) => void;
   toggleHiddenFiles: () => void;
+  setSortAlphabetical: (sort: boolean) => void;
+  setFoldersFirst: (foldersFirst: boolean) => void;
+  setPendingMove: (
+    move: {
+      fromPath: string;
+      toParentPath: string;
+      neighbors?: { prevName?: string | null; nextName?: string | null };
+    } | null
+  ) => void;
+  executeMovePage: (move: {
+    fromPath: string;
+    toParentPath: string;
+    neighbors?: { prevName?: string | null; nextName?: string | null };
+  }) => Promise<void>;
   /** Mark tree paths as recently changed by a task (sidebar highlight + dot). */
   markChanged: (paths: string[]) => void;
   /** Clear the "recently changed" mark for one path (e.g. when it's opened). */
@@ -78,6 +106,69 @@ function loadShowHiddenFiles(): boolean {
   } catch {
     return false;
   }
+}
+
+function loadSortAlphabetical(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const stored = localStorage.getItem("kb-sort-alphabetical");
+    return stored === null ? true : stored === "true";
+  } catch {
+    return true;
+  }
+}
+
+function loadFoldersFirst(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const stored = localStorage.getItem("kb-folders-first");
+    return stored === null ? true : stored === "true";
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Recursively sort tree nodes. When `sortAlphabetical` is on, sort by name
+ * (optionally folders-first); otherwise honor the manual `frontmatter.order`
+ * with name as a tiebreaker.
+ */
+export function sortTreeNodes(
+  nodes: TreeNode[],
+  sortAlphabetical: boolean,
+  foldersFirst: boolean
+): TreeNode[] {
+  return [...nodes]
+    .map((node) => {
+      if (node.children && node.children.length > 0) {
+        return {
+          ...node,
+          children: sortTreeNodes(node.children, sortAlphabetical, foldersFirst),
+        };
+      }
+      return node;
+    })
+    .sort((a, b) => {
+      const isFolderA = a.type === "directory" || a.type === "cabinet";
+      const isFolderB = b.type === "directory" || b.type === "cabinet";
+
+      if (sortAlphabetical && foldersFirst && isFolderA !== isFolderB) {
+        return isFolderA ? -1 : 1;
+      }
+
+      if (sortAlphabetical) {
+        const nameA = a.frontmatter?.title || a.name;
+        const nameB = b.frontmatter?.title || b.name;
+        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+      } else {
+        const orderA = a.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+        const orderB = b.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+        if (orderA !== orderB) return orderA - orderB;
+        const nameA = a.frontmatter?.title || a.name;
+        const nameB = b.frontmatter?.title || b.name;
+        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+      }
+    });
 }
 
 function saveExpandedPaths(paths: Set<string>) {
@@ -112,6 +203,7 @@ function saveCachedTree(nodes: TreeNode[], showHidden: boolean) {
 
 export const useTreeStore = create<TreeState>((set, get) => ({
   nodes: [],
+  rawNodes: [],
   selectedPath: null,
   driveNode: null,
   driveLoading: false,
@@ -121,27 +213,34 @@ export const useTreeStore = create<TreeState>((set, get) => ({
   dragOverZone: null,
   movingPaths: new Set<string>(),
   showHiddenFiles: loadShowHiddenFiles(),
+  sortAlphabetical: loadSortAlphabetical(),
+  foldersFirst: loadFoldersFirst(),
+  pendingMove: null,
   focusTick: 0,
   recentlyChanged: new Set<string>(),
+
+  setPendingMove: (move) => set({ pendingMove: move }),
 
   setDriveNode: (node) => set({ driveNode: node }),
   setDriveLoading: (loading) => set({ driveLoading: loading }),
 
   loadTree: async (opts) => {
-    const { showHiddenFiles, nodes: existing } = get();
+    const { showHiddenFiles, nodes: existing, sortAlphabetical, foldersFirst } = get();
     // Paint instantly from cache on first load, then revalidate in the
     // background. Keeps the sidebar from flashing empty on refresh.
     if (existing.length === 0) {
       const cached = loadCachedTree(showHiddenFiles);
       if (cached.length > 0) {
-        set({ nodes: cached, loading: false });
+        const sorted = sortTreeNodes(cached, sortAlphabetical, foldersFirst);
+        set({ rawNodes: cached, nodes: sorted, loading: false });
       } else {
         set({ loading: true });
       }
     }
     try {
       const nodes = await fetchTree(showHiddenFiles, opts?.fresh ?? false);
-      set({ nodes, loading: false });
+      const sorted = sortTreeNodes(nodes, sortAlphabetical, foldersFirst);
+      set({ rawNodes: nodes, nodes: sorted, loading: false });
       saveCachedTree(nodes, showHiddenFiles);
     } catch {
       set({ loading: false });
@@ -226,6 +325,17 @@ export const useTreeStore = create<TreeState>((set, get) => ({
     toParentPath: string,
     neighbors: { prevName?: string | null; nextName?: string | null } = {}
   ) => {
+    const { sortAlphabetical } = get();
+    // Manual drag-reordering conflicts with alphabetical auto-sorting — ask
+    // the user before applying the move (TreeView renders the dialog).
+    if (sortAlphabetical) {
+      set({ pendingMove: { fromPath, toParentPath, neighbors } });
+      return;
+    }
+    await get().executeMovePage({ fromPath, toParentPath, neighbors });
+  },
+
+  executeMovePage: async ({ fromPath, toParentPath, neighbors = {} }) => {
     const fromParent = fromPath.split("/").slice(0, -1).join("/");
     const sameParent =
       fromParent === toParentPath &&
@@ -396,5 +506,19 @@ export const useTreeStore = create<TreeState>((set, get) => ({
   toggleHiddenFiles: () => {
     const { showHiddenFiles } = get();
     get().setShowHiddenFiles(!showHiddenFiles);
+  },
+
+  setSortAlphabetical: (sort: boolean) => {
+    localStorage.setItem("kb-sort-alphabetical", String(sort));
+    const { rawNodes, foldersFirst } = get();
+    const sorted = sortTreeNodes(rawNodes, sort, foldersFirst);
+    set({ sortAlphabetical: sort, nodes: sorted });
+  },
+
+  setFoldersFirst: (foldersFirst: boolean) => {
+    localStorage.setItem("kb-folders-first", String(foldersFirst));
+    const { rawNodes, sortAlphabetical } = get();
+    const sorted = sortTreeNodes(rawNodes, sortAlphabetical, foldersFirst);
+    set({ foldersFirst, nodes: sorted });
   },
 }));

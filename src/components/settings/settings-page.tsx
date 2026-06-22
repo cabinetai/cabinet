@@ -366,7 +366,14 @@ const REQUESTED_LOCALES_KEY = "cabinet-requested-locales";
 
 export function SettingsPage() {
   const { t } = useLocale();
-  const { showHiddenFiles, setShowHiddenFiles } = useTreeStore();
+  const {
+    showHiddenFiles,
+    setShowHiddenFiles,
+    sortAlphabetical,
+    setSortAlphabetical,
+    foldersFirst,
+    setFoldersFirst,
+  } = useTreeStore();
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
   const [defaultProvider, setDefaultProvider] = useState("");
   const [defaultModel, setDefaultModel] = useState("");
@@ -1072,31 +1079,73 @@ export function SettingsPage() {
                   {t("settings:appearance.sidebarDescription")}
                 </p>
 
-                <label className="flex items-center justify-between gap-3 rounded-lg border border-border p-3 cursor-pointer hover:border-primary/30 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={showHiddenFiles}
-                      onChange={(e) => setShowHiddenFiles(e.target.checked)}
-                      className="h-4 w-4 rounded border-border accent-primary"
-                    />
-                    <div>
-                      <span className="text-[13px] font-medium">{t("settings:appearance.showHiddenFiles")}</span>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        {t("settings:appearance.showHiddenFilesHint")}
-                      </p>
+                <div className="space-y-3">
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-border p-3 cursor-pointer hover:border-primary/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={showHiddenFiles}
+                        onChange={(e) => setShowHiddenFiles(e.target.checked)}
+                        className="h-4 w-4 rounded border-border accent-primary"
+                      />
+                      <div>
+                        <span className="text-[13px] font-medium">{t("settings:appearance.showHiddenFiles")}</span>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {t("settings:appearance.showHiddenFilesHint")}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  {/*
-                   * Audit #043: macOS convention concatenates modifier glyphs
-                   * with no separator (⌘⇧.); Windows/Linux uses Ctrl+Shift+. .
-                   */}
-                  <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border bg-muted/50 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
-                    {typeof navigator !== "undefined" && /Mac/.test(navigator.platform)
-                      ? "⌘⇧."
-                      : "Ctrl+Shift+."}
-                  </kbd>
-                </label>
+                    {/*
+                     * Audit #043: macOS convention concatenates modifier glyphs
+                     * with no separator (⌘⇧.); Windows/Linux uses Ctrl+Shift+. .
+                     */}
+                    <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border bg-muted/50 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
+                      {typeof navigator !== "undefined" && /Mac/.test(navigator.platform)
+                        ? "⌘⇧."
+                        : "Ctrl+Shift+."}
+                    </kbd>
+                  </label>
+
+                  <label className="flex items-center justify-between gap-3 rounded-lg border border-border p-3 cursor-pointer hover:border-primary/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={sortAlphabetical}
+                        onChange={(e) => setSortAlphabetical(e.target.checked)}
+                        className="h-4 w-4 rounded border-border accent-primary"
+                      />
+                      <div>
+                        <span className="text-[13px] font-medium">{t("settings:appearance.autoSortAlphabetical")}</span>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {t("settings:appearance.autoSortAlphabeticalHint")}
+                        </p>
+                      </div>
+                    </div>
+                  </label>
+
+                  <label className={cn(
+                    "flex items-center justify-between gap-3 rounded-lg border border-border p-3 transition-colors ms-6",
+                    sortAlphabetical
+                      ? "cursor-pointer hover:border-primary/30"
+                      : "opacity-40 cursor-not-allowed pointer-events-none bg-muted/20"
+                  )}>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={foldersFirst}
+                        disabled={!sortAlphabetical}
+                        onChange={(e) => setFoldersFirst(e.target.checked)}
+                        className="h-4 w-4 rounded border-border accent-primary"
+                      />
+                      <div>
+                        <span className="text-[13px] font-medium">{t("settings:appearance.foldersFirst")}</span>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {t("settings:appearance.foldersFirstHint")}
+                        </p>
+                      </div>
+                    </div>
+                  </label>
+                </div>
               </div>
 
               <div className="border-t border-border pt-6">

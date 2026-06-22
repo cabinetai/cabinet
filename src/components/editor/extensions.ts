@@ -100,6 +100,7 @@ export const editorExtensions = [
   }),
   Link.configure({
     openOnClick: false, // we handle clicks ourselves in the editor
+    isAllowedUri: (url) => !!url, // allow file:// and any other protocol
     HTMLAttributes: {
       class: "text-primary underline cursor-pointer",
     },

@@ -12,6 +12,11 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
    */
   uninstallApp: () => ipcRenderer.invoke("cabinet:uninstall-app"),
   /**
+   * Open a local file with the OS default application. Used for file://
+   * links clicked in the editor (e.g. open a PDF in Preview).
+   */
+  openLocalFile: (filePath) => ipcRenderer.invoke("cabinet:open-local-file", { path: filePath }),
+  /**
    * The OS keyboard / input languages, most-preferred first, plus the
    * Electron app + system locale. Used on the first onboarding screen to
    * localize Cabinet out of the box. Renderer maps these BCP-47 tags onto a

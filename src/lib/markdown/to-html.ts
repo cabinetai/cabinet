@@ -19,6 +19,19 @@ function convertWikiLinks(markdown: string): string {
 }
 
 /**
+ * Pre-process markdown to URL-encode spaces in file:// link URLs.
+ * CommonMark terminates a bare URL at the first whitespace, so
+ * [text](file:///path/My File.pdf) is not parsed as a link. This encodes
+ * spaces in the path so the remark pipeline sees a valid URL.
+ */
+function encodeFileUrls(markdown: string): string {
+  return markdown.replace(
+    /\]\((file:\/\/[^)]+)\)/g,
+    (_match, url: string) => `](${url.replace(/ /g, "%20")})`
+  );
+}
+
+/**
  * Post-process HTML to fix task list structure for Tiptap compatibility.
  * remark-gfm outputs: <li><input type="checkbox" ...> text</li>
  * Tiptap expects:     <li data-type="taskItem" data-checked="..."><label><input ...></label><div><p>text</p></div></li>
@@ -149,8 +162,11 @@ const processor = unified()
   .freeze();
 
 export async function markdownToHtml(markdown: string, pagePath?: string): Promise<string> {
+  // Encode spaces in file:// link URLs before remark (which terminates
+  // bare URLs at whitespace)
+  const withFileUrls = encodeFileUrls(markdown);
   // Pre-process wiki-links before remark (which would treat [[ as text)
-  const preprocessed = convertWikiLinks(markdown);
+  const preprocessed = convertWikiLinks(withFileUrls);
 
   const result = await processor.process(preprocessed);
 

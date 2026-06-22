@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { Cloud, ChevronRight, ChevronDown, Folder, Loader2, FolderOpen, ClipboardCopy, FileText } from "lucide-react";
 import { GoogleNodeIcon } from "./google-node-icon";
 import { useAppStore } from "@/stores/app-store";
-import { useTreeStore } from "@/stores/tree-store";
+import { useTreeStore, sortTreeNodes } from "@/stores/tree-store";
 import type { TreeNode, GoogleDriveSection } from "@/types";
 import { cn } from "@/lib/utils";
 import { decodeDrivePath } from "@/lib/google-drive/paths";
@@ -253,13 +253,23 @@ export function GoogleDriveTreeSection({ depth, padFn, cabinetPath }: GoogleDriv
     });
   };
 
-  if (sections.length === 0) return null;
+  const sortAlphabetical = useTreeStore((s) => s.sortAlphabetical);
+  const foldersFirst = useTreeStore((s) => s.foldersFirst);
+
+  const sortedSections = useMemo(() => {
+    return sections.map((section) => ({
+      ...section,
+      children: sortTreeNodes(section.children, sortAlphabetical, foldersFirst),
+    }));
+  }, [sections, sortAlphabetical, foldersFirst]);
+
+  if (sortedSections.length === 0) return null;
 
   return (
     <div>
       {/* Mounted Drive folders render inline with the cabinet files — each
           mount is a collapsible folder, set apart only by the cloud glyph. */}
-      {sections.map((section) => {
+      {sortedSections.map((section) => {
         const expanded = sectionExpanded[section.mountId] ?? true;
         const mountChildrenId = `gdrive-mount-${section.mountId.replace(/[^a-z0-9]/gi, "-")}`;
         const sectionLogo = providerLogo(section.provider ?? "google-drive");
