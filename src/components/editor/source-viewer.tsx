@@ -8,6 +8,8 @@ import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
 import { useLocale } from "@/i18n/use-locale";
 import { SplitScreenIcon } from "./editor-toolbar";
+import { useSplitResize } from "@/hooks/use-split-resize";
+import { SplitRuler } from "./split-ruler";
 
 interface SourceViewerProps {
   path: string;
@@ -59,6 +61,7 @@ export function SourceViewer({ path }: SourceViewerProps) {
   const [saving, setSaving] = useState(false);
   const editInputRef = useRef<HTMLTextAreaElement | null>(null);
   const editOverlayRef = useRef<HTMLDivElement | null>(null);
+  const split = useSplitResize("kb-source-viewer-split-ratio");
 
   const assetUrl = `/api/assets/${path}`;
   const language = detectLanguage(filename);
@@ -257,18 +260,21 @@ export function SourceViewer({ path }: SourceViewerProps) {
             Loading...
           </div>
         ) : isHtml ? (
-          <div className="flex-1 flex h-full overflow-hidden">
+          <div ref={split.containerRef} className="relative flex-1 flex h-full overflow-hidden">
             {/* LEFT: HTML EDITOR */}
             {(splitMode || sourceMode) && (
-              <div className="flex-1 relative h-full min-h-0 overflow-auto p-0 animate-in fade-in duration-200">
+              <div
+                className="relative h-full min-h-0 overflow-auto p-0 animate-in fade-in duration-200"
+                style={splitMode ? { width: `${split.leftPct}%`, flex: "none" } : { flex: "1 1 0%" }}
+              >
                 <div
                   ref={editOverlayRef}
                   className="pointer-events-none absolute inset-0 overflow-auto"
                 >
                   <div className="relative min-h-full">
-                    <pre className="absolute inset-y-0 left-0 m-0 w-[4rem] select-none bg-[#1e1e1e] pr-4 text-right font-mono text-[13px] leading-relaxed text-[#858585]">{Array.from({ length: editHighlightedLines.length }, (_, i) => i + 1).join("\n")}</pre>
+                    <pre className="absolute inset-y-0 left-0 m-0 w-16 select-none bg-[#1e1e1e] pr-4 text-right font-mono text-[13px] leading-relaxed text-[#858585]">{Array.from({ length: editHighlightedLines.length }, (_, i) => i + 1).join("\n")}</pre>
                     <pre
-                      className="m-0 min-h-full whitespace-pre bg-transparent p-0 pl-[4rem] font-mono text-[13px] leading-relaxed text-[#d4d4d4]"
+                      className="m-0 min-h-full whitespace-pre bg-transparent p-0 pl-16 font-mono text-[13px] leading-relaxed text-[#d4d4d4]"
                       dangerouslySetInnerHTML={{ __html: editHighlightedLines.join("\n") }}
                     />
                   </div>
@@ -294,16 +300,27 @@ export function SourceViewer({ path }: SourceViewerProps) {
                       editOverlayRef.current.scrollLeft = target.scrollLeft;
                     }
                   }}
-                  className="absolute inset-y-0 left-[4rem] right-0 z-10 min-h-[calc(100vh-12rem)] resize-none bg-transparent p-0 font-mono text-[13px] leading-relaxed text-transparent caret-[#d4d4d4] focus:outline-none"
+                  className="absolute inset-y-0 left-16 right-0 z-10 min-h-[calc(100vh-12rem)] resize-none bg-transparent p-0 font-mono text-[13px] leading-relaxed text-transparent caret-[#d4d4d4] focus:outline-none"
                   wrap="off"
                   spellCheck={false}
                 />
               </div>
             )}
 
+            {/* Divider */}
+            {splitMode && (
+              <div
+                role="separator"
+                aria-orientation="vertical"
+                onPointerDown={split.startResize}
+                onDoubleClick={split.resetWidth}
+                className="relative w-px shrink-0 cursor-col-resize bg-border before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:content-[''] hover:bg-primary/50"
+              />
+            )}
+
             {/* RIGHT: HTML PREVIEW */}
             {splitMode && (
-              <div className="flex-1 flex flex-col overflow-hidden border-l border-border bg-white relative animate-in fade-in duration-200">
+              <div className="flex-1 flex flex-col overflow-hidden bg-white relative animate-in fade-in duration-200">
                 <iframe
                   src={assetUrl}
                   className="w-full h-full border-none bg-white"
@@ -311,6 +328,10 @@ export function SourceViewer({ path }: SourceViewerProps) {
                   key={content || ""}
                 />
               </div>
+            )}
+            {/* Drag ruler */}
+            {splitMode && split.resizing && (
+              <SplitRuler leftPct={split.leftPct} />
             )}
           </div>
         ) : sourceMode ? (
@@ -320,9 +341,9 @@ export function SourceViewer({ path }: SourceViewerProps) {
               className="pointer-events-none absolute inset-0 overflow-auto"
             >
               <div className="relative min-h-full">
-                <pre className="absolute inset-y-0 left-0 m-0 w-[4rem] select-none bg-[#1e1e1e] pr-4 text-right font-mono text-[13px] leading-relaxed text-[#858585]">{Array.from({ length: editHighlightedLines.length }, (_, i) => i + 1).join("\n")}</pre>
+                <pre className="absolute inset-y-0 left-0 m-0 w-16 select-none bg-[#1e1e1e] pr-4 text-right font-mono text-[13px] leading-relaxed text-[#858585]">{Array.from({ length: editHighlightedLines.length }, (_, i) => i + 1).join("\n")}</pre>
                 <pre
-                  className="m-0 min-h-full whitespace-pre bg-transparent p-0 pl-[4rem] font-mono text-[13px] leading-relaxed text-[#d4d4d4]"
+                  className="m-0 min-h-full whitespace-pre bg-transparent p-0 pl-16 font-mono text-[13px] leading-relaxed text-[#d4d4d4]"
                   dangerouslySetInnerHTML={{ __html: editHighlightedLines.join("\n") }}
                 />
               </div>
@@ -341,7 +362,7 @@ export function SourceViewer({ path }: SourceViewerProps) {
                   editOverlayRef.current.scrollLeft = target.scrollLeft;
                 }
               }}
-              className="absolute inset-y-0 left-[4rem] right-0 z-10 min-h-[calc(100vh-12rem)] resize-none bg-transparent p-0 font-mono text-[13px] leading-relaxed text-transparent caret-[#d4d4d4] focus:outline-none"
+              className="absolute inset-y-0 left-16 right-0 z-10 min-h-[calc(100vh-12rem)] resize-none bg-transparent p-0 font-mono text-[13px] leading-relaxed text-transparent caret-[#d4d4d4] focus:outline-none"
               wrap="off"
               spellCheck={false}
             />

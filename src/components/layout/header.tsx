@@ -1,7 +1,6 @@
 "use client";
 
-import { Copy, Download, FileCode, FileDown, FileText, Sparkles, Maximize } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Copy, Download, FileCode, FileDown, FileText, Sparkles } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,76 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore } from "@/stores/editor-store";
-import { useAppStore } from "@/stores/app-store";
-import { VersionHistory } from "@/components/editor/version-history";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { useLocale } from "@/i18n/use-locale";
 
 export function Header() {
   const { t } = useLocale();
   const { frontmatter, content, currentPath } = useEditorStore();
-  const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
-  const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
-  const openTaskPanelCompose = useAppStore((s) => s.openTaskPanelCompose);
-  const closeTaskPanel = useAppStore((s) => s.closeTaskPanel);
-  const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
-  const aiPanelCollapsed = useAppStore((s) => s.aiPanelCollapsed);
-  const taskPanelOpen = useAppStore((s) => s.taskPanelOpen);
-
-  const [inFullscreen, setInFullscreen] = useState(false);
-  const prevStateRef = useRef<{
-    sidebarCollapsed: boolean;
-    aiPanelCollapsed: boolean;
-    taskPanelOpen: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    const updateFullscreen = () => {
-      setInFullscreen(Boolean(document.fullscreenElement));
-    };
-
-    updateFullscreen();
-    document.addEventListener("fullscreenchange", updateFullscreen);
-    return () => {
-      document.removeEventListener("fullscreenchange", updateFullscreen);
-    };
-  }, []);
-
-  const handleFocus = async () => {
-    try {
-      if (document.fullscreenElement) {
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        }
-        if (prevStateRef.current) {
-          setSidebarCollapsed(prevStateRef.current.sidebarCollapsed);
-          setAiPanelCollapsed(prevStateRef.current.aiPanelCollapsed);
-          if (prevStateRef.current.taskPanelOpen) {
-            openTaskPanelCompose();
-          }
-          prevStateRef.current = null;
-        }
-        return;
-      }
-
-      prevStateRef.current = {
-        sidebarCollapsed: sidebarCollapsed,
-        aiPanelCollapsed: aiPanelCollapsed,
-        taskPanelOpen: taskPanelOpen,
-      };
-
-      if (document.documentElement.requestFullscreen) {
-        await document.documentElement.requestFullscreen();
-      }
-
-      setSidebarCollapsed(true);
-      setAiPanelCollapsed(true);
-      if (taskPanelOpen) closeTaskPanel();
-    } catch (error) {
-      prevStateRef.current = null;
-      console.error(error);
-    }
-  };
 
   const handleCopyMarkdown = async () => {
     if (!content) return;
@@ -191,22 +126,6 @@ export function Header() {
     <ViewerToolbar path={currentPath || undefined} showBreadcrumb={!!currentPath}>
       {currentPath && (
         <>
-          <button
-            aria-label={
-              inFullscreen
-                ? t("editor:header.exitFocus")
-                : t("editor:header.focus")
-            }
-            title={
-              inFullscreen
-                ? t("editor:header.exitFocus")
-                : t("editor:header.focus")
-            }
-            onClick={handleFocus}
-            className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-          >
-            <Maximize className="h-4 w-4" />
-          </button>
           <DropdownMenu>
           <DropdownMenuTrigger aria-label={t("editor:header.exportPage")} title={t("editor:header.exportPage")} className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
             <Download className="h-4 w-4" />

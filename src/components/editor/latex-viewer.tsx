@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { renderLatexToHtml } from "./latex-render";
 import { SplitScreenIcon } from "./editor-toolbar";
+import { useSplitResize } from "@/hooks/use-split-resize";
+import { SplitRuler } from "./split-ruler";
 
 interface LatexViewerProps {
   path: string;
@@ -21,6 +23,7 @@ export function LatexViewer({ path }: LatexViewerProps) {
   const [mode, setMode] = useState<ViewMode>("source");
   const [splitMode, setSplitMode] = useState(false);
   const [saving, setSaving] = useState(false);
+  const split = useSplitResize("kb-latex-viewer-split-ratio");
 
   const editContentRef = useRef<string>("");
   const [previewContent, setPreviewContent] = useState("");
@@ -253,10 +256,13 @@ export function LatexViewer({ path }: LatexViewerProps) {
             {error}
           </div>
         ) : (
-          <div className="flex-1 flex h-full overflow-hidden">
+          <div ref={split.containerRef} className="relative flex-1 flex h-full overflow-hidden">
             {/* LEFT: SOURCE CODE EDITOR */}
             {(splitMode || mode === "source") && (
-              <div className="flex-1 flex flex-col overflow-hidden animate-in fade-in duration-200">
+              <div
+                className="flex flex-col overflow-hidden min-w-0 animate-in fade-in duration-200"
+                style={splitMode ? { width: `${split.leftPct}%`, flex: "none" } : { flex: "1 1 0%" }}
+              >
                 <textarea
                   defaultValue={content}
                   onChange={(e) => handleSourceChange(e.target.value)}
@@ -274,9 +280,20 @@ export function LatexViewer({ path }: LatexViewerProps) {
               </div>
             )}
 
+            {/* Divider */}
+            {splitMode && (
+              <div
+                role="separator"
+                aria-orientation="vertical"
+                onPointerDown={split.startResize}
+                onDoubleClick={split.resetWidth}
+                className="relative w-px shrink-0 cursor-col-resize bg-border before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:content-[''] hover:bg-primary/50"
+              />
+            )}
+
             {/* RIGHT: RENDERED PREVIEW */}
             {(splitMode || mode === "rendered") && (
-              <div className="flex-1 overflow-auto border-l border-border bg-background animate-in fade-in duration-200">
+              <div className="flex-1 min-w-0 overflow-auto bg-background animate-in fade-in duration-200">
                 {rendered && rendered.ok ? (
                   <div className="mx-auto max-w-3xl px-6 py-8">
                     {rendered.unsupported.length > 0 && (
@@ -316,6 +333,10 @@ export function LatexViewer({ path }: LatexViewerProps) {
                   </div>
                 )}
               </div>
+            )}
+            {/* Drag ruler */}
+            {splitMode && split.resizing && (
+              <SplitRuler leftPct={split.leftPct} />
             )}
           </div>
         )}

@@ -474,7 +474,7 @@ export function EditorToolbar({
           )}
 
           {/* New Mode Toggles */}
-          {!splitMode && !sourceMode && (
+          {!sourceMode && (
             // Preview Mode
             <>
               <ToolButton

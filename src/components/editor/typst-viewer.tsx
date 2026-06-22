@@ -5,6 +5,8 @@ import { Download, Eye, Save, AlertCircle, Loader2, RefreshCw, FileCode } from "
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { SplitScreenIcon } from "./editor-toolbar";
+import { useSplitResize } from "@/hooks/use-split-resize";
+import { SplitRuler } from "./split-ruler";
 
 interface TypstViewerProps {
   path: string;
@@ -27,6 +29,7 @@ export function TypstViewer({ path }: TypstViewerProps) {
   const [viewMode, setViewMode] = useState<"source" | "preview">("source");
 
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const split = useSplitResize("kb-typst-viewer-split-ratio");
   const editContentRef = useRef<string>("");
   const compileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -268,10 +271,13 @@ export function TypstViewer({ path }: TypstViewerProps) {
           Loading Typst file…
         </div>
       ) : (
-        <div className="flex-1 flex overflow-hidden">
+        <div ref={split.containerRef} className="relative flex-1 flex overflow-hidden">
           {/* LEFT: SOURCE CODE EDITOR */}
           {(splitMode || viewMode === "source") && (
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div
+              className="flex flex-col overflow-hidden min-w-0"
+              style={splitMode ? { width: `${split.leftPct}%`, flex: "none" } : { flex: "1 1 0%" }}
+            >
               <textarea
                 defaultValue={content}
                 onChange={(e) => handleSourceChange(e.target.value)}
@@ -289,9 +295,20 @@ export function TypstViewer({ path }: TypstViewerProps) {
             </div>
           )}
 
+          {/* Divider */}
+          {splitMode && (
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              onPointerDown={split.startResize}
+              onDoubleClick={split.resetWidth}
+              className="relative w-px shrink-0 cursor-col-resize bg-border before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:content-[''] hover:bg-primary/50"
+            />
+          )}
+
           {/* RIGHT: PDF PREVIEW */}
           {(splitMode || viewMode === "preview") && (
-            <div className="flex-1 flex flex-col overflow-hidden border-l border-border bg-zinc-100 dark:bg-zinc-900 relative">
+            <div className="flex-1 min-w-0 flex flex-col overflow-hidden bg-zinc-100 dark:bg-zinc-900 relative">
               {compiling && (
                 <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-background/80 backdrop-blur px-2.5 py-1 rounded-md text-[11px] text-muted-foreground shadow-sm z-10">
                   <Loader2 className="h-3 w-3 animate-spin text-primary" />
@@ -318,6 +335,10 @@ export function TypstViewer({ path }: TypstViewerProps) {
                 </div>
               )}
             </div>
+          )}
+          {/* Drag ruler */}
+          {splitMode && split.resizing && (
+            <SplitRuler leftPct={split.leftPct} />
           )}
         </div>
       )}

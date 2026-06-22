@@ -29,6 +29,8 @@ import { openUrlInAppropriateContext } from "@/lib/runtime/open-url";
 import { cellAround, isInTable } from "@tiptap/pm/tables";
 import type { TreeNode, FrontMatter } from "@/types";
 import { useLocale } from "@/i18n/use-locale";
+import { useSplitResize } from "@/hooks/use-split-resize";
+import { SplitRuler } from "./split-ruler";
 
 async function uploadFile(pagePath: string, file: File): Promise<string | null> {
   const formData = new FormData();
@@ -166,6 +168,7 @@ export function KBEditor() {
     return false;
   });
   const [splitHtml, setSplitHtml] = useState("");
+  const split = useSplitResize("kb-editor-split-ratio", isRtl);
 
   const toggleSplitMode = useCallback(() => {
     setSplitMode((prev) => {
@@ -805,9 +808,13 @@ export function KBEditor() {
       />
 
       {sourceMode ? (
-        <div className="flex-1 flex overflow-hidden border-t border-border" dir={isRtl ? "rtl" : undefined}>
+        <div ref={split.containerRef} className="relative flex-1 flex overflow-hidden border-t border-border" dir={isRtl ? "rtl" : undefined}>
           {/* Left: Code Editor */}
-          <div className="flex-1 overflow-y-auto p-4" data-editor-scroll>
+          <div
+            className="overflow-y-auto p-4 min-w-0"
+            style={splitMode ? { width: `${split.leftPct}%`, flex: "none" } : { flex: "1 1 0%" }}
+            data-editor-scroll
+          >
             <textarea
               ref={textareaRef}
               value={sourceText}
@@ -832,17 +839,31 @@ export function KBEditor() {
                 }
               }}
               className={`w-full bg-transparent font-mono text-[13px] leading-relaxed resize-none focus:outline-none overflow-hidden block ${
-                wideMode ? "max-w-none" : "max-w-[48rem] mx-auto"
+                wideMode ? "max-w-none" : "max-w-3xl mx-auto"
               }`}
               style={{ height: "auto" }}
               spellCheck={false}
             />
           </div>
+          {/* Divider */}
+          {splitMode && (
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              onPointerDown={split.startResize}
+              onDoubleClick={split.resetWidth}
+              className="relative w-px shrink-0 cursor-col-resize bg-border before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:content-[''] hover:bg-primary/50"
+            />
+          )}
           {/* Right: Rendered Preview */}
           {splitMode && (
-            <div className="flex-1 overflow-y-auto p-8 border-l border-border bg-background prose dark:prose-invert max-w-none">
+            <div className="flex-1 min-w-0 overflow-y-auto p-8 bg-background prose dark:prose-invert max-w-none">
               <div className="tiptap" dangerouslySetInnerHTML={{ __html: splitHtml }} />
             </div>
+          )}
+          {/* Drag ruler */}
+          {splitMode && split.resizing && (
+            <SplitRuler leftPct={split.leftPct} rtl={isRtl} />
           )}
         </div>
       ) : (
