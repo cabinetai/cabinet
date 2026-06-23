@@ -1,11 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
+import { Archive, Globe } from "lucide-react";
 import { HeaderActions } from "@/components/layout/header-actions";
 import { VersionHistory } from "@/components/editor/version-history";
 import { ReturnToChip } from "@/components/layout/return-to-chip";
 import { ViewerBreadcrumb } from "@/components/layout/viewer-breadcrumb";
 import { NewTaskButton } from "@/components/composer/new-task-button";
+import { useAppStore } from "@/stores/app-store";
+import { useTreeStore } from "@/stores/tree-store";
+import { useLocale } from "@/i18n/use-locale";
+import { findNodeByPath } from "@/lib/cabinets/tree";
 import { cn } from "@/lib/utils";
 
 /**
@@ -27,6 +32,7 @@ export function ViewerToolbar({
   leading,
   children,
   className,
+  showModeButtons = true,
 }: {
   path?: string;
   badge?: string;
@@ -36,7 +42,66 @@ export function ViewerToolbar({
   leading?: ReactNode;
   children?: ReactNode;
   className?: string;
+  showModeButtons?: boolean;
 }) {
+  const { t } = useLocale();
+  const appMode = useAppStore((s) => s.appMode);
+  const setAppMode = useAppStore((s) => s.setAppMode);
+  const nodes = useTreeStore((s) => s.nodes);
+  const selectedPath = useTreeStore((s) => s.selectedPath);
+  const sourcePath = path || selectedPath;
+  const sourceNode = useMemo(
+    () => (sourcePath ? findNodeByPath(nodes, sourcePath) : null),
+    [nodes, sourcePath]
+  );
+
+  // Map the current file to an in-app browser URL: websites/apps open their
+  // index.html, directories/cabinets their index.md, markdown its <name>.md,
+  // everything else the raw asset.
+  const browseModeUrl = useMemo(() => {
+    if (!sourcePath) return null;
+    const assetUrl = `/api/assets/${sourcePath.split("/").map(encodeURIComponent).join("/")}`;
+    const lower = sourcePath.toLowerCase();
+    if (sourceNode?.type === "website" || sourceNode?.type === "app") {
+      return `${assetUrl}/index.html`;
+    }
+    if (sourceNode?.type === "directory" || sourceNode?.type === "cabinet") {
+      return `${assetUrl}/index.md`;
+    }
+    if (sourceNode?.type === "file" || lower.endsWith(".md")) {
+      return `${assetUrl}.md`;
+    }
+    return assetUrl;
+  }, [sourcePath, sourceNode?.type]);
+
+  // The Globe (enter-browse) button only makes sense for web-renderable
+  // content — i.e. bundled websites/apps, which open their index.html. Markdown
+  // articles and other files render in their own viewers, and their raw asset
+  // URL isn't browsable (e.g. .md downloads as octet-stream), so no button.
+  const isBrowsable = sourceNode?.type === "website" || sourceNode?.type === "app";
+
+  const modeButtons = !showModeButtons ? null : appMode === "browse" ? (
+    // Always offer the exit affordance while browsing, regardless of which node
+    // is selected (you may have entered browse from a link in a markdown page).
+    <button
+      aria-label={t("editor:header.editMode")}
+      title={t("editor:header.editMode")}
+      onClick={() => setAppMode("edit")}
+      className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+    >
+      <Archive className="h-4 w-4" />
+    </button>
+  ) : isBrowsable ? (
+    <button
+      aria-label={t("editor:header.browseMode")}
+      title={t("editor:header.browseMode")}
+      onClick={() => setAppMode("browse", browseModeUrl)}
+      className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+    >
+      <Globe className="h-4 w-4" />
+    </button>
+  ) : null;
+
   return (
     <div
       className={cn(
@@ -64,6 +129,7 @@ export function ViewerToolbar({
         {children}
         {/* File History on every viewer, not just the markdown editor. */}
         {path ? <VersionHistory path={path} /> : null}
+        {modeButtons}
         <HeaderActions />
         <NewTaskButton />
       </div>

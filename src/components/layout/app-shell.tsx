@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Header } from "@/components/layout/header";
 import { KBEditor } from "@/components/editor/editor";
+import { BrowserView } from "@/components/layout/browser-view";
 import { WebsiteViewer } from "@/components/editor/website-viewer";
 import { PdfViewer } from "@/components/editor/pdf-viewer";
 import { CsvViewer } from "@/components/editor/csv-viewer";
@@ -160,6 +161,8 @@ export function AppShell() {
   const selectedPath = useTreeStore((s) => s.selectedPath);
   const driveNode = useTreeStore((s) => s.driveNode);
   const section = useAppStore((s) => s.section);
+  const appMode = useAppStore((s) => s.appMode);
+  const setAppMode = useAppStore((s) => s.setAppMode);
   const setSection = useAppStore((s) => s.setSection);
   const terminalOpen = useAppStore((s) => s.terminalOpen);
   const terminalPosition = useAppStore((s) => s.terminalPosition);
@@ -367,6 +370,14 @@ export function AppShell() {
     }, 1000);
     return () => window.clearTimeout(id);
   }, [selectedPath, section.cabinetPath]);
+
+  // Browse mode only makes sense over a page/cabinet surface; leaving those
+  // sections (settings, help, etc.) drops back to the editor.
+  useEffect(() => {
+    if (section.type !== "page" && section.type !== "cabinet" && appMode !== "edit") {
+      setAppMode("edit");
+    }
+  }, [section.type, appMode, setAppMode]);
 
   // Dynamic document.title — reflects the current section and page.
   useEffect(() => {
@@ -789,6 +800,9 @@ export function AppShell() {
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "integrations") return <IntegrationsHubPage />;
     if (section.type === "help") return <HelpPage />;
+    if ((section.type === "cabinet" || section.type === "page") && appMode === "browse") {
+      return <BrowserView />;
+    }
     if (section.type === "cabinet" && section.cabinetPath) {
       return <CabinetView cabinetPath={section.cabinetPath} />;
     }

@@ -1071,7 +1071,16 @@
       "copyAsHtml": "Copy as HTML",
       "downloadMarkdown": "Download .md",
       "downloadPdf": "Download PDF",
-      "copiedForLlmToast": "Copied {{size}} of Markdown for LLM"
+      "copiedForLlmToast": "Copied {{size}} of Markdown for LLM",
+      "browseMode": "Open in browser",
+      "editMode": "Back to editor"
+    },
+    "browser": {
+      "noUrl": "Built-in browser ready. Click a link in a page to open it here.",
+      "openExternally": "Open externally",
+      "back": "Back",
+      "forward": "Forward",
+      "reload": "Reload"
     },
     "toolbar": {
       "heading1": "Heading 1",

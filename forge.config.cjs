@@ -21,7 +21,7 @@ const PACKAGER_IGNORE = [
   /^\/assets(?:\/|$)/,
   /^\/cli(?:\/|$)/,
   /^\/public(?:\/|$)/,
-  /^\/electron\/(?!main\.cjs$|preload\.cjs$).*/,
+  /^\/electron\/(?!main\.cjs$|preload\.cjs$|browser-views\.cjs$|browser-preload\.cjs$).*/,
   /^\/server(?:\/|$)/,
   /^\/src(?:\/|$)/,
   /^\/data(?:\/|$)/,
