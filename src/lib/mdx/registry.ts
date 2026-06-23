@@ -50,6 +50,67 @@ export const MDX_COMPONENT_REGISTRY: Record<string, MdxComponentSpec> = {
       { name: "url", description: "URL of the video to play.", required: true },
     ],
   },
+  NotebookCell: {
+    name: "NotebookCell",
+    description:
+      "A Jupyter notebook code cell with optional outputs. Wraps a fenced code block and output components.",
+    props: [
+      { name: "language", description: "Programming language of the cell (e.g. python)." },
+      { name: "executionCount", description: "Jupyter execution count number." },
+    ],
+  },
+  CodeOutput: {
+    name: "CodeOutput",
+    description: "A text or HTML output from a notebook cell execution.",
+    selfClosing: true,
+    props: [
+      {
+        name: "type",
+        description: "Output type.",
+        enum: ["stream", "text", "html", "unknown"],
+      },
+      { name: "name", description: "Stream name (stdout/stderr) when type=stream." },
+      { name: "text", description: "Plain-text output content." },
+      { name: "html", description: "HTML output content (rendered in a sandboxed iframe)." },
+      { name: "outputType", description: "Raw nbformat output_type when type=unknown." },
+    ],
+  },
+  DataFrame: {
+    name: "DataFrame",
+    description: "A pandas DataFrame rendered as an HTML table.",
+    selfClosing: true,
+    props: [
+      { name: "html", description: "HTML table string from pandas to_html().", required: true },
+    ],
+  },
+  PlotlyChart: {
+    name: "PlotlyChart",
+    description: "A Plotly figure rendered from serialized JSON.",
+    selfClosing: true,
+    props: [
+      { name: "data", description: "JSON string of the Plotly figure spec.", required: true },
+    ],
+  },
+  ImageOutput: {
+    name: "ImageOutput",
+    description: "An image output (PNG, JPEG, or SVG) from a notebook cell.",
+    selfClosing: true,
+    props: [
+      { name: "mime", description: "MIME type of the image.", enum: ["image/png", "image/jpeg", "image/svg+xml"] },
+      { name: "src", description: "Base64-encoded image data (for PNG/JPEG)." },
+      { name: "data", description: "Raw SVG string (for image/svg+xml)." },
+    ],
+  },
+  ErrorOutput: {
+    name: "ErrorOutput",
+    description: "An error output from a notebook cell execution.",
+    selfClosing: true,
+    props: [
+      { name: "ename", description: "Exception name.", required: true },
+      { name: "evalue", description: "Exception value." },
+      { name: "traceback", description: "Traceback string (newline-separated)." },
+    ],
+  },
 };
 
 /** True if `name` is a registered (verified) MDX component. */
@@ -96,7 +157,7 @@ export function mdxRegistryPromptText(): string {
     "",
     "Example:",
     "```jsx live",
-    '<ChartContainer config={{ sales: { label: "Sales", color: "var(--chart-1)" } }} className="h-[300px]">',
+    '<ChartContainer config={{ sales: { label: "Sales", color: "var(--chart-1)" } }} className="h-75">',
     "  <BarChart data={data}>",
     '    <XAxis dataKey="month" />',
     '    <Bar dataKey="sales" fill="var(--chart-1)" radius={4} />',
