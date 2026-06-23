@@ -148,9 +148,9 @@ export function CodeOutput({
   if (type === "html" && html) {
     return (
       <AutoHeightIframe
-        srcDoc={`<!doctype html><html><head><base target="_blank"><style>body{margin:0;padding:8px;font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;background:#FFF9E9;color:#2A221B;font-size:13px}table{border-collapse:collapse}th,td{border:1px solid #D4C4B0;padding:4px 8px;text-align:left}thead{background:#EFE5CC}</style></head><body>${html}</body></html>`}
+        srcDoc={`<!doctype html><html><head><base target="_blank"><style>body{margin:0;padding:8px;font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;background:transparent;color:#2A221B;font-size:13px}table{border-collapse:collapse}th,td{border:1px solid #D4C4B0;padding:4px 8px;text-align:left}thead{background:#EFE5CC}.vega-embed{background:transparent!important}rect.background{fill:transparent!important}rect.bg{fill:transparent!important}</style><script>(function(){var _v=undefined;var w=function(el,spec,opt){if(spec){spec.background="transparent";if(spec.config){spec.config.background="transparent";if(spec.config.view){spec.config.view.fill="transparent";spec.config.view.stroke="transparent"}}}if(_v)return _v(el,spec,opt)};Object.defineProperty(window,"vegaEmbed",{get:function(){return w},set:function(val){_v=val;if(val){Object.assign(w,val);w.vega=val.vega;w.vegaLite=val.vegaLite}},configurable:true})})()</script></head><body>${html}</body></html>`}
         sandbox="allow-scripts"
-        className="w-full bg-[#FFF9E9] rounded-md border border-[#E8DDC5]"
+        className="w-full bg-transparent rounded-md border border-[#E8DDC5]"
         defaultHeight={360}
       />
     );
@@ -179,9 +179,9 @@ export interface DataFrameProps {
 export function DataFrame({ html }: DataFrameProps) {
   return (
     <AutoHeightIframe
-      srcDoc={`<!doctype html><html><head><base target="_blank"><style>body{margin:0;padding:8px;font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;background:#FFF9E9;color:#2A221B;font-size:13px}table{border-collapse:collapse}th,td{border:1px solid #D4C4B0;padding:4px 8px;text-align:left}thead{background:#EFE5CC}</style></head><body>${html}</body></html>`}
+      srcDoc={`<!doctype html><html><head><base target="_blank"><style>body{margin:0;padding:8px;font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;background:transparent;color:#2A221B;font-size:13px}table{border-collapse:collapse}th,td{border:1px solid #D4C4B0;padding:4px 8px;text-align:left}thead{background:#EFE5CC}</style></head><body>${html}</body></html>`}
       sandbox="allow-scripts"
-      className="w-full bg-[#FFF9E9] rounded-md border border-[#E8DDC5]"
+      className="w-full bg-transparent rounded-md border border-[#E8DDC5]"
       defaultHeight={360}
     />
   );
@@ -196,6 +196,12 @@ export function PlotlyChart({ data }: PlotlyChartProps) {
     let spec: unknown;
     try {
       spec = JSON.parse(data);
+      if (spec && typeof spec === "object") {
+        const layout = (spec as any).layout || {};
+        layout.paper_bgcolor = "transparent";
+        layout.plot_bgcolor = "transparent";
+        (spec as any).layout = layout;
+      }
     } catch {
       return `<p style="color:#8B2E3E;font-family:monospace;padding:8px">Invalid Plotly JSON</p>`;
     }
@@ -213,9 +219,9 @@ try {
 
   return (
     <AutoHeightIframe
-      srcDoc={`<!doctype html><html><head><base target="_blank"><style>body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;background:#FFF9E9;color:#2A221B}</style></head><body>${html}</body></html>`}
+      srcDoc={`<!doctype html><html><head><base target="_blank"><style>body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif;background:transparent;color:#2A221B}rect.background{fill:transparent!important}rect.bg{fill:transparent!important}</style></head><body>${html}</body></html>`}
       sandbox="allow-scripts"
-      className="w-full bg-[#FFF9E9] rounded-md border border-[#E8DDC5]"
+      className="w-full bg-transparent rounded-md border border-[#E8DDC5]"
       defaultHeight={420}
     />
   );
@@ -231,7 +237,7 @@ export function ImageOutput({ mime = "image/png", src, data }: ImageOutputProps)
   if (mime === "image/svg+xml" && data) {
     return (
       <div
-        className="max-w-full rounded-md bg-white p-2 overflow-auto"
+        className="max-w-full rounded-md bg-transparent p-2 overflow-auto"
         dangerouslySetInnerHTML={{ __html: data }}
       />
     );
@@ -245,7 +251,7 @@ export function ImageOutput({ mime = "image/png", src, data }: ImageOutputProps)
     <img
       src={imgSrc}
       alt="notebook output"
-      className="max-w-full rounded-md bg-white p-2"
+      className="max-w-full rounded-md bg-transparent p-2"
     />
   );
 }
