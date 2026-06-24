@@ -1808,22 +1808,26 @@ export function BrowserView() {
                   <div className="p-3 text-xs text-muted-foreground text-center">No extensions enabled</div>
                 ) : (
                   extensions.filter(ext => ext.enabled !== false).map(ext => (
-                    <div key={ext.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm cursor-pointer group">
-                      <div className="flex items-center gap-2 flex-1 overflow-hidden" onClick={(e) => handleRunExtension(ext, e)}>
+                    <div key={ext.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm group">
+                      <button
+                        type="button"
+                        onClick={(e) => handleRunExtension(ext, e)}
+                        className="flex items-center gap-2 flex-1 overflow-hidden text-left cursor-pointer focus:outline-none"
+                      >
                         {ext.iconDataUrl ? (
                           <img src={ext.iconDataUrl} alt="" className="w-4 h-4 object-contain shrink-0" />
                         ) : (
                           <Blocks className="h-4 w-4 shrink-0 text-muted-foreground" />
                         )}
                         <span className="truncate">{ext.name}</span>
-                      </div>
-                      <button 
-                        type="button" 
+                      </button>
+                      <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleExtensionPin(ext);
                         }}
-                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded text-muted-foreground"
+                        className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1 hover:bg-muted rounded text-muted-foreground"
                         title={ext.pinned ? "Unpin extension" : "Pin extension"}
                       >
                         {ext.pinned ? <PinOff className="w-3.5 h-3.5" /> : <Pin className="w-3.5 h-3.5" />}
