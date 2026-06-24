@@ -509,14 +509,22 @@ export const useTreeStore = create<TreeState>((set, get) => ({
   },
 
   setSortAlphabetical: (sort: boolean) => {
-    localStorage.setItem("kb-sort-alphabetical", String(sort));
+    try {
+      localStorage.setItem("kb-sort-alphabetical", String(sort));
+    } catch {
+      // Ignore storage failures (private mode, quota) — sort still applies.
+    }
     const { rawNodes, foldersFirst } = get();
     const sorted = sortTreeNodes(rawNodes, sort, foldersFirst);
     set({ sortAlphabetical: sort, nodes: sorted });
   },
 
   setFoldersFirst: (foldersFirst: boolean) => {
-    localStorage.setItem("kb-folders-first", String(foldersFirst));
+    try {
+      localStorage.setItem("kb-folders-first", String(foldersFirst));
+    } catch {
+      // Ignore storage failures (private mode, quota) — sort still applies.
+    }
     const { rawNodes, sortAlphabetical } = get();
     const sorted = sortTreeNodes(rawNodes, sortAlphabetical, foldersFirst);
     set({ foldersFirst, nodes: sorted });
