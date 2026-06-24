@@ -15,7 +15,7 @@ import { addHeadingIds } from "@/lib/markdown/heading-slug";
  */
 function convertLatexEmbeds(markdown: string): string {
   return markdown.replace(
-    /!\[\[([^\]]+\.tex)\]\]/g,
+    /!\[\[([^\]]+\.(?:tex|latex))\]\]/gi,
     (_match, path: string) => {
       // Escape the path before it lands in the data-path attribute so a name
       // containing `"`, `<`, `>` or `&` can't break out and inject markup.
