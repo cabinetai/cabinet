@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { safeFetch, SsrfError } from "@/lib/net/ssrf-guard";
 
 function parseFrameAncestors(csp: string): string[] | null {
   const directives = csp
@@ -62,18 +63,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid-protocol" }, { status: 400 });
   }
 
+  // SSRF guard: reject loopback/private/link-local hosts (re-validated across
+  // redirects) and bound the probe with a timeout so a slow host can't hang it.
   let response: Response;
+  let fetchedUrl: string;
   try {
-    response = await fetch(target.toString(), {
-      method: "HEAD",
-      redirect: "follow",
-      cache: "no-store",
-    });
-  } catch {
+    const result = await safeFetch(target.toString(), { method: "HEAD", timeoutMs: 8000 });
+    response = result.response;
+    fetchedUrl = result.finalUrl;
+  } catch (error) {
+    if (error instanceof SsrfError) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: 400 });
+    }
     return NextResponse.json({ ok: true, blocked: false, unreachable: true });
   }
 
-  const finalUrl = response.url || target.toString();
+  const finalUrl = response.url || fetchedUrl;
   const finalOrigin = (() => {
     try {
       return new URL(finalUrl).origin;
