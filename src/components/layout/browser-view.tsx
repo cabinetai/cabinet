@@ -160,7 +160,16 @@ function normalizeBookmarkNodes(nodes: BookmarkNode[]): BookmarkNode[] {
 function normalizeBookmarkUrl(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "about:blank";
-  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed) || trimmed.startsWith("//")) return trimmed;
+  if (trimmed.toLowerCase() === "about:blank") return "about:blank";
+  // Protocol-relative → assume https.
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
+  if (schemeMatch) {
+    const scheme = schemeMatch[1].toLowerCase();
+    // Only allow web schemes; reject file:, javascript:, data:, etc.
+    if (scheme === "http" || scheme === "https") return trimmed;
+    return "about:blank";
+  }
   return `https://${trimmed}`;
 }
 
@@ -184,6 +193,8 @@ function toBridgeBookmarkMenuItems(nodes: BookmarkNode[]): BrowserBookmarkMenuIt
 }
 
 function getBridge(): Partial<BrowserBridge> & { runtime?: "electron" } {
+  // Guard for SSR / non-browser environments where `window` is undefined.
+  if (typeof window === "undefined") return {};
   return (window as unknown as { CabinetDesktop?: Partial<BrowserBridge> & { runtime?: "electron" } })
     .CabinetDesktop ?? {};
 }
@@ -636,6 +647,29 @@ export function BrowserView() {
   const { t } = useLocale();
   const url = useAppStore((s) => s.browseUrl);
   const setAppMode = useAppStore((s) => s.setAppMode);
+
+  // Sandbox for the fallback iframe. `allow-same-origin` is only safe for
+  // *cross-origin* pages: there it just lets the external site use its own
+  // origin, and it can't reach our app. For a page served from our OWN origin,
+  // `allow-same-origin` + `allow-scripts` would let it script the host app and
+  // escape the sandbox, so we omit it for same-origin/unknown URLs.
+  const iframeSandbox = (() => {
+    const base = "allow-scripts allow-forms allow-modals allow-top-navigation-by-user-activation";
+    try {
+      if (url && typeof window !== "undefined") {
+        const u = new URL(url, window.location.origin);
+        if (
+          (u.protocol === "http:" || u.protocol === "https:") &&
+          u.origin !== window.location.origin
+        ) {
+          return `${base} allow-same-origin`;
+        }
+      }
+    } catch {
+      // fall through to the restrictive sandbox
+    }
+    return base;
+  })();
   const initialSessionRef = useRef<BrowserSessionState>(loadBrowserSessionState());
   const [addressValue, setAddressValue] = useState(toAddressBarValue(url ?? initialSessionRef.current.url ?? ""));
   const [browserMode, setBrowserMode] = useState<"initializing" | "electron" | "iframe">(() => {
@@ -1815,7 +1849,7 @@ export function BrowserView() {
                   setIframeLoadedToken(iframeLoadTokenRef.current);
                 }}
                 className="h-full w-full border-0 bg-white"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-modals allow-top-navigation-by-user-activation"
+                sandbox={iframeSandbox}
               />
               {iframeFailure ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/85 p-6 text-center">
