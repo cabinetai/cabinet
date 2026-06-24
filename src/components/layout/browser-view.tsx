@@ -718,7 +718,38 @@ export function BrowserView() {
   useEffect(() => {
     if (url == null) return;
     setAddressValue(toAddressBarValue(url));
-  }, [url]);
+
+    // In iframe mode there's no Electron navigation event to record history
+    // from (that's owned by onBrowserViewNavigated in electron mode), so track
+    // it here. Without this, iframeHistoryRef never grows and Back/Forward
+    // can't replay earlier pages.
+    if (browserMode !== "iframe") return;
+    const normalized = normalizeSessionUrl(url);
+    const navAction = iframeNavActionRef.current;
+    if (navAction === "back" || navAction === "forward") {
+      // Back/forward already moved the index; just clear the pending action.
+      iframeNavActionRef.current = null;
+      persistBrowserSessionState({
+        history: iframeHistoryRef.current,
+        index: iframeHistoryIndexRef.current,
+        url: normalized,
+      });
+      return;
+    }
+    const history = iframeHistoryRef.current;
+    const currentIndex = iframeHistoryIndexRef.current;
+    if (currentIndex >= 0 && history[currentIndex] === normalized) return;
+    // Genuine navigation: drop any forward entries and push the new URL.
+    const nextHistory = currentIndex >= 0 ? history.slice(0, currentIndex + 1) : [];
+    nextHistory.push(normalized);
+    iframeHistoryRef.current = nextHistory;
+    iframeHistoryIndexRef.current = nextHistory.length - 1;
+    persistBrowserSessionState({
+      history: nextHistory,
+      index: iframeHistoryIndexRef.current,
+      url: normalized,
+    });
+  }, [url, browserMode]);
 
   useEffect(() => {
     const bridge = getBridge();
@@ -1442,6 +1473,11 @@ export function BrowserView() {
       setIframeFailure(null);
       return;
     }
+    // Bump the token for each load attempt so the timeout below can tell
+    // whether *this* load fired onLoad. onLoad copies this value into
+    // iframeLoadedTokenRef; if it never does, loadedToken stays behind and we
+    // flag a failure.
+    iframeLoadTokenRef.current += 1;
     const loadToken = iframeLoadTokenRef.current;
     const timer = window.setTimeout(() => {
       if (iframePolicyBlocked) {
@@ -1485,7 +1521,7 @@ export function BrowserView() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, [browserMode, url, iframeLoadedToken, iframePolicyBlocked]);
+  }, [browserMode, url, iframeReloadKey, iframeLoadedToken, iframePolicyBlocked]);
 
   useEffect(() => {
     void fetchBookmarks();
