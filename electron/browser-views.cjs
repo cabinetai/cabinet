@@ -93,6 +93,30 @@ function getBrowserBaseUrl() {
   );
 }
 
+// Report the real OS so client-sniffing sites don't misidentify Windows/Linux
+// users as macOS (which can change layout, downloads, and shortcut hints).
+function clientPlatformLabel() {
+  switch (process.platform) {
+    case "win32":
+      return "Windows";
+    case "linux":
+      return "Linux";
+    default:
+      return "macOS";
+  }
+}
+
+function userAgentPlatformToken() {
+  switch (process.platform) {
+    case "win32":
+      return "Windows NT 10.0; Win64; x64";
+    case "linux":
+      return "X11; Linux x86_64";
+    default:
+      return "Macintosh; Intel Mac OS X 10_15_7";
+  }
+}
+
 // Make Google (and other client-sniffing sites) treat the browser session as
 // desktop Chrome rather than Electron, so they don't downgrade or block.
 function setupBrowserSession() {
@@ -102,9 +126,9 @@ function setupBrowserSession() {
     details.requestHeaders["Sec-CH-UA"] =
       '"Google Chrome";v="136", "Chromium";v="136", "Not_A Brand";v="24"';
     details.requestHeaders["Sec-CH-UA-Mobile"] = "?0";
-    details.requestHeaders["Sec-CH-UA-Platform"] = '"macOS"';
+    details.requestHeaders["Sec-CH-UA-Platform"] = `"${clientPlatformLabel()}"`;
     details.requestHeaders["User-Agent"] =
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36";
+      `Mozilla/5.0 (${userAgentPlatformToken()}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36`;
     callback({ requestHeaders: details.requestHeaders });
   });
 }
@@ -295,7 +319,8 @@ function applyClicksToSubmenu(submenu, items, resolveOnce) {
 function registerHandlers() {
   // Open a local file with the OS default app (e.g. Preview for PDFs). file://
   // URLs can't load in a WebContentsView, so the renderer routes them here.
-  ipcMain.handle("cabinet:open-local-file", async (_event, payload) => {
+  ipcMain.handle("cabinet:open-local-file", async (event, payload) => {
+    if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
     try {
       const filePath = typeof payload?.path === "string" ? payload.path : "";
       if (!filePath) return { ok: false, error: "no-path" };
