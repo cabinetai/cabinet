@@ -167,7 +167,12 @@ function buildLatexIframeDoc(texSource: string): string {
     } catch (e) {
       const output = document.getElementById('latex-output');
       if (output) {
-        output.innerHTML = '<div class="latex-error">LaTeX parse error: ' + (e.message || 'Unknown error') + '</div>';
+        // Build with the DOM API + textContent so an error message that
+        // contains markup can't inject HTML/script into the frame.
+        const errBox = document.createElement('div');
+        errBox.className = 'latex-error';
+        errBox.textContent = 'LaTeX parse error: ' + (e.message || 'Unknown error');
+        output.replaceChildren(errBox);
       }
       console.error('LaTeX.js error:', e);
     }
