@@ -3,6 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { CABINET_INTERNAL_DIR } from "@/lib/storage/path-utils";
+import { safeFetch, readTextCapped } from "@/lib/net/ssrf-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -279,7 +280,17 @@ function normalizeName(value: string | undefined, fallback: string): string {
 function normalizeUrl(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "about:blank";
-  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed) || trimmed.startsWith("//")) return trimmed;
+  if (trimmed.toLowerCase() === "about:blank") return "about:blank";
+  // Protocol-relative → assume https.
+  if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
+  if (schemeMatch) {
+    const scheme = schemeMatch[1].toLowerCase();
+    // Only allow web schemes; reject file:, javascript:, data:, etc. so a
+    // dangerous URL can't be persisted and later navigated to.
+    if (scheme === "http" || scheme === "https") return trimmed;
+    return "about:blank";
+  }
   return `https://${trimmed}`;
 }
 
@@ -320,27 +331,24 @@ function extractTitleFromHtml(html: string): string | null {
   return cleaned.length > 0 ? cleaned : null;
 }
 
+// Cap the HTML we read while sniffing a <title> — it lives in <head>, so a
+// few hundred KB is plenty and protects against a hostile/huge response.
+const TITLE_FETCH_MAX_BYTES = 512 * 1024;
+
 async function resolveBookmarkTitle(nextUrl: string): Promise<string | null> {
-  let parsed: URL;
   try {
-    parsed = new URL(nextUrl);
-  } catch {
-    return null;
-  }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    return null;
-  }
-  try {
-    const response = await fetch(parsed.toString(), {
+    // SSRF guard: http(s) only, no private/loopback hosts (re-validated across
+    // redirects), with a timeout and a bounded read so this server-side fetch
+    // of a user-supplied URL can't be abused.
+    const { response } = await safeFetch(nextUrl, {
       method: "GET",
-      redirect: "follow",
-      cache: "no-store",
+      timeoutMs: 8000,
       headers: {
         accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
       },
     });
-    if (!response.ok) return null;
-    const html = await response.text();
+    if (response.status < 200 || response.status >= 300) return null;
+    const html = await readTextCapped(response, TITLE_FETCH_MAX_BYTES);
     return extractTitleFromHtml(html);
   } catch {
     return null;
@@ -367,8 +375,16 @@ export async function POST(request: NextRequest) {
       const targetFolder = findFolderById(bookmarks, payload.parentId);
       const nextUrl = normalizeUrl(payload.url);
       const requestedName = payload.name?.trim();
-      const fetchedTitle = await resolveBookmarkTitle(nextUrl);
-      const nextName = fetchedTitle ?? (requestedName && requestedName.length > 0 ? requestedName : nextUrl);
+      // Honor a user-supplied name verbatim; only fetch the page title when the
+      // user didn't provide one (avoids clobbering edits and skips the network
+      // round-trip when it's unnecessary).
+      let nextName: string;
+      if (requestedName && requestedName.length > 0) {
+        nextName = requestedName;
+      } else {
+        const fetchedTitle = await resolveBookmarkTitle(nextUrl);
+        nextName = fetchedTitle ?? nextUrl;
+      }
       const node: BookmarkUrlNode = {
         id: getNextId(bookmarks),
         name: nextName,
