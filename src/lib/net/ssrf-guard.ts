@@ -1,4 +1,6 @@
-import dns from "node:dns/promises";
+import http from "node:http";
+import https from "node:https";
+import dns from "node:dns";
 import net from "node:net";
 
 /**
@@ -7,9 +9,16 @@ import net from "node:net";
  * Without this, a user could point the in-app browser's bookmark-title fetch or
  * the frame-check probe at `http://169.254.169.254/…` (cloud metadata),
  * `http://127.0.0.1:…` (local services) or other internal hosts and have the
- * server make the request on their behalf. We reject any URL whose hostname
- * resolves to a loopback/private/link-local address, follow redirects manually
- * so each hop is re-validated, and bound every request with a timeout.
+ * server make the request on their behalf.
+ *
+ * Defenses:
+ *  - reject non-http(s) URLs and literal private/reserved IPs up front;
+ *  - resolve + re-validate the host *inside the socket lookup* so a hostname
+ *    that passed an earlier check can't rebind to a private IP at connect time
+ *    (DNS-rebinding);
+ *  - follow redirects manually, re-validating each hop and draining the
+ *    intermediate response so sockets aren't leaked;
+ *  - bound every request with a timeout and cap how much body we read.
  */
 
 export class SsrfError extends Error {
@@ -19,26 +28,37 @@ export class SsrfError extends Error {
   }
 }
 
-/** True for loopback, private, link-local, CGNAT, multicast and reserved IPs. */
+/**
+ * True for loopback, private, link-local, CGNAT, benchmarking, documentation,
+ * multicast and other reserved/non-public addresses (IPv4 and IPv6).
+ */
 export function isPrivateAddress(ip: string): boolean {
   const kind = net.isIP(ip);
   if (kind === 4) {
-    const [a, b] = ip.split(".").map(Number);
-    if (a === 0 || a === 10 || a === 127) return true;
+    const [a, b, c] = ip.split(".").map(Number);
+    if (a === 0 || a === 10 || a === 127) return true; // this-host / private / loopback
     if (a === 169 && b === 254) return true; // link-local
     if (a === 172 && b >= 16 && b <= 31) return true; // private
     if (a === 192 && b === 168) return true; // private
-    if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
-    if (a >= 224) return true; // multicast / reserved
+    if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT (100.64.0.0/10)
+    if (a === 198 && (b === 18 || b === 19)) return true; // benchmarking (198.18.0.0/15)
+    if (a === 192 && b === 0 && c === 0) return true; // IETF protocol assignments
+    if (a === 192 && b === 0 && c === 2) return true; // TEST-NET-1
+    if (a === 198 && b === 51 && c === 100) return true; // TEST-NET-2
+    if (a === 203 && b === 0 && c === 113) return true; // TEST-NET-3
+    if (a === 192 && b === 88 && c === 99) return true; // 6to4 relay anycast
+    if (a >= 224) return true; // multicast (224/4) + reserved (240/4) + broadcast
     return false;
   }
   if (kind === 6) {
     const lower = ip.toLowerCase();
-    if (lower === "::1" || lower === "::") return true;
+    if (lower === "::1" || lower === "::") return true; // loopback / unspecified
     if (lower.startsWith("fe80")) return true; // link-local
     if (lower.startsWith("fc") || lower.startsWith("fd")) return true; // unique local
+    if (lower.startsWith("ff")) return true; // multicast (ff00::/8)
+    if (lower.startsWith("2001:db8")) return true; // documentation
     const mapped = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/.exec(lower);
-    if (mapped) return isPrivateAddress(mapped[1]);
+    if (mapped) return isPrivateAddress(mapped[1]); // IPv4-mapped
     return false;
   }
   // Not a recognizable IP literal — treat as unsafe.
@@ -46,10 +66,11 @@ export function isPrivateAddress(ip: string): boolean {
 }
 
 /**
- * Validate that `rawUrl` is an http(s) URL whose host does not resolve to a
- * non-public address. Returns the parsed URL or throws an {@link SsrfError}.
+ * Validate the static parts of a URL (protocol + any literal IP host). Hostname
+ * DNS resolution is deferred to {@link guardedLookup} so the address that is
+ * actually connected to is the one we validate. Throws an {@link SsrfError}.
  */
-export async function assertPublicHttpUrl(rawUrl: string): Promise<URL> {
+export function assertPublicHttpUrl(rawUrl: string): URL {
   let url: URL;
   try {
     url = new URL(rawUrl);
@@ -63,22 +84,37 @@ export async function assertPublicHttpUrl(rawUrl: string): Promise<URL> {
   if (!hostname || hostname.toLowerCase() === "localhost") {
     throw new SsrfError("private-address");
   }
-  if (net.isIP(hostname)) {
-    if (isPrivateAddress(hostname)) throw new SsrfError("private-address");
-    return url;
-  }
-  let records: { address: string }[];
-  try {
-    records = await dns.lookup(hostname, { all: true });
-  } catch {
-    throw new SsrfError("dns-failed");
-  }
-  if (records.length === 0) throw new SsrfError("dns-failed");
-  for (const record of records) {
-    if (isPrivateAddress(record.address)) throw new SsrfError("private-address");
+  if (net.isIP(hostname) && isPrivateAddress(hostname)) {
+    throw new SsrfError("private-address");
   }
   return url;
 }
+
+// Socket-level lookup that resolves the host and rejects the connection if ANY
+// resolved address is non-public. Used for every request so a hostname can't
+// rebind to a private IP between validation and connect (DNS-rebinding).
+const guardedLookup: net.LookupFunction = (hostname, options, callback) => {
+  const wantsAll = typeof options === "object" && options?.all === true;
+  dns.lookup(hostname, { all: true }, (err, addresses) => {
+    if (err) {
+      (callback as (e: Error | null) => void)(err);
+      return;
+    }
+    const list = addresses as dns.LookupAddress[];
+    for (const entry of list) {
+      if (isPrivateAddress(entry.address)) {
+        (callback as (e: Error | null) => void)(new SsrfError("private-address"));
+        return;
+      }
+    }
+    if (wantsAll) {
+      (callback as unknown as (e: Error | null, a: dns.LookupAddress[]) => void)(null, list);
+    } else {
+      const first = list[0];
+      callback(null, first.address, first.family);
+    }
+  });
+};
 
 export interface SafeFetchOptions {
   method?: string;
@@ -90,75 +126,95 @@ export interface SafeFetchOptions {
 }
 
 export interface SafeFetchResult {
-  response: Response;
+  status: number;
+  headers: http.IncomingHttpHeaders;
   /** The final URL after any (validated) redirects. */
   finalUrl: string;
+  /** Read the body as text, capped at `maxBytes`, then release the socket. */
+  readText: (maxBytes: number) => Promise<string>;
+  /** Release the socket without reading the body (e.g. for HEAD probes). */
+  dispose: () => void;
+}
+
+function requestOnce(
+  url: URL,
+  opts: { method: string; headers?: Record<string, string>; timeoutMs: number }
+): Promise<http.IncomingMessage> {
+  return new Promise((resolve, reject) => {
+    const mod = url.protocol === "https:" ? https : http;
+    const req = mod.request(
+      url,
+      { method: opts.method, headers: opts.headers, lookup: guardedLookup },
+      (res) => resolve(res)
+    );
+    req.on("error", reject);
+    req.setTimeout(opts.timeoutMs, () => {
+      req.destroy(new SsrfError("timeout"));
+    });
+    req.end();
+  });
+}
+
+function readStreamCapped(stream: http.IncomingMessage, maxBytes: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let total = 0;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      stream.destroy();
+      resolve(Buffer.concat(chunks).subarray(0, maxBytes).toString("utf-8"));
+    };
+    stream.on("data", (chunk: Buffer) => {
+      if (settled) return;
+      chunks.push(chunk);
+      total += chunk.length;
+      if (total >= maxBytes) finish();
+    });
+    stream.on("end", finish);
+    stream.on("error", (err) => {
+      if (settled) return;
+      settled = true;
+      reject(err);
+    });
+  });
 }
 
 /**
- * Fetch a user-supplied URL with SSRF validation, manual + re-validated
- * redirects, and a hard timeout. Throws {@link SsrfError} when the target (or
- * any redirect hop) is not a public http(s) address.
+ * Fetch a user-supplied URL with SSRF validation (including at the socket
+ * lookup), manual + re-validated redirects, and a hard timeout. Throws
+ * {@link SsrfError} when the target — or any redirect hop — isn't a public
+ * http(s) address.
  */
 export async function safeFetch(rawUrl: string, options: SafeFetchOptions = {}): Promise<SafeFetchResult> {
   const { method = "GET", headers, timeoutMs = 8000, maxRedirects = 5 } = options;
-  let current = await assertPublicHttpUrl(rawUrl);
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    for (let hop = 0; hop <= maxRedirects; hop++) {
-      const response = await fetch(current.toString(), {
-        method,
-        headers,
-        redirect: "manual",
-        cache: "no-store",
-        signal: controller.signal,
-      });
-      const location = response.headers.get("location");
-      if (response.status >= 300 && response.status < 400 && location) {
-        const next = new URL(location, current);
-        current = await assertPublicHttpUrl(next.toString());
-        continue;
-      }
-      return { response, finalUrl: current.toString() };
-    }
-    throw new SsrfError("too-many-redirects");
-  } finally {
-    clearTimeout(timer);
-  }
-}
+  let current = assertPublicHttpUrl(rawUrl);
 
-/** Read a response body as text, capped at `maxBytes` to avoid memory blowups. */
-export async function readTextCapped(response: Response, maxBytes: number): Promise<string> {
-  const body = response.body;
-  if (!body) return "";
-  const reader = body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  try {
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      if (value) {
-        chunks.push(value);
-        total += value.length;
-        if (total >= maxBytes) break;
-      }
-    }
-  } finally {
-    await reader.cancel().catch(() => {});
-  }
-  return new TextDecoder("utf-8").decode(concatChunks(chunks, Math.min(total, maxBytes)));
-}
+  for (let hop = 0; hop <= maxRedirects; hop++) {
+    const res = await requestOnce(current, { method, headers, timeoutMs });
+    const status = res.statusCode ?? 0;
+    const location = res.headers.location;
 
-function concatChunks(chunks: Uint8Array[], limit: number): Uint8Array {
-  const out = new Uint8Array(limit);
-  let offset = 0;
-  for (const chunk of chunks) {
-    if (offset >= limit) break;
-    const slice = chunk.subarray(0, Math.min(chunk.length, limit - offset));
-    out.set(slice, offset);
-    offset += slice.length;
+    if (status >= 300 && status < 400 && location) {
+      // Drain + close the intermediate response so the socket isn't leaked.
+      res.resume();
+      res.destroy();
+      current = assertPublicHttpUrl(new URL(location, current).toString());
+      continue;
+    }
+
+    return {
+      status,
+      headers: res.headers,
+      finalUrl: current.toString(),
+      readText: (maxBytes: number) => readStreamCapped(res, maxBytes),
+      dispose: () => {
+        res.resume();
+        res.destroy();
+      },
+    };
   }
-  return out;
+
+  throw new SsrfError("too-many-redirects");
 }

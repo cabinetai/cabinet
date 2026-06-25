@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { CABINET_INTERNAL_DIR } from "@/lib/storage/path-utils";
-import { safeFetch, readTextCapped } from "@/lib/net/ssrf-guard";
+import { safeFetch } from "@/lib/net/ssrf-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -312,6 +312,11 @@ function normalizeUrl(value: string): string {
   if (trimmed.toLowerCase() === "about:blank") return "about:blank";
   // Protocol-relative → assume https.
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  // host:port (e.g. localhost:3000, 127.0.0.1:8080) — the colon is a port
+  // separator, not a URL scheme, so keep the target and prefix https.
+  if (/^[a-zA-Z0-9.-]+:\d+(?:[/?#]|$)/.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
   const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
   if (schemeMatch) {
     const scheme = schemeMatch[1].toLowerCase();
@@ -369,15 +374,18 @@ async function resolveBookmarkTitle(nextUrl: string): Promise<string | null> {
     // SSRF guard: http(s) only, no private/loopback hosts (re-validated across
     // redirects), with a timeout and a bounded read so this server-side fetch
     // of a user-supplied URL can't be abused.
-    const { response } = await safeFetch(nextUrl, {
+    const result = await safeFetch(nextUrl, {
       method: "GET",
       timeoutMs: 8000,
       headers: {
         accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
       },
     });
-    if (response.status < 200 || response.status >= 300) return null;
-    const html = await readTextCapped(response, TITLE_FETCH_MAX_BYTES);
+    if (result.status < 200 || result.status >= 300) {
+      result.dispose();
+      return null;
+    }
+    const html = await result.readText(TITLE_FETCH_MAX_BYTES);
     return extractTitleFromHtml(html);
   } catch {
     return null;

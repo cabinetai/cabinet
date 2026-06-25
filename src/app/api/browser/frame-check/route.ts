@@ -63,22 +63,27 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid-protocol" }, { status: 400 });
   }
 
-  // SSRF guard: reject loopback/private/link-local hosts (re-validated across
-  // redirects) and bound the probe with a timeout so a slow host can't hang it.
-  let response: Response;
-  let fetchedUrl: string;
+  // SSRF guard: reject loopback/private/link-local hosts (validated at the
+  // socket lookup + across redirects) and bound the probe with a timeout so a
+  // slow host can't hang it.
+  let status: number;
+  let headers: import("node:http").IncomingHttpHeaders;
+  let finalUrl: string;
   try {
     const result = await safeFetch(target.toString(), { method: "HEAD", timeoutMs: 8000 });
-    response = result.response;
-    fetchedUrl = result.finalUrl;
+    status = result.status;
+    headers = result.headers;
+    finalUrl = result.finalUrl;
+    // HEAD has no body to read; release the socket.
+    result.dispose();
   } catch (error) {
     if (error instanceof SsrfError) {
       return NextResponse.json({ ok: false, error: error.code }, { status: 400 });
     }
     return NextResponse.json({ ok: true, blocked: false, unreachable: true });
   }
+  void status;
 
-  const finalUrl = response.url || fetchedUrl;
   const finalOrigin = (() => {
     try {
       return new URL(finalUrl).origin;
@@ -87,9 +92,13 @@ export async function GET(request: NextRequest) {
     }
   })();
 
+  const headerValue = (name: string): string => {
+    const v = headers[name];
+    return Array.isArray(v) ? v.join(", ") : v || "";
+  };
   const appOrigin = request.nextUrl.origin;
-  const xfo = response.headers.get("x-frame-options") || "";
-  const csp = response.headers.get("content-security-policy") || "";
+  const xfo = headerValue("x-frame-options");
+  const csp = headerValue("content-security-policy");
 
   let blocked = false;
   if (xfoBlocksEmbedding(xfo, finalOrigin, appOrigin)) {
