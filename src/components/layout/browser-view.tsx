@@ -163,6 +163,11 @@ function normalizeBookmarkUrl(value: string): string {
   if (trimmed.toLowerCase() === "about:blank") return "about:blank";
   // Protocol-relative → assume https.
   if (trimmed.startsWith("//")) return `https:${trimmed}`;
+  // host:port (e.g. localhost:3000, 127.0.0.1:8080) — the colon is a port
+  // separator, not a URL scheme, so keep the target and prefix https.
+  if (/^[a-zA-Z0-9.-]+:\d+(?:[/?#]|$)/.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
   const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
   if (schemeMatch) {
     const scheme = schemeMatch[1].toLowerCase();
@@ -683,7 +688,6 @@ export function BrowserView() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const iframeLoadTokenRef = useRef(0);
   const iframeLoadedTokenRef = useRef(0);
-  const [iframeLoadedToken, setIframeLoadedToken] = useState(0);
   const iframeHistoryRef = useRef<string[]>(initialSessionRef.current.history);
   const iframeHistoryIndexRef = useRef<number>(initialSessionRef.current.index);
   const iframeNavActionRef = useRef<"back" | "forward" | null>(null);
@@ -1521,7 +1525,11 @@ export function BrowserView() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, [browserMode, url, iframeReloadKey, iframeLoadedToken, iframePolicyBlocked]);
+    // NOTE: deliberately not depending on the load-completion signal — the
+    // timer reads iframeLoadedTokenRef directly. Re-running on load completion
+    // would bump the load token again and flag a false failure on a page that
+    // actually loaded fine.
+  }, [browserMode, url, iframeReloadKey, iframePolicyBlocked]);
 
   useEffect(() => {
     void fetchBookmarks();
@@ -1886,7 +1894,6 @@ export function BrowserView() {
                 src={url || "about:blank"}
                 onLoad={() => {
                   iframeLoadedTokenRef.current = iframeLoadTokenRef.current;
-                  setIframeLoadedToken(iframeLoadTokenRef.current);
                 }}
                 className="h-full w-full border-0 bg-white"
                 sandbox={iframeSandbox}
