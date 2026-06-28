@@ -31,8 +31,6 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
   runtime: "electron",
   platform: process.platform,
   // --- In-app browser ("browse mode") backed by a native WebContentsView ---
-  openLocalFile: (filePath) =>
-    ipcRenderer.invoke("cabinet:open-local-file", { path: filePath }),
   createBrowserView: async (url) => {
     try {
       return await ipcRenderer.invoke("cabinet:create-browser-view", {
