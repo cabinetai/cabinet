@@ -308,24 +308,59 @@ function SlackArt({ step, label, brand }: { step: number; label: string; brand: 
 }
 
 /** Google Workspace: consent (0) → your own GCP app — APIs + OAuth client (1). */
+// Indices map to the google-workspace `setupSteps` order in mcp-catalog.ts:
+// 0 install uv · 1 create OAuth client · 2 add test user · 3 connect & authorize.
 function GoogleArt({ step, label, brand }: { step: number; label: string; brand: string }) {
-  if (step === 0) return <OAuthConsentArt step={0} label={label} brand={brand} />;
-  return (
-    <MockWindow title="Google Cloud Console · APIs &amp; Services" brand={brand}>
-      <div className="space-y-1">
-        <CheckRow brand={brand}>Gmail API — enabled</CheckRow>
-        <CheckRow brand={brand}>Google Calendar API — enabled</CheckRow>
-        <CheckRow brand={brand}>Google Drive API — enabled</CheckRow>
-      </div>
-      <div className="mt-2 flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
-        <span className="text-[10px] text-muted-foreground">OAuth client (Desktop)</span>
-        <BtnMock brand={brand}>Download JSON</BtnMock>
-      </div>
-      <Hint brand={brand}>
-        Enable the three APIs, create a <b>Desktop</b> OAuth client, download its JSON, then point the path field at it.
-      </Hint>
-    </MockWindow>
-  );
+  // 0 — install uv (the server runs via uvx).
+  if (step === 0) {
+    return (
+      <MockWindow title="Terminal · install uv" brand={brand}>
+        <FieldMock>curl -LsSf https://astral.sh/uv/install.sh | sh</FieldMock>
+        <Hint brand={brand}>
+          One-time. Windows: <b>winget install --id=astral-sh.uv</b>. Restart Cabinet after installing.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // 1 — enable APIs, create a Desktop OAuth client, copy its Client ID/Secret.
+  if (step === 1) {
+    return (
+      <MockWindow title="Google Cloud Console · APIs &amp; Services" brand={brand}>
+        <div className="space-y-1">
+          <CheckRow brand={brand}>Google Calendar API</CheckRow>
+          <CheckRow brand={brand}>People API (contacts)</CheckRow>
+        </div>
+        <div className="mt-2 space-y-1">
+          <KvRow k="OAuth client type" v="Web application" />
+          <KvRow k="Redirect URI" v="http://localhost:8000/oauth2callback" />
+          <KvRow k="Client ID" v="1234…apps.googleusercontent.com" />
+          <KvRow k="Client secret" v="GOCSPX-••••" />
+        </div>
+        <Hint brand={brand}>
+          Create a <b>Web application</b> client, add the redirect URI above, then paste its Client ID and Secret into the fields on the right.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // 2 — add yourself as a test user on the consent screen.
+  if (step === 2) {
+    return (
+      <MockWindow title="OAuth consent screen · Test users" brand={brand}>
+        <div className="flex items-center justify-between">
+          <span className="font-medium text-foreground">Test users</span>
+          <BtnMock brand={brand}>+ Add users</BtnMock>
+        </div>
+        <div className="mt-2">
+          <KvRow k="you@gmail.com" v="added" />
+        </div>
+        <Hint brand={brand}>
+          Add your own Google account so sign-in works while the app is unverified.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // 3 — connect: the browser consent screen the server opens on first use.
+  return <OAuthConsentArt step={0} label={label} brand={brand} />;
 }
 
 /** GitHub: consent (0) → scope the access — orgs/repos grant + revoke (1). */

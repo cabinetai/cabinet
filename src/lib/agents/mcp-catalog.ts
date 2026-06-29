@@ -170,44 +170,87 @@ const SLACK: CatalogEntry = {
 const GOOGLE_WORKSPACE: CatalogEntry = {
   id: "google-workspace",
   label: "Google Workspace",
-  blurb: "Gmail, Calendar and Drive — read, draft, schedule, and search.",
+  blurb: "Google Calendar, Contacts, Docs, Sheets, Slides, Tasks, Forms, Chat and Search via one Google sign-in.",
   iconSlug: "google-workspace",
   bgImage: "/integrations/google-workspace-bg.webp",
   logo: "/integrations/google-workspace-logo.webp",
-  sourceUrl: "https://developers.google.com/workspace/guides/configure-mcp-servers",
-  registryId: "google-workspace",
-  trustTier: "official",
-  authBackend: "cli-pkce",
-  fallbackAuthBackend: "user-app",
-  transport: "http",
+  // Community server (taylorwilsdon/google_workspace_mcp, PyPI `workspace-mcp`),
+  // run locally via uvx in single-user stdio mode. One Google sign-in covers
+  // Calendar + Contacts + the rest of the productivity suite. Gmail and Drive
+  // are intentionally excluded from `--tools` so this never overlaps the IMAP
+  // Gmail + Drive-for-Desktop integrations (each keeps its own card/flow). We
+  // deliberately do NOT use Google's official hosted `*mcp.googleapis.com`
+  // servers: they're Developer Preview and gated to Claude.ai-web / Antigravity
+  // clients, so a CLI-driven agent can't authenticate against them.
+  sourceUrl: "https://github.com/taylorwilsdon/google_workspace_mcp",
+  trustTier: "community",
+  authBackend: "user-app",
+  transport: "stdio",
   mcpServerName: "cabinet-google-workspace",
-  // Google publishes per-product official servers; the Gmail endpoint is the
-  // primary surface. Calendar/Drive can be added as sibling entries later.
-  url: "https://mcp.gmail.google.com/mcp",
+  command: "uvx",
+  args: [
+    "workspace-mcp",
+    "--single-user",
+    "--tools",
+    "calendar",
+    "contacts",
+    "docs",
+    "sheets",
+    "slides",
+    "tasks",
+    "forms",
+    "chat",
+    "search",
+  ],
+  serverEnv: {
+    GOOGLE_OAUTH_CLIENT_ID: "${GOOGLE_OAUTH_CLIENT_ID}",
+    GOOGLE_OAUTH_CLIENT_SECRET: "${GOOGLE_OAUTH_CLIENT_SECRET}",
+    // Lets the server complete its loopback OAuth callback over plain http.
+    OAUTHLIB_INSECURE_TRANSPORT: "1",
+  },
   credentials: [
     {
-      envKey: "GOOGLE_APPLICATION_CREDENTIALS",
-      label: "OAuth client JSON path",
-      kind: "filepath",
+      envKey: "GOOGLE_OAUTH_CLIENT_ID",
+      label: "Google OAuth Client ID",
+      kind: "plain",
       required: true,
-      placeholder: "/Users/you/.config/cabinet/google-oauth.json",
-      hint: "Absolute path to your OAuth client JSON. Shared with the Gemini provider — not deleted on disconnect.",
+      placeholder: "1234567890-abc123.apps.googleusercontent.com",
+      hint: "From a Google Cloud OAuth client (type: Web application) with redirect URI http://localhost:8000/oauth2callback, and the relevant APIs enabled (at minimum Calendar API and People API).",
+    },
+    {
+      envKey: "GOOGLE_OAUTH_CLIENT_SECRET",
+      label: "Google OAuth Client Secret",
+      kind: "secret",
+      required: true,
+      placeholder: "GOCSPX-••••••••••••••••",
+      hint: "Stored in .cabinet.env (0600). Never written into the CLI config.",
     },
   ],
   actions: [
-    "Search & read Gmail, draft replies",
-    "List & create Calendar events",
-    "Search & read Drive files",
+    "Calendar: read agenda, create & update events, add Meet links",
+    "Contacts: search & manage people",
+    "Docs & Sheets: read, create & edit",
+    "Slides, Tasks, Forms, Chat & programmable Search",
   ],
   setupSteps: [
     {
-      title: "Sign in with Google",
-      body: "Click Connect & sign in — your agent's CLI opens Google's consent screen. Grant access to Gmail / Calendar / Drive and you're connected.",
+      title: "Install uv (one-time)",
+      body: "The server runs locally through uvx, uv's tool runner (think npx, but for Python). Install uv, then restart Cabinet if it was already open. macOS or Linux: run `curl -LsSf https://astral.sh/uv/install.sh | sh` (or `brew install uv`). Windows: run `winget install --id=astral-sh.uv` (or use the PowerShell installer at the link below).",
+      href: "https://docs.astral.sh/uv/getting-started/installation/",
     },
     {
-      title: "If you need your own GCP app",
-      body: "For org-managed accounts: create a Google Cloud project, enable the Gmail, Calendar and Drive APIs, create an OAuth client (Desktop), download the JSON, and point the path below at it.",
-      href: "https://developers.google.com/workspace/guides/configure-mcp-servers",
+      title: "Create a Google OAuth client",
+      body: "In Google Cloud Console: pick or create a project, enable the APIs for the services you'll use (at minimum the Google Calendar API and People API for contacts), then create an OAuth client of type \"Web application\" and add http://localhost:8000/oauth2callback under Authorized redirect URIs. Paste its Client ID and Secret into the fields below.",
+      href: "https://console.cloud.google.com/apis/credentials",
+    },
+    {
+      title: "Add yourself as a test user",
+      body: "On the OAuth consent screen, add your Google account under \"Test users\" so sign-in works while the app is unverified.",
+      href: "https://console.cloud.google.com/apis/credentials/consent",
+    },
+    {
+      title: "Connect & authorize",
+      body: "Click Connect. The first time an agent uses Calendar, the server opens Google's consent screen in your browser. Approve it once and you're connected.",
     },
   ],
 };
