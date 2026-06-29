@@ -23,7 +23,17 @@ before(async () => {
 });
 
 after(async () => {
-  if (tempRoot) await fs.rm(tempRoot, { recursive: true, force: true });
+  if (tempRoot) {
+    for (let i = 0; i < 5; i++) {
+      try {
+        await fs.rm(tempRoot, { recursive: true, force: true });
+        break;
+      } catch (err) {
+        if (i === 4) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+  }
 });
 
 interface Capture {

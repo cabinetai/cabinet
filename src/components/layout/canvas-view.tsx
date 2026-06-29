@@ -483,7 +483,7 @@ function CardPreview({
   if (node.type === "image") {
     return (
       <div className="pointer-events-none min-h-0 flex-1 overflow-hidden rounded-lg bg-muted/40">
-        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic local-asset URL served by the app's own /api/assets endpoint; next/image's optimizer/loader doesn't fit arbitrary vault file paths. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic local-asset URL served by the app's own /api/assets endpoint; next/image's optimizer/loader doesn't fit arbitrary cabinet file paths. */}
         <img
           src={assetUrl(node.path)}
           alt={title}

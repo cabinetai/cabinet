@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createVault, listVaults, setActiveVault } from "@/lib/cabinets/vaults";
-import { getActiveVaultName } from "@/lib/runtime/runtime-config";
+import { createCabinet, listCabinets, setActiveCabinet } from "@/lib/cabinets/cabinets";
+import { getActiveCabinetName } from "@/lib/runtime/runtime-config";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const vaults = await listVaults();
-    return NextResponse.json({ vaults, activeVault: getActiveVaultName() });
+    const cabinets = await listCabinets();
+    return NextResponse.json({ cabinets, activeCabinet: getActiveCabinetName() });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
     if (typeof body.name !== "string" || !body.name.trim()) {
       return NextResponse.json({ error: "name is required" }, { status: 400 });
     }
-    const name = await createVault(body.name);
-    const vaults = await listVaults();
-    return NextResponse.json({ name, vaults });
+    const name = await createCabinet(body.name);
+    const cabinets = await listCabinets();
+    return NextResponse.json({ name, cabinets });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     const status =
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Switch the active vault (root cabinet). Persists the pointer to the shared
+ * Switch the active cabinet (root cabinet). Persists the pointer to the shared
  * home config; the new content root only takes effect after the server is
  * restarted, so the client reloads/relaunches on success.
  */
@@ -44,8 +44,8 @@ export async function PATCH(req: NextRequest) {
     if (typeof body.name !== "string" || !body.name.trim()) {
       return NextResponse.json({ error: "name is required" }, { status: 400 });
     }
-    const name = await setActiveVault(body.name);
-    return NextResponse.json({ activeVault: name, requiresRestart: true });
+    const name = await setActiveCabinet(body.name);
+    return NextResponse.json({ activeCabinet: name, requiresRestart: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     const status = message.startsWith("unknown") ? 400 : 500;

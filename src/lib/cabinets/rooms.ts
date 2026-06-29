@@ -126,12 +126,12 @@ export interface HomeConfig {
   lastActiveRoom: string | null;
   /** Deepest valid path the user was on, restored on reopen (PRD §10.5). */
   lastActivePath: string | null;
-  /** Active vault (root cabinet) — the data-folder child used as content root. */
-  activeVault: string | null;
+  /** Active cabinet (root cabinet) — the data-folder child used as content root. */
+  activeCabinet: string | null;
 }
 
-// home.json lives in the shared data folder (parent of all vaults): it carries
-// the cross-vault `activeVault` pointer and must not be scoped to one vault.
+// home.json lives in the shared data folder (parent of all cabinets): it carries
+// the cross-cabinet `activeCabinet` pointer and must not be scoped to one cabinet.
 const HOME_CONFIG_PATH = path.join(DATA_PARENT_DIR, ".home", "home.json");
 
 /** Read the home container config (`data/.home/home.json`). */
@@ -150,15 +150,19 @@ export async function getHomeConfig(): Promise<HomeConfig> {
         typeof parsed.lastActivePath === "string"
           ? parsed.lastActivePath
           : null,
-      activeVault:
-        typeof parsed.activeVault === "string" ? parsed.activeVault : null,
+      activeCabinet:
+        typeof parsed.activeCabinet === "string"
+          ? parsed.activeCabinet
+          : typeof parsed.activeVault === "string"
+          ? parsed.activeVault
+          : null,
     };
   } catch {
     return {
       defaultRoom: null,
       lastActiveRoom: null,
       lastActivePath: null,
-      activeVault: null,
+      activeCabinet: null,
     };
   }
 }
@@ -193,9 +197,14 @@ async function patchHomeConfig(patch: Partial<HomeConfig>): Promise<void> {
     if (patch.lastActivePath === null) delete current.lastActivePath;
     else current.lastActivePath = patch.lastActivePath;
   }
-  if (patch.activeVault !== undefined) {
-    if (patch.activeVault === null) delete current.activeVault;
-    else current.activeVault = patch.activeVault;
+  if (patch.activeCabinet !== undefined) {
+    if (patch.activeCabinet === null) {
+      delete current.activeCabinet;
+      delete current.activeVault;
+    } else {
+      current.activeCabinet = patch.activeCabinet;
+      delete current.activeVault;
+    }
   }
   const tmp = `${HOME_CONFIG_PATH}.tmp-${process.pid}-${Date.now()}`;
   await fs.writeFile(tmp, JSON.stringify(current, null, 2), "utf-8");
@@ -203,12 +212,12 @@ async function patchHomeConfig(patch: Partial<HomeConfig>): Promise<void> {
 }
 
 /**
- * Persist the active vault (root cabinet) pointer into the shared home config.
- * The caller is responsible for validating the vault exists and for triggering
+ * Persist the active cabinet (root cabinet) pointer into the shared home config.
+ * The caller is responsible for validating the cabinet exists and for triggering
  * the server restart that makes the new content root take effect.
  */
-export async function writeActiveVault(name: string): Promise<void> {
-  await patchHomeConfig({ activeVault: name });
+export async function writeActiveCabinet(name: string): Promise<void> {
+  await patchHomeConfig({ activeCabinet: name });
 }
 
 /**

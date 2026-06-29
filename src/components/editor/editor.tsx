@@ -295,6 +295,14 @@ export function KBEditor() {
           return true;
         }
 
+        // Escape collapses a text selection, which dismisses the bubble menu.
+        if (event.key === "Escape" && !view.state.selection.empty) {
+          event.preventDefault();
+          const { to } = view.state.selection;
+          editor?.chain().focus().setTextSelection(to).run();
+          return true;
+        }
+
         return false;
       },
       handleClick: (_view, _pos, event) => {

@@ -304,7 +304,12 @@ turndown.addRule("inlineMath", {
     return dataType === "inline-math" || dataType === "inlineMath";
   },
   replacement: (_content, node) => {
-    const latex = (node as HTMLElement).getAttribute("data-latex") ?? "";
+    const el = node as HTMLElement;
+    const latex = el.getAttribute("data-latex") ?? "";
+    const display = el.getAttribute("data-display");
+    if (display === "yes") {
+      return `\n\n$$${latex}$$\n\n`;
+    }
     return `$${latex}$`;
   },
 });

@@ -1,13 +1,13 @@
 import path from "path";
-import { getManagedDataDir, getManagedDataParentDir, isElectronRuntime, PROJECT_ROOT } from "@/lib/runtime/runtime-config";
+import { getManagedDataDir, getManagedDataParentDir, isElectronRuntime, PROJECT_ROOT, isProcessStale } from "@/lib/runtime/runtime-config";
 import { normalizeVirtualPath } from "@/lib/virtual-paths";
 
-// Content root: the active vault directory (`<dataParent>/<activeVault>`).
+// Content root: the active cabinet directory (`<dataParent>/<activeCabinet>`).
 // All content, cabinets, rooms and per-cabinet agents live under here.
 export const DATA_DIR = getManagedDataDir();
-// Shared data folder: parent of every vault. Holds cross-vault state
+// Shared data folder: parent of every cabinet. Holds cross-cabinet state
 // (bookmarks.json, .home/, .cabinet-state/, backups) that must not be scoped
-// to a single vault.
+// to a single cabinet.
 export const DATA_PARENT_DIR = getManagedDataParentDir();
 export const CABINET_INTERNAL_DIR = path.join(DATA_PARENT_DIR, ".cabinet-state");
 export const ROOT_INSTALL_METADATA_PATH = path.join(PROJECT_ROOT, ".cabinet-install.json");
@@ -20,7 +20,13 @@ export const BACKUP_ROOT = isElectronRuntime()
   : path.resolve(PROJECT_ROOT, "..", ".cabinet-backups", path.basename(PROJECT_ROOT));
 
 export function resolveContentPath(virtualPath: string): string {
+  if (isProcessStale()) {
+    throw new Error(
+      "Cabinet server process is stale (active cabinet changed on disk). Please restart the process to apply the cabinet switch."
+    );
+  }
   const dataDir = path.resolve(DATA_DIR);
+
   const resolved = path.resolve(dataDir, normalizeVirtualPath(virtualPath));
   const relative = path.relative(dataDir, resolved);
   if (relative.startsWith("..") || path.isAbsolute(relative)) {

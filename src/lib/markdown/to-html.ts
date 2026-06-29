@@ -62,6 +62,43 @@ function convertLatexEmbeds(markdown: string): string {
 }
 
 /**
+ * Pre-process markdown to convert dollar-delimited math expressions into
+ * <span data-type="inlineMath"> HTML markers that the Tiptap math extension
+ * can parse when loaded via setContent().
+ *
+ * Without this step, remark passes dollar-delimited math through as plain
+ * text and Tiptap never creates math nodes on page load.
+ *
+ * Handles:
+ * - Block/display math: $$...$$
+ * - Inline math: $...$
+ * - Malformed legacy: $$...$ (double-start, single-end from past bugs)
+ */
+function convertDollarMath(markdown: string): string {
+  // 1. Block/display math: $$...$$ (may span lines)
+  markdown = markdown.replace(
+    /\$\$([\s\S]+?)\$\$/g,
+    (_match, latex: string) => {
+      const attr = escapeHtml(latex.trim());
+      return `<span data-type="inlineMath" data-latex="${attr}" data-display="yes" data-evaluate="no">$$${latex}$$</span>`;
+    }
+  );
+
+  // 2. Inline math: $...$ and malformed $$...$
+  // \${1,2} at start handles both single and legacy double-dollar openings;
+  // (?!\$) at end prevents matching block math endings that were already handled.
+  markdown = markdown.replace(
+    /(?<!\$)\${1,2}(?![$\s,.])((?:[^$\\]|\\\$|\\)+?(?<![\\\s(["]))\$(?!\$)/g,
+    (_match, latex: string) => {
+      const attr = escapeHtml(latex);
+      return `<span data-type="inlineMath" data-latex="${attr}" data-display="no" data-evaluate="no">$${latex}$</span>`;
+    }
+  );
+
+  return markdown;
+}
+
+/**
  * Pre-process markdown to URL-encode spaces in file:// link URLs.
  * CommonMark terminates a bare URL at the first whitespace, so
  * [text](file:///path/My File.pdf) is not parsed as a link. This encodes
@@ -302,8 +339,11 @@ export async function markdownToHtml(markdown: string, pagePath?: string): Promi
   const withLatex = convertLatexEmbeds(withFileUrls);
   // Pre-process wiki-links before remark (which would treat [[ as text)
   const preprocessed = convertWikiLinks(withLatex);
+  // Convert $...$ and $$...$$ math to <span data-type="inlineMath"> markers
+  // so Tiptap creates proper math nodes on setContent.
+  const withMath = convertDollarMath(preprocessed);
 
-  const result = await processor.process(preprocessed);
+  const result = await processor.process(withMath);
 
   let html = String(result);
 

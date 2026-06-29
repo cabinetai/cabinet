@@ -12,7 +12,7 @@ import {
 import { writeProviderSettings } from "./provider-settings";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 
-// Vaults nest content under data/<activeVault>; DATA_DIR resolves to that
+// Cabinets nest content under data/<activeCabinet>; DATA_DIR resolves to that
 // content root so these fixtures land where provider-management reads them.
 const AGENTS_DIR = path.join(DATA_DIR, ".agents");
 

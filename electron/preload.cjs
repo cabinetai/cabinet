@@ -92,7 +92,7 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
   uninstallApp: () => ipcRenderer.invoke("cabinet:uninstall-app"),
   /**
    * Restart the desktop app so the embedded server rebinds to the active
-   * vault's content root. Called after switching vaults via PATCH /api/vaults.
+   * cabinet's content root. Called after switching cabinets via PATCH /api/cabinets.
    */
   relaunch: () => ipcRenderer.invoke("cabinet:relaunch"),
   /**

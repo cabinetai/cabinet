@@ -1,68 +1,41 @@
 #!/usr/bin/env node
+
 /**
- * Legacy-structure migration for existing customers.
+ * Converts an old data folder to the current "cabinet + Sibling Pattern" layout:
  *
- * Converts an old data folder to the current "vault + Sibling Pattern" layout:
- *
- *   1. VAULT LAYOUT  — loose content sitting directly under data/ is moved into a
- *      single root-cabinet folder (the "vault"); only shared cross-vault state
- *      (.home, .cabinet-state, cabinet-backups, bookmarks.json) stays at the root.
- *
- *   2. GIT           — the old SHARED data/.git is moved INTO the vault so each
- *      vault owns its history (data/<Vault>/.git). Because both the content and
- *      the repo move together, the tracked paths stay valid (no rename churn).
- *
- *   3. PAGES         — legacy Directory-Pattern pages (`X/index.md`) become
- *      Sibling-Pattern pages (`<parent>/X.md`):
- *        a) rename  X/index.md       -> X/<X>.md
- *        b) move up  X/<X>.md         -> <parent>/<X>.md
- *        c) delete   X/               if nothing else remains
- *      Sub-pages and local assets stay inside X/ (which becomes the sibling
- *      folder of X.md); relative links inside the moved page are re-based, and
- *      explicit `.../index.md` links across the vault are rewritten.
- *
- * Pages are renamed but their LOGICAL path is unchanged (`X/index.md` and `X.md`
- * both resolve to virtual path `X`), so wiki-links by name keep working.
- *
- * Special container folders keep their index.md and are never collapsed:
- * cabinets (.cabinet), linked folders/repos (.cabinet-meta, .repo.yaml), apps (.app).
- *
- * Usage:
- *   node scripts/migrate-legacy-structure.mjs [--data <dir>] [--dry-run]
- *                                             [--no-backup] [--no-commit]
- *   CABINET_DATA_DIR=/path/to/data node scripts/migrate-legacy-structure.mjs
- *
- * Idempotent: re-running on an already-migrated folder is a no-op. Run with the
- * dev server + daemon stopped (the SQLite DB must not be open).
+ *   1. CABINET LAYOUT  — loose content sitting directly under data/ is moved into a
+ *      single root-cabinet folder (the "cabinet"); only shared cross-cabinet state
+ *      (.home, .cabinet-state, bookmarks.json, backups) remains at the parent root.
+ *   2. GIT             — the old SHARED data/.git is moved INTO the cabinet so each
+ *      cabinet owns its history (data/<Cabinet>/.git). Because both the content and
+ *      history move down, `git status`/`log`/`diff` remain fully intact and local.
+ *   3. SIBLINGS        — every page folder X/ containing an index.md is collapsed
+ *      into a single X.md file in X's parent folder, and the empty folder is removed.
+ *      Folders containing other sub-pages/assets are left in place.
+ *   4. RELATIVE LINKS  — every `[text](relative/link/to/index.md)` or relative image
+ *      is re-resolved and updated to point at the new file locations, ensuring
+ *      explicit `.../index.md` links across the cabinet are rewritten.
  */
+
 import fs from "fs";
 import path from "path";
 import { execFileSync } from "child_process";
-import { fileURLToPath } from "url";
-import { createRequire } from "module";
+import yaml from "js-yaml";
 
-const require = createRequire(import.meta.url);
-const yaml = require("js-yaml");
+const PROJECT_ROOT = path.resolve(new URL(".", import.meta.url).pathname, "..");
+const DATA_DIR = process.env.CABINET_DATA_DIR ? path.resolve(process.env.CABINET_DATA_DIR) : path.join(PROJECT_ROOT, "data");
 
-const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+// Script CLI arguments:
+//   --dry-run   (perform scans and print planned changes; write nothing)
+//   --no-commit (perform moves and link rewrites, but do not create a git commit)
+//   --no-backup (consolidate immediately without duplicating the data folder first)
+const DRY_RUN = process.argv.includes("--dry-run");
+const DO_COMMIT = !process.argv.includes("--no-commit");
+const DO_BACKUP = !process.argv.includes("--no-backup");
 
-const args = process.argv.slice(2);
-const has = (flag) => args.includes(flag);
-const opt = (name, fallback) => {
-  const i = args.indexOf(name);
-  return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
-};
-
-const DRY_RUN = has("--dry-run");
-const DO_BACKUP = !has("--no-backup");
-const DO_COMMIT = !has("--no-commit");
-const DATA_DIR = path.resolve(
-  opt("--data", process.env.CABINET_DATA_DIR || path.join(REPO_ROOT, "data"))
-);
-
-// Cross-vault state that lives beside the vaults and is never itself a vault nor
-// moved during migration. Mirrors SHARED_TOP_LEVEL in src/lib/cabinets/vaults.ts
-// (note: .git is intentionally NOT here — it moves into the vault per phase 2).
+// Cross-cabinet state that lives beside the cabinets and is never itself a cabinet nor
+// moved during migration. Mirrors SHARED_TOP_LEVEL in src/lib/cabinets/cabinets.ts
+// (note: .git is intentionally NOT here — it moves into the cabinet per phase 2).
 const SHARED_TOP_LEVEL = new Set([
   ".home",
   ".cabinet-state",
@@ -70,33 +43,43 @@ const SHARED_TOP_LEVEL = new Set([
   "bookmarks.json",
 ]);
 
-// Folders whose presence marks a "special container" whose index.md must stay.
-const CONTAINER_MARKERS = [".cabinet", ".cabinet-meta", ".repo.yaml", ".app"];
+// Folder features that identify a cabinet (manifest file).
+const CONTAINER_MARKERS = [".cabinet"];
 
-const DEFAULT_VAULT_NAME = "Cabinet";
+const DEFAULT_CABINET_NAME = "Cabinet";
 
-const log = (...a) => console.log("[migrate-legacy]", ...a);
-const act = (...a) => console.log(DRY_RUN ? "[dry-run]" : "[apply]", ...a);
-
-// ── fs helpers (no-ops under --dry-run) ────────────────────────────────────
-const exists = (p) => fs.existsSync(p);
-const isDir = (p) => { try { return fs.statSync(p).isDirectory(); } catch { return false; } };
-const readDir = (p) => { try { return fs.readdirSync(p); } catch { return []; } };
-
-function mkdirp(p) { if (!DRY_RUN) fs.mkdirSync(p, { recursive: true }); }
-function rename(src, dst) {
-  act("move", path.relative(DATA_DIR, src), "->", path.relative(DATA_DIR, dst));
-  if (DRY_RUN) return;
-  mkdirp(path.dirname(dst));
-  fs.renameSync(src, dst);
+function log(...args) {
+  console.log("[migrate]", ...args);
 }
-function rmdir(p) {
-  act("rmdir", path.relative(DATA_DIR, p) || ".");
-  if (!DRY_RUN) fs.rmdirSync(p);
+function act(op, p, extra = "") {
+  console.log(`  ${op.padEnd(20)} ${p}`, extra);
+}
+function exists(p) {
+  try { return fs.existsSync(p); } catch { return false; }
+}
+function isDir(p) {
+  try { return fs.statSync(p).isDirectory(); } catch { return false; }
+}
+function readDir(p) {
+  try { return fs.readdirSync(p); } catch { return []; }
+}
+function rename(src, dst) {
+  act("rename", path.relative(DATA_DIR, src), `-> ${path.relative(DATA_DIR, dst)}`);
+  if (!DRY_RUN) {
+    mkdirp(path.dirname(dst));
+    fs.renameSync(src, dst);
+  }
 }
 function rmFile(p) {
-  act("rm", path.relative(DATA_DIR, p));
+  act("delete file", path.relative(DATA_DIR, p));
   if (!DRY_RUN) fs.rmSync(p, { force: true });
+}
+function rmdir(p) {
+  act("delete folder", path.relative(DATA_DIR, p));
+  if (!DRY_RUN) fs.rmdirSync(p);
+}
+function mkdirp(p) {
+  if (!DRY_RUN) fs.mkdirSync(p, { recursive: true });
 }
 function writeFile(p, content) {
   if (!DRY_RUN) fs.writeFileSync(p, content, "utf-8");
@@ -104,7 +87,7 @@ function writeFile(p, content) {
 function readYaml(file) {
   try { return yaml.load(fs.readFileSync(file, "utf-8")) || {}; } catch { return null; }
 }
-function sanitizeVaultName(raw) {
+function sanitizeCabinetName(raw) {
   return String(raw || "")
     .replace(/[\\/]/g, "")
     .replace(/[^a-zA-Z0-9-_ ]/g, "")
@@ -117,11 +100,11 @@ function isContainerDir(dir) {
 // Junk-only entries that don't count toward "is this folder empty?".
 const JUNK = new Set([".DS_Store", "Thumbs.db"]);
 
-// ── vault-relative posix-path helpers ───────────────────────────────────────
-// All link math is done on "/"-separated vault-relative paths so it is platform
+// ── cabinet-relative posix-path helpers ───────────────────────────────────────
+// All link math is done on "/"-separated cabinet-relative paths so it is platform
 // independent and easy to reason about.
-function vrel(vaultDir, abs) {
-  return path.relative(vaultDir, abs).split(path.sep).join("/");
+function vrel(cabinetDir, abs) {
+  return path.relative(cabinetDir, abs).split(path.sep).join("/");
 }
 function parentV(vpath) {
   return vpath.includes("/") ? vpath.slice(0, vpath.lastIndexOf("/")) : "";
@@ -160,12 +143,12 @@ function main() {
 
   if (DO_BACKUP && !DRY_RUN) backup();
 
-  const vaults = phase1EnsureVault();
-  for (const vaultDir of vaults) {
-    phase2GitIntoVault(vaultDir);
-    const converted = phase3ConvertPages(vaultDir);
-    rewriteLinks(vaultDir, converted);
-    if (DO_COMMIT) commit(vaultDir, converted.convertedDirs.size);
+  const cabinets = phase1EnsureCabinet();
+  for (const cabinetDir of cabinets) {
+    phase2GitIntoCabinet(cabinetDir);
+    const converted = phase3ConvertPages(cabinetDir);
+    rewriteLinks(cabinetDir, converted);
+    if (DO_COMMIT) commit(cabinetDir, converted.convertedDirs.size);
   }
   log("done.");
 }
@@ -178,36 +161,36 @@ function backup() {
   fs.cpSync(DATA_DIR, dst, { recursive: true });
 }
 
-// ── phase 1: ensure a vault holds all content ───────────────────────────────
-function isVaultDir(dir) {
+// ── phase 1: ensure a cabinet holds all content ───────────────────────────────
+function isCabinetDir(dir) {
   if (!isDir(dir)) return false;
   const m = readYaml(path.join(dir, ".cabinet"));
   return !!m && (m.kind === "root" || m.kind === undefined);
 }
 
-function phase1EnsureVault() {
+function phase1EnsureCabinet() {
   const top = readDir(DATA_DIR);
-  const existingVaults = top
-    .filter((n) => !SHARED_TOP_LEVEL.has(n) && isVaultDir(path.join(DATA_DIR, n)))
+  const existingCabinets = top
+    .filter((n) => !SHARED_TOP_LEVEL.has(n) && isCabinetDir(path.join(DATA_DIR, n)))
     .map((n) => path.join(DATA_DIR, n));
 
-  if (existingVaults.length > 0) {
-    log(`vault layout already present: ${existingVaults.map((d) => path.basename(d)).join(", ")}`);
-    return existingVaults;
+  if (existingCabinets.length > 0) {
+    log(`cabinet layout already present: ${existingCabinets.map((d) => path.basename(d)).join(", ")}`);
+    return existingCabinets;
   }
 
-  // No vault yet: derive a name (root .cabinet name, else home.json, else default).
+  // No cabinet yet: derive a name (root .cabinet name, else home.json, else default).
   const rootManifest = readYaml(path.join(DATA_DIR, ".cabinet"));
   const home = readYaml(path.join(DATA_DIR, ".home", "home.json")) || {};
   let target =
-    sanitizeVaultName(rootManifest?.name) ||
-    sanitizeVaultName(home.activeVault) ||
-    DEFAULT_VAULT_NAME;
+    sanitizeCabinetName(rootManifest?.name) ||
+    sanitizeCabinetName(home.activeCabinet || home.activeVault) ||
+    DEFAULT_CABINET_NAME;
 
   const loose = top.filter((n) => !SHARED_TOP_LEVEL.has(n));
-  if (loose.includes(target)) target = DEFAULT_VAULT_NAME; // never bury into a loose entry
+  if (loose.includes(target)) target = DEFAULT_CABINET_NAME; // never bury into a loose entry
   const targetDir = path.join(DATA_DIR, target);
-  log(`no vault found — consolidating loose content into vault "${target}"`);
+  log(`no cabinet found — consolidating loose content into cabinet "${target}"`);
   mkdirp(targetDir);
 
   for (const name of loose) {
@@ -217,61 +200,61 @@ function phase1EnsureVault() {
   return [targetDir];
 }
 
-// ── phase 2: move shared git into the vault ──────────────────────────────────
-function phase2GitIntoVault(vaultDir) {
+// ── phase 2: move shared git into the cabinet ──────────────────────────────────
+function phase2GitIntoCabinet(cabinetDir) {
   const sharedGit = path.join(DATA_DIR, ".git");
-  const vaultGit = path.join(vaultDir, ".git");
-  if (exists(vaultGit)) {
-    log(`git already per-vault: ${path.relative(DATA_DIR, vaultGit)}`);
+  const cabinetGit = path.join(cabinetDir, ".git");
+  if (exists(cabinetGit)) {
+    log(`git already per-cabinet: ${path.relative(DATA_DIR, cabinetGit)}`);
     return;
   }
   if (!exists(sharedGit)) {
     log("no shared .git to migrate.");
     return;
   }
-  const otherVaults = readDir(DATA_DIR).filter(
-    (n) => !SHARED_TOP_LEVEL.has(n) && isVaultDir(path.join(DATA_DIR, n))
+  const otherCabinets = readDir(DATA_DIR).filter(
+    (n) => !SHARED_TOP_LEVEL.has(n) && isCabinetDir(path.join(DATA_DIR, n))
   );
-  if (otherVaults.length > 1) {
-    log("WARNING: shared .git but multiple vaults — leaving .git at root; resolve manually.");
+  if (otherCabinets.length > 1) {
+    log("WARNING: shared .git but multiple cabinets — leaving .git at root; resolve manually.");
     return;
   }
-  rename(sharedGit, vaultGit);
+  rename(sharedGit, cabinetGit);
 }
 
 // ── phase 3: convert legacy index.md pages (bottom-up) ───────────────────────
 // Two passes: first move every legacy `X/index.md` up to `<parent>/X.md`
 // (deleting emptied folders), recording what moved; then rewrite links so they
 // still resolve against the new file locations.
-function phase3ConvertPages(vaultDir) {
-  const convertedDirs = new Set(); // vault-rel posix dir paths that were collapsed
-  const pageOldDir = new Map();    // new md vault-rel path -> its ORIGINAL dir vpath
-  walkConvert(vaultDir, vaultDir, true, convertedDirs, pageOldDir);
-  log(`converted ${convertedDirs.size} legacy page folder(s) in ${path.basename(vaultDir)}`);
+function phase3ConvertPages(cabinetDir) {
+  const convertedDirs = new Set(); // cabinet-rel posix dir paths that were collapsed
+  const pageOldDir = new Map();    // new md cabinet-rel path -> its ORIGINAL dir vpath
+  walkConvert(cabinetDir, cabinetDir, true, convertedDirs, pageOldDir);
+  log(`converted ${convertedDirs.size} legacy page folder(s) in ${path.basename(cabinetDir)}`);
   return { convertedDirs, pageOldDir };
 }
 
-function walkConvert(dir, vaultDir, isVaultRoot, convertedDirs, pageOldDir) {
+function walkConvert(dir, cabinetDir, isCabinetRoot, convertedDirs, pageOldDir) {
   // Special containers (nested cabinets, linked repos, apps) own their internal
   // structure — never descend into them nor convert their pages (a linked repo's
-  // sub-pages are synced from an external source). The vault root is itself a
+  // sub-pages are synced from an external source). The cabinet root is itself a
   // cabinet, so we still descend into it; we just never convert the root itself.
-  if (!isVaultRoot && isContainerDir(dir)) return;
+  if (!isCabinetRoot && isContainerDir(dir)) return;
 
   // Recurse into children first so the deepest pages convert before their parents.
   for (const name of readDir(dir)) {
     if (name.startsWith(".")) continue; // hidden/scaffold dirs are never pages
     const child = path.join(dir, name);
-    if (isDir(child)) walkConvert(child, vaultDir, false, convertedDirs, pageOldDir);
+    if (isDir(child)) walkConvert(child, cabinetDir, false, convertedDirs, pageOldDir);
   }
 
-  if (isVaultRoot) return;            // the vault root is the cabinet entry; keep its index.md
+  if (isCabinetRoot) return;            // the cabinet root is the cabinet entry; keep its index.md
   const indexPath = path.join(dir, "index.md");
   if (!exists(indexPath)) return;     // not a legacy page folder
 
   const base = path.basename(dir);
   const target = path.join(path.dirname(dir), `${base}.md`);
-  const dirV = vrel(vaultDir, dir);
+  const dirV = vrel(cabinetDir, dir);
   if (exists(target)) {
     log(`SKIP ${dirV}: sibling ${base}.md already exists`);
     return;
@@ -279,7 +262,7 @@ function walkConvert(dir, vaultDir, isVaultRoot, convertedDirs, pageOldDir) {
 
   rename(indexPath, target);
   convertedDirs.add(dirV);
-  pageOldDir.set(vrel(vaultDir, target), dirV);
+  pageOldDir.set(vrel(cabinetDir, target), dirV);
 
   // Drop junk, then remove the now-empty folder (sub-pages/assets keep it alive).
   for (const name of readDir(dir)) {
@@ -293,11 +276,11 @@ function readText(p) {
 }
 
 // ── phase 3 link pass: re-resolve relative links to the new layout ───────────
-function rewriteLinks(vaultDir, { convertedDirs, pageOldDir }) {
+function rewriteLinks(cabinetDir, { convertedDirs, pageOldDir }) {
   if (convertedDirs.size === 0) return;
   let files = 0;
-  forEachMd(vaultDir, (file) => {
-    const vp = vrel(vaultDir, file);
+  forEachMd(cabinetDir, (file) => {
+    const vp = vrel(cabinetDir, file);
     const newDir = parentV(vp);
     // A converted page's links were authored relative to its ORIGINAL folder.
     const oldDir = pageOldDir.get(vp) ?? newDir;
@@ -314,7 +297,7 @@ function rewriteLinks(vaultDir, { convertedDirs, pageOldDir }) {
 
 /**
  * Rewrite relative markdown links/images. Each target is resolved to an absolute
- * vault-relative path against the file's ORIGINAL directory, remapped through the
+ * cabinet-relative path against the file's ORIGINAL directory, remapped through the
  * `X/index.md -> X.md` collapse, then re-expressed relative to the file's NEW
  * directory. Absolute URLs, anchors and root-absolute paths are left alone, and
  * wiki-links (resolved globally by name) are untouched.
@@ -350,19 +333,19 @@ function forEachMd(dir, fn) {
 }
 
 // ── git commit ───────────────────────────────────────────────────────────────
-function commit(vaultDir, count) {
-  if (!exists(path.join(vaultDir, ".git"))) return;
-  if (DRY_RUN) { act("git add -A && git commit (vault:", path.basename(vaultDir) + ")"); return; }
+function commit(cabinetDir, count) {
+  if (!exists(path.join(cabinetDir, ".git"))) return;
+  if (DRY_RUN) { act("git add -A && git commit (cabinet:", path.basename(cabinetDir) + ")"); return; }
   try {
-    execFileSync("git", ["-C", vaultDir, "add", "-A"], { stdio: "ignore" });
-    const status = execFileSync("git", ["-C", vaultDir, "status", "--porcelain"], { encoding: "utf-8" });
+    execFileSync("git", ["-C", cabinetDir, "add", "-A"], { stdio: "ignore" });
+    const status = execFileSync("git", ["-C", cabinetDir, "status", "--porcelain"], { encoding: "utf-8" });
     if (!status.trim()) { log("nothing to commit."); return; }
     execFileSync(
       "git",
-      ["-C", vaultDir, "commit", "-m", `Migrate to vault + Sibling Pattern (${count} page folder(s))`],
+      ["-C", cabinetDir, "commit", "-m", `Migrate to cabinet + Sibling Pattern (${count} page folder(s))`],
       { stdio: "ignore" }
     );
-    log(`committed migration in ${path.basename(vaultDir)}`);
+    log(`committed migration in ${path.basename(cabinetDir)}`);
   } catch (e) {
     log("WARNING: git commit failed:", e.message);
   }

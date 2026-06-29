@@ -151,6 +151,16 @@ export function EditorBubbleMenu({ editor }: Props) {
     <>
       <BubbleMenu
         editor={editor}
+        shouldShow={({ editor: e, state }) => {
+          // Preserve Tiptap's built-in behaviour: only show on text selections.
+          if (state.selection.empty) return false;
+          // Hide the formatting toolbar when a math node is selected —
+          // the math-specific Edit Equation bubble menu handles that case.
+          if (e.isActive("inlineMath")) return false;
+          // Hide when a slash-command popover (math editor, media, etc.) is open.
+          if (e.view.dom.hasAttribute("data-popover-open")) return false;
+          return true;
+        }}
         options={{ placement: "top", offset: 8 }}
         className="flex items-center gap-0.5 px-1 py-1 bg-popover border border-border rounded-md shadow-lg"
       >

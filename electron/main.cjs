@@ -159,26 +159,26 @@ function resolveManagedDataDir() {
 
 const managedDataDir = resolveManagedDataDir();
 
-// `managedDataDir` is the PARENT data folder; the active vault is a root folder
+// `managedDataDir` is the PARENT data folder; the active cabinet is a root folder
 // directly beneath it (Obsidian-style). Content (cabinets, agents, assets)
-// lives under the vault, while shared state (.home, .cabinet-state, bookmarks)
-// stays at the parent. The active vault name is persisted by the server in
+// lives under the cabinet, while shared state (.home, .cabinet-state, bookmarks)
+// stays at the parent. The active cabinet name is persisted by the server in
 // .home/home.json — read it here so asset deep-link resolution targets the
 // same content root the server serves from. Falls back to "Cabinet".
-const DEFAULT_VAULT_NAME = "Cabinet";
+const DEFAULT_CABINET_NAME = "Cabinet";
 
 function resolveContentDir() {
   try {
     const homePath = path.join(managedDataDir, ".home", "home.json");
     const raw = fs.readFileSync(homePath, "utf8");
     const parsed = JSON.parse(raw);
-    const name =
-      parsed && typeof parsed.activeVault === "string" && parsed.activeVault.trim()
-        ? parsed.activeVault.trim()
-        : DEFAULT_VAULT_NAME;
+    const activeVal = parsed ? (parsed.activeCabinet || parsed.activeVault) : null;
+    const name = typeof activeVal === "string" && activeVal.trim()
+      ? activeVal.trim()
+      : DEFAULT_CABINET_NAME;
     return path.join(managedDataDir, name);
   } catch {
-    return path.join(managedDataDir, DEFAULT_VAULT_NAME);
+    return path.join(managedDataDir, DEFAULT_CABINET_NAME);
   }
 }
 
@@ -799,11 +799,11 @@ ipcMain.handle("cabinet:uninstall-app", () => {
   return macosUninstallApp();
 });
 
-// Restart the whole desktop app. Switching the active vault changes the
+// Restart the whole desktop app. Switching the active cabinet changes the
 // content root that the embedded Next server resolves at boot (DATA_DIR is a
 // load-time constant), so the only safe way to rebind it is a full relaunch —
-// this mirrors how Obsidian reloads when you open a different vault. The new
-// process re-reads `.home/home.json` `activeVault` on start.
+// this mirrors how Obsidian reloads when you open a different cabinet. The new
+// process re-reads `.home/home.json` `activeCabinet` on start.
 ipcMain.handle("cabinet:relaunch", () => {
   try {
     app.relaunch();
@@ -1785,7 +1785,7 @@ ipcMain.handle("cabinet:get-extensions", () => {
   return readPersistedExtensions();
 });
 
-// Read a file from the active vault's content directory. Used by the LaTeX
+// Read a file from the active cabinet's content directory. Used by the LaTeX
 // embed extension to load .tex files for in-editor rendering. The path is
 // resolved relative to the content root with path-traversal protection.
 ipcMain.handle("cabinet:read-file", async (_event, payload) => {
@@ -1809,7 +1809,7 @@ ipcMain.handle("cabinet:read-file", async (_event, payload) => {
   }
 });
 
-// Write file content back to the active vault's content directory. Used by
+// Write file content back to the active cabinet's content directory. Used by
 // the LaTeX embed extension when the user edits a .tex file inline.
 ipcMain.handle("cabinet:write-file", async (_event, payload) => {
   try {

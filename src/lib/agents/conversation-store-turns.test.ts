@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 let tempRoot: string;
-/** The vault content root the store resolves to (parent/<activeVault>). */
+/** The cabinet content root the store resolves to (parent/<activeCabinet>). */
 let contentRoot: string;
 type Store = typeof import("./conversation-store");
 let store: Store;
@@ -16,14 +16,24 @@ before(async () => {
   );
   process.env.CABINET_DATA_DIR = tempRoot;
   store = await import("./conversation-store");
-  // CABINET_DATA_DIR is the PARENT data folder; the active vault nests content
+  // CABINET_DATA_DIR is the PARENT data folder; the active cabinet nests content
   // one level down. Read the resolved content root so the raw-path assertions
   // below target the same place the store writes to.
   ({ DATA_DIR: contentRoot } = await import("@/lib/storage/path-utils"));
 });
 
 after(async () => {
-  if (tempRoot) await fs.rm(tempRoot, { recursive: true, force: true });
+  if (tempRoot) {
+    for (let i = 0; i < 5; i++) {
+      try {
+        await fs.rm(tempRoot, { recursive: true, force: true });
+        break;
+      } catch (err) {
+        if (i === 4) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+  }
 });
 
 async function makeSingleShotConversation(title: string, prompt: string, agentOutput: string) {

@@ -75,7 +75,7 @@ A complete rethink of first-run for new users.
 
 - **3-slide "Meet your Cabinet" tour** — animated intro, sidebar-accurate mockup, mocha palette, vivid file-type icons
 - **Seamless wizard → app → tour** — no flash between transitions; disclaimer folded into final wizard step
-- **Animated home blueprint** — rooms (Study, Lab, Studio, Archive, Vault) wrap the welcome popup as a central patio
+- **Animated home blueprint** — rooms (Study, Lab, Studio, Archive, Cabinet) wrap the welcome popup as a central patio
 - **Staged data reveal** — DATA slide animation sequence with half-duration tweens for snappier feel
 - **Home > Room > Cabinet breadcrumb** on cabinet-created screen
 - **Tour persistence** — sidebar flicker on cabinet name load fixed; tour state tracked correctly

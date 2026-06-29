@@ -12,21 +12,21 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useVaultsStore } from "@/stores/vaults-store";
+import { useCabinetsStore } from "@/stores/cabinets-store";
 
-interface NewVaultDialogProps {
+interface NewRootCabinetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 /**
- * Minimal "create a vault" dialog. A vault is a root folder under the data
+ * Minimal "create a cabinet" dialog. A root cabinet is a folder under the data
  * folder; the name the user types becomes the folder name (sanitized
- * server-side) and the vault's display name. Creating a vault does NOT switch
+ * server-side) and the cabinet's display name. Creating a cabinet does NOT switch
  * to it — that's an explicit, restart-triggering action in the switcher.
  */
-export function NewVaultDialog({ open, onOpenChange }: NewVaultDialogProps) {
-  const create = useVaultsStore((s) => s.create);
+export function NewRootCabinetDialog({ open, onOpenChange }: NewRootCabinetDialogProps) {
+  const create = useCabinetsStore((s) => s.create);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function NewVaultDialog({ open, onOpenChange }: NewVaultDialogProps) {
     const created = await create(trimmed);
     setBusy(false);
     if (!created) {
-      setError("Could not create that vault. Try a different name.");
+      setError("Could not create that cabinet. Try a different name.");
       return;
     }
     setName("");
@@ -50,10 +50,10 @@ export function NewVaultDialog({ open, onOpenChange }: NewVaultDialogProps) {
     <Dialog open={open} onOpenChange={(next) => !busy && onOpenChange(next)}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>New vault</DialogTitle>
+          <DialogTitle>New cabinet</DialogTitle>
           <DialogDescription>
-            A vault is an isolated workspace with its own cabinets, agents, and
-            chats. Bookmarks are shared across all vaults.
+            A root cabinet is an isolated workspace with its own rooms, agents, and
+            chats. Bookmarks are shared across all cabinets.
           </DialogDescription>
         </DialogHeader>
         <Input
@@ -63,7 +63,7 @@ export function NewVaultDialog({ open, onOpenChange }: NewVaultDialogProps) {
           onKeyDown={(e) => {
             if (e.key === "Enter") void handleCreate();
           }}
-          placeholder="Vault name"
+          placeholder="Cabinet name"
           disabled={busy}
         />
         {error && <p className="text-[12px] text-red-500">{error}</p>}

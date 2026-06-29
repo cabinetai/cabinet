@@ -48,6 +48,7 @@ import { resolveCabinetDir } from "../src/lib/cabinets/server-paths";
 import {
   getAppOrigin,
   getDaemonPort,
+  isProcessStale,
 } from "../src/lib/runtime/runtime-config";
 import {
   getDetachedPromptLaunchMode,
@@ -1304,6 +1305,10 @@ function scheduleJob(job: JobConfig): void {
   }
 
   const task = cron.schedule(job.schedule, () => {
+    if (isProcessStale()) {
+      console.warn(`[daemon] Skipping job ${key}: process is stale. Please restart the daemon.`);
+      return;
+    }
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering scheduled job ${key} @ ${scheduledAt}`);
     recordTriggerAttempt(scheduledAt);
@@ -1360,6 +1365,10 @@ function scheduleHeartbeat(slug: string, cronExpr: string, cabinetPath: string):
   }
 
   const task = cron.schedule(cronExpr, () => {
+    if (isProcessStale()) {
+      console.warn(`[daemon] Skipping heartbeat for ${key}: process is stale. Please restart the daemon.`);
+      return;
+    }
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering heartbeat ${key} @ ${scheduledAt}`);
     recordTriggerAttempt(scheduledAt);
