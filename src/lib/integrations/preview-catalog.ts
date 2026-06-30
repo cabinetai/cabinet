@@ -282,6 +282,16 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     actions: ["List bookings", "Watch for new invitees", "Prep meeting briefs"],
   },
   {
+    id: "google-calendar",
+    name: "Google Calendar",
+    category: "productivity",
+    logo: L("google-calendar.svg"),
+    blurb: "Read your agenda and schedule on your behalf. (Connects through Google Workspace.)",
+    brand: "#4285f4",
+    implemented: true,
+    actions: ["Read agenda", "Create & update events", "Find free slots"],
+  },
+  {
     id: "gmail",
     name: "Gmail",
     category: "productivity",
@@ -636,10 +646,12 @@ const CONNECTABLE = new Set(MCP_CATALOG.map((e) => e.id));
 // Sub-products that connect through a suite's single OAuth (no separate server).
 const COVERED_BY: Record<string, string> = {
   gmail: "google-workspace",
+  // Calendar is served by the Google Workspace MCP, so its card connects the
+  // Workspace suite (single OAuth) rather than a server of its own.
+  "google-calendar": "google-workspace",
   // NOTE: "google-drive" is intentionally NOT covered by google-workspace —
   // it's a Cabinet-native (Drive for Desktop) integration with its own UI,
-  // distinct from the Workspace MCP. See `native` above. Calendar/Meet are no
-  // longer separate cards — the Google Workspace card connects Calendar directly.
+  // distinct from the Workspace MCP. See `native` above.
   "microsoft-teams": "microsoft-365",
   onedrive: "microsoft-365",
   sharepoint: "microsoft-365",
@@ -656,6 +668,7 @@ const LAUNCHED = new Set([
   "google-drive",
   "gmail",
   "google-workspace",
+  "google-calendar",
   "microsoft-365",
   "notion",
 ]);
