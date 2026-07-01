@@ -1,10 +1,11 @@
 # Microsoft Integration — Status
 
-_Last updated: 2026-06-16_
+_Last updated: 2026-06-28_
 
 | Integration | Status | Server / Type | Source | TODO |
 |---|---|---|---|---|
 | **Microsoft 365** (Outlook mail, calendar, Teams, files) | ✅ **Live** — launched (`LAUNCHED` gate on), connectable. Personal accounts: in-panel one-click device-code sign-in. Work/school: paste your own Entra app. ⚠️ Not yet fully verified end-to-end on a real account. **Note:** file access is read/browse only (`Files.Read.All` / `Sites.Read.All`) — no write-back | Community MCP server (`@softeria/ms-365-mcp-server`) | Open source | Complete a real personal sign-in to confirm completion detection + token-cache sharing · verify the work/school path |
+| **Microsoft Teams** (chats & channels into agent context) | ✅ **Launched** — `microsoft-teams` added to `LAUNCHED`; card connects through the Microsoft 365 suite. ⚠️ **Work/school only** — personal accounts have no Teams. The Teams Graph tools are now auto-enabled via the server's `--org-mode` flag, which Cabinet appends only when an Entra Client ID is set (work mode). **Not yet verified end-to-end** (needs a work/school tenant). | Community MCP server (same `ms-365-mcp-server`, `--org-mode`) | Open source | Verify against a real work/school tenant (e.g. M365 Developer Program E5 sandbox): connect → list Teams chats → post a marker message |
 | **OneDrive + SharePoint** (browse files in left sidebar) | ⚠️ MCP access works, but **mounted files in sidebar don't exist** | Community MCP server (same `ms-365-mcp-server`) | Open source | Show mounted files in the left sidebar ❓ (needs sync-to-disk or a remote tree — separate from the MCP integration) |
 | **Official Microsoft** (Agent 365 / tenant) | ❌ Integration does not exist | Tenant Agent (Agent 365 hosted servers) | Closed source | Get a compatible Microsoft account (Agent-365-enabled work tenant) for testing |
 | **SharePoint** (official) | ❌ Integration does not exist | Tenant Agent — no dedicated server; site/file content only via Agent 365 Copilot Chat search | Closed source | Get an Agent-365-enabled work tenant · confirm SharePoint coverage via Copilot Chat search |

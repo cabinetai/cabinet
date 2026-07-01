@@ -73,6 +73,13 @@ export interface SelectedSection {
   taskId?: string; // task id when type === "task"
   /** Sub-tab key when type === "agents" (e.g. "routines", "heartbeats"). */
   agentsTab?: "agents" | "routines" | "heartbeats" | "schedule" | "channels";
+  /**
+   * The integration card actually clicked, when it differs from `slug` (the
+   * suite it connects through). E.g. clicking "Microsoft Teams" sets
+   * slug="microsoft-365", integrationVia="microsoft-teams" so the detail page
+   * can default to the account mode that sub-product needs.
+   */
+  integrationVia?: string;
 }
 
 /**

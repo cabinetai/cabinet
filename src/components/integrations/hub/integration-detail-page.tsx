@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Check, Sparkles, ShieldCheck, Bell, ChevronDown } from "lucide-react";
+import { ArrowLeft, Check, Lock, Sparkles, ShieldCheck, Bell, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { showSuccess } from "@/lib/ui/toast";
@@ -31,25 +31,43 @@ import {
  * connect data (steps, tier) is read straight from the MCP catalog; the
  * ConnectPanel handles the live runtime state.
  */
+/** Sub-product cards that can only be delivered by a work/school account. */
+const M365_WORK_ONLY_VIA = new Set(["microsoft-teams", "sharepoint"]);
+
+/**
+ * Microsoft 365 capabilities, tagged by whether they need a work/school account.
+ * Rendered as the full list so the personal/work choice and its consequences are
+ * visible (work-only rows show locked in Personal mode) instead of the list
+ * silently changing under the user.
+ */
+const M365_CAPABILITIES: { label: string; workOnly: boolean }[] = [
+  { label: "Outlook mail & calendar", workOnly: false },
+  { label: "OneDrive files", workOnly: false },
+  { label: "Teams messages", workOnly: true },
+  { label: "SharePoint files", workOnly: true },
+];
+
 export function IntegrationDetailPage({
   item,
+  via,
   onBack,
 }: {
   item: IntegrationItem;
+  /** The sub-product card the user clicked to reach this suite page, if any. */
+  via?: string | null;
   onBack: () => void;
 }) {
   const category = CATEGORY_META[item.category].label;
   const entry = getCatalogEntry(item.id);
   // Microsoft 365 has a personal/work toggle in the ConnectPanel; we lift it
-  // here so the left-hand setup guide can react to it (personal = no setup).
+  // here so the left-hand setup guide and capability list can react to it.
   const isM365 = item.id === "microsoft-365";
-  const [msMode, setMsMode] = useState<"personal" | "work">("personal");
+  // Teams and SharePoint are work/school-only, so a user who clicked those
+  // cards should land in Work mode (Personal simply can't deliver them).
+  const [msMode, setMsMode] = useState<"personal" | "work">(
+    isM365 && via && M365_WORK_ONLY_VIA.has(via) ? "work" : "personal",
+  );
   const m365Personal = isM365 && msMode === "personal";
-  // Personal Microsoft accounts have no Teams or SharePoint (work/school only),
-  // so trim the capability list to what actually applies.
-  const agentActions = m365Personal
-    ? ["Outlook mail & calendar", "OneDrive files"]
-    : item.actions;
   // MCP connectors get setup steps from the catalog; native integrations carry
   // their own on the catalog item.
   const setupSteps = entry?.setupSteps ?? item.setupSteps;
@@ -111,24 +129,66 @@ export function IntegrationDetailPage({
           <h2 className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
             What your agents can do
           </h2>
+          {isM365 && (
+            // Tie the list explicitly to the account choice, so it's clear why a
+            // row is available or locked.
+            <p className="mt-1 text-[12px] text-muted-foreground">
+              With a{" "}
+              <span className="font-medium text-foreground">
+                {m365Personal ? "personal account" : "work or school account"}
+              </span>
+              :
+            </p>
+          )}
           <ul className="mt-4 space-y-3">
-            {agentActions.map((action) => (
-              <li key={action} className="flex items-start gap-3">
-                <span
-                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                  style={{ background: `${item.brand}1f` }}
-                >
-                  <Check className="h-3 w-3" style={{ color: item.brand }} />
-                </span>
-                <span className="text-[14px] text-foreground">{action}</span>
-              </li>
-            ))}
+            {isM365
+              ? M365_CAPABILITIES.map(({ label, workOnly }) => {
+                  const locked = workOnly && m365Personal;
+                  return (
+                    <li key={label} className="flex items-start gap-3">
+                      <span
+                        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                        style={{ background: locked ? undefined : `${item.brand}1f` }}
+                      >
+                        {locked ? (
+                          <Lock className="h-3 w-3 text-muted-foreground/60" />
+                        ) : (
+                          <Check className="h-3 w-3" style={{ color: item.brand }} />
+                        )}
+                      </span>
+                      <span
+                        className={cn(
+                          "flex flex-wrap items-center gap-2 text-[14px]",
+                          locked ? "text-muted-foreground/70" : "text-foreground",
+                        )}
+                      >
+                        {label}
+                        {locked && (
+                          <span className="rounded-full bg-foreground/[0.06] px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                            Work / school
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  );
+                })
+              : item.actions.map((action) => (
+                  <li key={action} className="flex items-start gap-3">
+                    <span
+                      className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                      style={{ background: `${item.brand}1f` }}
+                    >
+                      <Check className="h-3 w-3" style={{ color: item.brand }} />
+                    </span>
+                    <span className="text-[14px] text-foreground">{action}</span>
+                  </li>
+                ))}
           </ul>
           {m365Personal && (
             <p className="mt-3 text-[12px] text-muted-foreground">
-              Teams &amp; SharePoint need a work or school account. Switch to{" "}
+              The locked items need a work or school account. Switch to{" "}
               <span className="font-medium text-foreground">Work / school app</span>{" "}
-              to use those.
+              to use them.
             </p>
           )}
 
@@ -160,6 +220,7 @@ export function IntegrationDetailPage({
                 authBackend: entry?.authBackend ?? "",
                 transport: entry?.transport ?? "",
                 hasUrlCredential: !!entry?.urlCredentialKey,
+                scopes: entry?.oauthClient?.scopes,
               })}
             />
           ) : null}

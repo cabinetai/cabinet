@@ -41,6 +41,12 @@ export function IntegrationsHubPage() {
   const selectedId = useAppStore((s) =>
     s.section.type === "integrations" ? s.section.slug ?? null : null,
   );
+  // The sub-product card the user clicked (e.g. "microsoft-teams") when it
+  // differs from the suite slug it opens. Lets the detail page pick the right
+  // default account mode.
+  const selectedVia = useAppStore((s) =>
+    s.section.type === "integrations" ? s.section.integrationVia ?? null : null,
+  );
   const setSection = useAppStore((s) => s.setSection);
 
   // Which connectors (and suites) are actually connected — drives the only badge
@@ -88,6 +94,7 @@ export function IntegrationsHubPage() {
     return (
       <IntegrationDetailPage
         item={selected}
+        via={selectedVia}
         onBack={() => setSection({ type: "integrations" })}
       />
     );
@@ -154,18 +161,22 @@ export function IntegrationsHubPage() {
           <LayoutGallery
             items={filtered}
             connectedIds={connectedIds}
-            onOpen={(id) =>
+            onOpen={(id) => {
+              // Google Drive (Drive-for-Desktop) and Gmail (IMAP) each have
+              // their own detail page rather than folding into the Google
+              // Workspace OAuth suite.
+              const slug =
+                id === "google-drive" || id === "gmail"
+                  ? id
+                  : connectTargetFor(id);
               setSection({
                 type: "integrations",
-                // Google Drive (Drive-for-Desktop) and Gmail (IMAP) each have
-                // their own detail page rather than folding into the Google
-                // Workspace OAuth suite.
-                slug:
-                  id === "google-drive" || id === "gmail"
-                    ? id
-                    : connectTargetFor(id),
-              })
-            }
+                slug,
+                // Remember the actual card when it routes to a suite, so the
+                // detail page can default to the right account mode.
+                integrationVia: slug !== id ? id : undefined,
+              });
+            }}
           />
         )}
         {tab === "mcps" && (
