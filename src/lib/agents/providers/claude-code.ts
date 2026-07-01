@@ -7,22 +7,16 @@ import {
 } from "../provider-cli";
 import { getNvmNodeBin } from "../nvm-path";
 
-// Effort levels per Claude Code docs: Fable 5 / Opus 4.8 support an extra
-// `xhigh` rung (recommended default); Sonnet 4.6 stops at `max`. Setting
-// an unsupported level falls back to the highest the model accepts, but we
+// Effort levels per Claude Code docs: Fable 5, Opus 4.8/4.7, and Sonnet 5 all
+// support the full ladder including the `xhigh` rung. (Sonnet 4.6 stopped at
+// `max` with no `xhigh`, but it's no longer offered here.) Setting an
+// unsupported level falls back to the highest the model accepts, but we
 // surface the right list so the picker doesn't show levels that won't apply.
-const OPUS_THINKING_LEVELS = [
+const EFFORT_LEVELS_WITH_XHIGH = [
   { id: "low", name: "Low", description: "Quick, minimal reasoning" },
   { id: "medium", name: "Medium", description: "Balanced depth" },
   { id: "high", name: "High", description: "Thorough reasoning" },
   { id: "xhigh", name: "Extra High", description: "Recommended for hardest tasks" },
-  { id: "max", name: "Max", description: "Deepest reasoning, no token cap" },
-] as const;
-
-const SONNET_THINKING_LEVELS = [
-  { id: "low", name: "Low", description: "Quick, minimal reasoning" },
-  { id: "medium", name: "Medium", description: "Balanced depth" },
-  { id: "high", name: "High", description: "Thorough reasoning" },
   { id: "max", name: "Max", description: "Deepest reasoning, no token cap" },
 ] as const;
 
@@ -49,37 +43,37 @@ export const claudeCodeProvider: AgentProvider = {
       id: "fable",
       name: "Claude Fable 5",
       description: "Most powerful model, above Opus, with configurable effort",
-      effortLevels: [...OPUS_THINKING_LEVELS],
+      effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
     },
     {
       id: "opus",
       name: "Claude Opus 4.8",
       description: "Most intelligent Opus with configurable effort",
-      effortLevels: [...OPUS_THINKING_LEVELS],
+      effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
     },
     {
       id: "opus[1m]",
       name: "Claude Opus 4.8 (1M context)",
       description: "Opus 4.8 with 1M-token context for very long sessions",
-      effortLevels: [...OPUS_THINKING_LEVELS],
+      effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
     },
     {
       id: "sonnet",
-      name: "Claude Sonnet 4.6",
+      name: "Claude Sonnet 5",
       description: "Fast and capable with configurable effort",
-      effortLevels: [...SONNET_THINKING_LEVELS],
+      effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
     },
     {
       id: "sonnet[1m]",
-      name: "Claude Sonnet 4.6 (1M context)",
-      description: "Sonnet 4.6 with 1M-token context for very long sessions",
-      effortLevels: [...SONNET_THINKING_LEVELS],
+      name: "Claude Sonnet 5 (1M context)",
+      description: "Sonnet 5 with 1M-token context for very long sessions",
+      effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
     },
     {
       id: "opusplan",
       name: "Opus + Sonnet (opusplan)",
       description: "Opus during plan mode, Sonnet for execution",
-      effortLevels: [...OPUS_THINKING_LEVELS],
+      effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
     },
     {
       id: "haiku",
@@ -90,7 +84,7 @@ export const claudeCodeProvider: AgentProvider = {
   ],
   detachedPromptLaunchMode: "session",
   supportsTerminalResume: true,
-  effortLevels: [...OPUS_THINKING_LEVELS],
+  effortLevels: [...EFFORT_LEVELS_WITH_XHIGH],
   command: "claude",
   commandCandidates: buildCommandCandidates("claude", { nvmBin: nvmClaudePath }),
 
