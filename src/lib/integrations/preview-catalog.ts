@@ -578,10 +578,10 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     name: "Snowflake",
     category: "data",
     logo: L("snowflake.webp"),
-    blurb: "Query your warehouse in natural language.",
+    blurb: "Query your warehouse and Cortex AI in natural language.",
     brand: "#29b5e8",
-    implemented: false,
-    actions: ["Run queries", "Summarise tables", "Build reports"],
+    implemented: true,
+    actions: ["Run queries", "Explore schemas", "Query Cortex & semantic views"],
   },
   {
     id: "bigquery",
@@ -715,6 +715,7 @@ const LAUNCHED = new Set([
   "microsoft-teams",
   "notion",
   "slack",
+  "snowflake",
 ]);
 
 export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) => {

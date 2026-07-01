@@ -25,6 +25,7 @@ import path from "path";
 import { parse as parseToml, stringify as stringifyToml } from "smol-toml";
 import { getCabinetEnvSnapshot, readCabinetEnvFile } from "@/lib/runtime/cabinet-env";
 import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
+import { DATA_DIR } from "@/lib/storage/path-utils";
 import {
   MCP_PROVIDERS,
   getMcpProvider,
@@ -58,6 +59,20 @@ function resolveServerEnv(
     out[key] = val;
   }
   return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/**
+ * Materialize an entry's auxiliary config file (e.g. Snowflake's
+ * `--service-config-file`) to a stable, Cabinet-owned absolute path and return
+ * it. Contents are static, secret-free policy. Written only if absent so a user
+ * who hand-edits it (e.g. to allow writes) keeps their edits across reconnects.
+ */
+function materializeConfigFile(cfg: { name: string; contents: string }): string {
+  const dir = path.join(DATA_DIR, ".agents", ".config");
+  fs.mkdirSync(dir, { recursive: true });
+  const abs = path.join(dir, cfg.name);
+  if (!fs.existsSync(abs)) fs.writeFileSync(abs, cfg.contents, "utf8");
+  return abs;
 }
 
 /**
@@ -124,7 +139,12 @@ function buildServerEntry(entry: CatalogEntry): Record<string, unknown> {
     }
   }
   const out: Record<string, unknown> = { command: entry.command };
-  const args = resolveArgs(entry);
+  let args = resolveArgs(entry);
+  if (args && entry.configFile) {
+    // Materialize the aux config file and swap its absolute path in for the token.
+    const configPath = materializeConfigFile(entry.configFile);
+    args = args.map((a) => a.replaceAll("${CONFIG_FILE}", configPath));
+  }
   if (args) out.args = args;
   if (entry.serverEnv) {
     const env = resolveServerEnv(entry.serverEnv); // ${ENVKEY} placeholders, unset ones dropped

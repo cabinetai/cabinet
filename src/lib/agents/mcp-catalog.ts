@@ -113,6 +113,15 @@ export interface CatalogEntry {
    */
   serverEnv?: Record<string, string>;
   /**
+   * stdio servers that require an auxiliary config file on disk (Snowflake's
+   * `--service-config-file`). At connect the writer materializes this file under
+   * Cabinet's data dir and substitutes its absolute path for the `${CONFIG_FILE}`
+   * token in `args`. Contents are static, secret-free policy (e.g. which tool
+   * groups + SQL statement types are permitted) — real secrets stay in
+   * `.cabinet.env` / `serverEnv`, never in this file.
+   */
+  configFile?: { name: string; contents: string };
+  /**
    * Confidential OAuth client for remote (http) servers whose auth server does
    * NOT support Dynamic Client Registration (e.g. Slack). The user brings their
    * own app; we register its client id/secret with the CLI so OAuth can run
@@ -957,7 +966,141 @@ const EXTENDED: CatalogEntry[] = [
   byoRemote({ id: "docusign", label: "DocuSign", blurb: "Envelopes, signatures, and templates.", logo: "/logos/docusign.webp", sourceUrl: "https://www.docusign.com/", tier: "community", actions: ["Send envelopes", "Check signature status", "Use templates"], where: "Use a hosted DocuSign MCP URL or self-host." }),
   byoRemote({ id: "workday", label: "Workday", blurb: "HR records, time off, and org data.", logo: "/logos/workday.svg", sourceUrl: "https://www.workday.com/", tier: "community", actions: ["Read worker & org data", "Check time off", "Look up policies"], where: "Use a hosted Workday MCP URL or self-host." }),
   byoRemote({ id: "bamboohr", label: "BambooHR", blurb: "Employees, time off, and HR data.", logo: "/logos/bamboohr.svg", sourceUrl: "https://www.bamboohr.com/", tier: "community", actions: ["Read employee data", "Check time off", "Look up directory"], where: "Use a hosted BambooHR MCP URL or self-host." }),
-  byoRemote({ id: "snowflake", label: "Snowflake", blurb: "Query your data warehouse with Cortex.", logo: "/logos/snowflake.svg", sourceUrl: "https://docs.snowflake.com/", tier: "community", actions: ["Run SQL queries", "Explore schemas", "Summarize results"], where: "Use Snowflake's Cortex MCP endpoint or a hosted URL." }),
+  {
+    id: "snowflake",
+    label: "Snowflake",
+    blurb: "Query your warehouse and Cortex AI in natural language.",
+    iconSlug: "snowflake",
+    bgImage: "/integrations/snowflake-bg.webp",
+    logo: "/logos/snowflake.webp",
+    // Snowflake's own server (Snowflake-Labs/mcp), run locally via uvx. Auth goes
+    // through the Snowflake Python Connector: we pass account/user + a Programmatic
+    // Access Token (as SNOWFLAKE_PASSWORD) via the env — no browser OAuth, so it's
+    // a plain token paste. The server REQUIRES --service-config-file, so we
+    // materialize a read-only default policy (see configFile) and pass its path.
+    sourceUrl: "https://github.com/Snowflake-Labs/mcp",
+    registryId: "snowflake",
+    trustTier: "official",
+    authBackend: "token",
+    transport: "stdio",
+    mcpServerName: "cabinet-snowflake",
+    command: "uvx",
+    args: ["snowflake-labs-mcp", "--service-config-file", "${CONFIG_FILE}"],
+    serverEnv: {
+      SNOWFLAKE_ACCOUNT: "${SNOWFLAKE_ACCOUNT}",
+      SNOWFLAKE_USER: "${SNOWFLAKE_USER}",
+      // A Programmatic Access Token is passed as the password (its documented use).
+      SNOWFLAKE_PASSWORD: "${SNOWFLAKE_PASSWORD}",
+      // Optional — dropped by the writer when left blank in .cabinet.env.
+      SNOWFLAKE_WAREHOUSE: "${SNOWFLAKE_WAREHOUSE}",
+      SNOWFLAKE_ROLE: "${SNOWFLAKE_ROLE}",
+    },
+    configFile: {
+      name: "snowflake-mcp-config.yaml",
+      contents: `# Cabinet default config for the Snowflake MCP server (Snowflake-Labs/mcp).
+#
+# Read-only by default: agents may run SELECT / DESCRIBE / USE and utility
+# commands, but INSERT / UPDATE / DELETE / DROP and other mutations are denied.
+# To let agents write, flip the relevant statement types below to true.
+#
+# No Cortex agent/search/analyst services are pre-wired — those are
+# account-specific; add them here after you create them in Snowflake.
+agent_services: []
+search_services: []
+analyst_services: []
+other_services:
+  object_manager: true    # explore databases/schemas/tables/etc.
+  query_manager: true     # run SQL, gated by sql_statement_permissions below
+  semantic_manager: true  # discover & query semantic views
+sql_statement_permissions:
+  - Select: true
+  - Describe: true
+  - Use: true
+  - Command: true
+  - Alter: false
+  - Comment: false
+  - Commit: false
+  - Create: false
+  - Delete: false
+  - Drop: false
+  - Insert: false
+  - Merge: false
+  - Rollback: false
+  - Transaction: false
+  - TruncateTable: false
+  - Update: false
+  - Unknown: false
+`,
+    },
+    credentials: [
+      {
+        envKey: "SNOWFLAKE_ACCOUNT",
+        label: "Account identifier",
+        kind: "plain",
+        required: true,
+        placeholder: "myorg-myaccount",
+        hint: "Your account identifier (e.g. myorg-myaccount), the first part of your account URL https://<account>.snowflakecomputing.com.",
+      },
+      {
+        envKey: "SNOWFLAKE_USER",
+        label: "Username",
+        kind: "plain",
+        required: true,
+        placeholder: "you@example.com",
+        hint: "The Snowflake user the token belongs to.",
+      },
+      {
+        envKey: "SNOWFLAKE_PASSWORD",
+        label: "Programmatic Access Token (PAT)",
+        kind: "secret",
+        required: true,
+        placeholder: "••••••••••••••••",
+        hint: "Generate a PAT in Snowsight (Profile → Authentication) scoped to a least-privilege role. Passed as SNOWFLAKE_PASSWORD; stored in .cabinet.env (0600), never written into the CLI config. A raw password or key-pair also works — see setup.",
+      },
+      {
+        envKey: "SNOWFLAKE_WAREHOUSE",
+        label: "Warehouse (optional)",
+        kind: "plain",
+        required: false,
+        placeholder: "COMPUTE_WH",
+        hint: "Default virtual warehouse for queries. Leave blank to use the user's default.",
+      },
+      {
+        envKey: "SNOWFLAKE_ROLE",
+        label: "Role (optional)",
+        kind: "plain",
+        required: false,
+        placeholder: "MCP_READONLY",
+        hint: "Role to run as — a least-privilege role is recommended. Leave blank for the user's default.",
+      },
+    ],
+    actions: [
+      "Run SQL queries (read-only by default)",
+      "Explore databases, schemas & tables",
+      "Query Cortex Analyst & semantic views",
+      "Summarize results",
+    ],
+    setupSteps: [
+      {
+        title: "Install uv (one-time)",
+        body: "The server runs locally through uvx, uv's tool runner (like npx, but for Python). macOS/Linux: run `curl -LsSf https://astral.sh/uv/install.sh | sh` (or `brew install uv`). Windows: `winget install --id=astral-sh.uv`. Restart Cabinet if it was already open.",
+        href: "https://docs.astral.sh/uv/getting-started/installation/",
+      },
+      {
+        title: "Create a Programmatic Access Token",
+        body: "In Snowsight, open your user menu → Profile → Authentication → Programmatic access tokens and generate a PAT. Scope it to a least-privilege role (ideally read-only) so agents can't do more than you intend.",
+        href: "https://docs.snowflake.com/en/user-guide/programmatic-access-tokens",
+      },
+      {
+        title: "Paste your account, user & token",
+        body: "Enter your account identifier, username, and the PAT below. They're stored in .cabinet.env (0600) and injected into the server's environment at run time — never written into the CLI config. Prefer key-pair auth? Set SNOWFLAKE_PRIVATE_KEY_FILE in .cabinet.env and leave the token blank.",
+      },
+      {
+        title: "Read-only by default",
+        body: "Cabinet ships a config that permits SELECT/DESCRIBE/USE and denies INSERT/UPDATE/DELETE/DROP and other writes. To let agents write, edit snowflake-mcp-config.yaml in Cabinet's data dir (data/.agents/.config) and flip the relevant statement types to true.",
+      },
+    ],
+  },
   byoRemote({ id: "bigquery", label: "BigQuery", blurb: "Query datasets in Google BigQuery.", logo: "/logos/bigquery.svg", sourceUrl: "https://cloud.google.com/bigquery", tier: "community", actions: ["Run SQL queries", "Explore datasets", "Summarize results"], where: "Use a hosted BigQuery MCP URL or self-host." }),
   byoRemote({ id: "amplitude", label: "Amplitude", blurb: "Product analytics, charts, and cohorts.", logo: "/logos/amplitude.svg", sourceUrl: "https://amplitude.com/", tier: "community", actions: ["Query charts & events", "Read cohorts", "Summarize trends"], where: "Use a hosted Amplitude MCP URL or self-host." }),
   byoRemote({ id: "airtable", label: "Airtable", blurb: "Read and write records across your bases.", logo: "/logos/airtable.svg", sourceUrl: "https://airtable.com/developers", tier: "community", actions: ["Query tables", "Create & update records", "Read schemas"], where: "Use a hosted Airtable MCP URL (Composio/Pipedream) or self-host." }),
