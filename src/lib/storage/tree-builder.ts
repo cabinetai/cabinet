@@ -43,6 +43,8 @@ const MERMAID_EXTENSIONS = new Set([".mermaid", ".mmd"]);
 
 const DRAWIO_EXTENSIONS = new Set([".drawio", ".dio"]);
 
+const EXCALIDRAW_EXTENSIONS = new Set([".excalidraw"]);
+
 const LATEX_EXTENSIONS = new Set([".tex", ".latex"]);
 
 const TYPST_EXTENSIONS = new Set([".typ"]);
@@ -79,6 +81,7 @@ function classifyFile(ext: string): TreeNode["type"] | null {
   if (AUDIO_EXTENSIONS.has(ext)) return "audio";
   if (MERMAID_EXTENSIONS.has(ext)) return "mermaid";
   if (DRAWIO_EXTENSIONS.has(ext)) return "drawio";
+  if (EXCALIDRAW_EXTENSIONS.has(ext)) return "excalidraw";
   if (LATEX_EXTENSIONS.has(ext)) return "latex";
   if (TYPST_EXTENSIONS.has(ext)) return "typst";
   if (DOCX_EXTENSIONS.has(ext)) return "docx";
@@ -311,6 +314,24 @@ async function buildTreeRecursive(
         name: entry.name,
         path: vPath,
         type: "drawio",
+        knowledgePolicy: inheritedPolicy,
+        frontmatter: {
+          title,
+          order: sidecarOrders[entry.name],
+        },
+      });
+    } else if (
+      entry.name.toLowerCase().endsWith(".excalidraw.svg") ||
+      entry.name.toLowerCase().endsWith(".excalidraw")
+    ) {
+      const lowerName = entry.name.toLowerCase();
+      const title = lowerName.endsWith(".excalidraw.svg")
+        ? entry.name.slice(0, -15)
+        : entry.name.slice(0, -11);
+      nodes.push({
+        name: entry.name,
+        path: vPath,
+        type: "excalidraw",
         knowledgePolicy: inheritedPolicy,
         frontmatter: {
           title,

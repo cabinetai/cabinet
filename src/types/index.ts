@@ -48,6 +48,7 @@ export interface TreeNode {
     | "audio"
     | "mermaid"
     | "drawio"
+    | "excalidraw"
     | "docx"
     | "xlsx"
     | "pptx"

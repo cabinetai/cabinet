@@ -217,6 +217,39 @@ const commands: SlashCommand[] = [
       }
     }
   } } },
+  { label: "Excalidraw Drawing", icon: Workflow, description: "Insert and edit a local Excalidraw drawing", category: "advanced", action: { type: "direct", run: async (editor) => {
+    const defaultName = `drawing-${Date.now()}`;
+    const name = typeof window !== "undefined" ? window.prompt("Enter a name for the new Excalidraw drawing:", defaultName) : null;
+    if (name === null) return;
+    
+    const sanitized = (name.trim() || defaultName).replace(/[^a-zA-Z0-9_-]/g, "-");
+    const filename = `${sanitized}.excalidraw.svg`;
+    const pagePath = useEditorStore.getState().currentPath;
+    if (!pagePath) return;
+
+    const blankSvgContent = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="200px" height="120px" viewBox="0 0 200 120" data-excalidraw="true"><rect width="198" height="118" x="1" y="1" fill="#fcfcfc" stroke="#dddddd" stroke-width="2" stroke-dasharray="5,5" rx="5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" fill="#888888">Empty Drawing</text></svg>`;
+
+    try {
+      const assetUrl = `/api/assets/${pagePath}/${filename}`;
+      const res = await fetch(assetUrl, {
+        method: "PUT",
+        headers: { "Content-Type": "image/svg+xml" },
+        body: blankSvgContent
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const imageUrl = `/api/assets/${pagePath}/${filename}`;
+      editor.chain().focus().setImage({ src: imageUrl, alt: sanitized }).run();
+
+      const editorUrl = `${window.location.origin}/excalidraw/editor?path=${pagePath}/${filename}`;
+      useAppStore.getState().setAppMode("browse", editorUrl);
+    } catch (err) {
+      console.error("Failed to create Excalidraw drawing:", err);
+      if (typeof window !== "undefined") {
+        window.alert(`Error creating Excalidraw drawing: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+  } } },
 ];
 
 interface SlashCommandsProps {

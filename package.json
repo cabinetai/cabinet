@@ -39,6 +39,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@emoji-mart/data": "^1.2.1",
+    "@excalidraw/excalidraw": "^0.18.1",
     "@tailwindcss/typography": "^0.5.19",
     "@tiptap/extension-bubble-menu": "^3.22.3",
     "@tiptap/extension-code-block-lowlight": "^3.20.4",

@@ -356,7 +356,8 @@ export function EditorBubbleMenu({ editor }: Props) {
             const { selection } = e.state;
             if (selection && selection.constructor.name === "NodeSelection" && (selection as any).node?.type.name === "image") {
               const src = ((selection as any).node?.attrs.src ?? "") as string;
-              return src.toLowerCase().endsWith(".drawio.svg");
+              const lower = src.toLowerCase();
+              return lower.endsWith(".drawio.svg") || lower.endsWith(".excalidraw.svg");
             }
           } catch (err) {}
           return false;
@@ -378,17 +379,23 @@ export function EditorBubbleMenu({ editor }: Props) {
                 }
                 path = decodeURIComponent(path);
                 
-                const editorUrl = `${window.location.origin}/drawio/editor.html?path=${encodeURIComponent(path)}`;
+                const lowerPath = path.toLowerCase();
+                const editorUrl = lowerPath.endsWith(".excalidraw.svg")
+                  ? `${window.location.origin}/excalidraw/editor?path=${encodeURIComponent(path)}`
+                  : `${window.location.origin}/drawio/editor.html?path=${encodeURIComponent(path)}`;
                 useAppStore.getState().setAppMode("browse", editorUrl);
               }
             } catch (err) {
-              console.error("Failed to open Draw.io editor from image selection:", err);
+              console.error("Failed to open drawing editor from image selection:", err);
             }
           }}
           className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-popover-foreground hover:bg-muted rounded-sm transition-colors"
         >
           <Edit2 className="w-3.5 h-3.5" />
-          Edit Diagram
+          {editor && editor.state.selection &&
+           (((editor.state.selection as any).node?.attrs.src ?? "") as string).toLowerCase().endsWith(".excalidraw.svg")
+            ? "Edit Drawing"
+            : "Edit Diagram"}
         </button>
       </BubbleMenu>
     </>

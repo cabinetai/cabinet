@@ -743,6 +743,7 @@ export function AppShell() {
         if (lower.endsWith(".ipynb")) return "notebook";
         if (lower.endsWith(".mmd") || lower.endsWith(".mermaid")) return "mermaid";
         if (lower.endsWith(".drawio") || lower.endsWith(".dio") || lower.endsWith(".drawio.svg")) return "drawio";
+        if (lower.endsWith(".excalidraw") || lower.endsWith(".excalidraw.svg")) return "excalidraw";
         if (lower.endsWith(".tex") || lower.endsWith(".latex")) return "latex";
         if (lower.endsWith(".typ")) return "typst";
         if (/\.(png|jpe?g|gif|webp|svg|bmp)$/.test(lower)) return "image";
@@ -767,6 +768,7 @@ export function AppShell() {
   const isAudio = nodeType === "audio";
   const isMermaid = nodeType === "mermaid";
   const isDrawio = nodeType === "drawio";
+  const isExcalidraw = nodeType === "excalidraw";
   const isLatex = nodeType === "latex";
   const isTypst = nodeType === "typst";
   const isDocx = nodeType === "docx";
@@ -807,16 +809,29 @@ export function AppShell() {
   }, [isDrawio, selectedNode, selectedPath, browseUrl, setAppMode]);
 
   useEffect(() => {
+    if (isExcalidraw && (selectedNode || selectedPath)) {
+      const path = selectedNode?.path || selectedPath!;
+      const targetUrl = `${window.location.origin}/excalidraw/editor?path=${path}`;
+      if (browseUrl !== targetUrl) {
+        setAppMode("browse", targetUrl);
+      }
+    }
+  }, [isExcalidraw, selectedNode, selectedPath, browseUrl, setAppMode]);
+
+  useEffect(() => {
     const handleExit = () => {
       setAppMode("edit");
+      loadTree();
       
-      // If the selected path itself is a drawio diagram, deselect it to parent
+      // If the selected path itself is a drawio diagram or excalidraw drawing, deselect it to parent
       // directory to prevent redirect loop
       const currentPath = useTreeStore.getState().selectedPath;
       if (currentPath && (
         currentPath.toLowerCase().endsWith(".drawio.svg") ||
         currentPath.toLowerCase().endsWith(".drawio") ||
-        currentPath.toLowerCase().endsWith(".dio")
+        currentPath.toLowerCase().endsWith(".dio") ||
+        currentPath.toLowerCase().endsWith(".excalidraw.svg") ||
+        currentPath.toLowerCase().endsWith(".excalidraw")
       )) {
         const lastSlash = currentPath.lastIndexOf("/");
         const parentPath = lastSlash > 0 ? currentPath.slice(0, lastSlash) : null;
@@ -824,25 +839,28 @@ export function AppShell() {
       }
     };
 
-    const handleDrawioMessage = (event: MessageEvent) => {
-      if (event.data?.type === "drawio-saved") {
+    const handleEditorMessage = (event: MessageEvent) => {
+      if (event.data?.type === "drawio-saved" || event.data?.type === "excalidraw-saved") {
         handleExit();
       }
     };
 
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === "cabinet.drawio.last_saved_path") {
+      if (
+        event.key === "cabinet.drawio.last_saved_path" ||
+        event.key === "cabinet.excalidraw.last_saved_path"
+      ) {
         handleExit();
       }
     };
 
-    window.addEventListener("message", handleDrawioMessage);
+    window.addEventListener("message", handleEditorMessage);
     window.addEventListener("storage", handleStorage);
     return () => {
-      window.removeEventListener("message", handleDrawioMessage);
+      window.removeEventListener("message", handleEditorMessage);
       window.removeEventListener("storage", handleStorage);
     };
-  }, [setAppMode]);
+  }, [setAppMode, loadTree]);
 
   const handleExitApp = () => {
     setSidebarCollapsed(false);

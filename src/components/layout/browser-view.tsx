@@ -1358,6 +1358,11 @@ export function BrowserView() {
       setIframePolicyBlocked(false);
       return;
     }
+    const isInternalRoute = url.startsWith("/") || (typeof window !== "undefined" && url.startsWith(window.location.origin));
+    if (isInternalRoute) {
+      setIframePolicyBlocked(false);
+      return;
+    }
     let cancelled = false;
     const check = async () => {
       try {
@@ -1388,6 +1393,11 @@ export function BrowserView() {
       return;
     }
     if (!url || url === "about:blank") {
+      setIframeFailure(null);
+      return;
+    }
+    const isInternalRoute = url.startsWith("/") || (typeof window !== "undefined" && url.startsWith(window.location.origin));
+    if (isInternalRoute) {
       setIframeFailure(null);
       return;
     }
