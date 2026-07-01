@@ -112,11 +112,57 @@ export interface CatalogEntry {
    * and is resolved by the PTY env merge at spawn.
    */
   serverEnv?: Record<string, string>;
+  /**
+   * Confidential OAuth client for remote (http) servers whose auth server does
+   * NOT support Dynamic Client Registration (e.g. Slack). The user brings their
+   * own app; we register its client id/secret with the CLI so OAuth can run
+   * without DCR. `clientId` + `callbackPort` go into the CLI config; the secret
+   * is handed to the CLI (stored in its keychain), never written into config.
+   * The user must register `http://localhost:<callbackPort>/callback` as a
+   * redirect URL on their app.
+   */
+  oauthClient?: {
+    clientIdEnvKey: string;
+    clientSecretEnvKey: string;
+    callbackPort: number;
+    /**
+     * Pins the OAuth scopes requested at sign-in (space-separated), overriding
+     * the larger set the server would otherwise discover. Lets the user's app
+     * get away with a small, easy-to-grant scope set. Omit to request whatever
+     * the server advertises.
+     */
+    scopes?: string;
+  };
   /** Credentials collected for `token` / `user-app` backends. */
   credentials: CatalogCredential[];
   /** Display-only: what the agent can do once connected. */
   actions: string[];
   setupSteps: CatalogSetupStep[];
+  /**
+   * Opt-in: drive this stdio server's OWN browser OAuth at connect time (in the
+   * daemon, keeping the server + its loopback alive across the human approval
+   * step) instead of deferring to the first agent run — where the task times out
+   * and the loopback dies before the user finishes. The stdio twin of the HTTP
+   * connect-time login. See stdio-mcp-login.ts.
+   */
+  connectAuth?: {
+    kind: "stdio-loopback";
+    /** MCP tool whose call kicks off the OAuth flow and surfaces the URL. */
+    triggerTool: string;
+    /** Static args passed to the trigger tool. */
+    triggerArgs?: Record<string, unknown>;
+    /**
+     * Args to spawn the server with FOR SIGN-IN ONLY (overrides `args`). Trim it
+     * to just the trigger tool's service so the auth server boots fast — agents
+     * still get the full `args`. The OAuth scope is set by the trigger tool, not
+     * by which tools are registered, so this doesn't narrow what gets authorized.
+     */
+    authArgs?: string[];
+    /** .cabinet.env key whose value is passed as the `user_google_email` arg. */
+    emailEnvKey?: string;
+    /** Dir (supports `~`) whose token-file presence means auth completed. */
+    tokenDir: string;
+  };
 }
 
 const SLACK: CatalogEntry = {
@@ -129,11 +175,27 @@ const SLACK: CatalogEntry = {
   sourceUrl: "https://docs.slack.dev/ai/slack-mcp-server",
   registryId: "slack",
   trustTier: "official",
-  authBackend: "cli-pkce",
-  fallbackAuthBackend: "user-app",
+  // Slack's auth server doesn't support Dynamic Client Registration, so the
+  // one-click `cli-pkce` flow can't work — the user must bring their own app
+  // (client id/secret). user-app is the *only* path, not a fallback.
+  authBackend: "user-app",
   transport: "http",
   mcpServerName: "cabinet-slack",
   url: "https://mcp.slack.com/mcp",
+  // Slack's MCP server doesn't support Dynamic Client Registration, so OAuth
+  // needs a pre-registered confidential client (the user's own Slack app). The
+  // user registers http://localhost:8765/callback as a redirect URL.
+  oauthClient: {
+    clientIdEnvKey: "SLACK_CLIENT_ID",
+    clientSecretEnvKey: "SLACK_CLIENT_SECRET",
+    callbackPort: 8765,
+    // Pinned to a read + post + search set so a self-made app only needs these
+    // 6 user-token scopes granted — avoids the full ~26 (and sensitive ones like
+    // users:read.email that locked-down workspaces block). Widen to add files,
+    // private channels, DMs, canvases, or reactions as needed.
+    scopes:
+      "chat:write channels:read channels:history users:read search:read.public search:read.users",
+  },
   credentials: [
     {
       envKey: "SLACK_CLIENT_ID",
@@ -141,7 +203,7 @@ const SLACK: CatalogEntry = {
       kind: "plain",
       required: true,
       placeholder: "1234567890.1234567890",
-      hint: "Only needed for the fallback flow when one-click sign-in isn't available.",
+      hint: "From your Slack app's Basic Information page. Required — Slack's MCP server needs your own app (it has no one-click sign-in).",
     },
     {
       envKey: "SLACK_CLIENT_SECRET",
@@ -149,7 +211,7 @@ const SLACK: CatalogEntry = {
       kind: "secret",
       required: true,
       placeholder: "••••••••••••••••",
-      hint: "Stored in .cabinet.env (0600). Never written into the CLI config.",
+      hint: "From the same Basic Information page. Stored in .cabinet.env (0600), never written into the CLI config.",
     },
   ],
   actions: [
@@ -160,18 +222,27 @@ const SLACK: CatalogEntry = {
   ],
   setupSteps: [
     {
-      title: "Sign in with Slack",
-      body: "Click Connect & sign in — your agent's CLI opens Slack in the browser. Approve the requested access and you're done. Most workspaces work with this one-click flow.",
-    },
-    {
-      title: "If your workspace blocks one-click",
-      body: "Some workspaces require their own Slack app. Create one, enable the listed user-token scopes, then paste its Client ID & Secret below.",
+      title: "Create your own Slack app",
+      body: "Slack's MCP server has no one-click sign-in — it requires an app you own. Open Slack's app dashboard, click Create New App → From scratch, give it a name (e.g. \"Cabinet\"), and pick your workspace.",
       href: "https://api.slack.com/apps",
     },
     {
-      title: "Scopes to enable (own-app only)",
-      body: "Add these user-token scopes so every tool works.",
-      copy: "search:read.public search:read.private search:read.users files:read chat:write channels:history channels:read channels:write groups:history users:read reactions:write canvases:read canvases:write",
+      title: "Enable MCP server access",
+      body: "Slack only allows MCP for apps that opt in. In your app settings, open Agents & AI Apps (App Assistant) and turn on MCP server access. Skip this and you'll sign in fine but every connection is rejected with \"App is not enabled for Slack MCP server access.\"",
+      href: "https://api.slack.com/apps",
+    },
+    {
+      title: "Add the redirect URL and scopes",
+      body: "In OAuth & Permissions, add the redirect URL http://localhost:8765/callback (click Save URLs), then add these scopes under User Token Scopes (not Bot Token Scopes — Slack signs you in with a user token), and Install to Workspace. They let agents read public channels, search, and post.",
+      copy: "chat:write channels:read channels:history users:read search:read.public search:read.users",
+    },
+    {
+      title: "Paste your Client ID & Secret below",
+      body: "On the app's Basic Information page, copy the Client ID and Client Secret into the fields in the connect panel. Slack needs these because it doesn't support automatic client registration; they're stored in .cabinet.env (0600).",
+    },
+    {
+      title: "Connect & sign in",
+      body: "Click Connect & sign in. Cabinet opens Slack in your browser to approve access — once you do, your agents can use Slack and the \"does not support dynamic client registration\" error is gone.",
     },
   ],
 };
@@ -179,44 +250,112 @@ const SLACK: CatalogEntry = {
 const GOOGLE_WORKSPACE: CatalogEntry = {
   id: "google-workspace",
   label: "Google Workspace",
-  blurb: "Gmail, Calendar and Drive — read, draft, schedule, and search.",
+  blurb: "Google Calendar, Contacts, Docs, Sheets, Slides, Tasks, Forms, Chat and Search via one Google sign-in.",
   iconSlug: "google-workspace",
   bgImage: "/integrations/google-workspace-bg.webp",
   logo: "/integrations/google-workspace-logo.webp",
-  sourceUrl: "https://developers.google.com/workspace/guides/configure-mcp-servers",
-  registryId: "google-workspace",
-  trustTier: "official",
-  authBackend: "cli-pkce",
-  fallbackAuthBackend: "user-app",
-  transport: "http",
+  // Community server (taylorwilsdon/google_workspace_mcp, PyPI `workspace-mcp`),
+  // run locally via uvx in single-user stdio mode. One Google sign-in covers
+  // Calendar + Contacts + the rest of the productivity suite. Gmail and Drive
+  // are intentionally excluded from `--tools` so this never overlaps the IMAP
+  // Gmail + Drive-for-Desktop integrations (each keeps its own card/flow). We
+  // deliberately do NOT use Google's official hosted `*mcp.googleapis.com`
+  // servers: they're Developer Preview and gated to Claude.ai-web / Antigravity
+  // clients, so a CLI-driven agent can't authenticate against them.
+  sourceUrl: "https://github.com/taylorwilsdon/google_workspace_mcp",
+  trustTier: "community",
+  authBackend: "user-app",
+  transport: "stdio",
   mcpServerName: "cabinet-google-workspace",
-  // Google publishes per-product official servers; the Gmail endpoint is the
-  // primary surface. Calendar/Drive can be added as sibling entries later.
-  url: "https://mcp.gmail.google.com/mcp",
+  command: "uvx",
+  args: [
+    "workspace-mcp",
+    "--single-user",
+    "--tools",
+    "calendar",
+    "contacts",
+    "docs",
+    "sheets",
+    "slides",
+    "tasks",
+    "forms",
+    "chat",
+    "search",
+  ],
+  serverEnv: {
+    GOOGLE_OAUTH_CLIENT_ID: "${GOOGLE_OAUTH_CLIENT_ID}",
+    GOOGLE_OAUTH_CLIENT_SECRET: "${GOOGLE_OAUTH_CLIENT_SECRET}",
+    USER_GOOGLE_EMAIL: "${USER_GOOGLE_EMAIL}",
+    // Lets the server complete its loopback OAuth callback over plain http.
+    OAUTHLIB_INSECURE_TRANSPORT: "1",
+  },
+  // Connect-time browser OAuth, driven by the daemon so the server's :8000
+  // loopback stays alive across the human approval step (see stdio-mcp-login.ts).
+  connectAuth: {
+    kind: "stdio-loopback",
+    // Use the dedicated auth helper, NOT a data tool: it always returns the
+    // authorize URL. A data tool (e.g. list_calendars) skips OAuth when a token
+    // already exists and instead calls the API, so it surfaces no URL.
+    triggerTool: "start_google_auth",
+    triggerArgs: { service_name: "Google Calendar" },
+    // Boot the sign-in server with only Calendar so it starts fast (it requests
+    // calendar scope regardless); agents still run the full --tools set above.
+    authArgs: ["workspace-mcp", "--single-user", "--tools", "calendar"],
+    emailEnvKey: "USER_GOOGLE_EMAIL",
+    // workspace-mcp writes <email>.json here once OAuth completes.
+    tokenDir: "~/.google_workspace_mcp/credentials",
+  },
   credentials: [
     {
-      envKey: "GOOGLE_APPLICATION_CREDENTIALS",
-      label: "OAuth client JSON path",
-      kind: "filepath",
+      envKey: "GOOGLE_OAUTH_CLIENT_ID",
+      label: "Google OAuth Client ID",
+      kind: "plain",
       required: true,
-      placeholder: "/Users/you/.config/cabinet/google-oauth.json",
-      hint: "Absolute path to your OAuth client JSON. Shared with the Gemini provider — not deleted on disconnect.",
+      placeholder: "1234567890-abc123.apps.googleusercontent.com",
+      hint: "From a Google Cloud OAuth client (type: Web application) with redirect URI http://localhost:8000/oauth2callback, and the relevant APIs enabled (at minimum Calendar API and People API).",
+    },
+    {
+      envKey: "GOOGLE_OAUTH_CLIENT_SECRET",
+      label: "Google OAuth Client Secret",
+      kind: "secret",
+      required: true,
+      placeholder: "GOCSPX-••••••••••••••••",
+      hint: "Stored in .cabinet.env (0600). Never written into the CLI config.",
+    },
+    {
+      envKey: "USER_GOOGLE_EMAIL",
+      label: "Your Google email",
+      kind: "plain",
+      required: true,
+      placeholder: "you@gmail.com",
+      hint: "The Google account to authorize. Used as the sign-in hint when you connect.",
     },
   ],
   actions: [
-    "Search & read Gmail, draft replies",
-    "List & create Calendar events",
-    "Search & read Drive files",
+    "Calendar: read agenda, create & update events, add Meet links",
+    "Contacts: search & manage people",
+    "Docs & Sheets: read, create & edit",
+    "Slides, Tasks, Forms, Chat & programmable Search",
   ],
   setupSteps: [
     {
-      title: "Sign in with Google",
-      body: "Click Connect & sign in — your agent's CLI opens Google's consent screen. Grant access to Gmail / Calendar / Drive and you're connected.",
+      title: "Install uv (one-time)",
+      body: "The server runs locally through uvx, uv's tool runner (think npx, but for Python). Install uv, then restart Cabinet if it was already open. macOS or Linux: run `curl -LsSf https://astral.sh/uv/install.sh | sh` (or `brew install uv`). Windows: run `winget install --id=astral-sh.uv` (or use the PowerShell installer at the link below).",
+      href: "https://docs.astral.sh/uv/getting-started/installation/",
     },
     {
-      title: "If you need your own GCP app",
-      body: "For org-managed accounts: create a Google Cloud project, enable the Gmail, Calendar and Drive APIs, create an OAuth client (Desktop), download the JSON, and point the path below at it.",
-      href: "https://developers.google.com/workspace/guides/configure-mcp-servers",
+      title: "Create a Google OAuth client",
+      body: "In Google Cloud Console: pick or create a project, enable the APIs for the services you'll use (at minimum the Google Calendar API and People API for contacts), then create an OAuth client of type \"Web application\" and add http://localhost:8000/oauth2callback under Authorized redirect URIs. Paste its Client ID and Secret into the fields below.",
+      href: "https://console.cloud.google.com/apis/credentials",
+    },
+    {
+      title: "Add yourself as a test user",
+      body: "On the OAuth consent screen, add your Google account under \"Test users\" so sign-in works while the app is unverified.",
+      href: "https://console.cloud.google.com/apis/credentials/consent",
+    },
+    {
+      title: "Connect & authorize",
+      body: "Click Connect. Cabinet opens Google's consent screen in your browser, keeps the local callback server alive while you approve it, and then marks the Workspace suite as connected.",
     },
   ],
 };

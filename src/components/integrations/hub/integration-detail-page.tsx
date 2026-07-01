@@ -221,6 +221,7 @@ export function IntegrationDetailPage({
                 authBackend: entry?.authBackend ?? "",
                 transport: entry?.transport ?? "",
                 hasUrlCredential: !!entry?.urlCredentialKey,
+                scopes: entry?.oauthClient?.scopes,
               })}
             />
           ) : null}

@@ -42,8 +42,10 @@ export function stepArtFor(opts: {
   authBackend: string;
   transport: string;
   hasUrlCredential: boolean;
+  /** Space-separated OAuth scope pin, e.g. the catalog entry's `oauthClient.scopes`. */
+  scopes?: string;
 }): ((index: number) => ReactNode) | undefined {
-  const { id, label, brand, authBackend, transport, hasUrlCredential } = opts;
+  const { id, label, brand, authBackend, transport, hasUrlCredential, scopes } = opts;
 
   if (id === "discord") return (i) => <DiscordStepArt step={i} brand={brand} />;
   if (id === "telegram") return (i) => <TelegramStepArt step={i} brand={brand} />;
@@ -57,7 +59,7 @@ export function stepArtFor(opts: {
   // Multi-step official-OAuth connectors: step 0 is the generic consent screen,
   // but their later "register your own app / scopes / scope the access" steps
   // need their own tailored mocks (the steps users actually get stuck on).
-  if (id === "slack") return (i) => <SlackArt step={i} label={label} brand={brand} />;
+  if (id === "slack") return (i) => <SlackArt step={i} label={label} brand={brand} scopes={scopes} />;
   if (id === "google-workspace") return (i) => <GoogleArt step={i} label={label} brand={brand} />;
   if (id === "github") return (i) => <GithubArt step={i} label={label} brand={brand} />;
   if (id === "notion") return (i) => <NotionArt step={i} label={label} brand={brand} />;
@@ -269,10 +271,28 @@ function LinkedInArt({ step, brand }: { step: number; brand: string }) {
 
 /* ── multi-step official-OAuth connectors ───────────────────────────────── */
 
+/** Groups a space-separated scope string into rows of 2 for CheckRow display. */
+function scopeRows(scopes: string | undefined): string[] {
+  const list = (scopes ?? "").split(/\s+/).filter(Boolean);
+  const rows: string[] = [];
+  for (let i = 0; i < list.length; i += 2) rows.push(list.slice(i, i + 2).join(" · "));
+  return rows;
+}
+
 /** Slack: consent (0) → create your own app (1) → user-token scopes (2). */
-function SlackArt({ step, label, brand }: { step: number; label: string; brand: string }) {
-  if (step === 0) return <OAuthConsentArt step={0} label={label} brand={brand} />;
-  if (step === 1) {
+function SlackArt({
+  step,
+  label,
+  brand,
+  scopes,
+}: {
+  step: number;
+  label: string;
+  brand: string;
+  scopes?: string;
+}) {
+  // Step 0 — create your own app (Slack has no one-click; you bring the app).
+  if (step === 0) {
     return (
       <MockWindow title="api.slack.com/apps" brand={brand}>
         <div className="flex items-center justify-between">
@@ -284,48 +304,151 @@ function SlackArt({ step, label, brand }: { step: number; label: string; brand: 
           <div className="h-5 w-2/3 rounded bg-muted" />
         </div>
         <Hint brand={brand}>
-          Create an app <b>From scratch</b>, pick your workspace, then open <b>OAuth &amp; Permissions</b>.
+          Create an app <b>From scratch</b> and pick your workspace.
         </Hint>
       </MockWindow>
     );
   }
+  // Step 1 — turn on MCP server access for the app (required, easy to miss).
+  if (step === 1) {
+    return (
+      <MockWindow title="Agents &amp; AI Apps · App Assistant" brand={brand}>
+        <div className="flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
+          <span className="text-[10px] text-foreground">MCP server access</span>
+          <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-medium"
+            style={{ background: `${brand}1f`, color: brand }}
+          >
+            On
+          </span>
+        </div>
+        <Hint brand={brand}>
+          Turn this on, or Slack rejects every connection with &ldquo;App is not enabled
+          for Slack MCP server access.&rdquo;
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // Step 2 — register the redirect URL and add the user-token scopes.
+  if (step === 2) {
+    return (
+      <MockWindow title="OAuth &amp; Permissions" brand={brand}>
+        <div className="text-[10px] text-muted-foreground">Redirect URLs</div>
+        <div className="mt-1 flex items-center gap-2">
+          <div className="flex-1 truncate rounded-md bg-foreground/[0.06] px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
+            http://localhost:8765/callback
+          </div>
+          <BtnMock brand={brand}>Add</BtnMock>
+        </div>
+        <div className="mt-2 space-y-1">
+          {scopeRows(scopes).map((row) => (
+            <CheckRow key={row} brand={brand}>{row}</CheckRow>
+          ))}
+        </div>
+        <Hint brand={brand}>
+          Add the redirect URL, add the scopes (use <b>Copy</b> above), then <b>Install to Workspace</b>.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // Step 3 — copy the app's Client ID & Secret into the connect panel.
+  if (step === 3) {
+    return (
+      <MockWindow title="Basic Information · App Credentials" brand={brand}>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
+            <span className="text-[10px] text-muted-foreground">Client ID</span>
+            <BtnMock brand={brand}>Copy</BtnMock>
+          </div>
+          <div className="flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
+            <span className="text-[10px] text-muted-foreground">Client Secret</span>
+            <BtnMock brand={brand}>Show · Copy</BtnMock>
+          </div>
+        </div>
+        <Hint brand={brand}>
+          Paste both into the <b>Connect</b> panel — kept in .cabinet.env, never in plain config.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // Step 4 — approve in the browser (only after the app credentials are saved).
   return (
-    <MockWindow title="OAuth &amp; Permissions · User Token Scopes" brand={brand}>
-      <div className="space-y-1">
-        <CheckRow brand={brand}>search:read.public</CheckRow>
-        <CheckRow brand={brand}>chat:write</CheckRow>
-        <CheckRow brand={brand}>channels:history · channels:read</CheckRow>
-        <CheckRow brand={brand}>files:read · users:read</CheckRow>
-      </div>
-      <div className="mt-2">
-        <BtnMock brand={brand}>+ Add an OAuth Scope</BtnMock>
+    <MockWindow title={`Authorize · ${label}`} brand={brand}>
+      <div className="flex flex-col items-center text-center">
+        <Avatar brand={brand}>{label.charAt(0)}</Avatar>
+        <div className="mt-2 text-[11px] text-foreground">
+          <b>Cabinet</b> wants to access your <b>{label}</b> account
+        </div>
+        <div className="mt-2 w-full space-y-1 text-left">
+          <CheckRow brand={brand}>Read your {label} data</CheckRow>
+          <CheckRow brand={brand}>Act on your behalf</CheckRow>
+        </div>
+        <div className="mt-3 flex w-full items-center justify-center gap-2">
+          <BtnMock brand={brand}>Authorize</BtnMock>
+          <BtnMock>Cancel</BtnMock>
+        </div>
       </div>
       <Hint brand={brand}>
-        Add the user-token scopes (use the <b>Copy</b> button above), then <b>Install to Workspace</b>.
+        Once your app&apos;s credentials are saved, Cabinet opens this in your browser to approve.
       </Hint>
     </MockWindow>
   );
 }
 
 /** Google Workspace: consent (0) → your own GCP app — APIs + OAuth client (1). */
+// Indices map to the google-workspace `setupSteps` order in mcp-catalog.ts:
+// 0 install uv · 1 create OAuth client · 2 add test user · 3 connect & authorize.
 function GoogleArt({ step, label, brand }: { step: number; label: string; brand: string }) {
-  if (step === 0) return <OAuthConsentArt step={0} label={label} brand={brand} />;
-  return (
-    <MockWindow title="Google Cloud Console · APIs &amp; Services" brand={brand}>
-      <div className="space-y-1">
-        <CheckRow brand={brand}>Gmail API — enabled</CheckRow>
-        <CheckRow brand={brand}>Google Calendar API — enabled</CheckRow>
-        <CheckRow brand={brand}>Google Drive API — enabled</CheckRow>
-      </div>
-      <div className="mt-2 flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
-        <span className="text-[10px] text-muted-foreground">OAuth client (Desktop)</span>
-        <BtnMock brand={brand}>Download JSON</BtnMock>
-      </div>
-      <Hint brand={brand}>
-        Enable the three APIs, create a <b>Desktop</b> OAuth client, download its JSON, then point the path field at it.
-      </Hint>
-    </MockWindow>
-  );
+  // 0 — install uv (the server runs via uvx).
+  if (step === 0) {
+    return (
+      <MockWindow title="Terminal · install uv" brand={brand}>
+        <FieldMock>curl -LsSf https://astral.sh/uv/install.sh | sh</FieldMock>
+        <Hint brand={brand}>
+          One-time. Windows: <b>winget install --id=astral-sh.uv</b>. Restart Cabinet after installing.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // 1 — enable APIs, create a Desktop OAuth client, copy its Client ID/Secret.
+  if (step === 1) {
+    return (
+      <MockWindow title="Google Cloud Console · APIs &amp; Services" brand={brand}>
+        <div className="space-y-1">
+          <CheckRow brand={brand}>Google Calendar API</CheckRow>
+          <CheckRow brand={brand}>People API (contacts)</CheckRow>
+        </div>
+        <div className="mt-2 space-y-1">
+          <KvRow k="OAuth client type" v="Web application" />
+          <KvRow k="Redirect URI" v="http://localhost:8000/oauth2callback" />
+          <KvRow k="Client ID" v="1234…apps.googleusercontent.com" />
+          <KvRow k="Client secret" v="GOCSPX-••••" />
+        </div>
+        <Hint brand={brand}>
+          Create a <b>Web application</b> client, add the redirect URI above, then paste its Client ID and Secret into the fields on the right.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // 2 — add yourself as a test user on the consent screen.
+  if (step === 2) {
+    return (
+      <MockWindow title="OAuth consent screen · Test users" brand={brand}>
+        <div className="flex items-center justify-between">
+          <span className="font-medium text-foreground">Test users</span>
+          <BtnMock brand={brand}>+ Add users</BtnMock>
+        </div>
+        <div className="mt-2">
+          <KvRow k="you@gmail.com" v="added" />
+        </div>
+        <Hint brand={brand}>
+          Add your own Google account so sign-in works while the app is unverified.
+        </Hint>
+      </MockWindow>
+    );
+  }
+  // 3 — connect: the browser consent screen the server opens on first use.
+  return <OAuthConsentArt step={0} label={label} brand={brand} />;
 }
 
 /** GitHub: consent (0) → scope the access — orgs/repos grant + revoke (1). */

@@ -91,6 +91,12 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
    */
   openLocalFile: (filePath) => ipcRenderer.invoke("cabinet:open-local-file", { path: filePath }),
   /**
+   * Open an http(s) URL in the user's SYSTEM default browser (never the in-app
+   * browse view). Used for OAuth sign-in, where the embedded browser lacks the
+   * user's provider session and some providers block webviews.
+   */
+  openExternal: (url) => ipcRenderer.invoke("cabinet:open-external", { url }),
+  /**
    * The OS keyboard / input languages, most-preferred first, plus the
    * Electron app + system locale. Used on the first onboarding screen to
    * localize Cabinet out of the box. Renderer maps these BCP-47 tags onto a

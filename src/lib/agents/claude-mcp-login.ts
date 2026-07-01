@@ -13,13 +13,18 @@
  * PKCE state is gone. See microsoft-login.ts for the same idea on M365.
  *
  * The fix: keep ONE `claude` process alive across the human approval step. We
- * spawn it in stream-json mode (stdin stays open → process + loopback stay
- * alive), tell it to call the server's `authenticate` helper tool, and parse the
- * authorization URL it returns. When the user approves in the browser, the live
- * loopback catches the callback and Claude Code persists the token to disk — we
- * detect that via `claude mcp get <server>` flipping off "Needs authentication".
- * For remote/headless setups where the browser can't reach localhost, the user
- * can paste the callback URL and we forward it to `complete_authentication`.
+ * run `claude mcp login <server> --no-browser` inside a PTY (the CLI refuses to
+ * authenticate without a terminal), parse the authorization URL it prints, and
+ * keep the process — and its loopback on the configured callback port — alive
+ * while the user approves in the browser. The CLI's own loopback catches the
+ * callback and persists the token; we detect that via `claude mcp get <server>`
+ * flipping off "Needs authentication". For remote/headless setups where the
+ * browser can't reach localhost, the user pastes the callback URL and we write
+ * it to the CLI's "Or paste the redirect URL here:" prompt over the PTY.
+ *
+ * (Earlier this drove a headless `claude -p` agent calling a `…__authenticate`
+ * helper tool; that tool no longer exists in Claude Code ≥2.1.x, so the agent
+ * could never emit a URL and the flow timed out. `claude mcp login` replaces it.)
  *
  * Claude Code only. Other CLIs keep the deferred (first-use) flow for now.
  *
@@ -27,8 +32,10 @@
  * dev. This is a local, single-instance feature — no cross-process store needed.
  */
 
-import { spawn, execFile, type ChildProcess } from "child_process";
+import { execFile } from "child_process";
 import { randomUUID } from "crypto";
+import * as pty from "node-pty";
+import type { IPty } from "node-pty";
 import { claudeCodeProvider } from "./providers/claude-code";
 import { getRuntimePath, resolveCliCommand } from "./provider-cli";
 
@@ -38,7 +45,8 @@ interface McpLoginSession {
   id: string;
   /** The `cabinet-<id>` MCP server name as written into the CLI config. */
   serverName: string;
-  proc: ChildProcess;
+  /** The `claude mcp login` PTY child. Null for the already-authenticated fast path. */
+  term: IPty | null;
   status: McpLoginStatus;
   /** Authorization URL parsed from the `authenticate` tool result. */
   authorizeUrl?: string;
@@ -78,12 +86,7 @@ function markTerminal(
   }
   // The flow is done; release the held `claude` process (and its loopback).
   try {
-    session.proc.stdin?.end();
-  } catch {
-    /* already closed */
-  }
-  try {
-    session.proc.kill();
+    session.term?.kill();
   } catch {
     /* already gone */
   }
@@ -103,7 +106,7 @@ function sweepSessions(): void {
       }
     } else if (now - s.startedAt > LOGIN_TIMEOUT_MS + COMPLETED_TTL_MS) {
       try {
-        s.proc.kill();
+        s.term?.kill();
       } catch {
         /* already gone */
       }
@@ -119,16 +122,6 @@ function claudeCommand(): string {
 function claudeEnv(): NodeJS.ProcessEnv {
   // Match the runtime PATH the provider uses so nvm/homebrew `claude` resolves.
   return { ...process.env, PATH: getRuntimePath() };
-}
-
-/** A stream-json user turn, newline-delimited on the child's stdin. */
-function userMessage(text: string): string {
-  return (
-    JSON.stringify({
-      type: "user",
-      message: { role: "user", content: [{ type: "text", text }] },
-    }) + "\n"
-  );
 }
 
 /**
@@ -157,14 +150,78 @@ export function readServerAuthState(
       claudeCommand(),
       ["mcp", "get", serverName],
       { env: claudeEnv(), timeout: 8000 },
-      (err, stdout) => {
-        const out = `${stdout ?? ""}`;
+      (err, stdout, stderr) => {
+        const out = `${stdout ?? ""}\n${stderr ?? ""}`;
+        // Not registered at all. `claude mcp get <name>` echoes the name back in
+        // its "No MCP server named …" error, so this must be checked BEFORE the
+        // name-presence fallback below — otherwise a missing server reads as
+        // authenticated (the panel would falsely show "Signed in").
+        if (/no mcp server named/i.test(out)) return resolve("needs-auth");
         if (/needs authentication/i.test(out)) return resolve("needs-auth");
+        // Registered + has a token, but the server rejects the connection (e.g.
+        // Slack app not enabled for MCP). Not usable → don't report it as signed
+        // in; surface it as needing attention so the panel offers reconnect.
+        if (/failed to connect/i.test(out)) return resolve("needs-auth");
         if (/\bconnected\b/i.test(out)) return resolve("authenticated");
         if (err) return resolve("unknown");
         // Got a clean read with neither marker → server is configured and not
         // flagged as needing auth, so treat as authenticated.
         return resolve(out.includes(serverName) ? "authenticated" : "unknown");
+      },
+    );
+  });
+}
+
+/**
+ * Register a pre-configured confidential OAuth client with Claude Code for a
+ * remote server whose auth server lacks Dynamic Client Registration (Slack).
+ *
+ * `claude mcp add-json … --client-secret` is the only supported way to get the
+ * secret into Claude Code's keychain (it can't live in config) while ALSO
+ * setting the `oauth` block — including `scopes`, which `claude mcp add` flags
+ * can't express. It writes the config entry too, so we remove any existing one
+ * first (add refuses to overwrite). The secret is passed via `MCP_CLIENT_SECRET`,
+ * never on argv. Scope `user` matches where the JSON writer keeps cabinet
+ * servers (top-level `mcpServers` in ~/.claude.json).
+ */
+export function registerConfidentialOAuthClient(opts: {
+  serverName: string;
+  url: string;
+  clientId: string;
+  clientSecret: string;
+  callbackPort: number;
+  /** Optional space-separated scope pin (overrides server-discovered scopes). */
+  scopes?: string;
+}): Promise<void> {
+  const { serverName, url, clientId, clientSecret, callbackPort, scopes } = opts;
+  const oauth: Record<string, unknown> = { clientId, callbackPort };
+  if (scopes) oauth.scopes = scopes;
+  const json = JSON.stringify({ type: "http", url, oauth });
+  return new Promise((resolve, reject) => {
+    // Best-effort remove of any prior entry so add-json doesn't error on conflict.
+    execFile(
+      claudeCommand(),
+      ["mcp", "remove", "--scope", "user", serverName],
+      { env: claudeEnv(), timeout: 15_000 },
+      () => {
+        execFile(
+          claudeCommand(),
+          ["mcp", "add-json", "--scope", "user", "--client-secret", serverName, json],
+          { env: { ...claudeEnv(), MCP_CLIENT_SECRET: clientSecret }, timeout: 30_000 },
+          (err, stdout, stderr) => {
+            if (err) {
+              reject(
+                new Error(
+                  `Failed to register Slack OAuth client: ${
+                    `${stderr ?? ""}`.trim() || `${stdout ?? ""}`.trim() || err.message
+                  }`,
+                ),
+              );
+            } else {
+              resolve();
+            }
+          },
+        );
       },
     );
   });
@@ -195,7 +252,7 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
     const session: McpLoginSession = {
       id,
       serverName,
-      proc: { kill() {}, stdin: null } as unknown as ChildProcess,
+      term: null,
       status: "success",
       startedAt: Date.now(),
       finishedAt: Date.now(),
@@ -208,31 +265,22 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
   }
 
   const id = randomUUID();
-  const authTool = `mcp__${serverName}__authenticate`;
-  const completeTool = `mcp__${serverName}__complete_authentication`;
-  const proc = spawn(
-    claudeCommand(),
-    [
-      "--dangerously-skip-permissions",
-      "-p",
-      "--input-format",
-      "stream-json",
-      "--output-format",
-      "stream-json",
-      "--verbose",
-      // Restrict to just the OAuth helpers so the model reliably calls them and
-      // can't wander off doing anything else.
-      "--allowedTools",
-      authTool,
-      completeTool,
-    ],
-    { env: claudeEnv(), stdio: ["pipe", "pipe", "pipe"] },
-  );
+  // `claude mcp login` is the supported OAuth entry point, but it refuses to run
+  // without a TTY — so drive it through a PTY. `--no-browser` makes it PRINT the
+  // authorization URL (we surface it in the panel) while still arming its own
+  // loopback on the configured callback port to catch the redirect.
+  const term = pty.spawn(claudeCommand(), ["mcp", "login", serverName, "--no-browser"], {
+    name: "xterm-color",
+    // Wide enough that the long authorize URL is never wrapped mid-line.
+    cols: 1000,
+    rows: 30,
+    env: claudeEnv() as { [key: string]: string },
+  });
 
   const session: McpLoginSession = {
     id,
     serverName,
-    proc,
+    term,
     status: "pending",
     startedAt: Date.now(),
     output: "",
@@ -250,15 +298,24 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
       }
     };
 
-    const onData = (buf: Buffer) => {
-      session.output += buf.toString();
+    term.onData((chunk) => {
+      session.output += chunk;
+      // The CLI prints a clear message when the loopback port is taken; surface
+      // it verbatim instead of letting the start time out opaquely.
+      if (!settled && /already in use/i.test(session.output)) {
+        fail(
+          "OAuth callback port is already in use — close any other sign-in in progress and try again.",
+        );
+        return;
+      }
       if (!session.authorizeUrl) {
         const url = parseAuthorizeUrl(session.output);
         if (url) {
           session.authorizeUrl = url;
           if (!settled) {
             settled = true;
-            // Start watching for the user to finish in the browser.
+            // Watch for the user to finish in the browser. The CLI's own
+            // loopback completes the token exchange; we poll the persisted token.
             session.statusPoll = setInterval(() => {
               void readServerAuthState(serverName).then((state) => {
                 if (state === "authenticated") markTerminal(session, "success");
@@ -269,17 +326,19 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
           }
         }
       }
-    };
+    });
 
-    proc.stdout?.on("data", onData);
-    proc.stderr?.on("data", onData);
-    proc.on("error", (err) => fail(err.message));
-    proc.on("exit", () => {
-      // If the process dies before we got a URL, the start failed. If it dies
-      // after, the loopback is gone — but a poll may still confirm success
-      // (token persisted), so only flip to error when not already authenticated.
+    term.onExit(({ exitCode }) => {
+      // If it dies before we got a URL, the start failed. If it dies after, the
+      // loopback is gone — but the token may already be persisted, so only flip
+      // to error when a fresh auth-state read says it isn't authenticated.
       if (!settled) {
-        fail(session.error ?? "Sign-in ended before an authorization URL was issued");
+        fail(
+          session.error ??
+            (exitCode === 0
+              ? "Sign-in ended before an authorization URL was issued"
+              : `Sign-in process exited (code ${exitCode}) before an authorization URL`),
+        );
         return;
       }
       if (session.status === "pending") {
@@ -289,17 +348,6 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
         });
       }
     });
-
-    // Kick off the flow.
-    try {
-      proc.stdin?.write(
-        userMessage(
-          `Call the ${authTool} tool now and then output ONLY the authorization URL it returns, nothing else. Do not call any other tool.`,
-        ),
-      );
-    } catch (err) {
-      fail(err instanceof Error ? err.message : "Could not write to sign-in process");
-    }
 
     setTimeout(() => {
       if (!settled) fail("Timed out waiting for the authorization URL");
@@ -323,19 +371,15 @@ export function getMcpLoginStatus(sessionId: string): {
 /**
  * Fallback for when the browser can't reach the loopback (remote/headless): the
  * user pastes the full `http://localhost:<port>/callback?code=...&state=...` URL
- * and we forward it to the server's `complete_authentication` tool on the SAME
- * live process (which still holds the in-flight PKCE state).
+ * and we deliver it to the SAME live `claude mcp login` process, which is parked
+ * at its "Or paste the redirect URL here:" prompt holding the in-flight PKCE
+ * state. A trailing CR submits the line.
  */
 export function completeMcpLogin(sessionId: string, callbackUrl: string): boolean {
   const s = sessions.get(sessionId);
-  if (!s || s.status !== "pending") return false;
-  const completeTool = `mcp__${s.serverName}__complete_authentication`;
+  if (!s || s.status !== "pending" || !s.term) return false;
   try {
-    s.proc.stdin?.write(
-      userMessage(
-        `Call the ${completeTool} tool with callback_url set to exactly: ${callbackUrl}`,
-      ),
-    );
+    s.term.write(`${callbackUrl}\r`);
   } catch {
     return false;
   }
@@ -348,12 +392,7 @@ export function cancelMcpLogin(sessionId: string): boolean {
   if (s.cleanupTimer) clearTimeout(s.cleanupTimer);
   if (s.statusPoll) clearInterval(s.statusPoll);
   try {
-    s.proc.stdin?.end();
-  } catch {
-    /* already closed */
-  }
-  try {
-    s.proc.kill();
+    s.term?.kill();
   } catch {
     /* already gone */
   }

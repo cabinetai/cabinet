@@ -8,7 +8,14 @@ import {
 } from "@/lib/agents/mcp-config-writer";
 import { resolveAuthBackend } from "@/lib/agents/deployment-mode";
 import { getSelectedEnvironments } from "@/lib/agents/integration-environments";
-import { isValidKey, upsertCabinetEnv, getCabinetEnvSnapshot } from "@/lib/runtime/cabinet-env";
+import {
+  isValidKey,
+  upsertCabinetEnv,
+  getCabinetEnvSnapshot,
+  readCabinetEnvFile,
+} from "@/lib/runtime/cabinet-env";
+import { registerConfidentialOAuthClient } from "@/lib/agents/claude-mcp-login";
+import type { CatalogEntry } from "@/lib/agents/mcp-catalog";
 
 /**
  * `/api/agents/config/mcp-catalog/connect`
@@ -31,6 +38,47 @@ async function resolveTargets(
     return requested as string[];
   }
   return await fallback();
+}
+
+/**
+ * Register one environment. For a confidential-OAuth entry (Slack) targeting
+ * Claude Code, drive `claude mcp add --client-id --client-secret` so the secret
+ * reaches the CLI keychain (a plain JSON write can't do that, and the bare entry
+ * dead-ends on "does not support dynamic client registration"). Every other
+ * case — and Claude Code before the user has saved both creds — falls back to
+ * the JSON writer.
+ */
+async function writeOrRegister(
+  pid: string,
+  entry: CatalogEntry,
+): Promise<ProviderWriteResult> {
+  if (pid === "claude-code" && entry.oauthClient && entry.url) {
+    const env = readCabinetEnvFile().values;
+    const clientId = env[entry.oauthClient.clientIdEnvKey];
+    const clientSecret = env[entry.oauthClient.clientSecretEnvKey];
+    if (clientId && clientSecret) {
+      const base = { providerId: pid, providerName: "Claude Code" };
+      try {
+        await registerConfidentialOAuthClient({
+          serverName: entry.mcpServerName,
+          url: entry.url,
+          clientId,
+          clientSecret,
+          callbackPort: entry.oauthClient.callbackPort,
+          scopes: entry.oauthClient.scopes,
+        });
+        return { ...base, ok: true, supported: true };
+      } catch (err) {
+        return {
+          ...base,
+          ok: false,
+          supported: true,
+          error: err instanceof Error ? err.message : "Registration failed",
+        };
+      }
+    }
+  }
+  return writeEntry(pid, entry);
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -109,7 +157,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const explicitSelection = Array.isArray(providers);
   const previouslyConnected = explicitSelection ? connectedProvidersForEntry(entry) : [];
 
-  const results: ProviderWriteResult[] = targets.map((pid) => writeEntry(pid, entry));
+  const results: ProviderWriteResult[] = await Promise.all(
+    targets.map((pid) => writeOrRegister(pid, entry)),
+  );
   const removedResults: ProviderWriteResult[] = previouslyConnected
     .filter((pid) => !targets.includes(pid))
     .map((pid) => removeEntry(pid, entry));

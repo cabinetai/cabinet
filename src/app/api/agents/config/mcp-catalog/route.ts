@@ -53,6 +53,14 @@ export async function GET(): Promise<NextResponse> {
       supportedProviderIds,
       connectedProviderIds: connectedProvidersForEntry(entry),
       credentialStatus: credentialStatus(entry.credentials.map((c) => c.envKey)),
+      // How (if at all) the connect panel can sign in at connect time:
+      // "http" → driven through Claude Code; "stdio" → daemon runs the server's
+      // own browser-OAuth loopback (connectAuth); null → deferred/none.
+      signinKind: (entry.transport === "http"
+        ? "http"
+        : entry.connectAuth
+          ? "stdio"
+          : null) as "http" | "stdio" | null,
     };
   });
 

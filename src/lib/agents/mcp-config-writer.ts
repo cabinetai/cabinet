@@ -85,7 +85,29 @@ function buildServerEntry(entry: CatalogEntry): Record<string, unknown> {
       url = readCabinetEnvFile().values[entry.urlCredentialKey];
     }
     if (!url) throw new Error(`Catalog entry ${entry.id} is http but has no url`);
-    return { type: "http", url };
+    const server: Record<string, unknown> = { type: "http", url };
+    // Servers whose auth server lacks Dynamic Client Registration (e.g. Slack)
+    // need a pre-registered confidential client. The client id + fixed callback
+    // port go into the config's `oauth` block; the secret is registered with the
+    // CLI separately (keychain), never written here. Require both the id and
+    // secret before writing — the connect route only calls
+    // registerConfidentialOAuthClient() (which registers the secret) when both
+    // are present, so writing the block on id-alone would persist an `oauth`
+    // config whose secret was never registered with the CLI.
+    if (entry.oauthClient) {
+      const values = readCabinetEnvFile().values;
+      const clientId = values[entry.oauthClient.clientIdEnvKey];
+      const clientSecret = values[entry.oauthClient.clientSecretEnvKey];
+      if (clientId && clientSecret) {
+        const oauth: Record<string, unknown> = {
+          clientId,
+          callbackPort: entry.oauthClient.callbackPort,
+        };
+        if (entry.oauthClient.scopes) oauth.scopes = entry.oauthClient.scopes;
+        server.oauth = oauth;
+      }
+    }
+    return server;
   }
   // Dev bootstrap: a first-party server whose local build exists in the source
   // tree runs directly via `node`, instead of an npm package that may not be

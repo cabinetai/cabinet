@@ -7,6 +7,13 @@ import {
   cancelMcpLogin,
   readServerAuthState,
 } from "@/lib/agents/claude-mcp-login";
+import {
+  startStdioLogin,
+  getStdioLoginStatus,
+  completeStdioLogin,
+  cancelStdioLogin,
+  readStdioAuthState,
+} from "@/lib/agents/stdio-mcp-login";
 
 /**
  * `/api/agents/config/mcp-catalog/oauth/login`
@@ -44,14 +51,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   };
 
   // Completion branch: forward the pasted callback URL to the live session.
+  // Accept any loopback path (the HTTP flow uses /callback; workspace-mcp uses
+  // /oauth2callback). The session lookup is tried on both engines.
   if (typeof sessionId === "string" && typeof callbackUrl === "string") {
-    if (!/^https?:\/\/localhost(:\d+)?\/callback/i.test(callbackUrl.trim())) {
+    const url = callbackUrl.trim();
+    if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(url)) {
       return NextResponse.json(
         { ok: false, error: "That doesn't look like a localhost callback URL." },
         { status: 400 },
       );
     }
-    const ok = completeMcpLogin(sessionId, callbackUrl.trim());
+    const ok = completeMcpLogin(sessionId, url) || (await completeStdioLogin(sessionId, url));
     return ok
       ? NextResponse.json({ ok: true })
       : NextResponse.json(
@@ -65,15 +75,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!entry) {
     return NextResponse.json({ ok: false, error: "Unknown integration id" }, { status: 400 });
   }
-  if (entry.transport !== "http") {
+  try {
+    if (entry.transport === "http") {
+      const res = await startMcpLogin(entry.mcpServerName);
+      return NextResponse.json({ ok: true, ...res });
+    }
+    if (entry.connectAuth?.kind === "stdio-loopback") {
+      const res = await startStdioLogin(entry);
+      return NextResponse.json({ ok: true, ...res });
+    }
     return NextResponse.json(
       { ok: false, error: "This integration doesn't use OAuth sign-in." },
       { status: 400 },
     );
-  }
-  try {
-    const res = await startMcpLogin(entry.mcpServerName);
-    return NextResponse.json({ ok: true, ...res });
   } catch (err) {
     return NextResponse.json(
       { ok: false, error: err instanceof Error ? err.message : "Could not start sign-in" },
@@ -89,22 +103,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const id = request.nextUrl.searchParams.get("id");
   if (id) {
     const entry = getCatalogEntry(id);
-    if (!entry || entry.transport !== "http") {
-      return NextResponse.json({ authenticated: false, applicable: false });
+    if (entry?.transport === "http") {
+      const state = await readServerAuthState(entry.mcpServerName);
+      return NextResponse.json({ authenticated: state === "authenticated", applicable: true, state });
     }
-    const state = await readServerAuthState(entry.mcpServerName);
-    return NextResponse.json({
-      authenticated: state === "authenticated",
-      applicable: true,
-      state,
-    });
+    if (entry?.connectAuth?.kind === "stdio-loopback") {
+      const state = readStdioAuthState(entry);
+      return NextResponse.json({ authenticated: state === "authenticated", applicable: true, state });
+    }
+    return NextResponse.json({ authenticated: false, applicable: false });
   }
 
   const sessionId = request.nextUrl.searchParams.get("sessionId");
   if (!sessionId) {
     return NextResponse.json({ error: "Missing sessionId or id" }, { status: 400 });
   }
-  const status = getMcpLoginStatus(sessionId);
+  const status = getMcpLoginStatus(sessionId) ?? getStdioLoginStatus(sessionId);
   if (!status) {
     return NextResponse.json({ error: "Unknown sign-in session" }, { status: 404 });
   }
@@ -116,6 +130,6 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   if (!sessionId) {
     return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
   }
-  cancelMcpLogin(sessionId);
+  if (!cancelMcpLogin(sessionId)) cancelStdioLogin(sessionId);
   return NextResponse.json({ ok: true });
 }

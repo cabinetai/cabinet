@@ -18,9 +18,9 @@ import { MCP_CATALOG, type CatalogSetupStep } from "@/lib/agents/mcp-catalog";
 
 export type IntegrationCategory =
   | "communication"
+  | "social"
   | "productivity"
   | "knowledge"
-  | "storage"
   | "development"
   | "crm"
   | "finance"
@@ -79,7 +79,7 @@ export const CATEGORY_META: Record<
   communication: { label: "Communication", order: 0 },
   productivity: { label: "Productivity", order: 1 },
   knowledge: { label: "Knowledge", order: 2 },
-  storage: { label: "Files & Storage", order: 3 },
+  social: { label: "Social", order: 3 },
   development: { label: "Development", order: 4 },
   crm: { label: "Sales & Support", order: 5 },
   finance: { label: "Finance & Legal", order: 6 },
@@ -147,15 +147,47 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     implemented: false,
     actions: ["Fetch meeting transcripts", "Summarise calls", "Track action items"],
   },
+
+  // ── Social ──────────────────────────────────────────────────────
   {
-    id: "google-meet",
-    name: "Google Meet",
-    category: "communication",
-    logo: L("google-meet.svg"),
-    blurb: "Capture meeting notes and recaps automatically.",
-    brand: "#00897b",
+    id: "tiktok",
+    name: "TikTok",
+    category: "social",
+    logo: L("tiktok.svg"),
+    blurb: "Track videos, trends, and engagement on your account.",
+    brand: "#010101",
     implemented: false,
-    actions: ["Fetch recordings", "Summarise meetings", "Extract decisions"],
+    actions: ["Read post performance", "Track trends & hashtags", "Summarise comments"],
+  },
+  {
+    id: "instagram",
+    name: "Instagram",
+    category: "social",
+    logo: L("instagram.svg"),
+    blurb: "Read posts, comments, and DMs — and draft replies.",
+    brand: "#E4405F",
+    implemented: false,
+    actions: ["Read posts & insights", "Triage comments & DMs", "Draft replies"],
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    category: "social",
+    logo: L("facebook.svg"),
+    blurb: "Manage Pages, posts, and audience engagement.",
+    brand: "#1877F2",
+    implemented: false,
+    actions: ["Read Page insights", "Summarise comments", "Draft posts & replies"],
+  },
+  {
+    id: "x",
+    name: "X",
+    category: "social",
+    logo: L("x.svg"),
+    blurb: "Monitor mentions, search posts, and draft your own.",
+    brand: "#000000",
+    implemented: false,
+    actions: ["Search posts & mentions", "Summarise threads", "Draft posts"],
   },
 
   // ── Knowledge ───────────────────────────────────────────────────
@@ -245,10 +277,10 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     name: "Google Workspace",
     category: "productivity",
     logo: "/integrations/google-workspace-logo.webp",
-    blurb: "Connect Gmail, Drive, Docs, and Calendar in one grant.",
+    blurb: "Calendar, Contacts, Docs, Sheets, Slides, Tasks, Forms, Chat and Search via one sign-in. (Gmail and Drive have their own cards.)",
     brand: "#4285f4",
     implemented: true,
-    actions: ["Read & draft email", "Search Drive", "Manage calendar events"],
+    actions: ["Calendar & Contacts", "Docs, Sheets & Slides", "Tasks, Forms, Chat & Search"],
   },
   {
     id: "microsoft-365",
@@ -305,10 +337,10 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     name: "Google Calendar",
     category: "productivity",
     logo: L("google-calendar.svg"),
-    blurb: "Read your agenda and schedule on your behalf.",
+    blurb: "Read your agenda and schedule on your behalf. (Connects through Google Workspace.)",
     brand: "#4285f4",
-    implemented: false,
-    actions: ["Read agenda", "Create events", "Find free slots"],
+    implemented: true,
+    actions: ["Read agenda", "Create & update events", "Find free slots"],
   },
   {
     id: "gmail",
@@ -321,11 +353,11 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     actions: ["Search inbox", "Summarise threads", "Send & reply (with approval)"],
   },
 
-  // ── Files & Storage ─────────────────────────────────────────────
+  // ── Files & Storage (folded into Knowledge) ─────────────────────
   {
     id: "onedrive",
     name: "OneDrive",
-    category: "storage",
+    category: "knowledge",
     logo: L("onedrive.svg"),
     blurb: "Pull documents from OneDrive into your cabinet.",
     brand: "#0364b8",
@@ -335,7 +367,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
   {
     id: "sharepoint",
     name: "SharePoint",
-    category: "storage",
+    category: "knowledge",
     logo: L("sharepoint.svg"),
     blurb: "Connect team sites and document libraries.",
     brand: "#038387",
@@ -346,7 +378,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
   {
     id: "dropbox",
     name: "Dropbox",
-    category: "storage",
+    category: "knowledge",
     logo: L("dropbox.webp"),
     blurb: "Bring Dropbox files into agent reach.",
     brand: "#0061ff",
@@ -356,7 +388,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
   {
     id: "box",
     name: "Box",
-    category: "storage",
+    category: "knowledge",
     logo: L("box.webp"),
     blurb: "Access Box content securely from your cabinet.",
     brand: "#0061d5",
@@ -666,11 +698,12 @@ const CONNECTABLE = new Set(MCP_CATALOG.map((e) => e.id));
 // Sub-products that connect through a suite's single OAuth (no separate server).
 const COVERED_BY: Record<string, string> = {
   gmail: "google-workspace",
+  // Calendar is served by the Google Workspace MCP, so its card connects the
+  // Workspace suite (single OAuth) rather than a server of its own.
   "google-calendar": "google-workspace",
   // NOTE: "google-drive" is intentionally NOT covered by google-workspace —
   // it's a Cabinet-native (Drive for Desktop) integration with its own UI,
-  // distinct from the future OAuth-based Workspace MCP. See `native` above.
-  "google-meet": "google-workspace",
+  // distinct from the Workspace MCP. See `native` above.
   "microsoft-teams": "microsoft-365",
   onedrive: "microsoft-365",
   sharepoint: "microsoft-365",
@@ -686,11 +719,14 @@ const LAUNCHED = new Set([
   "discord",
   "google-drive",
   "gmail",
+  "google-workspace",
+  "google-calendar",
   "microsoft-365",
   "microsoft-teams",
   "onedrive",
   "sharepoint",
   "notion",
+  "slack",
 ]);
 
 export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) => {

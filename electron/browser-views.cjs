@@ -332,6 +332,22 @@ function registerHandlers() {
     }
   });
 
+  // Open a URL in the user's SYSTEM default browser (not the in-app browse
+  // view). Used for OAuth sign-in, where the embedded browser lacks the user's
+  // provider session and some providers reject webviews. Restricted to http(s)
+  // so a hostile link can't trigger file:/// or custom-scheme handlers.
+  ipcMain.handle("cabinet:open-external", async (event, payload) => {
+    if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
+    const url = typeof payload?.url === "string" ? payload.url : "";
+    if (!/^https?:\/\//i.test(url)) return { ok: false, error: "blocked" };
+    try {
+      await shell.openExternal(url);
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
+
   ipcMain.handle("cabinet:create-browser-view", async (event, payload) => {
     if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
     const win = liveMainWindow();
