@@ -142,13 +142,20 @@ export async function probeStdioMcp(
     }
   }
 
-  // Redact any pasted secret that happens to echo back in server output.
+  // Redact any secret that could echo back in server output. Cover both the
+  // just-typed creds AND the values buildEnv actually injected for secret-kind
+  // credentials — the latter may come from saved .cabinet.env, not this request.
+  const secretValues = [
+    ...entry.credentials
+      .filter((c) => c.kind === "secret")
+      .map((c) => env[c.envKey]),
+    ...Object.values(credsOverride),
+  ]
+    .map((v) => (typeof v === "string" ? v.trim() : ""))
+    .filter((v) => v.length >= 6);
   const scrub = (s: string): string => {
     let out = s;
-    for (const v of Object.values(credsOverride)) {
-      const t = typeof v === "string" ? v.trim() : "";
-      if (t.length >= 6) out = out.split(t).join("<redacted>");
-    }
+    for (const v of secretValues) out = out.split(v).join("<redacted>");
     return out;
   };
 
