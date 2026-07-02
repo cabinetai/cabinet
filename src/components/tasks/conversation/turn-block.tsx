@@ -224,30 +224,78 @@ export function TurnBlock({
     user?.displayName?.trim() || user?.name?.trim() || "You";
   const [avatarEditorOpen, setAvatarEditorOpen] = useState(false);
 
-  return (
-    <div className={cn("group/turn flex gap-3 px-6 py-5", !isUser && "bg-muted/20")}>
-      {isUser ? (
-        <button
-          type="button"
-          onClick={() => setAvatarEditorOpen(true)}
-          title={t("tinyExtras:editYourAvatar")}
-          className="mt-0.5 shrink-0 rounded-full transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          {user ? (
-            <UserAvatar profile={user} size="md" shape="circle" />
-          ) : (
-            <span className="flex size-7 items-center justify-center rounded-full border border-border bg-background text-muted-foreground">
-              <User className="size-3.5" />
-            </span>
-          )}
-        </button>
-      ) : agent ? (
-        <AgentAvatar agent={agent} size="md" shape="circle" className="mt-0.5" />
+  const avatarNode = isUser ? (
+    <button
+      type="button"
+      onClick={() => setAvatarEditorOpen(true)}
+      title={t("tinyExtras:editYourAvatar")}
+      className="shrink-0 rounded-full transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      {user ? (
+        <UserAvatar profile={user} size="sm" shape="circle" />
       ) : (
-        <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400">
-          <Sparkles className="size-3.5" />
-        </div>
+        <span className="flex size-5 items-center justify-center rounded-full border border-border bg-background text-muted-foreground">
+          <User className="size-3" />
+        </span>
       )}
+    </button>
+  ) : agent ? (
+    <AgentAvatar agent={agent} size="sm" shape="circle" className="shrink-0" />
+  ) : (
+    <div className="flex size-5 shrink-0 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400">
+      <Sparkles className="size-3" />
+    </div>
+  );
+
+  return (
+    <div className={cn("group/turn py-5 pl-6 pr-3", !isUser && "bg-muted/20")}>
+      <div className="mb-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
+        {avatarNode}
+        <span className="font-medium text-foreground/80">{isUser ? userLabel : agentLabel}</span>
+        <span>·</span>
+        <RelativeTime iso={turn.ts} />
+        {totalTokens ? (
+          <>
+            <span>·</span>
+            <span className="font-mono tabular-nums">
+              {(totalTokens / 1000).toFixed(1)}k tok
+            </span>
+          </>
+        ) : null}
+        {turn.awaitingInput ? (
+          <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">
+            <Pause className="size-2.5" /> awaiting input
+          </span>
+        ) : null}
+      </div>
+
+      {isUser ? (
+        <Markdown
+          content={turn.content}
+          className="text-[14.5px] leading-[1.65] tracking-[-0.005em] text-foreground/95"
+        />
+      ) : turn.content.trim() ? (
+        <ConversationContentViewer text={turn.content} />
+      ) : null}
+
+      {isUser && turn.attachmentPaths && turn.attachmentPaths.length > 0 ? (
+        <TurnAttachments paths={turn.attachmentPaths} />
+      ) : null}
+
+      {!isUser && turn.pending ? <PendingIndicator /> : null}
+
+      {artifactPaths.length > 0 ? (
+        <div className="mt-3.5 space-y-1.5 rounded-xl border border-border/60 bg-muted/40 p-2 dark:bg-muted/20">
+          {artifactPaths.map((path) => (
+            <KbArtifactRow
+              key={path}
+              path={path}
+              returnContext={returnContext}
+              cabinetPath={cabinetPath}
+            />
+          ))}
+        </div>
+      ) : null}
 
       {isUser ? (
         <EditUserAvatarDialog
@@ -255,55 +303,6 @@ export function TurnBlock({
           onOpenChange={setAvatarEditorOpen}
         />
       ) : null}
-
-      <div className="min-w-0 flex-1">
-        <div className="mb-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
-          <span className="font-medium text-foreground/80">{isUser ? userLabel : agentLabel}</span>
-          <span>·</span>
-          <RelativeTime iso={turn.ts} />
-          {totalTokens ? (
-            <>
-              <span>·</span>
-              <span className="font-mono tabular-nums">
-                {(totalTokens / 1000).toFixed(1)}k tok
-              </span>
-            </>
-          ) : null}
-          {turn.awaitingInput ? (
-            <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">
-              <Pause className="size-2.5" /> awaiting input
-            </span>
-          ) : null}
-        </div>
-
-        {isUser ? (
-          <Markdown
-            content={turn.content}
-            className="text-[14.5px] leading-[1.65] tracking-[-0.005em] text-foreground/95"
-          />
-        ) : turn.content.trim() ? (
-          <ConversationContentViewer text={turn.content} />
-        ) : null}
-
-        {isUser && turn.attachmentPaths && turn.attachmentPaths.length > 0 ? (
-          <TurnAttachments paths={turn.attachmentPaths} />
-        ) : null}
-
-        {!isUser && turn.pending ? <PendingIndicator /> : null}
-
-        {artifactPaths.length > 0 ? (
-          <div className="mt-3.5 space-y-1.5 rounded-xl border border-border/60 bg-muted/40 p-2 dark:bg-muted/20">
-            {artifactPaths.map((path) => (
-              <KbArtifactRow
-                key={path}
-                path={path}
-                returnContext={returnContext}
-                cabinetPath={cabinetPath}
-              />
-            ))}
-          </div>
-        ) : null}
-      </div>
     </div>
   );
 }

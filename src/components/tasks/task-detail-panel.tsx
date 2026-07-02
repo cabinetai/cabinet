@@ -118,10 +118,7 @@ export function TaskDetailPanel() {
   const content =
     isCompose || !conversation ? (
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex shrink-0 items-center gap-2 border-b border-border/70 px-4 py-3">
-          <p className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground">
-            New task
-          </p>
+        <div className="flex shrink-0 items-center justify-end px-2 py-1.5">
           <Button
             variant="ghost"
             size="sm"

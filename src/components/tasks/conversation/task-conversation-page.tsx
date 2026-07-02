@@ -462,9 +462,9 @@ export function TaskConversationPage({
   const [retryNonce, setRetryNonce] = useState(0);
   const [editingSummary, setEditingSummary] = useState(false);
   const [summaryDraft, setSummaryDraft] = useState("");
-  // The summary block collapses to a single ellipsised row once the user
-  // scrolls into any tab's content, and auto-expands back at the top.
-  const [summaryCollapsed, setSummaryCollapsed] = useState(false);
+  // Summary is collapsed by default; clicking the title reveals the full
+  // title + summary below it (another click hides). Not scroll-driven.
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [wrapUpDismissed, setWrapUpDismissed] = useState(false);
   const [busy, setBusy] = useState(false);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -474,33 +474,6 @@ export function TaskConversationPage({
   useEffect(() => {
     prevTaskStatusRef.current = null;
   }, [taskId, cabinetPath, variant, isDemo]);
-
-  // Callback ref on the panel root: scroll doesn't bubble, so we listen in
-  // the capture phase to catch scrolling inside any tab's content. A
-  // callback ref (not useEffect) so the listener attaches exactly when the
-  // root mounts — the component early-returns null until the task loads,
-  // so an effect would bind before the node exists and never rebind.
-  const scrollCleanupRef = useRef<(() => void) | null>(null);
-  const setPanelRoot = useCallback((node: HTMLDivElement | null) => {
-    scrollCleanupRef.current?.();
-    scrollCleanupRef.current = null;
-    if (!node) return;
-    let raf = 0;
-    const onScroll = (e: Event) => {
-      const tgt = e.target as HTMLElement | null;
-      if (!tgt || typeof tgt.scrollTop !== "number") return;
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        setSummaryCollapsed(tgt.scrollTop > 24);
-      });
-    };
-    node.addEventListener("scroll", onScroll, { capture: true, passive: true });
-    scrollCleanupRef.current = () => {
-      node.removeEventListener("scroll", onScroll, { capture: true });
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
 
   // Terminal-mode viewer tabs: Terminal (xterm stream) vs Details
   // (structured prompt/result/artifacts cards via ConversationResultView).
@@ -1614,6 +1587,39 @@ export function TaskConversationPage({
   // for TypeScript.
   if (!task) return null;
 
+  // "New chat" = nothing has happened yet: no completed agent reply, no
+  // artifacts, no summary. In that state the Summary bar and the tab strip
+  // are just empty clutter, so we hide both and show the chat full-height.
+  const hasAgentReply = task.turns.some(
+    (tn) => tn.role === "agent" && !tn.pending && tn.content.trim() !== ""
+  );
+  const hasArtifacts = task.turns.some((tn) => (tn.artifacts?.length ?? 0) > 0);
+  const isNewChat = !hasAgentReply && !hasArtifacts && !task.meta.summary?.trim();
+
+  // Title acts as a disclosure toggle for the summary (closed by default).
+  // The selection guard lets the user select/copy the title text without
+  // toggling. Only interactive once there's a summary worth showing.
+  const titleIsToggle = !isNewChat;
+  const showSummarySection = !isNewChat && (summaryOpen || editingSummary);
+  const titleToggleProps = titleIsToggle
+    ? {
+        role: "button" as const,
+        tabIndex: 0,
+        "aria-expanded": summaryOpen,
+        title: summaryOpen ? "Hide summary" : "Show summary",
+        onClick: () => {
+          if (window.getSelection()?.toString()) return;
+          setSummaryOpen((v) => !v);
+        },
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setSummaryOpen((v) => !v);
+          }
+        },
+      }
+    : {};
+
   // The model is "alive" while running or paused for input; Stop (SIGTERM)
   // and the manual graceful-exit Done both apply in either state. Built once
   // here so the full-page bar and the compact drawer render an identical
@@ -1748,10 +1754,7 @@ export function TaskConversationPage({
   );
 
   return (
-    <div
-      ref={setPanelRoot}
-      className="flex h-full flex-col bg-background text-foreground"
-    >
+    <div className="flex h-full flex-col bg-background text-foreground">
       {/* Header — owned here and rendered in every variant so Stop / Done /
           Status / Compact / menu stay identical everywhere. Compact embeds
           (the drawer) get a denser, collapse-on-scroll layout; the full page
@@ -1760,9 +1763,8 @@ export function TaskConversationPage({
       {isCompact ? (
         <header
           className={cn(
-            "flex shrink-0 flex-col gap-1 border-b border-border/70 px-4 transition-[padding]",
-            COLLAPSE_EASE,
-            summaryCollapsed ? "py-2" : "py-3"
+            "flex shrink-0 flex-col gap-1 px-4 py-2 transition-[padding]",
+            COLLAPSE_EASE
           )}
         >
           <div className="flex items-center gap-2">
@@ -1776,12 +1778,14 @@ export function TaskConversationPage({
           </div>
           <p
             dir="auto"
+            {...titleToggleProps}
             className={cn(
               "overflow-hidden text-[14px] font-semibold leading-snug text-foreground transition-[max-height]",
               COLLAPSE_EASE,
-              summaryCollapsed
-                ? "max-h-[1.5rem] truncate"
-                : "max-h-[12rem] whitespace-normal"
+              summaryOpen
+                ? "max-h-[12rem] whitespace-normal"
+                : "max-h-[1.5rem] truncate",
+              titleIsToggle && "cursor-pointer select-text"
             )}
           >
             {task.meta.title}
@@ -1798,7 +1802,7 @@ export function TaskConversationPage({
         </header>
       ) : (
         <header
-          className="flex items-center gap-3 border-b border-border/70 px-6 py-3 transition-[padding] duration-200"
+          className="flex items-center gap-3 px-6 py-3 transition-[padding] duration-200"
           style={{ paddingInlineStart: `calc(1.5rem + var(--sidebar-toggle-offset, 0px))` }}
         >
           <div className="min-w-0 flex-1">
@@ -1823,7 +1827,14 @@ export function TaskConversationPage({
                     : `${attachedSkills.length} skills`}
                 </span>
               )}
-              <h1 className="truncate text-[14px] font-semibold tracking-tight">
+              <h1
+                {...titleToggleProps}
+                className={cn(
+                  "text-[14px] font-semibold tracking-tight",
+                  summaryOpen ? "whitespace-normal" : "truncate",
+                  titleIsToggle && "cursor-pointer select-text"
+                )}
+              >
                 {task.meta.title}
               </h1>
               <StatusBadge status={task.meta.status} />
@@ -1858,114 +1869,88 @@ export function TaskConversationPage({
         </header>
       )}
 
-      {/* Summary — eases down to a single ellipsised row on scroll. */}
-      {(() => {
-        const collapsed = summaryCollapsed && !editingSummary;
-        const ease = COLLAPSE_EASE;
-        return (
-          <div
-            className={cn(
-              "border-b border-border/70 bg-muted/20 px-6 transition-[padding]",
-              ease,
-              collapsed ? "py-1.5" : "py-3"
-            )}
-          >
-            <div className="flex items-start gap-2">
-              <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                Summary
-              </span>
-              {editingSummary ? (
-                <div className="flex-1 space-y-2">
-                  <textarea
-                    className="w-full resize-none rounded-md border border-border bg-background px-2 py-1 text-[13px] outline-none"
-                    rows={2}
-                    value={summaryDraft}
-                    onChange={(e) => setSummaryDraft(e.target.value)}
-                    autoFocus
-                  />
-                  <div className="flex justify-end gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 px-2 text-[11px]"
-                      onClick={() => {
-                        setSummaryDraft(task.meta.summary ?? "");
-                        setEditingSummary(false);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-6 px-2 text-[11px]"
-                      onClick={handleSummarySave}
-                      disabled={busy}
-                    >
-                      Save
-                    </Button>
-                  </div>
+      {/* Summary — revealed by clicking the title; hidden by default and in
+          brand-new chats. Text is selectable so it can be copied. */}
+      {showSummarySection ? (
+        <div className="bg-muted/20 px-6 py-3">
+          <div className="flex items-start gap-2">
+            <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Summary
+            </span>
+            {editingSummary ? (
+              <div className="flex-1 space-y-2">
+                <textarea
+                  className="w-full resize-none rounded-md border border-border bg-background px-2 py-1 text-[13px] outline-none"
+                  rows={2}
+                  value={summaryDraft}
+                  onChange={(e) => setSummaryDraft(e.target.value)}
+                  autoFocus
+                />
+                <div className="flex justify-end gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-[11px]"
+                    onClick={() => {
+                      setSummaryDraft(task.meta.summary ?? "");
+                      setEditingSummary(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-6 px-2 text-[11px]"
+                    onClick={handleSummarySave}
+                    disabled={busy}
+                  >
+                    Save
+                  </Button>
                 </div>
-              ) : (
-                <>
-                  <p
-                    dir="auto"
-                    className={cn(
-                      "min-w-0 flex-1 overflow-hidden text-[13px] text-foreground/80 transition-[max-height]",
-                      ease,
-                      collapsed
-                        ? "max-h-[1.25rem] truncate"
-                        : "max-h-[24rem] whitespace-normal leading-relaxed"
-                    )}
-                  >
-                    {task.meta.summary || (
-                      <span className="text-muted-foreground/70">
-                        {t("tasks:conversation.noSummary")}
-                      </span>
-                    )}
-                  </p>
-                  {/* Pencil eases its width/opacity away when collapsed
-                      instead of vanishing. */}
-                  <div
-                    className={cn(
-                      "shrink-0 overflow-hidden transition-[max-width,opacity]",
-                      ease,
-                      collapsed
-                        ? "pointer-events-none max-w-0 opacity-0"
-                        : "max-w-8 opacity-100"
-                    )}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 shrink-0 p-0 text-muted-foreground"
-                      onClick={startEditingSummary}
-                      tabIndex={collapsed ? -1 : 0}
-                    >
-                      <Pencil className="size-3" />
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
+              </div>
+            ) : (
+              <>
+                <p
+                  dir="auto"
+                  className="min-w-0 flex-1 select-text whitespace-normal text-[13px] leading-relaxed text-foreground/80"
+                >
+                  {task.meta.summary || (
+                    <span className="text-muted-foreground/70">
+                      {t("tasks:conversation.noSummary")}
+                    </span>
+                  )}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 shrink-0 p-0 text-muted-foreground"
+                  onClick={startEditingSummary}
+                >
+                  <Pencil className="size-3" />
+                </Button>
+              </>
+            )}
           </div>
-        );
-      })()}
+        </div>
+      ) : null}
 
       {/* Tabs + content */}
       <Tabs defaultValue="chat" className="flex flex-1 min-h-0 flex-col gap-0">
-        <div className="border-b border-border/70 px-6">
-          <TabsList variant="line" className="h-10">
-            <TabsTrigger value="chat">Chat</TabsTrigger>
-            <TabsTrigger value="artifacts">
-              Artifacts
-              <span className="ml-1.5 rounded-full bg-muted px-1.5 py-px text-[10px] tabular-nums text-muted-foreground">
-                {task.turns.flatMap((t) => t.artifacts ?? []).length}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="diff">Diff</TabsTrigger>
-            <TabsTrigger value="logs">Logs</TabsTrigger>
-          </TabsList>
-        </div>
+        {!isNewChat ? (
+          <div className="px-6">
+            <TabsList variant="line" className="h-10">
+              <TabsTrigger value="chat">Chat</TabsTrigger>
+              <TabsTrigger value="artifacts">
+                Artifacts
+                <span className="ml-1.5 rounded-full bg-muted px-1.5 py-px text-[10px] tabular-nums text-muted-foreground">
+                  {task.turns.flatMap((t) => t.artifacts ?? []).length}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="diff">Diff</TabsTrigger>
+              <TabsTrigger value="logs">Logs</TabsTrigger>
+            </TabsList>
+          </div>
+        ) : null}
 
         <TabsContent
           value="chat"
@@ -2069,7 +2054,7 @@ export function TaskConversationPage({
                 </div>
               </div>
             ) : null}
-            <div className="mx-auto max-w-3xl divide-y divide-border/40">
+            <div className="mx-auto max-w-3xl">
               {task.turns.map((turn) => (
                 <TurnBlock
                   key={turn.id}
@@ -2103,7 +2088,7 @@ export function TaskConversationPage({
             ) : null}
           </div>
           {!readOnly ? (
-            <div className="shrink-0 border-t border-border/70 bg-background">
+            <div className="shrink-0 bg-background">
               <div className="mx-auto w-full max-w-3xl">
                 <TaskComposerPanel
                   awaitingInput={task.meta.status === "awaiting-input"}

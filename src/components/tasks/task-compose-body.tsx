@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Archive } from "lucide-react";
 import { useAppStore, type TaskPanelComposeContext } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { flattenTree } from "@/lib/tree-utils";
@@ -180,7 +180,7 @@ export function TaskComposeBody({ context }: TaskComposeBodyProps) {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
-        <Sparkles className="h-8 w-8 text-muted-foreground/40" />
+        <Archive className="h-8 w-8 text-muted-foreground/40" />
         <p className="text-[13px] text-muted-foreground">
           {context?.greeting
             ? context.greeting
