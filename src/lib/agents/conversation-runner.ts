@@ -334,6 +334,12 @@ const NON_INLINE_MENTION_EXT = new Set([
 // Cap inlined text so a single huge page can't blow up the prompt either.
 const MAX_INLINE_MENTION_BYTES = 200_000;
 
+// Default run timeout for a conversation turn. Was 10 min hardcoded; long
+// editor tasks legitimately run past that. ponytail: bump via env, no UI —
+// CABINET_RUN_TIMEOUT_MS overrides (ms).
+const DEFAULT_RUN_TIMEOUT_MS =
+  Number(process.env.CABINET_RUN_TIMEOUT_MS) || 60 * 60 * 1000;
+
 async function buildMentionContext(mentionedPaths: string[]): Promise<string> {
   if (mentionedPaths.length === 0) return "";
 
@@ -1773,7 +1779,7 @@ export async function continueConversationRun(
       adapterConfig: turnAdapterConfig,
       prompt,
       replayPrompt,
-      timeoutMs: input.timeoutMs ?? 10 * 60 * 1000,
+      timeoutMs: input.timeoutMs ?? DEFAULT_RUN_TIMEOUT_MS,
       isSessionExpiredError,
     });
   }
@@ -1813,7 +1819,7 @@ export async function continueConversationRun(
         cwd,
         timeoutSeconds: Math.max(
           60,
-          Math.ceil((input.timeoutMs ?? 10 * 60 * 1000) / 1000)
+          Math.ceil((input.timeoutMs ?? DEFAULT_RUN_TIMEOUT_MS) / 1000)
         ),
         adapterSessionId: effectiveSessionId,
         adapterSessionParams: effectiveSessionParams,
@@ -1826,7 +1832,9 @@ export async function continueConversationRun(
     try {
       const result = await pollDaemonSessionUntilDone(runId, {
         intervalMs: 700,
-        deadlineMs: input.timeoutMs ?? 15 * 60 * 1000,
+        // Poll deadline must outlive the run timeout, else the poller gives up
+        // first and reports "timed out while waiting" instead of the real result.
+        deadlineMs: (input.timeoutMs ?? DEFAULT_RUN_TIMEOUT_MS) + 60_000,
         onPartial: (output) => {
           const partial =
             extractAgentTurnContent(output) || output.trim();
