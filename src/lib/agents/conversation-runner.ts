@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import type { JobConfig, JobRun, JobPostAction } from "@/types/jobs";
 import type { ConversationMeta } from "@/types/conversations";
 import { readPage } from "../storage/page-io";
-import { DATA_DIR } from "../storage/path-utils";
+import { DATA_DIR, resolveAgentCwd } from "../storage/path-utils";
 import {
   defaultAdapterTypeForProvider,
   resolveExecutionProviderId,
@@ -420,10 +420,7 @@ export async function buildManualConversationPrompt(input: {
   const persona = await readPersona(input.agentSlug, input.cabinetPath);
   const mentionContext = await buildMentionContext(input.mentionedPaths || []);
   const baseCwd = input.cabinetPath ? path.join(DATA_DIR, input.cabinetPath) : DATA_DIR;
-  const cwd =
-    persona?.workdir && persona.workdir !== "/data"
-      ? `${DATA_DIR}/${persona.workdir.replace(/^\/+/, "")}`
-      : baseCwd;
+  const cwd = resolveAgentCwd(input.cabinetPath, persona?.workdir);
 
   // Merge persona's persisted skills with @-mentioned skills so the skill
   // index in the prompt matches the set the runner mounts via --add-dir.
@@ -508,10 +505,7 @@ export async function buildEditorConversationPrompt(input: {
   );
   const mentionContext = await buildMentionContext(combinedMentionedPaths);
   const baseCwd = input.cabinetPath ? path.join(DATA_DIR, input.cabinetPath) : DATA_DIR;
-  const cwd =
-    persona?.workdir && persona.workdir !== "/data"
-      ? `${DATA_DIR}/${persona.workdir.replace(/^\/+/, "")}`
-      : baseCwd;
+  const cwd = resolveAgentCwd(input.cabinetPath, persona?.workdir);
 
   const mergedSkillKeys = Array.from(
     new Set([...(persona?.skills ?? []), ...(input.mentionedSkills ?? [])]),
@@ -1012,12 +1006,13 @@ export async function startJobConversation(
   const defaultProviderId = getDefaultProviderId();
   const jobPrompt = substituteTemplateVars(job.prompt, job);
   const baseCwd = job.cabinetPath ? path.join(DATA_DIR, job.cabinetPath) : DATA_DIR;
-  const cwd =
+  // A job overrides cwd only when it names a non-root workdir; otherwise the
+  // persona's workdir wins (preserved from the original precedence).
+  const effectiveWorkdir =
     job.workdir && job.workdir !== "/data" && job.workdir !== "/"
-      ? path.join(baseCwd, job.workdir.replace(/^\/+/, ""))
-      : persona?.workdir && persona.workdir !== "/data" && persona.workdir !== "/"
-        ? path.join(baseCwd, persona.workdir.replace(/^\/+/, ""))
-        : baseCwd;
+      ? job.workdir
+      : persona?.workdir;
+  const cwd = resolveAgentCwd(job.cabinetPath, effectiveWorkdir);
 
   const prompt = [
     buildCabinetRequirementHeader(),
@@ -1528,10 +1523,7 @@ export async function continueConversationRun(
       ? await readPersona(meta.agentSlug, cp)
       : null;
     const legacyBaseCwd = cp ? path.join(DATA_DIR, cp) : DATA_DIR;
-    const legacyCwd =
-      legacyPersona?.workdir && legacyPersona.workdir !== "/data"
-        ? `${DATA_DIR}/${legacyPersona.workdir.replace(/^\/+/, "")}`
-        : legacyBaseCwd;
+    const legacyCwd = resolveAgentCwd(cp, legacyPersona?.workdir);
 
     // 1. Try same-process continue: stdin-inject into the existing PTY.
     const alive = await isDaemonSessionAlive(conversationId);
@@ -1650,10 +1642,7 @@ export async function continueConversationRun(
     ? await readPersona(meta.agentSlug, cp)
     : null;
   const baseCwd = cp ? path.join(DATA_DIR, cp) : DATA_DIR;
-  const cwd =
-    persona?.workdir && persona.workdir !== "/data"
-      ? `${DATA_DIR}/${persona.workdir.replace(/^\/+/, "")}`
-      : baseCwd;
+  const cwd = resolveAgentCwd(cp, persona?.workdir);
 
   // 4b. Re-mount skills for this turn so newly @-mentioned skills get
   // registered with the CLI. Each structured-adapter continuation is a fresh

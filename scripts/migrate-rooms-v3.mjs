@@ -65,7 +65,62 @@ function move(src, dst) {
   fs.renameSync(src, dst);
 }
 
+// Find every `.agents` dir under DATA_DIR (rooms can nest, e.g. dragonstone/home).
+function findAgentsDirs(dir, out = []) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const e of entries) {
+    if (!e.isDirectory()) continue;
+    if (e.name === ".agents") {
+      out.push(path.join(dir, e.name));
+      continue; // don't descend into an .agents dir; it holds slugs, not rooms
+    }
+    if (e.name === "node_modules" || e.name === ".git") continue;
+    findAgentsDirs(path.join(dir, e.name), out);
+  }
+  return out;
+}
+
+// Reset a persona's `workdir` to /data when it names a subfolder that doesn't
+// exist inside the agent's room — the flat→Rooms move left cabinetPath already
+// pointing at the (sub)room while workdir still held the old `/subfolder`, so the
+// scheduled spawn cwd double-joined into a missing dir (#178). Idempotent:
+// a legit subfolder that DOES exist, or a value already /data, is left alone.
+function backfillWorkdirs(root) {
+  let fixed = 0;
+  for (const agentsDir of findAgentsDirs(root)) {
+    const roomDir = path.dirname(agentsDir);
+    for (const slug of fs.readdirSync(agentsDir)) {
+      const file = path.join(agentsDir, slug, "persona.md");
+      if (!fs.existsSync(file)) continue;
+      const raw = fs.readFileSync(file, "utf-8");
+      const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      if (!fm) continue;
+      const wdLine = fm[1].match(/^(\s*workdir:\s*)(.+?)\s*$/m);
+      if (!wdLine) continue;
+      const value = wdLine[2].replace(/^["']|["']$/g, "").trim();
+      const sub = value.replace(/^\/+/, "");
+      if (!sub || sub === "data") continue; // already room-root
+      if (fs.existsSync(path.join(roomDir, sub))) continue; // real subfolder — keep
+      const patchedFm = fm[1].replace(wdLine[0], `${wdLine[1]}/data`);
+      fs.writeFileSync(file, raw.replace(fm[1], patchedFm), "utf-8");
+      log(`workdir ${value} -> /data for ${path.relative(root, file)}`);
+      fixed++;
+    }
+  }
+  if (fixed) log(`backfilled ${fixed} stale workdir(s).`);
+}
+
 function main() {
+  // Runs on EVERY invocation, before the home-marker short-circuit, so installs
+  // that already migrated (and never re-run the rest of this script) still get
+  // their stale workdirs cleaned when they re-run it.
+  backfillWorkdirs(DATA_DIR);
+
   const homeMarker = path.join(DATA_DIR, ".home", "home.json");
   if (fs.existsSync(homeMarker)) {
     log("already migrated (data/.home/home.json present) — no-op.");
