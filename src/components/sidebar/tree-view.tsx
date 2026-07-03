@@ -95,7 +95,7 @@ interface AgentSummary {
 
 const itemClass = (active: boolean) =>
   cn(
-    "flex items-center gap-2 w-full text-left py-1 px-2 text-[12px] text-foreground/75 rounded-md transition-colors cursor-pointer",
+    "flex items-center gap-2 w-full text-left py-0.5 px-2 text-[12px] text-foreground/75 rounded-md transition-colors cursor-pointer",
     "hover:bg-foreground/[0.03] hover:text-foreground",
     active && "bg-accent text-accent-foreground font-medium"
   );
@@ -390,7 +390,7 @@ export function TreeView() {
       <button
         onClick={opts.onClick}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-1 text-left transition-colors hover:bg-foreground/[0.03]",
+          "flex w-full items-center gap-2 rounded-md px-2 py-0.5 text-left transition-colors hover:bg-foreground/[0.03]",
           opts.selected && "bg-accent text-accent-foreground"
         )}
         style={pad(1)}
@@ -470,8 +470,8 @@ export function TreeView() {
              Header rail (always) + drawer-tab strip (flush below) wrapped
              in one `px-2 pt-3` column. Strip is `mx-[9px]`-inset so the
              header reads as a wider crown over the drawer frame. */}
-        <div className="px-2 pt-3">
-        <div className="flex items-center gap-2 rounded-lg bg-muted/60 px-2.5 py-1.5 ring-1 ring-border/60 hover:bg-muted/80 transition-colors">
+        <div className="px-2 pt-2">
+        <div className="flex items-center gap-2 rounded-lg bg-muted/60 px-2.5 py-1 ring-1 ring-border/60 hover:bg-muted/80 transition-colors">
           <ContextMenu>
           <ContextMenuTrigger>
           <button
@@ -558,7 +558,7 @@ export function TreeView() {
           <div
             role="tablist"
             aria-label={t("treeView:drawersAriaLabel")}
-            className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-1 pt-2 border border-border/60"
+            className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-0.5 pt-1.5 border border-border/60"
           >
                 {([
                   {
@@ -655,7 +655,7 @@ export function TreeView() {
                           drawer.onOpen();
                         }}
                         className={cn(
-                          "relative flex w-full flex-col items-center gap-0.5 rounded-md px-1.5 pt-3 pb-2 transition-all duration-150",
+                          "relative flex w-full flex-col items-center gap-0.5 rounded-md px-1.5 pt-2 pb-1.5 transition-all duration-150",
                           active
                             ? "-translate-y-px bg-background text-foreground shadow-[0_1px_0_rgba(0,0,0,0.06),0_6px_14px_-10px_rgba(0,0,0,0.35)] ring-1 ring-border/70"
                             : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
@@ -669,7 +669,7 @@ export function TreeView() {
                             active ? "bg-amber-400/50" : "bg-muted-foreground/30"
                           )}
                         />
-                        <Icon className="h-[18px] w-[18px] shrink-0" />
+                        <Icon className="h-4 w-4 shrink-0" />
                         {/*
                          * Audit #008 (review feedback 2026-05-02): user
                          * preferred the original ALL CAPS treatment. Restored

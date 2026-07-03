@@ -183,7 +183,7 @@ export function Sidebar() {
       <aside
         suppressHydrationWarning
         className={cn(
-          "flex bg-sidebar h-screen overflow-hidden transition-[width] duration-200 will-change-[width] [&_button]:cursor-pointer",
+          "flex bg-[var(--gutter)] h-full overflow-hidden transition-[width] duration-200 will-change-[width] [&_button]:cursor-pointer",
           isMobile && "fixed inset-y-0 start-0 z-40",
           !isMobile && !collapsed && "shrink-0"
         )}
@@ -193,7 +193,7 @@ export function Sidebar() {
           className="flex h-full flex-col"
           style={{ width: panelWidth }}
         >
-        <div className="sidebar-header flex items-center justify-between gap-1 px-3 py-3">
+        <div className="sidebar-header flex items-center justify-between gap-1 px-3 py-2">
           <div className="flex min-w-0 items-center gap-1">
             <button
               onClick={() => setSection({ type: "home" })}

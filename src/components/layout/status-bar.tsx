@@ -424,7 +424,7 @@ export function StatusBar() {
     <footer
       role="contentinfo"
       aria-label={t("status:bar.ariaLabel")}
-      className="relative flex items-center justify-between px-3 py-1 border-t border-border text-[11px] text-muted-foreground/60 bg-background"
+      className="relative flex items-center justify-between px-3 py-1 text-[11px] text-muted-foreground/60 bg-transparent"
     >
       <div className="flex min-w-0 items-center gap-3">
         <div className="relative">

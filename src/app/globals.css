@@ -14,7 +14,7 @@
   --font-serif: var(--font-logo-rtl), Cardo, Georgia, ui-serif, serif;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-border: color-mix(in oklch, var(--sidebar-border) 22%, transparent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -28,7 +28,11 @@
   --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
-  --color-border: var(--border);
+  /* Manila Arc / borderless: neutral hairlines gave the app its "old boxy"
+     look. Surfaces separate by fill + elevation now, so soften the ubiquitous
+     --border token to a whisper. Colored borders (border-primary/-destructive)
+     and form-field edges (--color-input) are untouched. One knob, all themes. */
+  --color-border: color-mix(in oklch, var(--border) 22%, transparent);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -84,6 +88,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.4 0 0);
+  /* Manila Arc desk gutter + sheet lift (see @theme inline note). Default
+     gutter is a hair darker than the sheet so every theme floats the content;
+     the paper theme overrides --gutter with a warm manila. */
+  --gutter: color-mix(in oklch, var(--background) 95%, var(--foreground) 5%);
+  /* Single soft ambient shadow — no tight layer, which was casting a hard
+     seam where the flush-left page meets the sidebar. */
+  --sheet-shadow: 0 6px 22px rgb(0 0 0 / 0.07);
   --terminal-bg: color-mix(in oklch, var(--card) 94%, black 6%);
   --terminal-fg: var(--foreground);
   --terminal-cursor: var(--primary);
@@ -138,6 +149,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --gutter: color-mix(in oklch, var(--background) 85%, black 15%);
+  --sheet-shadow: 0 8px 26px rgb(0 0 0 / 0.3);
 }
 
 @layer base {
@@ -155,6 +168,14 @@
   :focus-visible {
     outline-color: var(--ring);
   }
+}
+
+/* Manila Arc: the paper (Cabinet) theme's desk gutter is a warm manila.
+   Keyed on data-custom-theme so it clears cleanly when switching themes —
+   an inline theme var would stick. Every other theme derives --gutter from
+   --background in :root / .dark, so they all float their content too. */
+html[data-custom-theme="paper"] {
+  --gutter: oklch(0.94 0.022 80);
 }
 
 /* Custom theme font overrides — outside @layer so they beat Tailwind utilities */

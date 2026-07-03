@@ -351,7 +351,12 @@ export const THEMES: ThemeDefinition[] = [
       // calculated at ~2.6:1 contrast — under WCAG 2.4.7 (3:1 for non-text
       // UI). Push L 0.47 → 0.34 (deeper rust, same hue) to clear 4:1.
       "--ring":                 "oklch(0.34 0.09 48)",     // deeper #6B4A2D for visibility
-      "--sidebar":              "oklch(0.946 0.010 60)",   // #F3EDE4 bg-warm
+      // Manila Arc: the sidebar rail merges into the desk gutter (same warm
+      // manila) so the bright content sheet reads as the one elevated surface.
+      // The desk gutter itself (--gutter) lives in globals.css keyed on
+      // data-custom-theme="paper" — NOT here — because an inline theme var
+      // sticks when you switch to a theme that doesn't redefine it.
+      "--sidebar":              "oklch(0.884 0.050 83)",   // rail == desk
       "--sidebar-foreground":   "oklch(0.22 0.018 28)",    // #3B2F2F
       "--sidebar-primary":      "oklch(0.47 0.09 48)",     // #8B5E3C
       "--sidebar-primary-foreground": "oklch(1 0 0)",      // #FFFFFF

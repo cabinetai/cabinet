@@ -1046,9 +1046,12 @@ export function AppShell() {
         edge: the whole app shrinks into the remaining width (the "iframe")
         and the fixed, full-height rail lives in that gutter. */}
     <div
-      className={`flex h-screen bg-background text-foreground transition-[padding] duration-200 ease-out${
-        taskRailOpen && !isMobile ? " pe-[30px]" : ""
-      }`}
+      className="flex h-screen bg-[var(--gutter)] text-foreground transition-[padding] duration-200 ease-out"
+      style={
+        isMobile
+          ? undefined
+          : { paddingTop: 10, paddingInlineEnd: taskRailOpen ? 30 : 10, paddingBottom: 0, paddingInlineStart: 0 }
+      }
     >
       {/* Audit #031: SR-only live region announcing the active page title
           on every route change. role="status" + aria-live="polite" so it
@@ -1063,16 +1066,24 @@ export function AppShell() {
         className="sr-only"
       />
       <Sidebar />
+      {/* The main column is transparent (shows the desk gutter). The content
+          "sheet" floats inside it (rounded + shadow); the status bar sits
+          BELOW the sheet, on the desk — outside the floating page. */}
       <div
-        className="flex-1 flex flex-col overflow-hidden max-md:pb-[calc(56px+env(safe-area-inset-bottom))]"
+        className="flex-1 flex flex-col min-w-0 overflow-hidden max-md:pb-[calc(56px+env(safe-area-inset-bottom))]"
         style={{ '--sidebar-toggle-offset': sidebarCollapsed ? 'calc(2.25rem + var(--traffic-clearance, 0px))' : '0px' } as React.CSSProperties}
       >
-        <DaemonHealthBanner />
-        {!isMobile && <NarrowViewportHint />}
-        <main className="flex-1 flex flex-col overflow-hidden">
-          {renderContent()}
-        </main>
-        {terminalOpen && terminalPosition === "bottom" && <TerminalTabs />}
+        <div
+          className="flex-1 flex flex-col overflow-hidden bg-background min-h-0"
+          style={isMobile ? undefined : { borderRadius: 16, boxShadow: 'var(--sheet-shadow)' }}
+        >
+          <DaemonHealthBanner />
+          {!isMobile && <NarrowViewportHint />}
+          <main className="flex-1 flex flex-col overflow-hidden">
+            {renderContent()}
+          </main>
+          {terminalOpen && terminalPosition === "bottom" && <TerminalTabs />}
+        </div>
         {!isMobile && <StatusBar />}
       </div>
       <MobileBottomNav />
