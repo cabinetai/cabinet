@@ -101,7 +101,7 @@ function ToolButton({ label, icon: Icon, active, disabled, style, onAction }: To
         onAction(e);
       }}
       className={cn(
-        "h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-md text-foreground/80 hover:bg-accent transition-colors disabled:opacity-40",
+        "h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-md text-muted-foreground/70 hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40",
         active && "bg-accent text-foreground ring-1 ring-inset ring-foreground/15"
       )}
     >
@@ -375,7 +375,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
 
   return (
     <>
-      <div className="relative flex items-stretch rounded-xl bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_2px_8px_-2px_rgb(0_0_0/0.06)]">
+      <div className="relative flex items-stretch">
         <div className="relative flex-1 min-w-0">
           {/* Scroll indicator arrows */}
           {!sourceMode && canScrollLeft && (
@@ -384,7 +384,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
               aria-label={t("editor:toolbar.scrollLeft")}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => scrollBy(-1)}
-              className="absolute left-0 rtl:left-auto rtl:right-0 top-0 bottom-0 w-6 z-10 flex items-center justify-start rtl:justify-end ps-0.5 bg-gradient-to-r rtl:bg-gradient-to-l from-background via-background/80 to-transparent text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute left-0 rtl:left-auto rtl:right-0 top-0 bottom-0 w-6 z-10 flex items-center justify-start rtl:justify-end ps-0.5 bg-gradient-to-r rtl:bg-gradient-to-l from-[var(--gutter)] via-[var(--gutter)]/80 to-transparent text-muted-foreground hover:text-foreground transition-colors"
             >
               <DirIcon ltr={ChevronLeft} rtl={ChevronRight} className="h-4 w-4" />
             </button>
@@ -395,7 +395,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
               aria-label={t("editor:toolbar.scrollRight")}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => scrollBy(1)}
-              className="absolute right-0 rtl:right-auto rtl:left-0 top-0 bottom-0 w-6 z-10 flex items-center justify-end rtl:justify-start pe-0.5 bg-gradient-to-l rtl:bg-gradient-to-r from-background via-background/80 to-transparent text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute right-0 rtl:right-auto rtl:left-0 top-0 bottom-0 w-6 z-10 flex items-center justify-end rtl:justify-start pe-0.5 bg-gradient-to-l rtl:bg-gradient-to-r from-[var(--gutter)] via-[var(--gutter)]/80 to-transparent text-muted-foreground hover:text-foreground transition-colors"
             >
               <DirIcon ltr={ChevronRight} rtl={ChevronLeft} className="h-4 w-4" />
             </button>
@@ -404,7 +404,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
             <div
               ref={scrollRef}
               onWheel={onWheel}
-              className="flex items-center gap-0.5 px-2 pt-1 pb-1.5 overflow-x-scroll overflow-y-hidden editor-toolbar-scroll"
+              className="flex items-center gap-0.5 px-2 pt-1 pb-1.5 overflow-x-scroll overflow-y-hidden editor-toolbar-scroll [mask-image:linear-gradient(to_right,#000,#000_86%,transparent)] [-webkit-mask-image:linear-gradient(to_right,#000,#000_86%,transparent)]"
             >
               {[...primaryItems, { separator: true } as ButtonSpec, ...secondaryItems].map((item, i) => {
                 if ("separator" in item) {

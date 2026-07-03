@@ -32,7 +32,10 @@ export function ContentSheet({
         ...(isMobile
           ? {}
           : {
-              borderRadius: flatTop ? "0 0 16px 16px" : 16,
+              borderRadius: 16,
+              // Only the corner where the active tab connects is squared off;
+              // every other corner stays rounded + elevated like the rest.
+              ...(flatTop ? { borderStartStartRadius: 0 } : {}),
               boxShadow: "var(--sheet-shadow)",
             }),
         ...style,
