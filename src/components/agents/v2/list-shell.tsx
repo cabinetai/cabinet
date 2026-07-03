@@ -13,6 +13,7 @@ export function ListShell({
   searchPlaceholder = "Search",
   filters,
   trailingActions,
+  bare = false,
   loading,
   empty,
   children,
@@ -30,6 +31,9 @@ export function ListShell({
   /** Action(s) anchored to the right of the filter row (e.g. "Pause all
    *  heartbeats" on the Heartbeats tab, "Org chart" on the Agents tab). */
   trailingActions?: ReactNode;
+  /** Drop the bordered list panel so children (e.g. a card grid) sit directly
+   *  on the sheet. Default false = bordered list. */
+  bare?: boolean;
   loading: boolean;
   /** Shown when not loading and the list has no items. */
   empty: { title: string; hint?: string };
@@ -64,21 +68,37 @@ export function ListShell({
         ) : null}
       </div>
 
-      <div className="min-h-0 max-h-full overflow-y-auto rounded-xl border border-border/70 bg-card">
+      <div
+        className={cn(
+          "min-h-0 max-h-full overflow-y-auto",
+          !bare && "rounded-xl border border-border/70 bg-card"
+        )}
+      >
         {loading ? (
-          <div className="divide-y divide-border/60">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex h-9 animate-pulse items-center gap-3 px-3"
-              >
-                <div className="size-4 rounded-full bg-muted/60" />
-                <div className="size-5 shrink-0 rounded-full bg-muted/60" />
-                <div className="h-2.5 w-32 rounded bg-muted/60" />
-                <div className="ms-auto h-2.5 w-20 rounded bg-muted/40" />
-              </div>
-            ))}
-          </div>
+          bare ? (
+            <div className="grid grid-cols-1 gap-3 pb-2 pt-0.5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[140px] animate-pulse rounded-xl border border-border/60 bg-muted/30"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="divide-y divide-border/60">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex h-9 animate-pulse items-center gap-3 px-3"
+                >
+                  <div className="size-4 rounded-full bg-muted/60" />
+                  <div className="size-5 shrink-0 rounded-full bg-muted/60" />
+                  <div className="h-2.5 w-32 rounded bg-muted/60" />
+                  <div className="ms-auto h-2.5 w-20 rounded bg-muted/40" />
+                </div>
+              ))}
+            </div>
+          )
         ) : (
           <EmptyOrChildren empty={empty}>{children}</EmptyOrChildren>
         )}

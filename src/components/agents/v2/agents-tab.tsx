@@ -134,6 +134,7 @@ export function AgentsTab() {
           {t("agents:workspace.orgChart")}
         </button>
       }
+      bare
       loading={loading}
       empty={{
         title:
@@ -149,25 +150,24 @@ export function AgentsTab() {
       {filtered.length === 0 ? (
         []
       ) : (
-        <ul className="divide-y divide-border/60">
+        <div className="grid grid-cols-1 gap-3 pb-2 pt-0.5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((agent) => (
-            <li key={agent.scopedId}>
-              <AgentRow
-                agent={agent}
-                routines={jobsByAgent.get(agent.slug) || []}
-                onToggleActive={() => toggleAgentActive(agent)}
-                onOpen={() =>
-                  setSection({
-                    type: "agent",
-                    slug: agent.slug,
-                    cabinetPath: agent.cabinetPath,
-                    agentScopedId: agent.scopedId,
-                  })
-                }
-              />
-            </li>
+            <AgentRow
+              key={agent.scopedId}
+              agent={agent}
+              routines={jobsByAgent.get(agent.slug) || []}
+              onToggleActive={() => toggleAgentActive(agent)}
+              onOpen={() =>
+                setSection({
+                  type: "agent",
+                  slug: agent.slug,
+                  cabinetPath: agent.cabinetPath,
+                  agentScopedId: agent.scopedId,
+                })
+              }
+            />
           ))}
-        </ul>
+        </div>
       )}
     </ListShell>
   );
