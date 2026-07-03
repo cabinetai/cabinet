@@ -14,7 +14,9 @@
   --font-serif: var(--font-logo-rtl), Cardo, Georgia, ui-serif, serif;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
+  /* Same borderless treatment for the sidebar's dividers — the sidebar already
+     reads as its own surface via --sidebar fill vs --background. */
+  --color-sidebar-border: color-mix(in oklch, var(--sidebar-border) 38%, transparent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -28,7 +30,12 @@
   --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
-  --color-border: var(--border);
+  /* Borderless direction (audit 2026-07-02): neutral hairlines gave the app an
+     "old boxy" look. Surfaces already differ by fill (card/muted/secondary vs
+     background), so we soften the ubiquitous --border token to a whisper and let
+     color do the separating. Colored borders (border-primary/-destructive/etc.)
+     and form-field edges (--color-input) are untouched. One knob, all themes. */
+  --color-border: color-mix(in oklch, var(--border) 38%, transparent);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
