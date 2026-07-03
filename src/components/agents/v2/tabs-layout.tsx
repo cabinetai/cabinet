@@ -49,9 +49,9 @@ export function TabsLayout({
   onTabChange: (next: AgentsTabKey) => void;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col gap-1.5">
+    <div className="flex h-full min-h-0 flex-col">
       <TopBar tab={tab} onTabChange={onTabChange} />
-      <ContentSheet>
+      <ContentSheet flatTop>
       {tab === "schedule" ? (
         // Full-bleed: the calendar fills the sheet below the tab bar.
         <div className="min-h-0 flex-1">
@@ -148,10 +148,10 @@ function TopBar({
       className="flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
       style={{ paddingInlineStart: `calc(0.75rem + var(--sidebar-toggle-offset, 0px))` }}
     >
-      <div className="order-2 min-w-0 flex-1 overflow-x-auto md:order-1">
+      <div className="order-2 min-w-0 flex-1 md:order-1">
         <TabStrip tab={tab} onTabChange={onTabChange} />
       </div>
-      <div className="order-1 ms-auto flex items-center gap-2 pb-1 md:order-2">
+      <div className="order-1 ms-auto flex items-center gap-2 mb-1.5 md:order-2">
         {loading && (
           <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
         )}

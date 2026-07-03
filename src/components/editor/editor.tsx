@@ -636,11 +636,13 @@ export function KBEditor() {
   const onFilesTab = showFolderTabs && folderTab === "files";
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden gap-1.5 min-h-0">
-      {/* Manila Arc: folder tabs sit on the desk, directly over the sheet. */}
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      {/* Manila Arc: folder tabs sit on the desk and connect into the strip
+          below them (the toolbar on the Page tab, the folder-index sheet on
+          the Files tab). */}
       {showFolderTabs && (
         <FolderTabs
-          className="shrink-0"
+          className="shrink-0 px-1"
           ariaLabel="Page views"
           active={folderTab}
           onSelect={(id) => setFolderTab(id as "page" | "files")}
@@ -652,7 +654,7 @@ export function KBEditor() {
       )}
       {/* Files tab: elevated sheet holding the folder index. */}
       {onFilesTab && (
-        <ContentSheet>
+        <ContentSheet flatTop>
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto px-6 py-6">
               <FolderIndex

@@ -13,10 +13,13 @@ export function ContentSheet({
   children,
   className,
   style,
+  flatTop,
 }: {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
+  /** Square off the top corners so folder tabs connect seamlessly. */
+  flatTop?: boolean;
 }) {
   const isMobile = useIsMobile();
   return (
@@ -28,7 +31,10 @@ export function ContentSheet({
       style={{
         ...(isMobile
           ? {}
-          : { borderRadius: 16, boxShadow: "var(--sheet-shadow)" }),
+          : {
+              borderRadius: flatTop ? "0 0 16px 16px" : 16,
+              boxShadow: "var(--sheet-shadow)",
+            }),
         ...style,
       }}
     >

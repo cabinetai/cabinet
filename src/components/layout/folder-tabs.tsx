@@ -27,11 +27,14 @@ export function FolderTabs({
   className?: string;
   ariaLabel?: string;
 }) {
+  // The tablist overlaps the sheet below it by 1px (-mb-px); the active tab
+  // shares the sheet's fill so the two read as one folder, while inactive tabs
+  // are recessed (muted, shorter) behind it.
   return (
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className={cn("flex items-end gap-1 px-1", className)}
+      className={cn("relative z-10 -mb-px flex items-end gap-0.5", className)}
     >
       {tabs.map((t) => {
         const on = t.id === active;
@@ -40,12 +43,13 @@ export function FolderTabs({
             key={t.id}
             role="tab"
             aria-selected={on}
+            type="button"
             onClick={() => onSelect(t.id)}
             className={cn(
-              "relative inline-flex items-center gap-1.5 rounded-t-[10px] px-3.5 text-[12.5px] font-medium transition-all duration-150 cursor-pointer",
+              "relative inline-flex items-center gap-1.5 rounded-t-[9px] px-4 text-[12.5px] font-medium transition-all duration-150 cursor-pointer",
               on
-                ? "z-10 -mb-px bg-background text-foreground pt-1.5 pb-2 shadow-[0_-3px_10px_-4px_rgb(0_0_0/0.15)]"
-                : "translate-y-[3px] bg-muted/50 text-muted-foreground pt-1 pb-1.5 hover:translate-y-[1px] hover:bg-muted hover:text-foreground"
+                ? "z-20 bg-background text-foreground pt-2 pb-2.5 shadow-[0_-2px_8px_-3px_rgb(0_0_0/0.16)]"
+                : "z-0 mb-px bg-muted/70 text-muted-foreground pt-1.5 pb-2 hover:bg-muted hover:text-foreground"
             )}
           >
             {t.label}
@@ -53,7 +57,7 @@ export function FolderTabs({
               <span
                 className={cn(
                   "rounded-full px-1.5 text-[10px] font-semibold tabular-nums",
-                  on ? "bg-muted text-muted-foreground" : "bg-background/60 text-muted-foreground/70"
+                  on ? "bg-muted text-muted-foreground" : "bg-background/70 text-muted-foreground/70"
                 )}
               >
                 {t.count}
