@@ -12,6 +12,8 @@ import {
   FilePlus,
   Globe,
   Pencil,
+  Eye,
+  Code2,
   AppWindow,
   GitBranch,
   FileType,
@@ -40,6 +42,11 @@ import {
   Cloud,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  isHtmlPath,
+  setHtmlViewMode,
+  type HtmlViewMode,
+} from "@/lib/ui/html-view-mode";
 import { decodeDrivePath } from "@/lib/google-drive/paths";
 import type { TreeNode as TreeNodeType } from "@/types";
 import { useTreeStore } from "@/stores/tree-store";
@@ -329,6 +336,15 @@ function TreeNodeImpl({
     doCopyRelative,
     doOpenInFinder,
   ]);
+
+  // Open a lone .html file in the chosen mode (rendered webpage vs. source).
+  // Persists the preference so re-opening keeps it, and updates an already-open
+  // viewer live via the html-view-mode event.
+  const openHtmlAs = (m: HtmlViewMode) => {
+    setHtmlViewMode(node.path, m);
+    selectPage(node.path);
+    void loadPage(node.path);
+  };
 
   const handleClick = () => {
     selectPage(node.path);
@@ -904,6 +920,21 @@ function TreeNodeImpl({
                 {t("treeNode:rename")}
                 <ContextMenuShortcut>{renameShortcut}</ContextMenuShortcut>
               </ContextMenuItem>
+            )}
+            {isHtmlPath(node.path) && (
+              // Lone HTML files: let the user choose how to open them — as a
+              // rendered webpage (the default) or as raw source. The viewer
+              // also carries a Preview/Source toggle.
+              <>
+                <ContextMenuItem onClick={() => openHtmlAs("preview")}>
+                  <Eye className="h-4 w-4 me-2" />
+                  Open as webpage
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => openHtmlAs("source")}>
+                  <Code2 className="h-4 w-4 me-2" />
+                  Open as source
+                </ContextMenuItem>
+              </>
             )}
             {hasFileSettings && (
               <ContextMenuItem onClick={() => setFileSettingsOpen(true)}>
