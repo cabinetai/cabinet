@@ -75,7 +75,7 @@ export function Header() {
           <DropdownMenuTrigger aria-label={t("editor:header.exportPage")} title={t("editor:header.exportPage")} className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
             <Download className="h-4 w-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-56 [&_[role=menuitem]]:whitespace-nowrap">
             <DropdownMenuItem onClick={handleCopyMarkdown}>
               <Copy className="h-4 w-4 mr-2" />
               {t("editor:header.copyMarkdown")}

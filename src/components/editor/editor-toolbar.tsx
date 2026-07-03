@@ -375,7 +375,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
 
   return (
     <>
-      <div className="relative flex items-stretch rounded-xl bg-muted/40">
+      <div className="relative flex items-stretch rounded-xl bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_2px_8px_-2px_rgb(0_0_0/0.06)]">
         <div className="relative flex-1 min-w-0">
           {/* Scroll indicator arrows */}
           {!sourceMode && canScrollLeft && (
