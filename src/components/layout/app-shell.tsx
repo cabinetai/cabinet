@@ -46,6 +46,7 @@ import { useGlobalHotkeys } from "@/hooks/use-global-hotkeys";
 import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { subscribeConversationEvents } from "@/lib/agents/conversation-events-client";
 import { StatusBar } from "@/components/layout/status-bar";
+import { ContentSheet } from "@/components/layout/content-sheet";
 import { DaemonHealthBanner } from "@/components/layout/daemon-health-banner";
 import { TourModal } from "@/components/onboarding/tour/tour-modal";
 import { useTour } from "@/components/onboarding/tour/use-tour";
@@ -1040,6 +1041,25 @@ export function AppShell() {
     return <OnboardingWizard onComplete={handleWizardComplete} />;
   }
 
+  // The default markdown editor renders its own chrome (breadcrumb + folder
+  // tabs + formatting toolbar) on the desk and its body in a ContentSheet, so
+  // it opts out of app-shell's single full-view sheet. Every other view is a
+  // single elevated sheet.
+  const isDefaultEditor =
+    section.type === "page" &&
+    appMode !== "browse" &&
+    !driveLoading &&
+    !isApp && !isCsv && !isPdf && !isWebsite && !isNotebook && !isCode &&
+    !isImage && !isVideo && !isAudio && !isMermaid && !isLatex && !isDocx &&
+    !isXlsx && !isPptx && !isUnknown && !googleFrontmatter?.url;
+
+  // Views that place their controls on the desk and their body in a
+  // ContentSheet manage their own layout — skip the app-shell sheet wrapper.
+  const bareLayout =
+    isDefaultEditor ||
+    section.type === "tasks" ||
+    section.type === "agents";
+
   return (
     <TaskRailProvider>
     {/* When the rail is open we reserve a 30px gutter on the inline-end
@@ -1073,17 +1093,19 @@ export function AppShell() {
         className="flex-1 flex flex-col min-w-0 overflow-hidden max-md:pb-[calc(56px+env(safe-area-inset-bottom))]"
         style={{ '--sidebar-toggle-offset': sidebarCollapsed ? 'calc(2.25rem + var(--traffic-clearance, 0px))' : '0px' } as React.CSSProperties}
       >
-        <div
-          className="flex-1 flex flex-col overflow-hidden bg-background min-h-0"
-          style={isMobile ? undefined : { borderRadius: 16, boxShadow: 'var(--sheet-shadow)' }}
-        >
-          <DaemonHealthBanner />
-          {!isMobile && <NarrowViewportHint />}
-          <main className="flex-1 flex flex-col overflow-hidden">
-            {renderContent()}
-          </main>
-          {terminalOpen && terminalPosition === "bottom" && <TerminalTabs />}
-        </div>
+        <DaemonHealthBanner />
+        {!isMobile && <NarrowViewportHint />}
+        {/* The main column IS the desk (transparent). Content floats on an
+            elevated ContentSheet; the editor manages its own layout — its
+            toolbars sit on the desk — so it opts out of the default sheet. */}
+        <main className="flex-1 flex flex-col overflow-hidden min-h-0 gap-1.5">
+          {bareLayout ? (
+            renderContent()
+          ) : (
+            <ContentSheet>{renderContent()}</ContentSheet>
+          )}
+        </main>
+        {terminalOpen && terminalPosition === "bottom" && <TerminalTabs />}
         {!isMobile && <StatusBar />}
       </div>
       <MobileBottomNav />

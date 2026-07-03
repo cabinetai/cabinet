@@ -108,7 +108,7 @@ export function ViewerToolbar({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-between gap-x-3 gap-y-2 border-b border-border/70 bg-background px-4 py-2 transition-[padding] duration-200 md:h-12 md:py-0",
+        "flex shrink-0 items-center justify-between gap-x-3 gap-y-2 px-3 py-1.5 transition-[padding] duration-200 md:h-10 md:py-0",
         className
       )}
       style={{ paddingInlineStart: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}

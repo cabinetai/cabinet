@@ -35,6 +35,7 @@ import { KanbanView } from "./kanban-view";
 import { ListView } from "./list-view";
 import { ScheduleView } from "@/components/cabinets/schedule-view";
 import { ViewToggle, type BoardViewMode } from "./view-toggle";
+import { ContentSheet } from "@/components/layout/content-sheet";
 import { DensityToggle, type BoardDensity } from "./density-toggle";
 import {
   ExplainerCard,
@@ -414,10 +415,10 @@ export function TasksBoard({
   const draggedAgent = draggedTask ? agentsBySlug.get(draggedTask.agentSlug ?? "") : undefined;
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+    <div className="flex h-full min-h-0 flex-col gap-1.5 text-foreground">
       <header
-        className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-border/70 bg-background px-4 py-2 transition-[padding] duration-200 md:h-12 md:flex-nowrap md:py-0"
-        style={{ paddingInlineStart: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
+        className="flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
+        style={{ paddingInlineStart: `calc(0.75rem + var(--sidebar-toggle-offset, 0px))` }}
       >
         {standalone && (
           <Link
@@ -635,7 +636,7 @@ export function TasksBoard({
         void handleDragEnd(e);
       }}
     >
-      <div className="relative flex min-h-0 flex-1 flex-col">
+      <ContentSheet className="relative">
         {!loading && tasks.length > 0 && filteredTasks.length === 0 && (
           <div className="flex items-center justify-between gap-3 border-b border-border bg-amber-500/10 px-3 py-2 text-[12px] text-amber-900 dark:text-amber-200">
             <span>
@@ -745,7 +746,7 @@ export function TasksBoard({
           </main>
         )}
 
-      </div>
+      </ContentSheet>
 
       <DragOverlay dropAnimation={null}>
         {draggedTask && draggedLane ? (

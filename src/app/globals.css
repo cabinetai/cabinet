@@ -92,9 +92,10 @@
      gutter is a hair darker than the sheet so every theme floats the content;
      the paper theme overrides --gutter with a warm manila. */
   --gutter: color-mix(in oklch, var(--background) 95%, var(--foreground) 5%);
-  /* Single soft ambient shadow — no tight layer, which was casting a hard
-     seam where the flush-left page meets the sidebar. */
-  --sheet-shadow: 0 6px 22px rgb(0 0 0 / 0.07);
+  /* Downward-biased soft shadow: negative spread keeps it from bleeding onto
+     the flush-left sidebar (no seam) while lifting the sheet clearly off the
+     desk below it. */
+  --sheet-shadow: 0 10px 28px -6px rgb(0 0 0 / 0.14);
   --terminal-bg: color-mix(in oklch, var(--card) 94%, black 6%);
   --terminal-fg: var(--foreground);
   --terminal-cursor: var(--primary);
@@ -163,6 +164,14 @@
   html {
     @apply font-sans;
   }
+  /* Manila Arc: the desk itself never scrolls — only the sidebar rail and the
+     elevated content sheet do. Locks the outer page so overloaded views can't
+     bounce the whole desk. */
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
   /* Audit #101: focus rings were barely visible in light theme at ring/50.
      Use full-opacity ring on :focus-visible for consistent keyboard nav. */
   :focus-visible {
@@ -175,7 +184,7 @@
    an inline theme var would stick. Every other theme derives --gutter from
    --background in :root / .dark, so they all float their content too. */
 html[data-custom-theme="paper"] {
-  --gutter: oklch(0.94 0.022 80);
+  --gutter: oklch(0.925 0.026 79);
 }
 
 /* Custom theme font overrides — outside @layer so they beat Tailwind utilities */

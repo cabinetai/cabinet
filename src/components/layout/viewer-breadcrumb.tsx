@@ -79,6 +79,39 @@ export function ViewerBreadcrumb({
     leafNode?.name ||
     segments[segments.length - 1];
 
+  const labelFor = (segPath: string, seg: string) => {
+    const node = findNodeByPath(nodes, segPath);
+    return node?.frontmatter?.title || node?.name || seg;
+  };
+
+  // Ancestors = every segment except the leaf. A deep path collapses its middle
+  // into a single "…" (jumping to the grandparent, tooltip lists what's hidden)
+  // so an overloaded breadcrumb stays one tidy line instead of wrapping.
+  const ancestors = segments.slice(0, -1);
+  type Crumb =
+    | { kind: "seg"; key: string; path: string; label: string }
+    | { kind: "gap"; key: string; hiddenLabel: string; jumpPath: string };
+  let crumbs: Crumb[];
+  if (ancestors.length > 3) {
+    const firstPath = segments[0];
+    const parentPath = ancestors.join("/");
+    const jumpPath = segments.slice(0, ancestors.length - 1).join("/");
+    const hiddenLabel = ancestors
+      .slice(1, -1)
+      .map((seg, i) => labelFor(segments.slice(0, i + 2).join("/"), seg))
+      .join(" / ");
+    crumbs = [
+      { kind: "seg", key: firstPath, path: firstPath, label: labelFor(firstPath, segments[0]) },
+      { kind: "gap", key: "__gap", hiddenLabel, jumpPath },
+      { kind: "seg", key: parentPath, path: parentPath, label: labelFor(parentPath, ancestors[ancestors.length - 1]) },
+    ];
+  } else {
+    crumbs = ancestors.map((seg, i) => {
+      const p = segments.slice(0, i + 1).join("/");
+      return { kind: "seg" as const, key: p, path: p, label: labelFor(p, seg) };
+    });
+  }
+
   return (
     <div className={cn("flex min-w-0 items-center gap-1 text-[11px] text-muted-foreground", className)}>
       <button
@@ -89,34 +122,39 @@ export function ViewerBreadcrumb({
       >
         <Home className="h-3 w-3" />
       </button>
-      {segments.map((segment, index) => {
-        const segmentPath = segments.slice(0, index + 1).join("/");
-        const isLast = index === segments.length - 1;
-        const node = findNodeByPath(nodes, segmentPath);
-        const label = node?.frontmatter?.title || node?.name || segment;
-        return (
-          <div key={segmentPath} className="flex min-w-0 items-center gap-1">
-            <ChevronRight className="h-3 w-3 shrink-0 opacity-40" />
-            {isLast ? (
-              <span
-                className="truncate text-[14px] font-semibold tracking-tight text-foreground"
-                title={leafTitle}
-              >
-                {leafTitle}
-              </span>
-            ) : (
-              <button
-                type="button"
-                onClick={() => navigateTo(segmentPath)}
-                className="max-w-[14rem] shrink-0 truncate rounded px-1 py-0.5 hover:bg-muted/60 hover:text-foreground"
-                title={`Open ${label}`}
-              >
-                {label}
-              </button>
-            )}
-          </div>
-        );
-      })}
+      {crumbs.map((c) => (
+        <div key={c.key} className="flex min-w-0 items-center gap-1">
+          <ChevronRight className="h-3 w-3 shrink-0 opacity-40" />
+          {c.kind === "gap" ? (
+            <button
+              type="button"
+              onClick={() => navigateTo(c.jumpPath)}
+              className="shrink-0 rounded px-1.5 py-0.5 hover:bg-muted/60 hover:text-foreground"
+              title={c.hiddenLabel}
+            >
+              …
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigateTo(c.path)}
+              className="max-w-[12rem] shrink-0 truncate rounded px-1 py-0.5 hover:bg-muted/60 hover:text-foreground"
+              title={`Open ${c.label}`}
+            >
+              {c.label}
+            </button>
+          )}
+        </div>
+      ))}
+      <div className="flex min-w-0 items-center gap-1">
+        <ChevronRight className="h-3 w-3 shrink-0 opacity-40" />
+        <span
+          className="truncate text-[14px] font-semibold tracking-tight text-foreground"
+          title={leafTitle}
+        >
+          {leafTitle}
+        </span>
+      </div>
     </div>
   );
 }

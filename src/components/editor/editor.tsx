@@ -11,6 +11,8 @@ import { EditorBubbleMenu } from "./bubble-menu";
 import { TableMenu } from "./table-menu";
 import { FindBar } from "./find-bar";
 import { FolderIndex } from "./folder-index";
+import { ContentSheet } from "@/components/layout/content-sheet";
+import { FolderTabs } from "@/components/layout/folder-tabs";
 import { useEditorStore } from "@/stores/editor-store";
 import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -634,53 +636,41 @@ export function KBEditor() {
   const onFilesTab = showFolderTabs && folderTab === "files";
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden gap-1.5 min-h-0">
+      {/* Manila Arc: folder tabs sit on the desk, directly over the sheet. */}
       {showFolderTabs && (
-        <div className="flex items-center gap-1 px-3 pt-2 border-b border-border">
-          <button
-            onClick={() => setFolderTab("page")}
-            className={`px-3 py-1.5 text-[12px] rounded-t-md border-b-2 -mb-px transition-colors ${
-              folderTab === "page"
-                ? "border-primary text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-            aria-pressed={folderTab === "page"}
-          >
-            Page
-          </button>
-          <button
-            onClick={() => setFolderTab("files")}
-            className={`px-3 py-1.5 text-[12px] rounded-t-md border-b-2 -mb-px transition-colors ${
-              folderTab === "files"
-                ? "border-primary text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-            aria-pressed={folderTab === "files"}
-          >
-            Files
-            <span className="ms-1.5 text-muted-foreground/60">
-              {renderedFolderChildren.length}
-            </span>
-          </button>
-        </div>
+        <FolderTabs
+          className="shrink-0"
+          ariaLabel="Page views"
+          active={folderTab}
+          onSelect={(id) => setFolderTab(id as "page" | "files")}
+          tabs={[
+            { id: "page", label: "Page" },
+            { id: "files", label: "Files", count: renderedFolderChildren.length },
+          ]}
+        />
       )}
+      {/* Files tab: elevated sheet holding the folder index. */}
       {onFilesTab && (
-        <div className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-6 py-6">
-            <FolderIndex
-              key={currentPath}
-              folderPath={currentPath}
-              entries={renderedFolderChildren}
-            />
+        <ContentSheet>
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-3xl mx-auto px-6 py-6">
+              <FolderIndex
+                key={currentPath}
+                folderPath={currentPath}
+                entries={renderedFolderChildren}
+              />
+            </div>
           </div>
-        </div>
+        </ContentSheet>
       )}
       {/* Editor + toolbar stay MOUNTED on the Files tab / in source mode —
           hidden via CSS, never unmounted. Unmounting made Tiptap re-run
           createNodeViews() on the next mount, which flushSyncs a React node
           view (e.g. a mermaid diagram) inside componentDidMount → React's
           "flushSync was called from inside a lifecycle method" warning. */}
-      <div className={onFilesTab ? "hidden" : "flex-1 flex flex-col overflow-hidden"}>
+      <div className={onFilesTab ? "hidden" : "flex-1 flex flex-col overflow-hidden gap-1.5 min-h-0"}>
+      {/* Formatting toolbar: a control strip on the desk, outside the sheet. */}
       <EditorToolbar
         editor={editor}
         sourceMode={sourceMode}
@@ -689,6 +679,7 @@ export function KBEditor() {
         onToggleWide={toggleWideMode}
       />
 
+      <ContentSheet>
       {sourceMode && (
         <div className="flex-1 overflow-y-auto p-4" dir={isRtl ? "rtl" : undefined}>
           <textarea
@@ -762,6 +753,7 @@ export function KBEditor() {
           {saveStatus === "error" && "Save failed"}
         </span>
       </div>
+      </ContentSheet>
       </div>
 
     </div>

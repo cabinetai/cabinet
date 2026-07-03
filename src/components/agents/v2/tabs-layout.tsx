@@ -28,6 +28,8 @@ import { AgentsTab } from "./agents-tab";
 import { RoutinesTab } from "./routines-tab";
 import { HeartbeatsTab } from "./heartbeats-tab";
 import { ScheduleView } from "@/components/cabinets/schedule-view";
+import { ContentSheet } from "@/components/layout/content-sheet";
+import { FolderTabs } from "@/components/layout/folder-tabs";
 
 export type AgentsTabKey = "agents" | "routines" | "heartbeats" | "schedule" | "channels";
 
@@ -47,15 +49,16 @@ export function TabsLayout({
   onTabChange: (next: AgentsTabKey) => void;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div className="flex h-full min-h-0 flex-col gap-1.5">
       <TopBar tab={tab} onTabChange={onTabChange} />
+      <ContentSheet>
       {tab === "schedule" ? (
-        // Full-bleed: the calendar fills the area below the tab bar.
+        // Full-bleed: the calendar fills the sheet below the tab bar.
         <div className="min-h-0 flex-1">
           <ScheduleMount />
         </div>
       ) : tab === "channels" ? (
-        // Full-bleed: the team channels viewer fills the area below the tab bar.
+        // Full-bleed: the team channels viewer fills the sheet below the tab bar.
         // ponytail: onOpenFile omitted → in-message file links are inert (add a
         // nav handler if users want to click through to KB pages).
         <div className="min-h-0 flex-1">
@@ -68,6 +71,7 @@ export function TabsLayout({
           {tab === "heartbeats" && <HeartbeatsTab />}
         </div>
       )}
+      </ContentSheet>
     </div>
   );
 }
@@ -141,19 +145,16 @@ function TopBar({
     useAgentsContext();
   return (
     <header
-      className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-border/70 bg-background px-4 py-2 transition-[padding] duration-200 md:h-12 md:flex-nowrap md:py-0"
-      style={{ paddingInlineStart: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
+      className="flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
+      style={{ paddingInlineStart: `calc(0.75rem + var(--sidebar-toggle-offset, 0px))` }}
     >
-      <div className="flex items-center gap-2">
-        <h1 className="font-ui text-[14px] font-semibold tracking-tight">Team</h1>
+      <div className="order-2 min-w-0 flex-1 overflow-x-auto md:order-1">
+        <TabStrip tab={tab} onTabChange={onTabChange} />
+      </div>
+      <div className="order-1 ms-auto flex items-center gap-2 pb-1 md:order-2">
         {loading && (
           <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
         )}
-      </div>
-      <div className="order-3 w-full overflow-x-auto md:order-2 md:ms-2 md:w-auto md:overflow-visible">
-        <TabStrip tab={tab} onTabChange={onTabChange} />
-      </div>
-      <div className="order-2 ms-auto flex items-center gap-2 md:order-3">
         <DepthDropdown mode={visibilityMode} onChange={setVisibilityMode} />
         <Divider className="hidden md:block" />
         <button
@@ -287,46 +288,24 @@ function TabStrip({
     channels: undefined,
   };
   return (
-    <nav
-      className="flex h-7 items-center rounded-lg border border-border/60 p-0.5"
-      role="tablist"
-    >
-      {TABS.map((t) => {
-        const active = tab === t.key;
+    <FolderTabs
+      ariaLabel="Team views"
+      active={tab}
+      onSelect={(id) => onTabChange(id as AgentsTabKey)}
+      tabs={TABS.map((t) => {
         const Icon = t.icon;
-        const count = counts[t.key];
-        return (
-          <button
-            key={t.key}
-            type="button"
-            role="tab"
-            aria-selected={active}
-            onClick={() => onTabChange(t.key)}
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
-              active
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <Icon className="size-3.5" />
-            {t.label}
-            {typeof count === "number" ? (
-              <span
-                className={cn(
-                  "rounded-full px-1.5 py-px text-[9.5px] font-semibold tabular-nums",
-                  active
-                    ? "bg-primary-foreground/20 text-primary-foreground"
-                    : "bg-muted/60 text-muted-foreground/80"
-                )}
-              >
-                {count}
-              </span>
-            ) : null}
-          </button>
-        );
+        return {
+          id: t.key,
+          label: (
+            <span className="inline-flex items-center gap-1.5">
+              <Icon className="size-3.5" />
+              {t.label}
+            </span>
+          ),
+          count: counts[t.key],
+        };
       })}
-    </nav>
+    />
   );
 }
 
