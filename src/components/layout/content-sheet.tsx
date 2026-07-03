@@ -13,13 +13,10 @@ export function ContentSheet({
   children,
   className,
   style,
-  flatTop,
 }: {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
-  /** Square off the top corners so folder tabs connect seamlessly. */
-  flatTop?: boolean;
 }) {
   const isMobile = useIsMobile();
   return (
@@ -31,13 +28,7 @@ export function ContentSheet({
       style={{
         ...(isMobile
           ? {}
-          : {
-              borderRadius: 16,
-              // Only the corner where the active tab connects is squared off;
-              // every other corner stays rounded + elevated like the rest.
-              ...(flatTop ? { borderStartStartRadius: 0 } : {}),
-              boxShadow: "var(--sheet-shadow)",
-            }),
+          : { borderRadius: 16, boxShadow: "var(--sheet-shadow)" }),
         ...style,
       }}
     >

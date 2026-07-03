@@ -637,24 +637,37 @@ export function KBEditor() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      {/* Manila Arc: folder tabs sit on the desk and connect into the strip
-          below them (the toolbar on the Page tab, the folder-index sheet on
-          the Files tab). */}
-      {showFolderTabs && (
-        <FolderTabs
-          className="shrink-0 px-1"
-          ariaLabel="Page views"
-          active={folderTab}
-          onSelect={(id) => setFolderTab(id as "page" | "files")}
-          tabs={[
-            { id: "page", label: "Page" },
-            { id: "files", label: "Files", count: renderedFolderChildren.length },
-          ]}
-        />
-      )}
+      {/* Chrome row on the desk: folder tabs on the left; on the Page tab the
+          formatting toolbar scrolls to the right of them (transparent, faded).
+          Only the tabs connect down into the sheet below. */}
+      <div className="flex shrink-0 items-end gap-3 ps-4 pe-2">
+        {showFolderTabs && (
+          <FolderTabs
+            className="shrink-0"
+            ariaLabel="Page views"
+            active={folderTab}
+            onSelect={(id) => setFolderTab(id as "page" | "files")}
+            tabs={[
+              { id: "page", label: "Page" },
+              { id: "files", label: "Files", count: renderedFolderChildren.length },
+            ]}
+          />
+        )}
+        {!onFilesTab && (
+          <div className="min-w-0 flex-1 mb-1">
+            <EditorToolbar
+              editor={editor}
+              sourceMode={sourceMode}
+              onToggleSource={toggleSourceMode}
+              wideMode={wideMode}
+              onToggleWide={toggleWideMode}
+            />
+          </div>
+        )}
+      </div>
       {/* Files tab: elevated sheet holding the folder index. */}
       {onFilesTab && (
-        <ContentSheet flatTop>
+        <ContentSheet>
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto px-6 py-6">
               <FolderIndex
@@ -666,21 +679,9 @@ export function KBEditor() {
           </div>
         </ContentSheet>
       )}
-      {/* Editor + toolbar stay MOUNTED on the Files tab / in source mode —
-          hidden via CSS, never unmounted. Unmounting made Tiptap re-run
-          createNodeViews() on the next mount, which flushSyncs a React node
-          view (e.g. a mermaid diagram) inside componentDidMount → React's
-          "flushSync was called from inside a lifecycle method" warning. */}
-      <div className={onFilesTab ? "hidden" : "flex-1 flex flex-col overflow-hidden gap-1.5 min-h-0"}>
-      {/* Formatting toolbar: a control strip on the desk, outside the sheet. */}
-      <EditorToolbar
-        editor={editor}
-        sourceMode={sourceMode}
-        onToggleSource={toggleSourceMode}
-        wideMode={wideMode}
-        onToggleWide={toggleWideMode}
-      />
-
+      {/* The editor body stays MOUNTED on the Files tab (hidden via CSS), else
+          Tiptap re-runs createNodeViews and flushSyncs inside a lifecycle. */}
+      <div className={onFilesTab ? "hidden" : "flex-1 flex flex-col overflow-hidden min-h-0"}>
       <ContentSheet>
       {sourceMode && (
         <div className="flex-1 overflow-y-auto p-4" dir={isRtl ? "rtl" : undefined}>

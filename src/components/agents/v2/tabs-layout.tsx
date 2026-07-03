@@ -51,7 +51,7 @@ export function TabsLayout({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <TopBar tab={tab} onTabChange={onTabChange} />
-      <ContentSheet flatTop>
+      <ContentSheet>
       {tab === "schedule" ? (
         // Full-bleed: the calendar fills the sheet below the tab bar.
         <div className="min-h-0 flex-1">

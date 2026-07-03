@@ -640,7 +640,7 @@ export function TasksBoard({
         void handleDragEnd(e);
       }}
     >
-      <ContentSheet flatTop className="relative">
+      <ContentSheet className="relative">
         {!loading && tasks.length > 0 && filteredTasks.length === 0 && (
           <div className="flex items-center justify-between gap-3 border-b border-border bg-amber-500/10 px-3 py-2 text-[12px] text-amber-900 dark:text-amber-200">
             <span>
