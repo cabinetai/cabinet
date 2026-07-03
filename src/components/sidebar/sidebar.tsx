@@ -218,8 +218,8 @@ export function Sidebar() {
                 </span>
               )}
             </button>
-            {/* The room switcher is just the room's icon next to the logo;
-                the room/cabinet name already shows in the drawer + main view. */}
+            {/* The room switcher shows the current room's icon + name next to
+                the logo; the name truncates on narrow rails. */}
             <RoomSwitcher />
           </div>
           <div className="flex shrink-0 items-center gap-0.5">
@@ -314,10 +314,7 @@ export function Sidebar() {
               "h-7 w-7 shrink-0",
               section.type === "integrations" && "bg-accent text-foreground"
             )}
-            onClick={() => {
-              setSection({ type: "integrations" });
-              setCollapsed(true);
-            }}
+            onClick={() => setSection({ type: "integrations" })}
           >
             <Blocks className="h-3.5 w-3.5" />
           </Button>
@@ -344,9 +341,26 @@ export function Sidebar() {
             aria-orientation="vertical"
             aria-label={t("sidebar:resizeHandle")}
             title={t("sidebar:resetWidth")}
+            tabIndex={0}
+            aria-valuemin={SIDEBAR_MIN_WIDTH}
+            aria-valuemax={SIDEBAR_MAX_WIDTH}
+            aria-valuenow={sidebarWidth}
             onPointerDown={startResize}
             onDoubleClick={() => setSidebarWidth(SIDEBAR_DEFAULT_WIDTH)}
-            className="absolute inset-y-0 inset-x-0 mx-auto w-3 cursor-col-resize bg-transparent"
+            onKeyDown={(event) => {
+              const STEP = 16;
+              if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                setSidebarWidth((w) => clamp(w - STEP, SIDEBAR_MIN_WIDTH, SIDEBAR_MAX_WIDTH));
+              } else if (event.key === "ArrowRight") {
+                event.preventDefault();
+                setSidebarWidth((w) => clamp(w + STEP, SIDEBAR_MIN_WIDTH, SIDEBAR_MAX_WIDTH));
+              } else if (event.key === "Home" || event.key === "Enter") {
+                event.preventDefault();
+                setSidebarWidth(SIDEBAR_DEFAULT_WIDTH);
+              }
+            }}
+            className="absolute inset-y-0 inset-x-0 mx-auto w-3 cursor-col-resize bg-transparent focus-visible:outline-none focus-visible:bg-primary/40"
           />
         </div>
       )}

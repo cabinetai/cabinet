@@ -36,6 +36,13 @@ import type { ConversationMeta } from "@/types/conversations";
 import type { JobConfig } from "@/types/jobs";
 import type { ScheduleEvent } from "@/lib/agents/cron-compute";
 
+// Audit #064: user-facing copy for a failed Schedule action. Replaces the
+// developer term "daemon" (which end users can't act on) with plain, actionable
+// guidance. `action` is the specific "Couldn't …" clause per call site.
+function serviceDownMessage(action: string): string {
+  return `${action} — Cabinet's background service isn't responding. Make sure Cabinet is fully started, then try again.`;
+}
+
 type RepeatMode = "none" | "daily" | "weekly" | "custom";
 
 interface CreateState {
@@ -267,7 +274,7 @@ export function ScheduleView({
           scheduleRefresh();
         } catch {
           rollbackPatch(job.scopedId);
-          showError("Couldn't reschedule. Is the daemon running?");
+          showError(serviceDownMessage("Couldn't reschedule"));
         }
         return;
       }
@@ -288,7 +295,7 @@ export function ScheduleView({
           scheduleRefresh();
         } catch {
           rollbackPatch(job.scopedId);
-          showError("Couldn't update the series. Is the daemon running?");
+          showError(serviceDownMessage("Couldn't update the series"));
         }
         return;
       }
@@ -355,7 +362,7 @@ export function ScheduleView({
         } catch {
           rollbackPatch(job.scopedId);
           setCreatedJobs((c) => c.filter((j) => j.scopedId !== tempScopedId));
-          showError("Couldn't split the series. Is the daemon running?");
+          showError(serviceDownMessage("Couldn't split the series"));
         }
         return;
       }
@@ -422,7 +429,7 @@ export function ScheduleView({
       } catch {
         rollbackPatch(job.scopedId);
         setCreatedJobs((c) => c.filter((j) => j.scopedId !== tempScopedId));
-        showError("Couldn't move this occurrence. Is the daemon running?");
+        showError(serviceDownMessage("Couldn't move this occurrence"));
       }
     },
     [cabinetPath, rollbackPatch, scheduleRefresh],
@@ -454,7 +461,7 @@ export function ScheduleView({
         showSuccess(`Running ${event.label} now…`);
         scheduleRefresh();
       } catch {
-        showError("Couldn't start the run. Is the daemon running?");
+        showError(serviceDownMessage("Couldn't start the run"));
       }
     },
     [cabinetPath, scheduleRefresh],
@@ -493,7 +500,7 @@ export function ScheduleView({
         }
       } catch {
         if (job) rollbackPatch(job.scopedId);
-        showError("Couldn't update. Is the daemon running?");
+        showError(serviceDownMessage("Couldn't update"));
       }
     },
     [cabinetPath, rollbackPatch, scheduleRefresh],
@@ -520,7 +527,7 @@ export function ScheduleView({
           n.delete(job.scopedId);
           return n;
         });
-        showError("Couldn't delete. Is the daemon running?");
+        showError(serviceDownMessage("Couldn't delete"));
       }
     },
     [cabinetPath, scheduleRefresh],
@@ -562,7 +569,7 @@ export function ScheduleView({
         scheduleRefresh();
       } catch {
         setCreatedJobs((c) => c.filter((j) => j.scopedId !== tempScopedId));
-        showError("Couldn't duplicate. Is the daemon running?");
+        showError(serviceDownMessage("Couldn't duplicate"));
       }
     },
     [cabinetPath, scheduleRefresh],
@@ -586,7 +593,7 @@ export function ScheduleView({
         scheduleRefresh();
       } catch {
         rollbackPatch(job.scopedId);
-        showError("Couldn't skip this occurrence. Is the daemon running?");
+        showError(serviceDownMessage("Couldn't skip this occurrence"));
       }
     },
     [cabinetPath, rollbackPatch, scheduleRefresh],
@@ -711,7 +718,7 @@ export function ScheduleView({
       scheduleRefresh();
     } catch {
       setCreatedJobs((c) => c.filter((j) => j.scopedId !== tempScopedId));
-      showError("Couldn't create the task. Is the daemon running?");
+      showError(serviceDownMessage("Couldn't create the task"));
     } finally {
       setCreating(false);
     }

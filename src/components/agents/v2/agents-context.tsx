@@ -229,7 +229,11 @@ export function AgentsContextProvider({
 
   const toggleAllAgentsActive = useCallback(async () => {
     if (bulkToggleInFlight) return;
-    const turningOff = agents.some((a) => a.active);
+    // Master switch is "on" only when EVERY agent is active. If any agent is
+    // still stopped, the click starts the remaining ones (start-all); we only
+    // stop-all when the whole team is already running (#072).
+    const allActive = agents.length > 0 && agents.every((a) => a.active);
+    const turningOff = allActive;
     // Only flip the agents that actually need to change. Targets is
     // also the list we'll write per-agent — bypassing the scheduler
     // bulk endpoint, which filters by a single cabinetPath and silently

@@ -160,7 +160,9 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
     () => (overview?.agents || []).filter((a) => a.cabinetDepth === 0),
     [overview?.agents]
   );
-  const boardName = displayName || "there";
+  // Empty when the user is unknown — the composer drops the name entirely
+  // rather than greeting a named user as an impersonal "there" (#001).
+  const boardName = displayName;
   const agentCount = overview?.agents.length ?? 0;
   const jobCount = overview?.jobs.length ?? 0;
   const heartbeatCount = useMemo(
@@ -206,9 +208,11 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
           className="flex flex-wrap items-center gap-3 border-b border-border/70 bg-background/95 py-2.5 pe-4 ps-[calc(1rem+var(--sidebar-toggle-offset,0px))] transition-[padding] duration-200 sm:pe-6 sm:ps-[calc(1.5rem+var(--sidebar-toggle-offset,0px))]"
         >
           <div className="flex min-w-0 items-center gap-3">
-            <h1 className="truncate font-ui text-[14px] font-semibold tracking-tight text-foreground">
+            {/* #004: the composer hero owns the single <h1> (the greeting), so
+                this cabinet-name title is a section heading, not a second h1. */}
+            <h2 className="truncate font-ui text-[14px] font-semibold tracking-tight text-foreground">
               {cabinetName}
-            </h1>
+            </h2>
             {loading && !overview ? (
               <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
             ) : null}
@@ -291,6 +295,13 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
                   jobs={overview?.jobs || []}
                   now={now}
                   onEventClick={handleScheduleEventClick}
+                  onViewAll={() =>
+                    setSection({
+                      type: "agents",
+                      cabinetPath,
+                      agentsTab: "schedule",
+                    })
+                  }
                 />
                 {(overview?.children?.length ?? 0) > 0 && (
                   <div className="mt-8 space-y-2">

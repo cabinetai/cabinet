@@ -190,7 +190,7 @@ export function ComposerInput({
       <div
         className={cn(
           "relative flex flex-col",
-          variant === "card" && "rounded-2xl border border-border bg-card",
+          variant === "card" && "rounded-2xl border border-foreground/10 bg-card shadow-[0_1px_3px_rgb(0_0_0/0.05)]",
           focusTint && "transition-all",
           focusTint && cardFocused && "shadow-sm",
           isDragging && "ring-2 ring-primary/60 ring-offset-0"
@@ -303,11 +303,6 @@ export function ComposerInput({
             </div>
           ) : null}
           <div className="flex items-center gap-3 ms-auto">
-            <div className="hidden sm:flex items-center gap-1 text-[11px] text-muted-foreground/35 select-none">
-              <kbd className="rounded border border-border/40 bg-muted/40 px-1 py-0.5 font-mono text-[10px]">⌘</kbd>
-              <kbd className="rounded border border-border/40 bg-muted/40 px-1 py-0.5 font-mono text-[10px]">↵</kbd>
-              <span>newline</span>
-            </div>
             {secondaryAction && (
               <Button
                 variant="outline"
@@ -355,10 +350,23 @@ export function ComposerInput({
         {footer}
       </div>
 
+      {/* Audit #012/#013: one calm hint line instead of two competing rows.
+          It leads with how to send (plain ↵ submits, per use-composer) — the
+          old hint only advertised a redundant "⌘↵ newline" and never told the
+          user Enter submits — then folds in newline + the @-mention affordance. */}
       {showKeyHint && (
-        <div className="flex items-center justify-end px-2 pt-2 pb-2">
-          <span className="text-[11px] text-muted-foreground/50">
-            use <kbd className="rounded border border-border/50 bg-muted/50 px-1 py-0.5 font-mono text-[10px]">@</kbd> to mention agents, skills &amp; pages
+        <div className="flex flex-wrap items-center justify-end gap-x-2.5 gap-y-1 px-2 pt-2 pb-2 text-[11px] text-muted-foreground/60 select-none">
+          <span className="hidden items-center gap-1 sm:inline-flex">
+            <kbd className="rounded border border-border/50 bg-muted/50 px-1 py-0.5 font-mono text-[10px]">↵</kbd>
+            send
+          </span>
+          <span className="hidden items-center gap-1 sm:inline-flex">
+            <kbd className="rounded border border-border/50 bg-muted/50 px-1 py-0.5 font-mono text-[10px]">⇧↵</kbd>
+            newline
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <kbd className="rounded border border-border/50 bg-muted/50 px-1 py-0.5 font-mono text-[10px]">@</kbd>
+            to mention
           </span>
         </div>
       )}

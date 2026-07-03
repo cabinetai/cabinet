@@ -105,6 +105,7 @@ export function AgentsTab() {
       filters={
         <>
           <FilterChip
+            ariaLabel="Filter by department"
             value={deptFilter}
             onChange={(v) => setDeptFilter(v as string | "all")}
             options={departments.map((d) => ({
@@ -113,10 +114,11 @@ export function AgentsTab() {
             }))}
           />
           <FilterChip
+            ariaLabel="Filter by status"
             value={activeFilter}
             onChange={(v) => setActiveFilter(v as typeof activeFilter)}
             options={[
-              { value: "all", label: "All" },
+              { value: "all", label: "All statuses" },
               { value: "active", label: "Active only" },
               { value: "stopped", label: "Stopped only" },
             ]}

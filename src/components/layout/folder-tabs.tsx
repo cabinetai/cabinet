@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export interface FolderTab {
@@ -27,6 +27,29 @@ export function FolderTabs({
   className?: string;
   ariaLabel?: string;
 }) {
+  // ARIA tabs keyboard pattern: roving tabindex (only the active tab is
+  // tabbable) + arrow/Home/End to move focus and selection between tabs.
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+    const i = tabs.findIndex((t) => t.id === active);
+    if (i < 0) return;
+    e.preventDefault();
+    const next =
+      e.key === "ArrowLeft"
+        ? (i - 1 + tabs.length) % tabs.length
+        : e.key === "ArrowRight"
+          ? (i + 1) % tabs.length
+          : e.key === "Home"
+            ? 0
+            : tabs.length - 1;
+    const id = tabs[next]?.id;
+    if (!id) return;
+    onSelect(id);
+    e.currentTarget
+      .querySelectorAll<HTMLButtonElement>('[role="tab"]')
+      [next]?.focus();
+  };
+
   // The tablist overlaps the sheet below it by 1px (-mb-px); the active tab
   // shares the sheet's fill so the two read as one folder, while inactive tabs
   // are recessed (muted, shorter) behind it.
@@ -34,6 +57,7 @@ export function FolderTabs({
     <div
       role="tablist"
       aria-label={ariaLabel}
+      onKeyDown={onKeyDown}
       className={cn("relative z-10 -mb-px flex items-end gap-0.5", className)}
     >
       {tabs.map((t) => {
@@ -43,6 +67,7 @@ export function FolderTabs({
             key={t.id}
             role="tab"
             aria-selected={on}
+            tabIndex={on ? 0 : -1}
             type="button"
             onClick={() => onSelect(t.id)}
             className={cn(
@@ -53,11 +78,11 @@ export function FolderTabs({
             )}
           >
             {t.label}
-            {typeof t.count === "number" && (
+            {typeof t.count === "number" && t.count > 0 && (
               <span
                 className={cn(
                   "rounded-full px-1.5 text-[10px] font-semibold tabular-nums",
-                  on ? "bg-muted text-muted-foreground" : "bg-background/70 text-muted-foreground/70"
+                  on ? "bg-muted text-muted-foreground" : "bg-background text-muted-foreground"
                 )}
               >
                 {t.count}

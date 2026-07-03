@@ -46,24 +46,27 @@ export function Header() {
 
   const handleCopyHTML = async () => {
     if (!content) return;
-    // Convert markdown to HTML for clipboard
-    const res = await fetch(`/api/pages/${currentPath}`);
-    if (res.ok) {
-      const data = await res.json();
-      // Use the remark pipeline via a simple conversion
-      const { markdownToHtml } = await import("@/lib/markdown/to-html");
-      const html = await markdownToHtml(data.content);
-      await navigator.clipboard.writeText(html);
-    }
+    // Convert the LIVE editor content (not a refetched saved copy, which would
+    // miss unsaved edits) and pass the page path so relative image/link URLs
+    // resolve instead of pasting in broken (#031).
+    const { markdownToHtml } = await import("@/lib/markdown/to-html");
+    const html = await markdownToHtml(content, currentPath || undefined);
+    await navigator.clipboard.writeText(html);
   };
 
   const handleDownloadMarkdown = () => {
-    if (!content || !frontmatter) return;
+    // Guard on content only — a valid page with no YAML frontmatter must still
+    // download; derive the filename from the title or the path basename (#032).
+    if (!content) return;
+    const base =
+      frontmatter?.title ||
+      currentPath?.split("/").pop()?.replace(/\.md$/, "") ||
+      "page";
     const blob = new Blob([content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${frontmatter.title || "page"}.md`;
+    a.download = `${base}.md`;
     a.click();
     URL.revokeObjectURL(url);
   };

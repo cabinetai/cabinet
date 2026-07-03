@@ -121,11 +121,13 @@ export function RoutinesTab() {
       filters={
         <>
           <FilterChip
+            ariaLabel="Filter by agent"
             value={agentFilter}
             onChange={(v) => setAgentFilter(v as string | "all")}
             options={agentOptions}
           />
           <FilterChip
+            ariaLabel="Filter by status"
             value={statusFilter}
             onChange={(v) => setStatusFilter(v as typeof statusFilter)}
             options={[
@@ -207,16 +209,8 @@ function RoutineRow({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
       onClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onOpen();
-        }
-      }}
-      className="group flex h-10 items-center gap-3 px-3 outline-none transition-colors hover:bg-muted/40 focus-visible:bg-muted/40"
+      className="group flex h-10 items-center gap-3 px-3 transition-colors hover:bg-muted/40 focus-within:bg-muted/40"
     >
       <Clock3
         className={cn(
@@ -235,14 +229,20 @@ function RoutineRow({
         <div className="size-5 shrink-0 rounded-full bg-muted/40" />
       )}
       <div className="flex min-w-0 flex-1 items-baseline gap-2 overflow-hidden">
-        <span
+        <button
+          type="button"
+          title={job.name || "(untitled routine)"}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpen();
+          }}
           className={cn(
-            "truncate text-[12.5px] font-semibold",
+            "min-w-0 truncate text-left text-[12.5px] font-semibold outline-none",
             firing ? "text-foreground" : "text-muted-foreground/70"
           )}
         >
           {job.name || "(untitled routine)"}
-        </span>
+        </button>
         {owner ? (
           <span
             className={cn(

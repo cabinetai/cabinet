@@ -572,36 +572,43 @@ export function KBEditor() {
     const folderNode = findNodeByPath(nodes, currentPath);
     const folderChildren = folderNode?.children ?? [];
     const hasChildren = folderChildren.length > 0;
+    // Float the placeholder + folder index on the elevated cream sheet, same
+    // as every other editor view — a bare desk-flat column reads as an
+    // off-system, unfinished screen (#025).
     return (
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
-          <div className="space-y-3">
-            <p className="text-lg font-medium tracking-[-0.02em] text-foreground">
-              {inferredTitle}
-            </p>
-            <p className="text-sm text-muted-foreground/80">
-              This folder doesn&apos;t have an{" "}
-              <code className="px-1 py-0.5 rounded bg-muted text-[12px]">index.md</code>
-              {hasChildren
-                ? " yet — its contents are listed below."
-                : " yet."}
-            </p>
-            <button
-              onClick={() => void createMissingPage(inferredTitle)}
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[13px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              <FilePlus className="h-3.5 w-3.5" />
-              Create page
-            </button>
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+        <ContentSheet>
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
+              <div className="space-y-3">
+                <p className="text-lg font-medium tracking-[-0.02em] text-foreground">
+                  {inferredTitle}
+                </p>
+                <p className="text-sm text-muted-foreground/80">
+                  This folder doesn&apos;t have an{" "}
+                  <code className="px-1 py-0.5 rounded bg-muted text-[12px]">index.md</code>
+                  {hasChildren
+                    ? " yet — its contents are listed below."
+                    : " yet."}
+                </p>
+                <button
+                  onClick={() => void createMissingPage(inferredTitle)}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[13px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  <FilePlus className="h-3.5 w-3.5" />
+                  Create page
+                </button>
+              </div>
+              {hasChildren && (
+                <FolderIndex
+                  key={currentPath}
+                  folderPath={currentPath}
+                  entries={folderChildren}
+                />
+              )}
+            </div>
           </div>
-          {hasChildren && (
-            <FolderIndex
-              key={currentPath}
-              folderPath={currentPath}
-              entries={folderChildren}
-            />
-          )}
-        </div>
+        </ContentSheet>
       </div>
     );
   }
@@ -716,12 +723,12 @@ export function KBEditor() {
             <div className="max-w-[var(--editor-max-w,48rem)] mx-auto px-8 pb-8 flex items-center gap-4">
               <button
                 onClick={handleOpenAI}
-                className="group flex items-center gap-2 text-[13px] text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer"
+                className="group flex items-center gap-2 text-[13px] text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5 group-hover:text-primary transition-colors" />
                 <span>{t("editorExtras:editWithAi")}</span>
               </button>
-              <span className="text-[11px] text-muted-foreground/30 select-none">
+              <span className="text-[11px] text-muted-foreground/60 select-none">
                 <kbd className="rounded px-1 py-0.5 font-mono text-[10px] ring-1 ring-foreground/10">/</kbd>
                 {" "}for commands
               </span>

@@ -296,11 +296,17 @@ function LanguageSection() {
       <p className="text-[12px] text-muted-foreground mb-4">
         {t("settings:language.description")}
       </p>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1">
+      <div
+        role="radiogroup"
+        aria-label={t("settings:language.title")}
+        className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-1"
+      >
         {supported.map((opt) => (
           <button
             key={opt.value}
             type="button"
+            role="radio"
+            aria-checked={locale === opt.value}
             onClick={() => setLocale(opt.value)}
             dir={opt.dir}
             title={opt.dir === "rtl" ? "RTL ←" : undefined}
@@ -417,6 +423,7 @@ export function SettingsPage() {
     }
   };
   const [dataDir, setDataDir] = useState("");
+  const [dataDirCopied, setDataDirCopied] = useState(false);
   const [dataDirPending, setDataDirPending] = useState<string | null>(null);
   const [dataDirBrowsing, setDataDirBrowsing] = useState(false);
   const [dataDirSaving, setDataDirSaving] = useState(false);
@@ -843,6 +850,7 @@ export function SettingsPage() {
                 <a
                   key={t.id}
                   href={`#/settings/${t.id}`}
+                  aria-current={tab === t.id ? "page" : undefined}
                   onClick={(e) => {
                     e.preventDefault();
                     setTab(t.id);
@@ -870,6 +878,7 @@ export function SettingsPage() {
               <a
                 key={t.id}
                 href={`#/settings/${t.id}`}
+                aria-current={tab === t.id ? "page" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
                   setTab(t.id);
@@ -994,10 +1003,16 @@ export function SettingsPage() {
 
                   <div>
                     <p className="text-[11px] uppercase tracking-wider text-muted-foreground/60 mb-2">{t("settings:appearance.lightThemes")}</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div
+                      role="radiogroup"
+                      aria-label={t("settings:appearance.lightThemes")}
+                      className="grid grid-cols-2 sm:grid-cols-3 gap-2"
+                    >
                       {lightThemes.map((t) => (
                         <button
                           key={t.name}
+                          role="radio"
+                          aria-checked={activeThemeName === t.name}
                           onClick={() => selectTheme(t)}
                           title={`Apply ${t.label} theme`}
                           className={cn(
@@ -1037,10 +1052,16 @@ export function SettingsPage() {
 
                   <div>
                     <p className="text-[11px] uppercase tracking-wider text-muted-foreground/60 mb-2">{t("settings:appearance.darkThemes")}</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div
+                      role="radiogroup"
+                      aria-label={t("settings:appearance.darkThemes")}
+                      className="grid grid-cols-2 sm:grid-cols-3 gap-2"
+                    >
                       {darkThemes.map((t) => (
                         <button
                           key={t.name}
+                          role="radio"
+                          aria-checked={activeThemeName === t.name}
                           onClick={() => selectTheme(t)}
                           title={`Apply ${t.label} theme`}
                           className={cn(
@@ -1189,11 +1210,19 @@ export function SettingsPage() {
                     variant="ghost"
                     size="sm"
                     className="h-6 px-2 text-[11px]"
+                    aria-label={t("settings:common.copyToClipboard")}
+                    title={t("settings:common.copyToClipboard")}
                     onClick={() => {
                       navigator.clipboard.writeText(dataDir);
+                      setDataDirCopied(true);
+                      setTimeout(() => setDataDirCopied(false), 2000);
                     }}
                   >
-                    <Copy className="h-3 w-3" />
+                    {dataDirCopied ? (
+                      <ClipboardCheck className="h-3 w-3 text-emerald-500" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -1354,7 +1383,7 @@ export function SettingsPage() {
                 ) : (
                   <div className="space-y-3">
                     <div>
-                      <div className="mb-3 rounded-lg border border-border bg-card p-3 space-y-2">
+                      <div className="mb-3 rounded-lg border border-card-edge bg-card p-3 space-y-2">
                         <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                           {t("settings:providers.defaultRuntime")}
                         </label>
@@ -1415,7 +1444,7 @@ export function SettingsPage() {
                             return (
                               <div
                                 key={provider.id}
-                                className="bg-card border border-border rounded-lg p-3 space-y-2"
+                                className="bg-card border border-card-edge rounded-lg p-3 space-y-2"
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
@@ -1692,7 +1721,7 @@ export function SettingsPage() {
                         ].map((p) => (
                           <div
                             key={p.name}
-                            className="flex items-center justify-between bg-card border border-border rounded-lg p-3 opacity-50"
+                            className="flex items-center justify-between bg-card border border-card-edge rounded-lg p-3 opacity-50"
                           >
                             <div className="flex items-center gap-3">
                               <XCircle className="h-4 w-4 text-muted-foreground" />
@@ -1732,7 +1761,7 @@ export function SettingsPage() {
                       { icon: "💬", name: t("settings:notifications.channelSlackName"), desc: t("settings:notifications.channelSlackDesc") },
                       { icon: "📧", name: t("settings:notifications.channelEmailName"), desc: t("settings:notifications.channelEmailDesc") },
                     ].map((ch) => (
-                      <div key={ch.name} className="bg-card border border-border rounded-lg p-3">
+                      <div key={ch.name} className="bg-card border border-card-edge rounded-lg p-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <span className="text-lg">{ch.icon}</span>
@@ -1762,7 +1791,7 @@ export function SettingsPage() {
                       { event: t("settings:notifications.ruleFloorEvent"), desc: t("settings:notifications.ruleFloorDesc") },
                       { event: t("settings:notifications.ruleHealthEvent"), desc: t("settings:notifications.ruleHealthDesc") },
                     ].map((rule) => (
-                      <div key={rule.event} className="flex items-center justify-between bg-card border border-border rounded-lg px-3 py-2">
+                      <div key={rule.event} className="flex items-center justify-between bg-card border border-card-edge rounded-lg px-3 py-2">
                         <div>
                           <p className="text-[12px] font-medium">{rule.event}</p>
                           <p className="text-[10px] text-muted-foreground/60">{rule.desc}</p>

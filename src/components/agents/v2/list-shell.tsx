@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ChevronDown, ListFilter, Search } from "lucide-react";
+import { ChevronDown, ListFilter, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Search input + N filter chips + list pane shell, shared across all tabs. */
@@ -57,10 +57,21 @@ export function ListShell({
           <input
             type="text"
             placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="h-8 w-full rounded-md border border-border/70 bg-background pl-8 pr-3 text-[12.5px] outline-none placeholder:text-muted-foreground focus:border-ring"
+            className="h-8 w-full rounded-md border border-border/70 bg-background pl-8 pr-8 text-[12.5px] outline-none placeholder:text-muted-foreground focus:border-ring"
           />
+          {query ? (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              className="absolute right-1.5 top-1/2 inline-flex size-5 -translate-y-1/2 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+            >
+              <X className="size-3.5" />
+            </button>
+          ) : null}
         </div>
         {filters}
         {trailingActions ? (
@@ -135,14 +146,17 @@ export function FilterChip<V extends string>({
   options,
   value,
   onChange,
+  ariaLabel,
 }: {
   options: { value: V; label: string }[];
   value: V;
   onChange: (v: V) => void;
+  ariaLabel?: string;
 }) {
   return (
     <div className="relative">
       <select
+        aria-label={ariaLabel}
         value={value}
         onChange={(e) => onChange(e.target.value as V)}
         className={cn(

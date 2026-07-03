@@ -46,7 +46,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
-        className="relative flex-1 rounded-full bg-border"
+        className="relative flex-1 rounded-full bg-[color-mix(in_oklch,var(--muted-foreground)_35%,transparent)]"
       />
     </ScrollAreaPrimitive.Scrollbar>
   )

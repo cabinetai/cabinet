@@ -13,7 +13,7 @@ import {
 } from "@/lib/agents/cron-compute";
 import type { CabinetAgentSummary, CabinetJobSummary } from "@/types/cabinets";
 import type { ConversationMeta } from "@/types/conversations";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, Repeat, Activity } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -139,6 +139,18 @@ function isEventMissed(
 
 /* ─── Event pill ─── */
 
+// Audit #066: a per-type marker + word so heartbeats, routines, and one-off
+// runs are distinguishable at a glance even when they share an agent's color
+// (color encodes the agent, this encodes the type).
+const TYPE_META: Record<
+  ScheduleEvent["sourceType"],
+  { icon: typeof Repeat | null; word: string }
+> = {
+  job: { icon: Repeat, word: "routine" },
+  heartbeat: { icon: Activity, word: "heartbeat" },
+  manual: { icon: null, word: "run" },
+};
+
 function EventPill({
   event,
   onClick,
@@ -164,6 +176,8 @@ function EventPill({
   onContextMenu?: HTMLAttributes<HTMLButtonElement>["onContextMenu"];
 }) {
   const color = getAgentColor(event.agentSlug);
+  const typeMeta = TYPE_META[event.sourceType];
+  const TypeIcon = typeMeta.icon;
   const defaultHandlers: HTMLAttributes<HTMLButtonElement> = {
     onClick: (e) => {
       e.stopPropagation();
@@ -180,7 +194,7 @@ function EventPill({
       type="button"
       {...(dragHandlers ?? defaultHandlers)}
       onContextMenu={onContextMenu}
-      title={`${event.label} · ${event.agentName} · ${formatTime(event.time)}${dragHandlers && !blocked ? " · drag to reschedule" : ""}${missed ? " · no run logged — click to run now" : ""}`}
+      title={`${event.label} · ${typeMeta.word} · ${event.agentName} · ${formatTime(event.time)}${dragHandlers && !blocked ? " · drag to reschedule" : ""}${missed ? " · no run logged — click to run now" : ""}`}
       className={cn(
         "flex items-center gap-1 rounded-md px-1.5 text-left transition-all",
         "hover:ring-1 hover:ring-foreground/20 hover:shadow-sm",
@@ -203,6 +217,9 @@ function EventPill({
        * trust in the calendar.
        */}
       <span className="shrink-0 text-[10px] leading-none">{event.agentEmoji}</span>
+      {TypeIcon && (
+        <TypeIcon className="shrink-0 size-2.5 opacity-70" aria-hidden="true" />
+      )}
       <span className={cn("truncate text-[10px] font-medium", wide && "text-[11px]")}>
         {event.label}
       </span>

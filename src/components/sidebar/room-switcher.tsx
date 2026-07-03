@@ -162,7 +162,7 @@ export function RoomSwitcher() {
           title={active?.name || t("rooms:switcherTitle")}
           aria-label={t("rooms:switcherTitle")}
           className={cn(
-            "group flex shrink-0 items-center gap-0.5 rounded-md p-1 cursor-pointer",
+            "group flex min-w-0 items-center gap-1 rounded-md p-1 cursor-pointer",
             "transition-colors hover:bg-accent/60 data-[popup-open]:bg-accent/60"
           )}
         >
@@ -171,8 +171,16 @@ export function RoomSwitcher() {
             iconKey={active?.icon}
             color={active?.color}
             colorKey={active?.path ?? ""}
-            className="size-6"
+            className="size-6 shrink-0"
           />
+          {/* Name the current room in the trigger (not just a hover tooltip) so
+              it's always identifiable, even when the drawer header shows a
+              drilled-into sub-cabinet. Truncates on narrow rails. */}
+          {active?.name && (
+            <span className="min-w-0 max-w-[7rem] truncate text-sm text-foreground/80 group-hover:text-foreground">
+              {active.name}
+            </span>
+          )}
           <ChevronDown className="size-3 shrink-0 text-muted-foreground/70" />
         </DropdownMenuTrigger>
 

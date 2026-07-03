@@ -8,6 +8,7 @@ import type { CabinetAgentSummary } from "@/types/cabinets";
 import type { LaneKey } from "./lane-rules";
 import { AgentPill } from "./agent-pill";
 import { RowActions } from "./row-actions";
+import { SelectCheckbox } from "./select-checkbox";
 import { StatusIcon, deriveCardState } from "./status-icon";
 
 /**
@@ -88,6 +89,8 @@ export function ListView({
   agents,
   agentsBySlug,
   selectedId,
+  selection,
+  onToggleSelection,
   now,
   onSelect,
   onRefresh,
@@ -102,6 +105,9 @@ export function ListView({
   agents?: CabinetAgentSummary[];
   agentsBySlug: Map<string, CabinetAgentSummary>;
   selectedId: string | null;
+  /** Multi-select set (audit #068) — shared with the Kanban board. */
+  selection?: Set<string>;
+  onToggleSelection?: (id: string) => void;
   now: number;
   onSelect: (id: string) => void;
   onRefresh?: () => Promise<void> | void;
@@ -110,13 +116,16 @@ export function ListView({
   _lane?: LaneKey;
 }) {
   return (
-    <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-y-auto md:px-[4%] lg:px-[6%] xl:px-[8%] 2xl:px-[10%]">
+    // Audit #057: escalating symmetric percentage padding stranded rows in wide
+    // empty gutters on xl/2xl. A centered max-width column keeps line length
+    // sane without wasting the sheet's horizontal space at every breakpoint.
+    <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-y-auto px-4">
       {tasks.length === 0 ? (
         <div className="flex h-full items-center justify-center p-8 text-[13px] text-muted-foreground">
           No tasks match these filters.
         </div>
       ) : (
-        <ul className="divide-y divide-border/60">
+        <ul className="mx-auto w-full max-w-5xl divide-y divide-border/60">
           {tasks.map((task) => {
             const agent = agentsBySlug.get(task.agentSlug ?? "");
             const lastActivity = task.lastActivityAt ?? task.startedAt;
@@ -126,23 +135,45 @@ export function ListView({
             // safe default for the tie-breaker branches inside deriveCardState.
             const state = deriveCardState(task, "archive");
             const isSelected = selectedId === task.id;
+            const isChecked = selection?.has(task.id) ?? false;
             return (
-              <li key={task.id} className="group relative">
+              <li key={task.id} className="group/card group relative">
+                {onToggleSelection ? (
+                  <SelectCheckbox
+                    selected={isChecked}
+                    onToggle={() => onToggleSelection(task.id)}
+                    className="absolute start-1.5 top-1/2 z-20 -translate-y-1/2"
+                  />
+                ) : null}
                 {onRefresh ? (
                   <RowActions
                     task={task}
                     agents={agents}
                     onRefresh={onRefresh}
-                    className="absolute end-[300px] top-1/2 z-10 -translate-y-1/2"
+                    className="absolute end-3 top-1/2 z-10 -translate-y-1/2"
                   />
                 ) : null}
                 <button
                   type="button"
-                  onClick={() => onSelect(task.id)}
+                  onClick={(e) => {
+                    // Audit #068: ⌘/Ctrl/Shift-click toggles selection (parity
+                    // with the Kanban board); a plain click opens the task.
+                    if (onToggleSelection && (e.metaKey || e.ctrlKey || e.shiftKey)) {
+                      onToggleSelection(task.id);
+                    } else {
+                      onSelect(task.id);
+                    }
+                  }}
                   className={cn(
-                    "relative flex w-full items-center gap-3 px-6 text-start transition-colors",
+                    // pe reserves a fixed gutter for the hover action cluster
+                    // (audit #056) instead of the old magic end-[300px] offset.
+                    "relative flex w-full items-center gap-3 ps-6 pe-24 text-start transition-colors",
                     density === "compact" ? "py-1.5" : "py-2.5",
-                    isSelected ? "bg-primary/5" : "hover:bg-accent/35"
+                    isChecked
+                      ? "bg-sky-500/10"
+                      : isSelected
+                        ? "bg-primary/5"
+                        : "hover:bg-accent/35"
                   )}
                 >
                   {isSelected ? (

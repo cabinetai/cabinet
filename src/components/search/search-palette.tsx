@@ -464,24 +464,32 @@ export function SearchPalette() {
       }}
     >
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+        {/* Plain scrim instead of backdrop-blur: the blur forced a full-viewport
+            GPU pass every frame the palette was up for a purely decorative
+            effect on a centered modal (#097). */}
+        <Dialog.Backdrop className="cabinet-cmdk-backdrop fixed inset-0 z-50 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
         <Dialog.Popup
+          // Key handling lives here (not on the input) so Arrow/Enter/Esc keep
+          // working after focus moves to a scope tab, the clear button, or a
+          // result row — keydown from any of them bubbles to the popup (#095).
+          onKeyDown={onKeyDown}
           className={cn(
-            "fixed left-1/2 top-[15%] z-50 -translate-x-1/2",
+            "cabinet-cmdk-popup fixed left-1/2 top-[15%] z-50 -translate-x-1/2",
             "w-[min(920px,calc(100%-2rem))] h-[min(600px,calc(100%-6rem))]",
             "flex flex-col overflow-hidden rounded-xl bg-background text-sm shadow-2xl ring-1 ring-foreground/10 outline-none",
             "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95"
           )}
         >
           <Dialog.Title className="sr-only">{t("search:title")}</Dialog.Title>
-          {/* Header / input */}
-          <div className="flex items-center gap-2 border-b border-border px-3">
+          {/* Header / input. The whole row lights up on focus-within so keyboard
+              users can see the caret field is focused even though the bespoke
+              input opts out of its own outline (#096). */}
+          <div className="flex items-center gap-2 border-b border-border px-3 focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring/50">
             <SearchIcon className="h-4 w-4 text-muted-foreground shrink-0" />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={onKeyDown}
               placeholder={t("search:placeholder")}
               className="h-12 flex-1 border-0 bg-transparent text-[14px] outline-none placeholder:text-muted-foreground/60"
               spellCheck={false}
@@ -866,8 +874,10 @@ function Row({
 
   return (
     <button
-      onClick={() => onSelect(entry.key)}
-      onDoubleClick={() => onActivate(entry)}
+      // Single click opens (Raycast/Linear/Spotlight convention); hover drives
+      // the detail preview so the right pane still tracks the pointer (#094).
+      onClick={() => onActivate(entry)}
+      onMouseEnter={() => onSelect(entry.key)}
       className={cn(
         "group flex w-full items-start gap-2 rounded-md px-2 py-1.5 text-left",
         active ? "bg-accent text-accent-foreground" : "hover:bg-accent/40"

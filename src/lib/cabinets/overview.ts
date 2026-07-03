@@ -18,6 +18,7 @@ import {
   isHiddenEntry,
 } from "@/lib/storage/path-utils";
 import { GLOBAL_AGENTS_DIR } from "@/lib/agents/persona-manager";
+import { getRunningConversationCounts } from "@/lib/agents/conversation-store";
 import type {
   CabinetAgentSummary,
   CabinetJobSummary,
@@ -510,6 +511,12 @@ async function readCabinetOverviewUncached(
     }
     return left.name.localeCompare(right.name);
   });
+  // Enrich with live running-conversation counts (keyed by slug) so the sidebar
+  // and workspace can show a "running" dot without a second round-trip (#041).
+  const runningCounts = await getRunningConversationCounts();
+  for (const agent of agents) {
+    agent.runningCount = runningCounts[agent.slug] || 0;
+  }
   const jobs = scopedResults
     .flatMap((result) => result.jobs)
     .sort((left, right) => {

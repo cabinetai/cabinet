@@ -82,6 +82,7 @@ export function TaskCard({
       aria-label={task.title}
       className={cn(
         "relative w-full rounded-md border bg-card text-start transition-all",
+        "outline-none focus-visible:ring-2 focus-visible:ring-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "hover:border-foreground/30 hover:shadow-sm",
         compact ? "px-2 py-1.5" : "p-3",
         isActive ? "border-foreground/50 shadow-sm" : "border-border/60",

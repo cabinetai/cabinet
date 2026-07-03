@@ -241,11 +241,43 @@ function RegistryCarousel({
 }) {
   const { dir } = useLocale();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
+  // Audit #008: never run a perpetual marquee for users who ask the OS to
+  // reduce motion (vestibular safety), and don't burn rAF/compositor time
+  // while the row is scrolled out of view.
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || templates.length === 0) return;
+
+    // Reduced motion or offscreen: don't start the loop at all; leave the row
+    // parked at its natural start position.
+    if (reducedMotion || !inView) {
+      el.style.transform = "";
+      return;
+    }
 
     let animationId: number;
     let position = 0;
@@ -268,12 +300,13 @@ function RegistryCarousel({
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [isPaused, templates, dir]);
+  }, [isPaused, templates, dir, reducedMotion, inView]);
 
   const doubled = [...templates, ...templates];
 
   return (
     <div
+      ref={containerRef}
       className="tilt-carousel relative w-full py-6"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -358,9 +391,16 @@ function ImportDialog({
         return;
       }
 
-      await res.json();
+      // Audit #015: refresh the tree in place and navigate into the freshly
+      // imported cabinet instead of a hard `window.location.reload()` that
+      // white-flashes the whole app.
+      const data = await res.json();
+      await loadTree();
       onImportEnd();
-      window.location.reload();
+      if (data?.path) {
+        selectPage(data.path);
+        setSection({ type: "cabinet", cabinetPath: data.path });
+      }
     } catch {
       setError("Import failed. Check your internet connection.");
       setImporting(false);
@@ -713,7 +753,10 @@ export function HomeScreen() {
                   key={`${chipShuffle}-${action.labelKey}`}
                   onClick={() => void runQuickAction(action)}
                   disabled={disabled}
-                  title={action.prompt}
+                  // Audit #016: no `title={action.prompt}` — the chip's own
+                  // label is the human-readable summary; dumping the full
+                  // multi-sentence prompt (with internal LAUNCH_TASK/@Songs
+                  // tokens) into a native tooltip leaked implementation detail.
                   style={{
                     fontFamily:
                       "var(--font-heading-theme, var(--font-theme, var(--font-sans)))",
@@ -812,13 +855,18 @@ export function HomeScreen() {
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="mt-4 text-sm font-medium text-foreground">
-            Importing {importTemplate?.name || "cabinet"}...
+            Importing {importTemplate?.name || "cabinet"}…
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             Downloading agents, jobs, and content from the registry
           </p>
+          {/* Audit #015: an indeterminate bar replaces the alarming "do not
+              refresh" warning — a calm progress signal, not a threat. */}
+          <div className="mt-4 h-1 w-40 overflow-hidden rounded-full bg-muted">
+            <div className="h-full w-1/2 animate-pulse rounded-full bg-primary/70" />
+          </div>
           <p className="mt-3 text-[11px] text-muted-foreground/60">
-            Please do not refresh the page while importing
+            This usually takes just a few seconds
           </p>
         </div>
       )}

@@ -86,6 +86,9 @@ function Dialogs() {
   const [orgChartChildren, setOrgChartChildren] = useState<
     Parameters<typeof OrgChartModal>[0]["childCabinets"]
   >([]);
+  // The org chart is titled with the room's display name, not its raw path
+  // (#084). Sourced from the same overview fetch that loads its children.
+  const [orgChartName, setOrgChartName] = useState<string>("Cabinet");
   useEffect(() => {
     if (!orgChartOpen) return;
     let cancel = false;
@@ -96,7 +99,13 @@ function Dialogs() {
         );
         if (!res.ok) return;
         const data = await res.json();
-        if (!cancel) setOrgChartChildren(data.children || []);
+        if (!cancel) {
+          setOrgChartChildren(data.children || []);
+          setOrgChartName(
+            data.cabinet?.name ||
+              (cabinetPath === "." ? "Cabinet" : cabinetPath)
+          );
+        }
       } catch {
         /* ignore */
       }
@@ -162,7 +171,7 @@ function Dialogs() {
       <OrgChartModal
         open={orgChartOpen}
         onOpenChange={setOrgChartOpen}
-        cabinetName={cabinetPath === "." ? "Cabinet" : cabinetPath}
+        cabinetName={orgChartName}
         agents={agents}
         jobs={jobs}
         childCabinets={orgChartChildren}

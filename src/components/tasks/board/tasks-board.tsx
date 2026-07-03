@@ -669,8 +669,8 @@ export function TasksBoard({
                 <ExplainerCard state={boardExplainer}>
                   <p>
                     Every task your team has run or has queued, in one place.
-                    Kanban groups them by status; List is a flat, sortable
-                    feed of the same tasks.
+                    Kanban groups them by status; List is a flat feed of the
+                    same tasks, newest activity first.
                   </p>
                   <p>
                     Click any task to open it. Use the filters in the header
@@ -701,6 +701,8 @@ export function TasksBoard({
                 agents={overview?.agents ?? []}
                 agentsBySlug={agentsBySlug}
                 selectedId={selectedId}
+                selection={selection}
+                onToggleSelection={toggleSelection}
                 now={now}
                 onSelect={(id) => void openTaskById(id)}
                 onRefresh={refresh}

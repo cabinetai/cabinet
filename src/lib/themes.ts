@@ -353,10 +353,11 @@ export const THEMES: ThemeDefinition[] = [
       "--ring":                 "oklch(0.34 0.09 48)",     // deeper #6B4A2D for visibility
       // Manila Arc: the sidebar rail merges into the desk gutter (same warm
       // manila) so the bright content sheet reads as the one elevated surface.
-      // The desk gutter itself (--gutter) lives in globals.css keyed on
-      // data-custom-theme="paper" — NOT here — because an inline theme var
-      // sticks when you switch to a theme that doesn't redefine it.
-      "--sidebar":              "oklch(0.884 0.050 83)",   // rail == desk
+      // This value MUST equal --gutter (globals.css, keyed on
+      // data-custom-theme="paper") or a tonal seam appears between rail and
+      // desk (#088). The gutter lives there — NOT here — because an inline
+      // theme var sticks when you switch to a theme that doesn't redefine it.
+      "--sidebar":              "oklch(0.925 0.026 79)",   // rail == desk (== --gutter)
       "--sidebar-foreground":   "oklch(0.22 0.018 28)",    // #3B2F2F
       "--sidebar-primary":      "oklch(0.47 0.09 48)",     // #8B5E3C
       "--sidebar-primary-foreground": "oklch(1 0 0)",      // #FFFFFF

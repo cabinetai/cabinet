@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Plus, UsersRound } from "lucide-react";
+import { useAppStore } from "@/stores/app-store";
 import { ComposerInput } from "@/components/composer/composer-input";
 import {
   TaskRuntimePicker,
@@ -175,6 +176,13 @@ export function CabinetTaskComposer({
     ? `What should ${selectedAgent.name} work on?`
     : "Choose an agent and describe the next task.";
 
+  // Only weave in the name when we actually have one — an unknown user is
+  // greeted "Good evening. What are we working on today?" instead of the
+  // broken-merge-field "…, there." (#001).
+  const greetingLine = displayName
+    ? `${greeting}, ${displayName}. What are we working on today?`
+    : `${greeting}. What are we working on today?`;
+
   return (
     <div ref={rootRef} className="space-y-5">
       <div className="space-y-2">
@@ -184,69 +192,94 @@ export function CabinetTaskComposer({
               {cabinetName}
             </h1>
             <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-              {cabinetDescription || `${greeting}, ${displayName}. What are we working on today?`}
+              {cabinetDescription || greetingLine}
             </p>
           </>
         ) : (
           <h1 className="font-body-serif text-[1.45rem] leading-tight tracking-tight text-foreground sm:text-[1.85rem]">
-            {greeting}, {displayName}. What are we working on today?
+            {greetingLine}
           </h1>
         )}
       </div>
 
-      <ComposerInput
-        composer={composer}
-        placeholder={placeholder}
-        submitLabel="Start"
-        items={mentionItems}
-        attachments={attachments}
-        minHeight="72px"
-        className="w-full"
-        mentionDropdownPlacement="below"
-        topRightOverlay={
-          <WhenChip
-            mode="now"
-            onChange={(next) => {
-              if (next === "now") return;
-              setHandoffMode(next);
-              setHandoffOpen(true);
+      {agents.length === 0 ? (
+        // Audit #014: a cabinet with no agents used to show a fully-disabled
+        // composer with no escape ("Choose an agent…" with nothing to choose).
+        // Give that dead end a real next step instead.
+        <div className="rounded-2xl border border-foreground/10 bg-card p-7 text-center shadow-[0_1px_3px_rgb(0_0_0/0.05)]">
+          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-muted">
+            <UsersRound className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <p className="font-medium text-foreground">No agents in this cabinet yet</p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+            Add your first agent to start delegating work — then this composer comes alive.
+          </p>
+          <button
+            type="button"
+            onClick={() => useAppStore.getState().setSection({ type: "agents" })}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add your first agent
+          </button>
+        </div>
+      ) : (
+        <>
+          <ComposerInput
+            composer={composer}
+            placeholder={placeholder}
+            submitLabel="Start"
+            items={mentionItems}
+            attachments={attachments}
+            minHeight="72px"
+            className="w-full"
+            mentionDropdownPlacement="below"
+            topRightOverlay={
+              <WhenChip
+                mode="now"
+                onChange={(next) => {
+                  if (next === "now") return;
+                  setHandoffMode(next);
+                  setHandoffOpen(true);
+                }}
+              />
+            }
+            actionsStart={
+              <>
+                <AgentPickerCompact
+                  agents={assignableAgents}
+                  selected={selectedAgent}
+                  onSelect={setPickedAgent}
+                />
+                <TaskRuntimePicker
+                  value={taskRuntime}
+                  onChange={setTaskRuntime}
+                />
+              </>
+            }
+          />
+
+          <StartWorkDialog
+            open={handoffOpen}
+            onOpenChange={setHandoffOpen}
+            cabinetPath={cabinetPath}
+            agents={assignableAgents}
+            initialMode={handoffMode}
+            initialPrompt={composer.input}
+            initialAgentSlug={selectedAgent?.slug}
+            onStarted={(conversationId, conversationCabinetPath) => {
+              composer.reset();
+              if (selectedAgent) {
+                onNavigate(
+                  selectedAgent.slug,
+                  conversationCabinetPath || selectedAgent.cabinetPath || cabinetPath,
+                  conversationId
+                );
+              }
             }}
           />
-        }
-        actionsStart={
-          <>
-            <AgentPickerCompact
-              agents={assignableAgents}
-              selected={selectedAgent}
-              onSelect={setPickedAgent}
-            />
-            <TaskRuntimePicker
-              value={taskRuntime}
-              onChange={setTaskRuntime}
-            />
-          </>
-        }
-      />
-
-      <StartWorkDialog
-        open={handoffOpen}
-        onOpenChange={setHandoffOpen}
-        cabinetPath={cabinetPath}
-        agents={assignableAgents}
-        initialMode={handoffMode}
-        initialPrompt={composer.input}
-        initialAgentSlug={selectedAgent?.slug}
-        onStarted={(conversationId, conversationCabinetPath) => {
-          composer.reset();
-          if (selectedAgent) {
-            onNavigate(
-              selectedAgent.slug,
-              conversationCabinetPath || selectedAgent.cabinetPath || cabinetPath,
-              conversationId
-            );
-          }
-        }}
-      />
+        </>
+      )}
     </div>
   );
 }

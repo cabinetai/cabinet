@@ -192,55 +192,73 @@ function Divider({ className }: { className?: string }) {
 function MasterToggle() {
   const { agents, toggleAllAgentsActive, bulkToggleInFlight } =
     useAgentsContext();
-  const anyActive = agents.some((a) => a.active);
   const activeCount = agents.filter((a) => a.active).length;
   const totalCount = agents.length;
-  const summaryLine = anyActive
-    ? `${activeCount} of ${totalCount} ${totalCount === 1 ? "agent" : "agents"} running`
-    : totalCount === 0
+  const allActive = totalCount > 0 && activeCount === totalCount;
+  const partial = activeCount > 0 && activeCount < totalCount;
+  const summaryLine =
+    totalCount === 0
       ? "No agents in this team"
-      : "Every agent is stopped";
-  const actionLine = anyActive
+      : activeCount === 0
+        ? "Every agent is stopped"
+        : `${activeCount} of ${totalCount} ${totalCount === 1 ? "agent" : "agents"} running`;
+  const actionLine = allActive
     ? "Click to stop the whole team. All heartbeats and routines will be paused."
     : "Click to start the whole team. Heartbeats and routines fire on their schedule.";
+  // Caption + thumb sit opposite each other. The thumb position is derived
+  // from the track width (a fixed inset, or 100% minus the thumb) with
+  // logical properties, so it stays flush if the pill is widened and mirrors
+  // under RTL — no magic translate tied to the English caption width. The
+  // amber track + count caption cover the partial state (#071, #072, #073).
+  const caption = allActive
+    ? "Team on"
+    : partial
+      ? `${activeCount}/${totalCount}`
+      : "Team off";
+  const thumbInsetStart = allActive
+    ? "calc(100% - 1.5rem)"
+    : "0.25rem";
   return (
     <div className="relative inline-flex">
       <SwitchPrimitive.Root
-        checked={anyActive}
+        checked={allActive}
         onCheckedChange={() => void toggleAllAgentsActive()}
         disabled={totalCount === 0 || bulkToggleInFlight}
-        aria-label={anyActive ? "Stop every agent" : "Start every agent"}
+        aria-label={allActive ? "Stop every agent" : "Start every agent"}
         aria-busy={bulkToggleInFlight}
         className={cn(
-          "peer group/master relative inline-flex h-7 w-[5.5rem] shrink-0 cursor-pointer items-center rounded-md border border-transparent transition-colors outline-none",
+          "peer group/master relative inline-flex h-7 w-24 shrink-0 cursor-pointer items-center rounded-md border border-transparent transition-colors outline-none",
           "focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-1 focus-visible:ring-offset-background",
           "disabled:cursor-not-allowed",
           bulkToggleInFlight ? "opacity-80" : "disabled:opacity-50",
-          "data-[checked]:bg-emerald-500 data-[unchecked]:bg-muted-foreground/30"
+          partial
+            ? "bg-amber-500"
+            : "data-[checked]:bg-emerald-500 data-[unchecked]:bg-muted-foreground/30"
         )}
       >
         <span
           aria-hidden
+          style={
+            allActive
+              ? { insetInlineStart: "0.5rem" }
+              : { insetInlineEnd: "0.5rem" }
+          }
           className={cn(
-            "pointer-events-none absolute inset-y-0 left-2 flex items-center text-[10.5px] font-bold uppercase tracking-wider text-white transition-opacity",
-            "opacity-0 group-data-[checked]/master:opacity-100"
+            "pointer-events-none absolute inset-y-0 flex items-center text-[10px] font-bold uppercase tracking-wide",
+            allActive
+              ? "text-white"
+              : partial
+                ? "text-amber-950"
+                : "text-muted-foreground/80"
           )}
         >
-          Team on
-        </span>
-        <span
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute inset-y-0 right-2 flex items-center text-[9px] font-bold uppercase tracking-wide text-muted-foreground/80 transition-opacity",
-            "opacity-100 group-data-[checked]/master:opacity-0"
-          )}
-        >
-          Team off
+          {caption}
         </span>
         <SwitchPrimitive.Thumb
+          style={{ insetInlineStart: thumbInsetStart }}
           className={cn(
-            "pointer-events-none relative z-10 block size-5 rounded bg-background shadow-sm ring-0 transition-transform",
-            "data-[checked]:translate-x-16 data-[unchecked]:translate-x-1"
+            "pointer-events-none absolute inset-y-1 z-10 block aspect-square rounded bg-background shadow-sm ring-0",
+            "transition-[inset-inline-start]"
           )}
         />
       </SwitchPrimitive.Root>
@@ -257,7 +275,11 @@ function MasterToggle() {
         )}
       >
         <p className="text-[12px] font-semibold">
-          {anyActive ? "Team is running" : "Team is stopped"}
+          {allActive
+            ? "Team is running"
+            : partial
+              ? "Team partially running"
+              : "Team is stopped"}
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
           {summaryLine}.

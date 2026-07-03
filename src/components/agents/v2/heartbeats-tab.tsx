@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { HeartPulse, Pause } from "lucide-react";
+import { HeartPulse, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LockedSwitch } from "@/components/ui/locked-switch";
 import { AgentAvatar } from "@/components/agents/agent-avatar";
@@ -107,6 +107,7 @@ export function HeartbeatsTab() {
       searchPlaceholder="Search by agent name or role"
       filters={
         <FilterChip
+          ariaLabel="Filter by status"
           value={statusFilter}
           onChange={(v) => setStatusFilter(v as typeof statusFilter)}
           options={[
@@ -126,7 +127,11 @@ export function HeartbeatsTab() {
             title={anyEnabled ? "Pause every heartbeat" : "Resume every heartbeat"}
             className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border/70 bg-background px-2.5 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Pause className="size-3.5" />
+            {anyEnabled ? (
+              <Pause className="size-3.5" />
+            ) : (
+              <Play className="size-3.5" />
+            )}
             {anyEnabled ? "Pause all" : "Resume all"}
           </button>
         ) : null
@@ -190,16 +195,8 @@ function HeartbeatRow({
 
   return (
     <div
-      role="button"
-      tabIndex={0}
       onClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onOpen();
-        }
-      }}
-      className="group flex h-10 items-center gap-3 px-3 outline-none transition-colors hover:bg-muted/40 focus-visible:bg-muted/40"
+      className="group flex h-10 items-center gap-3 px-3 transition-colors hover:bg-muted/40 focus-within:bg-muted/40"
     >
       <HeartPulse
         className={cn(
@@ -214,14 +211,20 @@ function HeartbeatRow({
         className={cn(!firing && "saturate-50 opacity-60")}
       />
       <div className="flex min-w-0 flex-1 items-baseline gap-2 overflow-hidden">
-        <span
+        <button
+          type="button"
+          title={agent.name}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpen();
+          }}
           className={cn(
-            "truncate text-[12.5px] font-semibold",
+            "min-w-0 truncate text-left text-[12.5px] font-semibold outline-none",
             firing ? "text-foreground" : "text-muted-foreground/70"
           )}
         >
           {agent.name}
-        </span>
+        </button>
         <span
           className={cn(
             "truncate text-[11.5px]",

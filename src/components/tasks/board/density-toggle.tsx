@@ -32,11 +32,11 @@ export function DensityToggle({
           value === "compact" ? "Switch to comfortable rows" : "Switch to compact rows"
         }
         className={cn(
-          "inline-flex h-7 items-center gap-1 rounded-md px-2 text-muted-foreground/60 hover:bg-muted/60 hover:text-foreground"
+          "inline-flex h-7 items-center gap-1.5 rounded-md border border-border/70 bg-card/60 px-2 text-[11px] text-foreground/80 transition-colors hover:bg-accent hover:text-foreground hover:border-border"
         )}
       >
         <Icon className="size-3.5 shrink-0" />
-        <span className="text-[10.5px] font-medium">
+        <span className="font-medium">
           {value === "compact" ? "Compact" : "Comfortable"}
         </span>
       </button>

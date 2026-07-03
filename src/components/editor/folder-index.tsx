@@ -60,6 +60,20 @@ function isImageHeavy(children: TreeNode[]): boolean {
   return images >= 4 && images / children.length >= 0.6;
 }
 
+// Human-readable kind badge for the list view. Only kinds that add info beyond
+// the row icon get a label; folders/pages/plain files show nothing (the icon
+// already says it) instead of leaking raw enums like "Directory"/"Code"/"Csv".
+const KIND_LABEL: Partial<Record<TreeNode["type"], string>> = {
+  image: "Image",
+  video: "Video",
+  audio: "Audio",
+  code: "Code",
+  csv: "Sheet",
+  xlsx: "Sheet",
+  website: "Web",
+  app: "App",
+};
+
 function iconFor(node: TreeNode) {
   switch (node.type) {
     case "directory":
@@ -179,9 +193,11 @@ export function FolderIndex({ folderPath, entries }: FolderIndexProps) {
                 >
                   <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                   <span className="flex-1 truncate">{title}</span>
-                  <span className="text-[11px] text-muted-foreground/60 capitalize">
-                    {child.type}
-                  </span>
+                  {KIND_LABEL[child.type] && (
+                    <span className="text-[11px] text-muted-foreground/60">
+                      {KIND_LABEL[child.type]}
+                    </span>
+                  )}
                 </button>
               </li>
             );
@@ -202,7 +218,7 @@ export function FolderIndex({ folderPath, entries }: FolderIndexProps) {
                   <div className="aspect-square w-full overflow-hidden rounded-md border border-border bg-muted">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={`/api/assets/${child.path}`}
+                      src={`/api/assets/${child.path.split("/").map(encodeURIComponent).join("/")}`}
                       alt={title}
                       loading="lazy"
                       className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"

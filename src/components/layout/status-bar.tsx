@@ -183,11 +183,18 @@ export function StatusBar() {
   const editorContent = useEditorStore((s) => s.content);
   const editorLoadStatus = useEditorStore((s) => s.loadStatus);
   const wordCount = useMemo(() => countWords(editorContent), [editorContent]);
+  // Audit #010: the editor store keeps `currentPath`/`content` after the user
+  // navigates to home/cabinet, so a bare currentPath check leaks a stale word
+  // count and "Saved · Xs ago" onto surfaces with no editor. Gate editor-only
+  // chrome on the editor page ("page" section) actually being active.
+  const activeSection = useAppStore((s) => s.section);
+  const isEditorActive = activeSection.type === "page";
   // Only meaningful for the markdown editor surface — viewers (PDF, CSV,
   // image, media, office) never populate the editor store's content, so
   // the count would always read 0 there. loadStatus === "ok" means a
   // markdown page actually loaded.
-  const showWordCount = !!currentPath && editorLoadStatus === "ok";
+  const showWordCount =
+    isEditorActive && !!currentPath && editorLoadStatus === "ok";
 
   // Audit #018: rerender every 10s so the relative timestamp ticks. The
   // indicator only mounts when a page is open, so this isn't a global cost.
@@ -424,7 +431,7 @@ export function StatusBar() {
     <footer
       role="contentinfo"
       aria-label={t("status:bar.ariaLabel")}
-      className="relative flex items-center justify-between px-3 py-1 text-[11px] text-muted-foreground/60 bg-transparent"
+      className="relative flex items-center justify-between px-3 py-1 text-[11px] text-muted-foreground bg-transparent"
     >
       <div className="flex min-w-0 items-center gap-3">
         <div className="relative">
@@ -658,7 +665,7 @@ export function StatusBar() {
             </div>
           )}
         </div>
-        {currentPath && (
+        {isEditorActive && currentPath && (
           saveStatus === "error" ? (
             // Audit #126: clickable retry instead of forcing the user to
             // type a character to re-trigger autosave. Successful retry
@@ -758,16 +765,19 @@ export function StatusBar() {
             {t("status:update2.updateAvailable", { version: update.latest.version })}
           </button>
         )}
-        {/* Activity: per-room file-history feed (who touched what). */}
+        {/* #005: this is the per-room file-history feed (who touched what) —
+            distinct from the main "Activity" run feed on the home screen.
+            Label it "File history" so one screen never shows two "Activity"
+            surfaces meaning different things. */}
         <button
           type="button"
           onClick={() => setShowActivity(true)}
-          title="File activity in this room (who changed what)"
-          aria-label="Open file activity"
+          title="File history in this room (who changed what)"
+          aria-label="Open file history"
           className="flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted hover:text-foreground"
         >
           <HistoryIcon className="h-3 w-3" />
-          Activity
+          File history
         </button>
         {showActivity ? <ActivityFeed onClose={() => setShowActivity(false)} /> : null}
         {/* Audit #015: clickable so users can see *what* is uncommitted
@@ -1059,6 +1069,9 @@ export function StatusBar() {
                 <span className="text-[10px] text-muted-foreground">{t("status:help.discordSubtitle")}</span>
               </span>
             </a>
+            {/* #007: "GitHub" and "Star" both linked to the same repo URL —
+                collapse into one "Star on GitHub" row. Share is dropped here
+                since it already has its own dedicated status-bar pill. */}
             <a
               href={GITHUB_REPO_URL}
               target="_blank"
@@ -1068,39 +1081,14 @@ export function StatusBar() {
             >
               <GitHubIcon className="h-3.5 w-3.5 text-foreground" />
               <span className="flex flex-col">
-                <span className="font-medium text-foreground">{t("status:help.github")}</span>
+                <span className="font-medium text-foreground">
+                  {displayStars === null
+                    ? "Star on GitHub"
+                    : `Star on GitHub · ${formatGithubStars(displayStars)}`}
+                </span>
                 <span className="text-[10px] text-muted-foreground">{t("status:help.githubSubtitle")}</span>
               </span>
             </a>
-            <a
-              href={GITHUB_REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setShowCommunityPopup(false)}
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
-            >
-              <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-              <span className="flex flex-col">
-                <span className="font-medium text-foreground">
-                  {displayStars === null ? "Star Cabinet" : `${formatGithubStars(displayStars)} stars`}
-                </span>
-                <span className="text-[10px] text-muted-foreground">{t("status:help.ifUseful")}</span>
-              </span>
-            </a>
-            <button
-              type="button"
-              onClick={() => {
-                shareCabinet();
-                setShowCommunityPopup(false);
-              }}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[12px] hover:bg-muted"
-            >
-              <Heart className="h-3.5 w-3.5 fill-current text-rose-500" />
-              <span className="flex flex-col">
-                <span className="font-medium text-foreground">{t("status:help.share")}</span>
-                <span className="text-[10px] text-muted-foreground">{t("status:help.shareSubtitle")}</span>
-              </span>
-            </button>
           </div>
         )}
       </div>

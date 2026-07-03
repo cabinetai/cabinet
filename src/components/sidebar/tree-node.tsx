@@ -137,7 +137,7 @@ function TreeNodeImpl({
   const setDragOver = useTreeStore((s) => s.setDragOver);
   const createPage = useTreeStore((s) => s.createPage);
   const renamePage = useTreeStore((s) => s.renamePage);
-  const rowRef = useRef<HTMLButtonElement | null>(null);
+  const rowRef = useRef<HTMLDivElement | null>(null);
   const [blink, setBlink] = useState(false);
   const dragGhostRef = useRef<HTMLDivElement | null>(null);
   const loadPage = useEditorStore((s) => s.loadPage);
@@ -661,19 +661,20 @@ function TreeNodeImpl({
       )}
       <ContextMenu>
         <ContextMenuTrigger>
-          <button
+          <div
             ref={rowRef}
-            onClick={handleClick}
             draggable={!isMoving}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            disabled={isMoving}
             className={cn(
               "group relative flex items-center gap-2 w-full text-start py-1 px-2 text-[12px] text-foreground/75 rounded-md transition-colors",
-              "hover:bg-foreground/[0.03] hover:text-foreground !cursor-grab active:!cursor-grabbing",
+              // Audit #048: link-like pointer at rest; grab only while the row is
+              // actively pressed/dragged. A resting grab cursor mislabels a
+              // click-to-open row as a drag handle.
+              "hover:bg-foreground/[0.03] hover:text-foreground cursor-pointer active:cursor-grabbing",
               // Override the ContextMenuTrigger wrapper's user-select:none so HTML5 dragstart fires on first mousedown (Chromium quirk: draggable rows inheriting user-select:none need a focus pass before drag initiates).
               "select-text",
               // Audit #015: active row needs two cues, not just background.
@@ -696,24 +697,21 @@ function TreeNodeImpl({
             )}
             style={{ paddingInlineStart: `${depth * 16 + 8}px` }}
           >
+            {/* Audit #046: expand/select/open are sibling controls inside this
+                non-interactive row container, not controls nested in a button. */}
             {hasChildren ? (
-              <span
-                role="button"
-                tabIndex={0}
+              <button
+                type="button"
                 aria-label={isExpanded ? `Collapse ${title}` : `Expand ${title}`}
                 aria-expanded={isExpanded}
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleExpand(node.path);
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleExpand(node.path);
-                  }
-                }}
-                className="shrink-0 -ms-1 flex items-center justify-center w-3 h-3 rounded hover:bg-accent"
+                // Audit #047: keep the 12px glyph but expand the clickable box to
+                // ~24px via a negative-inset ::before overlay, so the target meets
+                // WCAG 2.5.8 without shifting the row's indent.
+                className="relative shrink-0 -ms-1 flex items-center justify-center w-3 h-3 rounded hover:bg-accent before:absolute before:-inset-1.5 before:content-['']"
               >
                 <ChevronRight
                   className={cn(
@@ -721,10 +719,16 @@ function TreeNodeImpl({
                     isExpanded ? "rotate-90" : "rtl:rotate-180"
                   )}
                 />
-              </span>
+              </button>
             ) : (
               <span className="w-3 -ms-1 shrink-0" />
             )}
+            <button
+              type="button"
+              onClick={handleClick}
+              disabled={isMoving}
+              className="flex min-w-0 flex-1 items-center gap-2 text-start"
+            >
             {knowledgeLogo ? (
               // Inline Connect Knowledge mount → provider brand mark.
               // eslint-disable-next-line @next/next/no-img-element
@@ -803,6 +807,7 @@ function TreeNodeImpl({
                 view
               </span>
             )}
+            </button>
             {isChanged && !isMoving && node.type !== "cabinet" && (
               <span
                 className="ms-auto h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
@@ -818,20 +823,14 @@ function TreeNodeImpl({
               // Hover-revealed "Open" pill — at rest the cabinet row has
               // no extra chrome (the Archive icon already says "cabinet").
               // On row hover the pill fades in as the explicit "switch
-              // into the cabinet's scoped view" affordance. <span> +
-              // role/tabIndex because <button> inside <button> is invalid
-              // HTML; pointer/keyboard reach reproduced via the role.
-              <span
-                role="button"
-                tabIndex={0}
+              // into the cabinet's scoped view" affordance. Audit #046: now a
+              // real <button> sibling of the row's action button, not a
+              // role="button" span nested inside it.
+              <button
+                type="button"
                 aria-label={`Open cabinet ${title}`}
                 title={t("treeNode:openCabinet")}
                 onClick={handleOpenCabinet}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleOpenCabinet(e as unknown as React.MouseEvent);
-                  }
-                }}
                 onPointerDown={(e) => e.stopPropagation()}
                 className={cn(
                   "ms-auto shrink-0 rounded-md bg-foreground/[0.04] px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/80 transition-[opacity,background-color,color]",
@@ -840,9 +839,9 @@ function TreeNodeImpl({
                 )}
               >
                 {t("treeNode:openBadge")}
-              </span>
+              </button>
             )}
-          </button>
+          </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-60">
           <ContextMenuGroup>

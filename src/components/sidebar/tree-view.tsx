@@ -68,6 +68,7 @@ import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import { fetchCabinetOverviewClient } from "@/lib/cabinets/overview-client";
 import { getDataDir } from "@/lib/data-dir-cache";
 import { DepthDropdown } from "@/components/cabinets/depth-dropdown";
+import { isMacPlatform, formatShortcut } from "@/lib/keys";
 import { useLocale } from "@/i18n/use-locale";
 
 interface AgentSummary {
@@ -120,6 +121,7 @@ export function TreeView() {
   const setCabinetVisibilityMode = useAppStore((s) => s.setCabinetVisibilityMode);
   const activeDrawer = useAppStore((s) => s.sidebarDrawer);
   const setActiveDrawer = useAppStore((s) => s.setSidebarDrawer);
+  const isMac = useMemo(isMacPlatform, []);
 
   const [cabinetExpanded, setCabinetExpanded] = useState(true);
 
@@ -214,7 +216,14 @@ export function TreeView() {
     }
     return base;
   }, [activeCabinet, rootCabinet, nodes, atRoot, subRoomPaths]);
-  const kbSectionLabel = "Data";
+  // Name the real destination the sub-page lands in (the active room/cabinet),
+  // not the literal drawer word. Mirrors the drawer header at #487 so the
+  // dialog title and the header always agree.
+  const kbSectionLabel =
+    cabinetAgentScopeName ||
+    activeCabinet?.frontmatter?.title ||
+    activeCabinet?.name ||
+    "Data";
 
   /* ── agent polling ─────────────────────────────────────────── */
 
@@ -245,7 +254,7 @@ export function TreeView() {
           slug: agent.slug,
           emoji: agent.emoji,
           active: agent.active,
-          runningCount: 0,
+          runningCount: agent.runningCount || 0,
           jobCount: agent.jobCount || 0,
           taskCount: agent.taskCount || 0,
           heartbeat: agent.heartbeat || "",
@@ -273,22 +282,31 @@ export function TreeView() {
     }
   }, [activeCabinet, cabinetVisibilityMode]);
 
+  // Load once on mount and whenever the window regains focus, so the cabinet
+  // scope name + agent list stay fresh regardless of which drawer is open.
   useEffect(() => {
     const initialLoad = window.setTimeout(() => {
       void loadAgents();
     }, 0);
-    // Pause polling while the tab is hidden — the sidebar isn't visible, and
-    // each tick would walk the server-side cabinet tree.
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === "visible") void loadAgents();
-    }, 5000);
     window.addEventListener("focus", loadAgents);
     return () => {
       window.clearTimeout(initialLoad);
-      window.clearInterval(interval);
       window.removeEventListener("focus", loadAgents);
     };
   }, [loadAgents]);
+
+  // Only *poll* while the TEAM (agents) drawer is actually visible. Each tick
+  // force-refetches the overview, which walks the server-side cabinet tree —
+  // pointless (and a constant background CPU/IO drain) for a drawer nobody is
+  // looking at. Poll gently (20s) even when it is open; also pause when the tab
+  // is hidden.
+  useEffect(() => {
+    if (activeDrawer !== "agents") return;
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") void loadAgents();
+    }, 20000);
+    return () => window.clearInterval(interval);
+  }, [loadAgents, activeDrawer]);
 
   // Cmd+Shift+M to open Move To… for the currently selected node
   useEffect(() => {
@@ -490,15 +508,6 @@ export function TreeView() {
           </button>
           </ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem disabled className="flex-col items-start gap-0">
-              <span className="flex items-center">
-                <Pencil className="h-4 w-4 me-2" />
-                Rename
-              </span>
-              <span className="text-[10px] text-muted-foreground/60 ms-6">
-                Coming soon
-              </span>
-            </ContextMenuItem>
             {cabinetPath !== ROOT_CABINET_PATH && (
               <ContextMenuItem onClick={() => navigator.clipboard.writeText(cabinetPath)}>
                 <Copy className="h-4 w-4 me-2" />
@@ -642,14 +651,18 @@ export function TreeView() {
                   const AddIcon = drawer.addIcon;
                   const active = activeDrawer === drawer.id;
                   const shortcutNum = drawerIdx + 1;
+                  // Platform-correct hint (⌘1 on macOS, Ctrl+1 elsewhere) — the
+                  // binding fires on metaKey||ctrlKey, so a hardcoded ⌘ lies on
+                  // Windows/Linux.
+                  const shortcutHint = formatShortcut(["cmd", String(shortcutNum)], isMac);
                   return (
                     <div key={drawer.id} className="relative group">
                       <button
                         type="button"
                         role="tab"
                         aria-selected={active}
-                        aria-label={`${drawer.label} drawer (⌘${shortcutNum})`}
-                        title={`${drawer.label} — ⌘${shortcutNum}`}
+                        aria-label={`${drawer.label} drawer (${shortcutHint})`}
+                        title={`${drawer.label} — ${shortcutHint}`}
                         onClick={() => {
                           setActiveDrawer(drawer.id);
                           drawer.onOpen();
@@ -689,7 +702,7 @@ export function TreeView() {
                           }}
                           title={drawer.addLabel}
                           aria-label={drawer.addLabel}
-                          className="absolute end-1 top-1 inline-flex size-4 items-center justify-center rounded text-muted-foreground/70 opacity-0 transition-opacity duration-150 hover:bg-muted hover:text-foreground group-hover:opacity-100"
+                          className="absolute end-0.5 top-0.5 inline-flex size-6 items-center justify-center rounded text-muted-foreground/60 transition-colors duration-150 hover:bg-muted hover:text-foreground"
                         >
                           <AddIcon className="h-3 w-3" />
                         </button>

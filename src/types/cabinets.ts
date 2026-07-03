@@ -42,6 +42,9 @@ export interface CabinetAgentSummary {
   workspace?: string;
   jobCount: number;
   taskCount: number;
+  /** Live count of in-flight conversations for this agent (drives the sidebar
+   *  "running" dot). Populated by the overview builder; omitted = unknown. */
+  runningCount?: number;
   cabinetPath: string;
   cabinetName: string;
   cabinetDepth: number;

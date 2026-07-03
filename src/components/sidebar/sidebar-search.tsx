@@ -164,7 +164,7 @@ export function SidebarSearch({ children }: { children: ReactNode }) {
           onKeyDown={onKeyDown}
           aria-label={t("sidebar:search")}
           placeholder={t("sidebar:searchPlaceholder")}
-          className="h-7 w-full rounded-md border-0 bg-foreground/[0.012] ps-7 pe-7 text-[12px] text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:bg-foreground/[0.03]"
+          className="h-7 w-full rounded-md border-0 bg-foreground/[0.04] ring-1 ring-border/60 ps-7 pe-7 text-[12px] text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:bg-foreground/[0.06] focus:ring-primary/50"
         />
         {loading ? (
           <Loader2 className="pointer-events-none absolute end-2 top-1/2 size-3.5 -translate-y-1/2 animate-spin text-muted-foreground/50" />

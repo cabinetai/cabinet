@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Archive,
   ChevronLeft,
@@ -15,6 +15,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { DirIcon } from "@/components/ui/dir-icon";
+import { SelectCheckbox } from "./select-checkbox";
+import { formatShortcut, isMacPlatform } from "@/lib/keys";
 import { restartConversation, stopConversation } from "./board-actions";
 import { useDroppable } from "@dnd-kit/core";
 import {
@@ -66,6 +68,8 @@ function LaneHeader({
   onAddTask,
   onKillAll,
   onRestartAll,
+  restartLabel,
+  restartHint,
 }: {
   lane: LaneDef;
   count: number;
@@ -74,6 +78,10 @@ function LaneHeader({
   onAddTask?: () => void;
   onKillAll?: () => void;
   onRestartAll?: () => void;
+  /** Overrides for the bulk-restart affordance (audit #067 scopes the
+   *  "Your turn" lane's restart to failed-only). */
+  restartLabel?: string;
+  restartHint?: string;
 }) {
   const { t } = useLocale();
   const LaneIcon = lane.icon;
@@ -82,7 +90,12 @@ function LaneHeader({
       <IconHint label={lane.hint} side="bottom">
         <div className="flex flex-1 items-center gap-2">
           <LaneIcon
-            className={cn("size-3.5 text-muted-foreground", lane.spin && "animate-spin [animation-duration:3s]")}
+            className={cn(
+              "size-3.5 text-muted-foreground",
+              // Audit #051: only spin the Running loader when work is actually
+              // in flight — an empty lane must not animate as if busy.
+              lane.spin && count > 0 && "animate-spin [animation-duration:3s]"
+            )}
           />
           <span className="flex-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {lane.label}
@@ -100,28 +113,31 @@ function LaneHeader({
             className="inline-flex items-center gap-0.5 rounded-md px-1 py-0.5 text-[9.5px] font-medium text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
           >
             <Square className="size-2.5" />
-            {t("kanban:kill")}
+            {/* Audit #059: match the per-task "Stop" verb instead of "Kill". */}
+            {t("rowActions:stop")}
           </button>
         </IconHint>
       ) : null}
       {onRestartAll ? (
-        <IconHint label={t("kanban:restartAllInLane")} side="bottom">
+        <IconHint label={restartHint ?? t("kanban:restartAllInLane")} side="bottom">
           <button
             type="button"
             onClick={onRestartAll}
             className="inline-flex items-center gap-0.5 rounded-md px-1 py-0.5 text-[9.5px] font-medium text-muted-foreground transition-colors hover:bg-primary/15 hover:text-primary"
           >
             <RotateCcw className="size-2.5" />
-            Restart
+            {restartLabel ?? t("rowActions:restart")}
           </button>
         </IconHint>
       ) : null}
       {onAddTask ? (
-        <IconHint label={t("kanban:newTask")} side="bottom">
+        // Audit #065: the Inbox "+" drafts a task into the Inbox (it does NOT
+        // run now like the header "New Task"), so label it accordingly.
+        <IconHint label={t("tinyExtras:addToInbox")} side="bottom">
           <button
             type="button"
             onClick={onAddTask}
-            aria-label={t("kanban:newTask")}
+            aria-label={t("tinyExtras:addToInbox")}
             className="ms-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <Plus className="size-3.5" />
@@ -153,6 +169,7 @@ function SortableTaskCard({
   isSelected,
   now,
   onClick,
+  onToggleSelect,
   onRefresh,
   density,
 }: {
@@ -164,10 +181,16 @@ function SortableTaskCard({
   isSelected: boolean;
   now: number;
   onClick: (modifiers: { shift: boolean; meta: boolean }) => void;
+  onToggleSelect: () => void;
   onRefresh?: () => Promise<void> | void;
   density: "compact" | "comfortable";
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  // Audit #053: only spread the drag `listeners` (pointer/keyboard drag
+  // handlers) onto the wrapper — NOT `attributes`, which would slap
+  // role="button" + tabIndex onto a <div> that already wraps TaskCard's real
+  // <button>, producing nested interactives, a doubled tab stop, and a garbled
+  // screen-reader announcement. The inner button stays the sole tab stop.
+  const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `${CARD_DROP_PREFIX}${task.id}`,
     data: { taskId: task.id, lane },
   });
@@ -180,13 +203,17 @@ function SortableTaskCard({
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
       {...listeners}
       className={cn(
-        "rounded-md outline-none focus-visible:ring-2 focus-visible:ring-foreground/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "group/card relative rounded-md",
         isSelected && "ring-2 ring-sky-500 ring-offset-2 ring-offset-background"
       )}
     >
+      <SelectCheckbox
+        selected={isSelected}
+        onToggle={onToggleSelect}
+        className="absolute start-1.5 top-1.5 z-20"
+      />
       <TaskCard
         task={task}
         lane={lane}
@@ -262,6 +289,10 @@ export function KanbanView({
   density?: "compact" | "comfortable";
 }) {
   const { t } = useLocale();
+  // Audit #062: render the add-task chord per-platform (⌘⌥T on macOS,
+  // Ctrl+Alt+T elsewhere) instead of hardcoding the Mac glyphs.
+  const isMac = useMemo(isMacPlatform, []);
+  const addTaskShortcut = formatShortcut(["cmd", "alt", "T"], isMac);
   // Build the LaneDef array each render using current locale.
   const LANES: LaneDef[] = LANES_RAW.map((raw) => ({
     key: raw.key,
@@ -369,6 +400,21 @@ export function KanbanView({
         t.status === "running"
     );
     if (restartable.length === 0) return;
+    // Audit #060: restarting a live or finished run throws its work away
+    // (stop-then-fresh-run). Failed/idle restarts are a safe retry, but confirm
+    // before wiping running/done runs so the bulk "Restart" isn't a silent
+    // sibling of the typed-"DELETE" bulk delete.
+    // ponytail: native confirm; swap for the styled dialog if design wants it.
+    const running = restartable.filter((t) => t.status === "running").length;
+    const finished = restartable.filter((t) => t.status === "done").length;
+    if ((running > 0 || finished > 0) && typeof window !== "undefined") {
+      const ok = window.confirm(
+        running > 0
+          ? `Restart ${restartable.length} task${restartable.length === 1 ? "" : "s"}? This stops ${running} live run${running === 1 ? "" : "s"} and starts over — in-progress work is lost.`
+          : `Restart ${restartable.length} finished task${restartable.length === 1 ? "" : "s"}? Their previous output will be replaced.`
+      );
+      if (!ok) return;
+    }
     setBulkBusy(`restart:${laneKey}`);
     try {
       await Promise.all(
@@ -384,8 +430,38 @@ export function KanbanView({
     }
   }
 
+  // Audit #052: five 280px lanes overflow the sheet, so Archive rests clipped
+  // mid-card with nothing signalling the row scrolls. Track the scroll edges
+  // and paint a gradient fade on whichever side has more content off-screen.
+  // `Math.abs` handles RTL (Chromium reports negative scrollLeft).
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollEdges, setScrollEdges] = useState({ start: false, end: false });
+  const updateScrollEdges = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const pos = Math.abs(el.scrollLeft);
+    setScrollEdges({ start: pos > 4, end: max - pos > 4 });
+  }, []);
+  useEffect(() => {
+    updateScrollEdges();
+    const el = scrollRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => updateScrollEdges());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [updateScrollEdges]);
+  useEffect(() => {
+    updateScrollEdges();
+  }, [updateScrollEdges, collapsedCsv, archiveExpanded, runningCount, byLane]);
+
   return (
-    <div className="flex min-h-0 w-full min-w-0 flex-1 gap-3 overflow-x-auto overflow-y-hidden p-4 snap-x snap-mandatory md:snap-none rtl:flex-row-reverse">
+    <div className="relative flex min-h-0 w-full min-w-0 flex-1">
+    <div
+      ref={scrollRef}
+      onScroll={updateScrollEdges}
+      className="flex min-h-0 w-full min-w-0 flex-1 gap-3 overflow-x-auto overflow-y-hidden p-4 snap-x snap-mandatory md:snap-none rtl:flex-row-reverse"
+    >
       {LANES.map((lane) => {
         const allItems = byLane[lane.key];
         const isArchive = lane.key === "archive";
@@ -423,7 +499,8 @@ export function KanbanView({
                 <LaneIcon
                   className={cn(
                     "size-4",
-                    lane.spin && "animate-spin [animation-duration:3s]"
+                    // Audit #051: don't spin a collapsed empty Running rail.
+                    lane.spin && items.length > 0 && "animate-spin [animation-duration:3s]"
                   )}
                 />
                 <span className="rotate-180 whitespace-nowrap text-[10.5px] font-semibold uppercase tracking-wider [writing-mode:vertical-rl]">
@@ -451,6 +528,15 @@ export function KanbanView({
                           : undefined
                       : undefined
                   }
+                  // Audit #067: the "Your turn" lane's restart only touches
+                  // failed tasks — questions/approvals are left alone — so name
+                  // and scope the affordance to that reality.
+                  restartLabel={isNeeds ? `Restart failed (${failedCount})` : undefined}
+                  restartHint={
+                    isNeeds
+                      ? "Restart only the failed tasks — questions and approvals are left untouched"
+                      : undefined
+                  }
                 />
                 <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2 pt-1">
                   <SortableContext
@@ -467,18 +553,16 @@ export function KanbanView({
                           <p className="text-[11px] text-muted-foreground group-hover:text-foreground/70 transition-colors">{lane.hint}</p>
                           <p className="text-[10.5px] text-muted-foreground/50">
                             Click or press{" "}
-                            <kbd className="rounded px-1 py-0.5 text-[9.5px] ring-1 ring-foreground/10">⌘⌥T</kbd>
-                            {" "}to add a task
+                            <kbd className="rounded px-1 py-0.5 text-[9.5px] ring-1 ring-foreground/10">{addTaskShortcut}</kbd>
+                            {" "}to add it to your Inbox
                           </p>
                         </button>
                       ) : (
                         // Audit #034: empty lanes carry an icon + the lane's
                         // hint so they read as teaching, not as flat captions.
                         <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-border/50 px-3 py-6 text-center">
-                          <lane.icon className={cn(
-                            "size-4 text-muted-foreground/50",
-                            lane.spin && "animate-spin"
-                          )} />
+                          {/* Audit #051: an empty lane never animates as busy. */}
+                          <lane.icon className="size-4 text-muted-foreground/50" />
                           <p className="text-[11px] text-muted-foreground/80">
                             {lane.hint}
                           </p>
@@ -503,6 +587,7 @@ export function KanbanView({
                               onSelect(task.id);
                             }
                           }}
+                          onToggleSelect={() => onToggleSelection(task.id)}
                           onRefresh={onRefresh}
                           density={density}
                         />
@@ -515,7 +600,7 @@ export function KanbanView({
                       onClick={onAddTask}
                       className="mt-1 w-full rounded-md px-3 py-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/30 transition-colors text-start"
                     >
-                      + Add task
+                      + {t("tinyExtras:addToInbox")}
                     </button>
                   )}
                   {isArchive && archiveHidden > 0 && (
@@ -542,6 +627,19 @@ export function KanbanView({
           </DroppableLane>
         );
       })}
+    </div>
+      {scrollEdges.start && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 start-0 w-10 bg-gradient-to-r from-background to-transparent rtl:bg-gradient-to-l"
+        />
+      )}
+      {scrollEdges.end && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 end-0 w-10 bg-gradient-to-l from-background to-transparent rtl:bg-gradient-to-r"
+        />
+      )}
     </div>
   );
 }

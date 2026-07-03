@@ -15,15 +15,21 @@ export function NextUpRuns({
   jobs,
   now,
   onEventClick,
+  onViewAll,
 }: {
   agents: CabinetAgentSummary[];
   jobs: CabinetJobSummary[];
   now: Date;
   onEventClick: (event: ScheduleEvent) => void;
+  onViewAll?: () => void;
 }) {
-  const events = useMemo(() => {
+  // #009: count the real total *before* slicing. Labelling the header with
+  // the post-slice length silently reported "8 upcoming" for a cabinet with
+  // dozens of runs in the window — the number meant "8 shown", not "8 due".
+  const { events, total } = useMemo(() => {
     const end = new Date(now.getTime() + HORIZON_MS);
-    return getScheduleEvents(agents, jobs, now, end).slice(0, LIMIT);
+    const all = getScheduleEvents(agents, jobs, now, end);
+    return { events: all.slice(0, LIMIT), total: all.length };
   }, [agents, jobs, now]);
 
   return (
@@ -34,11 +40,22 @@ export function NextUpRuns({
             Next-up runs
           </h2>
           <p className="text-[11px] text-muted-foreground">
-            {events.length === 0
+            {total === 0
               ? "Nothing scheduled in the next 7 days"
-              : `${events.length} upcoming · 7 days`}
+              : total > LIMIT
+                ? `Showing ${events.length} of ${total} · 7 days`
+                : `${total} upcoming · 7 days`}
           </p>
         </div>
+        {total > LIMIT && onViewAll ? (
+          <button
+            type="button"
+            onClick={onViewAll}
+            className="shrink-0 text-[11px] font-medium text-primary transition-colors hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            View all
+          </button>
+        ) : null}
       </div>
 
       {events.length === 0 ? (
