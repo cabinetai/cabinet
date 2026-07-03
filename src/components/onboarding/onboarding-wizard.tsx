@@ -26,6 +26,7 @@ import {
   HeartPulse,
 } from "lucide-react";
 import { HomeBlueprintBackground } from "@/components/onboarding/home-blueprint-background";
+import { KnowledgeGraph } from "@/components/onboarding/knowledge-graph";
 import { isAgentProviderSelectable } from "@/lib/agents/provider-filters";
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
 import type { ProviderInfo } from "@/types/agents";
@@ -145,18 +146,20 @@ const WELCOME_TYPE_START_MS = 4800; // begin typing shortly after heading fades 
 const WELCOME_TYPE_CHAR_MS = 32;
 
 // Step indices after the compress pass:
-// 0 intro · 1 welcome-home · 2 what-is-cabinet · 3 room-setup (pick + name + describe) ·
-// 4 provider (connect AI) · 5 team (configure first agent + heartbeat) ·
-// 6 first-task · 7 github · 8 discord · 9 cloud · 10 launch
-const COMMUNITY_START_STEP = 7;
-const COMMUNITY_END_STEP = 9;
-const STEP_COUNT = 11;
+// 0 intro · 1 welcome-home · 2 what-is-cabinet · 3 knowledge (connect your bases) ·
+// 4 room-setup (pick + name + describe) · 5 provider (connect AI) ·
+// 6 team (configure first agent + heartbeat) · 7 first-task ·
+// 8 github · 9 discord · 10 cloud · 11 launch
+const COMMUNITY_START_STEP = 8;
+const COMMUNITY_END_STEP = 10;
+const STEP_COUNT = 12;
 const STEP_WELCOME_HOME = 1;
 const STEP_WHAT_IS_CABINET = 2;
-const STEP_ROOM_SETUP = 3;
-const STEP_PROVIDER = 4;
-const STEP_TEAM = 5;
-const STEP_TASK = 6;
+const STEP_KNOWLEDGE = 3;
+const STEP_ROOM_SETUP = 4;
+const STEP_PROVIDER = 5;
+const STEP_TEAM = 6;
+const STEP_TASK = 7;
 
 /* ─── Colors from runcabinet.com ─── */
 const WEB = {
@@ -656,6 +659,35 @@ function StepNav({
         {nextLabel || t("onboarding:actions.next")}
         <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
       </button>
+    </div>
+  );
+}
+
+// "Cabinet connects all your knowledge bases" — animated radial graph step.
+function KnowledgeStep({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
+  const { t } = useLocale();
+  return (
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 animate-in fade-in duration-300">
+      <div className="flex flex-col items-center gap-8 md:flex-row md:gap-10">
+        <div className="flex-1 space-y-4 text-center md:text-start">
+          <h1
+            className="font-logo text-3xl italic tracking-tight md:text-4xl"
+            style={{ color: WEB.text }}
+          >
+            {t("onboarding:knowledge.heading")}
+          </h1>
+          <p className="text-base leading-relaxed md:text-lg" style={{ color: WEB.textSecondary }}>
+            {t("onboarding:knowledge.subtitle")}
+          </p>
+          <p className="text-sm" style={{ color: WEB.textTertiary }}>
+            {t("onboarding:knowledge.footnote")}
+          </p>
+        </div>
+        <div className="w-full max-w-[420px] shrink-0 md:w-[420px]">
+          <KnowledgeGraph />
+        </div>
+      </div>
+      <StepNav onBack={onBack} onNext={onNext} />
     </div>
   );
 }
@@ -1615,6 +1647,7 @@ const STEP_NAMES: Record<number, string> = {
   0: "intro",
   [STEP_WELCOME_HOME]: "welcome-home",
   [STEP_WHAT_IS_CABINET]: "what-is-cabinet",
+  [STEP_KNOWLEDGE]: "knowledge",
   [STEP_ROOM_SETUP]: "room-setup",
   [STEP_TEAM]: "team",
   [STEP_TASK]: "first-task",
@@ -2207,7 +2240,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         className={`relative mx-auto flex min-h-screen w-full ${
           showRail
             ? "max-w-6xl gap-10"
-            : step === STEP_WHAT_IS_CABINET
+            : step === STEP_WHAT_IS_CABINET || step === STEP_KNOWLEDGE
               ? "max-w-4xl"
               : "max-w-3xl"
         } justify-center ${
@@ -2420,11 +2453,19 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
               selected={exampleIndex}
               onSelect={setExampleIndex}
               onBack={() => setStep(STEP_WELCOME_HOME)}
+              onNext={() => setStep(STEP_KNOWLEDGE)}
+            />
+          )}
+
+          {/* Step 3: Cabinet connects all your knowledge bases (animated graph) */}
+          {step === STEP_KNOWLEDGE && (
+            <KnowledgeStep
+              onBack={() => setStep(STEP_WHAT_IS_CABINET)}
               onNext={() => setStep(STEP_ROOM_SETUP)}
             />
           )}
 
-          {/* Step 3: Pick a room + name + describe the cabinet (merged) */}
+          {/* Step 4: Pick a room + name + describe the cabinet (merged) */}
           {step === STEP_ROOM_SETUP && (
             <div className="mx-auto flex max-w-xl flex-col gap-7 animate-in fade-in duration-300">
               <div className="text-center space-y-2">
@@ -2516,7 +2557,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
               <div className="flex items-center justify-between pt-1">
                 <button
-                  onClick={() => setStep(STEP_WHAT_IS_CABINET)}
+                  onClick={() => setStep(STEP_KNOWLEDGE)}
                   className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-medium transition-colors"
                   style={{ color: WEB.textSecondary }}
                 >

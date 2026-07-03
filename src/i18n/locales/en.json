@@ -1316,6 +1316,11 @@
       "example4": "a client project",
       "example5": "your personal knowledge base"
     },
+    "knowledge": {
+      "heading": "All your knowledge, in one Cabinet",
+      "subtitle": "Cabinet connects to the tools where your work already lives — your docs, drives, and inboxes — so your AI team can draw on everything from a single place.",
+      "footnote": "Connect any of these later from Integrations. Nothing leaves your machine until you choose to share it."
+    },
     "access": {
       "heading": "What can {{name}} access?",
       "subtitle": "Pick the knowledge and tools this agent can use. You can change this anytime.",
