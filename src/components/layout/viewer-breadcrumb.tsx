@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronRight, Home, Cloud } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronRight, Cloud, Copy, Home } from "lucide-react";
 import { useAppStore } from "@/stores/app-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -12,6 +13,33 @@ import { decodeDrivePath } from "@/lib/google-drive/paths";
 function navigateTo(segmentPath: string) {
   useTreeStore.getState().focusPath(segmentPath);
   void useEditorStore.getState().loadPage(segmentPath).catch(() => {});
+}
+
+function CopyPathButton({ path }: { path: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        void navigator.clipboard
+          .writeText(path)
+          .then(() => {
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 1200);
+          })
+          .catch(() => {});
+      }}
+      className="ms-0.5 inline-flex shrink-0 items-center rounded p-1 text-muted-foreground/50 hover:bg-muted/60 hover:text-foreground transition-colors"
+      title={copied ? "Copied" : "Copy path"}
+      aria-label="Copy path"
+    >
+      {copied ? (
+        <Check className="h-3 w-3 text-emerald-600" />
+      ) : (
+        <Copy className="h-3 w-3" />
+      )}
+    </button>
+  );
 }
 
 /**
@@ -60,7 +88,7 @@ export function ViewerBreadcrumb({
         </span>
         <ChevronRight className="h-3 w-3 shrink-0 opacity-40" />
         <span
-          className="truncate text-[14px] font-semibold tracking-tight text-foreground"
+          className="truncate font-semibold text-foreground"
           title={filename}
         >
           {filename}
@@ -149,12 +177,13 @@ export function ViewerBreadcrumb({
       <div className="flex min-w-0 items-center gap-1">
         <ChevronRight className="h-3 w-3 shrink-0 opacity-40" />
         <span
-          className="truncate text-[14px] font-semibold tracking-tight text-foreground"
+          className="truncate font-semibold text-foreground"
           title={leafTitle}
         >
           {leafTitle}
         </span>
       </div>
+      <CopyPathButton path={path} />
     </div>
   );
 }

@@ -101,11 +101,11 @@ function ToolButton({ label, icon: Icon, active, disabled, style, onAction }: To
         onAction(e);
       }}
       className={cn(
-        "h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-md text-muted-foreground/70 hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40",
+        "h-7 w-7 shrink-0 inline-flex items-center justify-center rounded-md text-muted-foreground/70 hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40",
         active && "bg-accent text-foreground ring-1 ring-inset ring-foreground/15"
       )}
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="h-3.5 w-3.5" />
     </button>
   );
 }
@@ -409,7 +409,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
               {[...primaryItems, { separator: true } as ButtonSpec, ...secondaryItems].map((item, i) => {
                 if ("separator" in item) {
                   return (
-                    <Separator key={i} orientation="vertical" className="mx-1 h-6 shrink-0" />
+                    <Separator key={i} orientation="vertical" className="mx-1 h-5 shrink-0" />
                   );
                 }
                 return (
@@ -429,7 +429,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
         {/* Pinned, non-scrolling source/preview toggle — always reachable
             regardless of how far the formatting row is scrolled. */}
         <div className="shrink-0 flex items-center gap-1 ps-1 pe-2">
-          <Separator orientation="vertical" className="h-6" />
+          <Separator orientation="vertical" className="h-5" />
           {!sourceMode && (
             <ToolButton
               label={wideMode ? t("editor:toolbar.normalWidth") : t("editor:toolbar.wideMode")}
@@ -443,13 +443,13 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
             onMouseDown={(e) => e.preventDefault()}
             onClick={onToggleSource}
             className={cn(
-              "flex items-center gap-1.5 h-8 shrink-0 px-2.5 text-xs rounded-md transition-colors",
+              "flex items-center gap-1.5 h-7 shrink-0 px-2 text-[11px] rounded-md transition-colors",
               sourceMode
                 ? "bg-accent text-foreground ring-1 ring-inset ring-foreground/15"
-                : "text-foreground/80 hover:bg-accent"
+                : "text-muted-foreground/70 hover:bg-accent hover:text-foreground"
             )}
           >
-            <Code2 className="h-4 w-4" />
+            <Code2 className="h-3.5 w-3.5" />
             {sourceMode ? t("editor:toolbar.preview") : t("editor:toolbar.markdown")}
           </button>
         </div>

@@ -640,7 +640,7 @@ export function KBEditor() {
       {/* Chrome row on the desk: folder tabs on the left; on the Page tab the
           formatting toolbar scrolls to the right of them (transparent, faded).
           Only the tabs connect down into the sheet below. */}
-      <div className="flex shrink-0 items-end gap-3 ps-4 pe-2">
+      <div className="flex shrink-0 items-end gap-3 ps-4 pe-2 min-h-[34px]">
         {showFolderTabs && (
           <FolderTabs
             className="shrink-0"
@@ -654,7 +654,7 @@ export function KBEditor() {
           />
         )}
         {!onFilesTab && (
-          <div className="min-w-0 flex-1 mb-1">
+          <div className="min-w-0 flex-1 mb-0.5 animate-in fade-in slide-in-from-left-3 duration-300 ease-out">
             <EditorToolbar
               editor={editor}
               sourceMode={sourceMode}
