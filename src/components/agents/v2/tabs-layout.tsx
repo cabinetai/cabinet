@@ -145,7 +145,7 @@ function TopBar({
     useAgentsContext();
   return (
     <header
-      className="flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
+      className="@container flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
       style={{ paddingInlineStart: `calc(0.75rem + var(--sidebar-toggle-offset, 0px))` }}
     >
       <div className="order-2 min-w-0 flex-1 md:order-1">
@@ -322,7 +322,9 @@ function TabStrip({
           label: (
             <span className="inline-flex items-center gap-1.5">
               <Icon className="size-3.5" />
-              {t.label}
+              {/* Squeezed by open side panels the tab strip runs out of room,
+                  so drop the word to an icon-only tab below ~900px of desk. */}
+              <span className="@max-[900px]:hidden">{t.label}</span>
             </span>
           ),
           count: counts[t.key],

@@ -35,7 +35,8 @@ export function ViewToggle({
           label: (
             <span className="inline-flex items-center gap-1.5">
               <Icon className="size-3.5" />
-              {opt.label}
+              {/* Icon-only once the desk is squeezed by open side panels. */}
+              <span className="@max-[820px]:hidden">{opt.label}</span>
             </span>
           ),
         };

@@ -417,7 +417,7 @@ export function TasksBoard({
   return (
     <div className="flex h-full min-h-0 flex-col text-foreground">
       <header
-        className="flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
+        className="@container flex shrink-0 flex-wrap items-end gap-x-3 gap-y-1 px-3 pt-1 transition-[padding] duration-200 md:flex-nowrap"
         style={{ paddingInlineStart: `calc(0.75rem + var(--sidebar-toggle-offset, 0px))` }}
       >
         <div className="mb-1.5 flex items-center gap-2">
