@@ -105,14 +105,14 @@ function NewCabinetOverlay({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/80 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget && !creating) onOpenChange(false);
       }}
     >
-      <div className="relative w-full max-w-5xl mx-4 my-8 bg-card rounded-2xl border border-border shadow-2xl">
+      <div className="relative flex max-h-[calc(100vh-2rem)] w-full max-w-7xl flex-col bg-card rounded-2xl border border-border shadow-2xl">
         {/* Header */}
-        <div className="flex items-start justify-between px-8 pt-8 pb-4">
+        <div className="flex shrink-0 items-start justify-between px-8 pt-8 pb-4">
           <div>
             <h2 className="text-xl font-semibold text-foreground">{t("dialogs:newCabinet.title")}</h2>
             <p className="text-sm text-muted-foreground mt-1">
@@ -147,9 +147,9 @@ function NewCabinetOverlay({
           </div>
         </div>
 
-        <form onSubmit={handleCreate} className="px-8 pb-8 space-y-6">
-          {/* Cabinet name */}
-          <div className="space-y-1.5">
+        <form onSubmit={handleCreate} className="flex min-h-0 flex-1 flex-col">
+          {/* Cabinet name — fixed */}
+          <div className="shrink-0 space-y-1.5 px-8 pb-4">
             <label className="text-sm font-medium text-foreground">{t("dialogs:newCabinet.nameLabel")}</label>
             <Input
               placeholder={t("dialogs:newCabinet.namePlaceholder")}
@@ -161,14 +161,16 @@ function NewCabinetOverlay({
             />
           </div>
 
-          {/* Agent picker */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-foreground">{t("dialogs:newCabinet.selectAgents")}</label>
-              <span className="text-xs text-muted-foreground">
-                {t("dialogs:newCabinet.selectedCount", { count: picker.agents.filter((a) => a.checked).length })}
-              </span>
-            </div>
+          {/* Agent picker label — fixed so the count stays visible while scrolling */}
+          <div className="flex shrink-0 items-center justify-between px-8 pb-2">
+            <label className="text-sm font-medium text-foreground">{t("dialogs:newCabinet.selectAgents")}</label>
+            <span className="text-xs text-muted-foreground">
+              {t("dialogs:newCabinet.selectedCount", { count: picker.agents.filter((a) => a.checked).length })}
+            </span>
+          </div>
+
+          {/* Agent picker — the only region that scrolls, and only on short windows */}
+          <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-4">
             <AgentPicker
               agents={picker.agents}
               libraryTemplates={picker.templates}
@@ -178,12 +180,11 @@ function NewCabinetOverlay({
             />
           </div>
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
-
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-border">
+          {/* Footer — fixed */}
+          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-border px-8 py-4">
+            {error && (
+              <p className="me-auto text-sm text-destructive">{error}</p>
+            )}
             <Button
               type="button"
               variant="outline"

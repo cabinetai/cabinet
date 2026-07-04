@@ -32,13 +32,17 @@ const DEPARTMENT_ORDER: [string, string][] = [
   ["engineering", "Engineering"],
   ["product", "Product & Design"],
   ["design", "Product & Design"],
+  ["research", "Research"],
   ["sales", "Business"],
   ["support", "Business"],
   ["analytics", "Business"],
-  ["research", "Business"],
   ["finance", "Finance & Ops"],
   ["legal", "Finance & Ops"],
   ["hr", "Finance & Ops"],
+  ["content", "Content"],
+  ["publishing", "Content"],
+  ["household", "Home"],
+  ["personal", "Personal"],
 ];
 
 function getDepartmentLabel(dept: string): string {
@@ -117,17 +121,22 @@ export function AgentPicker({
         </p>
       )}
       <div className={cn(
-        "gap-3 pb-2",
+        "pb-2",
         layout === "grid"
-          ? "flex flex-wrap"
-          : "flex overflow-x-auto"
+          // masonry: cards flow into columns and pack by height, so the
+          // tallest group no longer drives one big empty row (flex-wrap did)
+          ? "columns-2 gap-3 sm:columns-3 lg:columns-4 xl:columns-5"
+          : "flex gap-3 overflow-x-auto"
       )}>
         {groupByDepartment(agents, libraryTemplates).map(
           ([label, groupAgents]) => (
             <div
               key={label}
-              className="rounded-xl border border-border bg-muted/30 p-3 shrink-0"
-              style={{ width: 180 }}
+              className={cn(
+                "rounded-xl border border-border bg-muted/30 p-3",
+                layout === "grid" ? "mb-3 break-inside-avoid" : "shrink-0"
+              )}
+              style={layout === "grid" ? undefined : { width: 180 }}
             >
               <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {label}
