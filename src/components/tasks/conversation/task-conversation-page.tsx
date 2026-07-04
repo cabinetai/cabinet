@@ -2114,7 +2114,7 @@ export function TaskConversationPage({
             ) : null}
           </div>
           {!readOnly ? (
-            <div className={cn("shrink-0 bg-background", isCompact && "pb-2")}>
+            <div className={cn("shrink-0 bg-background", isCompact && "pb-1")}>
               <div className="mx-auto w-full max-w-3xl">
                 <TaskComposerPanel
                   awaitingInput={task.meta.status === "awaiting-input"}

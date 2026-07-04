@@ -286,7 +286,9 @@ export function TaskComposerPanel({
   return (
     <div
       className={cn(
-        "bg-background px-4 py-3",
+        "bg-background px-4 pt-3",
+        // Drawer: keep the footnote hint close to the bottom edge.
+        compact ? "pb-1.5" : "pb-3",
         awaitingInput && "bg-amber-500/[0.04]",
         className
       )}
