@@ -114,35 +114,41 @@ export function LayoutGallery({
           </div>
         ) : (
           <div className="space-y-10">
-            {groups.map((group) => (
-              <section key={group.category}>
-                {/* Category header */}
-                <div className="mb-5 flex items-baseline gap-2.5">
-                  <h2 className="text-[13px] font-semibold text-foreground">
-                    {CATEGORY_META[group.category].label}
-                  </h2>
-                  <span className="inline-flex items-center rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground ring-1 ring-border">
-                    {group.items.length}
-                  </span>
-                </div>
+            {(() => {
+              // Running index across every group so the entrance animation
+              // cascades tile-by-tile down the whole page, not per-section.
+              let revealIndex = 0;
+              return groups.map((group) => (
+                <section key={group.category}>
+                  {/* Category header */}
+                  <div className="mb-5 flex items-baseline gap-2.5">
+                    <h2 className="text-[13px] font-semibold text-foreground">
+                      {CATEGORY_META[group.category].label}
+                    </h2>
+                    <span className="inline-flex items-center rounded-full bg-accent px-2 py-0.5 text-[11px] font-medium text-muted-foreground ring-1 ring-border">
+                      {group.items.length}
+                    </span>
+                  </div>
 
-                {/* Logo wall */}
-                <div className="flex flex-wrap gap-5">
-                  {group.items.map((item) => (
-                    <GalleryTile
-                      key={item.id}
-                      item={item}
-                      onOpen={onOpen}
-                      connectedIds={connectedIds}
-                      msWorkAccountConnected={msWorkAccountConnected}
-                      requested={requestedIds.has(item.id)}
-                      requesting={requestingId === item.id}
-                      onRequest={requestIntegration}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
+                  {/* Logo wall */}
+                  <div className="flex flex-wrap gap-5">
+                    {group.items.map((item) => (
+                      <GalleryTile
+                        key={item.id}
+                        item={item}
+                        revealIndex={revealIndex++}
+                        onOpen={onOpen}
+                        connectedIds={connectedIds}
+                        msWorkAccountConnected={msWorkAccountConnected}
+                        requested={requestedIds.has(item.id)}
+                        requesting={requestingId === item.id}
+                        onRequest={requestIntegration}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ));
+            })()}
           </div>
         )}
 
@@ -184,6 +190,7 @@ const GIGGLE_FRAMES = [
 
 function GalleryTile({
   item,
+  revealIndex,
   onOpen,
   connectedIds,
   msWorkAccountConnected,
@@ -192,6 +199,8 @@ function GalleryTile({
   onRequest,
 }: {
   item: IntegrationItem;
+  /** Position in the full tile sequence; drives the staggered entrance. */
+  revealIndex: number;
   onOpen: (id: string) => void;
   connectedIds: Set<string>;
   /** Whether the connected Microsoft 365 account is work/school, not personal. */
@@ -255,9 +264,17 @@ function GalleryTile({
       onBlur={soon ? undefined : stopGiggle}
       title={soon ? soonTitle : item.name}
       aria-label={soon ? soonTitle : item.name}
+      // Staggered entrance — tiles fade + rise into place one after another,
+      // same technique as the sidebar reveal (animationFillMode: backwards keeps
+      // each tile hidden until its delayed start). Cap so long lists stay snappy.
+      style={{
+        animationDelay: `${Math.min(revealIndex, 24) * 28}ms`,
+        animationFillMode: "backwards",
+      }}
       className={cn(
         "group flex w-[112px] flex-col items-center gap-2.5",
         "rounded-2xl p-2 text-center focus:outline-none",
+        "animate-in fade-in slide-in-from-top-2 duration-300 ease-out",
         soonActionable || !soon ? "cursor-pointer" : "cursor-default",
       )}
     >

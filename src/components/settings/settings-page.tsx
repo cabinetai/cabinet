@@ -9,6 +9,7 @@ import {
   XCircle,
   RefreshCw,
   Sparkles,
+  Blocks,
   Bell,
   Cpu,
   Stethoscope,
@@ -779,7 +780,9 @@ export function SettingsPage() {
   // Linear Settings, GitHub Settings, all do this for >5 categories.
   const tabGroups: {
     label: string;
-    items: { id: Tab; label: string; icon: React.ReactNode }[];
+    // `onSelect` lets an item navigate elsewhere (e.g. the Integrations hub is
+    // its own section, not a settings tab) instead of switching the in-page tab.
+    items: { id: Tab; label: string; icon: React.ReactNode; onSelect?: () => void }[];
   }[] = [
     {
       label: t("settings:page.groupYou"),
@@ -793,6 +796,12 @@ export function SettingsPage() {
       label: t("settings:page.groupWorkspace"),
       items: [
         { id: "providers", label: t("settings:tabs.providers"), icon: <Cpu className="h-3.5 w-3.5" /> },
+        {
+          id: "integrations" as Tab,
+          label: t("settings:tabs.integrations"),
+          icon: <Blocks className="h-3.5 w-3.5" />,
+          onSelect: () => useAppStore.getState().setSection({ type: "integrations" }),
+        },
         { id: "skills", label: t("settings:tabs.skills"), icon: <Sparkles className="h-3.5 w-3.5" /> },
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
       ],
@@ -849,11 +858,12 @@ export function SettingsPage() {
               {group.items.map((t) => (
                 <a
                   key={t.id}
-                  href={`#/settings/${t.id}`}
+                  href={t.onSelect ? "/integrations" : `#/settings/${t.id}`}
                   aria-current={tab === t.id ? "page" : undefined}
                   onClick={(e) => {
                     e.preventDefault();
-                    setTab(t.id);
+                    if (t.onSelect) t.onSelect();
+                    else setTab(t.id);
                   }}
                   className={cn(
                     "flex items-center gap-2 rounded-md px-2 py-1.5 text-[12.5px] font-medium transition-colors no-underline",
@@ -877,11 +887,12 @@ export function SettingsPage() {
             {tabGroups.flatMap((g) => g.items).map((t) => (
               <a
                 key={t.id}
-                href={`#/settings/${t.id}`}
+                href={t.onSelect ? "/integrations" : `#/settings/${t.id}`}
                 aria-current={tab === t.id ? "page" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
-                  setTab(t.id);
+                  if (t.onSelect) t.onSelect();
+                  else setTab(t.id);
                 }}
                 className={cn(
                   "flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors no-underline",
