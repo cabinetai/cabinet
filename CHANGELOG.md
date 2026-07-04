@@ -8,31 +8,47 @@ All notable changes to Cabinet.
 
 ## v0.5.0 · 2026-07-04
 
-The largest release since v0.4.0 (238 commits): Connect Knowledge brings your cloud drives into every room, the Integrations Hub gains Slack, Google, Microsoft, and Snowflake, your agents get their own Channels, and a borderless "Manila Arc" redesign.
+The largest release since v0.4.0 (238 commits): Connect Knowledge brings your cloud drives into every room, a much bigger Integrations Hub (Slack, Google, Microsoft 365, Snowflake, LinkedIn, Discord, Telegram), agents get their own Channels, a Telegram remote-control gateway, clean-path routing, a borderless "Manila Arc" redesign, and a deep editor + knowledge-import pass.
 
 ### 🟢 New
-- 🟢 **Connect Knowledge:** per-room knowledge sources. Browse Google Drive, iCloud, OneDrive/SharePoint, and Dropbox read-only inside a room, or mount a synced folder inline with read-only enforced on the server. Native Google Docs/Sheets shortcuts render in place, and the cloud picker auto-detects your desktop-sync accounts. No OAuth required.
-- 🟢 **Integrations Hub, expanded:** Slack, Google (Gmail, Calendar, Drive), Microsoft (OneDrive, SharePoint, Teams), and Snowflake, plus Notion and Confluence in the catalog. New Social category and a "Soon" request flow.
-- 🟢 **Channels:** per-room team chat for your agents. @mention an agent and it actually replies, with a live "is typing" indicator; channels sort by most recent activity and live under `.channels` per room.
+- 🟢 **Connect Knowledge:** per-room knowledge sources. Browse Google Drive, iCloud, OneDrive/SharePoint, and Dropbox read-only inside a room, or mount a synced folder inline with a read-only policy enforced on the server. Native Google Docs and Sheets shortcuts render in place, the cloud picker auto-detects your desktop-sync accounts, and there is no OAuth to set up.
+- 🟢 **Integrations Hub, much bigger:** a 52-connector tabbed catalog with illustrated per-step setup art. Live connectors now include Slack, Google (Gmail, Calendar, Drive), Microsoft 365 (OneDrive, SharePoint, Teams, with personal-account sign-in), Snowflake, LinkedIn, Discord, and Telegram, plus a Social category and a "Soon" request flow. A launch gate keeps not-yet-ready tiles grayed out.
+- 🟢 **Channels:** per-room team chat for your agents (the internal team-chat, renamed from "Slack"). @mention an agent and it actually replies, with a live "is typing" indicator; channels sort by most recent activity and live under `.channels` per room.
+- 🟢 **Telegram remote control:** an inbound gateway to run agents and search Cabinet from Telegram, with room-scoped chats, a personalized welcome, and a per-chat `/model` command for provider, model, and effort overrides.
 - 🟢 **Knowledge import:** bring Apple Notes (macOS) and a Notion export (.zip) in as local Markdown.
 - 🟢 **In-app browser:** external links and web pages open inside Cabinet in the desktop app, using a native web view that loads sites an iframe can't, with an iframe fallback on the web build.
+- 🟢 **Editor:** inline Mermaid diagrams with zoom and pan, LaTeX (`.tex`) embed rendering and a file viewer, `file://` links, a wide mode for full-width reading, and a Link vs Embed chooser when you paste a URL.
+- 🟢 **Schedule:** unified Schedule surfaces with calendar interactivity, one-off tasks, and a "this and following" recurrence split.
 - 🟢 **Onboarding:** a new knowledge-graph step in the wizard.
 
 ### 🔵 Improved
-- 🔵 **Editor:** inline Mermaid diagrams with zoom/pan, LaTeX (`.tex`) embed rendering and a file viewer, `file://` links, tree-view sorting, and paginated PDF export that skips cross-origin fonts.
-- 🔵 **Paste a URL, your way:** pasting a link on its own line now offers a Link vs Embed chooser instead of forcing an iframe. Embed is frame-checked so a site that refuses framing can't leave a dead box, and any embed can be turned back into a plain link.
 - 🔵 **Manila Arc:** a borderless redesign where the bright content sheet floats on a manila "desk", with softened hairline borders.
-- 🔵 **Tasks:** cleaner new-chat and conversation headers.
+- 🔵 **Clean-path routing:** the app moved from hash routing to clean paths end to end (web and Electron), with reopen-to-last-path persistence, section anchors in previews, and nested cabinets round-tripping correctly on reload.
+- 🔵 **Editor and paste:** paginated PDF export that skips cross-origin fonts, tree-view sorting, relative-image resolution in standalone `.md` pages, and any embed can be turned back into a plain link (frame-checked so a framing-hostile site can't leave a dead box).
+- 🔵 **Tasks:** real-time updates for non-Claude (Codex) runs, immediate Codex failure surfacing with actionable hints, one shared SSE connection for conversation events, concurrent follow-ups rejected with a clear 409, and no more phantom `_pending` conversations.
+- 🔵 **Sidebar:** moving standalone `.md` files no longer fails with `ENOENT`, renaming preserves the file extension, and the Edit Symlink dialog no longer overflows its box.
+- 🔵 **Observability:** diagnostic logging and attributed file history.
 
 ### 🟣 AI & providers
-- 🟣 Added Claude Fable 5 and bumped Opus 4.7 to 4.8.
-- 🟣 Conversation run timeout raised from 10 minutes to 1 hour (env-tunable); stale task errors clear on recovery.
+- 🟣 Added Claude Fable 5 and bumped Opus 4.7 to 4.8; stale task errors now clear on recovery.
+- 🟣 A `SEND_EMAIL` agent action wired end to end (inline and JSON parsing, dispatch, transcript), calling `sendEmail()` directly instead of a flaky HTTP self-fetch.
+- 🟣 Conversation run timeout raised from 10 minutes to 1 hour (env-tunable); finalized conversations skip transcript re-parse.
 - 🟣 Scheduler trigger health is exposed on the daemon `/health` endpoint.
 
 ### 🟡 Fixed
-- 🟡 **Agents:** unified the agent spawn working directory, fixing scheduled-run `ENOENT` failures.
-- 🟡 **Editor:** keep `EditorContent` mounted to avoid a flushSync-in-lifecycle warning.
-- 🟡 **Security:** patched `ws` and `next` advisories.
+- 🟡 **Auth:** PBKDF2 password hashing with a per-install salt and login rate-limiting (closes #11); the daemon authenticates scheduler triggers against the KB_PASSWORD gate and backfills all auth inputs from `.env`; sign-in works on mobile browsers and through reverse proxies.
+- 🟡 **Windows:** repaired the CLI install path, the Squirrel installer and release manifest, chunked PTY prompts, and remaining POSIX-only assumptions.
+- 🟡 **Artifacts:** external paths detected by absoluteness rather than a system-dir denylist, placeholder paths sanitized so repair is idempotent, and task artifacts resolved against the task cwd so they open and appear in the sidebar.
+- 🟡 **Networking and dev:** `npm run dev:all` works behind LAN / Tailscale / VPN hostnames; background-tab polling pauses so two Cabinet URLs can coexist; the file watcher stops following symlinks to avoid EMFILE.
+- 🟡 **Agents / editor:** unified the agent spawn working directory (fixes scheduled-run `ENOENT`) and kept `EditorContent` mounted to avoid a flushSync-in-lifecycle warning.
+- 🟡 **Lint and security:** eliminated all 49 react-hooks compiler-rule errors repo-wide and patched the `ws` and `next` advisories.
+
+### 🔴 Changed
+- 🔴 **Clean-path routing:** the app serves clean URLs instead of hash routes across web and Electron. Old hash links resolve via a marker-scan parser, but the canonical form is now path-based.
+- 🔴 **Channels on-disk rename:** the internal team-chat directory moved from `.slack` to `.channels`, scoped per room.
+
+### 🙏 Thanks
+Contributions this release from Alexandra Goldemberg, @alexsh1410 (in-app browser mode), @alpha8eta (skip transcript re-parse for finalized conversations, standalone static-asset copy fix), @Djaymare, @iGodly, and Erez Weinstein.
 
 ---
 
