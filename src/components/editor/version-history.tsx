@@ -74,7 +74,10 @@ export function FileHistoryPanel() {
   if (!path) return null;
 
   return (
-    <div className="fixed right-0 top-0 bottom-0 z-40 flex w-[420px] max-w-[94vw] flex-col border-l border-border bg-background">
+    // Manila Arc: a floating sheet on the desk — inset 10px on every side,
+    // rounded + lifted with --sheet-shadow, no border (matches the content sheet
+    // and the AI panel).
+    <div className="fixed top-[10px] bottom-[10px] end-[10px] z-40 flex w-[420px] max-w-[calc(94vw-20px)] flex-col overflow-hidden rounded-[var(--sheet-radius)] bg-background shadow-[var(--sheet-shadow)]">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex min-w-0 items-center gap-2">
           <History className="h-4 w-4 shrink-0" />

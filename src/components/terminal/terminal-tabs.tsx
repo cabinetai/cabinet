@@ -207,7 +207,7 @@ export function TerminalTabs() {
   if (terminalPosition === "right") {
     return (
       <div
-        className="flex flex-row h-full border-s border-border/70 bg-background shrink-0"
+        className="flex flex-row h-full bg-background shrink-0 overflow-hidden rounded-s-[var(--sheet-radius)] shadow-[var(--sheet-shadow)]"
         style={{ width: `${width}px` }}
       >
         {/* Audit #046: left-edge resize handle. Bumped from 1.5px to a

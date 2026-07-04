@@ -32,6 +32,15 @@ export function SideDrawer({ drawer, onScrimClick, children }: SideDrawerProps) 
     onWrapperTransitionEnd,
   } = drawer;
 
+  // The closed panel slides out toward the near (inline-end) window edge. The
+  // panel only renders while open/animating, so reading dir at render is safe.
+  const isRtl =
+    typeof document !== "undefined" &&
+    document.documentElement.dir === "rtl";
+  const hiddenTransform = isRtl
+    ? "translateX(calc(-100% - 14px))"
+    : "translateX(calc(100% + 14px))";
+
   if (isMobile) {
     return (
       <>
@@ -48,26 +57,38 @@ export function SideDrawer({ drawer, onScrimClick, children }: SideDrawerProps) 
   }
 
   return (
+    // The wrapper animates its width to push the main content; it carries no
+    // overflow clip so the floating sheet's shadow isn't cut off.
     <div
       className={cn(
-        "relative shrink-0 self-stretch overflow-hidden",
-        // Same leading-edge depth shadow as the task rail (RTL-mirrored).
-        // On the wrapper, not the inner panel, so its own overflow-hidden
-        // doesn't clip it. Only while expanded — no panel, no shadow.
-        expanded &&
-          "shadow-[-3px_0_8px_-5px_rgba(0,0,0,0.14)] rtl:shadow-[3px_0_8px_-5px_rgba(0,0,0,0.14)]",
+        "relative shrink-0 self-stretch",
         !resizing &&
           "transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
       )}
       style={{ width: expanded ? panelWidth : 0 }}
       onTransitionEnd={onWrapperTransitionEnd}
     >
+      {/* Manila Arc: a floating sheet pinned to the inline-end. Inset from the
+          desk on every side (top from the shell's gutter, start + bottom here)
+          so the manila breathes around it, rounded + lifted with the same
+          --sheet-shadow as the content sheet. Sized 10px narrower than the
+          wrapper so a start gutter sits between it and the content sheet; it
+          slides in on open (transform, so its fixed width never reflows). */}
       <div
-        className="absolute inset-y-0 end-0 flex flex-col bg-background"
-        style={{ width: panelWidth }}
+        className={cn(
+          "absolute top-0 bottom-[10px] end-0 flex flex-col overflow-hidden rounded-[var(--sheet-radius)] bg-background",
+          !resizing &&
+            "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        )}
+        style={{
+          width: panelWidth - 10,
+          boxShadow: "var(--sheet-shadow)",
+          transform: expanded ? "translateX(0)" : hiddenTransform,
+        }}
       >
-        {/* Resize handle — a flush 1px hairline at the inline-start edge.
-            Drag to resize, double-click to reset. */}
+        {/* Resize handle — an invisible grab strip at the sheet's inline-start
+            inner edge (kept inside the rounded, clipped panel). A soft primary
+            rail appears on hover. Drag to resize, double-click to reset. */}
         <div
           role="separator"
           aria-orientation="vertical"
@@ -75,7 +96,7 @@ export function SideDrawer({ drawer, onScrimClick, children }: SideDrawerProps) 
           title={t("sidebar:resetWidth")}
           onPointerDown={startResize}
           onDoubleClick={resetWidth}
-          className="absolute inset-y-0 start-0 z-30 w-px cursor-col-resize bg-border/50 transition-colors hover:bg-primary/50"
+          className="absolute inset-y-0 start-0 z-30 w-1.5 cursor-col-resize bg-transparent transition-colors hover:bg-primary/40"
         />
         {children}
       </div>

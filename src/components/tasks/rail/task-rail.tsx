@@ -223,11 +223,10 @@ export function TaskRail() {
         // the rail never moves (the task drawer opens to its left). z-40
         // sits above content/toolbars but below true modal scrims (z-50).
         "fixed inset-y-0 end-0 z-40 flex w-[30px] flex-col",
-        "border-s border-sidebar-border bg-sidebar text-sidebar-foreground",
-        // Soft depth shadow cast onto the content it floats over. Mirrored
-        // for RTL so it always falls on the content-facing (leading) edge.
-        "shadow-[-8px_0_22px_-12px_rgba(0,0,0,0.30)]",
-        "rtl:shadow-[8px_0_22px_-12px_rgba(0,0,0,0.30)]"
+        // The rail lives in the desk gutter (bg == --gutter / --sidebar), so it
+        // needs no border or drop shadow — the avatars simply float in the
+        // manila margin, borderless, like the rest of the Manila Arc chrome.
+        "bg-sidebar text-sidebar-foreground"
       )}
     >
       <button
