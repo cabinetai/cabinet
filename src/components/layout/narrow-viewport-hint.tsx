@@ -42,8 +42,15 @@ export function NarrowViewportHint() {
 
   if (!show) return null;
 
+  // Manila Arc: a rounded card floating on the desk, aligned to the content
+  // sheet below it (ms-2.5 matches the sheet's inline-start inset; right edge
+  // flush to the column), mirroring the daemon-down banner rather than a flat
+  // full-width strip with a hard border-b.
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-900 dark:text-amber-100">
+    <div
+      role="status"
+      className="ms-2.5 mt-2 mb-1.5 flex items-center justify-between gap-2 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3.5 py-2 text-[11px] text-amber-900 shadow-sm dark:text-amber-100"
+    >
       <span>
         {t("narrowViewport:hintPrefix")}<strong>{t("narrowViewport:hintWidth")}</strong>{t("narrowViewport:hintSuffix")}
       </span>
@@ -59,7 +66,7 @@ export function NarrowViewportHint() {
         }}
         aria-label={t("narrowViewport:dismiss")}
         title={t("narrowViewport:dismissTitle")}
-        className="shrink-0 rounded p-0.5 text-amber-900/70 transition-colors hover:bg-amber-500/20 hover:text-amber-900 dark:text-amber-100/70 dark:hover:text-amber-100"
+        className="-me-1 shrink-0 rounded-md p-1 text-amber-900/70 transition-colors hover:bg-amber-500/20 hover:text-amber-900 dark:text-amber-100/70 dark:hover:text-amber-100"
       >
         <X className="size-3" />
       </button>
