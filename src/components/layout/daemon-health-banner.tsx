@@ -20,21 +20,26 @@ export function DaemonHealthBanner() {
       ? t("chrome:daemon.fixHintElectron")
       : t("chrome:daemon.fixHintDev");
 
+  // Manila Arc: a rounded card floating on the desk, aligned to the content
+  // sheet below it (ms-2.5 matches the sheet's inline-start inset; the right
+  // edge sits flush to the column like the sheet). Colors come from the
+  // theme's `--destructive` semantic token so it adapts to the active theme
+  // instead of a hardcoded amber.
   return (
     <div
       role="alert"
-      className="flex items-center gap-3 border-b border-amber-500/40 bg-amber-500/10 px-4 py-2 text-[12px] text-amber-700 dark:text-amber-200"
+      className="ms-2.5 mt-2 mb-1.5 flex items-start gap-2.5 rounded-xl border border-destructive/25 bg-destructive/[0.08] px-3.5 py-2.5 text-[12px] text-foreground shadow-sm"
     >
-      <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <AlertTriangle className="mt-px h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
       <div className="flex-1 min-w-0">
-        <span className="font-medium">{t("chrome:daemon.notResponding")}</span>
-        <span className="ml-2 text-amber-700/80 dark:text-amber-200/80">
+        <span className="font-medium text-destructive">{t("chrome:daemon.notResponding")}</span>
+        <span className="ms-2 text-muted-foreground">
           {t("chrome:daemon.willFail", { fixHint })}
         </span>
       </div>
       <button
         onClick={dismiss}
-        className="shrink-0 rounded p-1 hover:bg-amber-500/20"
+        className="-me-1 -mt-0.5 shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-foreground"
         aria-label={t("daemonHealth:dismiss")}
       >
         <X className="h-3.5 w-3.5" />
