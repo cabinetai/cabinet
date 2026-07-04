@@ -71,7 +71,7 @@ export function DepthDropdown({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex items-center gap-1 rounded font-medium text-muted-foreground/80 transition-colors hover:bg-muted/50 hover:text-foreground data-[popup-open]:bg-muted/60 data-[popup-open]:text-foreground",
+          "inline-flex items-center gap-1 rounded font-medium text-muted-foreground/70 transition-colors hover:bg-accent hover:text-foreground data-[popup-open]:bg-accent data-[popup-open]:text-foreground",
           compact ? "px-1 py-0.5 text-[10px]" : "px-1.5 py-0.5 text-[11px]",
           className
         )}

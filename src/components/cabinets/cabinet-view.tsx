@@ -207,7 +207,7 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
       {/* ── Header row — a desk toolbar (transparent, floats above the sheet),
           matching the agents/tasks surfaces rather than a bordered bar. ── */}
         <header
-          className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2 transition-[padding] duration-200"
+          className="@container flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2 transition-[padding] duration-200"
           style={{ paddingInlineStart: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
         >
           <div className="flex min-w-0 items-center gap-3">
@@ -221,7 +221,8 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
             ) : null}
           </div>
 
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          {/* Secondary counts drop first when the desk is squeezed. */}
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground @max-[900px]:hidden">
             <CountPill label="agents" value={agentCount} />
             <CountPill label="jobs" value={jobCount} />
             <CountPill label="heartbeats" value={heartbeatCount} />
@@ -237,10 +238,11 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
               type="button"
               onClick={() => setOrgChartOpen(true)}
               disabled={!overview || agentCount === 0}
-              className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+              title="Org chart"
+              className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-muted-foreground/70 transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
             >
               <Network className="size-3.5" />
-              Org chart
+              <span className="@max-[780px]:hidden">Org chart</span>
             </button>
 
             <CabinetSchedulerControls
