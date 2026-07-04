@@ -1431,17 +1431,21 @@ html[data-custom-theme="cyber"] :where(button:not([data-no-bevel])):hover {
   unicode-bidi: isolate;
   text-align: left;
 }
-/* Same per-item marker logic as the editor's .tiptap lists: the inline
-   indent rides on the <li> (which carries dir="auto"), not the container,
-   so a Hebrew item's bullet/number lands on the right. Overrides the
-   container padding the prose/typography plugin sets on <ul>/<ol>. */
+/* Chat-markdown lists. The indent lives on the CONTAINER so the `outside`
+   marker sits right beside its text; keeping it on the <li> (as the editor
+   does) pinned the number/bullet to the far-left container edge, detached
+   from the text by a wide gap. Each <li> still carries dir="auto", so a
+   right-to-left (Hebrew) item still resolves its marker to the correct
+   (right) side — the marker follows the item's direction while the container
+   supplies a uniform hanging indent. */
 .rtl-aware ul,
 .rtl-aware ol {
-  padding-inline-start: 0;
+  padding-inline-start: 1.4em;
 }
 .rtl-aware li {
-  padding-inline-start: 1.5rem;
+  padding-inline-start: 0.3em;
 }
+.rtl-aware ul[data-type="taskList"],
 .rtl-aware ul[data-type="taskList"] li,
 .rtl-aware li[data-type="taskItem"] {
   padding-inline-start: 0;
