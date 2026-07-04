@@ -948,6 +948,8 @@ em-emoji-picker {
 /* Electron macOS: hidden title bar drag region + traffic light clearance */
 .electron-desktop header {
   -webkit-app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .electron-desktop header button,
 .electron-desktop header a,

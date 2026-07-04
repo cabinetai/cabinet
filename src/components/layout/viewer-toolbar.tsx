@@ -211,7 +211,7 @@ export function ViewerToolbar({
   ) : null;
 
   return (
-    <div
+    <header
       className={cn(
         "flex shrink-0 items-center justify-between gap-x-3 gap-y-2 border-b border-border/70 bg-background px-4 py-2 transition-[padding] duration-200 md:h-12 md:py-0",
         className
@@ -252,6 +252,6 @@ export function ViewerToolbar({
         <HeaderActions />
         <NewTaskButton />
       </div>
-    </div>
+    </header>
   );
 }

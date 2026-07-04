@@ -76,7 +76,7 @@ import {
 } from "@/components/composer/task-runtime-picker";
 import { isAgentProviderSelectable } from "@/lib/agents/provider-filters";
 import { cn } from "@/lib/utils";
-import { showError } from "@/lib/ui/toast";
+import { showError, showSuccess } from "@/lib/ui/toast";
 import { confirmDialog } from "@/lib/ui/confirm";
 import type { ProviderInfo, ProviderModel, AgentListItem } from "@/types/agents";
 import { UserAvatar } from "@/components/layout/user-avatar";
@@ -429,6 +429,10 @@ export function SettingsPage() {
     }
   };
   const [dataDir, setDataDir] = useState("");
+  const [publicRepo, setPublicRepo] = useState("");
+  const [publicRepoPending, setPublicRepoPending] = useState("");
+  const [publicRepoSaving, setPublicRepoSaving] = useState(false);
+  const [publicSyncing, setPublicSyncing] = useState(false);
   const [dataDirPending, setDataDirPending] = useState<string | null>(null);
   const [dataDirBrowsing, setDataDirBrowsing] = useState(false);
   const [dataDirSaving, setDataDirSaving] = useState(false);
@@ -467,6 +471,24 @@ export function SettingsPage() {
     });
     return unsub;
   }, [initialTab]);
+
+  useEffect(() => {
+    if (tab === "storage") {
+      fetch("/api/agents/config/cabinet-env")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && Array.isArray(data.entries)) {
+            const entry = data.entries.find((e: { key: string; value?: string }) => e.key === "PUBLIC_DIRECTORY_GITHUB_REPO");
+            if (entry && entry.value) {
+              setPublicRepo(entry.value);
+              setPublicRepoPending(entry.value);
+            }
+          }
+        })
+        .catch(() => {});
+    }
+  }, [tab]);
+
   const [activeThemeName, setActiveThemeName] = useState<string | null>(null);
   // Audit #045: theme mode state.
   const [themeMode, setThemeModeState] = useState<ThemeMode>("manual");
@@ -1580,6 +1602,134 @@ export function SettingsPage() {
               </div>
 
               <StorageBackendSection />
+
+              <div className="border-t border-border pt-6">
+                <h3 className="text-[14px] font-semibold mb-1">Public Directory (shared)</h3>
+                <p className="text-[12px] text-muted-foreground mb-4">
+                  Define the remote GitHub repository where the public Guest Room files will be pushed upon app exit.
+                </p>
+                <div className="space-y-4 max-w-md">
+                  <div className="space-y-2">
+                    <label className="text-[12px] font-medium text-muted-foreground">
+                      GitHub Repository URL or owner/repo
+                    </label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://github.com/username/repo.git or git@github.com:username/repo.git"
+                        value={publicRepoPending ?? ""}
+                        onChange={(e) => setPublicRepoPending(e.target.value)}
+                        className="font-mono text-[12px]"
+                      />
+                      <Button
+                        size="sm"
+                        disabled={publicRepoSaving || publicRepoPending === publicRepo}
+                        onClick={async () => {
+                          setPublicRepoSaving(true);
+                          try {
+                            const res = await fetch("/api/agents/config/cabinet-env", {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                key: "PUBLIC_DIRECTORY_GITHUB_REPO",
+                                value: publicRepoPending.trim(),
+                              }),
+                            });
+                            if (!res.ok) {
+                              const data = await res.json().catch(() => null);
+                              showError(data?.error || "Failed to save repository");
+                              return;
+                            }
+                            setPublicRepo(publicRepoPending.trim());
+                            showSuccess("Public directory repository saved");
+                          } catch {
+                            showError("Failed to save repository");
+                          } finally {
+                            setPublicRepoSaving(false);
+                          }
+                        }}
+                      >
+                        {publicRepoSaving ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin me-1.5" />
+                        ) : (
+                          <Save className="h-3.5 w-3.5 me-1.5" />
+                        )}
+                        Save
+                      </Button>
+                    </div>
+                    {publicRepo && (
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8"
+                          disabled={publicRepoSaving || publicSyncing}
+                          onClick={async () => {
+                            setPublicSyncing(true);
+                            try {
+                              const res = await fetch("/api/pages/public/sync", {
+                                method: "POST",
+                              });
+                              if (!res.ok) {
+                                const data = await res.json().catch(() => null);
+                                showError(data?.error || "Failed to sync public directory");
+                                return;
+                              }
+                              const data = await res.json();
+                              if (data.skipped) {
+                                showSuccess(`Sync skipped: ${data.reason}`);
+                              } else {
+                                showSuccess(`Public directory synced to GitHub (${data.publicFilesCount} files)`);
+                              }
+                            } catch {
+                              showError("Failed to sync public directory");
+                            } finally {
+                              setPublicSyncing(false);
+                            }
+                          }}
+                        >
+                          {publicSyncing ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin me-1.5" />
+                          ) : (
+                            <RefreshCw className="h-3.5 w-3.5 me-1.5" />
+                          )}
+                          Sync Now
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-500/5 h-8 px-0"
+                          disabled={publicRepoSaving}
+                          onClick={async () => {
+                            if (!confirm("Are you sure you want to disconnect the public directory repository?")) {
+                              return;
+                            }
+                            setPublicRepoSaving(true);
+                            try {
+                              const res = await fetch("/api/agents/config/cabinet-env?key=PUBLIC_DIRECTORY_GITHUB_REPO", {
+                                method: "DELETE",
+                              });
+                              if (!res.ok) {
+                                const data = await res.json().catch(() => null);
+                                showError(data?.error || "Failed to remove repository");
+                                return;
+                              }
+                              setPublicRepo("");
+                              setPublicRepoPending("");
+                              showSuccess("Public directory repository disconnected");
+                            } catch {
+                              showError("Failed to remove repository");
+                            } finally {
+                              setPublicRepoSaving(false);
+                            }
+                          }}
+                        >
+                          Disconnect Repo
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
               <div className="border-t border-border pt-6">
                 <DataLocationsSection />

@@ -195,6 +195,7 @@ export interface CabinetEnvSnapshotEntry {
   hasValue: boolean;
   /** Up to last 4 chars of the value. Empty when the value is too short to be safe to leak. */
   lastFour: string;
+  value?: string;
 }
 
 export function getCabinetEnvSnapshot(): CabinetEnvSnapshotEntry[] {
@@ -206,6 +207,7 @@ export function getCabinetEnvSnapshot(): CabinetEnvSnapshotEntry[] {
     // dev tool uses (Stripe, GitHub, etc.). Skip when shorter — small
     // secrets shouldn't leak even partial bytes.
     lastFour: value.length >= 8 ? value.slice(-4) : "",
+    ...(key === "PUBLIC_DIRECTORY_GITHUB_REPO" ? { value } : {}),
   }));
   entries.sort((a, b) => a.key.localeCompare(b.key));
   return entries;

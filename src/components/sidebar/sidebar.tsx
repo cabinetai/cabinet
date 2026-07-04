@@ -192,7 +192,7 @@ export function Sidebar() {
           className="flex h-full flex-col"
           style={{ width: panelWidth }}
         >
-        <div className="sidebar-header flex items-center justify-between gap-1 px-3 py-3">
+        <header className="sidebar-header flex items-center justify-between gap-1 px-3 py-3">
           <div className="flex min-w-0 items-center gap-1">
             <button
               onClick={() => setSection({ type: "home" })}
@@ -247,7 +247,7 @@ export function Sidebar() {
               <PanelLeftClose className="h-4 w-4 rtl:rotate-180" />
             </Button>
           </div>
-        </div>
+        </header>
         <TreeView />
 
         <div className="p-2 flex items-center gap-1">

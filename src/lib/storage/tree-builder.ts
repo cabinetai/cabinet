@@ -103,6 +103,27 @@ async function readFrontmatter(
   }
 }
 
+async function getPublicStatus(
+  entryName: string,
+  dirPath: string
+): Promise<boolean> {
+  const fullPath = path.join(dirPath, entryName);
+  const ext = path.extname(entryName).toLowerCase();
+  const isMarkdown = ext === ".md" || ext === ".mdx";
+
+  if (isMarkdown) {
+    const fm = await readFrontmatter(fullPath);
+    return fm.public === true;
+  } else {
+    const siblingPath = path.join(dirPath, `.${entryName}.md`);
+    if (await fileExists(siblingPath)) {
+      const siblingFm = await readFrontmatter(siblingPath);
+      return siblingFm.public === true;
+    }
+    return false;
+  }
+}
+
 async function readCabinetMeta(
   dirPath: string
 ): Promise<Record<string, unknown>> {
@@ -274,135 +295,148 @@ async function buildTreeRecursive(
           icon: fm.icon as string | undefined,
           order: (fm.order as number | undefined) ?? sidecarOrders[entry.name],
           google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
+          public: false,
+          hasSiblingPage: false,
         },
         children,
       });
-    } else if (entry.name.toLowerCase().endsWith(".pdf")) {
-      nodes.push({
-        name: entry.name,
-        path: vPath,
-        type: "pdf",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: entry.name.replace(/\.pdf$/i, ""),
-          order: sidecarOrders[entry.name],
-        },
-      });
-    } else if (entry.name.toLowerCase().endsWith(".csv")) {
-      nodes.push({
-        name: entry.name,
-        path: vPath,
-        type: "csv",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: entry.name.replace(/\.csv$/i, ""),
-          order: sidecarOrders[entry.name],
-        },
-      });
-    } else if (
-      entry.name.toLowerCase().endsWith(".drawio.svg") ||
-      entry.name.toLowerCase().endsWith(".drawio") ||
-      entry.name.toLowerCase().endsWith(".dio")
-    ) {
-      const lowerName = entry.name.toLowerCase();
-      const title = lowerName.endsWith(".drawio.svg")
-        ? entry.name.slice(0, -11)
-        : lowerName.endsWith(".drawio")
-        ? entry.name.slice(0, -7)
-        : entry.name.slice(0, -4);
-      nodes.push({
-        name: entry.name,
-        path: vPath,
-        type: "drawio",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title,
-          order: sidecarOrders[entry.name],
-        },
-      });
-    } else if (
-      entry.name.toLowerCase().endsWith(".excalidraw.svg") ||
-      entry.name.toLowerCase().endsWith(".excalidraw")
-    ) {
-      const lowerName = entry.name.toLowerCase();
-      const title = lowerName.endsWith(".excalidraw.svg")
-        ? entry.name.slice(0, -15)
-        : entry.name.slice(0, -11);
-      nodes.push({
-        name: entry.name,
-        path: vPath,
-        type: "excalidraw",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title,
-          order: sidecarOrders[entry.name],
-        },
-      });
-    } else if (googleNativeKind(entry.name)) {
-      // Google Workspace shortcut (e.g. inside an inline-mounted Drive folder):
-      // show it with the native-doc icon + its web URL so it opens in the viewer.
-      const native = await parseGoogleNative(fullPath);
-      nodes.push({
-        name: entry.name,
-        path: vPath, // keep the extension so readPage resolves the shortcut file
-        type: "file",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: entry.name.replace(/\.(gdoc|gsheet|gslide|gslides|gform)$/i, ""),
-          order: sidecarOrders[entry.name],
-          google: native ? { kind: native.kind, url: native.url } : undefined,
-        },
-      });
     } else {
-      const ext = path.extname(entry.name).toLowerCase();
-      const fileType = classifyFile(ext);
-      if (fileType) {
+      const isPublic = await getPublicStatus(entry.name, dirPath);
+
+      if (entry.name.toLowerCase().endsWith(".pdf")) {
         nodes.push({
           name: entry.name,
           path: vPath,
-          type: fileType,
+          type: "pdf",
           knowledgePolicy: inheritedPolicy,
           frontmatter: {
-            title: entry.name.replace(new RegExp(`\\${ext}$`, "i"), ""),
+            title: entry.name.replace(/\.pdf$/i, ""),
             order: sidecarOrders[entry.name],
+            public: isPublic,
           },
         });
-        continue;
+      } else if (entry.name.toLowerCase().endsWith(".csv")) {
+        nodes.push({
+          name: entry.name,
+          path: vPath,
+          type: "csv",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title: entry.name.replace(/\.csv$/i, ""),
+            order: sidecarOrders[entry.name],
+            public: isPublic,
+          },
+        });
+      } else if (
+        entry.name.toLowerCase().endsWith(".drawio.svg") ||
+        entry.name.toLowerCase().endsWith(".drawio") ||
+        entry.name.toLowerCase().endsWith(".dio")
+      ) {
+        const lowerName = entry.name.toLowerCase();
+        const title = lowerName.endsWith(".drawio.svg")
+          ? entry.name.slice(0, -11)
+          : lowerName.endsWith(".drawio")
+          ? entry.name.slice(0, -7)
+          : entry.name.slice(0, -4);
+        nodes.push({
+          name: entry.name,
+          path: vPath,
+          type: "drawio",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title,
+            order: sidecarOrders[entry.name],
+            public: isPublic,
+          },
+        });
+      } else if (
+        entry.name.toLowerCase().endsWith(".excalidraw.svg") ||
+        entry.name.toLowerCase().endsWith(".excalidraw")
+      ) {
+        const lowerName = entry.name.toLowerCase();
+        const title = lowerName.endsWith(".excalidraw.svg")
+          ? entry.name.slice(0, -15)
+          : entry.name.slice(0, -11);
+        nodes.push({
+          name: entry.name,
+          path: vPath,
+          type: "excalidraw",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title,
+            order: sidecarOrders[entry.name],
+            public: isPublic,
+          },
+        });
+      } else if (googleNativeKind(entry.name)) {
+        // Google Workspace shortcut (e.g. inside an inline-mounted Drive folder):
+        // show it with the native-doc icon + its web URL so it opens in the viewer.
+        const native = await parseGoogleNative(fullPath);
+        nodes.push({
+          name: entry.name,
+          path: vPath, // keep the extension so readPage resolves the shortcut file
+          type: "file",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title: entry.name.replace(/\.(gdoc|gsheet|gslide|gslides|gform)$/i, ""),
+            order: sidecarOrders[entry.name],
+            google: native ? { kind: native.kind, url: native.url } : undefined,
+            public: isPublic,
+          },
+        });
+      } else {
+        const ext = path.extname(entry.name).toLowerCase();
+        const fileType = classifyFile(ext);
+        if (fileType) {
+          nodes.push({
+            name: entry.name,
+            path: vPath,
+            type: fileType,
+            knowledgePolicy: inheritedPolicy,
+            frontmatter: {
+              title: entry.name.replace(new RegExp(`\\${ext}$`, "i"), ""),
+              order: sidecarOrders[entry.name],
+              public: isPublic,
+            },
+          });
+          continue;
+        }
       }
 
-    }
+      if (entry.name.endsWith(".md") && entry.name !== "index.md") {
+        // Sibling Pattern: `<name>.md` is the page; if a `<name>/` folder exists
+        // alongside it, merge the folder's entries in as this node's children so
+        // the page renders as one expandable item (content + sub-pages).
+        const baseName = entry.name.replace(/\.md$/, "");
+        const hasSiblingDir = dirNames.has(baseName);
 
-    if (entry.name.endsWith(".md") && entry.name !== "index.md") {
-      // Sibling Pattern: `<name>.md` is the page; if a `<name>/` folder exists
-      // alongside it, merge the folder's entries in as this node's children so
-      // the page renders as one expandable item (content + sub-pages).
-      const baseName = entry.name.replace(/\.md$/, "");
-      const hasSiblingDir = dirNames.has(baseName);
-
-      const fm = await readFrontmatter(fullPath);
-      let children: TreeNode[] | undefined;
-      let nodeType: TreeNode["type"] = "file";
-      if (hasSiblingDir) {
-        children = await buildTreeRecursive(
-          path.join(dirPath, baseName),
-          nextAncestorRealPaths,
-          showHidden
-        );
-        nodeType = children.length > 0 ? "directory" : "file";
+        const fm = await readFrontmatter(fullPath);
+        let children: TreeNode[] | undefined;
+        let nodeType: TreeNode["type"] = "file";
+        if (hasSiblingDir) {
+          children = await buildTreeRecursive(
+            path.join(dirPath, baseName),
+            nextAncestorRealPaths,
+            showHidden
+          );
+          nodeType = children.length > 0 ? "directory" : "file";
+        }
+        nodes.push({
+          name: entry.name,
+          path: vPath.replace(/\.md$/, ""),
+          type: nodeType,
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title: (fm.title as string) || baseName,
+            icon: fm.icon as string | undefined,
+            order: fm.order as number | undefined,
+            google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
+            public: fm.public === true,
+            hasSiblingPage: hasSiblingDir,
+          },
+          ...(children ? { children } : {}),
+        });
       }
-      nodes.push({
-        name: entry.name,
-        path: vPath.replace(/\.md$/, ""),
-        type: nodeType,
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: (fm.title as string) || baseName,
-          icon: fm.icon as string | undefined,
-          order: fm.order as number | undefined,
-          google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
-        },
-        ...(children ? { children } : {}),
-      });
     }
   }
 

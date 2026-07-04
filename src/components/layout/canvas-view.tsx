@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Palette } from "lucide-react";
+import { Archive, Palette, Lock, LockOpen } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Header } from "@/components/layout/header";
 import { useAppStore } from "@/stores/app-store";
@@ -579,7 +579,24 @@ export function CanvasView() {
   const nodes = useTreeStore((s) => s.nodes);
   const selectedPath = useTreeStore((s) => s.selectedPath);
   const selectPage = useTreeStore((s) => s.selectPage);
+  const loadTree = useTreeStore((s) => s.loadTree);
   const loadPage = useEditorStore((s) => s.loadPage);
+
+  const handleTogglePublic = useCallback(async (path: string, isPublic: boolean) => {
+    try {
+      const res = await fetch("/api/pages/public", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path, public: isPublic }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to toggle public status");
+      }
+      await loadTree();
+    } catch (err) {
+      console.error("Toggle public failed:", err);
+    }
+  }, [loadTree]);
 
   const cabinetPath = section.cabinetPath || ROOT_CABINET_PATH;
   const boardNode = useMemo(
@@ -1717,6 +1734,8 @@ export function CanvasView() {
                   const markdownCard = isMarkdownCard(node, content);
                   const cardBackgroundColor = cardBackgroundColorByPath[scopedPath] ?? "";
                   const hasCardBackgroundColor = markdownCard && isHexColor(cardBackgroundColor);
+                  const isPublic = node.frontmatter?.public === true;
+                  const showLock = node.type !== "cabinet" && (node.type !== "directory" || !!node.frontmatter?.hasSiblingPage);
 
                   return (
                     <div
@@ -1777,13 +1796,35 @@ export function CanvasView() {
                         }
                       }}
                     >
+                      {showLock && (
+                        <button
+                          type="button"
+                          aria-label={isPublic ? "Lock" : "Unlock"}
+                          title={isPublic ? "Make private" : "Make public"}
+                          className="absolute right-[44px] top-3 inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70 bg-background/80 text-muted-foreground hover:bg-background"
+                          onPointerDown={(event) => {
+                            event.stopPropagation();
+                          }}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            void handleTogglePublic(node.path, !isPublic);
+                          }}
+                        >
+                          {isPublic ? (
+                            <LockOpen className="h-3.5 w-3.5 text-violet-600" />
+                          ) : (
+                            <Lock className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      )}
                       {markdownCard ? (
                         <>
                           <button
                             type="button"
                             aria-label="Change markdown card color"
                             title="Change markdown card color"
-                            className="absolute right-12 top-3 inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70 bg-background/80 text-muted-foreground hover:bg-background"
+                            className="absolute right-[76px] top-3 inline-flex h-7 w-7 items-center justify-center rounded-md border border-border/70 bg-background/80 text-muted-foreground hover:bg-background"
                             data-card-color-trigger="true"
                             onPointerDown={(event) => {
                               event.stopPropagation();
@@ -1798,7 +1839,7 @@ export function CanvasView() {
                           </button>
                           {openColorPickerForPath === scopedPath ? (
                             <div
-                              className="absolute right-12 top-11 z-20 flex max-w-55 flex-wrap gap-1 rounded-md border border-border/70 bg-background p-2 shadow-lg"
+                              className="absolute right-[76px] top-11 z-20 flex max-w-55 flex-wrap gap-1 rounded-md border border-border/70 bg-background p-2 shadow-lg"
                               data-card-color-picker="true"
                               onPointerDown={(event) => {
                                 event.stopPropagation();

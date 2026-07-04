@@ -3,6 +3,7 @@ import type {
   CabinetVisibilityMode,
 } from "@/types/cabinets";
 import { getCabinetPathKind } from "@/stores/tree-store";
+import { handleStaleResponse } from "@/lib/api/stale-process-client";
 
 // Client-side fetcher for /api/cabinets/overview with in-flight dedupe and a
 // short TTL cache. Six components (tree-view, home-screen, ai-panel,
@@ -60,6 +61,11 @@ export async function fetchCabinetOverviewClient(
   const params = new URLSearchParams({ path, visibility });
   const promise = (async () => {
     const res = await fetch(`/api/cabinets/overview?${params.toString()}`);
+    if (handleStaleResponse(res)) {
+      // Active cabinet switched on disk; recovery (reload) is under way. Don't
+      // cache this transient null so a fresh process refetches after reload.
+      return null;
+    }
     if (res.status === 404) {
       // Cabinet doesn't exist on disk (yet). Cache the null so consumers
       // render an empty state instead of throwing on every tick.

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { getManagedDataDir, getManagedDataParentDir, isElectronRuntime, PROJECT_ROOT, isProcessStale } from "@/lib/runtime/runtime-config";
 import { normalizeVirtualPath } from "@/lib/virtual-paths";
+import { StaleProcessError } from "@/lib/api/stale-process";
 
 // Content root: the active cabinet directory (`<dataParent>/<activeCabinet>`).
 // All content, cabinets, rooms and per-cabinet agents live under here.
@@ -44,9 +45,10 @@ export function resolveAgentCwd(cabinetPath?: string, workdir?: string): string 
 
 export function resolveContentPath(virtualPath: string): string {
   if (isProcessStale()) {
-    throw new Error(
-      "Cabinet server process is stale (active cabinet changed on disk). Please restart the process to apply the cabinet switch."
-    );
+    // Typed so the API layer can return a retryable 503 (with a machine-
+    // readable code) instead of an opaque 500, letting the client recover
+    // gracefully once the (auto-)restarted process comes up.
+    throw new StaleProcessError();
   }
   const dataDir = path.resolve(DATA_DIR);
 

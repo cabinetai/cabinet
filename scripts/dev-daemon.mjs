@@ -118,6 +118,17 @@ async function findAvailablePort(startPort) {
   });
 }
 
+function readActiveCabinet(homeJsonPath) {
+  try {
+    if (!fs.existsSync(homeJsonPath)) return null;
+    const parsed = JSON.parse(fs.readFileSync(homeJsonPath, "utf8"));
+    const activeVal = parsed ? (parsed.activeCabinet || parsed.activeVault) : null;
+    return typeof activeVal === "string" && activeVal.trim() ? activeVal.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
   const preferredPort = parsePort(process.env.CABINET_DAEMON_PORT, 4100);
   const port = await findAvailablePort(preferredPort);
@@ -145,50 +156,95 @@ async function main() {
     "dist",
     "cli.mjs"
   );
-  const child = spawn(
-    process.execPath,
-    [
-      tsxCli,
-      "watch",
-      "--clear-screen=false",
-      "server/cabinet-daemon.ts",
-      ...process.argv.slice(2),
-    ],
-    {
-      cwd: PROJECT_ROOT,
-      stdio: "inherit",
-      env: {
-        // Audit #107: dev:all should not report telemetry by default —
-        // contributors, CI, and audit pipelines on localhost shouldn't be
-        // emitting "anonymous usage" signals. Explicit user opt-in
-        // (`CABINET_TELEMETRY_DISABLED=0`) is honored if set; otherwise
-        // we default to off in dev. Packaged builds keep their own
-        // onboarding prompt.
-        CABINET_TELEMETRY_DISABLED: "1",
-        ...process.env,
-        CABINET_DAEMON_PORT: String(port),
-        CABINET_DAEMON_URL: origin,
-        CABINET_PUBLIC_DAEMON_ORIGIN: origin,
-      },
-    }
-  );
 
   const cleanup = () => clearRuntimeService("daemon", process.pid);
   process.on("exit", cleanup);
-  process.on("SIGINT", () => child.kill("SIGINT"));
-  process.on("SIGTERM", () => child.kill("SIGTERM"));
 
-  child.on("exit", (code, signal) => {
-    cleanup();
-    if (signal) {
-      process.kill(process.pid, signal);
-      return;
+  let child = null;
+  let isRestarting = false;
+
+  function spawnDaemon() {
+    if (child) {
+      child.kill();
     }
-    process.exit(code ?? 0);
+    child = spawn(
+      process.execPath,
+      [
+        tsxCli,
+        "watch",
+        "--clear-screen=false",
+        "server/cabinet-daemon.ts",
+        ...process.argv.slice(2),
+      ],
+      {
+        cwd: PROJECT_ROOT,
+        stdio: "inherit",
+        env: {
+          // Audit #107: dev:all should not report telemetry by default —
+          // contributors, CI, and audit pipelines on localhost shouldn't be
+          // emitting "anonymous usage" signals. Explicit user opt-in
+          // (`CABINET_TELEMETRY_DISABLED=0`) is honored if set; otherwise
+          // we default to off in dev. Packaged builds keep their own
+          // onboarding prompt.
+          CABINET_TELEMETRY_DISABLED: "1",
+          ...process.env,
+          CABINET_DAEMON_PORT: String(port),
+          CABINET_DAEMON_URL: origin,
+          CABINET_PUBLIC_DAEMON_ORIGIN: origin,
+        },
+      }
+    );
+
+    child.on("exit", (code, signal) => {
+      if (isRestarting) return;
+      cleanup();
+      if (signal) {
+        process.kill(process.pid, signal);
+        return;
+      }
+      process.exit(code ?? 0);
+    });
+  }
+
+  spawnDaemon();
+
+  process.on("SIGINT", () => {
+    isRestarting = false;
+    if (child) child.kill("SIGINT");
   });
+  process.on("SIGTERM", () => {
+    isRestarting = false;
+    if (child) child.kill("SIGTERM");
+  });
+
+  const homeJsonPath = path.join(getManagedDataDir(), ".home", "home.json");
+  let currentActiveCabinet = readActiveCabinet(homeJsonPath);
+
+  const restartDaemon = () => {
+    isRestarting = true;
+    console.log(
+      `[cabinet] Active cabinet changed to "${currentActiveCabinet}". Restarting daemon...`
+    );
+    if (child) {
+      child.kill("SIGTERM");
+    }
+    setTimeout(() => {
+      isRestarting = false;
+      spawnDaemon();
+    }, 500);
+  };
+
+  setInterval(() => {
+    const nextCabinet = readActiveCabinet(homeJsonPath);
+    if (nextCabinet && nextCabinet !== currentActiveCabinet) {
+      currentActiveCabinet = nextCabinet;
+      restartDaemon();
+    }
+  }, 1000);
 }
 
 main().catch((error) => {
   console.error("[cabinet] Failed to start daemon:", error);
   process.exit(1);
 });
+
