@@ -5,6 +5,7 @@ import { Download, Code2, Eye, Copy, Check, ZoomIn, ZoomOut, Maximize } from "lu
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { ViewerLayout } from "@/components/layout/viewer-layout";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { useLocale } from "@/i18n/use-locale";
 
 interface MermaidViewerProps {
@@ -125,52 +126,31 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
     <ViewerLayout
       toolbar={
         <ViewerToolbar path={path} badge="MERMAID">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`h-7 gap-1.5 text-xs ${showSource ? "bg-muted" : ""}`}
+        <ToolbarButton
+          icon={showSource ? Eye : Code2}
+          label={showSource ? "Diagram" : "Code"}
+          active={showSource}
           onClick={() => setShowSource((v) => !v)}
-        >
-          {showSource ? <Eye className="h-3.5 w-3.5" /> : <Code2 className="h-3.5 w-3.5" />}
-          {showSource ? "Diagram" : "Code"}
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs"
+        />
+        <ToolbarButton
+          icon={copied ? Check : Copy}
+          label={copied ? "Copied" : "Copy"}
           onClick={copySource}
-        >
-          {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-          {copied ? "Copied" : "Copy"}
-        </Button>
+        />
         {svg && !showSource && (
           <>
             <div className="h-4 w-px bg-border mx-0.5" />
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={zoomOut} title={t("mermaidViewer:zoomOut")}>
-              <ZoomOut className="h-3.5 w-3.5" />
-            </Button>
-            <span className="text-[11px] text-muted-foreground tabular-nums w-10 text-center select-none">
+            <ToolbarButton icon={ZoomOut} label={t("mermaidViewer:zoomOut")} iconOnly onClick={zoomOut} />
+            <span className="text-[11px] text-muted-foreground/70 tabular-nums w-10 text-center select-none">
               {Math.round(zoom * 100)}%
             </span>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={zoomIn} title={t("mermaidViewer:zoomIn")}>
-              <ZoomIn className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={resetView} title={t("mermaidViewer:resetView")}>
-              <Maximize className="h-3.5 w-3.5" />
-            </Button>
+            <ToolbarButton icon={ZoomIn} label={t("mermaidViewer:zoomIn")} iconOnly onClick={zoomIn} />
+            <ToolbarButton icon={Maximize} label={t("mermaidViewer:resetView")} iconOnly onClick={resetView} />
             <div className="h-4 w-px bg-border mx-0.5" />
           </>
         )}
         {svg && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={downloadSvg}
-          >
-            <Download className="h-3.5 w-3.5" />
-            SVG
-          </Button>
+          <ToolbarButton icon={Download} label="SVG" onClick={downloadSvg} />
         )}
         </ViewerToolbar>
       }

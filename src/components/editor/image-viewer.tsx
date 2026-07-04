@@ -1,9 +1,9 @@
 "use client";
 
 import { ExternalLink, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { ViewerLayout } from "@/components/layout/viewer-layout";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 
 interface ImageViewerProps {
   path: string;
@@ -19,29 +19,22 @@ export function ImageViewer({ path, title }: ImageViewerProps) {
     <ViewerLayout
       toolbar={
         <ViewerToolbar path={path} badge={ext}>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs"
+        <ToolbarButton
+          icon={Download}
+          label="Download"
           onClick={() => {
             const a = document.createElement("a");
             a.href = src;
             a.download = filename;
             a.click();
           }}
-        >
-          <Download className="h-3.5 w-3.5" />
-          Download
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs"
+        />
+        <ToolbarButton
+          icon={ExternalLink}
+          label="Open in new tab"
+          iconOnly
           onClick={() => window.open(src, "_blank")}
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          Open in new tab
-        </Button>
+        />
         </ViewerToolbar>
       }
     >

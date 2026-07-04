@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { ExternalLink, Download, Code2, Eye, Save, AlertCircle, Loader2, Info, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { renderLatexToHtml } from "./latex-render";
@@ -115,9 +115,10 @@ export function LatexViewer({ path }: LatexViewerProps) {
     <ViewerLayout
       toolbar={
         <ViewerToolbar path={path} badge="TEX" sublabel={filename}>
-        <Button
-          variant="ghost"
-          size="sm"
+        <ToolbarButton
+          icon={mode === "source" ? Save : Code2}
+          label={mode === "source" ? (saving ? "Saving…" : "Save & Render") : "Edit Source"}
+          active={mode === "source"}
           disabled={mode === "source" && saving}
           onClick={() => {
             if (mode === "source") {
@@ -126,59 +127,21 @@ export function LatexViewer({ path }: LatexViewerProps) {
               setMode("source");
             }
           }}
-          className="gap-1.5"
-        >
-          {mode === "source" ? (
-            <>
-              <Save className="h-3.5 w-3.5" />
-              {saving ? "Saving…" : "Save & Render"}
-            </>
-          ) : (
-            <>
-              <Code2 className="h-3.5 w-3.5" />
-              Edit Source
-            </>
-          )}
-        </Button>
+        />
         {mode === "source" && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setMode("rendered")}
-            className="gap-1.5"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            Preview
-          </Button>
+          <ToolbarButton icon={Eye} label="Preview" onClick={() => setMode("rendered")} />
         )}
         {mode === "rendered" && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => void fetchContent()}
-            disabled={loading}
-            className="gap-1.5"
+          <ToolbarButton
+            icon={RefreshCw}
+            label="Refresh"
             title="Reload the file from disk"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
+            disabled={loading}
+            onClick={() => void fetchContent()}
+          />
         )}
-        <a
-          href={assetUrl}
-          download={filename}
-          className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <Download className="h-3.5 w-3.5" />
-        </a>
-        <a
-          href={assetUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+        <ToolbarButton icon={Download} label="Download" iconOnly href={assetUrl} download={filename} />
+        <ToolbarButton icon={ExternalLink} label="Open raw" iconOnly href={assetUrl} target="_blank" />
         </ViewerToolbar>
       }
     >

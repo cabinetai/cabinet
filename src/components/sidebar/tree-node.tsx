@@ -42,9 +42,21 @@ import {
   Cloud,
   History,
   Search,
+  Download,
+  Sparkles,
+  FileCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { openFileHistory } from "@/components/editor/version-history";
+import { assetUrlFor, contentUrlFor } from "@/lib/cabinets/asset-url";
+import {
+  copyMarkdown,
+  copyForLlm,
+  copyAsHtml,
+  downloadMarkdown,
+  downloadRawFile,
+  formatBytes,
+} from "@/lib/markdown/page-export";
 import {
   isHtmlPath,
   setHtmlViewMode,
@@ -64,6 +76,9 @@ import {
   ContextMenuLabel,
   ContextMenuGroup,
   ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
+  ContextMenuSubContent,
 } from "@/components/ui/context-menu";
 import {
   Dialog,
@@ -251,6 +266,35 @@ function TreeNodeImpl({
       body: JSON.stringify({ subpath: node.path }),
     });
   }, [node.path]);
+
+  // Right-click "Download" submenu shares the editor toolbar's export actions.
+  // Markdown pages (type file/directory/cabinet, or a `.md` path) fetch their
+  // saved content and transform it; any other file downloads raw.
+  const isMarkdownExport =
+    node.type === "file" ||
+    node.type === "directory" ||
+    node.type === "cabinet" ||
+    node.path.toLowerCase().endsWith(".md");
+
+  const runExport = useCallback(
+    async (action: (content: string) => void | Promise<void>) => {
+      try {
+        const res = await fetch(contentUrlFor(node.path, node.type));
+        if (!res.ok) throw new Error(`status ${res.status}`);
+        await action(await res.text());
+      } catch {
+        window.dispatchEvent(
+          new CustomEvent("cabinet:toast", {
+            detail: {
+              kind: "error",
+              message: "Couldn't load this file to export.",
+            },
+          })
+        );
+      }
+    },
+    [node.path, node.type]
+  );
 
   useEffect(() => {
     if (!isSelected || focusTick === 0) return;
@@ -967,6 +1011,62 @@ function TreeNodeImpl({
               {t("treeNode:openInFinder")}
               <ContextMenuShortcut>{finderShortcut}</ContextMenuShortcut>
             </ContextMenuItem>
+            <ContextMenuSub>
+              <ContextMenuSubTrigger>
+                <Download className="h-4 w-4 me-2" />
+                Download
+              </ContextMenuSubTrigger>
+              <ContextMenuSubContent className="w-52">
+                {isMarkdownExport ? (
+                  <>
+                    <ContextMenuItem onClick={() => void runExport((c) => copyMarkdown(c))}>
+                      <Copy className="h-4 w-4 me-2" />
+                      Copy as Markdown
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onClick={() =>
+                        void runExport(async (c) => {
+                          const bytes = await copyForLlm(c, node.path, title);
+                          window.dispatchEvent(
+                            new CustomEvent("cabinet:toast", {
+                              detail: {
+                                kind: "success",
+                                message: t("editor:header.copiedForLlmToast", {
+                                  size: formatBytes(bytes),
+                                }),
+                              },
+                            })
+                          );
+                        })
+                      }
+                    >
+                      <Sparkles className="h-4 w-4 me-2" />
+                      Copy for LLMs
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => void runExport((c) => copyAsHtml(c, node.path))}>
+                      <FileCode className="h-4 w-4 me-2" />
+                      Copy as HTML
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => void runExport((c) => downloadMarkdown(c, title))}>
+                      <Download className="h-4 w-4 me-2" />
+                      Download Markdown
+                    </ContextMenuItem>
+                  </>
+                ) : (
+                  <ContextMenuItem
+                    onClick={() =>
+                      downloadRawFile(
+                        assetUrlFor(node.path),
+                        node.path.split("/").pop() || node.name
+                      )
+                    }
+                  >
+                    <Download className="h-4 w-4 me-2" />
+                    Download file
+                  </ContextMenuItem>
+                )}
+              </ContextMenuSubContent>
+            </ContextMenuSub>
             <ContextMenuItem onClick={() => openFileHistory(node.path)}>
               <History className="h-4 w-4 me-2" />
               File history

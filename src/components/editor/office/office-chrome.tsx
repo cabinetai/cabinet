@@ -1,8 +1,8 @@
 "use client";
 
 import { Download, FolderOpen, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { useLocale } from "@/i18n/use-locale";
 
 interface OfficeChromeProps {
@@ -35,44 +35,33 @@ export function OfficeChrome({ path, extLabel, external, hideFinder }: OfficeChr
   return (
     <ViewerToolbar path={path} badge={extLabel || undefined}>
       {external && (
-        <a
+        <ToolbarButton
+          icon={ExternalLink}
+          label={external.label}
           href={external.href}
           target="_blank"
-          rel="noreferrer noopener"
-          className="inline-flex items-center gap-1.5 text-[11px] h-7 px-2.5 rounded-md border border-border hover:bg-accent transition-colors"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          {external.label}
-        </a>
+        />
       )}
       {!hideFinder && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5 text-[11px] h-7"
-          onClick={revealInFinder}
+        <ToolbarButton
+          icon={FolderOpen}
+          label="Reveal"
           title={t("officeChrome:openInFinder")}
-        >
-          <FolderOpen className="h-3.5 w-3.5" />
-          Reveal
-        </Button>
+          onClick={revealInFinder}
+        />
       )}
       {!hideFinder && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5 text-[11px] h-7"
+        <ToolbarButton
+          icon={Download}
+          label="Download"
+          title={t("officeChrome:downloadOriginal")}
           onClick={() => {
             const a = document.createElement("a");
             a.href = assetUrl;
             a.download = filename;
             a.click();
           }}
-          title={t("officeChrome:downloadOriginal")}
-        >
-          <Download className="h-3.5 w-3.5" />
-          Download
-        </Button>
+        />
       )}
     </ViewerToolbar>
   );

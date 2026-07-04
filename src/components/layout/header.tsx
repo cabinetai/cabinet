@@ -9,74 +9,58 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore } from "@/stores/editor-store";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import {
+  copyMarkdown,
+  copyForLlm,
+  copyAsHtml,
+  downloadMarkdown,
+  formatBytes,
+} from "@/lib/markdown/page-export";
 import { useLocale } from "@/i18n/use-locale";
 
 export function Header() {
   const { t } = useLocale();
   const { frontmatter, content, currentPath } = useEditorStore();
 
-  const handleCopyMarkdown = async () => {
-    if (!content) return;
-    await navigator.clipboard.writeText(content);
+  // Live editor content (unsaved edits included) drives every export. The
+  // sidebar right-click "Download" submenu shares these same actions, fetching
+  // the saved file instead (see page-export.ts).
+  const pageTitle =
+    frontmatter?.title ||
+    currentPath?.split("/").pop()?.replace(/\.md$/, "") ||
+    "Untitled";
+
+  const handleCopyMarkdown = () => {
+    if (content) void copyMarkdown(content);
   };
 
   const handleCopyForLLM = async () => {
     if (!content || !currentPath) return;
-    const title =
-      frontmatter?.title ||
-      currentPath.split("/").pop()?.replace(/\.md$/, "") ||
-      "Untitled";
-    const body = content.replace(
-      /\]\((\.\/)?([^)\s]+\.md)\)/g,
-      "]($2 — also in this cabinet)"
-    );
-    const out = `# ${title}\n\nSource: cabinet://${currentPath}\n\n---\n\n${body}`;
-    await navigator.clipboard.writeText(out);
-    const bytes = new TextEncoder().encode(out).length;
-    const display = bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
+    const bytes = await copyForLlm(content, currentPath, pageTitle);
     window.dispatchEvent(
       new CustomEvent("cabinet:toast", {
         detail: {
           kind: "success",
-          message: t("editor:header.copiedForLlmToast", { size: display }),
+          message: t("editor:header.copiedForLlmToast", { size: formatBytes(bytes) }),
         },
       })
     );
   };
 
-  const handleCopyHTML = async () => {
-    if (!content) return;
-    // Convert the LIVE editor content (not a refetched saved copy, which would
-    // miss unsaved edits) and pass the page path so relative image/link URLs
-    // resolve instead of pasting in broken (#031).
-    const { markdownToHtml } = await import("@/lib/markdown/to-html");
-    const html = await markdownToHtml(content, currentPath || undefined);
-    await navigator.clipboard.writeText(html);
+  const handleCopyHTML = () => {
+    if (content) void copyAsHtml(content, currentPath || "");
   };
 
   const handleDownloadMarkdown = () => {
-    // Guard on content only — a valid page with no YAML frontmatter must still
-    // download; derive the filename from the title or the path basename (#032).
-    if (!content) return;
-    const base =
-      frontmatter?.title ||
-      currentPath?.split("/").pop()?.replace(/\.md$/, "") ||
-      "page";
-    const blob = new Blob([content], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${base}.md`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (content) downloadMarkdown(content, pageTitle);
   };
 
   return (
     <ViewerToolbar path={currentPath || undefined} showBreadcrumb={!!currentPath}>
       {currentPath && (
         <DropdownMenu>
-          <DropdownMenuTrigger aria-label={t("editor:header.exportPage")} title={t("editor:header.exportPage")} className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
-            <Download className="h-4 w-4" />
+          <DropdownMenuTrigger aria-label={t("editor:header.exportPage")} title={t("editor:header.exportPage")} className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/70 transition-colors cursor-pointer hover:bg-accent hover:text-foreground aria-expanded:bg-accent aria-expanded:text-foreground">
+            <Download className="h-3.5 w-3.5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 [&_[role=menuitem]]:whitespace-nowrap">
             <DropdownMenuItem onClick={handleCopyMarkdown}>

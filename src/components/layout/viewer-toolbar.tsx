@@ -3,6 +3,7 @@
 import { useMemo, type ReactNode } from "react";
 import { Archive, Globe } from "lucide-react";
 import { HeaderActions } from "@/components/layout/header-actions";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { ReturnToChip } from "@/components/layout/return-to-chip";
 import { ViewerBreadcrumb } from "@/components/layout/viewer-breadcrumb";
 import { NewTaskButton } from "@/components/composer/new-task-button";
@@ -85,23 +86,19 @@ export function ViewerToolbar({
   const modeButtons = !showModeButtons ? null : appMode === "browse" ? (
     // Always offer the exit affordance while browsing, regardless of which node
     // is selected (you may have entered browse from a link in a markdown page).
-    <button
-      aria-label={t("editor:header.editMode")}
-      title={t("editor:header.editMode")}
+    <ToolbarButton
+      icon={Archive}
+      label={t("editor:header.editMode")}
+      iconOnly
       onClick={() => setAppMode("edit")}
-      className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-    >
-      <Archive className="h-4 w-4" />
-    </button>
+    />
   ) : isBrowsable ? (
-    <button
-      aria-label={t("editor:header.browseMode")}
-      title={t("editor:header.browseMode")}
+    <ToolbarButton
+      icon={Globe}
+      label={t("editor:header.browseMode")}
+      iconOnly
       onClick={() => setAppMode("browse", browseModeUrl)}
-      className="inline-flex items-center justify-center rounded-md h-7 w-7 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-    >
-      <Globe className="h-4 w-4" />
-    </button>
+    />
   ) : null;
 
   return (

@@ -5,6 +5,7 @@ import { ExternalLink, Download, WrapText, Copy, Check, Code2, Eye } from "lucid
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { ViewerLayout } from "@/components/layout/viewer-layout";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
 import { useLocale } from "@/i18n/use-locale";
@@ -154,55 +155,38 @@ export function SourceViewer({ path }: SourceViewerProps) {
           </div>
         )}
         {!showPreview && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`h-7 gap-1.5 text-xs ${wrap ? "bg-muted" : ""}`}
+          <ToolbarButton
+            icon={WrapText}
+            label="Wrap"
+            active={wrap}
             onClick={() => setWrap((v) => !v)}
             title={wrap ? "Disable line wrap" : "Enable line wrap"}
-          >
-            <WrapText className="h-3.5 w-3.5" />
-            Wrap
-          </Button>
+          />
         )}
         {!showPreview && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
+          <ToolbarButton
+            icon={copied ? Check : Copy}
+            label={copied ? "Copied" : "Copy"}
             onClick={copyToClipboard}
             title={t("sourceViewer:copyContents")}
-          >
-            {copied
-              ? <Check className="h-3.5 w-3.5 text-green-500" />
-              : <Copy className="h-3.5 w-3.5" />}
-            {copied ? "Copied" : "Copy"}
-          </Button>
+          />
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs"
+        <ToolbarButton
+          icon={Download}
+          label="Download"
+          title={t("sourceViewer:downloadFile")}
           onClick={() => {
             const a = document.createElement("a");
             a.href = assetUrl;
             a.download = filename;
             a.click();
           }}
-          title={t("sourceViewer:downloadFile")}
-        >
-          <Download className="h-3.5 w-3.5" />
-          Download
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1.5 text-xs"
+        />
+        <ToolbarButton
+          icon={ExternalLink}
+          label="Raw"
           onClick={() => window.open(assetUrl, "_blank")}
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          Raw
-        </Button>
+        />
         </ViewerToolbar>
       }
     >

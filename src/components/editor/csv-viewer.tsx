@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Code2, Save, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { ViewerLayout } from "@/components/layout/viewer-layout";
+import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { useLocale } from "@/i18n/use-locale";
 
 interface CsvViewerProps {
@@ -164,35 +164,25 @@ export function CsvViewer({ path }: CsvViewerProps) {
         badge={`CSV${rows.length > 0 ? ` (${rows.length - 1} rows)` : ""}`}
       >
         {dirty && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1.5 text-xs"
-            onClick={handleSave}
+          <ToolbarButton
+            icon={Save}
+            label={saving ? "Saving..." : "Save"}
             disabled={saving}
-          >
-            <Save className="h-3.5 w-3.5" />
-            {saving ? "Saving..." : "Save"}
-          </Button>
+            onClick={handleSave}
+          />
         )}
-        <button
+        <ToolbarButton
+          icon={Code2}
+          label={sourceMode ? "Table" : "Source"}
+          active={sourceMode}
           onClick={toggleSource}
-          className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] rounded-md transition-colors border border-border ${
-            sourceMode
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-accent"
-          }`}
-        >
-          <Code2 className="h-3 w-3" />
-          {sourceMode ? "Table" : "Source"}
-        </button>
-        <button
+        />
+        <ToolbarButton
+          icon={Download}
+          label={t("csvViewer:downloadCsv")}
+          iconOnly
           onClick={() => window.open(csvUrl, "_blank")}
-          className="inline-flex items-center justify-center rounded-md h-8 w-8 hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-          title={t("csvViewer:downloadCsv")}
-        >
-          <Download className="h-4 w-4" />
-        </button>
+        />
         </ViewerToolbar>
       }
     >
