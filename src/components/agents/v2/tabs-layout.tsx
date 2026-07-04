@@ -7,7 +7,6 @@ import {
   HeartPulse,
   Loader2,
   Plus,
-  RefreshCw,
   Users,
 } from "lucide-react";
 import { ChannelsPanel } from "@/components/agents/v2/channels-panel";
@@ -140,8 +139,7 @@ function TopBar({
   tab: AgentsTabKey;
   onTabChange: (next: AgentsTabKey) => void;
 }) {
-  const { t } = useLocale();
-  const { loading, refresh, visibilityMode, setVisibilityMode } =
+  const { loading, visibilityMode, setVisibilityMode } =
     useAgentsContext();
   return (
     <header
@@ -156,16 +154,6 @@ function TopBar({
           <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
         )}
         <DepthDropdown mode={visibilityMode} onChange={setVisibilityMode} />
-        <Divider className="hidden md:block" />
-        <button
-          type="button"
-          onClick={() => void refresh()}
-          title={t("agents:workspace.refresh")}
-          aria-label={t("agents:workspace.refresh")}
-          className="hidden md:inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
-        >
-          <RefreshCw className="size-3.5" />
-        </button>
         <Divider className="hidden md:block" />
         <MasterToggle />
         <NewButton tab={tab} />
