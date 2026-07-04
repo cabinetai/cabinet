@@ -1,5 +1,5 @@
 import path from "path";
-import { DATA_DIR } from "@/lib/storage/path-utils";
+import { DATA_DIR, resolveAgentCwd } from "@/lib/storage/path-utils";
 import {
   readPersona,
   readMemory,
@@ -179,10 +179,7 @@ If you did not create or modify any file this heartbeat, still emit exactly one 
 
 Now execute your heartbeat. Check your focus areas, process inbox, review goals, and take action.`;
 
-  const baseCwd = cabinetPath ? path.join(DATA_DIR, cabinetPath) : DATA_DIR;
-  const cwd = persona.workdir === "/data" || persona.workdir === "/"
-    ? baseCwd
-    : path.join(baseCwd, persona.workdir.replace(/^\/+/, ""));
+  const cwd = resolveAgentCwd(cabinetPath, persona.workdir);
   return { prompt, persona, inbox, cwd, startTime };
 }
 
