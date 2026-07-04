@@ -6,8 +6,8 @@ import {
   Loader2,
   Network,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ContentSheet } from "@/components/layout/content-sheet";
 import { HeaderActions } from "@/components/layout/header-actions";
 import { TaskRailToggle } from "@/components/tasks/rail/task-rail-toggle";
 import { VersionHistory } from "@/components/editor/version-history";
@@ -203,10 +203,12 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      {/* ── Header row ── */}
+    <div className="flex h-full min-h-0 flex-col">
+      {/* ── Header row — a desk toolbar (transparent, floats above the sheet),
+          matching the agents/tasks surfaces rather than a bordered bar. ── */}
         <header
-          className="flex flex-wrap items-center gap-3 border-b border-border/70 bg-background/95 py-2.5 pe-4 ps-[calc(1rem+var(--sidebar-toggle-offset,0px))] transition-[padding] duration-200 sm:pe-6 sm:ps-[calc(1.5rem+var(--sidebar-toggle-offset,0px))]"
+          className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2 transition-[padding] duration-200"
+          style={{ paddingInlineStart: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}
         >
           <div className="flex min-w-0 items-center gap-3">
             {/* #004: the composer hero owns the single <h1> (the greeting), so
@@ -231,16 +233,15 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
               onChange={(mode) => setCabinetVisibilityMode(cabinetPath, mode)}
             />
 
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 gap-1.5 text-[11px]"
+            <button
+              type="button"
               onClick={() => setOrgChartOpen(true)}
               disabled={!overview || agentCount === 0}
+              className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
             >
               <Network className="size-3.5" />
               Org chart
-            </Button>
+            </button>
 
             <CabinetSchedulerControls
               cabinetPath={cabinetPath}
@@ -253,9 +254,10 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
           </div>
         </header>
 
-        {/* ── Scrollable body ── */}
-        <ScrollArea className="min-h-0 flex-1">
-          <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+        {/* ── Body sheet — floats on the desk like agents/tasks ── */}
+        <ContentSheet>
+          <ScrollArea className="min-h-0 flex-1">
+            <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
             {error ? (
               <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-[12px] text-destructive">
                 {error}
@@ -329,7 +331,8 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
               </div>
             </section>
           </div>
-        </ScrollArea>
+          </ScrollArea>
+        </ContentSheet>
 
       {/* ── Org chart modal ── */}
       <OrgChartModal

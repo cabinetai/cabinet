@@ -1069,7 +1069,11 @@ export function AppShell() {
     isDefaultEditor ||
     isSelfSheetedViewer ||
     section.type === "tasks" ||
-    section.type === "agents";
+    section.type === "agents" ||
+    // The room/cabinet dashboard puts its header on the desk and wraps its body
+    // in a ContentSheet, like agents/tasks — but only in edit mode; browse mode
+    // hands off to BrowserView, which still wants the app-shell sheet.
+    (section.type === "cabinet" && appMode !== "browse");
 
   return (
     <TaskRailProvider>
