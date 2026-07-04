@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal, PanelRight, Heart, History as HistoryIcon } from "lucide-react";
+import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal, Heart, History as HistoryIcon } from "lucide-react";
 import { ActivityFeed } from "@/components/history/activity-feed";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
@@ -14,7 +14,6 @@ import {
 } from "@/stores/health-store";
 import { useGithubStatsStore } from "@/stores/github-stats-store";
 import { StarExplosion, formatGithubStars } from "@/components/layout/star-explosion";
-import { useTaskRail } from "@/components/tasks/rail/task-rail-context";
 import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { useLocale } from "@/i18n/use-locale";
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -217,9 +216,6 @@ export function StatusBar() {
   const setSection = useAppStore((s) => s.setSection);
   const terminalOpen = useAppStore((s) => s.terminalOpen);
   const toggleTerminal = useAppStore((s) => s.toggleTerminal);
-  const taskRailOpen = useAppStore((s) => s.taskRailOpen);
-  const toggleTaskRail = useAppStore((s) => s.toggleTaskRail);
-  const { runningCount, flash: taskRailFlash } = useTaskRail();
   const [isGitRepo, setIsGitRepo] = useState(false);
   // Audit #049: track when the last successful pull completed so the Sync
   // button's tooltip can answer "did the team's overnight work land?"
@@ -1023,32 +1019,8 @@ export function StatusBar() {
             {t("status:help.share")}
           </span>
         </button>
-        {/* Rail toggle — kept as the rightmost status-bar control so it sits
-            right against the rail's reserved gutter. */}
-        <button
-          type="button"
-          onClick={toggleTaskRail}
-          aria-label={taskRailOpen ? t("taskRail:hide") : t("taskRail:show")}
-          aria-pressed={taskRailOpen}
-          title={
-            runningCount > 0
-              ? t("taskRail:toggleRunning", { count: runningCount })
-              : taskRailOpen
-                ? t("taskRail:hide")
-                : t("taskRail:show")
-          }
-          className={`relative inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/55 px-2.5 py-1 text-muted-foreground transition-all hover:-translate-y-px hover:border-foreground/15 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1 ${
-            taskRailOpen ? "border-foreground/15 bg-muted text-primary" : ""
-          } ${taskRailFlash ? "animate-pulse !text-emerald-600 dark:!text-emerald-400" : ""}`}
-        >
-          <PanelRight className="h-3.5 w-3.5" />
-          {runningCount > 0 && (
-            <span
-              className="cabinet-task-heartbeat inline-block size-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.7)]"
-              aria-hidden="true"
-            />
-          )}
-        </button>
+        {/* The tasks-rail toggle moved to each surface's top bar (right of the
+            "New …" action). Reach the rail from anywhere with ⌥⌘L. */}
         {showCommunityPopup && (
           <div className="absolute bottom-full end-0 mb-2 z-50 w-64 rounded-lg border border-border bg-background p-1.5 shadow-lg">
             <button

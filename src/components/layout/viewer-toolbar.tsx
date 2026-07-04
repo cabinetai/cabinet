@@ -7,6 +7,7 @@ import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { ReturnToChip } from "@/components/layout/return-to-chip";
 import { ViewerBreadcrumb } from "@/components/layout/viewer-breadcrumb";
 import { NewTaskButton } from "@/components/composer/new-task-button";
+import { TaskRailToggle } from "@/components/tasks/rail/task-rail-toggle";
 import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
 import { useLocale } from "@/i18n/use-locale";
@@ -131,6 +132,7 @@ export function ViewerToolbar({
         {modeButtons}
         <HeaderActions />
         <NewTaskButton />
+        <TaskRailToggle />
       </div>
     </div>
   );

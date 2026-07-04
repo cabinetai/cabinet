@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { HeaderActions } from "@/components/layout/header-actions";
+import { TaskRailToggle } from "@/components/tasks/rail/task-rail-toggle";
 import { VersionHistory } from "@/components/editor/version-history";
 import { CabinetSchedulerControls } from "@/components/cabinets/cabinet-scheduler-controls";
 import { CabinetTaskComposer } from "@/components/cabinets/cabinet-task-composer";
@@ -248,6 +249,7 @@ export function CabinetView({ cabinetPath }: { cabinetPath: string }) {
             />
             <VersionHistory path={cabinetPath === "." ? "index" : cabinetPath} />
             <HeaderActions />
+            <TaskRailToggle />
           </div>
         </header>
 

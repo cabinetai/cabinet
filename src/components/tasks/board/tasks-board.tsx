@@ -37,6 +37,7 @@ import { ScheduleView } from "@/components/cabinets/schedule-view";
 import { ViewToggle, type BoardViewMode } from "./view-toggle";
 import { ContentSheet } from "@/components/layout/content-sheet";
 import { DensityToggle, type BoardDensity } from "./density-toggle";
+import { TaskRailToggle } from "@/components/tasks/rail/task-rail-toggle";
 import {
   ExplainerCard,
   ExplainerIcon,
@@ -626,6 +627,7 @@ export function TasksBoard({
           <div className="h-3.5 w-px bg-border/60" />
 
           <NewWorkButton onCreate={openComposer} />
+          <TaskRailToggle />
         </div>
       </header>
 
