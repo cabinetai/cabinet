@@ -133,13 +133,14 @@ export function TaskDetailPanel() {
       </div>
     ) : (
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex shrink-0 items-center justify-end gap-1 px-2 py-1.5">
-          {frameControls}
-        </div>
+        {/* Frame controls (mute · enlarge · close) are handed to the
+            conversation page as `chromeActions` so they share the one header
+            row with Mark done / ⋯ instead of a separate strip above it. */}
         <TaskConversationPage
           taskId={conversation.id}
           cabinetPath={conversation.cabinetPath}
           variant="compact"
+          chromeActions={frameControls}
           returnContext={{
             type: "task",
             taskId: conversation.id,

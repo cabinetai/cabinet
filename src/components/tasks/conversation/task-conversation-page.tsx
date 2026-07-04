@@ -49,7 +49,7 @@ import { openArtifactPath } from "@/lib/navigation/open-artifact-path";
 import { buildTaskPath } from "@/lib/navigation/task-route";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FolderTabs } from "@/components/layout/folder-tabs";
 import { TurnBlock, type TurnBlockAgent } from "./turn-block";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { ConversationApprovalPanel } from "@/components/agents/conversation-approval-panel";
@@ -244,7 +244,7 @@ function StatusActionButton({
   const { t } = useLocale();
   if (status === "done") {
     return (
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-3 text-[12px] font-semibold text-emerald-300">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-2.5 text-[12px] font-semibold text-emerald-700 dark:text-emerald-300">
         <CheckCircle2 className="size-4" />
         Done
       </span>
@@ -257,7 +257,7 @@ function StatusActionButton({
         type="button"
         disabled={busy}
         onClick={onRetry}
-        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-rose-500/30 bg-rose-500/15 px-3 text-[12px] font-semibold text-rose-300 transition-colors hover:bg-rose-500/25 hover:text-rose-200 disabled:opacity-50"
+        className="inline-flex h-8 items-center gap-1.5 rounded-md border border-rose-500/30 bg-rose-500/15 px-2.5 text-[12px] font-semibold text-rose-700 dark:text-rose-300 transition-colors hover:bg-rose-500/25 hover:text-rose-800 dark:hover:text-rose-200 disabled:opacity-50"
         title={t("tasks:conversation.restartFromOriginal")}
       >
         <RotateCcw className="size-4" />
@@ -268,7 +268,7 @@ function StatusActionButton({
 
   if (status === "running") {
     return (
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-md border border-sky-500/30 bg-sky-500/15 px-3 text-[12px] font-semibold text-sky-300">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-sky-500/30 bg-sky-500/15 px-2.5 text-[12px] font-semibold text-sky-700 dark:text-sky-300">
         <Loader2 className="size-4 animate-spin" />
         Running
       </span>
@@ -277,7 +277,7 @@ function StatusActionButton({
 
   if (status === "awaiting-input") {
     return (
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/15 px-3 text-[12px] font-semibold text-amber-300">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/15 px-2.5 text-[12px] font-semibold text-amber-700 dark:text-amber-300">
         <Pause className="size-4" />
         Waiting
       </span>
@@ -286,7 +286,7 @@ function StatusActionButton({
 
   if (status === "archived") {
     return (
-      <span className="inline-flex h-9 items-center gap-1.5 rounded-md border border-zinc-600 bg-zinc-800 px-3 text-[12px] font-semibold text-zinc-400">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-muted px-2.5 text-[12px] font-semibold text-muted-foreground">
         <Archive className="size-4" />
         Archived
       </span>
@@ -298,7 +298,7 @@ function StatusActionButton({
       type="button"
       disabled={busy}
       onClick={onMarkDone}
-      className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 text-[12px] font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/20 hover:text-emerald-200 disabled:opacity-50"
+      className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-2.5 text-[12px] font-semibold text-emerald-700 dark:text-emerald-300 transition-colors hover:bg-emerald-500/25 hover:text-emerald-800 dark:hover:text-emerald-200 disabled:opacity-50"
       title={t("tasks:conversation.markAsDone")}
     >
       <Check className="size-4" />
@@ -437,6 +437,13 @@ export interface TaskConversationPageProps {
    * into the full task view rather than the outer list.
    */
   returnContext?: import("@/stores/app-store").SelectedSection;
+  /**
+   * Host frame controls (close/enlarge/mute) rendered INTO this page's header
+   * so they share one row with Mark done / ⋯ in the compact drawer. Also
+   * surfaced in the loading/error/terminal early-returns so close stays
+   * reachable everywhere. Omitted for the full page (it has its own chrome).
+   */
+  chromeActions?: React.ReactNode;
 }
 
 export function TaskConversationPage({
@@ -445,6 +452,7 @@ export function TaskConversationPage({
   variant = "full",
   readOnly = false,
   returnContext,
+  chromeActions,
 }: TaskConversationPageProps) {
   const { t } = useLocale();
   const isDemo = taskId === "demo";
@@ -467,6 +475,9 @@ export function TaskConversationPage({
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [wrapUpDismissed, setWrapUpDismissed] = useState(false);
   const [busy, setBusy] = useState(false);
+  // Chat/Artifacts/Diff/Logs view selector — controlled so it can use the
+  // shared FolderTabs (same component as the Agents/Team/Tasks tabs).
+  const [chatTab, setChatTab] = useState<"chat" | "artifacts" | "diff" | "logs">("chat");
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const prevTaskStatusRef = useRef<TaskStatus | null>(null);
@@ -1146,7 +1157,10 @@ export function TaskConversationPage({
 
   if (loadError && !task) {
     return (
-      <div className="flex h-full items-center justify-center bg-background text-foreground">
+      <div className="relative flex h-full items-center justify-center bg-background text-foreground">
+        {chromeActions ? (
+          <div className="absolute end-2 top-2 flex items-center gap-1">{chromeActions}</div>
+        ) : null}
         <div className="max-w-sm rounded-2xl border border-border/70 bg-card px-6 py-5 text-center">
           <p className="text-[13px] font-medium">Couldn&rsquo;t load task</p>
           <p className="mt-1 text-[12px] text-muted-foreground">{loadError}</p>
@@ -1163,7 +1177,10 @@ export function TaskConversationPage({
 
   if (!task && !terminalModeActive) {
     return (
-      <div className="flex h-full items-center justify-center bg-background text-muted-foreground">
+      <div className="relative flex h-full items-center justify-center bg-background text-muted-foreground">
+        {chromeActions ? (
+          <div className="absolute end-2 top-2 flex items-center gap-1">{chromeActions}</div>
+        ) : null}
         <Loader2 className="size-5 animate-spin" />
       </div>
     );
@@ -1226,12 +1243,12 @@ export function TaskConversationPage({
         {/* Terminal | Transcript (claude only) | Details tab row. Same
             rounded-t merge pattern as the runtime picker — active tab bg
             matches the panel below so the seam disappears. */}
-        <div className="shrink-0 bg-zinc-950 px-2 pt-2">
+        <div className="flex shrink-0 items-start gap-2 bg-zinc-950 px-2 pt-2">
           <div
             role="tablist"
             aria-label={t("tasks:conversation.viewAriaLabel")}
             className={cn(
-              "relative z-10 grid gap-1 -mb-px text-[12px] font-medium",
+              "relative z-10 grid flex-1 gap-1 -mb-px text-[12px] font-medium",
               isClaudeProvider ? "grid-cols-3" : "grid-cols-2"
             )}
           >
@@ -1289,6 +1306,11 @@ export function TaskConversationPage({
               ) : null}
             </button>
           </div>
+          {chromeActions ? (
+            <div className="flex shrink-0 items-center gap-0.5 pt-0.5 [&_button]:text-zinc-400 [&_button:hover]:text-zinc-100">
+              {chromeActions}
+            </div>
+          ) : null}
         </div>
 
         {showTranscript ? (
@@ -1767,14 +1789,15 @@ export function TaskConversationPage({
             COLLAPSE_EASE
           )}
         >
-          <div className="flex items-center gap-2">
-            <span className="min-w-0 flex-1 truncate text-[11px] text-muted-foreground">
-              {runtimeLabel}
-            </span>
+          {/* One controls row: Mark done + ⋯ (task) share it with the host's
+              close/enlarge/mute (chromeActions). The runtime/model label is
+              dropped in the drawer — it's noise in the compact frame. */}
+          <div className="flex items-center justify-end gap-1">
             {busy ? (
-              <Loader2 className="size-3.5 shrink-0 animate-spin text-muted-foreground" />
+              <Loader2 className="me-1 size-3.5 shrink-0 animate-spin text-muted-foreground" />
             ) : null}
             {headerActions}
+            {chromeActions}
           </div>
           <p
             dir="auto"
@@ -1935,26 +1958,32 @@ export function TaskConversationPage({
       ) : null}
 
       {/* Tabs + content */}
-      <Tabs defaultValue="chat" className="flex flex-1 min-h-0 flex-col gap-0">
+      <div className="flex flex-1 min-h-0 flex-col gap-0">
         {!isNewChat ? (
-          <div className="px-6">
-            <TabsList variant="line" className="h-10">
-              <TabsTrigger value="chat">Chat</TabsTrigger>
-              <TabsTrigger value="artifacts">
-                Artifacts
-                <span className="ml-1.5 rounded-full bg-muted px-1.5 py-px text-[10px] tabular-nums text-muted-foreground">
-                  {task.turns.flatMap((t) => t.artifacts ?? []).length}
-                </span>
-              </TabsTrigger>
-              <TabsTrigger value="diff">Diff</TabsTrigger>
-              <TabsTrigger value="logs">Logs</TabsTrigger>
-            </TabsList>
+          <div className={cn("shrink-0", isCompact ? "px-3" : "px-6")}>
+            <FolderTabs
+              ariaLabel="Conversation views"
+              active={chatTab}
+              onSelect={(id) => setChatTab(id as typeof chatTab)}
+              tabs={[
+                { id: "chat", label: "Chat" },
+                {
+                  id: "artifacts",
+                  label: "Artifacts",
+                  count: task.turns.flatMap((t) => t.artifacts ?? []).length,
+                },
+                { id: "diff", label: "Diff" },
+                { id: "logs", label: "Logs" },
+              ]}
+            />
           </div>
         ) : null}
 
-        <TabsContent
-          value="chat"
-          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden",
+            chatTab !== "chat" && "hidden"
+          )}
         >
           {isTerminalMode ? (
             <div className="flex min-h-0 flex-1 flex-col">
@@ -2088,7 +2117,7 @@ export function TaskConversationPage({
             ) : null}
           </div>
           {!readOnly ? (
-            <div className="shrink-0 bg-background">
+            <div className={cn("shrink-0 bg-background", isCompact && "pb-2")}>
               <div className="mx-auto w-full max-w-3xl">
                 <TaskComposerPanel
                   awaitingInput={task.meta.status === "awaiting-input"}
@@ -2117,11 +2146,13 @@ export function TaskConversationPage({
           ) : null}
           </>
           )}
-        </TabsContent>
+        </div>
 
-        <TabsContent
-          value="artifacts"
-          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden",
+            chatTab !== "artifacts" && "hidden"
+          )}
         >
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
             <div className="mx-auto max-w-3xl">
@@ -2132,11 +2163,13 @@ export function TaskConversationPage({
               />
             </div>
           </div>
-        </TabsContent>
+        </div>
 
-        <TabsContent
-          value="diff"
-          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden",
+            chatTab !== "diff" && "hidden"
+          )}
         >
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
             <div className="mx-auto max-w-3xl">
@@ -2149,11 +2182,13 @@ export function TaskConversationPage({
               )}
             </div>
           </div>
-        </TabsContent>
+        </div>
 
-        <TabsContent
-          value="logs"
-          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden",
+            chatTab !== "logs" && "hidden"
+          )}
         >
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
             <div className="mx-auto max-w-3xl">
@@ -2166,8 +2201,8 @@ export function TaskConversationPage({
               )}
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
 
       <StartWorkDialog
         open={handoffOpen}
