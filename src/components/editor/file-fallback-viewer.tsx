@@ -3,6 +3,7 @@
 import { File, FolderOpen, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 
 interface FileFallbackViewerProps {
   path: string;
@@ -25,8 +26,7 @@ export function FileFallbackViewer({ path }: FileFallbackViewerProps) {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar path={path} badge={ext || undefined} />
+    <ViewerLayout toolbar={<ViewerToolbar path={path} badge={ext || undefined} />}>
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center max-w-sm">
           <div className="flex size-16 items-center justify-center rounded-2xl bg-muted">
@@ -65,6 +65,6 @@ export function FileFallbackViewer({ path }: FileFallbackViewerProps) {
           </div>
         </div>
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

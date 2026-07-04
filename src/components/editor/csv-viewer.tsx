@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Code2, Save, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { useLocale } from "@/i18n/use-locale";
 
 interface CsvViewerProps {
@@ -156,8 +157,9 @@ export function CsvViewer({ path }: CsvViewerProps) {
   const dataRows = rows.slice(1);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar
         path={path}
         badge={`CSV${rows.length > 0 ? ` (${rows.length - 1} rows)` : ""}`}
       >
@@ -191,8 +193,9 @@ export function CsvViewer({ path }: CsvViewerProps) {
         >
           <Download className="h-4 w-4" />
         </button>
-      </ViewerToolbar>
-
+        </ViewerToolbar>
+      }
+    >
       {sourceMode ? (
         <div className="flex-1 overflow-y-auto p-4">
           <textarea
@@ -328,6 +331,6 @@ export function CsvViewer({ path }: CsvViewerProps) {
           </div>
         </div>
       )}
-    </div>
+    </ViewerLayout>
   );
 }

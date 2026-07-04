@@ -3,6 +3,7 @@
 import { ExternalLink, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 
 interface MediaViewerProps {
   path: string;
@@ -16,8 +17,9 @@ export function MediaViewer({ path, type }: MediaViewerProps) {
   const ext = filename.includes(".") ? filename.split(".").pop()!.toUpperCase() : type.toUpperCase();
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar path={path} badge={ext}>
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar path={path} badge={ext}>
         <Button
           variant="ghost"
           size="sm"
@@ -41,7 +43,9 @@ export function MediaViewer({ path, type }: MediaViewerProps) {
           <ExternalLink className="h-3.5 w-3.5" />
           Open in new tab
         </Button>
-      </ViewerToolbar>
+        </ViewerToolbar>
+      }
+    >
       <div className="flex-1 overflow-auto flex items-center justify-center bg-[#1a1a1a] p-8">
         {type === "video" ? (
           <video
@@ -60,6 +64,6 @@ export function MediaViewer({ path, type }: MediaViewerProps) {
           </div>
         )}
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

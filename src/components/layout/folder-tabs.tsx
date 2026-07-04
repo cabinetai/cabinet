@@ -58,7 +58,7 @@ export function FolderTabs({
       role="tablist"
       aria-label={ariaLabel}
       onKeyDown={onKeyDown}
-      className={cn("relative z-10 -mb-px flex items-end gap-0.5", className)}
+      className={cn("relative z-10 -mb-px flex items-end gap-0.5 ps-2", className)}
     >
       {tabs.map((t) => {
         const on = t.id === active;

@@ -400,17 +400,25 @@ export function Sidebar() {
         </div>
       )}
       {collapsed && !isMobile && (
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={t("sidebar:expandSidebar")}
-          title={t("sidebar:expandSidebar")}
-          className="absolute top-3 z-20 h-7 w-7 animate-in fade-in zoom-in-95 duration-200"
+        // Sits in the same band as the viewer toolbar (desk paddingTop 10px +
+        // the h-10 toolbar row), vertically centered so it reads as the first
+        // toolbar button rather than a floating orphan. ViewerToolbar reserves
+        // the matching inline-start gap via --sidebar-toggle-offset.
+        <div
+          className="absolute top-[10px] z-20 flex h-10 items-center animate-in fade-in zoom-in-95 duration-200"
           style={{ insetInlineStart: "calc(0.5rem + var(--traffic-clearance, 0px))" }}
-          onClick={() => setCollapsed(false)}
         >
-          <PanelLeft className="h-4 w-4 rtl:rotate-180" />
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t("sidebar:expandSidebar")}
+            title={t("sidebar:expandSidebar")}
+            className="h-7 w-7 text-muted-foreground/60 hover:text-muted-foreground"
+            onClick={() => setCollapsed(false)}
+          >
+            <PanelLeft className="h-4 w-4 rtl:rotate-180" />
+          </Button>
+        </div>
       )}
     </>
   );

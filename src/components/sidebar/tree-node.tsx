@@ -40,8 +40,11 @@ import {
   FolderInput,
   Settings2,
   Cloud,
+  History,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { openFileHistory } from "@/components/editor/version-history";
 import {
   isHtmlPath,
   setHtmlViewMode,
@@ -963,6 +966,21 @@ function TreeNodeImpl({
               <FolderOpen className="h-4 w-4 me-2" />
               {t("treeNode:openInFinder")}
               <ContextMenuShortcut>{finderShortcut}</ContextMenuShortcut>
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => openFileHistory(node.path)}>
+              <History className="h-4 w-4 me-2" />
+              File history
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() =>
+                window.dispatchEvent(
+                  new KeyboardEvent("keydown", { key: "k", metaKey: true })
+                )
+              }
+            >
+              <Search className="h-4 w-4 me-2" />
+              Search
+              <ContextMenuShortcut>⌘K</ContextMenuShortcut>
             </ContextMenuItem>
           </ContextMenuGroup>
           <ContextMenuSeparator />

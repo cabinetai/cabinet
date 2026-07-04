@@ -3,6 +3,7 @@
 import { ExternalLink, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 
 interface ImageViewerProps {
   path: string;
@@ -15,8 +16,9 @@ export function ImageViewer({ path, title }: ImageViewerProps) {
   const ext = filename.includes(".") ? filename.split(".").pop()!.toUpperCase() : "IMG";
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar path={path} badge={ext}>
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar path={path} badge={ext}>
         <Button
           variant="ghost"
           size="sm"
@@ -40,7 +42,9 @@ export function ImageViewer({ path, title }: ImageViewerProps) {
           <ExternalLink className="h-3.5 w-3.5" />
           Open in new tab
         </Button>
-      </ViewerToolbar>
+        </ViewerToolbar>
+      }
+    >
       <div className="flex-1 overflow-auto flex items-center justify-center bg-[#1a1a1a] p-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -50,6 +54,6 @@ export function ImageViewer({ path, title }: ImageViewerProps) {
           style={{ imageRendering: "auto" }}
         />
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

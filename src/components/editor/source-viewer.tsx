@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { ExternalLink, Download, WrapText, Copy, Check, Code2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
 import { useLocale } from "@/i18n/use-locale";
@@ -121,8 +122,9 @@ export function SourceViewer({ path }: SourceViewerProps) {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar path={path} badge={showPreview ? "HTML" : formatBadge(filename)} sublabel={showPreview ? "webpage" : language || undefined}>
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar path={path} badge={showPreview ? "HTML" : formatBadge(filename)} sublabel={showPreview ? "webpage" : language || undefined}>
         {isHtml && (
           // Source ⇄ Preview segmented toggle for lone HTML files. Persists the
           // choice per-file (and honors the sidebar right-click menu).
@@ -201,7 +203,9 @@ export function SourceViewer({ path }: SourceViewerProps) {
           <ExternalLink className="h-3.5 w-3.5" />
           Raw
         </Button>
-      </ViewerToolbar>
+        </ViewerToolbar>
+      }
+    >
       {showPreview ? (
         <iframe
           src={assetUrl}
@@ -234,6 +238,6 @@ export function SourceViewer({ path }: SourceViewerProps) {
         )}
       </div>
       )}
-    </div>
+    </ViewerLayout>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { ExternalLink, Download, Code2, Eye, Save, AlertCircle, Loader2, Info, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { renderLatexToHtml } from "./latex-render";
 
 interface LatexViewerProps {
@@ -111,8 +112,9 @@ export function LatexViewer({ path }: LatexViewerProps) {
   }, [content, path, assetUrl]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar path={path} badge="TEX" sublabel={filename}>
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar path={path} badge="TEX" sublabel={filename}>
         <Button
           variant="ghost"
           size="sm"
@@ -177,8 +179,9 @@ export function LatexViewer({ path }: LatexViewerProps) {
         >
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
-      </ViewerToolbar>
-
+        </ViewerToolbar>
+      }
+    >
       {saveError && (
         <div className="flex items-start gap-2 border-b border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-700/60 dark:bg-red-950/40 dark:text-red-300">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -247,6 +250,6 @@ export function LatexViewer({ path }: LatexViewerProps) {
           </div>
         )}
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

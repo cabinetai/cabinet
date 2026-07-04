@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Download, Code2, Eye, Copy, Check, ZoomIn, ZoomOut, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { useLocale } from "@/i18n/use-locale";
 
 interface MermaidViewerProps {
@@ -121,8 +122,9 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar path={path} badge="MERMAID">
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar path={path} badge="MERMAID">
         <Button
           variant="ghost"
           size="sm"
@@ -170,7 +172,9 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
             SVG
           </Button>
         )}
-      </ViewerToolbar>
+        </ViewerToolbar>
+      }
+    >
       <div className="flex-1 overflow-auto">
         {loading ? (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
@@ -223,6 +227,6 @@ export function MermaidViewer({ path, title }: MermaidViewerProps) {
           </div>
         )}
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

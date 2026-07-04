@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { ExternalLink, Download, Copy, Check, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { common, createLowlight } from "lowlight";
 import { toHtml } from "hast-util-to-html";
 import { markdownToHtml } from "@/lib/markdown/to-html";
@@ -268,8 +269,9 @@ export function NotebookViewer({ path }: NotebookViewerProps) {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <ViewerToolbar
+    <ViewerLayout
+      toolbar={
+        <ViewerToolbar
         path={path}
         badge="IPYNB"
         sublabel={`${cellCount} cells · ${codeCellCount} code · ${language}`}
@@ -311,8 +313,9 @@ export function NotebookViewer({ path }: NotebookViewerProps) {
           <ExternalLink className="h-3.5 w-3.5" />
           Raw JSON
         </Button>
-      </ViewerToolbar>
-
+        </ViewerToolbar>
+      }
+    >
       <div className="flex-1 overflow-auto bg-[#F5EEDC]">
         {loading ? (
           <div className="flex items-center justify-center h-full text-[#7A6B5D] text-sm">
@@ -344,6 +347,6 @@ export function NotebookViewer({ path }: NotebookViewerProps) {
           </div>
         ) : null}
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

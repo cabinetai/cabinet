@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { OfficeChrome } from "./office-chrome";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { Loader2 } from "lucide-react";
 
 interface Props {
@@ -64,8 +65,7 @@ export function PptxViewer({ path, title }: Props) {
   }, [path]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <OfficeChrome path={path} title={title} extLabel="PPTX" />
+    <ViewerLayout toolbar={<OfficeChrome path={path} title={title} extLabel="PPTX" />}>
       <div className="flex-1 overflow-auto bg-muted/30 py-4">
         {loading && !error && (
           <div className="h-[60vh] flex items-center justify-center text-muted-foreground">
@@ -85,6 +85,6 @@ export function PptxViewer({ path, title }: Props) {
         )}
         <div ref={containerRef} className="pptx-viewer-body mx-auto max-w-5xl px-4" />
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

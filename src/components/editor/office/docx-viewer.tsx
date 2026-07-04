@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { OfficeChrome } from "./office-chrome";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { Loader2 } from "lucide-react";
 
 interface Props {
@@ -61,8 +62,7 @@ export function DocxViewer({ path, title }: Props) {
   }, [path]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <OfficeChrome path={path} title={title} extLabel="DOCX" />
+    <ViewerLayout toolbar={<OfficeChrome path={path} title={title} extLabel="DOCX" />}>
       <div className="flex-1 overflow-y-auto bg-muted/30">
         {loading && !error && (
           <div className="h-full flex items-center justify-center text-muted-foreground">
@@ -82,6 +82,6 @@ export function DocxViewer({ path, title }: Props) {
         )}
         <div ref={containerRef} className="docx-viewer-body mx-auto max-w-5xl py-6 px-4" />
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

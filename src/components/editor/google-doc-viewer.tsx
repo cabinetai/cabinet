@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { OfficeChrome } from "./office/office-chrome";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { detectGoogle, googleKindLabel, type GoogleKind } from "@/lib/google/detect";
 import { Info } from "lucide-react";
 import type { GoogleFrontmatter } from "@/types";
@@ -23,8 +24,7 @@ export function GoogleDocViewer({ path, title, google }: Props) {
 
   if (!embedUrl) {
     return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <OfficeChrome path={path} title={title} extLabel="GOOGLE" hideFinder />
+      <ViewerLayout toolbar={<OfficeChrome path={path} title={title} extLabel="GOOGLE" hideFinder />}>
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="max-w-md text-center space-y-2">
             <p className="text-sm font-medium">{t("googleDoc:noUrl")}</p>
@@ -34,19 +34,22 @@ export function GoogleDocViewer({ path, title, google }: Props) {
             </p>
           </div>
         </div>
-      </div>
+      </ViewerLayout>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <OfficeChrome
-        path={path}
-        title={title}
-        extLabel={label}
-        hideFinder
-        external={openUrl ? { label: "Open in Google", href: openUrl } : undefined}
-      />
+    <ViewerLayout
+      toolbar={
+        <OfficeChrome
+          path={path}
+          title={title}
+          extLabel={label}
+          hideFinder
+          external={openUrl ? { label: "Open in Google", href: openUrl } : undefined}
+        />
+      }
+    >
       <div className="px-4 py-1.5 border-b border-border bg-muted/30 text-[11px] text-muted-foreground flex items-center gap-1.5">
         <Info className="h-3 w-3 shrink-0" />
         Embed requires the doc&apos;s sharing to be <strong className="text-foreground/80">{t("googleDoc:anyoneWithLink")}</strong> or{" "}
@@ -61,6 +64,6 @@ export function GoogleDocViewer({ path, title, google }: Props) {
           title={title}
         />
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

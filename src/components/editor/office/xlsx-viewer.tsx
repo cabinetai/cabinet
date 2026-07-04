@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { OfficeChrome } from "./office-chrome";
+import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -60,8 +61,7 @@ export function XlsxViewer({ path, title }: Props) {
   const current = useMemo(() => sheets?.[active] ?? null, [sheets, active]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <OfficeChrome path={path} title={title} extLabel="XLSX" />
+    <ViewerLayout toolbar={<OfficeChrome path={path} title={title} extLabel="XLSX" />}>
       {sheets && sheets.length > 1 && (
         <div className="flex items-center gap-0.5 border-b border-border bg-muted/40 px-2 overflow-x-auto scrollbar-none">
           {sheets.map((s, i) => (
@@ -105,6 +105,6 @@ export function XlsxViewer({ path, title }: Props) {
           />
         )}
       </div>
-    </div>
+    </ViewerLayout>
   );
 }

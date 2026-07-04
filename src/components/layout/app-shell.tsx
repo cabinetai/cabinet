@@ -38,6 +38,7 @@ import { TaskDetailPanel } from "@/components/tasks/task-detail-panel";
 import { TaskRail } from "@/components/tasks/rail/task-rail";
 import { TaskRailProvider } from "@/components/tasks/rail/task-rail-context";
 import { SearchPalette } from "@/components/search/search-palette";
+import { FileHistoryPanel } from "@/components/editor/version-history";
 import { KeyboardShortcutsModal } from "@/components/help/keyboard-shortcuts-modal";
 import { WhatsNewCard } from "@/components/help/whats-new-card";
 import { NarrowViewportHint } from "@/components/layout/narrow-viewport-hint";
@@ -1053,10 +1054,20 @@ export function AppShell() {
     !isImage && !isVideo && !isAudio && !isMermaid && !isLatex && !isDocx &&
     !isXlsx && !isPptx && !isUnknown && !googleFrontmatter?.url;
 
+  // Viewers migrated to ViewerLayout put their toolbar on the desk and wrap
+  // only their body in a ContentSheet — so they, like the editor, opt out of
+  // the app-shell sheet (otherwise the toolbar sits back on a double sheet).
+  const isSelfSheetedViewer =
+    isCsv || isCode || isImage || isMermaid ||
+    isPdf || isVideo || isAudio || isUnknown || isLatex ||
+    isWebsite || isApp || isDocx || isXlsx || isPptx || isNotebook ||
+    !!googleFrontmatter?.url;
+
   // Views that place their controls on the desk and their body in a
   // ContentSheet manage their own layout — skip the app-shell sheet wrapper.
   const bareLayout =
     isDefaultEditor ||
+    isSelfSheetedViewer ||
     section.type === "tasks" ||
     section.type === "agents";
 
@@ -1113,6 +1124,7 @@ export function AppShell() {
       {!isMobile && <TaskRail />}
       <TaskDetailPanel />
       <SearchPalette />
+      <FileHistoryPanel />
       <KeyboardShortcutsModal />
       <WhatsNewCard />
       <ConfirmDialogHost />
