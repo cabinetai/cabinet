@@ -346,8 +346,8 @@ export function Sidebar() {
             aria-label="Integrations"
             title="Integrations"
             className={cn(
-              "h-7 w-7 shrink-0",
-              section.type === "integrations" && "bg-accent text-foreground"
+              "h-7 w-7 shrink-0 text-muted-foreground/60 hover:text-muted-foreground",
+              section.type === "integrations" && "bg-accent text-foreground hover:text-foreground"
             )}
             onClick={() => setSection({ type: "integrations" })}
           >
@@ -359,8 +359,8 @@ export function Sidebar() {
             aria-label={t("sidebar:settings")}
             title={t("sidebar:settings")}
             className={cn(
-              "h-7 w-7 shrink-0",
-              section.type === "settings" && "bg-accent text-foreground"
+              "h-7 w-7 shrink-0 text-muted-foreground/60 hover:text-muted-foreground",
+              section.type === "settings" && "bg-accent text-foreground hover:text-foreground"
             )}
             onClick={() => setSection({ type: "settings" })}
           >
