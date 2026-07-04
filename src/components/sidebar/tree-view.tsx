@@ -408,7 +408,7 @@ export function TreeView() {
       <button
         onClick={opts.onClick}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-2 py-0.5 text-left transition-colors hover:bg-foreground/[0.03]",
+          "flex w-full items-center gap-2.5 rounded-md px-2 py-1 text-left transition-colors hover:bg-foreground/[0.03]",
           opts.selected && "bg-accent text-accent-foreground"
         )}
         style={pad(1)}
@@ -426,7 +426,7 @@ export function TreeView() {
           size="sm"
           shape="square"
         />
-        <span className="min-w-0 flex-1 truncate text-[12px] text-foreground/75">
+        <span className="min-w-0 flex-1 truncate text-[13px] text-foreground/75">
           {getAgentDisplayName(agent)}
         </span>
         {typeof opts.activeDot === "boolean" && (

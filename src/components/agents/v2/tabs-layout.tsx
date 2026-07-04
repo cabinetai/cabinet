@@ -208,8 +208,9 @@ function MasterToggle() {
   // Caption + thumb sit opposite each other. The thumb position is derived
   // from the track width (a fixed inset, or 100% minus the thumb) with
   // logical properties, so it stays flush if the pill is widened and mirrors
-  // under RTL — no magic translate tied to the English caption width. The
-  // amber track + count caption cover the partial state (#071, #072, #073).
+  // under RTL — no magic translate tied to the English caption width. Partial
+  // reads as a softer green (not amber) with a paler count caption, so it
+  // stays on-brand with the full-on emerald while signalling "not everyone".
   const caption = allActive
     ? "Team on"
     : partial
@@ -232,7 +233,7 @@ function MasterToggle() {
           "disabled:cursor-not-allowed",
           bulkToggleInFlight ? "opacity-80" : "disabled:opacity-50",
           partial
-            ? "bg-amber-500"
+            ? "bg-emerald-500/70"
             : "data-[checked]:bg-emerald-500 data-[unchecked]:bg-muted-foreground/30"
         )}
       >
@@ -248,7 +249,7 @@ function MasterToggle() {
             allActive
               ? "text-white"
               : partial
-                ? "text-amber-950"
+                ? "text-white/80"
                 : "text-muted-foreground/80"
           )}
         >

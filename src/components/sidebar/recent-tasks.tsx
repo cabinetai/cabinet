@@ -306,7 +306,12 @@ export function RecentTasks({
                     cabinetPath: task.cabinetPath,
                   })
                 }
-                className={cn(itemClass(isActive), "min-w-0 flex-1")}
+                className={cn(
+                  itemClass(isActive),
+                  // Match the relaxed Team rows — a touch more breathing room
+                  // than the dense file tree itemClass gives.
+                  "min-w-0 flex-1 gap-2.5 py-1 text-[13px]"
+                )}
                 style={padStyle}
                 title={tooltip}
               >
