@@ -8,16 +8,16 @@ import { Markdown } from "@/components/tasks/conversation/markdown";
 import { cn } from "@/lib/utils";
 
 // Readable on the light content sheet: a darker text tone (-700) with a subtle
-// tint, keeping each label's colour identity. Dark theme keeps the lighter -300.
+// tint, no outline. Dark theme keeps the lighter -300.
 const LABEL_COLORS: Record<string, string> = {
-  SUMMARY: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
-  CONTEXT: "bg-blue-500/12 text-blue-700 dark:text-blue-300 border-blue-500/25",
-  CONTEXT_UPDATE: "bg-blue-500/12 text-blue-700 dark:text-blue-300 border-blue-500/25",
-  ARTIFACT: "bg-amber-500/12 text-amber-700 dark:text-amber-300 border-amber-500/25",
-  DECISION: "bg-purple-500/12 text-purple-700 dark:text-purple-300 border-purple-500/25",
-  LEARNING: "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border-cyan-500/25",
-  GOAL_UPDATE: "bg-pink-500/12 text-pink-700 dark:text-pink-300 border-pink-500/25",
-  MESSAGE_TO: "bg-orange-500/12 text-orange-700 dark:text-orange-300 border-orange-500/25",
+  SUMMARY: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300",
+  CONTEXT: "bg-blue-500/12 text-blue-700 dark:text-blue-300",
+  CONTEXT_UPDATE: "bg-blue-500/12 text-blue-700 dark:text-blue-300",
+  ARTIFACT: "bg-amber-500/12 text-amber-700 dark:text-amber-300",
+  DECISION: "bg-purple-500/12 text-purple-700 dark:text-purple-300",
+  LEARNING: "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300",
+  GOAL_UPDATE: "bg-pink-500/12 text-pink-700 dark:text-pink-300",
+  MESSAGE_TO: "bg-orange-500/12 text-orange-700 dark:text-orange-300",
 };
 
 function renderInlineFormatting(text: string): ReactNode[] {
@@ -132,12 +132,12 @@ function CodeBlock({ block }: { block: Extract<Block, { type: "code" }> }) {
 function StructuredBadge({ label, value }: { label: string; value: string }) {
   const baseLabel = label.split(" ")[0];
   const colorClass =
-    LABEL_COLORS[baseLabel] || "bg-muted/30 text-muted-foreground border-border";
+    LABEL_COLORS[baseLabel] || "bg-muted/30 text-muted-foreground";
 
   return (
     <div className="my-1.5 flex items-start gap-2">
       <span
-        className={`mt-0.5 shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${colorClass}`}
+        className={`mt-0.5 shrink-0 rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${colorClass}`}
       >
         {label}
       </span>
@@ -162,9 +162,9 @@ function CabinetBlock({ block }: { block: Extract<Block, { type: "cabinet" }> })
 }
 
 const ACTION_BADGE_COLORS: Record<string, string> = {
-  LAUNCH_TASK: "bg-pink-500/12 text-pink-700 dark:text-pink-300 border-pink-500/25",
-  SCHEDULE_JOB: "bg-blue-500/12 text-blue-700 dark:text-blue-300 border-blue-500/25",
-  SCHEDULE_TASK: "bg-violet-500/12 text-violet-700 dark:text-violet-300 border-violet-500/25",
+  LAUNCH_TASK: "bg-pink-500/12 text-pink-700 dark:text-pink-300",
+  SCHEDULE_JOB: "bg-blue-500/12 text-blue-700 dark:text-blue-300",
+  SCHEDULE_TASK: "bg-violet-500/12 text-violet-700 dark:text-violet-300",
 };
 
 function ActionsBlock({ block }: { block: Extract<Block, { type: "actions" }> }) {
@@ -177,7 +177,7 @@ function ActionsBlock({ block }: { block: Extract<Block, { type: "actions" }> })
       {block.actions.map((action, index) => {
         const color =
           ACTION_BADGE_COLORS[action.type] ||
-          "bg-muted/30 text-muted-foreground border-border";
+          "bg-muted/30 text-muted-foreground";
         const headline =
           action.type === "SEND_EMAIL"
             ? `${action.subject} · ${action.to.join(", ")}`
@@ -189,7 +189,7 @@ function ActionsBlock({ block }: { block: Extract<Block, { type: "actions" }> })
         return (
           <div key={index} className="flex items-start gap-2">
             <span
-              className={`mt-0.5 shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${color}`}
+              className={`mt-0.5 shrink-0 rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide ${color}`}
             >
               {action.type}
             </span>

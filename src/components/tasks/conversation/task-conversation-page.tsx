@@ -244,7 +244,7 @@ function StatusActionButton({
   const { t } = useLocale();
   if (status === "done") {
     return (
-      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-2.5 text-[12px] font-semibold text-emerald-700 dark:text-emerald-300">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 text-[12px] font-semibold text-emerald-700 dark:text-emerald-300">
         <CheckCircle2 className="size-4" />
         Done
       </span>
@@ -257,7 +257,7 @@ function StatusActionButton({
         type="button"
         disabled={busy}
         onClick={onRetry}
-        className="inline-flex h-8 items-center gap-1.5 rounded-md border border-rose-500/30 bg-rose-500/15 px-2.5 text-[12px] font-semibold text-rose-700 dark:text-rose-300 transition-colors hover:bg-rose-500/25 hover:text-rose-800 dark:hover:text-rose-200 disabled:opacity-50"
+        className="inline-flex h-8 items-center gap-1.5 rounded-md bg-rose-500/15 px-2.5 text-[12px] font-semibold text-rose-700 dark:text-rose-300 transition-colors hover:bg-rose-500/25 hover:text-rose-800 dark:hover:text-rose-200 disabled:opacity-50"
         title={t("tasks:conversation.restartFromOriginal")}
       >
         <RotateCcw className="size-4" />
@@ -268,7 +268,7 @@ function StatusActionButton({
 
   if (status === "running") {
     return (
-      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-sky-500/30 bg-sky-500/15 px-2.5 text-[12px] font-semibold text-sky-700 dark:text-sky-300">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-sky-500/15 px-2.5 text-[12px] font-semibold text-sky-700 dark:text-sky-300">
         <Loader2 className="size-4 animate-spin" />
         Running
       </span>
@@ -277,7 +277,7 @@ function StatusActionButton({
 
   if (status === "awaiting-input") {
     return (
-      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/15 px-2.5 text-[12px] font-semibold text-amber-700 dark:text-amber-300">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-amber-500/15 px-2.5 text-[12px] font-semibold text-amber-700 dark:text-amber-300">
         <Pause className="size-4" />
         Waiting
       </span>
@@ -286,7 +286,7 @@ function StatusActionButton({
 
   if (status === "archived") {
     return (
-      <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-muted px-2.5 text-[12px] font-semibold text-muted-foreground">
+      <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-muted px-2.5 text-[12px] font-semibold text-muted-foreground">
         <Archive className="size-4" />
         Archived
       </span>
@@ -298,7 +298,7 @@ function StatusActionButton({
       type="button"
       disabled={busy}
       onClick={onMarkDone}
-      className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-2.5 text-[12px] font-semibold text-emerald-700 dark:text-emerald-300 transition-colors hover:bg-emerald-500/25 hover:text-emerald-800 dark:hover:text-emerald-200 disabled:opacity-50"
+      className="inline-flex h-8 items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 text-[12px] font-semibold text-emerald-700 dark:text-emerald-300 transition-colors hover:bg-emerald-500/25 hover:text-emerald-800 dark:hover:text-emerald-200 disabled:opacity-50"
       title={t("tasks:conversation.markAsDone")}
     >
       <Check className="size-4" />
