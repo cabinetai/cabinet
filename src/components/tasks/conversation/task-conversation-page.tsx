@@ -339,7 +339,7 @@ function WrapUpCard({
 }) {
   return (
     <div className="mx-auto my-5 w-full max-w-[36rem] px-6">
-      <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.04] px-4 py-3.5 dark:border-emerald-400/20 dark:bg-emerald-400/[0.05]">
+      <div className="rounded-2xl bg-emerald-500/[0.07] px-4 py-3.5 dark:bg-emerald-400/[0.06]">
         <div className="flex items-center gap-3">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
             <Sparkles className="size-4" />
