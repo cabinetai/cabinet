@@ -341,9 +341,6 @@ function WrapUpCard({
     <div className="mx-auto my-5 w-full max-w-[36rem] px-6">
       <div className="rounded-2xl bg-emerald-500/[0.07] px-4 py-3.5 dark:bg-emerald-400/[0.06]">
         <div className="flex items-center gap-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <Sparkles className="size-4" />
-          </div>
           <div className="min-w-0 flex-1">
             <p className="text-[13px] font-medium text-foreground">
               Looks like a good place to wrap up.
