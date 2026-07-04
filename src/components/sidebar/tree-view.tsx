@@ -469,7 +469,7 @@ export function TreeView() {
 
   return (
     <>
-    <ScrollArea className="flex-1 min-h-0 [&_[data-slot=scroll-area-scrollbar]]:w-1.5 [&_[data-slot=scroll-area-scrollbar]]:py-0 [&_[data-slot=scroll-area-scrollbar]]:pe-0 [&_[data-slot=scroll-area-scrollbar]]:ps-0.5 [&_[data-slot=scroll-area-scrollbar]]:border-s-0">
+    <ScrollArea className="flex-1 min-h-0 [&_[data-slot=scroll-area-scrollbar]]:w-1.5 [&_[data-slot=scroll-area-scrollbar]]:py-0 [&_[data-slot=scroll-area-scrollbar]]:pe-0 [&_[data-slot=scroll-area-scrollbar]]:ps-0.5 [&_[data-slot=scroll-area-scrollbar]]:border-s-0 [&_[data-slot=scroll-area-scrollbar]]:opacity-0 [&_[data-slot=scroll-area-scrollbar]]:transition-opacity [&_[data-slot=scroll-area-scrollbar]]:duration-300 [&_[data-slot=scroll-area-scrollbar][data-hovering]]:opacity-100 [&_[data-slot=scroll-area-scrollbar][data-scrolling]]:opacity-100">
       <div className="flex min-h-full flex-col py-1">
         {/* ── Back to parent cabinet (never up into the home container) ── */}
         {activeCabinet && parentCabinet && !parentIsHome ? (

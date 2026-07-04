@@ -15,9 +15,24 @@ import { useTreeStore } from "@/stores/tree-store";
 import { useEditorStore } from "@/stores/editor-store";
 import { useLocale } from "@/i18n/use-locale";
 
-export function NewPageDialog({ parentPath = "" }: { parentPath?: string } = {}) {
+export function NewPageDialog({
+  parentPath = "",
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  hideTrigger = false,
+}: {
+  parentPath?: string;
+  /** When provided, the dialog is controlled externally (e.g. footer menu). */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Hide the built-in trigger when the dialog is opened from elsewhere. */
+  hideTrigger?: boolean;
+} = {}) {
   const { t } = useLocale();
-  const [open, setOpen] = useState(false);
+  const controlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? controlledOpen : internalOpen;
+  const setOpen = controlled ? controlledOnOpenChange! : setInternalOpen;
   const [title, setTitle] = useState("");
   const [creating, setCreating] = useState(false);
   const { createPage } = useTreeStore();
@@ -44,14 +59,16 @@ export function NewPageDialog({ parentPath = "" }: { parentPath?: string } = {})
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        data-new-page-trigger
-        title={t("dialogs:newPage.trigger")}
-        className="flex min-w-0 items-center gap-1.5 w-full text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
-      >
-        <Plus className="h-4 w-4 shrink-0" />
-        <span className="min-w-0 truncate">{t("dialogs:newPage.trigger")}</span>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger
+          data-new-page-trigger
+          title={t("dialogs:newPage.trigger")}
+          className="flex min-w-0 items-center gap-1.5 w-full text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+        >
+          <Plus className="h-4 w-4 shrink-0" />
+          <span className="min-w-0 truncate">{t("dialogs:newPage.trigger")}</span>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("dialogs:newPage.title")}</DialogTitle>

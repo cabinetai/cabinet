@@ -1775,6 +1775,7 @@
   "sidebar": {
     "settings": "Settings",
     "createPage": "Create page",
+    "new": "New",
     "newPage": "New page",
     "newAgent": "New Agent",
     "newTask": "New Task",

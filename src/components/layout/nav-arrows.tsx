@@ -20,22 +20,22 @@ export function NavArrows() {
         size="icon"
         aria-label={t("common:nav.goBack")}
         title={`${t("common:nav.goBack")} (⌘[)`}
-        className="h-7 w-6 text-muted-foreground/60 hover:text-muted-foreground disabled:opacity-40"
+        className="h-7 w-7 text-muted-foreground/60 hover:text-muted-foreground disabled:opacity-40"
         onClick={goBack}
         disabled={!canGoBack}
       >
-        <DirIcon ltr={ArrowLeft} rtl={ArrowRight} className="h-3 w-3" />
+        <DirIcon ltr={ArrowLeft} rtl={ArrowRight} className="h-3.5 w-3.5" />
       </Button>
       <Button
         variant="ghost"
         size="icon"
         aria-label={t("common:nav.goForward")}
         title={`${t("common:nav.goForward")} (⌘])`}
-        className="h-7 w-6 text-muted-foreground/60 hover:text-muted-foreground disabled:opacity-40"
+        className="h-7 w-7 text-muted-foreground/60 hover:text-muted-foreground disabled:opacity-40"
         onClick={goForward}
         disabled={!canGoForward}
       >
-        <DirIcon ltr={ArrowRight} rtl={ArrowLeft} className="h-3 w-3" />
+        <DirIcon ltr={ArrowRight} rtl={ArrowLeft} className="h-3.5 w-3.5" />
       </Button>
     </div>
   );

@@ -173,14 +173,9 @@ export function RoomSwitcher() {
             colorKey={active?.path ?? ""}
             className="size-6 shrink-0"
           />
-          {/* Name the current room in the trigger (not just a hover tooltip) so
-              it's always identifiable, even when the drawer header shows a
-              drilled-into sub-cabinet. Truncates on narrow rails. */}
-          {active?.name && (
-            <span className="min-w-0 max-w-[7rem] truncate text-sm text-foreground/80 group-hover:text-foreground">
-              {active.name}
-            </span>
-          )}
+          {/* Name is dropped from the trigger (the `title` tooltip + the header
+              still identify the room); the avatar + chevron keep the switcher
+              compact. */}
           <ChevronDown className="size-3 shrink-0 text-muted-foreground/70" />
         </DropdownMenuTrigger>
 
