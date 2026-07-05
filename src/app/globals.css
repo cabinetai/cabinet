@@ -1052,6 +1052,17 @@ html:not([dir="rtl"]).electron-desktop .sidebar-header {
 html[dir="rtl"].electron-desktop main > :first-child {
   padding-left: 80px;
 }
+/* Native macOS full-screen hides the traffic lights, so the ~80px reserved for
+   them turns into an empty gap — left of the sidebar logo (expanded) or the
+   toolbar (collapsed). Drop the reservation while full-screen. The renderer
+   toggles `.is-fullscreen` from an Electron enter/leave-full-screen event
+   (theme-initializer.tsx ← preload `onFullscreenChanged`). */
+html.electron-desktop.is-fullscreen {
+  --traffic-clearance: 0px;
+}
+html[dir="rtl"].electron-desktop.is-fullscreen main > :first-child {
+  padding-left: 0;
+}
 
 /* ── GitHub stars burst animation ── */
 @keyframes cabinet-star-burst {

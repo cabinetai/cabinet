@@ -1,6 +1,6 @@
 # create-cabinet
 
-Create a new [Cabinet](https://github.com/hilash/cabinet) project in one command. Cabinet is an AI-first self-hosted knowledge base and startup OS.
+Create a new [Cabinet](https://github.com/cabinetai/cabinet) project in one command. Cabinet is an AI-first self-hosted knowledge base and startup OS.
 
 ## Usage
 

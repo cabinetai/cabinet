@@ -28,8 +28,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/hilash/cabinet/stargazers" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/github/stars/hilash/cabinet?style=for-the-badge&logo=github&logoColor=white&label=Star%20the%20vision%20%F0%9F%98%8D%F0%9F%8C%9F&labelColor=4b4b4b&color=f5b301" alt="Star Cabinet on GitHub" valign="middle">
+  <a href="https://github.com/cabinetai/cabinet/stargazers" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/github/stars/cabinetai/cabinet?style=for-the-badge&logo=github&logoColor=white&label=Star%20the%20vision%20%F0%9F%98%8D%F0%9F%8C%9F&labelColor=4b4b4b&color=f5b301" alt="Star Cabinet on GitHub" valign="middle">
   </a>&nbsp;
   <a href="https://discord.gg/hJa5TRTbTH" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=4b4b4b" alt="Join the Discord" valign="middle">
@@ -38,7 +38,7 @@
     <img src="https://img.shields.io/badge/%F0%9F%97%84%EF%B8%8F%20Cabinet-Cloud%20Waitlist-55c938?style=for-the-badge&labelColor=4b4b4b" alt="Cabinet Cloud Waitlist" valign="middle">
   </a>&nbsp;
   <a href="https://coderabbit.ai" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/coderabbit/prs/github/hilash/cabinet?utm_source=oss&utm_medium=github&utm_campaign=hilash%2Fcabinet&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews" alt="CodeRabbit Pull Request Reviews" valign="middle">
+    <img src="https://img.shields.io/coderabbit/prs/github/cabinetai/cabinet?utm_source=oss&utm_medium=github&utm_campaign=cabinetai%2Fcabinet&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews" alt="CodeRabbit Pull Request Reviews" valign="middle">
   </a>
 </p>
 
@@ -276,7 +276,7 @@ Cabinet is free, open source, and self-hosted. Your data never leaves your machi
 npx create-cabinet my-startup
 ```
 
-[Get Started](https://runcabinet.com) | <a href="https://github.com/hilash/cabinet/stargazers" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/hilash/cabinet?label=GitHub%20Stars&logo=github&color=f5b301" alt="GitHub Stars" valign="middle"></a>
+[Get Started](https://runcabinet.com) | <a href="https://github.com/cabinetai/cabinet/stargazers" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/cabinetai/cabinet?label=GitHub%20Stars&logo=github&color=f5b301" alt="GitHub Stars" valign="middle"></a>
 
 ---
 
@@ -314,7 +314,7 @@ Cabinet is moving fast right now. We’d love thoughtful contributors who want t
 
 If you’re thinking about opening a PR, please start by joining the [Discord](https://discord.gg/hJa5TRTbTH) and talking with Hila before coding. Hila is Cabinet’s builder, and that early sync helps us keep the roadmap coherent while the product is still evolving rapidly.
 
-Once the direction is aligned, open your PR on [GitHub](https://github.com/hilash/cabinet). The goal is not gatekeeping — it’s making sure your energy goes into work that has a clear path to landing and shipping.
+Once the direction is aligned, open your PR on [GitHub](https://github.com/cabinetai/cabinet). The goal is not gatekeeping — it’s making sure your energy goes into work that has a clear path to landing and shipping.
 
 ---
 
@@ -324,10 +324,10 @@ MIT License
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=hilash%2Fcabinet&type=date&legend=top-left" target="_blank" rel="noopener noreferrer">
+<a href="https://www.star-history.com/?repos=cabinetai%2Fcabinet&type=date&legend=top-left" target="_blank" rel="noopener noreferrer">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=hilash/cabinet&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=hilash/cabinet&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=hilash/cabinet&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=cabinetai/cabinet&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=cabinetai/cabinet&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=cabinetai/cabinet&type=date&legend=top-left" />
  </picture>
 </a>

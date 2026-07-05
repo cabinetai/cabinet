@@ -74,7 +74,7 @@ On first run, downloads the app to `~/.cabinet/app/` and installs dependencies. 
 
 ### `npx cabinetai import <template>`
 
-Import a pre-made cabinet from the [template registry](https://github.com/hilash/cabinets).
+Import a pre-made cabinet from the [template registry](https://github.com/cabinetai/cabinets).
 
 ```bash
 npx cabinetai import saas-startup

@@ -6,7 +6,7 @@ import { spawnSync } from "child_process";
 import { log, success, warning, error } from "../lib/log.js";
 import { findCabinetRoot, CABINET_MANIFEST } from "../lib/paths.js";
 
-const REGISTRY_REPO = "https://github.com/hilash/cabinets";
+const REGISTRY_REPO = "https://github.com/cabinetai/cabinets";
 
 export function registerImport(program: Command): void {
   program

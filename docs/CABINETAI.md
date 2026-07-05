@@ -73,7 +73,7 @@ On first run, downloads the app to `~/.cabinet/app/` and installs dependencies. 
 
 ### `cabinetai import <template>`
 
-Imports a cabinet template from the [hilash/cabinets](https://github.com/hilash/cabinets) registry.
+Imports a cabinet template from the [cabinetai/cabinets](https://github.com/cabinetai/cabinets) registry.
 
 ```bash
 cabinetai import saas-startup
@@ -289,7 +289,7 @@ One command bumps all versions, commits, tags, and pushes:
 ```bash
 npm view create-cabinet version     # should match
 npm view cabinetai version          # should match
-gh release view vX.Y.Z -R hilash/cabinet
+gh release view vX.Y.Z -R cabinetai/cabinet
 npx cabinetai --version
 ```
 
@@ -298,7 +298,7 @@ npx cabinetai --version
 `cabinet-release.json` is published as a GitHub Release asset. The `cabinetai update` command fetches it to check for newer versions:
 
 ```
-https://github.com/hilash/cabinet/releases/latest/download/cabinet-release.json
+https://github.com/cabinetai/cabinet/releases/latest/download/cabinet-release.json
 ```
 
 ### Required GitHub secrets

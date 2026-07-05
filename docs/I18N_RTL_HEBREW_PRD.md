@@ -2,7 +2,7 @@
 
 **Branch:** `feat/i18n-rtl-hebrew`
 **Status:** Approved (planning) — implementation phased
-**Issue:** [#79](https://github.com/hilash/cabinet/issues/79) (scope narrowed: Hebrew + English only; Chinese deferred)
+**Issue:** [#79](https://github.com/cabinetai/cabinet/issues/79) (scope narrowed: Hebrew + English only; Chinese deferred)
 **Author:** hilash, 2026-05-12
 
 ---

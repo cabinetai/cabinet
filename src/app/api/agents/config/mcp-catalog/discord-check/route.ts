@@ -14,7 +14,7 @@ import { readCabinetEnvFile } from "@/lib/runtime/cabinet-env";
  */
 
 const API = "https://discord.com/api/v10";
-const UA = "Cabinet (https://github.com/hilash/cabinet, discord-check)";
+const UA = "Cabinet (https://github.com/cabinetai/cabinet, discord-check)";
 // View Channels + Read Message History + Send Messages + Create Public Threads
 // + Send Messages in Threads + Add Reactions — matches the guide's invite.
 const INVITE_PERMISSIONS = "292057844800";

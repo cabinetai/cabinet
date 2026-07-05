@@ -53,7 +53,7 @@ Test-Path "C:\Program Files\Git\usr\bin\tar.exe"
 ## Checkout
 
 ```powershell
-git clone https://github.com/hilash/cabinet.git
+git clone https://github.com/cabinetai/cabinet.git
 cd cabinet
 git fetch origin main fix/windows-cli-and-polish
 git checkout fix/windows-cli-and-polish

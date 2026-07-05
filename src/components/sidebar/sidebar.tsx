@@ -405,9 +405,23 @@ export function Sidebar() {
         // toolbar button rather than a floating orphan. ViewerToolbar reserves
         // the matching inline-start gap via --sidebar-toggle-offset.
         <div
-          className="absolute top-[10px] z-20 flex h-10 items-center animate-in fade-in zoom-in-95 duration-200"
+          className="absolute top-[10px] z-20 flex h-10 items-center gap-1 animate-in fade-in zoom-in-95 duration-200"
           style={{ insetInlineStart: "calc(0.5rem + var(--traffic-clearance, 0px))" }}
         >
+          {/* Brand persists when the sidebar is collapsed — it otherwise
+              vanishes with the 0-width rail (and full-screen leaves the corner
+              empty). Click = home, mirroring the expanded logo. ViewerToolbar
+              reserves the matching width via --sidebar-toggle-offset.
+              ponytail: Latin wordmark only so that reserved offset stays a
+              fixed width; measure if a locale's mark needs more room. */}
+          <button
+            onClick={() => setSection({ type: "home" })}
+            title={t("sidebar:goHome")}
+            aria-label={t("sidebar:goHome")}
+            className="font-logo text-[19px] italic tracking-[-0.01em] text-foreground/85 hover:text-foreground transition-colors cursor-pointer px-0.5"
+          >
+            <span className="brand-en">cabinet</span>
+          </button>
           <Button
             variant="ghost"
             size="icon"

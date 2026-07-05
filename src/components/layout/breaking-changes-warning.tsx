@@ -181,7 +181,7 @@ export function BreakingChangesWarning() {
             {" "}and{" "}
             <a href="https://runcabinet.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">Privacy</a>.
             {" "}Cabinet is an{" "}
-            <a href="https://github.com/hilash/cabinet" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">open-source project</a>
+            <a href="https://github.com/cabinetai/cabinet" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">open-source project</a>
             .
           </p>
           <Button onClick={acknowledge} disabled={!accepted}>

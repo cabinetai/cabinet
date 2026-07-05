@@ -165,7 +165,7 @@ export function WhatsNewCard() {
             ))}
           </ul>
           <a
-            href={`https://github.com/hilash/cabinet/releases/tag/v${release.version}`}
+            href={`https://github.com/cabinetai/cabinet/releases/tag/v${release.version}`}
             target="_blank"
             rel="noreferrer noopener"
             className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 underline-offset-2 hover:underline"

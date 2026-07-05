@@ -147,7 +147,7 @@ function RailButton({
         "animate-in fade-in slide-in-from-top-1 duration-200 ease-out",
         // No brown selection ring — just a subtle themed fill for the
         // currently-open task; hover gets the same fill.
-        isActive ? "bg-sidebar-accent" : "hover:bg-sidebar-accent"
+        isActive ? "bg-accent" : "hover:bg-accent"
       )}
     >
       <span className="relative">
@@ -163,7 +163,7 @@ function RailButton({
           )}
           <span
             className={cn(
-              "relative inline-flex h-1.5 w-1.5 rounded-full ring-1 ring-sidebar",
+              "relative inline-flex h-1.5 w-1.5 rounded-full ring-1 ring-card",
               dot.cls
             )}
           />
@@ -174,13 +174,12 @@ function RailButton({
 }
 
 /**
- * Thin (30px) always-available rail. It floats over the inline-end edge of
- * the content area (content scrolls underneath, a soft shadow on the
- * leading edge sells the depth) and uses the active theme's sidebar
- * surface so it reads a shade darker than the page. Live tasks (running /
- * awaiting-input) from every cabinet sit on top, then a hairline divider,
- * then every other task newest-activity-first. There's no scrollbar — the
- * rail simply shows as many as fit and clips the rest. Items cascade in
+ * Always-available rail pinned to the inline-end edge. The avatars ride a
+ * floating rounded "capsule" (a soft raised card, inset from the window edge
+ * — Manila Arc) that sits in a 52px desk gutter the app reserves. Live tasks
+ * (running / awaiting-input) from every cabinet sit on top, then a hairline
+ * divider, then every other task newest-activity-first. There's no scrollbar —
+ * the capsule simply shows as many as fit and clips the rest. Items cascade in
  * with the same fade/slide the sidebar uses for files and agents.
  * Clicking any item reopens the familiar task drawer.
  * Toggled from the status-bar button next to Help or with Cmd/Ctrl+Opt+L.
@@ -219,67 +218,69 @@ export function TaskRail() {
       aria-label={t("taskRail:title")}
       className={cn(
         // Fixed to the window's inline-end edge, full height — the app
-        // reserves a matching 30px gutter so nothing renders under it and
+        // reserves a matching 52px gutter so nothing renders under it and
         // the rail never moves (the task drawer opens to its left). z-40
         // sits above content/toolbars but below true modal scrims (z-50).
-        "fixed inset-y-0 end-0 z-40 flex w-[30px] flex-col",
-        // The rail lives in the desk gutter (bg == --gutter / --sidebar), so it
-        // needs no border or drop shadow — the avatars simply float in the
-        // manila margin, borderless, like the rest of the Manila Arc chrome.
-        "bg-sidebar text-sidebar-foreground"
+        // The aside is transparent; the capsule inside is the visible surface.
+        "fixed inset-y-0 end-0 z-40 flex w-[52px] flex-col"
       )}
     >
-      <button
-        type="button"
-        onClick={toggleTaskRail}
-        title={t("taskRail:hide")}
-        aria-label={t("taskRail:hide")}
-        className="flex h-7 w-full items-center justify-center text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/60"
-      >
-        {/* Chevron points toward the edge it collapses into. RTL flips it. */}
-        <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" />
-      </button>
+      {/* Floating capsule: a soft raised card inset from the window edge, so
+          the avatars read as round chips on a pill rather than squeezed flush
+          to the edge. bg-card/70 lifts it off the same-coloured desk gutter. */}
+      <div className="m-1.5 flex min-h-0 flex-1 flex-col rounded-[20px] bg-card/70 shadow-[0_2px_12px_rgba(0,0,0,0.10)] ring-1 ring-border/50 backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={toggleTaskRail}
+          title={t("taskRail:hide")}
+          aria-label={t("taskRail:hide")}
+          className="flex h-6 w-full items-center justify-center rounded-t-[20px] text-foreground/50 transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/60"
+        >
+          {/* Chevron points toward the edge it collapses into. RTL flips it. */}
+          <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" />
+        </button>
 
-      {/* No scrollbar by design: render the whole list and let the rail
-          clip whatever doesn't fit. Live work is on top, so the part you
-          see is always the part that matters most. */}
-      <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-hidden py-1">
-        {empty && (
-          <p className="px-1 py-2 text-center text-[9px] leading-tight text-sidebar-foreground/50">
-            {t("taskRail:empty")}
-          </p>
-        )}
+        {/* No scrollbar by design: render the whole list and let the capsule
+            clip whatever doesn't fit. Live work is on top, so the part you
+            see is always the part that matters most. */}
+        <div className="flex min-h-0 flex-1 flex-col items-center gap-1.5 overflow-hidden px-1 pb-1.5">
+          {empty && (
+            <p className="px-1 py-2 text-center text-[9px] leading-tight text-foreground/50">
+              {t("taskRail:empty")}
+            </p>
+          )}
 
-        {running.map((item, i) => (
-          <RailButton
-            key={item.task.id}
-            item={item}
-            index={i}
-            now={now}
-            t={t}
-            onShowTip={showTip}
-            onHideTip={hideTip}
-          />
-        ))}
+          {running.map((item, i) => (
+            <RailButton
+              key={item.task.id}
+              item={item}
+              index={i}
+              now={now}
+              t={t}
+              onShowTip={showTip}
+              onHideTip={hideTip}
+            />
+          ))}
 
-        {running.length > 0 && rest.length > 0 && (
-          <span
-            aria-hidden
-            className="mx-auto my-0.5 h-px w-4 bg-sidebar-border"
-          />
-        )}
+          {running.length > 0 && rest.length > 0 && (
+            <span
+              aria-hidden
+              className="my-0.5 h-px w-4 bg-border"
+            />
+          )}
 
-        {rest.map((item, i) => (
-          <RailButton
-            key={item.task.id}
-            item={item}
-            index={running.length + i}
-            now={now}
-            t={t}
-            onShowTip={showTip}
-            onHideTip={hideTip}
-          />
-        ))}
+          {rest.map((item, i) => (
+            <RailButton
+              key={item.task.id}
+              item={item}
+              index={running.length + i}
+              now={now}
+              t={t}
+              onShowTip={showTip}
+              onHideTip={hideTip}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Themed tooltip — instant (no transition), big readable row, sits

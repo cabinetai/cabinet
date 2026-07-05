@@ -16,7 +16,7 @@ const PROMPTED_AT_2_KEY = "cabinet.feedback.promptedAt2";
 const PROMPTED_AT_6_KEY = "cabinet.feedback.promptedAt6";
 const SESSION_COUNTED_KEY = "cabinet.session.launchCounted";
 const DISCORD_URL = "https://discord.gg/hJa5TRTbTH";
-const GITHUB_REPO_URL = "https://github.com/hilash/cabinet";
+const GITHUB_REPO_URL = "https://github.com/cabinetai/cabinet";
 const POPUP_DEFER_MS = 5000;
 // Cabinet-backend ingestion endpoint. Best-effort forward; the local JSONL
 // row is the durable copy. See cabinet-backend/FEEDBACK.md.

@@ -992,7 +992,7 @@ export function RegistryBrowser({
 
             {/* GitHub star — filled accent */}
             <a
-              href="https://github.com/hilash/cabinets"
+              href="https://github.com/cabinetai/cabinets"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"

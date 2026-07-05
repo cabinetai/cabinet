@@ -27,7 +27,7 @@ async function markdownToHtml(markdown: string): Promise<string> {
   return String(result);
 }
 
-const REPO_OWNER = "hilash";
+const REPO_OWNER = "cabinetai";
 const REPO_NAME = "cabinets";
 const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents`;
 

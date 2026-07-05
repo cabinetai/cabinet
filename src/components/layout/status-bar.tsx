@@ -21,7 +21,7 @@ import { useVisibleInterval } from "@/hooks/use-visible-interval";
 import type { TFunction } from "i18next";
 
 const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
-const GITHUB_REPO_URL = "https://github.com/hilash/cabinet";
+const GITHUB_REPO_URL = "https://github.com/cabinetai/cabinet";
 const CABINET_INVITE_URL = "https://runcabinet.com";
 
 // Audit #094: each "Not installed" provider row needs a one-click path to
