@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { LinkRepoDialog } from "./link-repo-dialog";
 import { ConnectDriveDialog } from "./connect-drive-dialog";
 import { ConnectKnowledgeDialog } from "./connect-knowledge-dialog";
+import { ConnectGithubDialog } from "./connect-github-dialog";
 import { NotionConnectDialog } from "./notion-connect-dialog";
 import { AppleNotesConnectDialog } from "./apple-notes-connect-dialog";
 import type { KnowledgeProviderId } from "@/lib/knowledge-sources/store";
@@ -167,6 +168,7 @@ export function TreeView() {
   const [linkRepoOpen, setLinkRepoOpen] = useState(false);
   const [connectDriveOpen, setConnectDriveOpen] = useState(false);
   const [connectKnowledgeOpen, setConnectKnowledgeOpen] = useState(false);
+  const [githubConnectOpen, setGithubConnectOpen] = useState(false);
   const [notionConnectOpen, setNotionConnectOpen] = useState(false);
   const [appleNotesConnectOpen, setAppleNotesConnectOpen] = useState(false);
   const [driveProvider, setDriveProvider] = useState<KnowledgeProviderId>("google-drive");
@@ -184,7 +186,11 @@ export function TreeView() {
   const routeCabinetPath = section.cabinetPath;
   const activeCabinet = useMemo(() => {
     if (!routeCabinetPath) return null;
-    return findNodeByPath(nodes, routeCabinetPath);
+    // Only an actual cabinet scopes the tree to its contents. A plain
+    // directory route (e.g. a folder the user opened a page inside of) must
+    // not scope — otherwise that folder is hidden and only its children show.
+    const node = findNodeByPath(nodes, routeCabinetPath);
+    return node?.type === "cabinet" ? node : null;
   }, [nodes, routeCabinetPath]);
   const parentCabinet = useMemo(() => {
     if (!activeCabinet) return null;
@@ -208,7 +214,7 @@ export function TreeView() {
     () => new Set(rooms.filter((r) => !r.isRoot).map((r) => r.path)),
     [rooms]
   );
-  const atRoot = !routeCabinetPath || routeCabinetPath === ROOT_CABINET_PATH;
+  const atRoot = !activeCabinet || activeCabinet.path === ROOT_CABINET_PATH;
   const visibleTreeNodes = useMemo(() => {
     const base = activeCabinet?.children || rootCabinet?.children || nodes;
     if (atRoot && subRoomPaths.size > 0) {
@@ -567,7 +573,7 @@ export function TreeView() {
           <div
             role="tablist"
             aria-label={t("treeView:drawersAriaLabel")}
-            className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-0.5 pt-1.5 border border-border/60"
+            className="mx-[5px] mt-1 grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-0.5 pt-1.5 border border-border/60"
           >
                 {([
                   {
@@ -670,7 +676,7 @@ export function TreeView() {
                         className={cn(
                           "relative flex w-full flex-col items-center gap-0.5 rounded-md px-1.5 pt-2 pb-1.5 transition-all duration-150",
                           active
-                            ? "-translate-y-px bg-background text-foreground shadow-[0_1px_0_rgba(0,0,0,0.06),0_6px_14px_-10px_rgba(0,0,0,0.35)] ring-1 ring-border/70"
+                            ? "-translate-y-px bg-[#E4D1B7] text-foreground shadow-[0_1px_0_rgba(0,0,0,0.06),0_6px_14px_-10px_rgba(0,0,0,0.35)] ring-1 ring-border/70"
                             : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
                         )}
                       >
@@ -678,7 +684,7 @@ export function TreeView() {
                         <span
                           aria-hidden
                           className={cn(
-                            "absolute inset-x-0 top-1 mx-auto h-[2px] w-4 rounded-full transition-colors",
+                            "absolute inset-x-0 top-1 mx-auto h-0.5 w-4 rounded-full transition-colors",
                             active ? "bg-amber-400/50" : "bg-muted-foreground/30"
                           )}
                         />
@@ -986,6 +992,12 @@ export function TreeView() {
       parentPath={dataRootPath}
     />
 
+    <ConnectGithubDialog
+      open={githubConnectOpen}
+      onOpenChange={setGithubConnectOpen}
+      parentPath={dataRootPath}
+    />
+
     <ConnectKnowledgeDialog
       open={connectKnowledgeOpen}
       onOpenChange={setConnectKnowledgeOpen}
@@ -1000,6 +1012,9 @@ export function TreeView() {
       }}
       onNotion={() => setNotionConnectOpen(true)}
       onAppleNotes={() => setAppleNotesConnectOpen(true)}
+      onGithub={() => {
+        setGithubConnectOpen(true);
+      }}
     />
 
     <NotionConnectDialog

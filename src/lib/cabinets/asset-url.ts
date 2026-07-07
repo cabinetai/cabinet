@@ -1,3 +1,5 @@
+import { isHtmlPath } from "@/lib/ui/html-view-mode";
+
 /**
  * Data-root-relative path → the URL that serves its raw bytes.
  */
@@ -16,7 +18,7 @@ export function contentUrlFor(path: string, type?: string): string {
   const base = assetUrlFor(path);
   const lower = path.toLowerCase();
   if (type === "website" || type === "app") return `${base}/index.html`;
-  if (type === "file" || lower.endsWith(".md")) return `${base}.md`;
+  if ((type === "file" && !isHtmlPath(path)) || lower.endsWith(".md")) return `${base}.md`;
   if (type === "directory" || type === "cabinet") return `${base}/index.md`;
   return base;
 }

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -439,22 +440,10 @@ html[lang^="zh-Hant"] h1.font-ui, html[lang^="zh-Hant"] h2.font-ui {
 }
 
 .editor-toolbar-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 10%, transparent) transparent;
+  scrollbar-width: none;
 }
 .editor-toolbar-scroll::-webkit-scrollbar {
-  height: 1px;
-  width: 1px;
-}
-.editor-toolbar-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.editor-toolbar-scroll::-webkit-scrollbar-thumb {
-  background-color: color-mix(in oklch, var(--muted-foreground) 10%, transparent);
-  border-radius: 999px;
-}
-.editor-toolbar-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: color-mix(in oklch, var(--muted-foreground) 25%, transparent);
+  display: none;
 }
 
 /* Tiptap Editor Styles */
@@ -524,16 +513,18 @@ html[lang^="zh-Hant"] h1.font-ui, html[lang^="zh-Hant"] h2.font-ui {
   text-align: start;
 }
 
-/* The inline indent lives on the <li>, not the <ul>/<ol>. Each list item
-   carries `dir="auto"` (AutoDirection), so putting `padding-inline-start`
-   on the item makes its outside marker resolve to the item's own
-   direction — a Hebrew item's bullet/number sits on the right, an English
-   item's on the left, even within the same list. Padding on the container
-   would instead follow the container's direction (LTR), pinning every
-   marker left regardless of the text. */
+/* The inline indent lives on the <ul>/<ol> container, not the <li>. Markdown
+   renders loose lists as `<li><p>…</p></li>`; with `list-style-position: inside`
+   the marker would sit in-flow and the block-level <p> would push the text onto
+   the next line. `outside` (the default) hangs the marker beside the first line
+   of the paragraph so the text starts right next to the bullet, and the
+   container's `padding-inline-start` gives that outside marker room to render
+   while keeping the wrapped text aligned (hanging indent). The marker side still
+   follows each item's own `dir="auto"`, so a Hebrew item's bullet sits on the
+   right; only the indent padding follows the container direction. */
 .tiptap ul,
 .tiptap ol {
-  padding-inline-start: 0;
+  padding-inline-start: 1.5rem;
   margin-bottom: 0.75rem;
 }
 
@@ -546,9 +537,10 @@ html[lang^="zh-Hant"] h1.font-ui, html[lang^="zh-Hant"] h2.font-ui {
 }
 
 .tiptap li {
-  padding-inline-start: 1.5rem;
+  padding-inline-start: 0;
   margin-bottom: 0.25rem;
   line-height: 1.65;
+  list-style-position: outside;
 }
 
 /* In an explicitly RTL document every list item is RTL — bullet/number on
@@ -1017,6 +1009,8 @@ em-emoji-picker {
 /* Electron macOS: hidden title bar drag region + traffic light clearance */
 .electron-desktop header {
   -webkit-app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .electron-desktop header button,
 .electron-desktop header a,

@@ -28,6 +28,8 @@ import { publishConversationEvent } from "./conversation-events";
 import { isLegacyAdapterType } from "./adapters/legacy-ids";
 import { agentAdapterRegistry } from "./adapters/registry";
 import { discoverCabinetPaths } from "../cabinets/discovery";
+import { isCabinetPath } from "../cabinets/server-paths";
+import { ROOT_CABINET_PATH, normalizeCabinetPath } from "../cabinets/paths";
 import { buildConversationInstanceKey } from "./conversation-identity";
 import { fingerprint, parseAgentActions } from "./action-parser";
 import { stripToolOutput } from "./tool-output-markers";
@@ -560,6 +562,15 @@ export async function ensureConversationsDir(cabinetPath?: string): Promise<void
 export async function createConversation(
   input: CreateConversationInput
 ): Promise<ConversationMeta> {
+  if (input.cabinetPath) {
+    const normalized = normalizeCabinetPath(input.cabinetPath, true) || ROOT_CABINET_PATH;
+    if (normalized !== ROOT_CABINET_PATH) {
+      const valid = await isCabinetPath(input.cabinetPath);
+      if (!valid) {
+        throw new Error(`Cabinet/room path "${input.cabinetPath}" does not exist in the active cabinet.`);
+      }
+    }
+  }
   await ensureConversationsDir(input.cabinetPath);
 
   const startedAt = input.startedAt || new Date().toISOString();
@@ -1756,6 +1767,11 @@ export async function listConversationMetas(
     : await discoverCabinetPaths();
 
   const groups = await mapCapped(cabinetPaths, 4, async (cabinetPath) => {
+    const normalized = normalizeCabinetPath(cabinetPath, true) || ROOT_CABINET_PATH;
+    if (normalized !== ROOT_CABINET_PATH) {
+      const valid = await isCabinetPath(cabinetPath);
+      if (!valid) return [];
+    }
     const convsDir = resolveConversationsDir(cabinetPath);
     await ensureDirectory(convsDir);
     const entries = await listDirectory(convsDir);

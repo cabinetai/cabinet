@@ -6,6 +6,7 @@ import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 import { assertWritablePath, ReadOnlySourceError } from "@/lib/knowledge-sources/store";
 import fs from "fs/promises";
+import { appendOrder, setEntryOrder } from "@/lib/storage/order-store";
 
 type RouteParams = { params: Promise<{ path: string[] }> };
 
@@ -67,7 +68,13 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    let filename = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    let filename = file.name
+      .replace(/[\x00-\x1f\x7f<>:"/\\|?*]/g, "-")
+      .replace(/\.\.+/g, "-")
+      .trim();
+    if (!filename) {
+      filename = "file";
+    }
     const ext = path.extname(filename);
     const base = path.basename(filename, ext);
     let filePath = path.join(resolved, filename);
@@ -81,6 +88,15 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     await fs.writeFile(filePath, buffer);
+
+    // Assign order to the newly uploaded/imported file
+    try {
+      const order = await appendOrder(virtualPath);
+      await setEntryOrder(virtualPath, filename, order);
+    } catch (err) {
+      console.error("Failed to assign order to uploaded file:", err);
+    }
+
     if (!skipCommit) {
       autoCommit(`${virtualPath}/${filename}`, "Add");
     }

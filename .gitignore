@@ -22,6 +22,8 @@
 
 # misc
 .DS_Store
+.abacusai
+.vscode
 *.pem
 
 # debug

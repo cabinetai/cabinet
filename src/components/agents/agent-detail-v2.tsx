@@ -21,7 +21,6 @@ import {
   FileCode,
   FileSpreadsheet,
   FileText,
-  FolderOpen,
   HelpCircle,
   Image as ImageIcon,
   Loader2,
@@ -30,7 +29,6 @@ import {
   Pencil,
   Play,
   Plus,
-  Send,
   Share2,
   Sparkles,
   Trash2,
@@ -84,6 +82,7 @@ import { LockedSwitch } from "@/components/ui/locked-switch";
 import type { JobConfig } from "@/types/jobs";
 import {
   TaskRuntimePicker,
+  type TaskRuntimeChangeMeta,
   type TaskRuntimeSelection,
 } from "@/components/composer/task-runtime-picker";
 import {
@@ -413,7 +412,6 @@ function StatusChip({
   color: string;
   onClick?: () => void;
 }) {
-  const { t } = useLocale();
   const label = status === "working" ? "Working" : status === "ready" ? "Ready" : "Paused";
   return (
     <button
@@ -575,7 +573,7 @@ function TopBar({
                 }
               />
               <TooltipContent>
-                <div className="max-w-[260px] space-y-1.5">
+                <div className="max-w-65 space-y-1.5">
                   <div>
                     {canDispatch
                       ? "Can hand off work to teammates. You approve each handoff before it runs."
@@ -713,7 +711,7 @@ function AvatarEditorPopover({
   return (
     <div
       ref={ref}
-      className="absolute top-full start-0 mt-2 z-50 w-72 rounded-xl border border-border bg-popover shadow-xl"
+      className="absolute top-full inset-s-0 mt-2 z-50 w-72 rounded-xl border border-border bg-popover shadow-xl"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Tab bar */}
@@ -908,7 +906,7 @@ function Hero({
               }}
               size="lg"
               shape="square"
-              className="!h-16 !w-16 !rounded-2xl [&>svg]:!h-7 [&>svg]:!w-7 transition-opacity group-hover:opacity-80"
+              className="h-16! w-16! rounded-2xl! [&>svg]:h-7! [&>svg]:w-7! transition-opacity group-hover:opacity-80"
             />
             <span className="absolute inset-0 flex items-center justify-center rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
               <Pencil className="h-5 w-5 text-white drop-shadow" />
@@ -991,14 +989,63 @@ function Composer({
   const palette = persona.color
     ? tintFromHex(persona.color)
     : getAgentColor(persona.slug);
-  const [runtime, setRuntime] = useState<TaskRuntimeSelection>(() => ({
-    providerId: persona.provider || undefined,
-    adapterType: persona.adapterType || undefined,
-    model:
-      (persona.adapterConfig?.model as string | undefined) || undefined,
-    effort:
-      (persona.adapterConfig?.effort as string | undefined) || undefined,
-  }));
+  // Seed from the persona's persisted runtime. `readPersona` ALWAYS fills in
+  // `provider` (defaulting to the global default), so a pinned model is the
+  // only reliable "this agent overrides the runtime" signal — exactly what
+  // the Settings → Agent Runtime select uses. When no model is pinned we seed
+  // an empty selection so the picker resolves to the global default runtime,
+  // keeping both surfaces in agreement (a model-less agent on "Default" must
+  // not surface its stored provider's first model).
+  const [runtime, setRuntime] = useState<TaskRuntimeSelection>(() => {
+    const pinnedModel =
+      persona.model ||
+      (persona.adapterConfig?.model as string | undefined) ||
+      undefined;
+    if (!pinnedModel) {
+      return {
+        providerId: undefined,
+        adapterType: undefined,
+        model: undefined,
+        effort: undefined,
+      };
+    }
+    return {
+      providerId: persona.provider || undefined,
+      adapterType: persona.adapterType || undefined,
+      model: pinnedModel,
+      effort:
+        persona.effort ||
+        (persona.adapterConfig?.effort as string | undefined) ||
+        undefined,
+    };
+  });
+
+  // Keep the persona in sync with explicit picker selections so the runtime
+  // shown here and in Settings → Agent Runtime never drift apart. The
+  // picker's internal normalization pass (no `meta.userInitiated`) is not
+  // persisted — only deliberate user choices are.
+  const handleRuntimeChange = useCallback(
+    (next: TaskRuntimeSelection, meta?: TaskRuntimeChangeMeta) => {
+      setRuntime(next);
+      if (!meta?.userInitiated) return;
+      const clear = meta.isAppDefault === true;
+      void fetch("/api/agents/personas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: persona.slug,
+          cabinetPath: persona.cabinetPath,
+          ...(next.providerId ? { provider: next.providerId } : {}),
+          // "" explicitly clears the stored value (App default) — undefined
+          // keys would be dropped by JSON.stringify and the server's
+          // partial-merge would keep the stale model.
+          model: clear ? "" : next.model || "",
+          effort: clear ? "" : next.effort || "",
+        }),
+      }).catch(() => {});
+    },
+    [persona.slug, persona.cabinetPath]
+  );
 
   const suggestions = useMemo(() => {
     const slug = persona.slug.toLowerCase();
@@ -1013,8 +1060,9 @@ function Composer({
 
   const name = getAgentDisplayName(persona) || persona.name;
 
-  // Lazy useState (not useMemo): the initializer runs once per mount, so
-  // the impure id generation never re-executes on re-render.
+  // Lazy useState initializer: runs exactly once per mount, which is the
+  // sanctioned home for impure one-time values (random ids) — unlike
+  // useMemo, whose body must stay pure and re-runnable.
   const [stagingClientUuid] = useState(() =>
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()
@@ -1128,7 +1176,7 @@ function Composer({
               disabled
               disabledReason={`Locked to ${name} — this is their workspace`}
             />
-            <TaskRuntimePicker value={runtime} onChange={setRuntime} />
+            <TaskRuntimePicker value={runtime} onChange={handleRuntimeChange} />
           </>
         }
       />
@@ -2574,7 +2622,7 @@ export function AgentDetailV2({
           />
         ) : (
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="mx-auto max-w-[840px] w-full flex flex-col">
+            <div className="mx-auto max-w-210 w-full flex flex-col">
               <Hero persona={persona} status={status} onSaveFields={saveFields} onApplyOptimistic={applyOptimistic} />
               <div className="sticky top-0 z-10 bg-background/95 backdrop-blur">
                 <Composer

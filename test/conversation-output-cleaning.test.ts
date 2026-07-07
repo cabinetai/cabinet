@@ -51,7 +51,7 @@ test("manual cabinet-scoped prompts explicitly pin work to the cabinet root", as
   );
   assert.match(
     prompt.prompt,
-    /Prefer Mermaid edge labels like `A -->\|label\| B` or `A -\.\->\|label\| B`/
+    /Prefer Mermaid edge labels like `A -->\|label\| B` or `A -\.->\|label\| B`/
   );
 });
 

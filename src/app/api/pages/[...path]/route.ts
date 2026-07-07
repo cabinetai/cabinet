@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readPage, writePage, createPage, deletePage, movePage, renamePage } from "@/lib/storage/page-io";
+import { readPage, writePage, createPage, createFolder, deletePage, movePage, renamePage } from "@/lib/storage/page-io";
 import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 import { recordMutation } from "@/lib/history/engine";
@@ -8,6 +8,7 @@ import {
   ReadOnlySourceError,
   removeInlineSourceByTreePath,
 } from "@/lib/knowledge-sources/store";
+import { staleProcessResponse } from "@/lib/api/stale-process-response";
 
 type RouteParams = { params: Promise<{ path: string[] }> };
 
@@ -25,6 +26,8 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
     const page = await readPage(virtualPath);
     return NextResponse.json(page);
   } catch (error) {
+    const stale = staleProcessResponse(error);
+    if (stale) return stale;
     const message = error instanceof Error ? error.message : "Unknown error";
     const status = message.includes("not found") ? 404 : 500;
     return NextResponse.json({ error: message }, { status });
@@ -41,6 +44,8 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     autoCommit(virtualPath, "Update");
     return NextResponse.json({ ok: true });
   } catch (error) {
+    const stale = staleProcessResponse(error);
+    if (stale) return stale;
     const ro = readOnly(error);
     if (ro) return ro;
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -54,11 +59,17 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     const virtualPath = segments.join("/");
     await assertWritablePath(virtualPath);
     const body = await req.json();
-    await createPage(virtualPath, body.title);
+    if (body.kind === "folder") {
+      await createFolder(virtualPath);
+    } else {
+      await createPage(virtualPath, body.title);
+    }
     invalidateTreeCache();
     autoCommit(virtualPath, "Add");
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
+    const stale = staleProcessResponse(error);
+    if (stale) return stale;
     const ro = readOnly(error);
     if (ro) return ro;
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -105,6 +116,8 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     }
     return NextResponse.json({ ok: true, newPath });
   } catch (error) {
+    const stale = staleProcessResponse(error);
+    if (stale) return stale;
     const ro = readOnly(error);
     if (ro) return ro;
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -127,6 +140,8 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     autoCommit(virtualPath, "Delete");
     return new NextResponse(null, { status: 204 });
   } catch (error) {
+    const stale = staleProcessResponse(error);
+    if (stale) return stale;
     const ro = readOnly(error);
     if (ro) return ro;
     const message = error instanceof Error ? error.message : "Unknown error";

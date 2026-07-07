@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/sidebar/sidebar";
 import { Header } from "@/components/layout/header";
 import { KBEditor } from "@/components/editor/editor";
 import { BrowserView } from "@/components/layout/browser-view";
+import { CanvasView } from "@/components/layout/canvas-view";
 import { WebsiteViewer } from "@/components/editor/website-viewer";
 import { PdfViewer } from "@/components/editor/pdf-viewer";
 import { CsvViewer } from "@/components/editor/csv-viewer";
@@ -15,6 +16,7 @@ import { ImageViewer } from "@/components/editor/image-viewer";
 import { MediaViewer } from "@/components/editor/media-viewer";
 import { MermaidViewer } from "@/components/editor/mermaid-viewer";
 import { LatexViewer } from "@/components/editor/latex-viewer";
+import { TypstViewer } from "@/components/editor/typst-viewer";
 import { FileFallbackViewer } from "@/components/editor/file-fallback-viewer";
 import dynamic from "next/dynamic";
 import { GoogleDocViewer } from "@/components/editor/google-doc-viewer";
@@ -175,6 +177,7 @@ export function AppShell() {
   const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
   const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
   const setTaskPanelConversation = useAppStore((s) => s.setTaskPanelConversation);
+  const browseUrl = useAppStore((s) => s.browseUrl);
   const {
     update,
     refreshing: updateRefreshing,
@@ -741,7 +744,10 @@ export function AppShell() {
         if (lower.endsWith(".pptx")) return "pptx";
         if (lower.endsWith(".ipynb")) return "notebook";
         if (lower.endsWith(".mmd") || lower.endsWith(".mermaid")) return "mermaid";
+        if (lower.endsWith(".drawio") || lower.endsWith(".dio") || lower.endsWith(".drawio.svg")) return "drawio";
+        if (lower.endsWith(".excalidraw") || lower.endsWith(".excalidraw.svg")) return "excalidraw";
         if (lower.endsWith(".tex") || lower.endsWith(".latex")) return "latex";
+        if (lower.endsWith(".typ")) return "typst";
         if (/\.(png|jpe?g|gif|webp|svg|bmp)$/.test(lower)) return "image";
         if (/\.(mp4|mov|webm|avi|mkv)$/.test(lower)) return "video";
         if (/\.(mp3|wav|ogg|flac|m4a)$/.test(lower)) return "audio";
@@ -754,6 +760,7 @@ export function AppShell() {
   const nodeType = selectedNode?.type || inferredType;
   const isWebsite = nodeType === "website";
   const isApp = nodeType === "app";
+  const prevIsApp = useRef(false);
   const isPdf = nodeType === "pdf";
   const isCsv = nodeType === "csv";
   const isCode = nodeType === "code";
@@ -762,7 +769,10 @@ export function AppShell() {
   const isVideo = nodeType === "video";
   const isAudio = nodeType === "audio";
   const isMermaid = nodeType === "mermaid";
+  const isDrawio = nodeType === "drawio";
+  const isExcalidraw = nodeType === "excalidraw";
   const isLatex = nodeType === "latex";
+  const isTypst = nodeType === "typst";
   const isDocx = nodeType === "docx";
   const isXlsx = nodeType === "xlsx";
   const isPptx = nodeType === "pptx";
@@ -782,8 +792,6 @@ export function AppShell() {
   const effectiveUpdateDialogOpen =
     updateDialogOpen || hasPersistentUpdateState || shouldPromptForUpdate;
 
-  // Auto-collapse sidebar + AI panel when entering app mode
-  const prevIsApp = useRef(false);
   useEffect(() => {
     if (isApp && !prevIsApp.current) {
       setSidebarCollapsed(true);
@@ -791,6 +799,70 @@ export function AppShell() {
     }
     prevIsApp.current = !!isApp;
   }, [isApp, setSidebarCollapsed, setAiPanelCollapsed]);
+
+  useEffect(() => {
+    if (isDrawio && (selectedNode || selectedPath)) {
+      const path = selectedNode?.path || selectedPath!;
+      const targetUrl = `${window.location.origin}/drawio/editor.html?path=${path}`;
+      if (browseUrl !== targetUrl) {
+        setAppMode("browse", targetUrl);
+      }
+    }
+  }, [isDrawio, selectedNode, selectedPath, browseUrl, setAppMode]);
+
+  useEffect(() => {
+    if (isExcalidraw && (selectedNode || selectedPath)) {
+      const path = selectedNode?.path || selectedPath!;
+      const targetUrl = `${window.location.origin}/excalidraw/editor?path=${path}`;
+      if (browseUrl !== targetUrl) {
+        setAppMode("browse", targetUrl);
+      }
+    }
+  }, [isExcalidraw, selectedNode, selectedPath, browseUrl, setAppMode]);
+
+  useEffect(() => {
+    const handleExit = () => {
+      setAppMode("edit");
+      loadTree();
+      
+      // If the selected path itself is a drawio diagram or excalidraw drawing, deselect it to parent
+      // directory to prevent redirect loop
+      const currentPath = useTreeStore.getState().selectedPath;
+      if (currentPath && (
+        currentPath.toLowerCase().endsWith(".drawio.svg") ||
+        currentPath.toLowerCase().endsWith(".drawio") ||
+        currentPath.toLowerCase().endsWith(".dio") ||
+        currentPath.toLowerCase().endsWith(".excalidraw.svg") ||
+        currentPath.toLowerCase().endsWith(".excalidraw")
+      )) {
+        const lastSlash = currentPath.lastIndexOf("/");
+        const parentPath = lastSlash > 0 ? currentPath.slice(0, lastSlash) : null;
+        useTreeStore.getState().selectPage(parentPath);
+      }
+    };
+
+    const handleEditorMessage = (event: MessageEvent) => {
+      if (event.data?.type === "drawio-saved" || event.data?.type === "excalidraw-saved") {
+        handleExit();
+      }
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (
+        event.key === "cabinet.drawio.last_saved_path" ||
+        event.key === "cabinet.excalidraw.last_saved_path"
+      ) {
+        handleExit();
+      }
+    };
+
+    window.addEventListener("message", handleEditorMessage);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("message", handleEditorMessage);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [setAppMode, loadTree]);
 
   const handleExitApp = () => {
     setSidebarCollapsed(false);
@@ -807,6 +879,9 @@ export function AppShell() {
     if (section.type === "help") return <HelpPage />;
     if ((section.type === "cabinet" || section.type === "page") && appMode === "browse") {
       return <BrowserView />;
+    }
+    if ((section.type === "cabinet" || section.type === "page") && appMode === "canvas") {
+      return <CanvasView />;
     }
     if (section.type === "cabinet" && section.cabinetPath) {
       return <CabinetView cabinetPath={section.cabinetPath} />;
@@ -974,10 +1049,24 @@ export function AppShell() {
       return <MermaidViewer path={mmdPath} title={mmdTitle} />;
     }
 
+    if ((isDrawio || isExcalidraw) && (selectedNode || selectedPath)) {
+      return (
+        <div className="flex-1 flex items-center justify-center bg-background">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      );
+    }
+
     if (isLatex && (selectedNode || selectedPath)) {
       const texPath = selectedNode?.path || selectedPath!;
       const texTitle = selectedNode?.frontmatter?.title || selectedNode?.name || texPath.split("/").pop() || "LaTeX";
       return <LatexViewer key={texPath} path={texPath} title={texTitle} />;
+    }
+
+    if (isTypst && (selectedNode || selectedPath)) {
+      const typPath = selectedNode?.path || selectedPath!;
+      const typTitle = selectedNode?.frontmatter?.title || selectedNode?.name || typPath.split("/").pop() || "Typst";
+      return <TypstViewer path={typPath} title={typTitle} />;
     }
 
     if (isDocx && (selectedNode || selectedPath)) {

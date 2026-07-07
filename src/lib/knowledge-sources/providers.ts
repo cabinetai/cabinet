@@ -51,9 +51,10 @@ export interface ConnectKnowledgeTile {
   /**
    * "local" → folder-symlink flow; "cloud" → desktop-sync folder picker for
    * `provider`; "hub" → open the Integrations Hub at this connector (key
-   * doubles as the catalog slug); "soon" → disabled placeholder.
+   * doubles as the catalog slug); "soon" → disabled placeholder; "github" →
+   * remote repository clone & link.
    */
-  kind: "local" | "cloud" | "hub" | "soon";
+  kind: "local" | "cloud" | "hub" | "soon" | "github";
   /** Set for kind "cloud" — which desktop-sync provider to connect. */
   provider?: KnowledgeProviderId;
   /** Brand logo under /public; undefined → caller renders a Lucide glyph. */
@@ -62,6 +63,7 @@ export interface ConnectKnowledgeTile {
 
 export const CONNECT_KNOWLEDGE_TILES: ConnectKnowledgeTile[] = [
   { key: "local", label: "Local folder", kind: "local" },
+  { key: "github", label: "GitHub", kind: "github", logo: "/logos/github.svg" },
   { key: "google-drive", label: "Google Drive", kind: "cloud", provider: "google-drive", logo: "/logos/google-drive.svg" },
   { key: "icloud", label: "iCloud Drive", kind: "cloud", provider: "icloud", logo: "/logos/icloud.svg" },
   { key: "onedrive", label: "OneDrive", kind: "cloud", provider: "onedrive", logo: "/logos/onedrive.svg" },

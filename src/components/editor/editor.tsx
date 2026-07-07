@@ -2,6 +2,14 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
+import Editor, { loader } from "@monaco-editor/react";
+import { useTheme } from "@/components/theme-provider";
+import { useEditorSettings } from "@/hooks/use-editor-settings";
+
+if (typeof window !== "undefined") {
+  loader.config({ paths: { vs: "/monaco/vs" } });
+}
+
 import { Sparkles, Loader2, FilePlus, Lock } from "lucide-react";
 import { editorExtensions } from "./extensions";
 import { EditorToolbar } from "./editor-toolbar";
@@ -20,13 +28,20 @@ import { useTreeStore } from "@/stores/tree-store";
 import { findNodeByPath } from "@/lib/cabinets/tree";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
+import { buildDocumentPropertiesHtml } from "./extensions/document-properties";
+import {
+  stringifyFrontmatter,
+  parseFrontmatter,
+} from "@/lib/markdown/frontmatter-text";
 import { slugifyPageName } from "@/lib/markdown/wiki-links";
 import { detectEmbed } from "@/lib/embeds/detect";
-import { openLocalFileUrl } from "@/lib/runtime/open-local-file";
+import { stripImportsAndWrappers } from "@/lib/mdx/live-code-strip";
 import { openUrlInAppropriateContext } from "@/lib/runtime/open-url";
 import { cellAround, isInTable } from "@tiptap/pm/tables";
-import type { TreeNode } from "@/types";
+import type { TreeNode, FrontMatter } from "@/types";
 import { useLocale } from "@/i18n/use-locale";
+import { useSplitResize } from "@/hooks/use-split-resize";
+import { SplitRuler } from "./split-ruler";
 
 async function uploadFile(pagePath: string, file: File): Promise<string | null> {
   const formData = new FormData();
@@ -42,6 +57,17 @@ async function uploadFile(pagePath: string, file: File): Promise<string | null> 
   } catch {
     return null;
   }
+}
+
+/**
+ * Heuristic: text looks like a React/JSX snippet copied from docs when it
+ * contains `import` statements AND JSX angle-bracket tags. This avoids false
+ * positives on plain HTML or regular code pastes.
+ */
+function looksLikeJsxWithImports(text: string): boolean {
+  const hasImport = /^\s*import\s+/m.test(text);
+  const hasJsxTag = /<[A-Z][A-Za-z0-9]*[\s/>]/.test(text);
+  return hasImport && hasJsxTag;
 }
 
 const WIDE_MODE_KEY = "kb-editor-wide-mode";
@@ -60,12 +86,14 @@ function findPageBySlug(slug: string, currentPath: string | null, nodes: TreeNod
   // The slug matches the last segment of the path. Native pages are stored with
   // slug filenames, so an exact match works; imported pages (e.g. Notion) keep
   // human names ("Day 1-100 Build 👩🏻‍💻"), so also match when the last segment
-  // *slugifies to* the target slug.
+  // *slugifies to* the target slug. Kept behaviourally identical to
+  // references.ts#resolvePageBySlug (the server-side rewrite mirror).
   const lastSeg = (p: string) => p.split("/").pop() ?? p;
   const parentOf = (p: string) => (p.includes("/") ? p.substring(0, p.lastIndexOf("/")) : "");
   const matches = allPages.filter(
     (p) =>
       p.name === slug ||
+      p.path === slug ||
       p.path.endsWith("/" + slug) ||
       slugifyPageName(lastSeg(p.path)) === slug
   );
@@ -132,6 +160,8 @@ function resolveInternalLink(
 
 export function KBEditor() {
   const { t } = useLocale();
+  const { resolvedTheme } = useTheme();
+  const settings = useEditorSettings();
   const { currentPath, assetBase, content, saveStatus, frontmatter, isLoading, loadStatus, createMissingPage } = useEditorStore();
   const nodes = useTreeStore((s) => s.nodes);
   // A page under a read-only Connect Knowledge mount is view-only — edits would
@@ -144,13 +174,46 @@ export function KBEditor() {
   const isLoadingRef = useRef(false);
   const [sourceMode, setSourceMode] = useState(false);
   const [sourceText, setSourceText] = useState("");
+  const [splitMode, setSplitMode] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return window.localStorage.getItem("kb-editor-split-mode") === "true";
+    }
+    return false;
+  });
+  const [splitHtml, setSplitHtml] = useState("");
+  const split = useSplitResize("kb-editor-split-ratio", isRtl);
+
+  const toggleSplitMode = useCallback(() => {
+    setSplitMode((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem("kb-editor-split-mode", String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!sourceMode || !splitMode || !currentPath) return;
+
+    const debounce = setTimeout(async () => {
+      const { body } = parseFrontmatter(sourceText);
+      try {
+        const html = await markdownToHtml(body, assetBase ?? currentPath ?? undefined);
+        setSplitHtml(html);
+      } catch (err) {
+        console.error("[KBEditor] Split preview compile failed:", err);
+      }
+    }, 150);
+
+    return () => clearTimeout(debounce);
+  }, [sourceText, sourceMode, splitMode, assetBase, currentPath]);
   // Wide mode lifts the max-w-3xl cap on the rendered page so tables get the
   // full viewport width. Read from localStorage in an effect (not the
   // initializer) to avoid an SSR hydration mismatch — same pattern as the
   // sidebar width pref.
   const [wideMode, setWideMode] = useState(false);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setWideMode(window.localStorage.getItem(WIDE_MODE_KEY) === "1");
   }, []);
   const toggleWideMode = useCallback(() => {
@@ -164,6 +227,9 @@ export function KBEditor() {
       return next;
     });
   }, []);
+
+
+
   // Reset the tab to "page" whenever the path changes — opening a new folder
   // shouldn't skip its index.md if the previous folder was on Files. Has to
   // be an effect (not state-during-render) because Tiptap's EditorContent
@@ -179,7 +245,6 @@ export function KBEditor() {
     left: number;
   } | null>(null);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFolderTab("page");
   }, [currentPath]);
 
@@ -195,30 +260,26 @@ export function KBEditor() {
     ({ editor }: { editor: ReturnType<typeof useEditor> }) => {
       if (isLoadingRef.current || !editor) return;
       // Ignore updates until the page has loaded — a transaction fired while the
-      // fetch is still in flight (e.g. editor mount/normalization on a fresh
+      // fetch is in flight (e.g. editor mount/normalization on a fresh
       // open) must not mark the page dirty with the empty loading state.
       if (useEditorStore.getState().loadStatus !== "ok") return;
       // Ignore updates before this editor instance has been populated once —
       // the initial empty-doc transaction must never overwrite stored content.
       if (!hasPopulatedRef.current) return;
       const html = editor.getHTML();
-      const md = htmlToMarkdown(html);
-      useEditorStore.getState().updateContent(md);
-    },
-    []
-  );
+      const store = useEditorStore.getState();
+      const md = htmlToMarkdown(html, store.currentPath, store.assetBase);
 
-  const handlePasteOrDrop = useCallback(
-    async (files: FileList) => {
-      const pagePath = useEditorStore.getState().currentPath;
-      if (!pagePath) return;
+      // If content hasn't changed, do not trigger store updates or dirty flags
+      if (md === store.content) return;
 
-      for (const file of Array.from(files)) {
-        const url = await uploadFile(pagePath, file);
-        if (!url) continue;
-        // For now insert via the editor reference stored separately
-        // This is handled by the editorProps below
+      // Block stray empty editor updates from overwriting non-empty store content when not focused
+      if (md.trim() === "" && store.content.trim() !== "" && !editor.isFocused) {
+        console.warn("[KBEditor] Blocked stray empty editor update from overwriting store content");
+        return;
       }
+
+      store.updateContent(md);
     },
     []
   );
@@ -230,7 +291,7 @@ export function KBEditor() {
     editorProps: {
       attributes: {
         class:
-          "focus:outline-none min-h-[calc(100vh-12rem)] px-4 sm:px-8 py-6 max-w-[var(--editor-max-w,48rem)] mx-auto",
+          "focus:outline-none min-h-[calc(100vh-12rem)] px-4 sm:px-8 py-6 max-w-(--editor-max-w,48rem) mx-auto",
         dir: isRtl ? "rtl" : "ltr",
       },
       handleKeyDown: (view, event) => {
@@ -247,6 +308,14 @@ export function KBEditor() {
 
           event.preventDefault();
           editor?.chain().focus().setTextSelection({ from, to }).run();
+          return true;
+        }
+
+        // Escape collapses a text selection, which dismisses the bubble menu.
+        if (event.key === "Escape" && !view.state.selection.empty) {
+          event.preventDefault();
+          const { to } = view.state.selection;
+          editor?.chain().focus().setTextSelection(to).run();
           return true;
         }
 
@@ -304,9 +373,6 @@ export function KBEditor() {
             );
             return true;
           }
-
-          // Local file links: open with the OS default app (Electron) or
-          // surface the path (browser). file:// can't load in a webview.
           if (href.startsWith("file://")) {
             event.preventDefault();
             event.stopPropagation();
@@ -314,7 +380,9 @@ export function KBEditor() {
             const encoded = pathPart.includes("%20") || !pathPart.includes(" ")
               ? href
               : "file://" + encodeURI(pathPart);
-            openLocalFileUrl(encoded);
+            openUrlInAppropriateContext(encoded, (url) =>
+              useAppStore.getState().setAppMode("browse", url)
+            );
             return true;
           }
           if (href.startsWith("mailto:") || href.startsWith("tel:")) return false;
@@ -409,6 +477,16 @@ export function KBEditor() {
           }
         }
 
+        // 3. JSX paste — auto-convert code with JSX tags + imports to a live
+        //    code block. This catches copy-pasted chart examples from docs.
+        if (text && editor && looksLikeJsxWithImports(text)) {
+          const stripped = stripImportsAndWrappers(text);
+          if (stripped.trim()) {
+            editor.commands.insertLiveCodeBlock({ code: stripped.trim() });
+            return true;
+          }
+        }
+
         return false;
       },
       handleDrop: (_view, event) => {
@@ -447,6 +525,47 @@ export function KBEditor() {
     },
     immediatelyRender: false,
   });
+
+  const handleSetMode = useCallback(async (targetMode: "edit" | "preview" | "split") => {
+    if (targetMode === "preview") {
+      if (sourceMode) {
+        // Switching FROM source mode
+        const { frontmatter: parsed, body } = parseFrontmatter(sourceText);
+        const store = useEditorStore.getState();
+        if (parsed) store.setFrontmatter(parsed as FrontMatter);
+        store.updateContent(body);
+        if (editor) {
+          isLoadingRef.current = true;
+          const html = await markdownToHtml(body, assetBase ?? currentPath ?? undefined);
+          const fm = useEditorStore.getState().frontmatter;
+          const propsHtml = fm ? buildDocumentPropertiesHtml(fm) : "";
+          editor.commands.setContent(propsHtml + (html || "<p></p>"));
+          setTimeout(() => { isLoadingRef.current = false; }, 50);
+        }
+        setSourceMode(false);
+      }
+      setSplitMode(false);
+      try { window.localStorage.setItem("kb-editor-split-mode", "false"); } catch {}
+    } else if (targetMode === "edit") {
+      if (!sourceMode) {
+        // Switching TO source mode
+        const { frontmatter: fm, content: c } = useEditorStore.getState();
+        setSourceText(stringifyFrontmatter(fm, c));
+        setSourceMode(true);
+      }
+      setSplitMode(false);
+      try { window.localStorage.setItem("kb-editor-split-mode", "false"); } catch {}
+    } else if (targetMode === "split") {
+      if (!sourceMode) {
+        // Switching TO source mode
+        const { frontmatter: fm, content: c } = useEditorStore.getState();
+        setSourceText(stringifyFrontmatter(fm, c));
+        setSourceMode(true);
+      }
+      setSplitMode(true);
+      try { window.localStorage.setItem("kb-editor-split-mode", "true"); } catch {}
+    }
+  }, [sourceMode, sourceText, editor, assetBase, currentPath]);
 
   // Toggle editability when navigating into/out of a read-only mount.
   useEffect(() => {
@@ -493,7 +612,13 @@ export function KBEditor() {
         // assetBase (parent dir for standalone .md pages) resolves relative
         // image refs; currentPath is only correct for directory pages.
         const html = await markdownToHtml(content, assetBase ?? currentPath);
-        editor.commands.setContent(html);
+        // Prepend the Obsidian-style properties panel, built from the store's
+        // parsed frontmatter, as a node at the very top of the document. The
+        // body markdown itself never carries frontmatter (gray-matter split it
+        // out on load; to-markdown strips this node back out on save).
+        const fm = useEditorStore.getState().frontmatter;
+        const propsHtml = fm ? buildDocumentPropertiesHtml(fm) : "";
+        editor.commands.setContent(propsHtml + (html || "<p></p>"));
         // This editor instance now reflects stored content, so user-driven
         // onUpdate transactions are safe to persist (see hasPopulatedRef).
         hasPopulatedRef.current = true;
@@ -532,7 +657,11 @@ export function KBEditor() {
   useEffect(() => {
     if (!sourceMode) return;
     if (useEditorStore.getState().isDirty) return;
-    setSourceText((prev) => (prev === content ? prev : content));
+    const next = stringifyFrontmatter(
+      useEditorStore.getState().frontmatter,
+      content
+    );
+    setSourceText((prev) => (prev === next ? prev : next));
   }, [sourceMode, content, currentPath]);
 
   // Section anchors (PRD §11): scroll to `#heading` on load and on hashchange.
@@ -641,8 +770,7 @@ export function KBEditor() {
                   {inferredTitle}
                 </p>
                 <p className="text-sm text-muted-foreground/80">
-                  This folder doesn&apos;t have an{" "}
-                  <code className="px-1 py-0.5 rounded bg-muted text-[12px]">index.md</code>
+                  This folder doesn&apos;t have a markdown sibling page
                   {hasChildren
                     ? " yet — its contents are listed below."
                     : " yet."}
@@ -671,16 +799,25 @@ export function KBEditor() {
 
   const toggleSourceMode = async () => {
     if (!sourceMode) {
-      // Switching TO source mode — grab current markdown
-      setSourceText(useEditorStore.getState().content);
+      // Switching TO source mode — show the file as it lives on disk: the
+      // YAML frontmatter block followed by the markdown body.
+      const { frontmatter, content } = useEditorStore.getState();
+      setSourceText(stringifyFrontmatter(frontmatter, content));
       setSourceMode(true);
     } else {
-      // Switching FROM source mode — apply changes
-      useEditorStore.getState().updateContent(sourceText);
+      // Switching FROM source mode — split frontmatter back out of the source,
+      // push both halves into the store, and re-render with the properties
+      // panel prepended so it survives the round-trip.
+      const { frontmatter: parsed, body } = parseFrontmatter(sourceText);
+      const store = useEditorStore.getState();
+      if (parsed) store.setFrontmatter(parsed as FrontMatter);
+      store.updateContent(body);
       if (editor) {
         isLoadingRef.current = true;
-        const html = await markdownToHtml(sourceText, assetBase ?? currentPath ?? undefined);
-        editor.commands.setContent(html);
+        const html = await markdownToHtml(body, assetBase ?? currentPath ?? undefined);
+        const fm = useEditorStore.getState().frontmatter;
+        const propsHtml = fm ? buildDocumentPropertiesHtml(fm) : "";
+        editor.commands.setContent(propsHtml + (html || "<p></p>"));
         setTimeout(() => { isLoadingRef.current = false; }, 50);
       }
       setSourceMode(false);
@@ -724,6 +861,9 @@ export function KBEditor() {
               onToggleSource={toggleSourceMode}
               wideMode={wideMode}
               onToggleWide={toggleWideMode}
+              splitMode={splitMode}
+              onToggleSplit={toggleSplitMode}
+              onSetMode={handleSetMode}
             />
           </div>
         )}
@@ -747,13 +887,70 @@ export function KBEditor() {
       <div className={onFilesTab ? "hidden" : "flex-1 flex flex-col overflow-hidden min-h-0"}>
       <ContentSheet>
       {sourceMode && (
-        <div className="flex-1 overflow-y-auto p-4" dir={isRtl ? "rtl" : undefined}>
-          <textarea
-            value={sourceText}
-            onChange={(e) => setSourceText(e.target.value)}
-            className="w-full h-full min-h-[calc(100vh-12rem)] bg-transparent font-mono text-[13px] leading-relaxed resize-none focus:outline-none"
-            spellCheck={false}
-          />
+        <div ref={split.containerRef} className="relative flex-1 flex overflow-hidden border-t border-border" dir={isRtl ? "rtl" : undefined}>
+          {/* Left: Code Editor */}
+          <div
+            className="overflow-hidden p-0 relative min-w-0"
+            style={splitMode ? { width: `${split.leftPct}%`, flex: "none" } : { flex: "1 1 0%" }}
+            data-editor-scroll
+          >
+            <div className={`h-full w-full ${wideMode ? "max-w-none" : "max-w-3xl mx-auto"}`}>
+              <Editor
+                height="100%"
+                language="markdown"
+                theme={settings.theme === "app" ? (resolvedTheme === "dark" ? "vs-dark" : "light") : settings.theme}
+                value={sourceText}
+                onChange={(val) => {
+                  const value = val || "";
+                  setSourceText(value);
+                  const hasFrontmatterHeader = /^---\r?\n/.test(value);
+                  const { frontmatter: parsed, body } = parseFrontmatter(value);
+                  const store = useEditorStore.getState();
+                  if (parsed) {
+                    store.setFrontmatter(parsed as FrontMatter);
+                  } else if (!hasFrontmatterHeader) {
+                    store.setFrontmatter({} as FrontMatter);
+                  }
+                  store.updateContent(body);
+                }}
+                onMount={(editor, monaco) => {
+                  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+                    void useEditorStore.getState().save();
+                  });
+                }}
+                options={{
+                  minimap: { enabled: true },
+                  fontFamily: settings.fontFamily,
+                  fontSize: settings.fontSize,
+                  fontLigatures: settings.fontLigatures,
+                  lineHeight: settings.lineHeight,
+                  fontWeight: settings.fontWeight,
+                  wordWrap: "on",
+                  automaticLayout: true,
+                }}
+              />
+            </div>
+          </div>
+          {/* Divider */}
+          {splitMode && (
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              onPointerDown={split.startResize}
+              onDoubleClick={split.resetWidth}
+              className="relative w-px shrink-0 cursor-col-resize bg-border before:absolute before:inset-y-0 before:-left-1.5 before:-right-1.5 before:content-[''] hover:bg-primary/50"
+            />
+          )}
+          {/* Right: Rendered Preview */}
+          {splitMode && (
+            <div className="flex-1 min-w-0 overflow-y-auto p-8 bg-background prose dark:prose-invert max-w-none">
+              <div className="tiptap" dangerouslySetInnerHTML={{ __html: splitHtml }} />
+            </div>
+          )}
+          {/* Drag ruler */}
+          {splitMode && split.resizing && (
+            <SplitRuler leftPct={split.leftPct} rtl={isRtl} />
+          )}
         </div>
       )}
         <div
@@ -785,7 +982,7 @@ export function KBEditor() {
             )}
 
             {/* AI Edit Prompt + slash hint */}
-            <div className="max-w-[var(--editor-max-w,48rem)] mx-auto px-8 pb-8 flex items-center gap-4">
+            <div className="max-w-(--editor-max-w,48rem) mx-auto px-8 pb-8 flex items-center gap-4">
               <button
                 onClick={handleOpenAI}
                 className="group flex items-center gap-2 text-[13px] text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer"

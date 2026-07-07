@@ -97,6 +97,8 @@ export interface AgentListItem {
   color?: string;
   avatar?: string;
   avatarExt?: string;
+  model?: string;
+  effort?: string;
 }
 export type ProviderModelRequires = "any" | "chatgpt_plan" | "api_key";
 

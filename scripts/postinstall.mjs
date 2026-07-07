@@ -83,6 +83,21 @@ if (fs.existsSync(latexJsDist)) {
   }
 }
 
+// Copy monaco-editor static assets to public/monaco/vs/ so Monaco can be loaded offline
+const monacoDist = path.join("node_modules", "monaco-editor", "min", "vs");
+const monacoPublic = path.join("public", "monaco", "vs");
+if (fs.existsSync(monacoDist)) {
+  try {
+    fs.rmSync(monacoPublic, { recursive: true, force: true });
+    copyDirRecursive(monacoDist, monacoPublic);
+    console.log("[cabinet] postinstall: monaco-editor assets copied to public/monaco/vs/");
+  } catch (err) {
+    console.error("[cabinet] postinstall: failed to copy monaco-editor assets:", err);
+    process.exitCode = 1;
+  }
+}
+
+
 function copyDirRecursive(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {

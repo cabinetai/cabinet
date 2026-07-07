@@ -4,34 +4,19 @@ import { useState, useCallback, useEffect, useMemo, useRef, memo } from "react";
 import {
   Archive,
   ChevronRight,
-  FileText,
-  Folder,
   FolderOpen,
   FolderPlus,
   Trash2,
   FilePlus,
-  Globe,
   Pencil,
   Eye,
   Code2,
   AppWindow,
   GitBranch,
-  FileType,
-  Table,
   Copy,
   ClipboardCopy,
   Link2,
   Link2Off,
-  Code,
-  Image,
-  Video,
-  Music,
-  Workflow,
-  File,
-  FileSpreadsheet,
-  NotebookText,
-  Sigma,
-  Presentation,
   TriangleAlert,
   ArrowRightLeft,
   Loader2,
@@ -92,6 +77,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LinkRepoDialog } from "./link-repo-dialog";
 import { ConnectKnowledgeDialog } from "./connect-knowledge-dialog";
+import { ConnectGithubDialog } from "./connect-github-dialog";
 import { NotionConnectDialog } from "./notion-connect-dialog";
 import { AppleNotesConnectDialog } from "./apple-notes-connect-dialog";
 import { ConnectDriveDialog } from "./connect-drive-dialog";
@@ -106,6 +92,521 @@ import { useFileImport } from "./use-file-import";
 import { getDataDir } from "@/lib/data-dir-cache";
 import { isMacPlatform, isEditableTarget, formatShortcut } from "@/lib/keys";
 import { useLocale } from "@/i18n/use-locale";
+
+function getFileIconPath(filename: string): string {
+  const parts = filename.split(".");
+  const ext = parts.length > 1 ? "." + parts.pop()!.toLowerCase() : "";
+  const lowerName = filename.toLowerCase();
+
+  // Special exact filename checks
+  if (lowerName === "package.json") return "/icons/npm.svg";
+  if (lowerName === "package-lock.json") return "/icons/lock.svg";
+  if (lowerName === "pnpm-lock.yaml") return "/icons/lock.svg";
+  if (lowerName === "yarn.lock") return "/icons/lock.svg";
+  if (lowerName === "cargo.lock") return "/icons/lock.svg";
+  if (lowerName === "composer.lock") return "/icons/lock.svg";
+  if (lowerName === "gemfile.lock") return "/icons/lock.svg";
+  if (lowerName === "dockerfile" || lowerName === "docker-compose.yml" || lowerName === "docker-compose.yaml") return "/icons/docker.svg";
+  if (lowerName === "license" || lowerName === "copying" || lowerName === "unlicense") return "/icons/license.svg";
+  if (lowerName === "makefile" || lowerName === "gnumakefile") return "/icons/makefile.svg";
+  if (lowerName === "eslint.config.js" || lowerName === "eslint.config.mjs" || lowerName === "eslint.config.cjs" || lowerName === ".eslintrc.json" || lowerName === ".eslintrc.js" || lowerName === ".eslintrc.yml" || lowerName === ".eslintrc.yaml" || lowerName === ".eslintrc") return "/icons/eslint.svg";
+  if (lowerName === "tsconfig.json") return "/icons/tsconfig.svg";
+  if (lowerName === "jsconfig.json") return "/icons/jsconfig.svg";
+  if (lowerName === "vite.config.ts" || lowerName === "vite.config.js") return "/icons/vite.svg";
+  if (lowerName === "next.config.js" || lowerName === "next.config.ts" || lowerName === "next.config.mjs") return "/icons/next.svg";
+  if (lowerName === "tailwind.config.js" || lowerName === "tailwind.config.ts" || lowerName === "tailwind.config.cjs") return "/icons/tailwindcss.svg";
+  if (lowerName === ".editorconfig") return "/icons/editorconfig.svg";
+  if (lowerName === ".gitignore" || lowerName === ".gitconfig" || lowerName === ".gitattributes") return "/icons/git.svg";
+  if (lowerName === ".prettierrc" || lowerName === ".prettierrc.json" || lowerName === ".prettierrc.js" || lowerName === ".prettierrc.yml" || lowerName === ".prettierrc.yaml") return "/icons/prettier.svg";
+  if (lowerName === "babel.config.js" || lowerName === "babel.config.json" || lowerName === ".babelrc") return "/icons/babel.svg";
+  if (lowerName === "webpack.config.js" || lowerName === "webpack.config.ts") return "/icons/webpack.svg";
+  if (lowerName === "readme" || lowerName === "readme.md" || lowerName === "readme.txt") return "/icons/readme.svg";
+  if (lowerName === "changelog" || lowerName === "changelog.md" || lowerName === "changelog.txt") return "/icons/changelog.svg";
+  if (lowerName === "authors" || lowerName === "authors.md" || lowerName === "authors.txt") return "/icons/authors.svg";
+  if (lowerName === "contributing" || lowerName === "contributing.md") return "/icons/contributing.svg";
+  if (lowerName === "conduct" || lowerName === "conduct.md") return "/icons/conduct.svg";
+  if (lowerName === "credits" || lowerName === "credits.md") return "/icons/credits.svg";
+  if (lowerName === "roadmap" || lowerName === "roadmap.md") return "/icons/roadmap.svg";
+  if (lowerName.endsWith(".d.ts")) return "/icons/typescript-def.svg";
+
+  // Specific file extension mappings
+  switch (ext) {
+    case ".md":
+      return "/icons/markdown.svg";
+    case ".mdx":
+      return "/icons/mdx.svg";
+    case ".pdf":
+      return "/icons/pdf.svg";
+    case ".html":
+    case ".htm":
+      return "/icons/html.svg";
+    case ".js":
+    case ".cjs":
+    case ".mjs":
+      return "/icons/javascript.svg";
+    case ".jsx":
+      return "/icons/react.svg";
+    case ".ts":
+      return "/icons/typescript.svg";
+    case ".tsx":
+      return "/icons/react_ts.svg";
+    case ".css":
+      return "/icons/css.svg";
+    case ".scss":
+    case ".sass":
+      return "/icons/sass.svg";
+    case ".less":
+      return "/icons/less.svg";
+    case ".json":
+    case ".jsonc":
+    case ".json5":
+      return "/icons/json.svg";
+    case ".yaml":
+    case ".yml":
+      return "/icons/yaml.svg";
+    case ".toml":
+      return "/icons/toml.svg";
+    case ".xml":
+      return "/icons/xml.svg";
+    case ".py":
+      return "/icons/python.svg";
+    case ".pyc":
+    case ".pyo":
+    case ".pyd":
+      return "/icons/python-misc.svg";
+    case ".rs":
+      return "/icons/rust.svg";
+    case ".go":
+      return "/icons/go.svg";
+    case ".c":
+      return "/icons/c.svg";
+    case ".h":
+      return "/icons/h.svg";
+    case ".cpp":
+    case ".cc":
+    case ".cxx":
+      return "/icons/cpp.svg";
+    case ".hpp":
+    case ".hh":
+    case ".hxx":
+      return "/icons/hpp.svg";
+    case ".tex":
+    case ".latex":
+      return "/icons/latexmk.svg";
+    case ".bib":
+      return "/icons/bibliography.svg";
+    case ".bst":
+      return "/icons/bibtex-style.svg";
+    case ".typ":
+      return "/icons/typst.svg";
+    case ".mermaid":
+    case ".mmd":
+      return "/icons/mermaid.svg";
+    case ".docx":
+    case ".doc":
+      return "/icons/word.svg";
+    case ".xlsx":
+    case ".xls":
+      return "/icons/table.svg";
+    case ".csv":
+      return "/icons/table.svg";
+    case ".pptx":
+    case ".ppt":
+      return "/icons/powerpoint.svg";
+    case ".ipynb":
+      return "/icons/jupyter.svg";
+    case ".mp3":
+    case ".wav":
+    case ".ogg":
+    case ".m4a":
+    case ".flac":
+    case ".aac":
+      return "/icons/audio.svg";
+    case ".mp4":
+    case ".mkv":
+    case ".avi":
+    case ".mov":
+    case ".webm":
+    case ".flv":
+      return "/icons/video.svg";
+    case ".png":
+    case ".jpg":
+    case ".jpeg":
+    case ".gif":
+    case ".webp":
+    case ".ico":
+    case ".tiff":
+    case ".bmp":
+      return "/icons/image.svg";
+    case ".svg":
+      return "/icons/svg.svg";
+    case ".sh":
+    case ".bash":
+    case ".zsh":
+      return "/icons/bash.svg";
+    case ".sql":
+      return "/icons/database.svg";
+    case ".db":
+    case ".sqlite":
+    case ".sqlite3":
+      return "/icons/database.svg";
+    case ".crt":
+    case ".pem":
+    case ".der":
+    case ".p12":
+    case ".cer":
+      return "/icons/certificate.svg";
+    case ".key":
+    case ".pub":
+      return "/icons/key.svg";
+    case ".zip":
+    case ".tar":
+    case ".gz":
+    case ".rar":
+    case ".7z":
+    case ".tgz":
+    case ".xz":
+    case ".bz2":
+      return "/icons/zip.svg";
+    case ".epub":
+      return "/icons/epub.svg";
+    case ".eml":
+    case ".msg":
+      return "/icons/email.svg";
+    case ".vue":
+      return "/icons/vue.svg";
+    case ".svelte":
+      return "/icons/svelte.svg";
+    case ".astro":
+      return "/icons/astro.svg";
+    case ".graphql":
+    case ".gql":
+      return "/icons/graphql.svg";
+    case ".wasm":
+      return "/icons/webassembly.svg";
+    case ".sol":
+      return "/icons/solidity.svg";
+    case ".prisma":
+      return "/icons/prisma.svg";
+    case ".diff":
+    case ".patch":
+      return "/icons/diff.svg";
+    case ".log":
+      return "/icons/log.svg";
+    case ".clj":
+    case ".cljs":
+    case ".cljc":
+    case ".edn":
+      return "/icons/clojure.svg";
+    case ".dart":
+      return "/icons/dart.svg";
+    case ".elm":
+      return "/icons/elm.svg";
+    case ".erl":
+    case ".hrl":
+      return "/icons/erlang.svg";
+    case ".fs":
+    case ".fsi":
+    case ".fsx":
+      return "/icons/fsharp.svg";
+    case ".hs":
+    case ".lhs":
+      return "/icons/haskell.svg";
+    case ".ml":
+      return "/icons/ocaml.svg";
+    case ".ex":
+      return "/icons/elixir.svg";
+    case ".groovy":
+    case ".gvy":
+    case ".gy":
+    case ".gsh":
+      return "/icons/groovy.svg";
+    case ".r":
+    case ".rmd":
+      return "/icons/r.svg";
+    case ".nim":
+      return "/icons/nim.svg";
+    case ".zig":
+      return "/icons/zig.svg";
+    case ".nix":
+      return "/icons/nix.svg";
+    case ".tf":
+    case ".tfvars":
+      return "/icons/terraform.svg";
+    case ".java":
+      return "/icons/java.svg";
+    case ".class":
+      return "/icons/javaclass.svg";
+    case ".jar":
+      return "/icons/jar.svg";
+    case ".swift":
+      return "/icons/swift.svg";
+    case ".kt":
+    case ".kts":
+      return "/icons/kotlin.svg";
+    case ".scala":
+    case ".sc":
+      return "/icons/scala.svg";
+    case ".php":
+      return "/icons/php.svg";
+    case ".rb":
+    case ".erb":
+      return "/icons/ruby.svg";
+    case ".pl":
+    case ".pm":
+      return "/icons/perl.svg";
+    case ".lua":
+      return "/icons/lua.svg";
+    case ".env":
+      return "/icons/settings.svg";
+    case ".glb":
+    case ".gltf":
+      return "/icons/3d.svg";
+    default:
+      return "/icons/document.svg";
+  }
+}
+
+function getFolderIconPath(folderName: string): string {
+  const name = folderName.toLowerCase();
+  
+  // Specific folder mappings based on known SVGs in public/icons
+  if (name === "src" || name === "source" || name === "sources") return "/icons/folder-src.svg";
+  if (name === "src-tauri") return "/icons/folder-src-tauri.svg";
+  if (name === "app" || name === "apps") return "/icons/folder-app.svg";
+  if (name === "config" || name === "configs" || name === "settings" || name === "options" || name === "configuration" || name === "configurations" || name === ".config") return "/icons/folder-config.svg";
+  if (name === "images" || name === "image" || name === "img" || name === "pics" || name === "photos" || name === "pictures" || name === "icons" || name === "icon") return "/icons/folder-images.svg";
+  if (name === "docs" || name === "doc" || name === "documentation") return "/icons/folder-docs.svg";
+  if (name === "test" || name === "tests" || name === "spec" || name === "specs" || name === "__tests__" || name === "testing") return "/icons/folder-test.svg";
+  if (name === "components" || name === "widgets") return "/icons/folder-components.svg";
+  if (name === "api" || name === "apis" || name === "rest") return "/icons/folder-api.svg";
+  if (name === "public" || name === "static" || name === "www") return "/icons/folder-public.svg";
+  if (name === "assets" || name === "resources" || name === "res") return "/icons/folder-resource.svg";
+  if (name === "styles" || name === "css" || name === "sass" || name === "scss" || name === "stylesheets") return "/icons/folder-css.svg";
+  if (name === "utils" || name === "util" || name === "helpers" || name === "helper" || name === "tools") return "/icons/folder-utils.svg";
+  if (name === "controllers" || name === "handlers") return "/icons/folder-controller.svg";
+  if (name === "models" || name === "entities" || name === "classes" || name === "class") return "/icons/folder-class.svg";
+  if (name === "routes" || name === "routing") return "/icons/folder-routes.svg";
+  if (name === "scripts" || name === "bin" || name === "commands" || name === "cli") return "/icons/folder-scripts.svg";
+  if (name === "database" || name === "db" || name === "sql" || name === "migrations" || name === "migration" || name === "seeders") return "/icons/folder-database.svg";
+  if (name === "hooks") return "/icons/folder-hook.svg";
+  if (name === "lib" || name === "libs" || name === "libraries" || name === "library") return "/icons/folder-lib.svg";
+  if (name === "node_modules") return "/icons/folder-node.svg";
+  if (name === "dist" || name === "out" || name === "build" || name === "target" || name === "release") return "/icons/folder-dist.svg";
+  if (name === "packages" || name === "modules") return "/icons/folder-packages.svg";
+  if (name === ".vscode" || name === "vscode") return "/icons/folder-vscode.svg";
+  if (name === ".git" || name === "github" || name === ".github") return "/icons/folder-git.svg";
+  if (name === "temp" || name === "tmp") return "/icons/folder-temp.svg";
+  if (name === "i18n" || name === "locale" || name === "locales" || name === "translation" || name === "translations" || name === "g11n") return "/icons/folder-i18n.svg";
+  if (name === "plugin" || name === "plugins" || name === "extension" || name === "extensions") return "/icons/folder-plugin.svg";
+  if (name === "server" || name === "backend") return "/icons/folder-server.svg";
+  if (name === "client" || name === "frontend") return "/icons/folder-client.svg";
+  if (name === "shared" || name === "common") return "/icons/folder-shared.svg";
+  if (name === "ui" || name === "views" || name === "view" || name === "layouts" || name === "layout") return "/icons/folder-ui.svg";
+  if (name === "kubernetes" || name === "k8s" || name === "manifests") return "/icons/folder-kubernetes.svg";
+  if (name === "docker" || name === ".docker") return "/icons/folder-docker.svg";
+  if (name === "types" || name === "interfaces") return "/icons/folder-typescript.svg";
+  if (name === "keys" || name === "certs" || name === "certificates" || name === "ssl") return "/icons/folder-keys.svg";
+  if (name === "secure" || name === "security") return "/icons/folder-secure.svg";
+  if (name === "markdown" || name === "md") return "/icons/folder-markdown.svg";
+  if (name === "fonts" || name === "font") return "/icons/folder-font.svg";
+  if (name === "logs" || name === "log") return "/icons/folder-log.svg";
+  if (name === "workflows" || name === ".github/workflows") return "/icons/folder-gh-workflows.svg";
+  if (name === "functions" || name === "func" || name === "funcs") return "/icons/folder-functions.svg";
+  if (name === "theme" || name === "themes") return "/icons/folder-theme.svg";
+  if (name === "tasks" || name === "task" || name === "jobs" || name === "job") return "/icons/folder-tasks.svg";
+  if (name === "store" || name === "stores" || name === "redux") return "/icons/folder-store.svg";
+  if (name === "json") return "/icons/folder-json.svg";
+  if (name === "constants") return "/icons/folder-constant.svg";
+  if (name === "middleware" || name === "middlewares") return "/icons/folder-middleware.svg";
+  if (name === "admin" || name === "administrator") return "/icons/folder-admin.svg";
+  if (name === "android") return "/icons/folder-android.svg";
+  if (name === "angular") return "/icons/folder-angular.svg";
+  if (name === "animation" || name === "animations") return "/icons/folder-animation.svg";
+  if (name === "ansible") return "/icons/folder-admin.svg"; // fallback config
+  if (name === "apollo") return "/icons/folder-apollo.svg";
+  if (name === "archive" || name === "archives") return "/icons/folder-archive.svg";
+  if (name === "assembly" || name === "asm") return "/icons/folder-assembly.svg";
+  if (name === "astro") return "/icons/folder-astro.svg";
+  if (name === "audio" || name === "audios" || name === "music" || name === "sound" || name === "sounds") return "/icons/folder-audio.svg";
+  if (name === "aws" || name === "amazon") return "/icons/folder-aws.svg";
+  if (name === "azure-pipelines") return "/icons/folder-azure-pipelines.svg";
+  if (name === "backup" || name === "backups") return "/icons/folder-backup.svg";
+  if (name === "benchmark" || name === "benchmarks") return "/icons/folder-benchmark.svg";
+  if (name === "bibliography") return "/icons/folder-bibliography.svg";
+  if (name === "bicep") return "/icons/folder-bicep.svg";
+  if (name === "blender") return "/icons/folder-blender.svg";
+  if (name === "bloc") return "/icons/folder-bloc.svg";
+  if (name === "bower") return "/icons/folder-bower.svg";
+  if (name === "buildkite") return "/icons/folder-buildkite.svg";
+  if (name === "cart" || name === "shopping" || name === "ecommerce") return "/icons/folder-cart.svg";
+  if (name === "changesets" || name === ".changesets" || name === ".changeset") return "/icons/folder-changesets.svg";
+  if (name === "circleci") return "/icons/folder-circleci.svg";
+  if (name === "claude") return "/icons/folder-claude.svg";
+  if (name === "cline") return "/icons/folder-cline.svg";
+  if (name === "cloud-functions") return "/icons/folder-cloud-functions.svg";
+  if (name === "cloudflare") return "/icons/folder-cloudflare.svg";
+  if (name === "cluster" || name === "clusters") return "/icons/folder-cluster.svg";
+  if (name === "cobol") return "/icons/folder-cobol.svg";
+  if (name === "connection" || name === "connections") return "/icons/folder-connection.svg";
+  if (name === "console") return "/icons/folder-console.svg";
+  if (name === "container" || name === "containers") return "/icons/folder-container.svg";
+  if (name === "content" || name === "contents") return "/icons/folder-content.svg";
+  if (name === "context" || name === "contexts") return "/icons/folder-context.svg";
+  if (name === "contract" || name === "contracts") return "/icons/folder-contract.svg";
+  if (name === "core") return "/icons/folder-core.svg";
+  if (name === "coverage" || name === ".nyc_output") return "/icons/folder-coverage.svg";
+  if (name === "cypress" || name === ".cypress") return "/icons/folder-cypress.svg";
+  if (name === "dart") return "/icons/folder-dart.svg";
+  if (name === "debug") return "/icons/folder-debug.svg";
+  if (name === "decorators" || name === "decorator") return "/icons/folder-decorators.svg";
+  if (name === "desktop") return "/icons/folder-desktop.svg";
+  if (name === "directive" || name === "directives") return "/icons/folder-directive.svg";
+  if (name === "download" || name === "downloads") return "/icons/folder-download.svg";
+  if (name === "drizzle") return "/icons/folder-drizzle.svg";
+  if (name === "dump" || name === "dumps") return "/icons/folder-dump.svg";
+  if (name === "element" || name === "elements") return "/icons/folder-element.svg";
+  if (name === "enum" || name === "enums") return "/icons/folder-enum.svg";
+  if (name === "environment" || name === "environments" || name === "env" || name === "envs" || name === ".env") return "/icons/folder-environment.svg";
+  if (name === "error" || name === "errors") return "/icons/folder-error.svg";
+  if (name === "eslint" || name === ".eslint") return "/icons/folder-eslint.svg";
+  if (name === "event" || name === "events") return "/icons/folder-event.svg";
+  if (name === "example" || name === "examples" || name === "sample" || name === "samples") return "/icons/folder-examples.svg";
+  if (name === "expo") return "/icons/folder-expo.svg";
+  if (name === "export" || name === "exports") return "/icons/folder-export.svg";
+  if (name === "fastlane") return "/icons/folder-fastlane.svg";
+  if (name === "favicon" || name === "favicons") return "/icons/folder-favicon.svg";
+  if (name === "features" || name === "feature") return "/icons/folder-features.svg";
+  if (name === "filter" || name === "filters") return "/icons/folder-filter.svg";
+  if (name === "firebase") return "/icons/folder-firebase.svg";
+  if (name === "firestore") return "/icons/folder-firestore.svg";
+  if (name === "flow") return "/icons/folder-flow.svg";
+  if (name === "flutter") return "/icons/folder-flutter.svg";
+  if (name === "forgejo") return "/icons/folder-forgejo.svg";
+  if (name === "forms" || name === "form") return "/icons/folder-form.svg";
+  if (name === "gamemaker") return "/icons/folder-gamemaker.svg";
+  if (name === "gemini-ai" || name === "gemini") return "/icons/folder-gemini-ai.svg";
+  if (name === "generator" || name === "generators") return "/icons/folder-generator.svg";
+  if (name === "gitea") return "/icons/folder-gitea.svg";
+  if (name === "gitlab" || name === ".gitlab") return "/icons/folder-gitlab.svg";
+  if (name === "global" || name === "globals") return "/icons/folder-global.svg";
+  if (name === "go" || name === "golang") return "/icons/folder-go.svg";
+  if (name === "godot") return "/icons/folder-godot.svg";
+  if (name === "gradle" || name === ".gradle") return "/icons/folder-gradle.svg";
+  if (name === "graphql") return "/icons/folder-graphql.svg";
+  if (name === "guard") return "/icons/folder-guard.svg";
+  if (name === "gulp") return "/icons/folder-gulp.svg";
+  if (name === "helm") return "/icons/folder-helm.svg";
+  if (name === "home") return "/icons/folder-home.svg";
+  if (name === "husky" || name === ".husky") return "/icons/folder-husky.svg";
+  if (name === "import" || name === "imports") return "/icons/folder-import.svg";
+  if (name === "include" || name === "includes" || name === "inc") return "/icons/folder-include.svg";
+  if (name === "input" || name === "inputs") return "/icons/folder-input.svg";
+  if (name === ".idea") return "/icons/folder-intellij.svg";
+  if (name === "interceptor" || name === "interceptors") return "/icons/folder-interceptor.svg";
+  if (name === "ios") return "/icons/folder-ios.svg";
+  if (name === "java") return "/icons/folder-java.svg";
+  if (name === "javascript" || name === "js") return "/icons/folder-javascript.svg";
+  if (name === "jinja") return "/icons/folder-jinja.svg";
+  if (name === "json") return "/icons/folder-json.svg";
+  if (name === "jupyter" || name === ".ipynb_checkpoints") return "/icons/folder-jupyter.svg";
+  if (name === "kotlin") return "/icons/folder-kotlin.svg";
+  if (name === "kusto") return "/icons/folder-kusto.svg";
+  if (name === "lefthook") return "/icons/folder-lefthook.svg";
+  if (name === "less") return "/icons/folder-less.svg";
+  if (name === "license" || name === "licenses") return "/icons/folder-license.svg";
+  if (name === "link" || name === "links") return "/icons/folder-link.svg";
+  if (name === "linux") return "/icons/folder-linux.svg";
+  if (name === "liquibase") return "/icons/folder-liquibase.svg";
+  if (name === "lottie") return "/icons/folder-lottie.svg";
+  if (name === "lua") return "/icons/folder-lua.svg";
+  if (name === "luau") return "/icons/folder-luau.svg";
+  if (name === "macos" || name === "osx") return "/icons/folder-macos.svg";
+  if (name === "mail" || name === "mails" || name === "email" || name === "emails") return "/icons/folder-mail.svg";
+  if (name === "mappings" || name === "mapping") return "/icons/folder-mappings.svg";
+  if (name === "hg" || name === ".hg") return "/icons/folder-mercurial.svg";
+  if (name === "messages" || name === "messaging") return "/icons/folder-messages.svg";
+  if (name === "meta") return "/icons/folder-meta.svg";
+  if (name === "metro") return "/icons/folder-metro.svg";
+  if (name === "mojo") return "/icons/folder-mojo.svg";
+  if (name === "molecule") return "/icons/folder-molecule.svg";
+  if (name === "moon") return "/icons/folder-moon.svg";
+  if (name === "netlify" || name === ".netlify") return "/icons/folder-netlify.svg";
+  if (name === "next" || name === ".next") return "/icons/folder-next.svg";
+  if (name === "nginx") return "/icons/folder-nginx.svg";
+  if (name === "ngrx") return "/icons/folder-ngrx-store.svg";
+  if (name === "node") return "/icons/folder-node.svg";
+  if (name === "nuxt" || name === ".nuxt") return "/icons/folder-nuxt.svg";
+  if (name === "obsidian" || name === ".obsidian") return "/icons/folder-obsidian.svg";
+  if (name === "opencode") return "/icons/folder-opencode.svg";
+  if (name === "organism" || name === "organisms") return "/icons/folder-organism.svg";
+  if (name === "pdf") return "/icons/folder-pdf.svg";
+  if (name === "pdm") return "/icons/folder-pdm.svg";
+  if (name === "php") return "/icons/folder-php.svg";
+  if (name === "phpmailer") return "/icons/folder-phpmailer.svg";
+  if (name === "pipe" || name === "pipes") return "/icons/folder-pipe.svg";
+  if (name === "plastic") return "/icons/folder-plastic.svg";
+  if (name === "policy" || name === "policies") return "/icons/folder-policy.svg";
+  if (name === "postman" || name === ".postman") return "/icons/folder-postman.svg";
+  if (name === "powershell" || name === "ps") return "/icons/folder-powershell.svg";
+  if (name === "prisma") return "/icons/folder-prisma.svg";
+  if (name === "private") return "/icons/folder-private.svg";
+  if (name === "project" || name === "projects") return "/icons/folder-project.svg";
+  if (name === "prompts") return "/icons/folder-prompts.svg";
+  if (name === "proto" || name === "protobuf") return "/icons/folder-proto.svg";
+  if (name === "python" || name === "py" || name === "__pycache__") return "/icons/folder-python.svg";
+  if (name === "pytorch") return "/icons/folder-pytorch.svg";
+  if (name === "quasar") return "/icons/folder-quasar.svg";
+  if (name === "queue" || name === "queues") return "/icons/folder-queue.svg";
+  if (name === "r") return "/icons/folder-r.svg";
+  if (name === "react") return "/icons/folder-react-components.svg";
+  if (name === "repository" || name === "repositories" || name === "repo" || name === "repos") return "/icons/folder-repository.svg";
+  if (name === "resolver" || name === "resolvers") return "/icons/folder-resolver.svg";
+  if (name === "review" || name === "reviews") return "/icons/folder-review.svg";
+  if (name === "robot") return "/icons/folder-robot.svg";
+  if (name === "rules") return "/icons/folder-rules.svg";
+  if (name === "rust" || name === "cargo") return "/icons/folder-rust.svg";
+  if (name === "salt") return "/icons/folder-salt.svg";
+  if (name === "sandbox" || name === "sandboxes") return "/icons/folder-sandbox.svg";
+  if (name === "scala") return "/icons/folder-scala.svg";
+  if (name === "scons") return "/icons/folder-scons.svg";
+  if (name === "simulations" || name === "simulation") return "/icons/folder-simulations.svg";
+  if (name === "snapcraft") return "/icons/folder-snapcraft.svg";
+  if (name === "snippet" || name === "snippets") return "/icons/folder-snippet.svg";
+  if (name === "stack") return "/icons/folder-stack.svg";
+  if (name === "stencil") return "/icons/folder-stencil.svg";
+  if (name === "storybook" || name === ".storybook") return "/icons/folder-storybook.svg";
+  if (name === "stylus") return "/icons/folder-stylus.svg";
+  if (name === "sublime") return "/icons/folder-sublime.svg";
+  if (name === "supabase") return "/icons/folder-supabase.svg";
+  if (name === "svelte" || name === ".svelte-kit") return "/icons/folder-svelte.svg";
+  if (name === "svg" || name === "svgs") return "/icons/folder-svg.svg";
+  if (name === "syntax") return "/icons/folder-syntax.svg";
+  if (name === "target") return "/icons/folder-target.svg";
+  if (name === "taskfile") return "/icons/folder-taskfile.svg";
+  if (name === "tv" || name === "television") return "/icons/folder-television.svg";
+  if (name === "template" || name === "templates") return "/icons/folder-template.svg";
+  if (name === "terraform") return "/icons/folder-terraform.svg";
+  if (name === "turborepo") return "/icons/folder-turborepo.svg";
+  if (name === "typescript" || name === "ts") return "/icons/folder-typescript.svg";
+  if (name === "unity") return "/icons/folder-unity.svg";
+  if (name === "update" || name === "updates") return "/icons/folder-update.svg";
+  if (name === "upload" || name === "uploads") return "/icons/folder-upload.svg";
+  if (name === "vercel" || name === ".vercel") return "/icons/folder-vercel.svg";
+  if (name === "verdaccio") return "/icons/folder-verdaccio.svg";
+  if (name === "video" || name === "videos" || name === "movies") return "/icons/folder-video.svg";
+  if (name === "vm") return "/icons/folder-vm.svg";
+  if (name === "wakatime") return "/icons/folder-wakatime.svg";
+  if (name === "webpack") return "/icons/folder-webpack.svg";
+  if (name === "windows") return "/icons/folder-windows.svg";
+  if (name === "wordpress") return "/icons/folder-wordpress.svg";
+  if (name === "yarn" || name === ".yarn") return "/icons/folder-yarn.svg";
+  if (name === "zeabur") return "/icons/folder-zeabur.svg";
+  if (name === "zed") return "/icons/folder-zed.svg";
+
+  // Generic folder icon fallback
+  return "/icons/folder-other.svg";
+}
 
 interface TreeNodeProps {
   node: TreeNodeType;
@@ -180,6 +681,7 @@ function TreeNodeImpl({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [linkRepoOpen, setLinkRepoOpen] = useState(false);
   const [connectKnowledgeOpen, setConnectKnowledgeOpen] = useState(false);
+  const [githubConnectOpen, setGithubConnectOpen] = useState(false);
   const [notionConnectOpen, setNotionConnectOpen] = useState(false);
   const [appleNotesConnectOpen, setAppleNotesConnectOpen] = useState(false);
   const [connectDriveOpen, setConnectDriveOpen] = useState(false);
@@ -410,16 +912,20 @@ function TreeNodeImpl({
     const browseFileUrl =
       node.type === "website" || node.type === "app"
         ? `${assetUrl}/index.html`
-        : // Sibling Pattern: a `<name>.md` page can carry sub-pages and so be
-          // typed "directory", but its content still lives at `<name>.md`, not
-          // an `index.md` inside the folder — match the markdown name first.
-          // Markdown pages are typed "file" with the extension stripped from
-          // the path, so they also resolve to `<name>.md`.
-          node.type === "file" || node.name.toLowerCase().endsWith(".md")
-          ? `${assetUrl}.md`
-          : node.type === "directory" || node.type === "cabinet"
-            ? `${assetUrl}/index.md`
-            : assetUrl;
+        : node.type === "drawio"
+          ? `${window.location.origin}/drawio/editor.html?path=${node.path}`
+          : node.type === "excalidraw"
+            ? `${window.location.origin}/excalidraw/editor?path=${node.path}`
+            : // Sibling Pattern: a `<name>.md` page can carry sub-pages and so be
+              // typed "directory", but its content still lives at `<name>.md`, not
+              // an `index.md` inside the folder — match the markdown name first.
+              // Markdown pages are typed "file" with the extension stripped from
+              // the path, so they also resolve to `<name>.md`.
+              (node.type === "file" && !isHtmlPath(node.path)) || node.name.toLowerCase().endsWith(".md")
+              ? `${assetUrl}.md`
+              : node.type === "directory" || node.type === "cabinet"
+                ? `${assetUrl}/index.md`
+                : assetUrl;
 
     if (appMode === "browse") {
       setAppMode("browse", browseFileUrl);
@@ -645,7 +1151,6 @@ function TreeNodeImpl({
       // before/after zone — a legitimate way to reach the top level.
       if (node.path.startsWith(fromPath + "/")) return;
 
-      const fromName = fromPath.split("/").pop() || "";
       const nodeParent = node.path.split("/").slice(0, -1).join("/");
 
       if (zone === "into") {
@@ -712,13 +1217,13 @@ function TreeNodeImpl({
       >
       {showInsertBefore && (
         <div
-          className="pointer-events-none absolute -top-px end-1.5 z-10 h-0.5 rounded-full bg-primary"
+          className="pointer-events-none absolute -top-px inset-e-1.5 z-10 h-0.5 rounded-full bg-primary"
           style={{ insetInlineStart: `${depth * 16 + 8}px` }}
         />
       )}
       {showInsertAfter && (
         <div
-          className="pointer-events-none absolute -bottom-px end-1.5 z-10 h-0.5 rounded-full bg-primary"
+          className="pointer-events-none absolute -bottom-px inset-e-1.5 z-10 h-0.5 rounded-full bg-primary"
           style={{ insetInlineStart: `${depth * 16 + 8}px` }}
         />
       )}
@@ -748,15 +1253,15 @@ function TreeNodeImpl({
               // Uses logical start/rounded-e so the bar flips to the
               // right edge in RTL and stays rounded on its inner side.
               isSelected &&
-                "bg-accent/70 text-accent-foreground font-semibold before:absolute before:start-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-e-full before:bg-primary",
+                "bg-accent/70 text-accent-foreground font-semibold before:absolute before:inset-s-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-e-full before:bg-primary",
               // Recently created/changed by a task — subtle tint + an
               // unread-style bump to fuller, medium-weight text until opened.
               isChanged && !isSelected &&
-                "bg-emerald-500/[0.06] font-medium text-foreground before:absolute before:start-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-e-full before:bg-emerald-500/70",
+                "bg-emerald-500/6 font-medium text-foreground before:absolute before:inset-s-0 before:top-1 before:bottom-1 before:w-0.5 before:rounded-e-full before:bg-emerald-500/70",
               showInto &&
                 "bg-primary/10 ring-1 ring-primary/30 ring-inset",
               blink && "cabinet-tree-blink",
-              isMoving && "opacity-60 !cursor-progress pointer-events-none"
+              isMoving && "opacity-60 cursor-progress! pointer-events-none"
             )}
             style={{ paddingInlineStart: `${depth * 16 + 8}px` }}
           >
@@ -801,36 +1306,6 @@ function TreeNodeImpl({
               <Cloud className="h-3.5 w-3.5 shrink-0 text-sky-400" />
             ) : node.frontmatter?.google ? (
               <GoogleNodeIcon kind={node.frontmatter.google.kind} />
-            ) : node.type === "csv" ? (
-              <Table className="h-3.5 w-3.5 shrink-0 text-green-400" />
-            ) : node.type === "pdf" ? (
-              <FileType className="h-3.5 w-3.5 shrink-0 text-red-400" />
-            ) : node.type === "app" ? (
-              <AppWindow className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
-            ) : node.type === "website" ? (
-              <Globe className="h-3.5 w-3.5 shrink-0 text-blue-400" />
-            ) : node.type === "code" ? (
-              <Code className="h-3.5 w-3.5 shrink-0 text-violet-400" />
-            ) : node.type === "image" ? (
-              <Image className="h-3.5 w-3.5 shrink-0 text-pink-400" />
-            ) : node.type === "video" ? (
-              <Video className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
-            ) : node.type === "audio" ? (
-              <Music className="h-3.5 w-3.5 shrink-0 text-amber-400" />
-            ) : node.type === "mermaid" ? (
-              <Workflow className="h-3.5 w-3.5 shrink-0 text-teal-400" />
-            ) : node.type === "docx" ? (
-              <FileText className="h-3.5 w-3.5 shrink-0 text-blue-400" />
-            ) : node.type === "xlsx" ? (
-              <FileSpreadsheet className="h-3.5 w-3.5 shrink-0 text-green-500" />
-            ) : node.type === "pptx" ? (
-              <Presentation className="h-3.5 w-3.5 shrink-0 text-orange-400" />
-            ) : node.type === "notebook" ? (
-              <NotebookText className="h-3.5 w-3.5 shrink-0 text-[#F37626]" />
-            ) : node.type === "latex" ? (
-              <Sigma className="h-3.5 w-3.5 shrink-0 text-indigo-400" />
-            ) : node.type === "unknown" ? (
-              <File className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
             ) : node.type === "cabinet" ? (
               // Audit #016 (review feedback 2026-05-02): keep the Archive
               // icon — it's the brand glyph used by the sidebar header and
@@ -842,14 +1317,20 @@ function TreeNodeImpl({
               <GitBranch className="h-3.5 w-3.5 shrink-0 text-orange-400" />
             ) : node.isLinked ? (
               <Link2 className="h-3.5 w-3.5 shrink-0 text-blue-400" />
-            ) : hasChildren ? (
-              isExpanded ? (
-                <FolderOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-              ) : (
-                <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-              )
+            ) : hasChildren || node.type === "directory" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={getFolderIconPath(node.name)}
+                alt=""
+                className="h-3.5 w-3.5 shrink-0 animate-in fade-in duration-200"
+              />
             ) : (
-              <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={getFileIconPath(node.name)}
+                alt=""
+                className="h-3.5 w-3.5 shrink-0 animate-in fade-in duration-200"
+              />
             )}
             <span
               className={cn(
@@ -896,7 +1377,7 @@ function TreeNodeImpl({
                 onClick={handleOpenCabinet}
                 onPointerDown={(e) => e.stopPropagation()}
                 className={cn(
-                  "ms-auto shrink-0 rounded-md bg-foreground/[0.04] px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/80 transition-[opacity,background-color,color]",
+                  "ms-auto shrink-0 rounded-md bg-foreground/4 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/80 transition-[opacity,background-color,color]",
                   "opacity-0 group-hover:opacity-100 focus:opacity-100",
                   "hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 )}
@@ -1211,6 +1692,8 @@ function TreeNodeImpl({
 
       <LinkRepoDialog open={linkRepoOpen} onOpenChange={setLinkRepoOpen} parentPath={node.path} />
 
+      <ConnectGithubDialog open={githubConnectOpen} onOpenChange={setGithubConnectOpen} parentPath={node.path} />
+
       <ConnectKnowledgeDialog
         open={connectKnowledgeOpen}
         onOpenChange={setConnectKnowledgeOpen}
@@ -1225,6 +1708,9 @@ function TreeNodeImpl({
         }}
         onNotion={() => setNotionConnectOpen(true)}
         onAppleNotes={() => setAppleNotesConnectOpen(true)}
+        onGithub={() => {
+          setGithubConnectOpen(true);
+        }}
       />
 
       <NotionConnectDialog

@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Sayfayı dışa aktar",
+      "focus": "Odaklan",
+      "exitFocus": "Odaklanmayı bırak",
       "copyMarkdown": "Markdown'ı Kopyala",
       "copyForLlms": "LLM'ler için Kopyala",
       "copyAsHtml": "HTML olarak Kopyala",

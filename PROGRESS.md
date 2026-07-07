@@ -1499,6 +1499,14 @@
 
 [2026-06-20] Rebuilt the agent "Channels" (internal team-chat) viewer orphaned by the v2 agents migration. Found the whole src/components/mission-control/ dir is unmounted dead code (no route, nothing imports MissionControl/SlackPanel) — but the backend is live: agents still post to data/.agents/.slack/ every heartbeat (280KB, 25 channels, 91 msgs in #general) with no in-app viewer. Reused the existing live SlackPanel instead of rewriting: added a `fill` prop (h-full, hides the resize-dock chrome) and mounted it as a new "Channels" tab in the v2 Team workspace (tabs-layout.tsx, full-bleed like Schedule). Wired the tab through AgentsTabKey/ALL_TABS (agents-workspace-v2), AgentsTab/isAgentsTab (route-scheme), AGENTS_SUB_TABS (use-hash-route), and app-store agentsTab. Renamed the visible "Agent Slack" label -> "Channels" so it stops colliding with the real Slack MCP connector in the Integrations Hub. Left slack-manager/notification-service/heartbeat writes intact (user chose keep-and-rebuild over rip-out). Verified in-browser at /room/<home>/-/agents/channels: tab renders + fills, shows all 25 channel pills + 91 #general messages + composer. tsc 0 errors.
 
+[2026-07-03] Added the ability to connect remote GitHub repositories to Cabinet from the Connect Knowledge dialog. Clones the remote repository, writes .repo.yaml and .cabinet-meta configurations, and creates a symlink in the active Cabinet room.
+
+[2026-07-03] Fixed GitHub connection EEXIST error for inline-cloned repositories by skipping symbolic link creation when the local clone path matches the target Cabinet path. Defaulted the local clone directory input to the right-clicked parent folder's absolute path.
+
+[2026-07-03] Changed the logo for Confluence in the Connect Knowledge popup window to the Atlassian Confluence SVG logo from Wikimedia Commons.
+
+
+
 [2026-07-04] Paste UX: a bare URL pasted on its own line no longer force-embeds a generic web page (many sites refuse framing → dead "refused to connect" grey box). Now it drops a plain link plus an inline Link/Embed chooser (new paste-link-menu.tsx); default = Link (Esc / keep typing keeps it), and Embed is gated on /api/browser/frame-check so framing-hostile sites (e.g. gumloop.com) show Embed disabled with a "can't be framed" tooltip. Media providers (YouTube/Vimeo/Loom/Spotify/tweets) still auto-embed anywhere; video files still embed on their own line. editor.tsx handlePaste branch + menu wiring; tsc 0 errors, lint clean, frame-check verified live (gumloop blocked:true, example.com blocked:false).
 
 [2026-07-04] Embed → link: added a hover "Link" button (top-right) on embed blocks that replaces the embed with a plain link back to its original URL (originalUrl ?? src), via insertContentAt over the node range. Works for all providers; hidden on read-only mounts (editor.isEditable guard). Completes the round-trip with the paste chooser (link⇄embed both directions). embed-extension.tsx; tsc + lint clean.

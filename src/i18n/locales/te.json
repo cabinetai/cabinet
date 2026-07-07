@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "పేజీని ఎగుమతి చేయండి",
+      "focus": "ఫోకస్",
+      "exitFocus": "ఫోకస్ నుండి బయటకు",
       "copyMarkdown": "మార్క్‌డౌన్ కాపీ చేయండి",
       "copyForLlms": "LLMల కోసం కాపీ చేయండి",
       "copyAsHtml": "HTMLగా కాపీ చేయండి",

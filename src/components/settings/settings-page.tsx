@@ -13,8 +13,6 @@ import {
   Bell,
   Cpu,
   Stethoscope,
-  Eye,
-  EyeOff,
   Save,
   Loader2,
   CloudDownload,
@@ -36,13 +34,27 @@ import {
   ArrowRight,
   CheckCircle2,
   ShieldAlert,
+  Plug,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SkillLibrary } from "@/components/skills/skill-library";
 import { DataLocationsSection } from "@/components/settings/data-locations-section";
 import { UninstallSection } from "@/components/settings/uninstall-section";
+import { ApiKeysSection } from "@/components/settings/api-keys-section";
+import { CliMcpSection } from "@/components/settings/cli-mcp-section";
+import { IntegrationsHubSection } from "@/components/settings/integrations-hub-section";
+import { BuiltInToolsSection } from "@/components/settings/built-in-tools-section";
+import { ExtensionsSection } from "@/components/settings/extensions-section";
+import { EditorSettingsSection } from "@/components/settings/editor-settings-section";
 import { UpdateSummary } from "@/components/system/update-summary";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useTheme } from "@/components/theme-provider";
@@ -65,9 +77,9 @@ import {
 } from "@/components/composer/task-runtime-picker";
 import { isAgentProviderSelectable } from "@/lib/agents/provider-filters";
 import { cn } from "@/lib/utils";
-import { showError } from "@/lib/ui/toast";
+import { showError, showSuccess } from "@/lib/ui/toast";
 import { confirmDialog } from "@/lib/ui/confirm";
-import type { ProviderInfo } from "@/types/agents";
+import type { ProviderInfo, ProviderModel, AgentListItem } from "@/types/agents";
 import { UserAvatar } from "@/components/layout/user-avatar";
 import {
   refreshUserProfile,
@@ -89,6 +101,7 @@ import {
   type AvatarPreset,
 } from "@/lib/agents/avatar-catalog";
 import Image from "next/image";
+import palettesSeed from "@/components/settings/color-palettes.json";
 import { sendTelemetry } from "@/lib/telemetry/browser";
 import {
   recordWaitlistView,
@@ -105,31 +118,11 @@ import {
 } from "@/i18n";
 import { submitLanguageRequest } from "@/lib/telemetry/language-request-client";
 
-interface McpServer {
-  name: string;
-  command: string;
-  enabled: boolean;
-  env: Record<string, string>;
-  description?: string;
-}
+type ColorPalettesMap = Record<string, string[]>;
 
-interface IntegrationConfig {
-  mcp_servers: Record<string, McpServer>;
-  notifications: {
-    browser_push: boolean;
-    telegram: { enabled: boolean; bot_token: string; chat_id: string };
-    slack_webhook: { enabled: boolean; url: string };
-    email: { enabled: boolean; frequency: "hourly" | "daily"; to: string };
-  };
-  scheduling: {
-    max_concurrent_agents: number;
-    default_heartbeat_interval: string;
-    active_hours: string;
-    pause_on_error: boolean;
-  };
-}
+type Tab = "profile" | "providers" | "skills" | "storage" | "integrations" | "notifications" | "appearance" | "updates" | "about" | "extensions";
 
-type Tab = "profile" | "providers" | "skills" | "storage" | "notifications" | "appearance" | "updates" | "about";
+const VALID_TABS: Tab[] = ["profile", "providers", "skills", "storage", "integrations", "notifications", "appearance", "extensions", "updates", "about"];
 
 function TerminalCommand({ command }: { command: string }) {
   const { t } = useLocale();
@@ -370,6 +363,25 @@ function LanguageSection() {
 }
 
 const REQUESTED_LOCALES_KEY = "cabinet-requested-locales";
+const CANVAS_SELECTED_PALETTES_KEY = "cabinet-canvas-selected-palettes";
+
+function formatPaletteDisplayName(name: string): string {
+  return name
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function normalizePaletteName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function normalizeHexColor(value: string): string {
+  const next = value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(next)) return next.toUpperCase();
+  if (/^[0-9a-fA-F]{6}$/.test(next)) return `#${next.toUpperCase()}`;
+  return "";
+}
 
 export function SettingsPage() {
   const { t } = useLocale();
@@ -424,12 +436,15 @@ export function SettingsPage() {
     }
   };
   const [dataDir, setDataDir] = useState("");
+  const [publicRepo, setPublicRepo] = useState("");
+  const [publicRepoPending, setPublicRepoPending] = useState("");
+  const [publicRepoSaving, setPublicRepoSaving] = useState(false);
+  const [publicSyncing, setPublicSyncing] = useState(false);
   const [dataDirCopied, setDataDirCopied] = useState(false);
   const [dataDirPending, setDataDirPending] = useState<string | null>(null);
   const [dataDirBrowsing, setDataDirBrowsing] = useState(false);
   const [dataDirSaving, setDataDirSaving] = useState(false);
   const [dataDirRestartNeeded, setDataDirRestartNeeded] = useState(false);
-  const VALID_TABS: Tab[] = ["profile", "providers", "skills", "storage", "notifications", "appearance", "updates", "about"];
   const initialTab = (() => {
     const slug = useAppStore.getState().section.slug as Tab | undefined;
     return slug && VALID_TABS.includes(slug) ? slug : "profile";
@@ -447,9 +462,11 @@ export function SettingsPage() {
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true;
-      // Set hash on first render if it's just #/settings
+      // Set hash on first render if it's just #/settings. `initialTab`
+      // equals `tab` on mount, and using it keeps this effect's dependency
+      // list honest without resubscribing on every tab switch.
       if (!useAppStore.getState().section.slug) {
-        useAppStore.getState().setSection({ type: "settings", slug: tab });
+        useAppStore.getState().setSection({ type: "settings", slug: initialTab });
       }
     }
     const unsub = useAppStore.subscribe((state, prev) => {
@@ -461,12 +478,25 @@ export function SettingsPage() {
       }
     });
     return unsub;
-  }, []);
-  const [config, setConfig] = useState<IntegrationConfig | null>(null);
-  const [configLoading, setConfigLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [revealedKeys, setRevealedKeys] = useState<Set<string>>(new Set());
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (tab === "storage") {
+      fetch("/api/agents/config/cabinet-env")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && Array.isArray(data.entries)) {
+            const entry = data.entries.find((e: { key: string; value?: string }) => e.key === "PUBLIC_DIRECTORY_GITHUB_REPO");
+            if (entry && entry.value) {
+              setPublicRepo(entry.value);
+              setPublicRepoPending(entry.value);
+            }
+          }
+        })
+        .catch(() => {});
+    }
+  }, [tab]);
+
   const [activeThemeName, setActiveThemeName] = useState<string | null>(null);
   // Audit #045: theme mode state.
   const [themeMode, setThemeModeState] = useState<ThemeMode>("manual");
@@ -477,6 +507,16 @@ export function SettingsPage() {
   const [telemetryEnabled, setTelemetryEnabled] = useState<boolean | null>(null);
   const [telemetryEnvDisabled, setTelemetryEnvDisabled] = useState(false);
   const [telemetrySaving, setTelemetrySaving] = useState(false);
+  const [colorPalettes, setColorPalettes] = useState<ColorPalettesMap>(() => palettesSeed as ColorPalettesMap);
+  const [selectedPalettes, setSelectedPalettes] = useState<Set<string>>(new Set());
+  const selectedPalettesLoadedRef = useRef(false);
+  const [addPaletteOpen, setAddPaletteOpen] = useState(false);
+  const [resetPalettesOpen, setResetPalettesOpen] = useState(false);
+  const [newPaletteName, setNewPaletteName] = useState("");
+  const [newPaletteColors, setNewPaletteColors] = useState<string[]>(["#000000", "#000000", "#000000", "#000000", "#000000", "#000000"]);
+  const [paletteSaving, setPaletteSaving] = useState(false);
+  const [paletteResetting, setPaletteResetting] = useState(false);
+  const [paletteError, setPaletteError] = useState<string | null>(null);
   const { setTheme: setNextTheme } = useTheme();
   const {
     update,
@@ -604,6 +644,154 @@ export function SettingsPage() {
     }
   }, []);
 
+  const loadColorPalettes = useCallback(async () => {
+    try {
+      const res = await fetch("/api/color-palettes");
+      if (!res.ok) return;
+      const data = (await res.json()) as { palettes?: ColorPalettesMap };
+      if (data.palettes && typeof data.palettes === "object") {
+        setColorPalettes(data.palettes);
+      }
+    } catch {
+      // ignore
+    }
+    if (typeof window !== "undefined") {
+      try {
+        const raw = window.localStorage.getItem(CANVAS_SELECTED_PALETTES_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as unknown;
+          if (Array.isArray(parsed)) {
+            const names = parsed.filter((item): item is string => typeof item === "string");
+            setSelectedPalettes(new Set(names));
+          }
+        }
+      } catch {
+        // ignore
+      } finally {
+        selectedPalettesLoadedRef.current = true;
+      }
+    }
+  }, []);
+
+  const saveColorPalettes = useCallback(async (nextPalettes: ColorPalettesMap) => {
+    setPaletteSaving(true);
+    setPaletteError(null);
+    try {
+      const res = await fetch("/api/color-palettes", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ palettes: nextPalettes }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setPaletteError(data?.error || "Failed to save color palettes");
+        return false;
+      }
+      return true;
+    } catch {
+      setPaletteError("Failed to save color palettes");
+      return false;
+    } finally {
+      setPaletteSaving(false);
+    }
+  }, []);
+
+  const resetColorPalettes = useCallback(async () => {
+    setPaletteResetting(true);
+    setPaletteError(null);
+    try {
+      const res = await fetch("/api/color-palettes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reset" }),
+      });
+      const data = (await res.json().catch(() => null)) as { palettes?: ColorPalettesMap; error?: string } | null;
+      if (!res.ok || !data?.palettes) {
+        setPaletteError(data?.error || "Failed to reset color palettes");
+        return false;
+      }
+      const palettes = data.palettes;
+      setColorPalettes(palettes);
+      setSelectedPalettes((prev) => {
+        const allowed = new Set(Object.keys(palettes));
+        return new Set(Array.from(prev).filter((name) => allowed.has(name)));
+      });
+      window.dispatchEvent(
+        new CustomEvent("cabinet:toast", {
+          detail: {
+            kind: "success",
+            message: "Canvas color palettes reset",
+          },
+        })
+      );
+      return true;
+    } catch {
+      setPaletteError("Failed to reset color palettes");
+      return false;
+    } finally {
+      setPaletteResetting(false);
+    }
+  }, []);
+
+  const togglePaletteSelection = useCallback((name: string, checked: boolean) => {
+    setSelectedPalettes((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(name);
+      else next.delete(name);
+      return next;
+    });
+  }, []);
+
+  const deletePalette = useCallback(async (name: string) => {
+    const nextPalettes = { ...colorPalettes };
+    delete nextPalettes[name];
+    const ok = await saveColorPalettes(nextPalettes);
+    if (!ok) return;
+    setColorPalettes(nextPalettes);
+    setSelectedPalettes((prev) => {
+      const next = new Set(prev);
+      next.delete(name);
+      return next;
+    });
+  }, [colorPalettes, saveColorPalettes]);
+
+  const saveNewPalette = useCallback(async () => {
+    const normalizedName = normalizePaletteName(newPaletteName);
+    if (!normalizedName) {
+      setPaletteError("Palette name is required");
+      return;
+    }
+    const normalizedColors = newPaletteColors.map(normalizeHexColor);
+    if (normalizedColors.some((color) => !color)) {
+      setPaletteError("All colors must be valid hex values");
+      return;
+    }
+    if (colorPalettes[normalizedName]) {
+      setPaletteError("A palette with this name already exists");
+      return;
+    }
+    const nextPalettes = {
+      ...colorPalettes,
+      [normalizedName]: normalizedColors,
+    };
+    const ok = await saveColorPalettes(nextPalettes);
+    if (!ok) return;
+    setColorPalettes(nextPalettes);
+    setAddPaletteOpen(false);
+    setNewPaletteName("");
+    setNewPaletteColors(["#000000", "#000000", "#000000", "#000000", "#000000", "#000000"]);
+    setPaletteError(null);
+  }, [newPaletteName, newPaletteColors, colorPalettes, saveColorPalettes]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !selectedPalettesLoadedRef.current) return;
+    window.localStorage.setItem(
+      CANVAS_SELECTED_PALETTES_KEY,
+      JSON.stringify(Array.from(selectedPalettes))
+    );
+    window.dispatchEvent(new CustomEvent("cabinet:canvas-selected-palettes-changed"));
+  }, [selectedPalettes]);
+
   const selectTheme = (themeDef: ThemeDefinition) => {
     applyTheme(themeDef);
     setActiveThemeName(themeDef.name);
@@ -619,17 +807,46 @@ export function SettingsPage() {
 
   const darkThemes = THEMES.filter((t) => t.type === "dark");
   const lightThemes = THEMES.filter((t) => t.type === "light");
+  const paletteEntries = useMemo(
+    () => Object.entries(colorPalettes).sort(([a], [b]) => a.localeCompare(b)),
+    [colorPalettes]
+  );
+
+  const [agents, setAgents] = useState<AgentListItem[]>([]);
+  const [dynamicModelsMap, setDynamicModelsMap] = useState<Record<string, ProviderModel[]>>({});
 
   const refresh = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch("/api/agents/providers");
-      if (res.ok) {
-        const data = await res.json();
-        setProviders(data.providers || []);
+      const [provRes, agentRes] = await Promise.all([
+        fetch("/api/agents/providers"),
+        fetch("/api/agents/personas"),
+      ]);
+      if (provRes.ok) {
+        const data = await provRes.json();
+        const loadedProviders = data.providers || [];
+        setProviders(loadedProviders);
         setDefaultProvider(data.defaultProvider || "");
         setDefaultModel(data.defaultModel || "");
         setDefaultEffort(data.defaultEffort || "");
+        
+        // Fetch dynamic models for enabled and ready providers
+        const dynamicProviders = loadedProviders.filter(
+          (p: ProviderInfo) => p.dynamicModels && p.enabled && p.available && p.authenticated
+        );
+        
+        for (const p of dynamicProviders) {
+          fetch(`/api/agents/providers/${p.id}/models`)
+            .then(res => res.json())
+            .then(data => {
+              setDynamicModelsMap(prev => ({ ...prev, [p.id]: data.models || [] }));
+            })
+            .catch(() => {});
+        }
+      }
+      if (agentRes.ok) {
+        const data = await agentRes.json();
+        setAgents(data.personas || []);
       }
     } catch {
       // ignore
@@ -696,38 +913,6 @@ export function SettingsPage() {
     return parts.join(", ");
   };
 
-  const loadConfig = useCallback(async () => {
-    setConfigLoading(true);
-    try {
-      const res = await fetch("/api/agents/config/integrations");
-      if (res.ok) {
-        setConfig(await res.json());
-      }
-    } catch {
-      // ignore
-    } finally {
-      setConfigLoading(false);
-    }
-  }, []);
-
-  const saveConfig = async () => {
-    if (!config) return;
-    setSaving(true);
-    try {
-      await fetch("/api/agents/config/integrations", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch {
-      // ignore
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const loadDataDir = useCallback(async () => {
     try {
       const res = await fetch("/api/system/data-dir");
@@ -742,38 +927,9 @@ export function SettingsPage() {
 
   useEffect(() => {
     refresh();
-    loadConfig();
     loadDataDir();
-  }, [refresh, loadConfig, loadDataDir]);
-
-  const toggleReveal = (key: string) => {
-    setRevealedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
-  const updateNotif = (path: string, value: unknown) => {
-    if (!config) return;
-    const parts = path.split(".");
-    const notif = { ...config.notifications } as Record<string, unknown>;
-    if (parts.length === 1) {
-      notif[parts[0]] = value;
-    } else {
-      notif[parts[0]] = { ...(notif[parts[0]] as Record<string, unknown>), [parts[1]]: value };
-    }
-    setConfig({ ...config, notifications: notif as IntegrationConfig["notifications"] });
-  };
-
-  const updateScheduling = (field: string, value: unknown) => {
-    if (!config) return;
-    setConfig({
-      ...config,
-      scheduling: { ...config.scheduling, [field]: value },
-    });
-  };
+    loadColorPalettes();
+  }, [refresh, loadDataDir, loadColorPalettes]);
 
   // Audit #040: 9 horizontal tabs broke the visual rhythm; switched to a
   // vertical rail (~200px) with three semantic groups. macOS Settings,
@@ -804,6 +960,8 @@ export function SettingsPage() {
         },
         { id: "skills", label: t("settings:tabs.skills"), icon: <Sparkles className="h-3.5 w-3.5" /> },
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
+        { id: "integrations", label: t("settings:tabs.integrations"), icon: <Plug className="h-3.5 w-3.5" /> },
+        { id: "extensions", label: "Extensions", icon: <Blocks className="h-3.5 w-3.5" /> },
       ],
     },
     {
@@ -836,7 +994,7 @@ export function SettingsPage() {
             variant="ghost"
             size="sm"
             className="h-7 gap-1.5 text-[12px]"
-            onClick={() => { refresh(); loadConfig(); }}
+            onClick={() => refresh()}
           >
             <RefreshCw className="h-3.5 w-3.5" />
             {t("settings:page.refresh")}
@@ -848,7 +1006,7 @@ export function SettingsPage() {
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <nav
           aria-label={t("settings:common.categoriesAriaLabel")}
-          className="hidden w-[212px] shrink-0 flex-col gap-3 border-e border-border bg-muted/10 px-2 py-3 md:flex"
+          className="hidden w-53 shrink-0 flex-col gap-3 border-e border-border bg-muted/10 px-2 py-3 md:flex"
         >
           {tabGroups.map((group) => (
             <div key={group.label} className="flex flex-col gap-0.5">
@@ -1105,6 +1263,65 @@ export function SettingsPage() {
                 </div>
               </div>
 
+              <div className="border-t border-border pt-6 space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="text-[13px] font-semibold">Canvas Color Palettes</h3>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={paletteSaving || paletteResetting}
+                      onClick={() => {
+                        setPaletteError(null);
+                        setResetPalettesOpen(true);
+                      }}
+                    >
+                      Reset
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => { setPaletteError(null); setAddPaletteOpen(true); }}>
+                      Add color palette
+                    </Button>
+                  </div>
+                </div>
+                {paletteError && <p className="text-[12px] text-rose-500">{paletteError}</p>}
+                <div className="space-y-2">
+                  {paletteEntries.map(([paletteName, colors]) => (
+                    <div
+                      key={paletteName}
+                      className="flex items-center gap-3 rounded-lg border border-border px-3 py-2"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedPalettes.has(paletteName)}
+                        onChange={(e) => togglePaletteSelection(paletteName, e.target.checked)}
+                        className="h-4 w-4 rounded border-border accent-primary"
+                      />
+                      <span className="text-[12px] font-medium min-w-45">{formatPaletteDisplayName(paletteName)}</span>
+                      <div className="flex items-center gap-0.5 rounded-full border border-border p-1 bg-muted/20">
+                        {colors.slice(0, 6).map((color, index) => (
+                          <div
+                            key={`${paletteName}-${index}`}
+                            className="h-4 w-8 rounded-sm border border-black/10"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="ms-auto text-muted-foreground hover:text-rose-500"
+                        disabled={paletteSaving}
+                        onClick={() => void deletePalette(paletteName)}
+                        title="Delete color palette"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="border-t border-border pt-6">
                 <h3 className="text-[13px] font-semibold mb-1">{t("settings:appearance.sidebar")}</h3>
                 <p className="text-[12px] text-muted-foreground mb-4">
@@ -1180,8 +1397,101 @@ export function SettingsPage() {
                 </div>
               </div>
 
+              <Dialog open={resetPalettesOpen} onOpenChange={setResetPalettesOpen}>
+                <DialogContent showCloseButton={false}>
+                  <DialogHeader>
+                    <DialogTitle>Reset canvas color palettes?</DialogTitle>
+                  </DialogHeader>
+                  <p className="text-[12px] text-muted-foreground">
+                    This will remove all custom color palettes. Only the original pastel color palettes will remain.
+                  </p>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setResetPalettesOpen(false)}
+                      disabled={paletteResetting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        const ok = await resetColorPalettes();
+                        if (!ok) return;
+                        setResetPalettesOpen(false);
+                      }}
+                      disabled={paletteResetting}
+                    >
+                      OK
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={addPaletteOpen} onOpenChange={setAddPaletteOpen}>
+                <DialogContent showCloseButton={false}>
+                  <DialogHeader>
+                    <DialogTitle>Add color palette</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <label className="text-[12px] font-medium">Name</label>
+                      <Input
+                        value={newPaletteName}
+                        onChange={(e) => setNewPaletteName(e.target.value)}
+                        placeholder="e.g. sunset dream"
+                      />
+                    </div>
+                    {newPaletteColors.map((color, index) => (
+                      <div key={`new-palette-color-${index}`} className="space-y-1">
+                        <label className="text-[12px] font-medium">Color {index + 1}</label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={normalizeHexColor(color) || "#000000"}
+                            onChange={(e) => {
+                              const next = [...newPaletteColors];
+                              next[index] = e.target.value.toUpperCase();
+                              setNewPaletteColors(next);
+                            }}
+                            className="h-9 w-12 cursor-pointer rounded border border-border bg-background p-1"
+                          />
+                          <Input
+                            value={color}
+                            onChange={(e) => {
+                              const next = [...newPaletteColors];
+                              next[index] = e.target.value;
+                              setNewPaletteColors(next);
+                            }}
+                            placeholder="#000000"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setAddPaletteOpen(false);
+                        setPaletteError(null);
+                      }}
+                      disabled={paletteSaving}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={() => void saveNewPalette()} disabled={paletteSaving}>
+                      Save
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
               <div className="border-t border-border pt-6">
                 <LanguageSection />
+              </div>
+
+              <div className="border-t border-border pt-6">
+                <EditorSettingsSection />
               </div>
             </div>
           )}
@@ -1338,6 +1648,134 @@ export function SettingsPage() {
               <StorageBackendSection />
 
               <div className="border-t border-border pt-6">
+                <h3 className="text-[14px] font-semibold mb-1">Public Directory (shared)</h3>
+                <p className="text-[12px] text-muted-foreground mb-4">
+                  Define the remote GitHub repository where the public Guest Room files will be pushed upon app exit.
+                </p>
+                <div className="space-y-4 max-w-md">
+                  <div className="space-y-2">
+                    <label className="text-[12px] font-medium text-muted-foreground">
+                      GitHub Repository URL or owner/repo
+                    </label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://github.com/username/repo.git or git@github.com:username/repo.git"
+                        value={publicRepoPending ?? ""}
+                        onChange={(e) => setPublicRepoPending(e.target.value)}
+                        className="font-mono text-[12px]"
+                      />
+                      <Button
+                        size="sm"
+                        disabled={publicRepoSaving || publicRepoPending === publicRepo}
+                        onClick={async () => {
+                          setPublicRepoSaving(true);
+                          try {
+                            const res = await fetch("/api/agents/config/cabinet-env", {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                key: "PUBLIC_DIRECTORY_GITHUB_REPO",
+                                value: publicRepoPending.trim(),
+                              }),
+                            });
+                            if (!res.ok) {
+                              const data = await res.json().catch(() => null);
+                              showError(data?.error || "Failed to save repository");
+                              return;
+                            }
+                            setPublicRepo(publicRepoPending.trim());
+                            showSuccess("Public directory repository saved");
+                          } catch {
+                            showError("Failed to save repository");
+                          } finally {
+                            setPublicRepoSaving(false);
+                          }
+                        }}
+                      >
+                        {publicRepoSaving ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin me-1.5" />
+                        ) : (
+                          <Save className="h-3.5 w-3.5 me-1.5" />
+                        )}
+                        Save
+                      </Button>
+                    </div>
+                    {publicRepo && (
+                      <div className="flex gap-2 pt-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8"
+                          disabled={publicRepoSaving || publicSyncing}
+                          onClick={async () => {
+                            setPublicSyncing(true);
+                            try {
+                              const res = await fetch("/api/pages/public/sync", {
+                                method: "POST",
+                              });
+                              if (!res.ok) {
+                                const data = await res.json().catch(() => null);
+                                showError(data?.error || "Failed to sync public directory");
+                                return;
+                              }
+                              const data = await res.json();
+                              if (data.skipped) {
+                                showSuccess(`Sync skipped: ${data.reason}`);
+                              } else {
+                                showSuccess(`Public directory synced to GitHub (${data.publicFilesCount} files)`);
+                              }
+                            } catch {
+                              showError("Failed to sync public directory");
+                            } finally {
+                              setPublicSyncing(false);
+                            }
+                          }}
+                        >
+                          {publicSyncing ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin me-1.5" />
+                          ) : (
+                            <RefreshCw className="h-3.5 w-3.5 me-1.5" />
+                          )}
+                          Sync Now
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-600 hover:bg-red-500/5 h-8 px-0"
+                          disabled={publicRepoSaving}
+                          onClick={async () => {
+                            if (!confirm("Are you sure you want to disconnect the public directory repository?")) {
+                              return;
+                            }
+                            setPublicRepoSaving(true);
+                            try {
+                              const res = await fetch("/api/agents/config/cabinet-env?key=PUBLIC_DIRECTORY_GITHUB_REPO", {
+                                method: "DELETE",
+                              });
+                              if (!res.ok) {
+                                const data = await res.json().catch(() => null);
+                                showError(data?.error || "Failed to remove repository");
+                                return;
+                              }
+                              setPublicRepo("");
+                              setPublicRepoPending("");
+                              showSuccess("Public directory repository disconnected");
+                            } catch {
+                              showError("Failed to remove repository");
+                            } finally {
+                              setPublicRepoSaving(false);
+                            }
+                          }}
+                        >
+                          Disconnect Repo
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-6">
                 <DataLocationsSection />
               </div>
 
@@ -1434,6 +1872,96 @@ export function SettingsPage() {
                           {t("settings:providers.defaultRuntimeHint")}
                         </p>
                       </div>
+
+                      {agents.length > 0 && (
+                        <div className="mb-3 rounded-lg border border-border bg-card p-3 space-y-2">
+                          <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                            Agent Runtime
+                          </label>
+                          <div className="space-y-2">
+                            {agents.map((agent) => {
+                              const availableProviders = providers.filter((p) => p.enabled && p.available && p.authenticated);
+                              const selectedModel = agent.model || "";
+                              const selectedProviderId = agent.provider || defaultProvider;
+                              const selectedValue = selectedModel ? `${selectedProviderId}::${selectedModel}` : "";
+                              
+                              return (
+                                <div key={agent.slug} className="flex items-center justify-between gap-3 bg-muted/30 border border-border/50 rounded-md p-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-base">{agent.emoji}</span>
+                                    <span className="text-[12px] font-medium">{agent.name}</span>
+                                  </div>
+                                  <select
+                                    className="bg-background border border-border rounded text-[11px] px-2 py-1 outline-none focus:border-primary/50 max-w-50 truncate"
+                                    value={selectedValue}
+                                    onChange={async (e) => {
+                                      const val = e.target.value;
+                                      // "Default" aligns the agent with the global default
+                                      // runtime: provider follows the default provider and
+                                      // model/effort are cleared so they resolve to the
+                                      // default runtime model at use time.
+                                      let newProviderId = defaultProvider || agent.provider;
+                                      let newModelId = "";
+                                      
+                                      if (val) {
+                                        const [pId, ...mParts] = val.split("::");
+                                        newProviderId = pId;
+                                        newModelId = mParts.join("::");
+                                      }
+                                      
+                                      setAgents((prev) => prev.map((a) => a.slug === agent.slug ? { ...a, provider: newProviderId, model: newModelId } : a));
+                                      try {
+                                        await fetch("/api/agents/personas", {
+                                          method: "POST",
+                                          headers: { "Content-Type": "application/json" },
+                                          // Send "" (not undefined — JSON.stringify drops
+                                          // undefined keys, leaving the server's partial
+                                          // merge to keep the stale model). "Default" also
+                                          // clears effort.
+                                          body: JSON.stringify({
+                                            slug: agent.slug,
+                                            provider: newProviderId,
+                                            model: newModelId,
+                                            ...(val ? {} : { effort: "" }),
+                                          }),
+                                        });
+                                      } catch {
+                                        // Ignore
+                                      }
+                                    }}
+                                  >
+                                    <option value="">Default</option>
+                                    {availableProviders.map((p) => {
+                                      const displayModels = p.dynamicModels && dynamicModelsMap[p.id] ? dynamicModelsMap[p.id] : (p.models || []);
+                                      if (displayModels.length === 0) return null;
+                                      
+                                      return (
+                                        <optgroup key={p.id} label={p.name}>
+                                          {displayModels.map((m) => (
+                                            <option key={`${p.id}::${m.id}`} value={`${p.id}::${m.id}`}>
+                                              {m.name || m.id}
+                                            </option>
+                                          ))}
+                                        </optgroup>
+                                      );
+                                    })}
+                                    {/* Keep selected model even if not in list (for dynamic models before hydration) */}
+                                    {selectedValue && !availableProviders.some(p => {
+                                      const checkModels = p.dynamicModels && dynamicModelsMap[p.id] ? dynamicModelsMap[p.id] : (p.models || []);
+                                      return p.id === selectedProviderId && checkModels.some(m => m.id === selectedModel);
+                                    }) && (
+                                      <option value={selectedValue}>{selectedProviderId} - {selectedModel}</option>
+                                    )}
+                                  </select>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground">
+                            Configure specific models for each agent. &ldquo;Default&rdquo; uses the global default runtime.
+                          </p>
+                        </div>
+                      )}
 
                       <h4 className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
                         {t("settings:providers.cliAgents")}
@@ -1755,6 +2283,49 @@ export function SettingsPage() {
           {/* Skills Tab */}
           {tab === "skills" && <SkillsSettings />}
 
+          {/* Integrations Tab */}
+          {tab === "integrations" && (
+            <div className="space-y-8">
+              <ApiKeysSection />
+
+              {/* Integrations + Built-in tools — coming soon (blurred preview) */}
+              <div className="relative">
+                <div className="pointer-events-none select-none blur-[2px] opacity-70 space-y-8" aria-hidden="true">
+                  <IntegrationsHubSection />
+                  <BuiltInToolsSection />
+                </div>
+
+                {/* Coming Soon overlay */}
+                <div className="absolute inset-0 flex items-start justify-center pt-10">
+                  <div className="flex flex-col items-center gap-2 bg-background/80 backdrop-blur-sm rounded-xl px-8 py-6 border border-border shadow-lg">
+                    <Plug className="h-6 w-6 text-muted-foreground/50" />
+                    <span className="text-[13px] font-semibold">{t("settings:integrationsPreview.comingSoon")}</span>
+                    <p className="text-[12px] text-muted-foreground text-center max-w-55">
+                      {t("settings:integrationsPreview.hint")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <CliMcpSection />
+            </div>
+          )}
+
+          {/* Extensions Tab */}
+          {tab === "extensions" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-[15px] font-semibold tracking-[-0.02em] mb-1">
+                  Extensions
+                </h2>
+                <p className="text-[13px] text-muted-foreground leading-relaxed">
+                  Manage Chrome Web Store extensions for Cabinet&apos;s built-in browser.
+                </p>
+              </div>
+              <ExtensionsSection />
+            </div>
+          )}
+
           {/* Notifications Tab */}
           {tab === "notifications" && (
             <div className="relative">
@@ -1782,7 +2353,7 @@ export function SettingsPage() {
                             </div>
                           </div>
                           <div className="h-4 w-8 rounded-full bg-muted-foreground/30 relative">
-                            <span className="absolute top-0.5 start-0.5 h-3 w-3 rounded-full bg-white" />
+                            <span className="absolute top-0.5 inset-s-0.5 h-3 w-3 rounded-full bg-white" />
                           </div>
                         </div>
                       </div>
@@ -1819,7 +2390,7 @@ export function SettingsPage() {
                 <div className="flex flex-col items-center gap-2 bg-background/80 backdrop-blur-sm rounded-xl px-8 py-6 border border-border shadow-lg">
                   <Bell className="h-6 w-6 text-muted-foreground/50" />
                   <span className="text-[13px] font-semibold">{t("settings:notifications.comingSoon")}</span>
-                  <p className="text-[12px] text-muted-foreground text-center max-w-[220px]">
+                  <p className="text-[12px] text-muted-foreground text-center max-w-55">
                     {t("settings:notifications.previewHint")}
                   </p>
                 </div>
@@ -1857,7 +2428,7 @@ export function SettingsPage() {
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">{t("settings:about.storage")}</span>
-                  <span className="font-mono text-[12px] truncate max-w-[300px]" title={dataDir}>{dataDir || t("settings:about.storageValue")}</span>
+                  <span className="font-mono text-[12px] truncate max-w-75" title={dataDir}>{dataDir || t("settings:about.storageValue")}</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">{t("settings:about.aiLabel")}</span>
@@ -2024,7 +2595,7 @@ function ThemeThumbnail({ theme }: { theme: ThemeDefinition }) {
   return (
     <div
       style={style}
-      className="pointer-events-none relative h-[70px] w-full overflow-hidden rounded-md border border-[color:var(--border)]"
+      className="pointer-events-none relative h-17.5 w-full overflow-hidden rounded-md border border-border"
       aria-hidden="true"
     >
       <div
@@ -2383,7 +2954,7 @@ function wcagContrastVsWhite(hex: string): number | null {
     const v = c / 255;
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   });
-  const l = 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  const l = 0.2126 * rs + 0.7152 * gs + 0.722 * bs;
   // Avatar fallback uses white icon — only warn when white-on-color contrast is low.
   return (1.05) / (l + 0.05);
 }
@@ -2555,7 +3126,7 @@ function ProfileTab() {
               onChange={(e) =>
                 update({ workspace: { description: e.target.value } })
               }
-              className="min-h-[72px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="min-h-18 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
               placeholder={t("settings:workspace.descriptionPlaceholder")}
             />
           </Field>

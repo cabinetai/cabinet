@@ -21,6 +21,7 @@ import {
   moveTableRow,
   selectedRect,
 } from "@tiptap/pm/tables";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/i18n/use-locale";
 import { DirIcon } from "@/components/ui/dir-icon";
@@ -83,6 +84,27 @@ function MoveColumnEndIcon(props: { className?: string }) {
 
 export function TableMenu({ editor }: TableMenuProps) {
   const { t } = useLocale();
+
+  // Tiptap's BubbleMenu only re-evaluates shouldShow on editor
+  // transactions.  Clicking outside the editor (e.g. on the sidebar)
+  // produces no transaction, so the table toolbar can get stuck open.
+  // Listen for mousedown on the document and blur the editor when the
+  // click lands outside both the editor and any Tippy-managed popup.
+  useEffect(() => {
+    if (!editor) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (editor.view.dom.contains(target)) return;
+      if (target.closest("[data-tippy-root]")) return;
+      if (editor.isFocused) editor.commands.blur();
+    };
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => {
+      document.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, [editor]);
+
   if (!editor) return null;
 
   const getRect = () => {
@@ -144,7 +166,16 @@ export function TableMenu({ editor }: TableMenuProps) {
       editor={editor}
       pluginKey="tableMenu"
       options={{ placement: "top", offset: 10 }}
-      shouldShow={({ editor: activeEditor }) => activeEditor.isActive("table")}
+      shouldShow={({ editor: activeEditor, state, oldState }) => {
+        if (!activeEditor.isActive("table")) return false;
+        if (!activeEditor.isFocused) return false;
+        if (!activeEditor.state.selection.empty) return false;
+        // Hide while typing: a doc change in this update means the user is
+        // editing the cell. A pure selection change (clicking a cell,
+        // arrow keys) leaves the doc untouched and shows the toolbar.
+        if (oldState && !state.doc.eq(oldState.doc)) return false;
+        return true;
+      }}
       className="flex items-center gap-0.5 rounded-md border border-border bg-popover px-1 py-1 shadow-lg"
     >
       <TableButton label={t("editor:toolbar.table.selectCellText")} icon={Table} onAction={selectCellText} />

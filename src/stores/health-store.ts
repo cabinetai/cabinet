@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { dedupFetch } from "@/lib/api/dedup-fetch";
+import { beginStaleRecovery } from "@/lib/api/stale-process-client";
 
 export type ServiceLevel = "unknown" | "ok" | "degraded" | "down";
 export type InstallKind = "source-managed" | "source-custom" | "electron-macos";
@@ -69,6 +70,13 @@ export const useHealthStore = create<HealthState>((set, get) => ({
         const data = await appRes.value.clone().json();
         if (data && typeof data.installKind === "string") {
           nextInstallKind = data.installKind as InstallKind;
+        }
+        // The active cabinet was switched on disk but this process still points
+        // at the old one. Some read paths (tree/overview) serve stale content
+        // silently, so proactively recover here rather than waiting for a page
+        // fetch to hit the 503. Idempotent — safe to call every poll.
+        if (data && data.stale === true) {
+          beginStaleRecovery();
         }
       } catch {
         /* ignore */

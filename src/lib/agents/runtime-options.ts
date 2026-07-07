@@ -18,11 +18,15 @@ export function resolveProviderModel(
   fallbackModel?: string | null
 ): ProviderModel | undefined {
   const models = provider?.models || [];
-  if (models.length === 0) return undefined;
 
   const direct =
     matchesId(models, requestedModel) || matchesId(models, fallbackModel);
   if (direct) return direct;
+
+  // With no models at all there is nothing to resolve or preserve — return
+  // undefined regardless of the dynamic flag so callers don't fabricate a
+  // selection for a provider that exposes none.
+  if (models.length === 0) return undefined;
 
   // Dynamic-discovery providers (e.g. OpenCode) ship only an offline fallback
   // list until the client hydrates the real, entitlement-gated set. During

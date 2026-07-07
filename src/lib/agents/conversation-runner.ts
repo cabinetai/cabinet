@@ -1352,6 +1352,24 @@ async function runContinueInProcess(input: {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown adapter error";
+    // Spawn-time failures reject straight out of `adapter.execute` before any
+    // stderr is captured — a missing CLI binary surfaces here as
+    // "spawn <cmd> ENOENT". Classify the thrown message (exit code 1, never
+    // null, so it can't fall into the empty-output `transport` branch) so the
+    // UI offers the right remediation (Install / re-auth) instead of an opaque
+    // "Adapter crashed". Mirrors the daemon's spawn-error handling in
+    // cabinet-daemon.ts; this path runs for CABINET_TASK_RUNNER=inprocess and
+    // unit tests.
+    let crashClassified:
+      | import("../../types/conversations").ConversationErrorClassification
+      | null = null;
+    if (adapter.classifyError) {
+      try {
+        crashClassified = adapter.classifyError(message, 1);
+      } catch {
+        crashClassified = { kind: "unknown" };
+      }
+    }
     await updateAgentTurn(
       conversationId,
       pendingTurnNumber,
@@ -1363,6 +1381,17 @@ async function runContinueInProcess(input: {
       },
       cp
     );
+    if (crashClassified) {
+      const crashMeta = await readConversationMeta(conversationId, cp);
+      if (crashMeta) {
+        await writeConversationMeta({
+          ...crashMeta,
+          errorKind: crashClassified.kind,
+          errorHint: crashClassified.hint,
+          errorRetryAfterSec: crashClassified.retryAfterSec,
+        });
+      }
+    }
   }
 
   return readConversationMeta(conversationId, cp);

@@ -19,6 +19,7 @@ function ResizableImageComponent(props: NodeViewProps) {
   const attrs = node.attrs as ImageAttrs;
   const imgRef = useRef<HTMLImageElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const liveWidthRef = useRef<number | null>(null);
   const [liveWidth, setLiveWidth] = useState<number | null>(null);
 
   const align = attrs.align ?? "center";
@@ -32,24 +33,35 @@ function ResizableImageComponent(props: NodeViewProps) {
       const wrap = wrapperRef.current;
       if (!img || !wrap) return;
 
+      const target = e.currentTarget;
+      try {
+        target.setPointerCapture(e.pointerId);
+      } catch (err) {}
+
       const startX = e.clientX;
       const startWidth = img.getBoundingClientRect().width;
-      const containerWidth = wrap.parentElement?.getBoundingClientRect().width ?? 800;
+      
+      const editorEl = wrap.closest(".ProseMirror");
+      const containerWidth = editorEl ? editorEl.getBoundingClientRect().width - 32 : 800;
 
       const onMove = (ev: PointerEvent) => {
         const delta = anchor === "right" ? ev.clientX - startX : startX - ev.clientX;
         const next = Math.max(80, Math.min(containerWidth, startWidth + delta));
+        liveWidthRef.current = next;
         setLiveWidth(next);
       };
-      const onUp = () => {
+      const onUp = (ev: PointerEvent) => {
+        try {
+          target.releasePointerCapture(ev.pointerId);
+        } catch (err) {}
         window.removeEventListener("pointermove", onMove);
         window.removeEventListener("pointerup", onUp);
-        setLiveWidth((curr) => {
-          if (curr != null) {
-            updateAttributes({ width: Math.round(curr) });
-          }
-          return null;
-        });
+        const finalWidth = liveWidthRef.current;
+        liveWidthRef.current = null;
+        setLiveWidth(null);
+        if (finalWidth != null) {
+          updateAttributes({ width: Math.round(finalWidth) });
+        }
       };
       window.addEventListener("pointermove", onMove);
       window.addEventListener("pointerup", onUp);
@@ -94,6 +106,8 @@ function ResizableImageComponent(props: NodeViewProps) {
             <div
               aria-label={t("resizableImage:resizeLeft")}
               onPointerDown={(e) => beginResize(e, "left")}
+              onDragStart={(e) => e.preventDefault()}
+              draggable="false"
               className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
             >
               <div className="w-1 h-8 bg-white border border-black/40 rounded-full shadow" />
@@ -101,6 +115,8 @@ function ResizableImageComponent(props: NodeViewProps) {
             <div
               aria-label={t("resizableImage:resizeRight")}
               onPointerDown={(e) => beginResize(e, "right")}
+              onDragStart={(e) => e.preventDefault()}
+              draggable="false"
               className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
             >
               <div className="w-1 h-8 bg-white border border-black/40 rounded-full shadow" />

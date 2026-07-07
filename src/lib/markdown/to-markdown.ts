@@ -2,6 +2,7 @@ import TurndownService from "turndown";
 // @ts-expect-error — no types available for this package
 import { gfm } from "turndown-plugin-gfm";
 import { detectEmbed } from "@/lib/embeds/detect";
+import { serializeMdxComponent, type MdxProps } from "@/lib/mdx/jsx";
 
 const turndown = new TurndownService({
   headingStyle: "atx",
@@ -15,6 +16,33 @@ const turndown = new TurndownService({
 
 // Add GFM support (tables, strikethrough, task lists)
 turndown.use(gfm);
+
+// Drop the DocumentProperties panel — frontmatter is owned by the editor store
+// and serialized into the YAML block by page-io, so it must never leak into the
+// markdown body.
+turndown.addRule("documentProperties", {
+  filter: (node) =>
+    node.nodeName === "DIV" &&
+    (node as HTMLElement).getAttribute("data-document-properties") === "true",
+  replacement: () => "",
+});
+
+// Serialize live code blocks back to ```jsx live fenced blocks.
+// Must be registered BEFORE the generic codeBlock rule so it matches first.
+turndown.addRule("liveCodeBlock", {
+  filter: (node) => {
+    return (
+      node.nodeName === "PRE" &&
+      (node as HTMLElement).getAttribute("data-live-code") === "true"
+    );
+  },
+  replacement: (_content, node) => {
+    const el = node as HTMLElement;
+    const code = el.querySelector("code");
+    const text = code?.textContent ?? el.textContent ?? "";
+    return `\n\`\`\`jsx live\n${text}\n\`\`\`\n`;
+  },
+});
 
 // Task items, the Tiptap way. Tiptap (and our markdownToHtml) render a task
 // item as `<li data-type="taskItem" data-checked="…"><label><input></label>
@@ -43,7 +71,9 @@ turndown.addRule("codeBlock", {
     return (
       node.nodeName === "PRE" &&
       node.firstChild !== null &&
-      node.firstChild.nodeName === "CODE"
+      node.firstChild.nodeName === "CODE" &&
+      // Skip live code blocks — handled by the liveCodeBlock rule above.
+      (node as HTMLElement).getAttribute("data-live-code") !== "true"
     );
   },
   replacement: (_content, node) => {
@@ -67,6 +97,21 @@ turndown.addRule("wikiLink", {
       (node as HTMLElement).getAttribute("data-page-name") || content;
     return `[[${pageName}]]`;
   },
+});
+
+// Completely drop inline annotation tags/icons during HTML-to-markdown serialization
+turndown.addRule("ignoreAnnotationTag", {
+  filter: (node) =>
+    node.nodeName === "SPAN" &&
+    (node as HTMLElement).classList.contains("inline-annotation-tag"),
+  replacement: () => "",
+});
+
+turndown.addRule("ignoreAnnotationIcon", {
+  filter: (node) =>
+    node.nodeName === "SPAN" &&
+    (node as HTMLElement).classList.contains("inline-annotation-icon"),
+  replacement: () => "",
 });
 
 // Preserve inline styled spans (text color, background color, font weight, etc.)
@@ -146,6 +191,50 @@ turndown.addRule("video", {
       attrs.push(`${attr.name}="${attr.value.replace(/"/g, "&quot;")}"`);
     }
     return `<video${attrs.length ? " " + attrs.join(" ") : ""}></video>`;
+  },
+});
+
+// Serialize MDX component markers back to JSX. The editor stores each verified
+// component as <div data-mdx-component data-name data-props data-children>;
+// turndown turns it back into `<Name …/>` or `<Name …>children</Name>`.
+turndown.addRule("mdxComponent", {
+  filter: (node) =>
+    node.nodeName === "DIV" &&
+    (node as HTMLElement).hasAttribute("data-mdx-component"),
+  replacement: (_content, node) => {
+    const el = node as HTMLElement;
+    const name = el.getAttribute("data-name") ?? "";
+    if (!name) return "";
+    let props: MdxProps = {};
+    try {
+      props = JSON.parse(el.getAttribute("data-props") || "{}");
+    } catch {
+      props = {};
+    }
+    const children = el.getAttribute("data-children") ?? "";
+    return `\n${serializeMdxComponent(name, props, children)}\n`;
+  },
+});
+
+// Serialize callout blocks back to MyST admonition directives.
+turndown.addRule("callout", {
+  filter: (node) =>
+    node.nodeName === "DIV" &&
+    (node as HTMLElement).getAttribute("data-callout") === "true",
+  replacement: (content, node) => {
+    const el = node as HTMLElement;
+    const type = el.getAttribute("data-callout-type") || "info";
+    
+    // Map callout type back to MyST admonition directive name
+    const typeMap: Record<string, string> = {
+      info: "note",
+      warning: "warning",
+      error: "error",
+      success: "success",
+    };
+    const directive = typeMap[type] || "note";
+    
+    return `\n\n\`\`\`{${directive}}\n${content.trim()}\n\`\`\`\n\n`;
   },
 });
 
@@ -242,7 +331,12 @@ turndown.addRule("inlineMath", {
     return dataType === "inline-math" || dataType === "inlineMath";
   },
   replacement: (_content, node) => {
-    const latex = (node as HTMLElement).getAttribute("data-latex") ?? "";
+    const el = node as HTMLElement;
+    const latex = el.getAttribute("data-latex") ?? "";
+    const display = el.getAttribute("data-display");
+    if (display === "yes") {
+      return `\n\n$$${latex}$$\n\n`;
+    }
     return `$${latex}$`;
   },
 });
@@ -264,6 +358,50 @@ turndown.addRule("alignedBlock", {
   },
 });
 
-export function htmlToMarkdown(html: string): string {
-  return turndown.turndown(html);
+// Serialize LaTeX embed blocks back to ![[file.tex]] syntax.
+turndown.addRule("latexEmbed", {
+  filter: (node) =>
+    node.nodeName === "DIV" &&
+    (node as HTMLElement).getAttribute("data-latex-embed") === "true",
+  replacement: (_content, node) => {
+    const el = node as HTMLElement;
+    const path = el.getAttribute("data-path") ?? "";
+    return `\n![[${path}]]\n`;
+  },
+});
+
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function htmlToMarkdown(html: string, pagePath?: string | null, assetBase?: string | null): string {
+  let md = turndown.turndown(html);
+  const base = assetBase || pagePath;
+  if (base) {
+    const escapedBase = base.split("/").map(encodeURIComponent).join("/");
+    const p1 = escapeRegExp(base);
+    const p2 = escapeRegExp(escapedBase);
+
+    // Replace "/api/assets/base/filename" with "./filename"
+    // 1. Markdown image syntax: ![alt](/api/assets/path/file.ext)
+    const markdownImgRegex = new RegExp(`!\\\[(.*?)\\\]\\(/api/assets/(?:${p1}|${p2})/([^)]+)\\)`, "g");
+    md = md.replace(markdownImgRegex, "![$1](./$2)");
+
+    // 2. Markdown link syntax: [text](/api/assets/path/file.ext)
+    const markdownLinkRegex = new RegExp(`\\\[(.*?)\\\]\\(/api/assets/(?:${p1}|${p2})/([^)]+)\\)`, "g");
+    md = md.replace(markdownLinkRegex, "[$1](./$2)");
+
+    // 3. HTML src attribute: src="/api/assets/path/file.ext"
+    const srcRegex = new RegExp(`src="/api/assets/(?:${p1}|${p2})/([^"]+)"`, "g");
+    md = md.replace(srcRegex, `src="./$1"`);
+
+    // 4. HTML data-src attribute: data-src="/api/assets/path/file.ext"
+    const dataSrcRegex = new RegExp(`data-src="/api/assets/(?:${p1}|${p2})/([^"]+)"`, "g");
+    md = md.replace(dataSrcRegex, `data-src="./$1"`);
+
+    // 5. HTML href attribute: href="/api/assets/path/file.ext"
+    const hrefRegex = new RegExp(`href="/api/assets/(?:${p1}|${p2})/([^"]+)"`, "g");
+    md = md.replace(hrefRegex, `href="./$1"`);
+  }
+  return md;
 }

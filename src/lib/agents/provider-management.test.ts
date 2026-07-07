@@ -10,8 +10,11 @@ import {
   updateProviderSettingsWithMigrations,
 } from "./provider-management";
 import { writeProviderSettings } from "./provider-settings";
+import { DATA_DIR } from "@/lib/storage/path-utils";
 
-const AGENTS_DIR = path.join(process.cwd(), "data", ".agents");
+// Cabinets nest content under data/<activeCabinet>; DATA_DIR resolves to that
+// content root so these fixtures land where provider-management reads them.
+const AGENTS_DIR = path.join(DATA_DIR, ".agents");
 
 async function writeRawPersona(slug: string, provider: string): Promise<string> {
   const agentDir = path.join(AGENTS_DIR, slug);
@@ -66,7 +69,7 @@ test("provider settings update reports conflicts for providers still assigned to
   };
   const agentDir = await writeRawPersona(slug, "claude-code");
   await writeRawJob(slug, "job-conflict", "claude-code");
-  const providersPath = path.join(process.cwd(), "data", ".agents", ".config", "providers.json");
+  const providersPath = path.join(AGENTS_DIR, ".config", "providers.json");
   const originalSettings = await fs.readFile(providersPath, "utf8").catch(() => null);
 
   t.after(async () => {
@@ -115,7 +118,7 @@ test("provider settings update migrates assigned personas and jobs before disabl
   const agentDir = await writeRawPersona(slug, "claude-code");
   const jobPath = await writeRawJob(slug, "job-migrate", "claude-code");
   const personaPath = path.join(agentDir, "persona.md");
-  const providersPath = path.join(process.cwd(), "data", ".agents", ".config", "providers.json");
+  const providersPath = path.join(AGENTS_DIR, ".config", "providers.json");
   const originalSettings = await fs.readFile(providersPath, "utf8").catch(() => null);
 
   t.after(async () => {

@@ -365,6 +365,10 @@ function registerHandlers() {
     });
     view.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     view.setVisible(false);
+    view.setBackgroundColor("#00ffffff");
+    if (typeof view.setBorderRadius === "function") {
+      view.setBorderRadius(20);
+    }
 
     const defaultUA = view.webContents.userAgent || "";
     view.webContents.userAgent = defaultUA

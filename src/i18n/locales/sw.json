@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Hamisha ukurasa",
+      "focus": "Lenga",
+      "exitFocus": "Toka kwenye hali ya kuzingatia",
       "copyMarkdown": "Nakili Markdown",
       "copyForLlms": "Nakili kwa LLMs",
       "copyAsHtml": "Nakili kama HTML",

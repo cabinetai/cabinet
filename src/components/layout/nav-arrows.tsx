@@ -8,10 +8,12 @@ import { DirIcon } from "@/components/ui/dir-icon";
 
 export function NavArrows() {
   const { t } = useLocale();
-  const canGoBack = useAppStore((s) => s.canGoBack);
-  const canGoForward = useAppStore((s) => s.canGoForward);
+  const navIndex = useAppStore((s) => s.navIndex);
+  const navHistoryLength = useAppStore((s) => s.navHistory.length);
   const goBack = useAppStore((s) => s.goBack);
   const goForward = useAppStore((s) => s.goForward);
+  const canGoBack = navIndex > 0;
+  const canGoForward = navIndex >= 0 && navIndex < navHistoryLength - 1;
 
   return (
     <div className="flex shrink-0 items-center">

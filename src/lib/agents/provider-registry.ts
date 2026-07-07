@@ -7,6 +7,7 @@ import { geminiCliProvider } from "./providers/gemini-cli";
 import { grokCliProvider } from "./providers/grok-cli";
 import { openCodeProvider } from "./providers/opencode";
 import { piProvider } from "./providers/pi";
+import { ollamaProvider } from "./providers/ollama";
 
 class ProviderRegistryImpl implements ProviderRegistry {
   providers = new Map<string, AgentProvider>();
@@ -51,6 +52,7 @@ providerRegistry.register(openCodeProvider);
 providerRegistry.register(piProvider);
 providerRegistry.register(grokCliProvider);
 providerRegistry.register(copilotCliProvider);
+providerRegistry.register(ollamaProvider);
 
 // Future providers will be registered here:
 // providerRegistry.register(anthropicApiProvider);

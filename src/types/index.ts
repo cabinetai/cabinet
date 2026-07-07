@@ -1,4 +1,6 @@
 export interface FrontMatter {
+  /** Free-form classification (Obsidian-style). Defaults to "Untyped". */
+  type: string;
   title: string;
   created: string;
   modified: string;
@@ -9,6 +11,8 @@ export interface FrontMatter {
   google?: GoogleFrontmatter;
   /** Set on pages imported from Apple Notes — the upsert key for re-import. */
   appleNotes?: AppleNotesFrontmatter;
+  /** Arbitrary user-defined frontmatter properties (Obsidian-style). */
+  [key: string]: unknown;
 }
 
 export interface AppleNotesFrontmatter {
@@ -43,11 +47,14 @@ export interface TreeNode {
     | "video"
     | "audio"
     | "mermaid"
+    | "drawio"
+    | "excalidraw"
     | "docx"
     | "xlsx"
     | "pptx"
     | "notebook"
     | "latex"
+    | "typst"
     | "unknown";
   hasRepo?: boolean;
   isLinked?: boolean;

@@ -35,6 +35,16 @@ export async function register(): Promise<void> {
   } catch (err) {
     console.error("instrumentation: ensureAuthSalt failed", err);
   }
+  // Ensure the active cabinet (root cabinet) exists before anything reads or
+  // writes content: on first run this moves loose top-level content into a
+  // default cabinet directory and records it as active. Must run before the
+  // global-agents bootstrap, which writes into the cabinet's content root.
+  try {
+    const { ensureCabinetsMigrated } = await import("./lib/cabinets/cabinets");
+    await ensureCabinetsMigrated();
+  } catch (err) {
+    console.error("instrumentation: ensureCabinetsMigrated failed", err);
+  }
   try {
     const { ensureGlobalAgents } = await import("./lib/agents/library-manager");
     await ensureGlobalAgents();

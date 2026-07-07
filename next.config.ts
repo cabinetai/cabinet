@@ -51,6 +51,14 @@ const nextConfig: NextConfig = {
       "**/.DS_Store",
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/room/:path*\\.:ext(html|pdf|csv|ipynb|tex|latex|typ)",
+        destination: "/room/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

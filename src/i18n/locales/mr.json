@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "पृष्ठ निर्यात करा",
+      "focus": "फोकस",
+      "exitFocus": "फोकस सोडा",
       "copyMarkdown": "Markdown कॉपी करा",
       "copyForLlms": "LLMs साठी कॉपी करा",
       "copyAsHtml": "HTML म्हणून कॉपी करा",

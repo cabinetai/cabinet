@@ -160,21 +160,7 @@ function normalizeBookmarkNodes(nodes: BookmarkNode[]): BookmarkNode[] {
 function normalizeBookmarkUrl(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "about:blank";
-  if (trimmed.toLowerCase() === "about:blank") return "about:blank";
-  // Protocol-relative → assume https.
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  // host:port (e.g. localhost:3000, 127.0.0.1:8080) — the colon is a port
-  // separator, not a URL scheme, so keep the target and prefix https.
-  if (/^[a-zA-Z0-9.-]+:\d+(?:[/?#]|$)/.test(trimmed)) {
-    return `https://${trimmed}`;
-  }
-  const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
-  if (schemeMatch) {
-    const scheme = schemeMatch[1].toLowerCase();
-    // Only allow web schemes; reject file:, javascript:, data:, etc.
-    if (scheme === "http" || scheme === "https") return trimmed;
-    return "about:blank";
-  }
+  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed) || trimmed.startsWith("//")) return trimmed;
   return `https://${trimmed}`;
 }
 
@@ -198,8 +184,6 @@ function toBridgeBookmarkMenuItems(nodes: BookmarkNode[]): BrowserBookmarkMenuIt
 }
 
 function getBridge(): Partial<BrowserBridge> & { runtime?: "electron" } {
-  // Guard for SSR / non-browser environments where `window` is undefined.
-  if (typeof window === "undefined") return {};
   return (window as unknown as { CabinetDesktop?: Partial<BrowserBridge> & { runtime?: "electron" } })
     .CabinetDesktop ?? {};
 }
@@ -652,29 +636,6 @@ export function BrowserView() {
   const { t } = useLocale();
   const url = useAppStore((s) => s.browseUrl);
   const setAppMode = useAppStore((s) => s.setAppMode);
-
-  // Sandbox for the fallback iframe. `allow-same-origin` is only safe for
-  // *cross-origin* pages: there it just lets the external site use its own
-  // origin, and it can't reach our app. For a page served from our OWN origin,
-  // `allow-same-origin` + `allow-scripts` would let it script the host app and
-  // escape the sandbox, so we omit it for same-origin/unknown URLs.
-  const iframeSandbox = (() => {
-    const base = "allow-scripts allow-forms allow-modals allow-top-navigation-by-user-activation";
-    try {
-      if (url && typeof window !== "undefined") {
-        const u = new URL(url, window.location.origin);
-        if (
-          (u.protocol === "http:" || u.protocol === "https:") &&
-          u.origin !== window.location.origin
-        ) {
-          return `${base} allow-same-origin`;
-        }
-      }
-    } catch {
-      // fall through to the restrictive sandbox
-    }
-    return base;
-  })();
   const initialSessionRef = useRef<BrowserSessionState>(loadBrowserSessionState());
   const [addressValue, setAddressValue] = useState(toAddressBarValue(url ?? initialSessionRef.current.url ?? ""));
   const [browserMode, setBrowserMode] = useState<"initializing" | "electron" | "iframe">(() => {
@@ -688,6 +649,7 @@ export function BrowserView() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const iframeLoadTokenRef = useRef(0);
   const iframeLoadedTokenRef = useRef(0);
+  const [iframeLoadedToken, setIframeLoadedToken] = useState(0);
   const iframeHistoryRef = useRef<string[]>(initialSessionRef.current.history);
   const iframeHistoryIndexRef = useRef<number>(initialSessionRef.current.index);
   const iframeNavActionRef = useRef<"back" | "forward" | null>(null);
@@ -722,38 +684,7 @@ export function BrowserView() {
   useEffect(() => {
     if (url == null) return;
     setAddressValue(toAddressBarValue(url));
-
-    // In iframe mode there's no Electron navigation event to record history
-    // from (that's owned by onBrowserViewNavigated in electron mode), so track
-    // it here. Without this, iframeHistoryRef never grows and Back/Forward
-    // can't replay earlier pages.
-    if (browserMode !== "iframe") return;
-    const normalized = normalizeSessionUrl(url);
-    const navAction = iframeNavActionRef.current;
-    if (navAction === "back" || navAction === "forward") {
-      // Back/forward already moved the index; just clear the pending action.
-      iframeNavActionRef.current = null;
-      persistBrowserSessionState({
-        history: iframeHistoryRef.current,
-        index: iframeHistoryIndexRef.current,
-        url: normalized,
-      });
-      return;
-    }
-    const history = iframeHistoryRef.current;
-    const currentIndex = iframeHistoryIndexRef.current;
-    if (currentIndex >= 0 && history[currentIndex] === normalized) return;
-    // Genuine navigation: drop any forward entries and push the new URL.
-    const nextHistory = currentIndex >= 0 ? history.slice(0, currentIndex + 1) : [];
-    nextHistory.push(normalized);
-    iframeHistoryRef.current = nextHistory;
-    iframeHistoryIndexRef.current = nextHistory.length - 1;
-    persistBrowserSessionState({
-      history: nextHistory,
-      index: iframeHistoryIndexRef.current,
-      url: normalized,
-    });
-  }, [url, browserMode]);
+  }, [url]);
 
   useEffect(() => {
     const bridge = getBridge();
@@ -1002,19 +933,10 @@ export function BrowserView() {
   const navigateBack = () => {
     const applyAppHistoryBack = () => {
       const nextIndex = iframeHistoryIndexRef.current - 1;
-      const target = nextIndex >= 0 ? iframeHistoryRef.current[nextIndex] : null;
-      // No earlier real page to return to (we're at the first browsed page, and
-      // index 0 is the empty session seed). Rather than dead-ending on
-      // about:blank, fall back to the KB article we came from by exiting browse
-      // mode — this is the "back to the article" affordance.
-      if (nextIndex < 0 || !target || target === "about:blank") {
-        iframeNavActionRef.current = null;
-        setAppMode("edit");
-        return;
-      }
+      if (nextIndex < 0) return;
       iframeHistoryIndexRef.current = nextIndex;
       iframeNavActionRef.current = "back";
-      setAppMode("browse", target);
+      setAppMode("browse", iframeHistoryRef.current[nextIndex] || "about:blank");
     };
     if (browserMode === "electron") {
       const viewId = viewIdRef.current;
@@ -1185,15 +1107,7 @@ export function BrowserView() {
       }
       void createBrowserView(useAppStore.getState().browseUrl || "about:blank")
         .then((result) => {
-          if (cancelled) {
-            // We unmounted while the view was being created — the cleanup ran
-            // before viewIdRef was set, so destroy the now-orphaned view here
-            // to avoid leaking a whole WebContentsView (a Chromium renderer).
-            if (result?.ok && result.viewId && destroyBrowserView) {
-              void destroyBrowserView(result.viewId);
-            }
-            return;
-          }
+          if (cancelled) return;
           if (!result?.ok || !result.viewId) {
             failToIframe();
             return;
@@ -1444,6 +1358,11 @@ export function BrowserView() {
       setIframePolicyBlocked(false);
       return;
     }
+    const isInternalRoute = url.startsWith("/") || (typeof window !== "undefined" && url.startsWith(window.location.origin));
+    if (isInternalRoute) {
+      setIframePolicyBlocked(false);
+      return;
+    }
     let cancelled = false;
     const check = async () => {
       try {
@@ -1477,11 +1396,11 @@ export function BrowserView() {
       setIframeFailure(null);
       return;
     }
-    // Bump the token for each load attempt so the timeout below can tell
-    // whether *this* load fired onLoad. onLoad copies this value into
-    // iframeLoadedTokenRef; if it never does, loadedToken stays behind and we
-    // flag a failure.
-    iframeLoadTokenRef.current += 1;
+    const isInternalRoute = url.startsWith("/") || (typeof window !== "undefined" && url.startsWith(window.location.origin));
+    if (isInternalRoute) {
+      setIframeFailure(null);
+      return;
+    }
     const loadToken = iframeLoadTokenRef.current;
     const timer = window.setTimeout(() => {
       if (iframePolicyBlocked) {
@@ -1525,11 +1444,7 @@ export function BrowserView() {
     return () => {
       window.clearTimeout(timer);
     };
-    // NOTE: deliberately not depending on the load-completion signal — the
-    // timer reads iframeLoadedTokenRef directly. Re-running on load completion
-    // would bump the load token again and flag a false failure on a page that
-    // actually loaded fine.
-  }, [browserMode, url, iframeReloadKey, iframePolicyBlocked]);
+  }, [browserMode, url, iframeLoadedToken, iframePolicyBlocked]);
 
   useEffect(() => {
     void fetchBookmarks();
@@ -1684,8 +1599,8 @@ export function BrowserView() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <Header />
-      <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
-        <div className="grid grid-cols-[1fr_minmax(0,720px)_1fr] items-center gap-3 border-b border-border/70 bg-background/80 px-4 py-2 text-sm text-muted-foreground">
+      <div className="flex flex-1 min-h-0 flex-col overflow-hidden bg-[var(--gutter)]">
+        <div className="grid grid-cols-[1fr_minmax(0,720px)_1fr] items-center gap-3 border-b border-border/70 bg-[#F1E4D3] px-4 py-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2 truncate">
             <button
               type="button"
@@ -1816,26 +1731,22 @@ export function BrowserView() {
                   <div className="p-3 text-xs text-muted-foreground text-center">No extensions enabled</div>
                 ) : (
                   extensions.filter(ext => ext.enabled !== false).map(ext => (
-                    <div key={ext.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm group">
-                      <button
-                        type="button"
-                        onClick={(e) => handleRunExtension(ext, e)}
-                        className="flex items-center gap-2 flex-1 overflow-hidden text-left cursor-pointer focus:outline-none"
-                      >
+                    <div key={ext.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm cursor-pointer group">
+                      <div className="flex items-center gap-2 flex-1 overflow-hidden" onClick={(e) => handleRunExtension(ext, e)}>
                         {ext.iconDataUrl ? (
                           <img src={ext.iconDataUrl} alt="" className="w-4 h-4 object-contain shrink-0" />
                         ) : (
                           <Blocks className="h-4 w-4 shrink-0 text-muted-foreground" />
                         )}
                         <span className="truncate">{ext.name}</span>
-                      </button>
-                      <button
-                        type="button"
+                      </div>
+                      <button 
+                        type="button" 
                         onClick={(e) => {
                           e.stopPropagation();
                           handleToggleExtensionPin(ext);
                         }}
-                        className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1 hover:bg-muted rounded text-muted-foreground"
+                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded text-muted-foreground"
                         title={ext.pinned ? "Unpin extension" : "Pin extension"}
                       >
                         {ext.pinned ? <PinOff className="w-3.5 h-3.5" /> : <Pin className="w-3.5 h-3.5" />}
@@ -1861,7 +1772,7 @@ export function BrowserView() {
           </div>
         </div>
         {bookmarksBarVisible ? (
-          <div className="border-b border-border/70 bg-background/80 px-4 py-1.5">
+          <div className="border-b border-border/70 bg-[#F1E4D3] px-4 py-1.5">
             <div className="flex items-center gap-1.5 overflow-x-auto">
               {bookmarkBarNodes.length > 0 ? (
                 bookmarkBarNodes.map((node) => (
@@ -1884,7 +1795,15 @@ export function BrowserView() {
             </div>
           </div>
         ) : null}
-        <div ref={containerRef} className="relative flex-1 min-h-0">
+        <div
+          ref={containerRef}
+          className="relative flex-1 min-h-0 rounded-[20px] overflow-hidden bg-background"
+          style={{
+            transform: "translate3d(0, 0, 0)",
+            clipPath: "inset(0% 0% 0% 0% round 20px)",
+            isolation: "isolate",
+          }}
+        >
           {browserMode === "iframe" ? (
             <>
               <iframe
@@ -1894,9 +1813,15 @@ export function BrowserView() {
                 src={url || "about:blank"}
                 onLoad={() => {
                   iframeLoadedTokenRef.current = iframeLoadTokenRef.current;
+                  setIframeLoadedToken(iframeLoadTokenRef.current);
                 }}
-                className="h-full w-full border-0 bg-white"
-                sandbox={iframeSandbox}
+                className="h-full w-full border-0 bg-transparent"
+                style={{
+                  clipPath: "inset(0% 0% 0% 0% round 20px)",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                }}
+                sandbox="allow-same-origin allow-scripts allow-forms allow-modals allow-top-navigation-by-user-activation"
               />
               {iframeFailure ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/85 p-6 text-center">
@@ -1909,7 +1834,7 @@ export function BrowserView() {
             </>
           ) : (
             <>
-              <div className="h-full w-full bg-white" />
+              <div className="h-full w-full bg-transparent" />
               {electronFailure ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/85 p-6 text-center">
                   <div className="max-w-xl rounded border border-border bg-background px-4 py-3 text-sm text-muted-foreground">

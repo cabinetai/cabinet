@@ -41,8 +41,13 @@ const AUDIO_EXTENSIONS = new Set([
 
 const MERMAID_EXTENSIONS = new Set([".mermaid", ".mmd"]);
 
+const DRAWIO_EXTENSIONS = new Set([".drawio", ".dio"]);
+
+const EXCALIDRAW_EXTENSIONS = new Set([".excalidraw"]);
+
 const LATEX_EXTENSIONS = new Set([".tex", ".latex"]);
 
+const TYPST_EXTENSIONS = new Set([".typ"]);
 // Office types that Cabinet can render inline.
 const DOCX_EXTENSIONS = new Set([".docx"]);
 const XLSX_EXTENSIONS = new Set([".xlsx", ".xlsm"]);
@@ -62,8 +67,8 @@ const UNKNOWN_EXTENSIONS = new Set([
   ".zip", ".tar", ".tgz", ".gz", ".rar", ".7z",
   // Installers / packages
   ".dmg", ".pkg", ".apk", ".ipa", ".msi", ".deb", ".rpm",
-  // Design
-  ".fig", ".sketch", ".psd", ".ai", ".xd",
+  // Design / 3D
+  ".fig", ".sketch", ".psd", ".ai", ".xd", ".glb", ".gltf",
   // Other documents
   ".epub", ".mobi", ".rtf",
 ]);
@@ -75,7 +80,10 @@ function classifyFile(ext: string): TreeNode["type"] | null {
   if (VIDEO_EXTENSIONS.has(ext)) return "video";
   if (AUDIO_EXTENSIONS.has(ext)) return "audio";
   if (MERMAID_EXTENSIONS.has(ext)) return "mermaid";
+  if (DRAWIO_EXTENSIONS.has(ext)) return "drawio";
+  if (EXCALIDRAW_EXTENSIONS.has(ext)) return "excalidraw";
   if (LATEX_EXTENSIONS.has(ext)) return "latex";
+  if (TYPST_EXTENSIONS.has(ext)) return "typst";
   if (DOCX_EXTENSIONS.has(ext)) return "docx";
   if (XLSX_EXTENSIONS.has(ext)) return "xlsx";
   if (PPTX_EXTENSIONS.has(ext)) return "pptx";
@@ -92,6 +100,27 @@ async function readFrontmatter(
     return data;
   } catch {
     return {};
+  }
+}
+
+async function getPublicStatus(
+  entryName: string,
+  dirPath: string
+): Promise<boolean> {
+  const fullPath = path.join(dirPath, entryName);
+  const ext = path.extname(entryName).toLowerCase();
+  const isMarkdown = ext === ".md" || ext === ".mdx";
+
+  if (isMarkdown) {
+    const fm = await readFrontmatter(fullPath);
+    return fm.public === true;
+  } else {
+    const siblingPath = path.join(dirPath, `.${entryName}.md`);
+    if (await fileExists(siblingPath)) {
+      const siblingFm = await readFrontmatter(siblingPath);
+      return siblingFm.public === true;
+    }
+    return false;
   }
 }
 
@@ -151,11 +180,26 @@ async function buildTreeRecursive(
   const entries = await listDirectory(dirPath);
   const nodes: TreeNode[] = [];
 
-  // Collect directory names so we can skip standalone .md files that collide.
+  // Collect directory names so we can merge sibling .md files into folders.
   const dirNames = new Set(
     entries
       .filter((e) => e.isDirectory && (!isHiddenEntry(e.name) || showHidden))
       .map((e) => e.name)
+  );
+
+  // Names that have a sibling `<name>.md` — Sibling Pattern. The markdown file
+  // is the canonical page node; its same-named folder is merged into it (skip
+  // emitting a separate directory node so children attach to the .md node).
+  const mdBaseNames = new Set(
+    entries
+      .filter(
+        (e) =>
+          !e.isDirectory &&
+          (!isHiddenEntry(e.name) || showHidden) &&
+          e.name.endsWith(".md") &&
+          e.name !== "index.md"
+      )
+      .map((e) => e.name.replace(/\.md$/, ""))
   );
 
   // Read order sidecar for non-frontmatter files.
@@ -179,11 +223,16 @@ async function buildTreeRecursive(
     if (!showHidden && isHiddenEntry(entry.name)) continue;
     if (entry.name === "CLAUDE.md") continue;
     if (entry.name === ORDER_SIDECAR) continue;
+    // Per-cabinet whiteboard layout metadata — internal, never a tree node.
+    if (entry.name === "canvas.json") continue;
 
     const fullPath = path.join(dirPath, entry.name);
     const vPath = virtualPathFromFs(fullPath);
 
     if (entry.isDirectory) {
+      // Sibling Pattern: a `<name>/` folder paired with `<name>.md` is merged
+      // into the markdown node below — skip it here to avoid a duplicate.
+      if (mdBaseNames.has(entry.name)) continue;
       const indexMd = path.join(fullPath, "index.md");
       const indexHtml = path.join(fullPath, "index.html");
       const hasIndexMd = await fileExists(indexMd);
@@ -246,83 +295,148 @@ async function buildTreeRecursive(
           icon: fm.icon as string | undefined,
           order: (fm.order as number | undefined) ?? sidecarOrders[entry.name],
           google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
+          public: false,
+          hasSiblingPage: false,
         },
         children,
       });
-    } else if (entry.name.toLowerCase().endsWith(".pdf")) {
-      nodes.push({
-        name: entry.name,
-        path: vPath,
-        type: "pdf",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: entry.name.replace(/\.pdf$/i, ""),
-          order: sidecarOrders[entry.name],
-        },
-      });
-    } else if (entry.name.toLowerCase().endsWith(".csv")) {
-      nodes.push({
-        name: entry.name,
-        path: vPath,
-        type: "csv",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: entry.name.replace(/\.csv$/i, ""),
-          order: sidecarOrders[entry.name],
-        },
-      });
-    } else if (googleNativeKind(entry.name)) {
-      // Google Workspace shortcut (e.g. inside an inline-mounted Drive folder):
-      // show it with the native-doc icon + its web URL so it opens in the viewer.
-      const native = await parseGoogleNative(fullPath);
-      nodes.push({
-        name: entry.name,
-        path: vPath, // keep the extension so readPage resolves the shortcut file
-        type: "file",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: entry.name.replace(/\.(gdoc|gsheet|gslide|gslides|gform)$/i, ""),
-          order: sidecarOrders[entry.name],
-          google: native ? { kind: native.kind, url: native.url } : undefined,
-        },
-      });
     } else {
-      const ext = path.extname(entry.name).toLowerCase();
-      const fileType = classifyFile(ext);
-      if (fileType) {
+      const isPublic = await getPublicStatus(entry.name, dirPath);
+
+      if (entry.name.toLowerCase().endsWith(".pdf")) {
         nodes.push({
           name: entry.name,
           path: vPath,
-          type: fileType,
+          type: "pdf",
           knowledgePolicy: inheritedPolicy,
           frontmatter: {
-            title: entry.name.replace(new RegExp(`\\${ext}$`, "i"), ""),
+            title: entry.name.replace(/\.pdf$/i, ""),
             order: sidecarOrders[entry.name],
+            public: isPublic,
           },
         });
-        continue;
+      } else if (entry.name.toLowerCase().endsWith(".csv")) {
+        nodes.push({
+          name: entry.name,
+          path: vPath,
+          type: "csv",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title: entry.name.replace(/\.csv$/i, ""),
+            order: sidecarOrders[entry.name],
+            public: isPublic,
+          },
+        });
+      } else if (
+        entry.name.toLowerCase().endsWith(".drawio.svg") ||
+        entry.name.toLowerCase().endsWith(".drawio") ||
+        entry.name.toLowerCase().endsWith(".dio")
+      ) {
+        const lowerName = entry.name.toLowerCase();
+        const title = lowerName.endsWith(".drawio.svg")
+          ? entry.name.slice(0, -11)
+          : lowerName.endsWith(".drawio")
+          ? entry.name.slice(0, -7)
+          : entry.name.slice(0, -4);
+        nodes.push({
+          name: entry.name,
+          path: vPath,
+          type: "drawio",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title,
+            order: sidecarOrders[entry.name],
+            public: isPublic,
+          },
+        });
+      } else if (
+        entry.name.toLowerCase().endsWith(".excalidraw.svg") ||
+        entry.name.toLowerCase().endsWith(".excalidraw")
+      ) {
+        const lowerName = entry.name.toLowerCase();
+        const title = lowerName.endsWith(".excalidraw.svg")
+          ? entry.name.slice(0, -15)
+          : entry.name.slice(0, -11);
+        nodes.push({
+          name: entry.name,
+          path: vPath,
+          type: "excalidraw",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title,
+            order: sidecarOrders[entry.name],
+            public: isPublic,
+          },
+        });
+      } else if (googleNativeKind(entry.name)) {
+        // Google Workspace shortcut (e.g. inside an inline-mounted Drive folder):
+        // show it with the native-doc icon + its web URL so it opens in the viewer.
+        const native = await parseGoogleNative(fullPath);
+        nodes.push({
+          name: entry.name,
+          path: vPath, // keep the extension so readPage resolves the shortcut file
+          type: "file",
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title: entry.name.replace(/\.(gdoc|gsheet|gslide|gslides|gform)$/i, ""),
+            order: sidecarOrders[entry.name],
+            google: native ? { kind: native.kind, url: native.url } : undefined,
+            public: isPublic,
+          },
+        });
+      } else {
+        const ext = path.extname(entry.name).toLowerCase();
+        const fileType = classifyFile(ext);
+        if (fileType) {
+          nodes.push({
+            name: entry.name,
+            path: vPath,
+            type: fileType,
+            knowledgePolicy: inheritedPolicy,
+            frontmatter: {
+              title: entry.name.replace(new RegExp(`\\${ext}$`, "i"), ""),
+              order: sidecarOrders[entry.name],
+              public: isPublic,
+            },
+          });
+          continue;
+        }
       }
 
-    }
+      if (entry.name.endsWith(".md") && entry.name !== "index.md") {
+        // Sibling Pattern: `<name>.md` is the page; if a `<name>/` folder exists
+        // alongside it, merge the folder's entries in as this node's children so
+        // the page renders as one expandable item (content + sub-pages).
+        const baseName = entry.name.replace(/\.md$/, "");
+        const hasSiblingDir = dirNames.has(baseName);
 
-    if (entry.name.endsWith(".md") && entry.name !== "index.md") {
-      // Skip standalone .md if a same-named directory exists (avoids duplicate keys).
-      const baseName = entry.name.replace(/\.md$/, "");
-      if (dirNames.has(baseName)) continue;
-
-      const fm = await readFrontmatter(fullPath);
-      nodes.push({
-        name: entry.name,
-        path: vPath.replace(/\.md$/, ""),
-        type: "file",
-        knowledgePolicy: inheritedPolicy,
-        frontmatter: {
-          title: (fm.title as string) || entry.name.replace(/\.md$/, ""),
-          icon: fm.icon as string | undefined,
-          order: fm.order as number | undefined,
-          google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
-        },
-      });
+        const fm = await readFrontmatter(fullPath);
+        let children: TreeNode[] | undefined;
+        let nodeType: TreeNode["type"] = "file";
+        if (hasSiblingDir) {
+          children = await buildTreeRecursive(
+            path.join(dirPath, baseName),
+            nextAncestorRealPaths,
+            showHidden
+          );
+          nodeType = children.length > 0 ? "directory" : "file";
+        }
+        nodes.push({
+          name: entry.name,
+          path: vPath.replace(/\.md$/, ""),
+          type: nodeType,
+          knowledgePolicy: inheritedPolicy,
+          frontmatter: {
+            title: (fm.title as string) || baseName,
+            icon: fm.icon as string | undefined,
+            order: fm.order as number | undefined,
+            google: (fm.google ?? undefined) as GoogleFrontmatter | undefined,
+            public: fm.public === true,
+            hasSiblingPage: hasSiblingDir,
+          },
+          ...(children ? { children } : {}),
+        });
+      }
     }
   }
 

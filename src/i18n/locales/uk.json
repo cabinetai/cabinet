@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Експортувати сторінку",
+      "focus": "Фокус",
+      "exitFocus": "Вийти з фокусу",
       "copyMarkdown": "Копіювати Markdown",
       "copyForLlms": "Копіювати для LLM",
       "copyAsHtml": "Копіювати як HTML",

@@ -31,6 +31,10 @@ export interface OneShotInvocationOptions {
  */
 export interface SessionInvocationOptions {
   resumeId?: string;
+  /** Some CLIs require the model on the launch command itself (e.g.
+   *  `ollama run <model>`) — forwarded from the resolved runtime so session
+   *  mode honors the selected model instead of a hard-coded default. */
+  model?: string;
 }
 
 export type ProviderModelRequires = "any" | "chatgpt_plan" | "api_key";

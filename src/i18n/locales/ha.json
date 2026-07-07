@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Fitar da shafi",
+      "focus": "Mayar da hankali",
+      "exitFocus": "Fita daga mayar da hankali",
       "copyMarkdown": "Kwafi Markdown",
       "copyForLlms": "Kwafi don LLMs",
       "copyAsHtml": "Kwafi a matsayin HTML",

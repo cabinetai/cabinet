@@ -196,18 +196,9 @@ export interface AgentPersona {
    * for adapters that support it (see `_shared/skills-injection.ts`).
    */
   skills?: string[];
-  /**
-   * Skills recommended for this persona — surfaced in the agent detail
-   * "Suggested" section. Each entry is either a bare key (assumed to be in
-   * the local catalog) or an object with a `source` URL so the UI can offer
-   * a one-click install for skills that aren't yet imported.
-   *
-   *   recommendedSkills:
-   *     - kb-page-author                                    # already in catalog
-   *     - key: seo-audit                                    # not yet installed
-   *       source: github:owner/repo/seo-audit
-   */
   recommendedSkills?: RecommendedSkill[];
+  model?: string;
+  effort?: string;
   // New fields (all optional for backward compat)
   emoji: string;
   department: string;
@@ -271,6 +262,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function normalizeAdapterConfig(value: unknown): Record<string, unknown> | undefined {
   if (!isRecord(value)) return undefined;
   return Object.keys(value).length > 0 ? value : undefined;
+}
+
+/** Frontmatter `model`/`effort` win; otherwise fall back to the same key in
+ *  adapterConfig (where agent creation historically stored the runtime). */
+function readRuntimeString(
+  direct: unknown,
+  adapterConfig: unknown,
+  key: "model" | "effort"
+): string | undefined {
+  if (typeof direct === "string" && direct.trim()) return direct.trim();
+  if (isRecord(adapterConfig)) {
+    const nested = adapterConfig[key];
+    if (typeof nested === "string" && nested.trim()) return nested.trim();
+  }
+  return undefined;
 }
 
 export async function initAgentsDir(): Promise<void> {
@@ -392,6 +398,12 @@ export async function readPersona(slug: string, cabinetPath?: string): Promise<A
           .map(parseRecommendedSkill)
           .filter((entry): entry is RecommendedSkill => entry !== null)
       : undefined,
+    // Effective runtime: frontmatter `model`/`effort` win, but legacy
+    // personas only carry them inside adapterConfig (written at creation
+    // time). Falling back keeps Settings → Agent Runtime and the TEAM
+    // picker showing the model that actually runs.
+    model: readRuntimeString(data.model, data.adapterConfig, "model"),
+    effort: readRuntimeString(data.effort, data.adapterConfig, "effort"),
     // New fields with backward-compatible defaults
     emoji: (data.emoji as string) || "🤖",
     department: (data.department as string) || "general",
@@ -478,6 +490,28 @@ export async function writePersona(slug: string, persona: Partial<AgentPersona> 
   const existing = await readPersona(slug, resolved);
   const merged = { ...existing, ...persona };
 
+  // Keep adapterConfig.model/effort in lockstep with the top-level runtime
+  // fields. Conversations read the runtime from adapterConfig, while the
+  // Settings → Agent Runtime picker writes the top-level fields — without
+  // this sync, clearing the model ("Default") left a stale adapterConfig
+  // model behind and the two surfaces drifted apart.
+  if ("model" in persona || "effort" in persona) {
+    const adapterConfig: Record<string, unknown> = {
+      ...(merged.adapterConfig || {}),
+    };
+    for (const key of ["model", "effort"] as const) {
+      if (!(key in persona)) continue;
+      const value = persona[key];
+      if (typeof value === "string" && value.trim()) {
+        adapterConfig[key] = value.trim();
+      } else {
+        delete adapterConfig[key];
+      }
+    }
+    merged.adapterConfig =
+      Object.keys(adapterConfig).length > 0 ? adapterConfig : undefined;
+  }
+
   const frontmatter: Record<string, unknown> = {
     name: merged.name,
     role: merged.role,
@@ -499,6 +533,12 @@ export async function writePersona(slug: string, persona: Partial<AgentPersona> 
     ...(merged.channels && merged.channels.length > 0 ? { channels: merged.channels } : {}),
     ...(typeof merged.adapterType === "string" && merged.adapterType.trim()
       ? { adapterType: merged.adapterType.trim() }
+      : {}),
+    ...(typeof merged.model === "string" && merged.model.trim()
+      ? { model: merged.model.trim() }
+      : {}),
+    ...(typeof merged.effort === "string" && merged.effort.trim()
+      ? { effort: merged.effort.trim() }
       : {}),
     ...(normalizeAdapterConfig(merged.adapterConfig)
       ? { adapterConfig: normalizeAdapterConfig(merged.adapterConfig) }

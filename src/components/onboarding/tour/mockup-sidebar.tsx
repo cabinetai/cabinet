@@ -140,7 +140,7 @@ export function MockupSidebar({
         <div
           role="tablist"
           aria-label={t("treeView:drawersAriaLabel")}
-          className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg p-1 pt-2"
+          className="mx-[5px] mt-1 grid grid-cols-3 gap-1 rounded-lg p-1 pt-2"
           style={{
             background: "rgba(243, 237, 228, 0.7)",
             boxShadow: `inset 0 0 0 1px ${P.borderLight}`,

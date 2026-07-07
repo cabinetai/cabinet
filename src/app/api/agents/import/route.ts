@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       const { data: wsFm, content: wsBody } = matter(bundle.workspaceIndex);
       wsFm.title = `${fm.name || slug} — Workspace`;
       const newWsContent = matter.stringify(wsBody, wsFm);
-      await fs.writeFile(path.join(workspaceDir, "index.md"), newWsContent, "utf-8");
+      await fs.writeFile(path.join(workspaceDir, "workspace.md"), newWsContent, "utf-8");
     }
 
     await ensureDir(path.join(DATA_DIR, ".agents", ".memory", slug));

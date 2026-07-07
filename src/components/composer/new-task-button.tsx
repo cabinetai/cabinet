@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, FileText, MessageCircle, Repeat, Zap } from "lucide-react";
+import { ChevronDown, FileText, PanelRightClose, PanelRightOpen, Repeat, Zap } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +43,8 @@ import { useLocale } from "@/i18n/use-locale";
  */
 export function NewTaskButton() {
   const { t } = useLocale();
-  const openTaskPanelCompose = useAppStore((s) => s.openTaskPanelCompose);
+  const toggleTaskPanelCompose = useAppStore((s) => s.toggleTaskPanelCompose);
+  const taskPanelOpen = useAppStore((s) => s.taskPanelOpen);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const setTaskPanelConversation = useAppStore(
@@ -145,7 +146,7 @@ export function NewTaskButton() {
           <button
             type="button"
             onClick={() =>
-              openTaskPanelCompose(
+              toggleTaskPanelCompose(
                 section.type === "page" && selectedPath
                   ? {
                       source: "editor",
@@ -155,12 +156,15 @@ export function NewTaskButton() {
                   : undefined
               )
             }
-            title={t("common:aiPanel.open")}
-            aria-label={t("common:aiPanel.open")}
-            className="inline-flex items-center gap-1.5 bg-primary px-2.5 text-[11.5px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            title={taskPanelOpen ? t("common:aiPanel.close") : t("common:aiPanel.open")}
+            aria-label={taskPanelOpen ? t("common:aiPanel.close") : t("common:aiPanel.open")}
+            className="inline-flex items-center justify-center bg-primary px-2 text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            <MessageCircle className="size-3.5" />
-            <span>New Chat</span>
+            {taskPanelOpen ? (
+              <PanelRightClose className="size-3.5" />
+            ) : (
+              <PanelRightOpen className="size-3.5" />
+            )}
           </button>
           <div className="w-px bg-primary-foreground/20" aria-hidden />
           <DropdownMenuTrigger

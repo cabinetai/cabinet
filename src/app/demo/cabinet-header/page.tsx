@@ -444,7 +444,7 @@ function VariantH() {
             ALL <ChevronDown className="h-3 w-3" />
           </span>
         </button>
-        <div className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-1 pt-2 border border-border/60">
+        <div className="mx-[5px] mt-1 grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1 pt-2 border border-border/60">
           {DRAWERS.map((d) => {
             const Icon = d.icon;
             const isActive = active === d.id;
@@ -497,7 +497,7 @@ function VariantI() {
             ALL <ChevronDown className="h-3 w-3" />
           </span>
         </button>
-        <div className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-1 pt-2 border border-border/60">
+        <div className="mx-[5px] mt-1 grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1 pt-2 border border-border/60">
           {DRAWERS.map((d) => {
             const Icon = d.icon;
             const isActive = active === d.id;

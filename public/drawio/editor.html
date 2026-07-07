@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Draw.io Editor</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    iframe {
+      border: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      padding-top: 30px;
+      box-sizing: border-box;
+    }
+    #loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      color: #666;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #debug-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: #222;
+      color: #0f0;
+      font-size: 11px;
+      line-height: 30px;
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      z-index: 9999;
+      font-family: monospace;
+      border-bottom: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
+  <div id="debug-bar">
+    <div id="debug-status">Status: Initializing...</div>
+    <div id="debug-log">Last event: None</div>
+  </div>
+  <div id="loader">
+    <div class="spinner"></div>
+    <div id="loader-text">Loading diagram...</div>
+  </div>
+  <iframe id="editor"></iframe>
+
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const path = urlParams.get('path');
+      const loader = document.getElementById('loader');
+      const loaderText = document.getElementById('loader-text');
+      const iframe = document.getElementById('editor');
+      const debugStatus = document.getElementById('debug-status');
+      const debugLog = document.getElementById('debug-log');
+
+      function setStatus(text, color = '#0f0') {
+        debugStatus.innerText = 'Status: ' + text;
+        debugStatus.style.color = color;
+        console.log('[DrawioWrapper] Status:', text);
+      }
+
+      function setLog(text) {
+        debugLog.innerText = 'Last event: ' + text;
+        console.log('[DrawioWrapper] Event:', text);
+      }
+
+      if (!path) {
+        loaderText.innerText = 'Error: No diagram path specified in URL parameters.';
+        loader.querySelector('.spinner').style.display = 'none';
+        setStatus('Error: Missing path parameter', '#ff3333');
+        return;
+      }
+
+      const assetUrl = '/api/assets/' + path;
+      const isSvg = path.toLowerCase().endsWith('.svg');
+      let fileContent = '';
+
+      function saveContent(contentToSave) {
+        setStatus('Sending PUT request to ' + assetUrl + '...');
+        fetch(assetUrl, {
+          method: 'PUT',
+          headers: { 
+            'Content-Type': isSvg ? 'image/svg+xml' : 'text/xml'
+          },
+          body: contentToSave
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(data => {
+          setStatus('Saved successfully! Acknowledging status back to Draw.io...');
+          // Acknowledge the save operation
+          iframe.contentWindow.postMessage(JSON.stringify({
+            action: 'status',
+            message: 'Saved successfully',
+            modified: false
+          }), '*');
+
+          setStatus('Closing editor view...');
+          notifySaved();
+        })
+        .catch(err => {
+          setStatus('Save failed: ' + err.message, '#ff3333');
+          console.error('Draw.io Save Error:', err);
+          iframe.contentWindow.postMessage(JSON.stringify({
+            action: 'status',
+            message: 'Save failed: ' + err.message,
+            modified: true
+          }), '*');
+        });
+      }
+
+      function notifySaved() {
+        try {
+          window.parent.postMessage({ type: 'drawio-saved', path: path }, '*');
+        } catch (e) {}
+        
+        try {
+          localStorage.setItem('cabinet.drawio.last_saved_path', path);
+          localStorage.setItem('cabinet.drawio.last_saved_time', Date.now().toString());
+        } catch (e) {}
+      }
+
+      // Handle postMessage communication from Draw.io
+      function receiveMessage(event) {
+        if (event.source !== iframe.contentWindow) return;
+        
+        try {
+          let msg;
+          if (typeof event.data === 'string') {
+            msg = JSON.parse(event.data);
+          } else if (typeof event.data === 'object' && event.data !== null) {
+            msg = event.data;
+          } else {
+            return;
+          }
+          
+          setLog(msg.event + ' (' + (typeof event.data) + ')');
+          
+          if (msg.event === 'configure') {
+            setStatus('Configuring theme...');
+            let isDark = false;
+            try {
+              isDark = window.parent.document.documentElement.classList.contains('dark');
+            } catch (e) {
+              isDark = localStorage.getItem('theme') === 'dark' || urlParams.get('theme') === 'dark';
+            }
+            
+            iframe.contentWindow.postMessage(JSON.stringify({
+              action: 'configure',
+              config: {
+                ui: isDark ? 'dark' : 'atlas',
+                css: isDark ? '.geDialog { background-color: #202020 !important; color: #e0e0e0 !important; }' : ''
+              }
+            }), '*');
+          } 
+          else if (msg.event === 'init') {
+            setStatus('Initializing Draw.io editor...');
+            iframe.contentWindow.postMessage(JSON.stringify({
+              action: 'load',
+              xml: fileContent,
+              autosave: 0
+            }), '*');
+            iframe.style.display = 'block';
+            loader.style.display = 'none';
+            setStatus('Editor ready', '#8af');
+          } 
+          else if (msg.event === 'save') {
+            setStatus('Save event received. Requesting SVG export...');
+            if (isSvg) {
+              iframe.contentWindow.postMessage(JSON.stringify({
+                action: 'export',
+                format: 'xmlsvg',
+                spinKey: 'saving'
+              }), '*');
+            } else {
+              saveContent(msg.xml);
+            }
+          }
+          else if (msg.event === 'export') {
+            setStatus('Export data received. Decoding payload...');
+            if (msg.data && (msg.format === 'xmlsvg' || msg.format === 'svg' || msg.data.indexOf('image/svg+xml') !== -1)) {
+              try {
+                const base64Data = msg.data.split(',')[1];
+                const binaryString = atob(base64Data);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                  bytes[i] = binaryString.charCodeAt(i);
+                }
+                const svgContent = new TextDecoder().decode(bytes);
+                saveContent(svgContent);
+              } catch (e) {
+                setStatus('SVG decode failed: ' + e.message, '#ff3333');
+                console.error("Failed to decode exported SVG:", e);
+                iframe.contentWindow.postMessage(JSON.stringify({
+                  action: 'status',
+                  message: 'Export decode failed: ' + e.message,
+                  modified: true
+                }), '*');
+              }
+            } else {
+              setStatus('Export format mismatch (received: ' + msg.format + ') or no data', '#ff3333');
+            }
+          }
+          else if (msg.event === 'exit') {
+            setStatus('Exit event received. Closing editor...');
+            notifySaved();
+          }
+        } catch (e) {
+          setStatus('Error parsing message: ' + e.message, '#ff3333');
+        }
+      }
+
+      // Load original content from Cabinet API
+      setStatus('Fetching file content from ' + assetUrl + '...');
+      fetch(assetUrl)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to retrieve file contents (HTTP ' + res.status + ')');
+          return res.text();
+        })
+        .then(data => {
+          fileContent = data;
+          setStatus('File content loaded. Registering postMessage listener...');
+          window.addEventListener('message', receiveMessage);
+          
+          setStatus('Loading Draw.io iframe...');
+          iframe.src = './index.html?embed=1&proto=json&ui=atlas&spin=1';
+        })
+        .catch(err => {
+          loaderText.innerText = 'Error loading diagram: ' + err.message;
+          loader.querySelector('.spinner').style.display = 'none';
+          setStatus('Load failed: ' + err.message, '#ff3333');
+        });
+    })();
+  </script>
+</body>
+</html>

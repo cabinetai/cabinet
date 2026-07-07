@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "برون‌بری صفحه",
+      "focus": "تمرکز",
+      "exitFocus": "خروج از تمرکز",
       "copyMarkdown": "کپی Markdown",
       "copyForLlms": "کپی برای LLMها",
       "copyAsHtml": "کپی به صورت HTML",

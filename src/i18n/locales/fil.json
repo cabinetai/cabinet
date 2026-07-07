@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "I-export ang pahina",
+      "focus": "Magtuon",
+      "exitFocus": "Lumabas sa tuon",
       "copyMarkdown": "Kopyahin ang Markdown",
       "copyForLlms": "Kopyahin para sa mga LLM",
       "copyAsHtml": "Kopyahin bilang HTML",

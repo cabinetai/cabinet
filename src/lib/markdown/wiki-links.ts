@@ -18,6 +18,15 @@ export function slugifyPageName(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
+// Case-preserving variant used when creating files/folders on disk so the
+// original capitalisation (e.g. "Eureka") survives. Wiki-link resolution
+// stays case-insensitive (see findPageBySlug), so links still match.
+export function slugifyFileName(name: string): string {
+  return name
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export interface WikiLinkOccurrence {
   /** Index of the leading `[[` in the source string. */
   start: number;

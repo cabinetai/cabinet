@@ -18,21 +18,20 @@ import { useLocale } from "@/i18n/use-locale";
 export function NewPageDialog({
   parentPath = "",
   open: controlledOpen,
-  onOpenChange: controlledOnOpenChange,
-  hideTrigger = false,
+  onOpenChange,
 }: {
   parentPath?: string;
-  /** When provided, the dialog is controlled externally (e.g. footer menu). */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Hide the built-in trigger when the dialog is opened from elsewhere. */
-  hideTrigger?: boolean;
 } = {}) {
   const { t } = useLocale();
-  const controlled = controlledOpen !== undefined;
-  const [internalOpen, setInternalOpen] = useState(false);
-  const open = controlled ? controlledOpen : internalOpen;
-  const setOpen = controlled ? controlledOnOpenChange! : setInternalOpen;
+  const isControlled = controlledOpen !== undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+  const setOpen = (next: boolean) => {
+    if (!isControlled) setUncontrolledOpen(next);
+    onOpenChange?.(next);
+  };
   const [title, setTitle] = useState("");
   const [creating, setCreating] = useState(false);
   const { createPage } = useTreeStore();
@@ -59,7 +58,7 @@ export function NewPageDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {!hideTrigger && (
+      {!isControlled && (
         <DialogTrigger
           data-new-page-trigger
           title={t("dialogs:newPage.trigger")}

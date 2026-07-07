@@ -601,6 +601,22 @@
     "autoDetectPlaceholder": "Auto-detect from git remote (optional)",
     "shortSummaryPlaceholder": "Optional short summary for agents"
   },
+  "connectGithub": {
+    "title": "Connect GitHub Repository",
+    "intro": "Clone a remote GitHub repository to your local machine and create a symlink to it. Cabinet will auto-create the necessary .repo.yaml file so AI agents can read the repository context.",
+    "repoUrlLabel": "GitHub Repository URL",
+    "repoUrlPlaceholder": "https://github.com/username/repository.git",
+    "localPathLabel": "Local Clone Directory",
+    "localPathPlaceholder": "/Users/me/Developer/my-repo",
+    "nameLabel": "Display Name",
+    "namePlaceholder": "my-repo",
+    "branchLabel": "Branch",
+    "branchPlaceholder": "main (optional)",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional short summary for agents",
+    "connecting": "Connecting...",
+    "connect": "Connect"
+  },
   "recentTasks": {
     "ptyMode": "Terminal (PTY) mode",
     "revealOlder": "Reveal more older tasks",
@@ -1049,6 +1065,13 @@
       "create": "Create",
       "creating": "Creating…"
     },
+    "newFolder": {
+      "trigger": "New Folder",
+      "title": "Create New Folder",
+      "placeholder": "Folder name…",
+      "create": "Create",
+      "creating": "Creating…"
+    },
     "newCabinet": {
       "trigger": "New Cabinet",
       "title": "Create New Cabinet",
@@ -1066,14 +1089,17 @@
   "editor": {
     "header": {
       "exportPage": "Export page",
+      "focus": "Focus",
+      "exitFocus": "Exit focus",
       "copyMarkdown": "Copy Markdown",
       "copyForLlms": "Copy for LLMs",
       "copyAsHtml": "Copy as HTML",
       "downloadMarkdown": "Download .md",
       "downloadPdf": "Download PDF",
       "copiedForLlmToast": "Copied {{size}} of Markdown for LLM",
-      "browseMode": "Open in browser",
-      "editMode": "Back to editor"
+      "editMode": "Edit mode",
+      "browseMode": "Browse mode",
+      "canvasMode": "Canvas mode"
     },
     "browser": {
       "noUrl": "Built-in browser ready. Click a link in a page to open it here.",
@@ -1081,6 +1107,11 @@
       "back": "Back",
       "forward": "Forward",
       "reload": "Reload"
+    },
+    "canvas": {
+      "title": "Canvas",
+      "empty": "No pages available in this cabinet.",
+      "openPage": "Open page"
     },
     "toolbar": {
       "heading1": "Heading 1",
@@ -1782,6 +1813,7 @@
     "createPage": "Create page",
     "new": "New",
     "newPage": "New page",
+    "newMenu": "Create new…",
     "newAgent": "New Agent",
     "newTask": "New Task",
     "archive": "Archive",

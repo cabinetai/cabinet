@@ -185,6 +185,17 @@ async function findAvailablePort(startPort) {
   });
 }
 
+function readActiveCabinet(homeJsonPath) {
+  try {
+    if (!fs.existsSync(homeJsonPath)) return null;
+    const parsed = JSON.parse(fs.readFileSync(homeJsonPath, "utf8"));
+    const activeVal = parsed ? (parsed.activeCabinet || parsed.activeVault) : null;
+    return typeof activeVal === "string" && activeVal.trim() ? activeVal.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
   const existingServer = await maybeReuseExistingNextDevServer();
   if (existingServer) {
@@ -228,44 +239,89 @@ async function main() {
     "bin",
     "next"
   );
-  const child = spawn(
-    process.execPath,
-    [nextBin, "dev", "-p", String(port), ...process.argv.slice(2)],
-    {
-      cwd: PROJECT_ROOT,
-      stdio: "inherit",
-      env: {
-        // Audit #107: telemetry off by default in dev. Explicit user opt-in
-        // via CABINET_TELEMETRY_DISABLED=0 is honored (process.env spread
-        // happens after the default).
-        CABINET_TELEMETRY_DISABLED: "1",
-        // Default CABINET_APP_ORIGIN to loopback, but let process.env spread
-        // below override when an operator pinned a public hostname so
-        // next.config.ts can auto-allow it through Next 15's dev origin guard.
-        CABINET_APP_ORIGIN: origin,
-        ...process.env,
-        PORT: String(port),
-        CABINET_APP_PORT: String(port),
-      },
-    }
-  );
 
   const cleanup = () => clearRuntimeService("app", process.pid);
   process.on("exit", cleanup);
-  process.on("SIGINT", () => child.kill("SIGINT"));
-  process.on("SIGTERM", () => child.kill("SIGTERM"));
 
-  child.on("exit", (code, signal) => {
-    cleanup();
-    if (signal) {
-      process.kill(process.pid, signal);
-      return;
+  let child = null;
+  let isRestarting = false;
+
+  function spawnNextServer() {
+    if (child) {
+      child.kill();
     }
-    process.exit(code ?? 0);
+    child = spawn(
+      process.execPath,
+      [nextBin, "dev", "-p", String(port), ...process.argv.slice(2)],
+      {
+        cwd: PROJECT_ROOT,
+        stdio: "inherit",
+        env: {
+          // Audit #107: telemetry off by default in dev. Explicit user opt-in
+          // via CABINET_TELEMETRY_DISABLED=0 is honored (process.env spread
+          // happens after the default).
+          CABINET_TELEMETRY_DISABLED: "1",
+          // Default CABINET_APP_ORIGIN to loopback, but let process.env spread
+          // below override when an operator pinned a public hostname so
+          // next.config.ts can auto-allow it through Next 15's dev origin guard.
+          CABINET_APP_ORIGIN: origin,
+          ...process.env,
+          PORT: String(port),
+          CABINET_APP_PORT: String(port),
+        },
+      }
+    );
+
+    child.on("exit", (code, signal) => {
+      if (isRestarting) return;
+      cleanup();
+      if (signal) {
+        process.kill(process.pid, signal);
+        return;
+      }
+      process.exit(code ?? 0);
+    });
+  }
+
+  spawnNextServer();
+
+  process.on("SIGINT", () => {
+    isRestarting = false;
+    if (child) child.kill("SIGINT");
   });
+  process.on("SIGTERM", () => {
+    isRestarting = false;
+    if (child) child.kill("SIGTERM");
+  });
+
+  const homeJsonPath = path.join(getManagedDataDir(), ".home", "home.json");
+  let currentActiveCabinet = readActiveCabinet(homeJsonPath);
+
+  const restartServer = () => {
+    isRestarting = true;
+    console.log(
+      `[cabinet] Active cabinet changed to "${currentActiveCabinet}". Restarting Next dev server...`
+    );
+    if (child) {
+      child.kill("SIGTERM");
+    }
+    setTimeout(() => {
+      isRestarting = false;
+      spawnNextServer();
+    }, 500);
+  };
+
+  setInterval(() => {
+    const nextCabinet = readActiveCabinet(homeJsonPath);
+    if (nextCabinet && nextCabinet !== currentActiveCabinet) {
+      currentActiveCabinet = nextCabinet;
+      restartServer();
+    }
+  }, 1000);
 }
 
 main().catch((error) => {
   console.error("[cabinet] Failed to start Next dev server:", error);
   process.exit(1);
 });
+

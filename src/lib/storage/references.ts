@@ -52,15 +52,24 @@ export async function scanCabinet(): Promise<ScanResult> {
     } catch {
       return;
     }
-    const dirNames = new Set(
-      entries.filter((e) => e.isDirectory() && !isHiddenEntry(e.name)).map((e) => e.name)
+    // Names that have a sibling `<name>.md` — the markdown file is the canonical
+    // page node (Sibling Pattern), so the same-named folder is not its own node.
+    const mdBaseNames = new Set(
+      entries
+        .filter(
+          (e) => !e.isDirectory() && e.name.endsWith(".md") && e.name !== "index.md"
+        )
+        .map((e) => e.name.replace(/\.md$/, ""))
     );
     for (const e of entries) {
       if (isHiddenEntry(e.name)) continue;
       const full = path.join(dir, e.name);
       if (e.isDirectory()) {
-        // Every directory is a navigable node (folder or page-with-index.md).
-        pages.push({ path: virtualPathFromFs(full), name: e.name });
+        // A folder with a sibling `<name>.md` is merged into that page node, so
+        // don't emit a duplicate; otherwise it's a navigable node of its own.
+        if (!mdBaseNames.has(e.name)) {
+          pages.push({ path: virtualPathFromFs(full), name: e.name });
+        }
         await walk(full);
         continue;
       }
@@ -68,9 +77,7 @@ export async function scanCabinet(): Promise<ScanResult> {
       if (SKIP_FILES.has(e.name)) continue;
       markdownFiles.push(full);
       if (e.name === "index.md") continue; // the directory already represents it
-      // Standalone foo.md is its own node unless a foo/ dir shadows it.
-      const base = e.name.replace(/\.md$/, "");
-      if (dirNames.has(base)) continue;
+      // A standalone OR sibling-merged foo.md is the canonical page node.
       pages.push({ path: virtualPathFromFs(full).replace(/\.md$/, ""), name: e.name });
     }
   }
@@ -97,6 +104,7 @@ export function resolvePageBySlug(
   const matches = pages.filter(
     (p) =>
       p.name === slug ||
+      p.path === slug ||
       p.path.endsWith("/" + slug) ||
       slugifyPageName(lastSeg(p.path)) === slug
   );
@@ -139,6 +147,11 @@ export async function rewriteReferencesForRename(opts: {
   newPagePath: string;
   oldResolvedDir: string;
   newResolvedDir: string;
+  /** Sibling Pattern: the page's own `<name>.md` lives OUTSIDE the folder, so
+   * its undo path can't be derived from the folder move. When set, a file that
+   * IS the renamed `.md` maps straight back to `oldResolvedMd`. */
+  oldResolvedMd?: string;
+  newResolvedMd?: string;
   oldSlug: string;
   newName: string;
   preRenamePages: PageRef[];
@@ -148,6 +161,8 @@ export async function rewriteReferencesForRename(opts: {
     newPagePath,
     oldResolvedDir,
     newResolvedDir,
+    oldResolvedMd,
+    newResolvedMd,
     oldSlug,
     newName,
     preRenamePages,
@@ -205,9 +220,14 @@ export async function rewriteReferencesForRename(opts: {
     // Undo writes pre-rename bytes; for files moved with the renamed subtree
     // that means the *old* absolute location (undo reverses the dir move
     // first, so the old path exists again before contents are restored).
-    const undoFsPath = inRenamedSubtree
-      ? path.join(oldResolvedDir, fsPath.slice(newResolvedDir.length + 1))
-      : fsPath;
+    // The Sibling-Pattern `.md` lives outside the folder, so it maps directly
+    // back to its pre-rename path rather than via the folder move.
+    const undoFsPath =
+      newResolvedMd && fsPath === newResolvedMd
+        ? oldResolvedMd!
+        : inRenamedSubtree
+        ? path.join(oldResolvedDir, fsPath.slice(newResolvedDir.length + 1))
+        : fsPath;
 
     changed.push({ undoFsPath, before: raw, virtualPagePath: currentPagePath });
   }

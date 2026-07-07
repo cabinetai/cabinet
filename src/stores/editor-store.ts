@@ -32,6 +32,7 @@ interface EditorState {
   createMissingPage: (title: string) => Promise<void>;
   updateContent: (content: string) => void;
   updateFrontmatter: (updates: Partial<FrontMatter>) => void;
+  setFrontmatter: (frontmatter: FrontMatter) => void;
   save: () => Promise<void>;
   clear: () => void;
 }
@@ -192,7 +193,23 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   updateFrontmatter: (updates: Partial<FrontMatter>) => {
     const { frontmatter } = get();
     if (!frontmatter) return;
-    set({ frontmatter: { ...frontmatter, ...updates }, isDirty: true });
+    // Merge updates, but treat an explicit `undefined` as a key deletion so
+    // the properties panel can remove custom keys (and toggle off optional
+    // fields like `dir`) rather than leaving dangling undefined values.
+    const next: FrontMatter = { ...frontmatter, ...updates };
+    for (const key of Object.keys(updates)) {
+      if (updates[key] === undefined) delete next[key];
+    }
+    set({ frontmatter: next, isDirty: true });
+
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      get().save();
+    }, 500);
+  },
+
+  setFrontmatter: (frontmatter: FrontMatter) => {
+    set({ frontmatter, isDirty: true });
 
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {

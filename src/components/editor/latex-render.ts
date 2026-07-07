@@ -52,9 +52,8 @@ function readBracedArg(str: string, openIndex: number): { content: string; end: 
   let depth = 0;
   for (let i = openIndex; i < str.length; i++) {
     const ch = str[i];
-    // Guard `i > 0` so we never read str[-1] for the first character.
-    if (ch === "{" && (i === 0 || str[i - 1] !== "\\")) depth++;
-    else if (ch === "}" && (i === 0 || str[i - 1] !== "\\")) {
+    if (ch === "{" && str[i - 1] !== "\\") depth++;
+    else if (ch === "}" && str[i - 1] !== "\\") {
       depth--;
       if (depth === 0) return { content: str.slice(openIndex + 1, i), end: i + 1 };
     }
@@ -90,30 +89,6 @@ function preambleArg(preamble: string, cmd: string): string | null {
 
 function escapeHtml(str: string): string {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-/**
- * Sanitize a URL pulled from `\href{}`/`\url{}` for use in an `href`
- * attribute. Blocks dangerous schemes (javascript:, data:, vbscript:, …) so a
- * malicious .tex file can't inject script via the rendered link, and escapes
- * the result for the double-quoted attribute context.
- */
-function safeHref(rawUrl: string): string {
-  // Inline math/text already HTML-escaped `&` to `&amp;`; restore it first.
-  const url = rawUrl.replace(/&amp;/g, "&").trim();
-  // Strip control characters before checking the scheme. Browsers ignore
-  // embedded tabs/newlines when resolving an href, so `java\nscript:` would
-  // otherwise slip past the scheme regex and still execute.
-  const normalized = url.replace(/[\u0000-\u001F\u007F]/g, "");
-  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(normalized);
-  if (scheme && !/^(https?|mailto|tel|ftp)$/i.test(scheme[1])) {
-    return "#";
-  }
-  return normalized
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
 }
 
 interface MathToken {
@@ -325,7 +300,7 @@ function processInline(input: string, unsupported: Set<string>): string {
           if (a1) {
             const a2 = input[a1.end] === "{" ? readBracedArg(input, a1.end) : null;
             if (a2) {
-              const url = safeHref(a1.content);
+              const url = a1.content.replace(/&amp;/g, "&");
               out += `<a href="${url}" target="_blank" rel="noopener noreferrer">${processInline(a2.content, unsupported)}</a>`;
               i = a2.end;
               continue;
@@ -335,9 +310,8 @@ function processInline(input: string, unsupported: Set<string>): string {
         if (name === "url") {
           const a1 = input[j] === "{" ? readBracedArg(input, j) : null;
           if (a1) {
-            const display = a1.content.replace(/&amp;/g, "&");
-            const url = safeHref(a1.content);
-            out += `<a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(display)}</a>`;
+            const url = a1.content.replace(/&amp;/g, "&");
+            out += `<a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>`;
             i = a1.end;
             continue;
           }

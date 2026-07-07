@@ -20,6 +20,25 @@ const FLUSH_INTERVAL_MS = 10_000;
 const MAX_BATCH = 20;
 const DEDUPE_WINDOW_MS = 60_000;
 
+/**
+ * Known-benign console.error messages to swallow. Tiptap's React node-views
+ * (`ReactNodeViewRenderer`) flush their portals with `flushSync`, which React
+ * warns about when it coincides with a render/commit. It's a dev-only warning
+ * (stripped from production builds) that doesn't affect functionality — see
+ * ueberdosis/tiptap#4355. We keep a quiet console.debug trace but don't ship it
+ * to the server log or let it trip the Next.js dev overlay.
+ */
+const IGNORED_ERROR_PATTERNS = [
+  "flushSync was called from inside a lifecycle method",
+];
+
+function isIgnoredError(args: unknown[]): boolean {
+  const text = args
+    .map((a) => (typeof a === "string" ? a : a instanceof Error ? a.message : ""))
+    .join(" ");
+  return IGNORED_ERROR_PATTERNS.some((p) => text.includes(p));
+}
+
 let installed = false;
 const queue: ClientLogEntry[] = [];
 let flushTimer: number | null = null;
@@ -109,6 +128,12 @@ export function installRendererLogCapture(): void {
 
   const originalError = console.error.bind(console);
   console.error = (...args: unknown[]) => {
+    // Swallow known-benign upstream warnings: don't call the (possibly
+    // overlay-patched) original or ship to the server log. Keep a quiet trace.
+    if (isIgnoredError(args)) {
+      console.debug(...args);
+      return;
+    }
     originalError(...args);
     try {
       let stack: string | undefined;

@@ -48,6 +48,7 @@ import { resolveCabinetDir } from "../src/lib/cabinets/server-paths";
 import {
   getAppOrigin,
   getDaemonPort,
+  isProcessStale,
 } from "../src/lib/runtime/runtime-config";
 import {
   getDetachedPromptLaunchMode,
@@ -104,6 +105,8 @@ import {
   printStartupBannerIfNeeded,
   startTelemetryFlusher,
 } from "../src/lib/telemetry";
+
+import { findActiveJupyterServer } from "../src/lib/notebook/jupyter";
 
 const PORT = getDaemonPort();
 const CABINET_MANIFEST_FILE = ".cabinet";
@@ -1302,6 +1305,10 @@ function scheduleJob(job: JobConfig): void {
   }
 
   const task = cron.schedule(job.schedule, () => {
+    if (isProcessStale()) {
+      console.warn(`[daemon] Skipping job ${key}: process is stale. Please restart the daemon.`);
+      return;
+    }
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering scheduled job ${key} @ ${scheduledAt}`);
     recordTriggerAttempt(scheduledAt);
@@ -1358,6 +1365,10 @@ function scheduleHeartbeat(slug: string, cronExpr: string, cabinetPath: string):
   }
 
   const task = cron.schedule(cronExpr, () => {
+    if (isProcessStale()) {
+      console.warn(`[daemon] Skipping heartbeat for ${key}: process is stale. Please restart the daemon.`);
+      return;
+    }
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering heartbeat ${key} @ ${scheduledAt}`);
     recordTriggerAttempt(scheduledAt);
@@ -2032,6 +2043,9 @@ const wssPty = new WebSocketServer({ noServer: true });
 // Event bus WebSocket — /events path
 const wssEvents = new WebSocketServer({ noServer: true });
 
+// Jupyter WebSocket proxy — /api/daemon/jupyter/ws path
+const wssJupyter = new WebSocketServer({ noServer: true });
+
 // Route WebSocket upgrades based on path
 server.on("upgrade", (req, socket, head) => {
   const url = new URL(req.url || "", `http://localhost:${PORT}`);
@@ -2049,6 +2063,10 @@ server.on("upgrade", (req, socket, head) => {
     wssPty.handleUpgrade(req, socket, head, (ws) => {
       wssPty.emit("connection", ws, req);
     });
+  } else if (url.pathname === "/api/daemon/jupyter/ws") {
+    wssJupyter.handleUpgrade(req, socket, head, (ws) => {
+      wssJupyter.emit("connection", ws, req);
+    });
   } else {
     socket.write("HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n");
     socket.destroy();
@@ -2061,6 +2079,66 @@ wssPty.on("connection", (ws, req) => {
 
 wssEvents.on("connection", (ws) => {
   handleEventBusConnection(ws);
+});
+
+wssJupyter.on("connection", async (ws, req) => {
+  const url = new URL(req.url || "", "http://localhost");
+  const kernelId = url.searchParams.get("kernelId");
+  if (!kernelId) {
+    ws.close(4000, "Missing kernelId parameter");
+    return;
+  }
+
+  const serverInfo = await findActiveJupyterServer();
+  if (!serverInfo) {
+    ws.close(4001, "No active Jupyter server found");
+    return;
+  }
+
+  // Build target WebSocket URL
+  const wsBase = serverInfo.url.replace(/^http/, "ws");
+  const targetWsUrl = `${wsBase}api/kernels/${kernelId}/channels?token=${serverInfo.token}`;
+
+  const targetWs = new WebSocket(targetWsUrl);
+
+  targetWs.on("open", () => {
+    console.log(`Jupyter WS proxy connected to kernel ${kernelId}`);
+  });
+
+  targetWs.on("message", (data, isBinary) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(data, { binary: isBinary });
+    }
+  });
+
+  targetWs.on("close", (code, reason) => {
+    console.log(`Jupyter WS proxy kernel connection closed: ${code} ${reason}`);
+    ws.close(code, reason.toString());
+  });
+
+  targetWs.on("error", (err) => {
+    console.error(`Jupyter WS proxy kernel error:`, err);
+    ws.close(1011, err.message);
+  });
+
+  ws.on("message", (data, isBinary) => {
+    if (targetWs.readyState === WebSocket.OPEN) {
+      targetWs.send(data, { binary: isBinary });
+    }
+  });
+
+  ws.on("close", (code, reason) => {
+    if (targetWs.readyState === WebSocket.OPEN) {
+      targetWs.close(code, reason);
+    }
+  });
+
+  ws.on("error", (err) => {
+    console.error(`Jupyter WS proxy client error:`, err);
+    if (targetWs.readyState === WebSocket.OPEN) {
+      targetWs.close(1011, err.message);
+    }
+  });
 });
 
 // ===== Startup =====

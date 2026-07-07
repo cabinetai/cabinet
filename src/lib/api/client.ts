@@ -1,5 +1,6 @@
 import type { TreeNode, PageData, FrontMatter } from "@/types";
 import { normalizeVirtualPath } from "@/lib/virtual-paths";
+import { handleStaleResponse } from "@/lib/api/stale-process-client";
 
 export function buildPageApiUrl(pagePath = ""): string {
   const normalized = normalizeVirtualPath(pagePath);
@@ -25,6 +26,7 @@ export async function fetchTree(
   const res = await fetch(qs ? `/api/tree?${qs}` : "/api/tree", {
     cache: "no-store",
   });
+  handleStaleResponse(res);
   if (!res.ok) throw new Error("Failed to fetch tree");
   return res.json();
 }
@@ -38,6 +40,9 @@ export class FetchPageError extends Error {
 
 export async function fetchPage(path: string): Promise<PageData> {
   const res = await fetch(buildPageApiUrl(path));
+  // A stale-process 503 means the active cabinet was switched; trigger recovery
+  // (reload) and still surface the error so the editor doesn't render stale data.
+  handleStaleResponse(res);
   if (!res.ok) {
     throw new FetchPageError(`Failed to fetch page: ${path}`, res.status);
   }
@@ -67,6 +72,18 @@ export async function createPageApi(
     body: JSON.stringify({ title }),
   });
   if (!res.ok) throw new Error(`Failed to create page: ${parentPath}`);
+}
+
+export async function createFolderApi(
+  fullPath: string,
+  name: string
+): Promise<void> {
+  const res = await fetch(buildPageApiUrl(fullPath), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: "folder", title: name }),
+  });
+  if (!res.ok) throw new Error(`Failed to create folder: ${fullPath}`);
 }
 
 export async function deletePageApi(path: string): Promise<void> {

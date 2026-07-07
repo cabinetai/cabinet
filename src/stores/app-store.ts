@@ -90,14 +90,10 @@ export interface SelectedSection {
 export type TaskPanelMode = "conversation" | "compose";
 
 export interface TaskPanelComposeContext {
-  /** Page to pin as an @context chip (Editor-scoped opens). */
   pinnedPagePath?: string | null;
-  /** Agent the composer should default to (defaults to "editor"). */
+  pinnedPagePaths?: string[];
   defaultAgentSlug?: string;
-  /** Mirrors createConversation's discriminant. */
   source?: "editor" | "agent";
-  /** Optional greeting shown above the composer (e.g. the post-create
-   *  "Hi {name} — what would you like to do in {file}?" handoff). */
   greeting?: string;
 }
 
@@ -142,22 +138,17 @@ interface AppState {
   taskPanelComposeContext: TaskPanelComposeContext | null;
   /** Right-edge recent-tasks rail. Closed by default; session memory only. */
   taskRailOpen: boolean;
-  /**
-   * Conversation ids the user has opened in the task drawer this session,
-   * newest-first. Backs the "recent" group of the task rail. Session memory.
-   */
   recentlyOpenedTaskIds: string[];
+  canvasSelectedCardPaths: string[];
   providers: ProviderInfo[];
   defaultProviderId: string | null;
   defaultModel: string | null;
   defaultEffort: string | null;
   providersLoading: boolean;
   providersLoaded: boolean;
-  /** Top-level app surface: the page editor, or the in-app browser. */
-  appMode: "edit" | "browse";
-  /** URL shown in browse mode; null until a link/bookmark sets it. */
+  appMode: "edit" | "browse" | "canvas";
   browseUrl: string | null;
-  setAppMode: (mode: "edit" | "browse", url?: string | null) => void;
+  setAppMode: (mode: "edit" | "browse" | "canvas", url?: string | null) => void;
   loadProviders: () => Promise<void>;
   /**
    * Hydrate one provider's real, entitlement-gated model list from
@@ -193,6 +184,8 @@ interface AppState {
   toggleTaskPanelCompose: (context?: TaskPanelComposeContext) => void;
   swapToConversation: (conversation: ConversationMeta) => void;
   toggleTaskRail: () => void;
+  setCanvasSelectedCardPaths: (paths: string[]) => void;
+  clearCanvasSelectedCardPaths: () => void;
 }
 
 function normalizeVisibilityCabinetPath(cabinetPath?: string): string {
@@ -264,6 +257,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   taskPanelComposeContext: null,
   taskRailOpen: false,
   recentlyOpenedTaskIds: [],
+  canvasSelectedCardPaths: [],
   providers: [],
   defaultProviderId: null,
   defaultModel: null,
@@ -552,6 +546,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             taskPanelConversation: conversation,
             taskPanelMode: "conversation" as const,
             taskPanelOpen: true,
+            canvasSelectedCardPaths: [],
             recentlyOpenedTaskIds: rememberOpenedTask(
               get().recentlyOpenedTaskIds,
               conversation.id
@@ -562,26 +557,37 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   openTaskPanelCompose: (context) => {
+    const state = get();
+    const canvasPaths = state.appMode === "canvas" ? state.canvasSelectedCardPaths : [];
+    const requestedPaths = [
+      ...(context?.pinnedPagePaths ?? []),
+      ...(context?.pinnedPagePath ? [context.pinnedPagePath] : []),
+      ...canvasPaths,
+    ];
+    const pinnedPagePaths = Array.from(new Set(requestedPaths.filter((path): path is string => !!path)));
     set({
       taskPanelOpen: true,
       taskPanelMode: "compose",
-      taskPanelComposeContext: context ?? null,
+      taskPanelComposeContext: context
+        ? {
+            ...context,
+            pinnedPagePath: pinnedPagePaths[0] ?? null,
+            pinnedPagePaths,
+          }
+        : pinnedPagePaths.length > 0
+          ? { source: "editor", defaultAgentSlug: "editor", pinnedPagePath: pinnedPagePaths[0], pinnedPagePaths }
+          : null,
       taskPanelConversation: null,
     });
   },
 
-  closeTaskPanel: () => set({ taskPanelOpen: false }),
+  closeTaskPanel: () => set({ taskPanelOpen: false, canvasSelectedCardPaths: [] }),
 
   toggleTaskPanelCompose: (context) => {
     if (get().taskPanelOpen) {
-      set({ taskPanelOpen: false });
+      set({ taskPanelOpen: false, canvasSelectedCardPaths: [] });
     } else {
-      set({
-        taskPanelOpen: true,
-        taskPanelMode: "compose",
-        taskPanelComposeContext: context ?? null,
-        taskPanelConversation: null,
-      });
+      get().openTaskPanelCompose(context);
     }
   },
 
@@ -592,6 +598,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       taskPanelConversation: conversation,
       taskPanelMode: "conversation",
       taskPanelOpen: true,
+      canvasSelectedCardPaths: [],
       recentlyOpenedTaskIds: rememberOpenedTask(
         get().recentlyOpenedTaskIds,
         conversation.id
@@ -600,6 +607,42 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   toggleTaskRail: () => set({ taskRailOpen: !get().taskRailOpen }),
+
+  setCanvasSelectedCardPaths: (paths) =>
+    set((state) => {
+      const nextPaths = Array.from(new Set(paths.filter((path) => !!path)));
+      if (state.appMode !== "canvas" || !state.taskPanelOpen || state.taskPanelMode !== "compose") {
+        return { canvasSelectedCardPaths: nextPaths };
+      }
+      const baseContext = state.taskPanelComposeContext ?? {
+        source: "editor" as const,
+        defaultAgentSlug: "editor",
+      };
+      return {
+        canvasSelectedCardPaths: nextPaths,
+        taskPanelComposeContext: {
+          ...baseContext,
+          pinnedPagePath: nextPaths[0] ?? null,
+          pinnedPagePaths: nextPaths,
+        },
+      };
+    }),
+  clearCanvasSelectedCardPaths: () =>
+    set((state) => {
+      if (state.appMode !== "canvas" || !state.taskPanelOpen || state.taskPanelMode !== "compose") {
+        return { canvasSelectedCardPaths: [] };
+      }
+      return {
+        canvasSelectedCardPaths: [],
+        taskPanelComposeContext: state.taskPanelComposeContext
+          ? {
+              ...state.taskPanelComposeContext,
+              pinnedPagePath: null,
+              pinnedPagePaths: [],
+            }
+          : null,
+      };
+    }),
 
   openAgentTab: (taskTitle: string, prompt: string) => {
     const id = `agent-${Date.now()}`;

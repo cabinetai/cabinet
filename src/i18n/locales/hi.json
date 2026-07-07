@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "पेज निर्यात करें",
+      "focus": "फोकस",
+      "exitFocus": "फोकस बंद करें",
       "copyMarkdown": "मार्कडाउन कॉपी करें",
       "copyForLlms": "LLM के लिए कॉपी करें",
       "copyAsHtml": "HTML के रूप में कॉपी करें",
