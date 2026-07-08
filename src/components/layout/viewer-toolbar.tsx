@@ -105,7 +105,11 @@ export function ViewerToolbar({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-between gap-x-3 gap-y-2 px-3 py-1.5 transition-[padding] duration-200 md:h-10 md:py-0",
+        // `viewer-toolbar` is the stable hook the Electron macOS drag-region
+        // CSS targets (globals.css) — this bar is a <div>, not a <header>, so
+        // without the class the hidden-title-bar window can't be dragged from
+        // the editor or any file viewer built on ViewerToolbar.
+        "viewer-toolbar flex shrink-0 items-center justify-between gap-x-3 gap-y-2 px-3 py-1.5 transition-[padding] duration-200 md:h-10 md:py-0",
         className
       )}
       style={{ paddingInlineStart: `calc(1rem + var(--sidebar-toggle-offset, 0px))` }}

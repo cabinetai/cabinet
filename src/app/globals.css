@@ -1014,14 +1014,28 @@ em-emoji-picker {
 
 .source-viewer-code .hljs-symbol { color: #b5cea8; }
 
-/* Electron macOS: hidden title bar drag region + traffic light clearance */
-.electron-desktop header {
+/* Electron macOS: hidden title bar drag region + traffic light clearance.
+   titleBarStyle "hiddenInset" removes the native title bar, so the window can
+   only be moved by CSS drag regions. Every top bar is a drag handle:
+     • <header>        — dashboard, tasks, agents, task conversation, etc.
+     • .viewer-toolbar — the editor + all file viewers (a <div>, not a header)
+     • .sidebar-header — the one bar present in every view, under the lights
+   Interactive controls opt back out (below) so they stay clickable. */
+.electron-desktop header,
+.electron-desktop .viewer-toolbar,
+.electron-desktop .sidebar-header {
   -webkit-app-region: drag;
 }
-.electron-desktop header button,
-.electron-desktop header a,
-.electron-desktop header input,
-.electron-desktop header [role="button"] {
+/* Any interactive control opts out of dragging so clicks/typing still work.
+   Scoped app-wide (not per-bar): no-drag is a harmless no-op outside a drag
+   region, and this keeps future drag handles working without re-listing. */
+.electron-desktop button,
+.electron-desktop a,
+.electron-desktop input,
+.electron-desktop select,
+.electron-desktop textarea,
+.electron-desktop [role="button"],
+.electron-desktop [contenteditable="true"] {
   -webkit-app-region: no-drag;
 }
 /* The macOS traffic lights sit at the window's *physical* top-left
