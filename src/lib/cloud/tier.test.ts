@@ -1,4 +1,5 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, afterEach } from "node:test";
+import assert from "node:assert/strict";
 import { cabinetTier, storageCapMb, isOverCap, aiDisabled } from "./tier";
 
 const env = process.env;
@@ -12,37 +13,37 @@ const MB = 1024 * 1024;
 
 describe("tier", () => {
   it("cabinetTier: only explicit 'free' is free; unset/other = pro (fail open)", () => {
-    expect(cabinetTier()).toBe("pro");
+    assert.equal(cabinetTier(), "pro");
     env.CABINET_TIER = "free";
-    expect(cabinetTier()).toBe("free");
+    assert.equal(cabinetTier(), "free");
     env.CABINET_TIER = "garbage";
-    expect(cabinetTier()).toBe("pro");
+    assert.equal(cabinetTier(), "pro");
   });
 
   it("aiDisabled only when cloud AND free", () => {
     env.CABINET_TIER = "free";
-    expect(aiDisabled()).toBe(false); // not cloud
+    assert.equal(aiDisabled(), false); // not cloud
     env.CABINET_CLOUD = "1";
-    expect(aiDisabled()).toBe(true);
+    assert.equal(aiDisabled(), true);
     env.CABINET_TIER = "pro";
-    expect(aiDisabled()).toBe(false);
+    assert.equal(aiDisabled(), false);
   });
 
   it("storageCapMb parses positive ints, else null", () => {
-    expect(storageCapMb()).toBeNull();
+    assert.equal(storageCapMb(), null);
     env.CABINET_STORAGE_CAP_MB = "20";
-    expect(storageCapMb()).toBe(20);
+    assert.equal(storageCapMb(), 20);
     env.CABINET_STORAGE_CAP_MB = "0";
-    expect(storageCapMb()).toBeNull();
+    assert.equal(storageCapMb(), null);
     env.CABINET_STORAGE_CAP_MB = "nope";
-    expect(storageCapMb()).toBeNull();
+    assert.equal(storageCapMb(), null);
   });
 
   it("isOverCap threshold (>= cap blocks; unknown never blocks)", () => {
-    expect(isOverCap(null, 20)).toBe(false);
-    expect(isOverCap(100, null)).toBe(false);
-    expect(isOverCap(19 * MB, 20)).toBe(false);
-    expect(isOverCap(20 * MB, 20)).toBe(true);
-    expect(isOverCap(21 * MB, 20)).toBe(true);
+    assert.equal(isOverCap(null, 20), false);
+    assert.equal(isOverCap(100, null), false);
+    assert.equal(isOverCap(19 * MB, 20), false);
+    assert.equal(isOverCap(20 * MB, 20), true);
+    assert.equal(isOverCap(21 * MB, 20), true);
   });
 });
