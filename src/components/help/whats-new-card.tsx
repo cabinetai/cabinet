@@ -97,6 +97,9 @@ function readPendingRelease(): ReleaseEntry | null {
     // Quota / private mode — fall through and show the card.
   }
   if (lastSeen === pkgVersion) return null; // Up to date.
+  // First run (no watermark yet): there's no "before" to catch up from, and the first-open
+  // moment already has the welcome tour — stay quiet and let the effect below set the watermark.
+  if (lastSeen === null) return null;
   return findReleaseFor(pkgVersion);
 }
 
