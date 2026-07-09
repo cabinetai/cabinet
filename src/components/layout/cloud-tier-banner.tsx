@@ -71,48 +71,54 @@ export function CloudTierBanner() {
       role="status"
       className="ms-2.5 mt-2 mb-1.5 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-primary/25 bg-primary/[0.06] px-3.5 py-2.5 text-[12px] text-foreground shadow-sm"
     >
-      <Sparkles className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-      <div className="flex-1 min-w-0">
-        {free ? (
-          <>
-            <span className="font-medium">Free plan · AI is paused</span>
-            <span className="ms-2 text-muted-foreground">
-              Upgrade to run agents{cap ? ` and lift the ${cap} MB cap` : ""}.
+      {/* Sparkle + copy as one group that takes the full width on mobile, so the meter + Upgrade
+          button wrap to their own row below instead of crushing the text one-word-per-line. */}
+      <div className="flex w-full items-center gap-2.5 min-w-0 sm:w-auto sm:flex-1">
+        <Sparkles className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+        <div className="min-w-0">
+          {free ? (
+            <>
+              <span className="font-medium">Free plan · AI is paused</span>
+              <span className="ms-2 text-muted-foreground">
+                Upgrade to run agents{cap ? ` and lift the ${cap} MB cap` : ""}.
+              </span>
+            </>
+          ) : (
+            <span className="font-medium">
+              {pct != null && pct >= 100 ? "Storage full — writes are paused." : "You're almost out of storage."}
             </span>
-          </>
-        ) : (
-          <span className="font-medium">
-            {pct != null && pct >= 100 ? "Storage full — writes are paused." : "You're almost out of storage."}
-          </span>
-        )}
+          )}
+        </div>
       </div>
 
-      {cap != null && (
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
-            <div
-              className={`h-full rounded-full transition-[width] duration-500 ${meterTone}`}
-              style={{ width: `${pct ?? 0}%` }}
-            />
+      <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-start">
+        {cap != null && (
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+              <div
+                className={`h-full rounded-full transition-[width] duration-500 ${meterTone}`}
+                style={{ width: `${pct ?? 0}%` }}
+              />
+            </div>
+            <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+              {used != null ? (used / (1024 * 1024)).toFixed(1) : "–"}/{cap} MB
+            </span>
           </div>
-          <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-            {used != null ? (used / (1024 * 1024)).toFixed(1) : "–"}/{cap} MB
-          </span>
-        </div>
-      )}
+        )}
 
-      {upgradeHref && (
-        <a
-          href={upgradeHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => track("upgrade_click", { surface: "banner" })}
-          className="-my-0.5 inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[12px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Upgrade
-          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-        </a>
-      )}
+        {upgradeHref && (
+          <a
+            href={upgradeHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("upgrade_click", { surface: "banner" })}
+            className="-my-0.5 inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[12px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Upgrade
+            <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </a>
+        )}
+      </div>
     </div>
   );
 }

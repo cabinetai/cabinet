@@ -21,6 +21,7 @@ interface CloudStatus {
   cloud: boolean;
   claudeConnected: boolean;
   panelUrl: string | null;
+  tier?: "free" | "pro";
 }
 
 export function CloudConnectClaudeBanner() {
@@ -49,7 +50,9 @@ export function CloudConnectClaudeBanner() {
     };
   }, []);
 
-  if (!status || !status.cloud || status.claudeConnected) return null;
+  // Free tier can't run agents at all, so "connect Claude to power your agents" is both pointless and
+  // contradicts the "AI is paused — upgrade" banner. Hide it; the upgrade nudge is the only CTA there.
+  if (!status || !status.cloud || status.claudeConnected || status.tier === "free") return null;
 
   const connectHref = status.panelUrl
     ? `${status.panelUrl.replace(/\/$/, "")}/connect`
