@@ -5,6 +5,7 @@ import { fileExists } from "@/lib/storage/fs-operations";
 import { autoCommit } from "@/lib/git/git-service";
 import { resolveAuthorizedMountPaths, assertWritablePath, ReadOnlySourceError } from "@/lib/knowledge-sources/store";
 import { decodeDrivePath } from "@/lib/google-drive/paths";
+import { storageOverCap } from "@/lib/cloud/tier";
 import fs from "fs/promises";
 
 const MIME_TYPES: Record<string, string> = {
@@ -242,6 +243,13 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     const { path: segments } = await params;
     const virtualPath = segments.join("/");
     await assertWritablePath(virtualPath);
+    // Free cloud tier at its storage cap: block content writes (mirrors /api/pages and /api/upload).
+    if (await storageOverCap()) {
+      return NextResponse.json(
+        { error: "Storage full — the free plan is capped. Upgrade for more room.", errorKind: "storage" },
+        { status: 402 }
+      );
+    }
     const resolved = resolveContentPath(virtualPath);
     const body = await req.text();
     await fs.writeFile(resolved, body, "utf-8");
