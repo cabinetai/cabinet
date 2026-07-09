@@ -69,7 +69,7 @@ export function CloudTierBanner() {
   return (
     <div
       role="status"
-      className="ms-2.5 mt-2 mb-1.5 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-primary/25 bg-primary/[0.06] px-3.5 py-2.5 text-[12px] text-foreground shadow-sm"
+      className="ms-2.5 mt-2 mb-1.5 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-primary/25 bg-primary/[0.06] px-3.5 py-2.5 text-[12px] text-foreground shadow-sm animate-in fade-in slide-in-from-top-2 duration-300 ease-out"
     >
       {/* Sparkle + copy as one group that takes the full width on mobile, so the meter + Upgrade
           button wrap to their own row below instead of crushing the text one-word-per-line. */}

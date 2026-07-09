@@ -307,7 +307,10 @@ function RegistryCarousel({
   return (
     <div
       ref={containerRef}
-      className="tilt-carousel relative w-full py-6"
+      // min-h reserves the settled row height (~192px card row + py-6) so the templates'
+      // late fetch fills space instead of shoving the vertically-centered composer up —
+      // this was the single biggest layout shift (0.15 CLS) on home load.
+      className="tilt-carousel relative w-full py-6 min-h-[12rem]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
