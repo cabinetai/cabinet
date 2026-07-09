@@ -1,7 +1,7 @@
 /**
  * Registry manifest client.
  *
- * The cabinets registry (https://github.com/hilash/cabinets) auto-generates
+ * The cabinets registry (https://github.com/cabinetai/cabinets) auto-generates
  * a `manifest.json` at its repo root on every push (via the
  * `build-manifest.yml` GitHub Action). This module fetches that manifest,
  * caches it in-process, and exposes a typed `RegistryTemplate[]` to the

@@ -4,7 +4,7 @@ import path from "path";
 
 export const PROJECT_ROOT = process.cwd();
 const DEFAULT_RELEASE_MANIFEST_URL =
-  "https://github.com/hilash/cabinet/releases/latest/download/cabinet-release.json";
+  "https://github.com/cabinetai/cabinet/releases/latest/download/cabinet-release.json";
 
 function parsePort(value: string | undefined, fallback: number): number {
   if (!value) return fallback;

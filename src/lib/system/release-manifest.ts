@@ -25,7 +25,7 @@ function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
   const version = pkg.version || "0.0.0";
   const gitTag = `v${version}`;
   const repositoryUrl = pkg.repository?.url?.replace(/^git\+/, "").replace(/\.git$/, "") ||
-    "https://github.com/hilash/cabinet";
+    "https://github.com/cabinetai/cabinet";
 
   return {
     manifestVersion: 1,

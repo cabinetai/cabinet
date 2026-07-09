@@ -1882,7 +1882,7 @@ export function SettingsPage() {
                 <p className="text-[12px] text-muted-foreground mb-3">
                   {t("settings:about.privacyBody")}
                   <a
-                    href="https://github.com/hilash/cabinet/blob/main/TELEMETRY.md"
+                    href="https://github.com/cabinetai/cabinet/blob/main/TELEMETRY.md"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-1 underline hover:text-foreground"

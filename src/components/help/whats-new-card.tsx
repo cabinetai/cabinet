@@ -140,7 +140,10 @@ export function WhatsNewCard() {
   if (dismissed || !release) return null;
 
   return (
-    <div className="pointer-events-auto fixed end-4 bottom-12 z-40 w-[360px] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-card p-3 shadow-2xl ring-1 ring-foreground/10">
+    // hidden sm:block — on a phone this card sits right on top of the composer's Send button;
+    // release notes are desktop furniture, so small screens just skip them (watermark still
+    // advances on dismiss/next visit from a desktop).
+    <div className="pointer-events-auto fixed end-4 bottom-12 z-40 hidden w-[360px] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-card p-3 shadow-2xl ring-1 ring-foreground/10 sm:block">
       <div className="flex items-start gap-2">
         <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
         <div className="flex flex-1 flex-col gap-1">
@@ -165,7 +168,7 @@ export function WhatsNewCard() {
             ))}
           </ul>
           <a
-            href={`https://github.com/hilash/cabinet/releases/tag/v${release.version}`}
+            href={`https://github.com/cabinetai/cabinet/releases/tag/v${release.version}`}
             target="_blank"
             rel="noreferrer noopener"
             className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 underline-offset-2 hover:underline"
