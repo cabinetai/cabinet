@@ -1,7 +1,7 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { piProvider } from "../providers/pi";
+import { piProvider, normalizePiModelId } from "../providers/pi";
 import { resolveCliCommand } from "../provider-cli";
 import { providerStatusToEnvironmentTest } from "./environment";
 import {
@@ -70,8 +70,14 @@ function buildPiArgs(
 
   const modelInput = readStringConfig(config, "model");
   if (modelInput) {
+    // Heal stale persisted table-row values before splitting. A pre-fix
+    // selection could store an entire `pi --list-models` row as the model id;
+    // normalizePiModelId collapses it back to <provider>/<model>. Clean ids
+    // pass through untouched. This is Pi-internal — callers hand us a model
+    // id and get clean args back, exactly like any other provider.
+    const healed = normalizePiModelId(modelInput) ?? modelInput;
     const explicitProvider = readStringConfig(config, "provider");
-    const { provider, model } = splitProviderModel(modelInput);
+    const { provider, model } = splitProviderModel(healed);
     const effectiveProvider = explicitProvider || provider;
     if (effectiveProvider) args.push("--provider", effectiveProvider);
     if (model) args.push("--model", model);
