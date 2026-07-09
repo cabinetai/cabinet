@@ -5,6 +5,7 @@ import type {
   CreateConversationResponse,
 } from "@/types/conversations";
 import { LOCALE_STORAGE_KEY, SUPPORTED_LOCALES, type Locale } from "@/i18n";
+import { gateAiRun } from "@/lib/cloud/client-tier";
 
 function getErrorMessage(
   fallback: string,
@@ -43,6 +44,12 @@ export async function createConversation(
     locale: readClientLocale(),
     ...request,
   };
+  // Free-tier cloud tenants can't run agents — pop the upgrade modal at the moment of intent and
+  // stop before firing a run the server would reject. This is the shared run path, so it covers the
+  // home composer, the ⌘⌥R dialog, and everything else. Draft saves (inbox) are still allowed.
+  if (!request.draftOnly && (await gateAiRun())) {
+    throw new Error("Upgrade to Pro to run agents on the free plan.");
+  }
   const response = await fetch("/api/agents/conversations", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
