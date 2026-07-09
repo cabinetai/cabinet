@@ -1,5 +1,21 @@
 import type { TreeNode, PageData, FrontMatter } from "@/types";
 import { normalizeVirtualPath } from "@/lib/virtual-paths";
+import { gateAiRun } from "@/lib/cloud/client-tier";
+
+// Turn a failed write into a useful error: surface the server's message, and on a free-tier
+// storage-cap 402 pop the upgrade modal (a storage 402 only happens on free cloud cabinets, so
+// gateAiRun's free check passes and it dispatches with the right panel URL). Inert off-cloud.
+async function writeError(res: Response, fallback: string): Promise<Error> {
+  let message = fallback;
+  try {
+    const body = (await res.json()) as { error?: string; errorKind?: string };
+    if (body.error) message = body.error;
+    if (body.errorKind === "storage") void gateAiRun();
+  } catch {
+    // body not JSON
+  }
+  return new Error(message);
+}
 
 export function buildPageApiUrl(pagePath = ""): string {
   const normalized = normalizeVirtualPath(pagePath);
@@ -54,7 +70,7 @@ export async function savePage(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content, frontmatter }),
   });
-  if (!res.ok) throw new Error(`Failed to save page: ${path}`);
+  if (!res.ok) throw await writeError(res, `Failed to save page: ${path}`);
 }
 
 export async function createPageApi(
@@ -66,7 +82,7 @@ export async function createPageApi(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title }),
   });
-  if (!res.ok) throw new Error(`Failed to create page: ${parentPath}`);
+  if (!res.ok) throw await writeError(res, `Failed to create page: ${parentPath}`);
 }
 
 export async function deletePageApi(path: string): Promise<void> {
