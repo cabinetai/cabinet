@@ -175,7 +175,7 @@ export const FALLBACK_TEMPLATES: RegistryTemplate[] = [
     slug: "text-your-mom",
     name: "Text Your Mom",
     description:
-      "Relatable B2C app company cabinet used to test nested cabinet behavior.",
+      "A relatable B2C app company fully staffed with product, marketing, design, and app development teams working as one.",
     domain: "Software",
     version: "0.1.0",
     cover: null,
