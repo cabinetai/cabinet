@@ -51,6 +51,7 @@ import { ContentSheet } from "@/components/layout/content-sheet";
 import { DaemonHealthBanner } from "@/components/layout/daemon-health-banner";
 import { CloudConnectClaudeBanner } from "@/components/layout/cloud-connect-claude-banner";
 import { CloudTierBanner } from "@/components/layout/cloud-tier-banner";
+import { CloudUpgradeModal } from "@/components/layout/cloud-upgrade-modal";
 import { TourModal } from "@/components/onboarding/tour/tour-modal";
 import { useTour } from "@/components/onboarding/tour/use-tour";
 import {
@@ -1113,6 +1114,7 @@ export function AppShell() {
         <DaemonHealthBanner />
         <CloudConnectClaudeBanner />
         <CloudTierBanner />
+        <CloudUpgradeModal />
         {!isMobile && <NarrowViewportHint />}
         {/* The main column IS the desk (transparent). Content floats on an
             elevated ContentSheet; the editor manages its own layout — its
