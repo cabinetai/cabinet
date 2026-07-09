@@ -75,3 +75,6 @@ skills-lock.json
 
 # latex.js static assets copied from node_modules by postinstall
 /public/latex-js/
+
+# UI-audit screenshots — local artifacts, not repo content (untracked 2026-07-09; 39MB)
+.audit-shots/
