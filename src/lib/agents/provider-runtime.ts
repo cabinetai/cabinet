@@ -3,6 +3,7 @@ import type { AgentProvider, CliProviderInvocation } from "./provider-interface"
 import { providerRegistry } from "./provider-registry";
 import { buildWindowsShellCommand, getRuntimePath, resolveCliCommand } from "./provider-cli";
 import { terminateChildProcess } from "./process-utils";
+import { assertAiAllowed } from "@/lib/cloud/tier";
 import {
   resolveDetachedPromptLaunchMode,
   type DetachedLaunchMode,
@@ -140,6 +141,7 @@ export async function runOneShotProviderPrompt(input: {
   model?: string;
   effort?: string;
 }): Promise<string> {
+  assertAiAllowed(); // free-tier cloud tenants can't run one-shot prompts (server backstop)
   const provider = resolveProviderOrThrow(input.providerId);
 
   if (provider.type === "api" && provider.runPrompt) {

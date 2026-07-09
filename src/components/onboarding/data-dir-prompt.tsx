@@ -9,6 +9,8 @@ const FLAG_KEY = "cabinet.dataDirConfirmed";
 
 export function isDataDirConfirmed(): boolean {
   if (typeof window === "undefined") return true;
+  // Cloud tenants run on a fixed /data volume — there is no folder to pick, so never prompt.
+  if (process.env.NEXT_PUBLIC_CABINET_EDITION === "cloud") return true;
   try {
     return window.localStorage.getItem(FLAG_KEY) !== null;
   } catch {

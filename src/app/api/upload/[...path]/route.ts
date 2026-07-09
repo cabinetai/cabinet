@@ -6,6 +6,7 @@ import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
 import { assertWritablePath, ReadOnlySourceError } from "@/lib/knowledge-sources/store";
 import fs from "fs/promises";
+import { storageOverCap } from "@/lib/cloud/tier";
 
 type RouteParams = { params: Promise<{ path: string[] }> };
 
@@ -35,6 +36,12 @@ function hasExecutableExtension(filename: string): boolean {
 
 export async function POST(req: NextRequest, { params }: RouteParams) {
   try {
+    if (await storageOverCap()) {
+      return NextResponse.json(
+        { error: "Storage full — the free plan is capped. Upgrade for more room.", errorKind: "storage" },
+        { status: 402 },
+      );
+    }
     const { path: segments } = await params;
     const virtualPath = segments.join("/");
     // Block uploading into a read-only mount (the new child sits under it).

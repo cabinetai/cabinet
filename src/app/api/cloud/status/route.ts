@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { cabinetTier, storageCapMb, storageUsedBytes } from "@/lib/cloud/tier";
 
 // Surfaces whether this instance is the hosted (Cabinet Cloud) edition and, if
 // so, whether Claude credentials have been provisioned yet. Drives the in-app
@@ -35,5 +36,8 @@ export async function GET() {
     cloud: true,
     claudeConnected: isClaudeConnected(),
     panelUrl: process.env.CABINET_CLOUD_PANEL_URL || null,
+    tier: cabinetTier(),
+    storageCapMb: storageCapMb(),
+    storageUsedBytes: await storageUsedBytes(),
   });
 }

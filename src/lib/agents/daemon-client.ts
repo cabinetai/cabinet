@@ -1,5 +1,6 @@
 import type { ConversationErrorKind } from "@/types/conversations";
 import { getDaemonUrl, getOrCreateDaemonToken } from "./daemon-auth";
+import { assertAiAllowed } from "@/lib/cloud/tier";
 
 interface CreateDaemonSessionInput {
   id: string;
@@ -51,6 +52,7 @@ async function daemonFetch(path: string, init?: RequestInit): Promise<Response> 
 export async function createDaemonSession(
   input: CreateDaemonSessionInput
 ): Promise<void> {
+  assertAiAllowed(); // free-tier cloud tenants can't start runs (server backstop; the UI gates first)
   const response = await daemonFetch("/sessions", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
