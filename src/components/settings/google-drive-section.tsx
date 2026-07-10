@@ -27,6 +27,7 @@ import { GDRIVE_MOUNTS_CHANGED_EVENT } from "@/components/sidebar/google-drive-t
 import { useAppStore } from "@/stores/app-store";
 import { useRoomsStore } from "@/stores/rooms-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
+import { useIsCloud } from "@/lib/cloud/client-tier";
 
 interface Mount {
   id: string;
@@ -198,6 +199,7 @@ function FolderPickerDialog({
 }
 
 export function GoogleDriveSection() {
+  const cloud = useIsCloud();
   const [status, setStatus] = useState<DriveStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -231,6 +233,21 @@ export function GoogleDriveSection() {
   useEffect(() => {
     void loadStatus();
   }, [loadStatus]);
+
+  // Cabinet Cloud has no desktop-sync mount to browse. Replace the whole
+  // Drive-for-Desktop surface with one honest explainer — no dead buttons.
+  // Gate strictly on cloud === true so self-hosted (cloud undefined/false)
+  // renders the desktop surface exactly as before, with no extra delay.
+  if (cloud === true) {
+    return (
+      <div className="rounded-md border border-border bg-muted/20 px-3.5 py-3">
+        <h3 className="text-[14px] font-semibold mb-1">Desktop sync folders</h3>
+        <p className="text-[12px] text-muted-foreground">
+          Google Drive, iCloud and OneDrive folder sync uses the desktop app on your computer. On Cabinet Cloud, upload files directly or use the Notion, GitHub and Drive connectors below. Cloud-native Drive sync is coming.
+        </p>
+      </div>
+    );
+  }
 
   const addMount = async (absPath: string, folderName: string) => {
     const res = await fetch("/api/google-drive/mounts", {

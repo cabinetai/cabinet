@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/stores/app-store";
 import { useTreeStore } from "@/stores/tree-store";
+import { useIsCloud } from "@/lib/cloud/client-tier";
 import { SetupGuide } from "@/components/integrations/hub/setup-guide";
 import {
   MockWindow,
@@ -52,6 +53,7 @@ export function NotionConnectDialog({
   /** Tree path the import lands under (the right-clicked folder). */
   targetPath: string;
 }) {
+  const cloud = useIsCloud();
   const [step, setStep] = useState<"choose" | "export">("choose");
   const [phase, setPhase] = useState<Phase>("intro");
   const [error, setError] = useState("");
@@ -231,12 +233,16 @@ export function NotionConnectDialog({
         </DialogHeader>
 
         <div className="grid gap-3 py-1">
-          <ChooserCard
-            icon={<FileArchive className="h-5 w-5" aria-hidden="true" />}
-            title="Import from an export"
-            body="One-time import. Your pages become editable Markdown files in this room — offline, searchable, no account needed."
-            onClick={() => setStep("export")}
-          />
+          {/* The export import reads a .zip through the native file picker, which
+              Cabinet Cloud has no access to — offer only the live MCP sync there. */}
+          {!cloud && (
+            <ChooserCard
+              icon={<FileArchive className="h-5 w-5" aria-hidden="true" />}
+              title="Import from an export"
+              body="One-time import. Your pages become editable Markdown files in this room — offline, searchable, no account needed."
+              onClick={() => setStep("export")}
+            />
+          )}
           <ChooserCard
             icon={<RefreshCw className="h-5 w-5" aria-hidden="true" />}
             title="Connect & sync"

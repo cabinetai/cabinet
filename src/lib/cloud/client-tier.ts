@@ -2,6 +2,7 @@
 // Client-side tier check for gating AI runs at the moment of intent (composer Send). Cached from
 // /api/cloud/status so it costs at most one request a minute. Inert off-cloud (tier is never "free"
 // unless CABINET_CLOUD is set), so self-hosted builds never gate.
+import { useEffect, useState } from "react";
 
 export type CloudTier = "free" | "pro";
 
@@ -41,6 +42,25 @@ export async function cloudTierStatus(): Promise<{
 }> {
   const { cloud, tier, panelUrl } = await cloudStatus();
   return { cloud, tier, panelUrl };
+}
+
+/**
+ * Client twin of `isCloud()` (server tier.ts) for gating desktop-only UI surfaces in the hosted
+ * edition. Returns `undefined` until the first /api/cloud/status resolves so callers can avoid a
+ * flash of the wrong surface, then `true` only when CABINET_CLOUD is set. Inert off-cloud.
+ */
+export function useIsCloud(): boolean | undefined {
+  const [cloud, setCloud] = useState<boolean | undefined>(undefined);
+  useEffect(() => {
+    let alive = true;
+    void cloudStatus().then((s) => {
+      if (alive) setCloud(s.cloud);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return cloud;
 }
 
 export const UPGRADE_GATE_EVENT = "cabinet:upgrade-gate";

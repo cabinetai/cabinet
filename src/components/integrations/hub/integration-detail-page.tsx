@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { showSuccess } from "@/lib/ui/toast";
 import { ConnectPanel } from "@/components/integrations/hub/connect-panel";
+import { useIsCloud } from "@/lib/cloud/client-tier";
 import { AppleNotesSection } from "@/components/settings/apple-notes-section";
 import { GoogleDriveSection } from "@/components/settings/google-drive-section";
 import { GmailSection } from "@/components/settings/gmail-section";
@@ -57,6 +58,7 @@ export function IntegrationDetailPage({
   via?: string | null;
   onBack: () => void;
 }) {
+  const cloud = useIsCloud();
   const category = CATEGORY_META[item.category].label;
   const entry = getCatalogEntry(item.id);
   // Microsoft 365 has a personal/work toggle in the ConnectPanel; we lift it
@@ -239,7 +241,18 @@ export function IntegrationDetailPage({
         <aside>
           {item.id === "apple-notes" ? (
             <div className="rounded-2xl border border-border bg-card/40 p-5">
-              <AppleNotesSection />
+              {cloud ? (
+                // Apple Notes import runs a local macOS scripting bridge on the
+                // user's own Mac — no cloud path. Honest note instead of the
+                // desktop import button.
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                  Apple Notes import uses the desktop app on your Mac. On Cabinet
+                  Cloud, upload files directly or use the Notion, GitHub and Drive
+                  connectors.
+                </p>
+              ) : (
+                <AppleNotesSection />
+              )}
             </div>
           ) : item.id === "google-drive" ? (
             // Drive connects via Google Drive for Desktop (folder mounts), not
