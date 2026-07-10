@@ -3,19 +3,44 @@
 // /api/cloud/status so it costs at most one request a minute. Inert off-cloud (tier is never "free"
 // unless CABINET_CLOUD is set), so self-hosted builds never gate.
 
-let cache: { free: boolean; panelUrl: string | null; at: number } | null = null;
+export type CloudTier = "free" | "pro";
 
-async function cloudStatus(): Promise<{ free: boolean; panelUrl: string | null }> {
+let cache: {
+  cloud: boolean;
+  tier: CloudTier;
+  free: boolean;
+  panelUrl: string | null;
+  at: number;
+} | null = null;
+
+async function cloudStatus(): Promise<{
+  cloud: boolean;
+  tier: CloudTier;
+  free: boolean;
+  panelUrl: string | null;
+}> {
   const now = Date.now();
   if (cache && now - cache.at < 60_000) return cache;
   try {
     const r = await fetch("/api/cloud/status", { cache: "no-store" });
     const d = (await r.json()) as { cloud?: boolean; tier?: string; panelUrl?: string | null };
-    cache = { free: d?.cloud === true && d?.tier === "free", panelUrl: d?.panelUrl ?? null, at: now };
+    const cloud = d?.cloud === true;
+    const tier: CloudTier = d?.tier === "free" ? "free" : "pro";
+    cache = { cloud, tier, free: cloud && tier === "free", panelUrl: d?.panelUrl ?? null, at: now };
   } catch {
-    cache = { free: false, panelUrl: null, at: now };
+    cache = { cloud: false, tier: "pro", free: false, panelUrl: null, at: now };
   }
   return cache;
+}
+
+/** Full cached status for render-time consumers (the `useCloudTier` hook). */
+export async function cloudTierStatus(): Promise<{
+  cloud: boolean;
+  tier: CloudTier;
+  panelUrl: string | null;
+}> {
+  const { cloud, tier, panelUrl } = await cloudStatus();
+  return { cloud, tier, panelUrl };
 }
 
 export const UPGRADE_GATE_EVENT = "cabinet:upgrade-gate";

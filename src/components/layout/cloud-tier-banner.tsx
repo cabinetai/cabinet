@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { track } from "@/components/analytics/posthog-provider";
 
 // Hosted-edition free-tier affordance: a free cabinet is a real, full workspace with AI paused and
@@ -74,7 +74,12 @@ export function CloudTierBanner() {
       {/* Sparkle + copy as one group that takes the full width on mobile, so the meter + Upgrade
           button wrap to their own row below instead of crushing the text one-word-per-line. */}
       <div className="flex w-full items-center gap-2.5 min-w-0 sm:w-auto sm:flex-1">
-        <Sparkles className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/cloud/sparkles.png"
+          alt=""
+          className="h-[18px] w-[18px] shrink-0 object-contain"
+        />
         <div className="min-w-0">
           {free ? (
             <>

@@ -39,6 +39,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { RegistryTemplate } from "@/lib/registry/registry-manifest";
 import { TiltCard } from "@/components/ui/tilt-card";
+import { useCloudTier } from "@/lib/cloud/use-cloud-tier";
+import { gateAiRun } from "@/lib/cloud/client-tier";
+import { NewFileDialog } from "@/components/sidebar/new-file-dialog";
+import { useFileImport } from "@/components/sidebar/use-file-import";
 
 type QuickAction = {
   /** Key under `home:quickActions.*` for the visible button label. */
@@ -469,6 +473,73 @@ function ImportDialog({
   );
 }
 
+// Free cloud tier only (aiPaused): the workspace-first hero. A row of three
+// brand-illustrated tiles for the things a free cabinet can do right now —
+// create a page, import files, browse templates. Replaces the AI composer,
+// which the free plan can't run.
+function WorkspaceTile({
+  img,
+  title,
+  subtitle,
+  onClick,
+}: {
+  img: string;
+  title: string;
+  subtitle: string;
+  onClick: () => void;
+}) {
+  return (
+    <TiltCard className="flex-1 basis-0 min-w-0">
+      <button
+        type="button"
+        onClick={onClick}
+        className="fancy-card flex h-full w-full flex-col items-center gap-2 border border-border bg-card px-4 py-5 text-center"
+      >
+        {/* Brand object art. Decorative — the title carries the label. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={img} alt="" className="h-14 w-14 object-contain" />
+        <span className="text-sm font-medium text-foreground">{title}</span>
+        <span className="text-[11px] leading-snug text-muted-foreground">
+          {subtitle}
+        </span>
+      </button>
+    </TiltCard>
+  );
+}
+
+// Free-tier upsell footer: AI is paused, not removed. Dispatches the same
+// UPGRADE_GATE_EVENT the run-time gate uses (via gateAiRun, so the panel URL is
+// populated from cache), reusing the one upgrade modal mounted in the app shell.
+function LockedAiTeaser() {
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl border border-primary/20 bg-primary/[0.04] px-6 py-6 text-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/cloud/sparkles.png"
+        alt=""
+        className="mx-auto mb-3 h-12 w-12 object-contain"
+      />
+      <h2
+        className="text-2xl text-foreground"
+        style={{ fontFamily: "var(--font-logo), Georgia, serif", fontStyle: "italic" }}
+      >
+        Your AI team is waiting.
+      </h2>
+      <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
+        Upgrade to Pro to let agents run for you 24/7, connect your own Claude,
+        and lift the storage cap.
+      </p>
+      <button
+        type="button"
+        onClick={() => void gateAiRun()}
+        className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+      >
+        See Pro
+      </button>
+    </div>
+  );
+}
+
 export function HomeScreen() {
   const { t } = useLocale();
   const setSection = useAppStore((s) => s.setSection);
@@ -496,6 +567,12 @@ export function HomeScreen() {
   const [selectedAgentSlug, setSelectedAgentSlug] = useState<string | null>(
     null
   );
+  // Cloud free tier pauses AI: swap the composer hero for a workspace-action
+  // hero. Defaults to not-paused until /api/cloud/status resolves, so pro and
+  // self-host never flash the gated layout (and never gate at all).
+  const { aiPaused } = useCloudTier();
+  const fileImport = useFileImport();
+  const [newFileOpen, setNewFileOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/user/profile")
@@ -705,6 +782,45 @@ export function HomeScreen() {
           {headline}
         </h1>
 
+        {aiPaused ? (
+          <div className="w-full space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <WorkspaceTile
+                img="/brand/cloud/document.png"
+                title={t("home:free.newPage", { defaultValue: "New page" })}
+                subtitle={t("home:free.newPageDesc", {
+                  defaultValue: "Start a doc, sheet, or code file",
+                })}
+                onClick={() => setNewFileOpen(true)}
+              />
+              <WorkspaceTile
+                img="/brand/cloud/folder.png"
+                title={t("home:free.importFiles", { defaultValue: "Import files" })}
+                subtitle={t("home:free.importFilesDesc", {
+                  defaultValue: "Bring in files from your computer",
+                })}
+                // The upload route is a required catch-all ([...path]), so the
+                // data root itself isn't addressable — a "." segment normalizes
+                // away and 404s. Land imports in a top-level "Imports" folder
+                // instead (the route creates it on demand); it shows up in the
+                // tree immediately.
+                onClick={() => fileImport.importFiles("Imports")}
+              />
+              <WorkspaceTile
+                img="/brand/cloud/open-drawers.png"
+                title={t("home:free.browseTemplates", {
+                  defaultValue: "Browse templates",
+                })}
+                subtitle={t("home:free.browseTemplatesDesc", {
+                  defaultValue: "Start from a ready-made cabinet",
+                })}
+                onClick={() => setSection({ type: "registry" })}
+              />
+            </div>
+            <LockedAiTeaser />
+          </div>
+        ) : (
+          <>
         <ComposerInput
           composer={composer}
           placeholder={composerPlaceholder}
@@ -803,6 +919,8 @@ export function HomeScreen() {
             </button>
           )}
         </div>
+          </>
+        )}
       </div>
 
       <div className="w-screen pb-8 pt-4 space-y-3">
@@ -825,6 +943,13 @@ export function HomeScreen() {
           }}
         />
       </div>
+
+      {/* Free-tier "New page" tile target — same dialog the sidebar uses. */}
+      <NewFileDialog
+        open={newFileOpen}
+        onOpenChange={setNewFileOpen}
+        parentPath=""
+      />
 
       <ImportDialog
         template={importTemplate}

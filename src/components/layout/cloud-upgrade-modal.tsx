@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, X, ArrowUpRight } from "lucide-react";
+import { X, ArrowUpRight } from "lucide-react";
 import { track } from "@/components/analytics/posthog-provider";
 import { UPGRADE_GATE_EVENT } from "@/lib/cloud/client-tier";
 
@@ -54,13 +54,23 @@ export function CloudUpgradeModal() {
           <X className="h-4 w-4" />
         </button>
 
-        <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-          <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
-        </div>
-        <h2 className="text-lg font-semibold tracking-[-0.01em]">Unlock your AI team</h2>
+        {/* Brand hero. Decorative — the headline carries the message. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/cloud/sparkles.png"
+          alt=""
+          className="mb-3 h-24 w-24 object-contain"
+        />
+        <h2
+          className="text-2xl tracking-[-0.01em]"
+          style={{ fontFamily: "var(--font-logo), Georgia, serif", fontStyle: "italic" }}
+        >
+          Unlock your AI team
+        </h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
-          Your free cabinet is a full workspace — files, notes, rooms, all yours. AI is paused. Upgrade
-          to Pro to let agents run for you 24/7, connect your own Claude, and lift the 20&nbsp;MB cap.
+          Your free cabinet is a full workspace. Files, notes, and rooms are all yours, with AI
+          paused. Upgrade to Pro to let agents run for you 24/7, connect your own Claude, and lift
+          the 20&nbsp;MB cap.
         </p>
 
         <div className="mt-6 flex items-center justify-end gap-2">
