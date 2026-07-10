@@ -70,11 +70,7 @@ function buildPiArgs(
 
   const modelInput = readStringConfig(config, "model");
   if (modelInput) {
-    // Heal stale persisted table-row values before splitting. A pre-fix
-    // selection could store an entire `pi --list-models` row as the model id;
-    // normalizePiModelId collapses it back to <provider>/<model>. Clean ids
-    // pass through untouched. This is Pi-internal — callers hand us a model
-    // id and get clean args back, exactly like any other provider.
+    // Heal a stale persisted table-row model id back to <provider>/<model>.
     const healed = normalizePiModelId(modelInput) ?? modelInput;
     const explicitProvider = readStringConfig(config, "provider");
     const { provider, model } = splitProviderModel(healed);
