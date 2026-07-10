@@ -19,7 +19,7 @@ const tag = readArg("tag", `v${version}`);
 const outputPath = readArg("output", path.join(process.cwd(), "cabinet-release.json"));
 const gitCommit = readArg("git-commit", process.env.GITHUB_SHA || undefined);
 const releaseDate = readArg("release-date", new Date().toISOString());
-const repositoryUrl = "https://github.com/hilash/cabinet";
+const repositoryUrl = "https://github.com/cabinetai/cabinet";
 
 // Electron Forge default naming for Cabinet (productName "Cabinet"):
 //   MakerZIP (darwin):     Cabinet-darwin-${arch}-${version}.zip

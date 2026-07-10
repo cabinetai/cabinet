@@ -1,7 +1,7 @@
 # cabinet-mcp-discord
 
 A small, **agent-shaped** Discord [MCP](https://modelcontextprotocol.io) server,
-maintained by [Cabinet](https://github.com/hilash/cabinet).
+maintained by [Cabinet](https://github.com/cabinetai/cabinet).
 
 Discord has no official MCP server, and the community ones are built for
 human-driven chat clients — they expose 60–139 tools, including destructive

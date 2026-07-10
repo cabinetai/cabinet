@@ -477,7 +477,7 @@ function configureAutoUpdates() {
 
   try {
     updateElectronApp({
-      repo: "hilash/cabinet",
+      repo: "cabinetai/cabinet",
       updateInterval: "4 hours",
       notifyUser: false,
     });
@@ -639,7 +639,7 @@ ipcMain.handle("cabinet:get-preferred-languages", () => {
 });
 
 function buildBrowserWindow() {
-  return new BrowserWindow({
+  const win = new BrowserWindow({
     width: 1480,
     height: 940,
     minWidth: 1180,
@@ -653,6 +653,18 @@ function buildBrowserWindow() {
       sandbox: false,
     },
   });
+  // Tell the renderer when macOS hides/shows the traffic lights (native
+  // full-screen) so it can drop/restore the --traffic-clearance reservation —
+  // otherwise the ~80px reserved for the lights is an empty gap in full-screen.
+  const sendFullscreen = () => {
+    if (!win.isDestroyed()) {
+      win.webContents.send("cabinet:fullscreen-changed", win.isFullScreen());
+    }
+  };
+  win.on("enter-full-screen", sendFullscreen);
+  win.on("leave-full-screen", sendFullscreen);
+  win.webContents.on("did-finish-load", sendFullscreen);
+  return win;
 }
 
 // In dev, the Next server may not be ready the instant a window loads. Retry by

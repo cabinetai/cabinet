@@ -211,7 +211,7 @@ module.exports = {
   publishers: [
     new PublisherGithub({
       repository: {
-        owner: "hilash",
+        owner: "cabinetai",
         name: "cabinet",
       },
       prerelease: false,

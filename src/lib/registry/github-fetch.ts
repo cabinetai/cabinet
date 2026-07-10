@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 
-const REPO_OWNER = "hilash";
+const REPO_OWNER = "cabinetai";
 const REPO_NAME = "cabinets";
 const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 const RAW_BASE = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/HEAD`;

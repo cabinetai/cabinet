@@ -1080,15 +1080,16 @@ export function AppShell() {
 
   return (
     <TaskRailProvider>
-    {/* When the rail is open we reserve a 30px gutter on the inline-end
+    {/* When the rail is open we reserve a 52px gutter on the inline-end
         edge: the whole app shrinks into the remaining width (the "iframe")
-        and the fixed, full-height rail lives in that gutter. */}
+        and the fixed, full-height rail — a floating capsule of avatars —
+        lives in that gutter. */}
     <div
       className="flex h-screen bg-[var(--gutter)] text-foreground transition-[padding] duration-200 ease-out"
       style={
         isMobile
           ? undefined
-          : { paddingTop: 10, paddingInlineEnd: taskRailOpen ? 30 : 10, paddingBottom: 0, paddingInlineStart: 0 }
+          : { paddingTop: 10, paddingInlineEnd: taskRailOpen ? 52 : 10, paddingBottom: 0, paddingInlineStart: 0 }
       }
     >
       {/* Audit #031: SR-only live region announcing the active page title
@@ -1109,7 +1110,7 @@ export function AppShell() {
           BELOW the sheet, on the desk — outside the floating page. */}
       <div
         className="flex-1 flex flex-col min-w-0 overflow-hidden max-md:pb-[calc(56px+env(safe-area-inset-bottom))]"
-        style={{ '--sidebar-toggle-offset': sidebarCollapsed ? 'calc(2.25rem + var(--traffic-clearance, 0px))' : '0px' } as React.CSSProperties}
+        style={{ '--sidebar-toggle-offset': sidebarCollapsed ? 'calc(8rem + var(--traffic-clearance, 0px))' : '0px' } as React.CSSProperties}
       >
         <DaemonHealthBanner />
         <CloudConnectClaudeBanner />

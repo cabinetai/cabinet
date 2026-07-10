@@ -6,7 +6,7 @@ import { CABINET_HOME, appVersionDir, ensureCabinetHome, ensureDir, validateVers
 import { log, success, warning } from "./log.js";
 import { npmCommand } from "./process.js";
 
-const REPO_URL = "https://github.com/hilash/cabinet";
+const REPO_URL = "https://github.com/cabinetai/cabinet";
 
 function releaseTagFor(version: string): string {
   const clean = validateVersion(version);

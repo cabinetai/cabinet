@@ -1,7 +1,7 @@
 # cabinet-mcp-telegram
 
 A small, **agent-shaped** Telegram [MCP](https://modelcontextprotocol.io) server,
-maintained by [Cabinet](https://github.com/hilash/cabinet).
+maintained by [Cabinet](https://github.com/cabinetai/cabinet).
 
 Telegram has no official MCP, and the community ones use **MTProto** (full
 *user-account* access — every private chat, impersonation, ToS-gray). This server

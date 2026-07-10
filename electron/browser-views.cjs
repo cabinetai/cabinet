@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 //
 // In-app browser ("browse mode") backed by Electron's native WebContentsView.
-// Ported from hilash/cabinet PR #96. A WebContentsView is a real Chromium view,
+// Ported from cabinetai/cabinet PR #96. A WebContentsView is a real Chromium view,
 // so unlike the iframe fallback it is NOT subject to `X-Frame-Options: DENY` /
 // CSP `frame-ancestors` — sites like Google, GitHub and X load normally.
 //

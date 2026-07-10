@@ -59,7 +59,7 @@ This is any install made from a manual git clone, a fork, or a working tree that
 Typical flow:
 
 ```bash
-git clone https://github.com/hilash/cabinet.git
+git clone https://github.com/cabinetai/cabinet.git
 cd cabinet
 npm install
 npm run dev:all
@@ -99,7 +99,7 @@ On first launch, the Electron app can either:
 
 ### Electron updates
 
-For macOS, Cabinet uses Electron's native update path with `update-electron-app` and `autoUpdater` (`electron/main.cjs` `configureAutoUpdates()`, darwin-only, 4-hour interval, `repo: hilash/cabinet`, served via `update.electronjs.org`). The app checks automatically, downloads supported updates in the background, and asks the user to restart when the update is ready. The Electron updater also writes lifecycle state (`checking` / `available` / `downloading` / `restart-required` / `failed`) into the shared `update-status.json`.
+For macOS, Cabinet uses Electron's native update path with `update-electron-app` and `autoUpdater` (`electron/main.cjs` `configureAutoUpdates()`, darwin-only, 4-hour interval, `repo: cabinetai/cabinet`, served via `update.electronjs.org`). The app checks automatically, downloads supported updates in the background, and asks the user to restart when the update is ready. The Electron updater also writes lifecycle state (`checking` / `available` / `downloading` / `restart-required` / `failed`) into the shared `update-status.json`.
 
 Linux auto-update is not part of v1.
 
@@ -119,7 +119,7 @@ Those versions should match for a real release.
 `cabinet-release.json` is generated from the tagged release and published as a GitHub Release asset. Clients poll the latest manifest here:
 
 ```text
-https://github.com/hilash/cabinet/releases/latest/download/cabinet-release.json
+https://github.com/cabinetai/cabinet/releases/latest/download/cabinet-release.json
 ```
 
 That manifest tells Cabinet:

@@ -12,7 +12,7 @@
  * UI stays usable.
  */
 
-const REPO_OWNER = "hilash";
+const REPO_OWNER = "cabinetai";
 const REPO_NAME = "cabinets";
 const MANIFEST_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/HEAD/manifest.json`;
 const RAW_BASE = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/HEAD`;

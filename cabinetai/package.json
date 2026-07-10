@@ -36,7 +36,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hilash/cabinet.git"
+    "url": "https://github.com/cabinetai/cabinet.git"
   },
   "engines": {
     "node": ">=18"

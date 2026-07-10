@@ -3,7 +3,7 @@ import { log, success, warning, error } from "../lib/log.js";
 import { ensureApp, listInstalledVersions } from "../lib/app-manager.js";
 import { VERSION } from "../version.js";
 const MANIFEST_URL =
-  "https://github.com/hilash/cabinet/releases/latest/download/cabinet-release.json";
+  "https://github.com/cabinetai/cabinet/releases/latest/download/cabinet-release.json";
 
 interface ReleaseManifest {
   version: string;
