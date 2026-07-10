@@ -3,19 +3,45 @@
 // /api/cloud/status so it costs at most one request a minute. Inert off-cloud (tier is never "free"
 // unless CABINET_CLOUD is set), so self-hosted builds never gate.
 
-let cache: { free: boolean; panelUrl: string | null; at: number } | null = null;
+import { useEffect, useState } from "react";
 
-async function cloudStatus(): Promise<{ free: boolean; panelUrl: string | null }> {
+let cache: { cloud: boolean; free: boolean; panelUrl: string | null; at: number } | null = null;
+
+async function cloudStatus(): Promise<{ cloud: boolean; free: boolean; panelUrl: string | null }> {
   const now = Date.now();
   if (cache && now - cache.at < 60_000) return cache;
   try {
     const r = await fetch("/api/cloud/status", { cache: "no-store" });
     const d = (await r.json()) as { cloud?: boolean; tier?: string; panelUrl?: string | null };
-    cache = { free: d?.cloud === true && d?.tier === "free", panelUrl: d?.panelUrl ?? null, at: now };
+    cache = {
+      cloud: d?.cloud === true,
+      free: d?.cloud === true && d?.tier === "free",
+      panelUrl: d?.panelUrl ?? null,
+      at: now,
+    };
   } catch {
-    cache = { free: false, panelUrl: null, at: now };
+    cache = { cloud: false, free: false, panelUrl: null, at: now };
   }
   return cache;
+}
+
+/**
+ * Client twin of `isCloud()` (server tier.ts) for gating desktop-only UI surfaces in the hosted
+ * edition. Returns `undefined` until the first /api/cloud/status resolves so callers can avoid a
+ * flash of the wrong surface, then `true` only when CABINET_CLOUD is set. Inert off-cloud.
+ */
+export function useIsCloud(): boolean | undefined {
+  const [cloud, setCloud] = useState<boolean | undefined>(undefined);
+  useEffect(() => {
+    let alive = true;
+    void cloudStatus().then((s) => {
+      if (alive) setCloud(s.cloud);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return cloud;
 }
 
 export const UPGRADE_GATE_EVENT = "cabinet:upgrade-gate";

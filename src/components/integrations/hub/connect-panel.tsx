@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { showError, showSuccess } from "@/lib/ui/toast";
 import { openExternalUrl } from "@/lib/runtime/open-url";
+import { useIsCloud } from "@/lib/cloud/client-tier";
 import type { IntegrationItem } from "@/lib/integrations/preview-catalog";
 
 /**
@@ -95,6 +96,7 @@ export function ConnectPanel({
    *  greyed out and unclickable rather than just un-selected. */
   msPersonalDisabled?: boolean;
 }) {
+  const cloud = useIsCloud();
   const [data, setData] = useState<Payload | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [targets, setTargets] = useState<Set<string>>(new Set());
@@ -792,7 +794,7 @@ export function ConnectPanel({
           ) : oauthLogin.state === "pending" ? (
             <div className="rounded-lg border border-border bg-background p-3">
               <p className="text-[12px] font-medium text-foreground">
-                Approve access in your browser
+                {cloud ? "Step 1: approve access" : "Approve access in your browser"}
               </p>
               <button
                 type="button"
@@ -809,35 +811,74 @@ export function ConnectPanel({
               >
                 Open {item.name} sign-in <ExternalLink className="h-3.5 w-3.5" />
               </button>
-              <p className="mt-3 flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Waiting for you to
-                finish…
-              </p>
-              <details className="mt-3">
-                <summary className="cursor-pointer text-[11px] text-muted-foreground hover:text-foreground">
-                  Stuck on a &ldquo;can&apos;t be reached&rdquo; page?
-                </summary>
-                <p className="mt-2 text-[11px] text-muted-foreground">
-                  That page is harmless. Copy its full address-bar URL (it starts
-                  with <code>http://localhost</code>) and paste it here:
-                </p>
-                <div className="mt-2 flex gap-2">
-                  <input
-                    value={callbackPaste}
-                    onChange={(e) => setCallbackPaste(e.target.value)}
-                    placeholder="http://localhost:…/callback?code=…"
-                    className="h-8 flex-1 rounded-md border border-border bg-background px-2.5 text-[12px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/20"
-                  />
-                  <button
-                    type="button"
-                    onClick={submitOauthCallback}
-                    disabled={!callbackPaste.trim()}
-                    className="shrink-0 rounded-md border border-border px-3 py-2 text-[12px] font-medium text-foreground hover:bg-accent disabled:opacity-50"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </details>
+              {cloud ? (
+                // In cloud the OAuth callback redirects to a localhost port inside
+                // the user's own machine, which their browser can't reach — so the
+                // paste step is the normal path here, not a hidden fallback.
+                <>
+                  <p className="mt-3 text-[12px] font-medium text-foreground">
+                    Step 2: paste the URL you land on
+                  </p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    After you approve, your browser will land on a localhost page it
+                    can&apos;t open. That&apos;s expected. Copy that page&apos;s full
+                    address-bar URL (it starts with <code>http://localhost</code>)
+                    and paste it here to finish.
+                  </p>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      value={callbackPaste}
+                      onChange={(e) => setCallbackPaste(e.target.value)}
+                      placeholder="http://localhost:…/callback?code=…"
+                      className="h-8 flex-1 rounded-md border border-border bg-background px-2.5 text-[12px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={submitOauthCallback}
+                      disabled={!callbackPaste.trim()}
+                      className="shrink-0 rounded-md border border-border px-3 py-2 text-[12px] font-medium text-foreground hover:bg-accent disabled:opacity-50"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                  <p className="mt-3 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Waiting for you
+                    to finish…
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="mt-3 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Waiting for you to
+                    finish…
+                  </p>
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-[11px] text-muted-foreground hover:text-foreground">
+                      Stuck on a &ldquo;can&apos;t be reached&rdquo; page?
+                    </summary>
+                    <p className="mt-2 text-[11px] text-muted-foreground">
+                      That page is harmless. Copy its full address-bar URL (it starts
+                      with <code>http://localhost</code>) and paste it here:
+                    </p>
+                    <div className="mt-2 flex gap-2">
+                      <input
+                        value={callbackPaste}
+                        onChange={(e) => setCallbackPaste(e.target.value)}
+                        placeholder="http://localhost:…/callback?code=…"
+                        className="h-8 flex-1 rounded-md border border-border bg-background px-2.5 text-[12px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={submitOauthCallback}
+                        disabled={!callbackPaste.trim()}
+                        className="shrink-0 rounded-md border border-border px-3 py-2 text-[12px] font-medium text-foreground hover:bg-accent disabled:opacity-50"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </details>
+                </>
+              )}
               <button
                 type="button"
                 onClick={cancelOauthLogin}

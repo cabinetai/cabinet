@@ -73,6 +73,12 @@ export interface CatalogEntry {
   registryId?: string;
   /** Declared tier; the UI shows the *verified* tier, falling back to this offline. */
   trustTier: TrustTier;
+  /**
+   * Cannot be connected on Cabinet Cloud — sign-in needs a local terminal / desktop app on the
+   * user's own machine (e.g. a CLI `login`, the Figma desktop app's local MCP server, `sf org
+   * login`). The catalog route filters these out when `isCloud()`. Inert (undefined) off-cloud.
+   */
+  cloudUnsupported?: true;
   authBackend: AuthBackend;
   /** Used when authBackend can't run locally (confidential client, no PKCE). */
   fallbackAuthBackend?: AuthBackend;
@@ -787,6 +793,8 @@ const LINKEDIN: CatalogEntry = {
   // `uv` must be installed (flagged in the setup steps, like Salesforce's CLI).
   sourceUrl: "https://github.com/stickerdaniel/linkedin-mcp-server",
   trustTier: "community",
+  // Auth is a `uvx …--login` browser profile created in a local terminal — no cloud path.
+  cloudUnsupported: true,
   authBackend: "token",
   transport: "stdio",
   mcpServerName: "cabinet-linkedin",
@@ -927,6 +935,8 @@ const EXTENDED: CatalogEntry[] = [
     id: "figma", label: "Figma", blurb: "Pull design context and generate code from frames.",
     iconSlug: "figma", bgImage: "/integrations/figma-bg.webp", logo: "/logos/figma.svg",
     sourceUrl: "https://developers.figma.com/docs/figma-mcp-server/", registryId: "figma", trustTier: "official",
+    // Needs the Figma desktop app's local Dev Mode MCP server (127.0.0.1:3845) — no cloud path.
+    cloudUnsupported: true,
     authBackend: "token", transport: "http", mcpServerName: "cabinet-figma",
     url: "http://127.0.0.1:3845/mcp", credentials: [],
     actions: ["Read selected frames & layers", "Extract design context", "Generate code from designs", "Fetch comments"],
@@ -936,6 +946,8 @@ const EXTENDED: CatalogEntry[] = [
     id: "salesforce", label: "Salesforce", blurb: "Query and update CRM data with the official DX MCP.",
     iconSlug: "salesforce", bgImage: "/integrations/salesforce-bg.webp", logo: "/logos/salesforce.webp",
     sourceUrl: "https://github.com/salesforcecli/mcp", registryId: "salesforce", trustTier: "official",
+    // Auth is a local `sf org login web` via the Salesforce CLI on the user's machine — no cloud path.
+    cloudUnsupported: true,
     authBackend: "token", transport: "stdio", mcpServerName: "cabinet-salesforce",
     command: "npx", args: ["-y", "@salesforce/mcp", "--orgs", "DEFAULT_TARGET_ORG", "--toolsets", "all"], credentials: [],
     actions: ["Query records (SOQL)", "Create & update records", "Run Apex & tests", "Inspect org metadata"],

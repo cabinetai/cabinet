@@ -17,6 +17,7 @@ import {
   type ConnectKnowledgeTile,
 } from "@/lib/knowledge-sources/providers";
 import type { KnowledgeProviderId } from "@/lib/knowledge-sources/store";
+import { useIsCloud } from "@/lib/cloud/client-tier";
 
 interface DetectedAccount {
   provider: KnowledgeProviderId;
@@ -51,20 +52,29 @@ export function ConnectKnowledgeDialog({
   onAppleNotes: () => void;
 }) {
   const setSection = useAppStore((s) => s.setSection);
+  const cloud = useIsCloud();
 
   // Apple Notes only exists on macOS — hide the tile elsewhere.
   const isMac =
     typeof navigator !== "undefined" &&
     /mac/i.test(navigator.platform || navigator.userAgent);
-  const tiles = isMac
-    ? CONNECT_KNOWLEDGE_TILES
-    : CONNECT_KNOWLEDGE_TILES.filter((t) => t.key !== "apple-notes");
+  const tiles = (
+    isMac
+      ? CONNECT_KNOWLEDGE_TILES
+      : CONNECT_KNOWLEDGE_TILES.filter((t) => t.key !== "apple-notes")
+  ).filter((t) =>
+    // On Cabinet Cloud there is no desktop-sync mount and no native folder
+    // picker, so drop the "local" (link folder) and "cloud" (Drive/iCloud/
+    // OneDrive desktop-sync) tiles and the Mac-only Apple Notes import. The
+    // remaining MCP "hub" connectors (Notion, Confluence) work in cloud.
+    cloud ? t.kind === "hub" && t.key !== "apple-notes" : true,
+  );
 
   // Auto-scan: surface the desktop-sync accounts actually installed on this
   // machine, so the user can jump straight to the one they have.
   const [accounts, setAccounts] = useState<DetectedAccount[]>([]);
   useEffect(() => {
-    if (!open) return;
+    if (!open || cloud) return; // no desktop-sync accounts to scan on Cabinet Cloud
     let cancelled = false;
     fetch("/api/knowledge-sources/scan", { cache: "no-store" })
       .then((r) => r.json())
@@ -75,7 +85,7 @@ export function ConnectKnowledgeDialog({
     return () => {
       cancelled = true;
     };
-  }, [open]);
+  }, [open, cloud]);
 
   const handlePick = (tile: ConnectKnowledgeTile) => {
     if (tile.kind === "soon") return;

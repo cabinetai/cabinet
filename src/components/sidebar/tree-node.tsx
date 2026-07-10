@@ -103,6 +103,7 @@ import { NewFileDialog } from "./new-file-dialog";
 import { EditSymlinkDialog } from "./edit-symlink-dialog";
 import { FileSettingsDialog } from "./file-settings-dialog";
 import { useFileImport } from "./use-file-import";
+import { useIsCloud } from "@/lib/cloud/client-tier";
 import { getDataDir } from "@/lib/data-dir-cache";
 import { isMacPlatform, isEditableTarget, formatShortcut } from "@/lib/keys";
 import { useLocale } from "@/i18n/use-locale";
@@ -530,6 +531,7 @@ function TreeNodeImpl({
     ? node.path
     : node.path.split("/").slice(0, -1).join("/");
 
+  const cloud = useIsCloud();
   const {
     importFiles,
     importFilesList,
@@ -932,17 +934,21 @@ function TreeNodeImpl({
               )}
               {t("treeNode:importFile")}
             </ContextMenuItem>
-            <ContextMenuItem
-              disabled={importingFolder || isReadOnly}
-              onClick={() => importFolder(importTargetPath)}
-            >
-              {importingFolder ? (
-                <Loader2 className="h-4 w-4 me-2 animate-spin" />
-              ) : (
-                <FolderInput className="h-4 w-4 me-2" />
-              )}
-              {t("treeNode:importFolder")}
-            </ContextMenuItem>
+            {/* Import folder uses the native directory picker — desktop only.
+                Cloud users upload files with Import file (browser upload) above. */}
+            {!cloud && (
+              <ContextMenuItem
+                disabled={importingFolder || isReadOnly}
+                onClick={() => importFolder(importTargetPath)}
+              >
+                {importingFolder ? (
+                  <Loader2 className="h-4 w-4 me-2 animate-spin" />
+                ) : (
+                  <FolderInput className="h-4 w-4 me-2" />
+                )}
+                {t("treeNode:importFolder")}
+              </ContextMenuItem>
+            )}
             <ContextMenuItem disabled={isReadOnly} onClick={() => setConnectKnowledgeOpen(true)}>
               <GitBranch className="h-4 w-4 me-2" />
               {t("treeNode:connectKnowledge")}

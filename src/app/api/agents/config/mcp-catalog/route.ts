@@ -9,6 +9,7 @@ import { getSelectedEnvironments } from "@/lib/agents/integration-environments";
 import { getRegistryPresence, verifyTier } from "@/lib/agents/mcp-registry-verify";
 import { getDeploymentMode, resolveAuthBackend } from "@/lib/agents/deployment-mode";
 import { getConfiguredDefaultProviderId } from "@/lib/agents/provider-settings";
+import { isCloud } from "@/lib/cloud/tier";
 
 /**
  * `/api/agents/config/mcp-catalog` — Integrations Hub data source.
@@ -32,7 +33,13 @@ export async function GET(): Promise<NextResponse> {
     configPath: p.mcpConfig?.displayPath,
   }));
 
-  const approved = MCP_CATALOG.map((entry) => {
+  // On Cabinet Cloud, drop integrations whose sign-in needs a local terminal / desktop app the
+  // hosted container can't reach (LinkedIn, Salesforce, Figma). Inert off-cloud.
+  const catalog = isCloud()
+    ? MCP_CATALOG.filter((entry) => !entry.cloudUnsupported)
+    : MCP_CATALOG;
+
+  const approved = catalog.map((entry) => {
     const supportedProviderIds = MCP_PROVIDERS.filter(
       (p) => p.mcpConfig?.transports.includes(entry.transport),
     ).map((p) => p.id);
