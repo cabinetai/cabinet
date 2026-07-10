@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { detectProvider, type CloudProviderId } from "@/lib/google-drive/detect-desktop";
+import { detectProvider, detectAllDriveDesktop, type CloudProviderId } from "@/lib/google-drive/detect-desktop";
 import { readKnowledgeSources } from "@/lib/knowledge-sources/store";
 
 export async function GET(request: NextRequest) {
@@ -8,6 +8,9 @@ export async function GET(request: NextRequest) {
     const provider = (request.nextUrl.searchParams.get("provider") ??
       "google-drive") as CloudProviderId;
     const detection = await detectProvider(provider);
+    // Google Drive can have multiple signed-in accounts mounted at once;
+    // other providers only ever expose the single `detection` result.
+    const accounts = provider === "google-drive" ? await detectAllDriveDesktop() : [];
     const sources = await readKnowledgeSources(cabinet);
     const mounts = sources
       .filter((s) => s.provider === provider && s.surface === "browser")
@@ -22,6 +25,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       desktopDetected: detection.detected,
       mountPath: detection.mountPath,
+      accounts,
       mounts,
     });
   } catch (error) {

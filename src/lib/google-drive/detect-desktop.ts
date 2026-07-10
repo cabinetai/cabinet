@@ -34,36 +34,44 @@ async function exists(p: string): Promise<boolean> {
   }
 }
 
-// Resolve the first valid Google Drive mount path.
-export async function detectDriveDesktop(): Promise<DriveDesktopResult> {
-  // macOS: scan ~/Library/CloudStorage for GoogleDrive-* directories
+export interface DriveAccount {
+  /** Label parsed from the "GoogleDrive-<account>" mount dir, e.g. an email. */
+  account: string;
+  mountPath: string;
+}
+
+// Resolve every mounted Google Drive account. Drive for Desktop mounts one
+// ~/Library/CloudStorage/GoogleDrive-<account> dir per signed-in account, so
+// a machine with two accounts signed in has two entries here simultaneously.
+export async function detectAllDriveDesktop(): Promise<DriveAccount[]> {
   const cloudStoragePath = path.join(HOME, "Library", "CloudStorage");
+  const out: DriveAccount[] = [];
   if (await exists(cloudStoragePath)) {
     try {
       const entries = await fs.readdir(cloudStoragePath);
-      const driveEntry = entries.find((e) => e.startsWith("GoogleDrive-"));
-      if (driveEntry) {
-        const myDrive = path.join(cloudStoragePath, driveEntry, "My Drive");
-        if (await exists(myDrive)) {
-          return { detected: true, mountPath: myDrive };
-        }
-        // Some setups mount without "My Drive" subdirectory
-        const root = path.join(cloudStoragePath, driveEntry);
-        return { detected: true, mountPath: root };
+      for (const e of entries.filter((e) => e.startsWith("GoogleDrive-"))) {
+        const myDrive = path.join(cloudStoragePath, e, "My Drive");
+        const root = (await exists(myDrive)) ? myDrive : path.join(cloudStoragePath, e);
+        out.push({ account: e.slice("GoogleDrive-".length), mountPath: root });
       }
     } catch {
       // ignore readdir errors
     }
   }
+  if (out.length > 0) return out;
 
-  // Remaining static candidates
+  // Legacy single-mount setups (Backup and Sync, Windows, Linux/rclone) —
+  // these never have more than one account.
   for (const candidate of CANDIDATE_GLOBS.slice(1)) {
-    if (await exists(candidate)) {
-      return { detected: true, mountPath: candidate };
-    }
+    if (await exists(candidate)) return [{ account: "", mountPath: candidate }];
   }
+  return [];
+}
 
-  return { detected: false, mountPath: null };
+// Resolve the first valid Google Drive mount path.
+export async function detectDriveDesktop(): Promise<DriveDesktopResult> {
+  const [first] = await detectAllDriveDesktop();
+  return first ? { detected: true, mountPath: first.mountPath } : { detected: false, mountPath: null };
 }
 
 export type CloudProviderId =

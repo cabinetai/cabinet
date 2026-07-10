@@ -36,9 +36,15 @@ interface Mount {
   added_at: string;
 }
 
+interface DriveAccount {
+  account: string;
+  mountPath: string;
+}
+
 interface DriveStatus {
   desktopDetected: boolean;
   mountPath: string | null;
+  accounts: DriveAccount[];
   mounts: Mount[];
 }
 
@@ -70,7 +76,9 @@ function FolderPickerDialog({
   const browse = useCallback(async (p: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/google-drive/browse?path=${encodeURIComponent(p)}`);
+      const res = await fetch(
+        `/api/google-drive/browse?path=${encodeURIComponent(p)}&mountPath=${encodeURIComponent(rootPath)}`
+      );
       const data = await res.json() as { dirs: BrowseDir[] };
       setCurrentPath(p);
       setDirs(data.dirs || []);
@@ -79,7 +87,7 @@ function FolderPickerDialog({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [rootPath]);
 
   useEffect(() => {
     if (open) {
@@ -200,7 +208,7 @@ function FolderPickerDialog({
 export function GoogleDriveSection() {
   const [status, setStatus] = useState<DriveStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerRoot, setPickerRoot] = useState<string | null>(null);
   const [removing, setRemoving] = useState<string | null>(null);
 
   // Drive sources are per-room. Resolve the active room the same way the
@@ -292,6 +300,14 @@ export function GoogleDriveSection() {
 
   const detected = status?.desktopDetected ?? false;
   const mounts = status?.mounts ?? [];
+  // Fall back to the single `mountPath` for older responses/tests that don't
+  // send `accounts` yet.
+  const accounts =
+    status?.accounts && status.accounts.length > 0
+      ? status.accounts
+      : status?.mountPath
+        ? [{ account: "", mountPath: status.mountPath }]
+        : [];
 
   return (
     <div className="space-y-4">
@@ -302,14 +318,33 @@ export function GoogleDriveSection() {
         </p>
       </div>
 
-      {/* Detection status */}
+      {/* Detection status — one card per signed-in account, since Drive for
+          Desktop can mount several accounts at once. */}
       {detected ? (
-        <div className="flex items-start gap-2.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5">
-          <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-          <div className="text-[12px]">
-            <div className="font-medium text-emerald-700 dark:text-emerald-400">Google Drive for Desktop detected</div>
-            <div className="text-muted-foreground font-mono mt-0.5 break-all">{status?.mountPath}</div>
-          </div>
+        <div className="space-y-2">
+          {accounts.map((acct) => (
+            <div
+              key={acct.mountPath}
+              className="flex items-start gap-2.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5"
+            >
+              <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+              <div className="text-[12px] flex-1 min-w-0">
+                <div className="font-medium text-emerald-700 dark:text-emerald-400">
+                  {acct.account || "Google Drive for Desktop detected"}
+                </div>
+                <div className="text-muted-foreground font-mono mt-0.5 break-all">{acct.mountPath}</div>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-6 text-[11px] shrink-0"
+                onClick={() => setPickerRoot(acct.mountPath)}
+              >
+                <Plus className="h-3 w-3 me-1" />
+                Add folder
+              </Button>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="space-y-2.5 rounded-md border border-border bg-muted/20 px-3.5 py-3">
@@ -346,18 +381,7 @@ export function GoogleDriveSection() {
       {/* Mounted folders */}
       {detected && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-medium">Mounted folders</span>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-6 text-[11px]"
-              onClick={() => setPickerOpen(true)}
-            >
-              <Plus className="h-3 w-3 me-1" />
-              Add folder
-            </Button>
-          </div>
+          <span className="text-[12px] font-medium">Mounted folders</span>
 
           {mounts.length === 0 ? (
             <div className="rounded-md border border-dashed border-border px-3 py-4 text-center text-[12px] text-muted-foreground">
@@ -365,7 +389,7 @@ export function GoogleDriveSection() {
               <button
                 type="button"
                 className="underline underline-offset-2 hover:text-foreground"
-                onClick={() => setPickerOpen(true)}
+                onClick={() => setPickerRoot(accounts[0]?.mountPath ?? null)}
               >
                 Add a folder
               </button>{" "}
@@ -405,11 +429,11 @@ export function GoogleDriveSection() {
       )}
 
       {/* Folder picker */}
-      {detected && status?.mountPath && (
+      {pickerRoot && (
         <FolderPickerDialog
-          open={pickerOpen}
-          onOpenChange={setPickerOpen}
-          rootPath={status.mountPath}
+          open={!!pickerRoot}
+          onOpenChange={(open) => { if (!open) setPickerRoot(null); }}
+          rootPath={pickerRoot}
           onSelect={addMount}
         />
       )}

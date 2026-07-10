@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { detectProvider, type CloudProviderId } from "@/lib/google-drive/detect-desktop";
+import { detectProvider, detectAllDriveDesktop, type CloudProviderId } from "@/lib/google-drive/detect-desktop";
 import {
   addKnowledgeSource,
   readKnowledgeSources,
@@ -58,27 +58,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Path does not exist" }, { status: 400 });
     }
 
-    // Constrain mounts to within the detected Drive root, so arbitrary host
+    // Constrain mounts to within a detected mount root, so arbitrary host
     // directories can't be mounted and exposed through the Drive APIs. Compare
-    // realpaths to defeat symlinks pointing outside the mount.
-    const detection = await detectProvider(provider);
-    if (!detection.mountPath) {
+    // realpaths to defeat symlinks pointing outside the mount. Google Drive
+    // may have several account roots mounted at once — any of them is valid.
+    const mountRoots =
+      provider === "google-drive"
+        ? (await detectAllDriveDesktop()).map((a) => a.mountPath)
+        : [(await detectProvider(provider)).mountPath].filter((p): p is string => !!p);
+    if (mountRoots.length === 0) {
       return NextResponse.json(
         { error: "Provider not detected on this machine" },
         { status: 400 },
       );
     }
-    let realMountPath: string;
     let realAbsPath: string;
     try {
-      realMountPath = await fs.realpath(detection.mountPath);
       realAbsPath = await fs.realpath(absPath);
     } catch {
       return NextResponse.json({ error: "Path does not exist" }, { status: 400 });
     }
-    const within =
-      realAbsPath === realMountPath ||
-      realAbsPath.startsWith(realMountPath + path.sep);
+    const within = await (async () => {
+      for (const root of mountRoots) {
+        try {
+          const realRoot = await fs.realpath(root);
+          if (realAbsPath === realRoot || realAbsPath.startsWith(realRoot + path.sep)) return true;
+        } catch {
+          // root vanished mid-request; try the next one
+        }
+      }
+      return false;
+    })();
     if (!within) {
       return NextResponse.json(
         { error: `Path is outside the ${providerLabel(provider)} mount` },

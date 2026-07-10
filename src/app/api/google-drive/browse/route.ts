@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listSubdirectories, detectProvider, type CloudProviderId } from "@/lib/google-drive/detect-desktop";
+import { listSubdirectories, detectProvider, detectAllDriveDesktop, type CloudProviderId } from "@/lib/google-drive/detect-desktop";
 import fs from "fs/promises";
 import path from "path";
 
@@ -9,20 +9,31 @@ export async function GET(request: NextRequest) {
     // iCloud/OneDrive/Dropbox navigates that provider — not always Google Drive.
     const provider = (request.nextUrl.searchParams.get("provider") ??
       "google-drive") as CloudProviderId;
-    const detection = await detectProvider(provider);
-    if (!detection.mountPath) {
+    const { searchParams } = request.nextUrl;
+
+    // Google Drive can have several account mounts; the caller picks which
+    // one to browse via `mountPath` (must match a detected account's root).
+    let mountPath: string | null;
+    if (provider === "google-drive") {
+      const accounts = await detectAllDriveDesktop();
+      const requested = searchParams.get("mountPath");
+      const match = requested ? accounts.find((a) => a.mountPath === requested) : undefined;
+      mountPath = match ? match.mountPath : (accounts[0]?.mountPath ?? null);
+    } else {
+      mountPath = (await detectProvider(provider)).mountPath;
+    }
+    if (!mountPath) {
       return NextResponse.json({ error: "Provider not detected" }, { status: 404 });
     }
 
     // Resolve the Drive root's real path once — used as the containment boundary.
     let realMountPath: string;
     try {
-      realMountPath = await fs.realpath(detection.mountPath);
+      realMountPath = await fs.realpath(mountPath);
     } catch {
       return NextResponse.json({ error: "Google Drive for Desktop not detected" }, { status: 404 });
     }
 
-    const { searchParams } = request.nextUrl;
     const rawPath = searchParams.get("path");
 
     // Resolve the requested path lexically (absolute) against the mount root.
