@@ -212,6 +212,22 @@ export async function isDaemonSessionAlive(id: string): Promise<boolean> {
   }
 }
 
+/**
+ * Ask the daemon to exit so its supervisor respawns it. Returns false when
+ * the daemon can't be reached (already dead or wedged past accepting HTTP).
+ */
+export async function restartDaemon(): Promise<boolean> {
+  try {
+    const response = await daemonFetch("/restart", {
+      method: "POST",
+      signal: AbortSignal.timeout(3000),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function reloadDaemonSchedules(): Promise<void> {
   const response = await daemonFetch("/reload-schedules", {
     method: "POST",

@@ -1909,6 +1909,8 @@
       "degraded": "Degraded",
       "allSystemsRunning": "All Systems Running",
       "serviceDisruption": "Service Disruption",
+      "restart": "Restart",
+      "restarting": "Restarting…",
       "appServer": "App Server",
       "daemon": "Daemon",
       "agentProviders": "Agent Providers",

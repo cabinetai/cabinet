@@ -1920,6 +1920,17 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Restart-by-exit: the daemon never respawns itself — whoever supervises it
+  // does (Electron main respawns the child; the cloud entrypoint exits and the
+  // container restart policy relaunches everything). Token-gated above.
+  if (url.pathname === "/restart" && req.method === "POST") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok: true, restarting: true }));
+    console.log("[daemon] restart requested — exiting for supervisor respawn");
+    setTimeout(() => process.exit(0), 250);
+    return;
+  }
+
   // Health check
   if (url.pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
