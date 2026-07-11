@@ -62,6 +62,8 @@ jobs:
             bundleKey: darwin-x64
           - runner: macos-14
             bundleKey: darwin-arm64
+          - runner: windows-latest
+            bundleKey: win32-x64
     permissions:
       contents: write
     steps:
@@ -81,6 +83,11 @@ jobs:
 
       - name: Package app bundle
         id: package
+        # Force bash on all runners — windows-latest defaults to pwsh, and this
+        # script is bash (parameter expansion, tar). GitHub's Windows runners
+        # ship Git Bash, and `tar` there creates a valid .tgz of the relative
+        # standalone dir.
+        shell: bash
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
           BUNDLE_NAME="cabinet-app-${{ matrix.bundleKey }}-v${TAG_VERSION}.tgz"
