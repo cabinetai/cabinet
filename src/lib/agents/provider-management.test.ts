@@ -10,8 +10,13 @@ import {
   updateProviderSettingsWithMigrations,
 } from "./provider-management";
 import { writeProviderSettings } from "./provider-settings";
+import { DATA_DIR } from "../storage/path-utils";
 
-const AGENTS_DIR = path.join(process.cwd(), "data", ".agents");
+// Must be DATA_DIR — the same root the code under test reads from. This used to
+// hardcode `process.cwd()/data`, which only worked because DATA_DIR happened to
+// default to PROJECT_ROOT/data; under an isolated CABINET_DATA_DIR the test
+// wrote personas to one directory while getProviderUsage() scanned another.
+const AGENTS_DIR = path.join(DATA_DIR, ".agents");
 
 async function writeRawPersona(slug: string, provider: string): Promise<string> {
   const agentDir = path.join(AGENTS_DIR, slug);

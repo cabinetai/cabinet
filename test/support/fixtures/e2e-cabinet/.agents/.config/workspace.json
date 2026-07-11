@@ -1,0 +1,17 @@
+{
+  "exists": true,
+  "version": 2,
+  "home": { "name": "Home" },
+  "room": {
+    "id": "office-01",
+    "type": "office",
+    "name": "The Office",
+    "slug": "test-cabinet"
+  },
+  "cabinet": {
+    "name": "Test Cabinet",
+    "description": "Seed fixture for the e2e suite and the cabinet-v2 unit tests.",
+    "size": ""
+  },
+  "setupDate": "2026-01-01T00:00:00.000Z"
+}

@@ -248,7 +248,11 @@ export function TurnBlock({
   );
 
   return (
-    <div className={cn("group/turn py-5 pl-6 pr-3", !isUser && "bg-muted/20")}>
+    <div
+      data-testid="turn"
+      data-turn-role={isUser ? "user" : "agent"}
+      className={cn("group/turn py-5 pl-6 pr-3", !isUser && "bg-muted/20")}
+    >
       <div className="mb-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
         {avatarNode}
         <span className="font-medium text-foreground/80">{isUser ? userLabel : agentLabel}</span>
