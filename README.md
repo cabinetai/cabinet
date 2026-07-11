@@ -68,7 +68,7 @@ npx cabinetai create my-startup    # just create, don't start
 npx cabinetai run                  # start Cabinet in the current dir
 ```
 
-On first run, Cabinet downloads the app to `~/.cabinet/app/v{version}/` and installs its dependencies there. Your cabinet directory is just a folder of markdown files — put it anywhere.
+On first run, Cabinet downloads the prebuilt app bundle to `~/.cabinet/app/v{version}/`. Your cabinet directory is just a folder of markdown files — put it anywhere.
 
 ### Update
 
@@ -264,6 +264,7 @@ npm run electron:start   # Launch Electron desktop against the local dev servers
 npm run build        # Production build
 npm run start        # Production mode (both servers)
 npm run electron:make:win  # Build a portable Windows zip
+npx cabinetai run    # Zero-install runtime, downloads the prebuilt app bundle
 ```
 
 ---

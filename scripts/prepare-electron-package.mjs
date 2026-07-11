@@ -198,29 +198,41 @@ async function stageDaemonRuntime() {
 
   // Stage node-pty into .native/ (NOT node_modules/) so it ships inside the
   // app bundle but is not resolvable by require(). On macOS main.cjs copies it
-  // to userData for Gatekeeper; on Windows the packaged .native directory is
-  // used directly via NODE_PATH.
-  const prebuildDirs =
-    targetPlatform === "win32"
-      ? ["win32-x64", "win32-arm64"]
-      : ["darwin-arm64", "darwin-x64"];
-
+  // to userData for Gatekeeper; on Windows/Linux the packaged .native directory
+  // is used directly via NODE_PATH — also how the zero-install standalone
+  // bundle resolves it, with no npm install.
   await Promise.all([
     copyDirectory(path.join(rootNodePtyDir, "lib"), path.join(stagedNodePtyDir, "lib")),
-    ...prebuildDirs.map((dirName) =>
-      copyDirectory(
-        path.join(rootNodePtyDir, "prebuilds", dirName),
-        path.join(stagedNodePtyDir, "prebuilds", dirName)
-      )
-    ),
     copyFile(path.join(rootNodePtyDir, "package.json"), path.join(stagedNodePtyDir, "package.json")),
   ]);
 
-  if (targetPlatform === "darwin") {
-    for (const dirName of ["darwin-arm64", "darwin-x64"]) {
-      const helperPath = path.join(stagedNodePtyDir, "prebuilds", dirName, "spawn-helper");
-      if (await pathExists(helperPath)) {
-        await fs.chmod(helperPath, 0o755);
+  if (targetPlatform === "linux") {
+    // Linux node-pty has no prebuilds/ dir — ship the compiled binding directly.
+    await copyFile(
+      path.join(rootNodePtyDir, "build", "Release", "pty.node"),
+      path.join(stagedNodePtyDir, "build", "Release", "pty.node")
+    );
+  } else {
+    const prebuildDirs =
+      targetPlatform === "win32"
+        ? ["win32-x64", "win32-arm64"]
+        : ["darwin-arm64", "darwin-x64"];
+
+    await Promise.all(
+      prebuildDirs.map((dirName) =>
+        copyDirectory(
+          path.join(rootNodePtyDir, "prebuilds", dirName),
+          path.join(stagedNodePtyDir, "prebuilds", dirName)
+        )
+      )
+    );
+
+    if (targetPlatform === "darwin") {
+      for (const dirName of prebuildDirs) {
+        const helperPath = path.join(stagedNodePtyDir, "prebuilds", dirName, "spawn-helper");
+        if (await pathExists(helperPath)) {
+          await fs.chmod(helperPath, 0o755);
+        }
       }
     }
   }

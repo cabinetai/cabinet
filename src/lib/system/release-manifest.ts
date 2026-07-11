@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { PROJECT_RELEASE_MANIFEST_PATH } from "@/lib/storage/path-utils";
 import { getReleaseManifestUrl, PROJECT_ROOT } from "@/lib/runtime/runtime-config";
-import type { ReleaseManifest } from "@/types";
+import type { AppBundleKey, ReleaseAppBundle, ReleaseManifest } from "@/types";
 
 interface PackageManifest {
   version?: string;
@@ -11,6 +11,8 @@ interface PackageManifest {
   };
 }
 
+const APP_BUNDLE_KEYS: AppBundleKey[] = ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64"];
+
 function buildReleaseUrls(repositoryUrl: string, gitTag: string): Pick<
   ReleaseManifest,
   "releaseNotesUrl" | "sourceTarballUrl"
@@ -18,6 +20,14 @@ function buildReleaseUrls(repositoryUrl: string, gitTag: string): Pick<
   return {
     releaseNotesUrl: `${repositoryUrl}/releases/tag/${gitTag}`,
     sourceTarballUrl: `${repositoryUrl}/archive/refs/tags/${gitTag}.tar.gz`,
+  };
+}
+
+function buildAppBundle(repositoryUrl: string, gitTag: string, key: AppBundleKey): ReleaseAppBundle {
+  const assetName = `cabinet-app-${key}-${gitTag}.tgz`;
+  return {
+    assetName,
+    url: `${repositoryUrl}/releases/download/${gitTag}/${assetName}`,
   };
 }
 
@@ -35,14 +45,17 @@ function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
     gitTag,
     repositoryUrl,
     ...buildReleaseUrls(repositoryUrl, gitTag),
+    appBundles: Object.fromEntries(
+      APP_BUNDLE_KEYS.map((key) => [key, buildAppBundle(repositoryUrl, gitTag, key)])
+    ) as Record<AppBundleKey, ReleaseAppBundle>,
     npmPackage: "create-cabinet",
     createCabinetVersion: version,
     cabinetaiPackage: "cabinetai",
     cabinetaiVersion: version,
     electron: {
       macos: {
-        zipAssetName: "Cabinet-darwin-arm64.zip",
-        dmgAssetName: "Cabinet.dmg",
+        zipAssetName: `Cabinet-darwin-arm64-${version}.zip`,
+        dmgAssetName: `Cabinet-${version}-arm64.dmg`,
       },
     },
   };
@@ -57,6 +70,10 @@ function normalizeReleaseManifest(input: Partial<ReleaseManifest>, fallback: Rel
   return {
     ...fallback,
     ...input,
+    appBundles: {
+      ...fallback.appBundles,
+      ...input.appBundles,
+    },
     channel: "stable",
     electron: {
       ...fallback.electron,

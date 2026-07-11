@@ -19,16 +19,35 @@ const tag = readArg("tag", `v${version}`);
 const outputPath = readArg("output", path.join(process.cwd(), "cabinet-release.json"));
 const gitCommit = readArg("git-commit", process.env.GITHUB_SHA || undefined);
 const releaseDate = readArg("release-date", new Date().toISOString());
-const repositoryUrl = "https://github.com/cabinetai/cabinet";
+// Prefer an explicit --repository-url, then the CI repo (GITHUB_REPOSITORY),
+// then the canonical repo. Keeps generated URLs correct after the org move
+// (hilash/cabinet → cabinetai/cabinet) without hardcoding.
+const repositoryUrl = (
+  readArg("repository-url") ||
+  (process.env.GITHUB_REPOSITORY && `https://github.com/${process.env.GITHUB_REPOSITORY}`) ||
+  "https://github.com/cabinetai/cabinet"
+).replace(/\.git$/, "");
+
+// Prebuilt app-bundle keys for the zero-install `npx cabinetai run` path.
+// darwin/linux only — Windows still uses the source + npm-install fallback
+// until a win32 bundle is validated (tracked in a follow-up PR).
+const appBundleKeys = ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64"];
+
+function appBundleAssetName(key, tag) {
+  return `cabinet-app-${key}-${tag}.tgz`;
+}
+
+function appBundleUrl(tag, key) {
+  const assetName = appBundleAssetName(key, tag);
+  return `${repositoryUrl}/releases/download/${tag}/${assetName}`;
+}
 
 // Electron Forge default naming for Cabinet (productName "Cabinet"):
-//   MakerZIP (darwin):     Cabinet-darwin-${arch}-${version}.zip
-//   MakerDMG:              Cabinet-${version}-${arch}.dmg
+//   MakerZIP (darwin):     Cabinet-darwin-arm64-${version}.zip
+//   MakerDMG:              Cabinet-${version}-arm64.dmg
 //   MakerZIP (win32):      Cabinet-win32-x64-${version}.zip
 //   MakerSquirrel (win32): "Cabinet-${version} Setup.exe", cabinet-${version}-full.nupkg, RELEASES
-// arch is the macOS build host arch — currently arm64 (electron-release.yml runs on macos-latest).
-// Confirm by running `npm run electron:make` / `:make:win` locally if maker versions change.
-const arch = "arm64";
+// The macOS build host is arm64 (electron-release.yml runs on macos-latest).
 
 const manifest = {
   manifestVersion: 1,
@@ -40,15 +59,18 @@ const manifest = {
   repositoryUrl,
   releaseNotesUrl: `${repositoryUrl}/releases/tag/${tag}`,
   sourceTarballUrl: `${repositoryUrl}/archive/refs/tags/${tag}.tar.gz`,
+  appBundles: Object.fromEntries(
+    appBundleKeys.map((key) => [key, { assetName: appBundleAssetName(key, tag), url: appBundleUrl(tag, key) }])
+  ),
   npmPackage: "create-cabinet",
   createCabinetVersion: version,
   cabinetaiPackage: "cabinetai",
   cabinetaiVersion: version,
   electron: {
     macos: {
-      arch,
-      zipAssetName: `Cabinet-darwin-${arch}-${version}.zip`,
-      dmgAssetName: `Cabinet-${version}-${arch}.dmg`,
+      arch: "arm64",
+      zipAssetName: `Cabinet-darwin-arm64-${version}.zip`,
+      dmgAssetName: `Cabinet-${version}-arm64.dmg`,
     },
     windows: {
       zipAssetName: `Cabinet-win32-x64-${version}.zip`,

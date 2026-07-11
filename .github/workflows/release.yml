@@ -47,9 +47,61 @@ jobs:
           files: |
             cabinet-release.json
 
+  publish-app-bundles:
+    runs-on: ${{ matrix.runner }}
+    needs: release-assets
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            bundleKey: linux-x64
+          - runner: ubuntu-24.04-arm
+            bundleKey: linux-arm64
+          - runner: macos-15-intel
+            bundleKey: darwin-x64
+          - runner: macos-14
+            bundleKey: darwin-arm64
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build && npm run electron:prep
+
+      - name: Package app bundle
+        id: package
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          BUNDLE_NAME="cabinet-app-${{ matrix.bundleKey }}-v${TAG_VERSION}.tgz"
+          tar -czf "$BUNDLE_NAME" -C .next/standalone .
+          node -e "
+            const{createHash}=require('crypto'),{readFileSync}=require('fs');
+            process.stdout.write(createHash('sha256').update(readFileSync('$BUNDLE_NAME')).digest('hex')+'\n')
+          " > "$BUNDLE_NAME.sha256"
+          echo "bundle_name=$BUNDLE_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Upload app bundle to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            ${{ steps.package.outputs.bundle_name }}
+            ${{ steps.package.outputs.bundle_name }}.sha256
+
   publish-cabinetai:
     runs-on: ubuntu-latest
-    needs: release-assets
+    needs: publish-app-bundles
     permissions:
       contents: read
       id-token: write
@@ -106,6 +158,9 @@ jobs:
       # OIDC trusted-publishing auth requires npm >= 11.5.1 (see publish-cabinetai).
       - name: Upgrade npm for trusted publishing
         run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
 
       # Auth via npm trusted publishing (OIDC). Same setup as cabinetai.
       - name: Publish create-cabinet

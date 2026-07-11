@@ -764,7 +764,22 @@ app.whenReady().then(async () => {
     getBaseAppUrl: () => baseAppUrl,
     isDev,
   });
-  await createWindow();
+  try {
+    await createWindow();
+  } catch (error) {
+    // Without this, a failed bootstrap (most commonly: no `npm run dev` server
+    // for the dev build to attach to) rejects unhandled and leaves a silent,
+    // windowless Electron process. Surface the cause instead.
+    const message = error instanceof Error ? error.message : String(error);
+    dialog.showErrorBox(
+      "Cabinet failed to start",
+      isDev
+        ? `${message}\n\nStart the dev server with \`npm run dev\` (or \`npm run dev:all\`) before \`npm run electron:start\`.`
+        : message
+    );
+    app.quit();
+    return;
+  }
 
   app.on("activate", async () => {
     if (BrowserWindow.getAllWindows().length === 0) {

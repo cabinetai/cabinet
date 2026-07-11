@@ -9,7 +9,7 @@ mkdir my-startup && cd my-startup
 npx cabinetai run
 ```
 
-That's it — no global install needed. `run` bootstraps the directory, auto-downloads the app on first use, installs dependencies, and opens in your browser.
+That's it — no global install needed. `run` bootstraps the directory, downloads the prebuilt app bundle for your platform, and opens in your browser.
 
 ## What You Get
 
@@ -27,7 +27,7 @@ That's it — no global install needed. `run` bootstraps the directory, auto-dow
 
 ```
 ~/.cabinet/              Global app cache (auto-managed)
-  app/v0.3.0/            Version-pinned Next.js install
+  app/v0.3.0/            Version-pinned prebuilt app bundle
 
 ~/my-startup/            Your cabinet (this is your data)
   .cabinet               YAML manifest
@@ -63,7 +63,7 @@ npx cabinetai run --no-open              # don't open browser
 npx cabinetai run --app-version 0.2.12   # use a specific app version
 ```
 
-On first run, downloads the app to `~/.cabinet/app/` and installs dependencies. If the current directory is not already a cabinet, `run` bootstraps it in place by creating the `.cabinet`, `.agents/`, `.jobs/`, and `.cabinet-state/` structure before starting the server.
+On first run, downloads the prebuilt app bundle to `~/.cabinet/app/`. If the current directory is not already a cabinet, `run` bootstraps it in place by creating the `.cabinet`, `.agents/`, `.jobs/`, and `.cabinet-state/` structure before starting the server.
 
 **Environment variables:**
 

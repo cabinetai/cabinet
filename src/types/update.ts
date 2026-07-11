@@ -15,6 +15,14 @@ export type UpdateState =
   | "restart-required"
   | "failed";
 
+export type AppBundleKey = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64";
+
+export interface ReleaseAppBundle {
+  assetName: string;
+  url: string;
+  sha256?: string;
+}
+
 export interface ReleaseManifest {
   manifestVersion: number;
   version: string;
@@ -25,6 +33,7 @@ export interface ReleaseManifest {
   repositoryUrl: string;
   releaseNotesUrl: string;
   sourceTarballUrl: string;
+  appBundles?: Partial<Record<AppBundleKey, ReleaseAppBundle>>;
   npmPackage?: string;
   createCabinetVersion?: string;
   cabinetaiPackage?: string;

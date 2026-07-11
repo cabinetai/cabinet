@@ -1,9 +1,10 @@
 import type { Command } from "commander";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import { log, success, error, warning } from "../lib/log.js";
 import { ensureApp } from "../lib/app-manager.js";
-import { openBrowser, npmCommand, spawnChild } from "../lib/process.js";
+import { openBrowser, spawnChild } from "../lib/process.js";
 import {
   bootstrapCabinetAt,
   resolveCabinetRoot,
@@ -264,20 +265,7 @@ async function runCabinet(opts: {
   const appDir = await ensureApp(version);
   log(`App directory:     ${appDir}`);
 
-  // 3. Quick doctor: auto-install deps if missing
-  if (!fs.existsSync(path.join(appDir, "node_modules", "next"))) {
-    log("Installing dependencies...");
-    const { spawnSync } = await import("child_process");
-    const result = spawnSync(npmCommand(), ["install"], {
-      cwd: appDir,
-      stdio: "inherit",
-    });
-    if (result.status !== 0) {
-      error("Failed to install dependencies");
-    }
-  }
-
-  // 4. Check for existing running server for this cabinet
+  // 3. Check for existing running server for this cabinet
   const existingPorts = readRuntimePorts(cabinetDir);
   if (existingPorts.app?.pid && isProcessAlive(existingPorts.app.pid)) {
     const origin = existingPorts.app.origin;
@@ -308,8 +296,13 @@ async function runCabinet(opts: {
   const daemonOrigin = `http://127.0.0.1:${daemonPort}`;
   const daemonWsOrigin = `ws://127.0.0.1:${daemonPort}`;
 
-  // 6. Spawn Next.js dev server
-  const nextBin = path.join(appDir, "node_modules", "next", "dist", "bin", "next");
+  // 6. Spawn app + daemon. Prefer the prebuilt standalone bundle (server.js);
+  // fall back to the legacy source install (next dev + tsx daemon) on platforms
+  // with no prebuilt bundle (e.g. Windows) — matches what ensureApp installed.
+  const appServer = path.join(appDir, "server.js");
+  const daemonServer = path.join(appDir, "server", "cabinet-daemon.cjs");
+  const isBundle = fs.existsSync(appServer) && fs.existsSync(daemonServer);
+
   const appEnv = {
     // Default CABINET_APP_ORIGIN to loopback, but let process.env override
     // when the operator pinned a public hostname so next.config.ts can
@@ -327,34 +320,63 @@ async function runCabinet(opts: {
     // CABINET_PUBLIC_DAEMON_ORIGIN explicitly only when serving behind a proxy.
   };
 
-  log("Starting Next.js server...");
-  const appChild = spawnChild(
-    process.execPath,
-    [nextBin, "dev", "-p", String(appPort)],
-    {
+  let appChild: ReturnType<typeof spawnChild>;
+  let daemonChild: ReturnType<typeof spawnChild>;
+
+  if (isBundle) {
+    const bundleAppEnv = {
+      ...appEnv,
+      HOSTNAME: process.env.HOSTNAME || "0.0.0.0",
+      NODE_ENV: "production",
+    };
+    const daemonEnv = {
+      ...bundleAppEnv,
+      HOME: os.homedir(),
+      NODE_PATH: [path.join(appDir, ".native"), process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
+    };
+
+    const bundledNode = path.join(appDir, "bin", "node");
+    const nodeExec = fs.existsSync(bundledNode) ? bundledNode : process.execPath;
+
+    log("Starting production app server...");
+    appChild = spawnChild(nodeExec, [appServer], {
+      cwd: appDir,
+      stdio: "inherit",
+      env: bundleAppEnv,
+    });
+
+    log("Starting daemon...");
+    daemonChild = spawnChild(nodeExec, [daemonServer], {
+      cwd: appDir,
+      stdio: "inherit",
+      env: {
+        ...daemonEnv,
+        CABINET_DAEMON_PORT: String(daemonPort),
+        CABINET_DAEMON_URL: daemonOrigin,
+        CABINET_PUBLIC_DAEMON_ORIGIN: daemonOrigin,
+      },
+    });
+  } else {
+    // Legacy source install: run the dev server + tsx daemon from node_modules.
+    const nextBin = path.join(appDir, "node_modules", "next", "dist", "bin", "next");
+    const tsxCli = path.join(appDir, "node_modules", "tsx", "dist", "cli.mjs");
+    const daemonScript = path.join(appDir, "server", "cabinet-daemon.ts");
+    if (!fs.existsSync(nextBin)) {
+      throw new Error(
+        "App install is incomplete (no prebuilt bundle and no node_modules/next). " +
+          "Reinstall with `npx cabinetai run`."
+      );
+    }
+
+    log("Starting Next.js server...");
+    appChild = spawnChild(process.execPath, [nextBin, "dev", "-p", String(appPort)], {
       cwd: appDir,
       stdio: "inherit",
       env: appEnv,
-    }
-  );
+    });
 
-  updateRuntimeService(cabinetDir, "app", {
-    port: appPort,
-    origin: appOrigin,
-    pid: appChild.pid!,
-    updatedAt: new Date().toISOString(),
-    cabinetDir,
-  });
-
-  // 7. Spawn daemon
-  const tsxCli = path.join(appDir, "node_modules", "tsx", "dist", "cli.mjs");
-  const daemonScript = path.join(appDir, "server", "cabinet-daemon.ts");
-
-  log("Starting daemon...");
-  const daemonChild = spawnChild(
-    process.execPath,
-    [tsxCli, daemonScript],
-    {
+    log("Starting daemon...");
+    daemonChild = spawnChild(process.execPath, [tsxCli, daemonScript], {
       cwd: appDir,
       stdio: "inherit",
       env: {
@@ -363,8 +385,16 @@ async function runCabinet(opts: {
         CABINET_DAEMON_URL: daemonOrigin,
         CABINET_PUBLIC_DAEMON_ORIGIN: daemonOrigin,
       },
-    }
-  );
+    });
+  }
+
+  updateRuntimeService(cabinetDir, "app", {
+    port: appPort,
+    origin: appOrigin,
+    pid: appChild.pid!,
+    updatedAt: new Date().toISOString(),
+    cabinetDir,
+  });
 
   updateRuntimeService(cabinetDir, "daemon", {
     port: daemonPort,
@@ -398,13 +428,21 @@ async function runCabinet(opts: {
 
   process.on("exit", cleanup);
 
-  process.on("SIGINT", () => {
-    for (const child of children) child.kill("SIGINT");
-  });
+  const forceKill = () => {
+    for (const child of children) {
+      try { child.kill("SIGKILL"); } catch { /* already dead */ }
+    }
+  };
 
-  process.on("SIGTERM", () => {
-    for (const child of children) child.kill("SIGTERM");
-  });
+  const gracefulShutdown = (sig: NodeJS.Signals) => {
+    for (const child of children) {
+      try { child.kill(sig); } catch { /* already dead */ }
+    }
+    setTimeout(forceKill, 5000).unref();
+  };
+
+  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
   // Wait for either child to exit
   let exited = 0;

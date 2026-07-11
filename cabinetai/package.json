@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "node esbuild.config.mjs",
+    "prepack": "npm run build",
     "dev": "node esbuild.config.mjs --watch"
   },
   "dependencies": {

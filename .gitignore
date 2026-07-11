@@ -56,7 +56,9 @@ next-env.d.ts
 
 # cabinetai CLI
 cabinetai/dist/
-cabinetai/node_modules/
+# No trailing slash: also ignore a node_modules *symlink* (a dev may link the
+# root install into cabinetai/), not just a real directory.
+cabinetai/node_modules
 
 # local install config (per-machine dataDir)
 .cabinet-install.json
