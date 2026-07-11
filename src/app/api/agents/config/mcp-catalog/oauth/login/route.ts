@@ -108,7 +108,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (id) {
     const entry = getCatalogEntry(id);
     if (entry?.transport === "http") {
-      const { state, detail } = await readServerAuthDetail(entry.mcpServerName);
+      const { state, detail } = await readServerAuthDetail(
+        entry.mcpServerName,
+        entry.connectFailureHint,
+      );
       return NextResponse.json({
         authenticated: state === "authenticated",
         applicable: true,

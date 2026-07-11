@@ -44,8 +44,6 @@ export function stepArtFor(opts: {
   authBackend: string;
   transport: string;
   hasUrlCredential: boolean;
-  /** Space-separated OAuth scope pin, e.g. the catalog entry's `oauthClient.scopes`. */
-  scopes?: string;
 }): ((index: number) => ReactNode) | undefined {
   const { id, label, brand, authBackend, transport, hasUrlCredential } = opts;
 

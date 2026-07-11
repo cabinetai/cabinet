@@ -138,29 +138,35 @@ function parseAuthorizeUrl(text: string): string | undefined {
 export type ServerAuthState = "authenticated" | "needs-auth" | "unknown";
 
 /**
- * TASK 1 VERDICT (measured 2026-07-11, not assumed): with the Slack app's MCP
- * toggle OFF but a valid token in hand, `claude mcp get cabinet-slack` prints
- * ONLY:
+ * Finding (measured 2026-07-11 against a real app with the MCP toggle off, not
+ * assumed): with a valid token in hand but the server rejecting it, `claude mcp
+ * get cabinet-slack` prints ONLY:
  *
  *     Status: ✘ Failed to connect
  *
  * Slack's own wording ("App is not enabled for Slack MCP server access") never
- * reaches the CLI's output. So there is no reason to scrape — the plan's
- * `extractFailureReason` helper was dropped as dead code (it could never match).
- * A `failed to connect` on a server that HAS a token means, in practice, this:
+ * reaches the CLI's output, so there is nothing to scrape out of it. A
+ * `failed to connect` on a server that HAS a token can only be explained with a
+ * curated, per-integration hint (see `CatalogEntry.connectFailureHint`) rather
+ * than by parsing the CLI's text.
  */
-const CONNECT_FAILURE_HINT =
-  "Slack rejected the connection. The usual cause: your app's MCP toggle is off. Open your app → Features → Agents → turn on “Slack Model Context Protocol (MCP) Server”, then sign in again.";
+const GENERIC_CONNECT_FAILURE_HINT =
+  "The server rejected the connection. Check the app's configuration, then sign in again.";
 
 /**
  * Read the server's connection status from a *separate* process, which only
  * succeeds once Claude Code has persisted the OAuth token to disk. Unlike the
  * old boolean-ish read, this keeps WHY a connection failed — a registered server
- * with a valid token can still be rejected (e.g. the Slack app never had MCP
- * turned on), and the user can't fix what we don't show them.
+ * with a valid token can still be rejected (e.g. a Slack app that isn't
+ * installed to the workspace), and the user can't fix what we don't show them.
+ *
+ * `hint` is the caller-supplied, integration-specific copy to surface for a
+ * "failed to connect" result (typically `CatalogEntry.connectFailureHint`).
+ * This function itself stays vendor-agnostic; callers own the wording.
  */
 export function readServerAuthDetail(
   serverName: string,
+  hint?: string,
 ): Promise<{ state: ServerAuthState; detail?: string }> {
   return new Promise((resolve) => {
     execFile(
@@ -179,7 +185,7 @@ export function readServerAuthDetail(
         // usable → don't report it as signed in; surface the reason so the panel
         // can tell the user what to go fix.
         if (/failed to connect/i.test(out)) {
-          return resolve({ state: "needs-auth", detail: CONNECT_FAILURE_HINT });
+          return resolve({ state: "needs-auth", detail: hint ?? GENERIC_CONNECT_FAILURE_HINT });
         }
         if (/\bconnected\b/i.test(out)) return resolve({ state: "authenticated" });
         if (err) return resolve({ state: "unknown" });

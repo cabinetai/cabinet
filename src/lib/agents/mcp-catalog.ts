@@ -165,6 +165,14 @@ export interface CatalogEntry {
      */
     scopes?: string;
   };
+  /**
+   * User-facing copy shown when `claude mcp get <server>` reports "failed to
+   * connect" for a server that HAS a token (registered + authenticated, but
+   * still rejected by the remote). Curated per integration because the CLI's
+   * own output carries no vendor-specific reason (see `claude-mcp-login.ts`).
+   * Omit for a neutral, vendor-agnostic fallback.
+   */
+  connectFailureHint?: string;
   /** Credentials collected for `token` / `user-app` backends. */
   credentials: CatalogCredential[];
   /** Display-only: what the agent can do once connected. */
@@ -242,6 +250,12 @@ const SLACK: CatalogEntry = {
     callbackPort: SLACK_CALLBACK_PORT,
     scopes: SLACK_SCOPES,
   },
+  // Users of the 3-step flow above get the MCP toggle turned ON by
+  // construction (the manifest sets `is_mcp_enabled`), so a "failed to
+  // connect" on a registered + authenticated server is now most likely an
+  // app that was never installed to the workspace, not the toggle.
+  connectFailureHint:
+    "Slack rejected the connection. Most likely, the app hasn't been installed to your workspace yet — go to OAuth & Permissions and click Install to Workspace. If it's already installed, check your app's MCP toggle under Features → Agents, then sign in again.",
   credentials: [
     {
       envKey: "SLACK_CLIENT_ID",
@@ -289,7 +303,7 @@ const SLACK: CatalogEntry = {
     },
     {
       title: "Install it into your workspace",
-      body: "Slack drops you on your new app's page. Open OAuth & permissions, click Install to <workspace>, then Allow.",
+      body: "Slack drops you on your new app's page. Open OAuth & Permissions, click Install to Workspace (Slack shows your workspace's name on the button), then Allow.",
       image: {
         src: "/integrations/slack/02-install.png",
         alt: "Slack's permission review screen for the Cabinet app with Cancel and Allow buttons",

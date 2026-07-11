@@ -165,12 +165,15 @@ export function ConnectPanel({
         (p) => entry?.supportedProviderIds.includes(p.id),
       );
       const connected = new Set(entry?.connectedProviderIds ?? []);
-      if (connected.size > 0) {
-        setTargets(connected);
+      const supportedConnected = new Set(
+        supported.map((p) => p.id).filter((id) => connected.has(id)),
+      );
+      if (supportedConnected.size > 0) {
+        setTargets(supportedConnected);
         // Only auto-expand the "other environments" list when more than one is
         // connected; otherwise it needlessly lengthens the panel and pushes the
         // primary action button below the fold.
-        setShowMore(connected.size > 1);
+        setShowMore(supportedConnected.size > 1);
       } else {
         const primary = pickPrimary(
           supported,
@@ -366,7 +369,10 @@ export function ConnectPanel({
       const json = await res.json();
       if (!res.ok || !json.ok) throw new Error(json.error || "Disconnect failed");
       showSuccess("Disconnected.");
+      setTestResult(undefined);
+      setAuthDetail(undefined);
       await load();
+      await refreshAuthState();
     } catch (err) {
       showError(err instanceof Error ? err.message : "Disconnect failed");
     } finally {
@@ -754,7 +760,7 @@ export function ConnectPanel({
                   // OAuth must run in the system browser, not the in-app browse
                   // view (which lacks the user's Microsoft session).
                   e.preventDefault();
-                  if (msLogin.url) openExternalUrl(msLogin.url);
+                  if (msLogin.url) void openExternalUrl(msLogin.url);
                 }}
                 className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-[13px] font-medium text-foreground hover:bg-accent"
               >
@@ -813,7 +819,7 @@ export function ConnectPanel({
                   // be rejected as a webview). A button keeps this routed solely
                   // through openExternalUrl — an anchor's href could still be
                   // activated through normal link navigation.
-                  if (oauthLogin.url) openExternalUrl(oauthLogin.url);
+                  if (oauthLogin.url) void openExternalUrl(oauthLogin.url);
                 }}
                 disabled={!oauthLogin.url}
                 className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-3 py-2 text-[13px] font-medium text-foreground hover:bg-accent disabled:opacity-50"
@@ -963,14 +969,22 @@ export function ConnectPanel({
               {testing ? "Checking…" : "Test connection"}
             </button>
             {testResult && (
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-foreground/80">{testResult}</p>
+              <p
+                aria-live="polite"
+                className="mt-1.5 text-[12.5px] leading-relaxed text-foreground/80"
+              >
+                {testResult}
+              </p>
             )}
           </div>
         </>
       )}
 
       {entry.signinKind != null && !isM365 && authState === "needs-auth" && authDetail && (
-        <p className="mt-2 rounded-md border border-l-[3px] border-amber-300 border-l-amber-500 bg-amber-50 px-2.5 py-2 text-[12.5px] leading-relaxed text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+        <p
+          aria-live="polite"
+          className="mt-2 rounded-md border border-l-[3px] border-amber-300 border-l-amber-500 bg-amber-50 px-2.5 py-2 text-[12.5px] leading-relaxed text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100"
+        >
           {authDetail}
         </p>
       )}
