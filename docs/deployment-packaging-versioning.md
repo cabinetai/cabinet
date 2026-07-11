@@ -50,7 +50,7 @@ npm run start
 
 By default, Cabinet runs the web app on port `3000` and the daemon on port `3001`. Those can be overridden with `CABINET_APP_PORT` and `CABINET_DAEMON_PORT`.
 
-`create-cabinet` now installs the exact GitHub release tarball that matches its npm version. It also writes install metadata so Cabinet can recognize the install as managed later.
+`create-cabinet` installs the app version that matches its npm version. On macOS/Linux this is a **prebuilt standalone bundle** (`cabinet-app-<platform>-vX.Y.Z.tgz`) downloaded from the GitHub Release — no `npm install`. On platforms with no bundle (currently Windows, pending PR #192) it falls back to the source release tarball + `npm install`. Either way it writes install metadata so Cabinet can recognize the install as managed later.
 
 ## 2. Source-custom install
 
@@ -83,6 +83,8 @@ That uses Electron Forge and produces packaged desktop artifacts under `out/`.
 ### Release packaging
 
 On release tags, GitHub Actions builds the macOS desktop artifacts and publishes them to the GitHub Release. The release manifest also records the expected macOS asset names.
+
+A separate `publish-app-bundles` job (in `release.yml`) builds the zero-install standalone bundles per platform (`darwin-arm64`, `darwin-x64`, `linux-arm64`, `linux-x64`; Windows `win32-x64` pending PR #192) with `npm run build && npm run electron:prep`, then uploads each `cabinet-app-<key>-vX.Y.Z.tgz` + `.sha256` to the Release. The release manifest records these under `appBundles`, and `cabinetai run` consumes them (see docs/CABINETAI.md → `ensureApp`).
 
 ### Desktop data location
 
@@ -130,8 +132,9 @@ That manifest tells Cabinet:
 - the source tarball URL
 - the matching `create-cabinet` version
 - the Electron asset names for macOS
+- the prebuilt app-bundle asset names + URLs per platform (`appBundles`)
 
-`create-cabinet` mirrors the same version and installs the matching release tarball, not the default branch `HEAD`.
+`create-cabinet` mirrors the same version and installs the matching release build — the prebuilt bundle where one exists, else the source tarball — not the default branch `HEAD`.
 
 Only the `stable` channel is used in v1. Draft and prerelease builds should not be treated as client updates.
 
@@ -235,15 +238,16 @@ git push origin v0.2.1
 
 10. Let GitHub Actions publish the release artifacts.
 
-The tag-triggered `Release` workflow (`.github/workflows/release.yml`) runs three chained jobs (verified 2026-07-04, shipping v0.5.0):
+The tag-triggered `Release` workflow (`.github/workflows/release.yml`) runs these chained jobs (three verified 2026-07-04 shipping v0.5.0; `publish-app-bundles` added with PR #65):
 
 1. `release-assets` - verify the tag matches `package.json`, regenerate `cabinet-release.json`, build the web app, and create a **draft** GitHub Release with the manifest attached.
+1b. `publish-app-bundles` - matrix build (darwin/linux; Windows pending PR #192) that packages the standalone bundle and uploads `cabinet-app-<key>-vX.Y.Z.tgz` + `.sha256` to the Release. `publish-cabinetai` now `needs:` this job.
 2. `publish-cabinetai` - `npm publish` from `cabinetai/`, publishing `cabinetai@X.Y.Z`.
 3. `publish-cli` - `npm publish` from `cli/`, publishing `create-cabinet@X.Y.Z`.
 
 The jobs are chained with `needs:`, so a failed draft-release job blocks both npm publishes, and a failed `cabinetai` publish blocks `create-cabinet`.
 
-The Electron macOS DMG/ZIP is **not** built by this workflow. It is the separate, manually-dispatched `electron-release.yml`. So a tag gives you the draft release plus both npm packages; you trigger the desktop build yourself and then publish the draft (see Known Gaps below). Because `create-cabinet` installs the matching GitHub release tarball, `npx create-cabinet@latest` stays broken until the draft release is published (the tarball URL 404s while it is a draft).
+The Electron macOS DMG/ZIP is **not** built by this workflow. It is the separate, manually-dispatched `electron-release.yml`. So a tag gives you the draft release plus both npm packages; you trigger the desktop build yourself and then publish the draft (see Known Gaps below). Because `create-cabinet` installs the matching GitHub release build (prebuilt bundle or, as fallback, the source tarball), `npx create-cabinet@latest` stays broken until the draft release is published (both the bundle and tarball URLs 404 while it is a draft).
 
 ### What to verify after the tag ships
 
