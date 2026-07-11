@@ -156,6 +156,8 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
         await refreshStatus();
         await loadProviders();
         await promoteSoleReadyDefault(providerId);
+        // Let the Settings list (and any other surface) refresh its card.
+        window.dispatchEvent(new CustomEvent("cabinet:providers-updated"));
       }
     } catch (e) {
       setVerify({ status: "other_error", hint: e instanceof Error ? e.message : String(e) });

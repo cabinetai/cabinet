@@ -97,12 +97,16 @@ async function buildResponse() {
   };
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const now = Date.now();
-    if (cachedResponse && cachedResponse.expiresAt > now) {
+    // `?refresh=1` bypasses the cache — used right after a provider is installed
+    // or signed in so the Settings list reflects it immediately.
+    const fresh = new URL(req.url).searchParams.get("refresh") === "1";
+    if (!fresh && cachedResponse && cachedResponse.expiresAt > now) {
       return NextResponse.json(cachedResponse.body);
     }
+    if (fresh) cachedResponse = null;
     if (!inflightBuild) {
       inflightBuild = buildResponse().finally(() => {
         inflightBuild = null;

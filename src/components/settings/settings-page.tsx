@@ -584,10 +584,10 @@ export function SettingsPage() {
   const darkThemes = THEMES.filter((t) => t.type === "dark");
   const lightThemes = THEMES.filter((t) => t.type === "light");
 
-  const refresh = useCallback(async (silent = false) => {
+  const refresh = useCallback(async (silent = false, bust = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch("/api/agents/providers");
+      const res = await fetch(`/api/agents/providers${bust ? "?refresh=1" : ""}`);
       if (res.ok) {
         const data = await res.json();
         setProviders(data.providers || []);
@@ -709,6 +709,14 @@ export function SettingsPage() {
     loadConfig();
     loadDataDir();
   }, [refresh, loadConfig, loadDataDir]);
+
+  // The setup dialog fires this when a provider becomes ready — refresh the list
+  // (cache-busted) so the card behind it updates immediately.
+  useEffect(() => {
+    const onChanged = () => void refresh(true, true);
+    window.addEventListener("cabinet:providers-updated", onChanged);
+    return () => window.removeEventListener("cabinet:providers-updated", onChanged);
+  }, [refresh]);
 
   const toggleReveal = (key: string) => {
     setRevealedKeys((prev) => {
