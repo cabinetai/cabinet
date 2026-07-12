@@ -1,11 +1,12 @@
 "use client";
 
-import { Bot, Clock3, HeartPulse } from "lucide-react";
+import { Bot, CircleHelp, Clock3, HeartPulse, type LucideIcon } from "lucide-react";
 import { TelegramMark } from "@/components/integrations/telegram-mark";
 import { cn } from "@/lib/utils";
 import type { TaskMeta } from "@/types/tasks";
 import type { CabinetAgentSummary } from "@/types/cabinets";
 import type { LaneKey } from "./lane-rules";
+import { resolveTriggerBadge, type TriggerIconKind } from "./trigger-badge";
 import { AgentPill } from "./agent-pill";
 import { RowActions } from "./row-actions";
 import { SelectCheckbox } from "./select-checkbox";
@@ -26,46 +27,20 @@ function relTime(fromIso: string | undefined, now: number): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-// Audit #134: badges used to ride saturated 500-tier sky/emerald/pink/
-// violet, which fought the warm paper theme. Now they share a single
-// muted/theme-aware look — the icon shape (Bot / Clock3 / HeartPulse /
-// Sparkles) carries the trigger meaning, and the badge just sits politely
-// on whatever surface the active theme paints.
-const TRIGGER_STYLES: Record<
-  NonNullable<TaskMeta["trigger"]>,
-  { label: string; className: string }
+const TRIGGER_ICONS: Record<
+  Exclude<TriggerIconKind, "telegram">,
+  LucideIcon
 > = {
-  manual: {
-    label: "Manual",
-    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
-  },
-  job: {
-    label: "Job",
-    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
-  },
-  heartbeat: {
-    label: "Heartbeat",
-    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
-  },
-  agent: {
-    label: "Agent",
-    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
-  },
-  telegram: {
-    label: "Telegram",
-    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
-  },
-  channel: {
-    label: "Channel",
-    className: "bg-muted text-muted-foreground ring-1 ring-border/60",
-  },
+  bot: Bot,
+  clock: Clock3,
+  heartbeat: HeartPulse,
+  unknown: CircleHelp,
 };
 
 function TriggerBadge({ trigger }: { trigger: TaskMeta["trigger"] }) {
-  if (!trigger) return null;
-  const style = TRIGGER_STYLES[trigger];
-  const Icon =
-    trigger === "manual" ? Bot : trigger === "job" ? Clock3 : HeartPulse;
+  const style = resolveTriggerBadge(trigger);
+  if (!style) return null;
+  const Icon = style.icon === "telegram" ? null : TRIGGER_ICONS[style.icon];
   return (
     <span
       title={style.label}
@@ -75,10 +50,10 @@ function TriggerBadge({ trigger }: { trigger: TaskMeta["trigger"] }) {
         style.className
       )}
     >
-      {trigger === "telegram" ? (
-        <TelegramMark className="size-3" />
-      ) : (
+      {Icon ? (
         <Icon className="size-2.75" />
+      ) : (
+        <TelegramMark className="size-3" />
       )}
     </span>
   );
