@@ -1,5 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findActiveJupyterServer } from "@/lib/notebook/jupyter";
+import path from "path";
+import { resolveContentPath, virtualPathFromFs, DATA_DIR } from "@/lib/storage/path-utils";
+import { decodeDrivePath, encodeDrivePath } from "@/lib/google-drive/paths";
+
+function resolveToAbsPath(virtualPath: string): string {
+  const driveAbsPath = decodeDrivePath(virtualPath);
+  if (driveAbsPath !== null) {
+    return path.normalize(driveAbsPath);
+  }
+  return resolveContentPath(virtualPath);
+}
+
+function toJupyterPath(virtualPath: string, rootDir: string): string {
+  const absPath = resolveToAbsPath(virtualPath);
+  return path.relative(rootDir, absPath);
+}
+
+function fromJupyterPath(jupyterPath: string, rootDir: string): string {
+  const absPath = path.resolve(rootDir, jupyterPath);
+  const relativeToData = path.relative(DATA_DIR, absPath);
+  if (!relativeToData.startsWith("..") && !path.isAbsolute(relativeToData)) {
+    return virtualPathFromFs(absPath);
+  }
+  return encodeDrivePath(absPath);
+}
 
 async function handleProxy(
   req: NextRequest,
@@ -40,8 +65,33 @@ async function handleProxy(
     });
 
     let body: any = null;
+    const contentTypeHeader = req.headers.get("content-type") || "";
+
     if (req.method !== "GET" && req.method !== "HEAD") {
-      body = await req.arrayBuffer();
+      if (subpath === "api/sessions" && req.method === "POST" && contentTypeHeader.includes("application/json")) {
+        const rawBody = await req.text();
+        try {
+          const json = JSON.parse(rawBody);
+          
+          // Unwrap model if the client wrapped it (like in notebook-viewer.tsx)
+          if (json.model && typeof json.model === "object") {
+            if (json.model.path) json.path = json.model.path;
+            if (json.model.type) json.type = json.model.type;
+            if (json.model.name) json.name = json.model.name;
+            delete json.model;
+          }
+
+          if (typeof json.path === "string" && server.rootDir) {
+            json.path = toJupyterPath(json.path, server.rootDir);
+          }
+          body = JSON.stringify(json);
+          headers.delete("content-length");
+        } catch {
+          body = rawBody;
+        }
+      } else {
+        body = await req.arrayBuffer();
+      }
     }
 
     const res = await fetch(targetUrl.toString(), {
@@ -63,8 +113,34 @@ async function handleProxy(
       }
     });
 
-    const data = await res.arrayBuffer();
-    return new Response(data, {
+    let resBody: any;
+    const resContentType = res.headers.get("content-type") || "";
+    if (resContentType.includes("application/json") && server.rootDir && subpath.startsWith("api/sessions")) {
+      const text = await res.text();
+      try {
+        let json = JSON.parse(text);
+        if (Array.isArray(json)) {
+          json = json.map((session) => {
+            if (session.path && typeof session.path === "string") {
+              session.path = fromJupyterPath(session.path, server.rootDir!);
+            }
+            return session;
+          });
+        } else if (json && typeof json === "object" && typeof json.path === "string") {
+          json.path = fromJupyterPath(json.path, server.rootDir);
+        }
+        resBody = JSON.stringify(json);
+        if (resHeaders.has("content-length")) {
+          resHeaders.set("content-length", String(Buffer.byteLength(resBody)));
+        }
+      } catch {
+        resBody = text;
+      }
+    } else {
+      resBody = await res.arrayBuffer();
+    }
+
+    return new Response((res.status === 204 || res.status === 304) ? null : resBody, {
       status: res.status,
       headers: resHeaders,
     });

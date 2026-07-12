@@ -6,6 +6,7 @@ export interface JupyterServerInfo {
   url: string;
   token: string;
   port: number;
+  rootDir?: string;
 }
 
 export function getJupyterRuntimeDir(): string {
@@ -58,6 +59,7 @@ export async function findActiveJupyterServer(): Promise<JupyterServerInfo | nul
               url: data.url,
               token: data.token,
               port: Number(data.port),
+              rootDir: data.root_dir,
             };
           }
         }
