@@ -2,7 +2,10 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkRehype from "remark-rehype";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import rehypeStringify from "rehype-stringify";
+import type { Schema } from "hast-util-sanitize";
 import { detectEmbed } from "@/lib/embeds/detect";
 import { slugifyPageName } from "@/lib/markdown/wiki-links";
 import { addHeadingIds } from "@/lib/markdown/heading-slug";
@@ -173,6 +176,55 @@ function resolveRelativeUrls(html: string, pagePath: string): string {
   return html;
 }
 
+// Sanitization schema (#66): the pipeline used to trust raw HTML pass-through
+// and stringify it verbatim, which meant any agent output containing markup
+// like `<img src=x onerror=…>` or `<a href="javascript:…">` executed inside
+// Cabinet's origin — where the daemon auth token and `/api/daemon/pty` live.
+// Extend hast-util-sanitize's default allowlist to cover the markup this
+// pipeline legitimately produces (GFM task lists, wiki-link/LaTeX/embed
+// data-attributes, the `<video>` tags that `upgradeProviderVideos` heals
+// downstream) while leaving event handlers, `javascript:` URLs, `<script>`,
+// `<style>`, and `<iframe>` for the raw-HTML path stripped out.
+//
+// Trusted post-processing (task-list transform, video→iframe upgrade, heading
+// ids, PDF-link marker, relative-URL resolution) runs AFTER sanitize on
+// already-sanitized HTML, so nothing it adds needs to survive the allowlist.
+const sanitizeSchema: Schema = {
+  ...defaultSchema,
+  tagNames: [
+    ...(defaultSchema.tagNames ?? []),
+    "mark",
+    "kbd",
+    "video",
+  ],
+  attributes: {
+    ...defaultSchema.attributes,
+    // Any `data-*` attribute survives — the pipeline itself and downstream
+    // React components rely on data-latex-embed, data-wiki-link, data-embed,
+    // data-provider, data-src, etc. These are inert as far as HTML execution
+    // is concerned; scripting attributes like `on*` are still stripped by
+    // the default deny-list.
+    "*": [...(defaultSchema.attributes?.["*"] ?? []), "className", "dir", "data*"],
+    a: [...(defaultSchema.attributes?.a ?? []), "target", "rel"],
+    input: [
+      ...(defaultSchema.attributes?.input ?? []),
+      ["type", "checkbox"],
+      "checked",
+      "disabled",
+    ],
+    // `<video src=…>` is a legitimate authoring shape that the healer in
+    // upgradeProviderVideos turns into a trusted embed iframe. Allow the
+    // source URL through so healing can inspect it, and cap the protocols
+    // to http(s) so raw HTML can't smuggle a `javascript:` src.
+    video: ["src", "controls", "width", "height", "poster"],
+  },
+  protocols: {
+    ...defaultSchema.protocols,
+    href: ["http", "https", "mailto", "tel"],
+    src: ["http", "https"],
+  },
+};
+
 // Unified's plugin resolution + processor freeze runs on every `unified()`
 // call. Reuse a single frozen pipeline across every page render so
 // navigation doesn't pay that cost on the hot path.
@@ -180,7 +232,9 @@ const processor = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeStringify, { allowDangerousHtml: true })
+  .use(rehypeRaw)
+  .use(rehypeSanitize, sanitizeSchema)
+  .use(rehypeStringify)
   .freeze();
 
 export async function markdownToHtml(markdown: string, pagePath?: string): Promise<string> {
