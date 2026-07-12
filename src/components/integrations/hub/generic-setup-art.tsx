@@ -29,10 +29,12 @@ import {
  *   - Microsoft 365             → Azure app register / scopes / secret
  *   - Shopify / Figma / Salesforce → tailored single-screen mocks
  *   - LinkedIn                  → install-uv / browser-login / ready-to-connect
- * Multi-step official-OAuth connectors (Slack / Google / GitHub / Notion) reuse
- * the consent mock for step 0 and add tailored mocks for their own-app / scopes
- * / scoping steps. Discord & Telegram keep their fully bespoke art. `stepArtFor`
- * is the dispatcher the detail page calls.
+ * Multi-step official-OAuth connectors (Google / GitHub / Notion) reuse the
+ * consent mock for step 0 and add tailored mocks for their own-app / scopes /
+ * scoping steps. Discord & Telegram keep their fully bespoke art. Slack has no
+ * generic art at all — each of its setup steps carries a real screenshot via
+ * `CatalogSetupStep.image` instead. `stepArtFor` is the dispatcher the detail
+ * page calls.
  */
 
 export function stepArtFor(opts: {
@@ -42,10 +44,8 @@ export function stepArtFor(opts: {
   authBackend: string;
   transport: string;
   hasUrlCredential: boolean;
-  /** Space-separated OAuth scope pin, e.g. the catalog entry's `oauthClient.scopes`. */
-  scopes?: string;
 }): ((index: number) => ReactNode) | undefined {
-  const { id, label, brand, authBackend, transport, hasUrlCredential, scopes } = opts;
+  const { id, label, brand, authBackend, transport, hasUrlCredential } = opts;
 
   if (id === "discord") return (i) => <DiscordStepArt step={i} brand={brand} />;
   if (id === "telegram") return (i) => <TelegramStepArt step={i} brand={brand} />;
@@ -59,7 +59,8 @@ export function stepArtFor(opts: {
   // Multi-step official-OAuth connectors: step 0 is the generic consent screen,
   // but their later "register your own app / scopes / scope the access" steps
   // need their own tailored mocks (the steps users actually get stuck on).
-  if (id === "slack") return (i) => <SlackArt step={i} label={label} brand={brand} scopes={scopes} />;
+  // Slack has no entry here — its setup steps each carry a real screenshot via
+  // `CatalogSetupStep.image`, so a stylized mockup would just be noise.
   if (id === "google-workspace") return (i) => <GoogleArt step={i} label={label} brand={brand} />;
   if (id === "github") return (i) => <GithubArt step={i} label={label} brand={brand} />;
   if (id === "notion") return (i) => <NotionArt step={i} label={label} brand={brand} />;
@@ -270,130 +271,6 @@ function LinkedInArt({ step, brand }: { step: number; brand: string }) {
 }
 
 /* ── multi-step official-OAuth connectors ───────────────────────────────── */
-
-/** Groups a space-separated scope string into rows of 2 for CheckRow display. */
-function scopeRows(scopes: string | undefined): string[] {
-  const list = (scopes ?? "").split(/\s+/).filter(Boolean);
-  const rows: string[] = [];
-  for (let i = 0; i < list.length; i += 2) rows.push(list.slice(i, i + 2).join(" · "));
-  return rows;
-}
-
-/** Slack: consent (0) → create your own app (1) → user-token scopes (2). */
-function SlackArt({
-  step,
-  label,
-  brand,
-  scopes,
-}: {
-  step: number;
-  label: string;
-  brand: string;
-  scopes?: string;
-}) {
-  // Step 0 — create your own app (Slack has no one-click; you bring the app).
-  if (step === 0) {
-    return (
-      <MockWindow title="api.slack.com/apps" brand={brand}>
-        <div className="flex items-center justify-between">
-          <span className="font-medium text-foreground">Your Apps</span>
-          <BtnMock brand={brand}>Create New App</BtnMock>
-        </div>
-        <div className="mt-2 space-y-1.5">
-          <div className="h-5 rounded bg-muted" />
-          <div className="h-5 w-2/3 rounded bg-muted" />
-        </div>
-        <Hint brand={brand}>
-          Create an app <b>From scratch</b> and pick your workspace.
-        </Hint>
-      </MockWindow>
-    );
-  }
-  // Step 1 — turn on MCP server access for the app (required, easy to miss).
-  if (step === 1) {
-    return (
-      <MockWindow title="Agents &amp; AI Apps · App Assistant" brand={brand}>
-        <div className="flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
-          <span className="text-[10px] text-foreground">MCP server access</span>
-          <span
-            className="rounded-full px-2 py-0.5 text-[10px] font-medium"
-            style={{ background: `${brand}1f`, color: brand }}
-          >
-            On
-          </span>
-        </div>
-        <Hint brand={brand}>
-          Turn this on, or Slack rejects every connection with &ldquo;App is not enabled
-          for Slack MCP server access.&rdquo;
-        </Hint>
-      </MockWindow>
-    );
-  }
-  // Step 2 — register the redirect URL and add the user-token scopes.
-  if (step === 2) {
-    return (
-      <MockWindow title="OAuth &amp; Permissions" brand={brand}>
-        <div className="text-[10px] text-muted-foreground">Redirect URLs</div>
-        <div className="mt-1 flex items-center gap-2">
-          <div className="flex-1 truncate rounded-md bg-foreground/[0.06] px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
-            http://localhost:8765/callback
-          </div>
-          <BtnMock brand={brand}>Add</BtnMock>
-        </div>
-        <div className="mt-2 space-y-1">
-          {scopeRows(scopes).map((row) => (
-            <CheckRow key={row} brand={brand}>{row}</CheckRow>
-          ))}
-        </div>
-        <Hint brand={brand}>
-          Add the redirect URL, add the scopes (use <b>Copy</b> above), then <b>Install to Workspace</b>.
-        </Hint>
-      </MockWindow>
-    );
-  }
-  // Step 3 — copy the app's Client ID & Secret into the connect panel.
-  if (step === 3) {
-    return (
-      <MockWindow title="Basic Information · App Credentials" brand={brand}>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
-            <span className="text-[10px] text-muted-foreground">Client ID</span>
-            <BtnMock brand={brand}>Copy</BtnMock>
-          </div>
-          <div className="flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
-            <span className="text-[10px] text-muted-foreground">Client Secret</span>
-            <BtnMock brand={brand}>Show · Copy</BtnMock>
-          </div>
-        </div>
-        <Hint brand={brand}>
-          Paste both into the <b>Connect</b> panel — kept in .cabinet.env, never in plain config.
-        </Hint>
-      </MockWindow>
-    );
-  }
-  // Step 4 — approve in the browser (only after the app credentials are saved).
-  return (
-    <MockWindow title={`Authorize · ${label}`} brand={brand}>
-      <div className="flex flex-col items-center text-center">
-        <Avatar brand={brand}>{label.charAt(0)}</Avatar>
-        <div className="mt-2 text-[11px] text-foreground">
-          <b>Cabinet</b> wants to access your <b>{label}</b> account
-        </div>
-        <div className="mt-2 w-full space-y-1 text-left">
-          <CheckRow brand={brand}>Read your {label} data</CheckRow>
-          <CheckRow brand={brand}>Act on your behalf</CheckRow>
-        </div>
-        <div className="mt-3 flex w-full items-center justify-center gap-2">
-          <BtnMock brand={brand}>Authorize</BtnMock>
-          <BtnMock>Cancel</BtnMock>
-        </div>
-      </div>
-      <Hint brand={brand}>
-        Once your app&apos;s credentials are saved, Cabinet opens this in your browser to approve.
-      </Hint>
-    </MockWindow>
-  );
-}
 
 /** Google Workspace: consent (0) → your own GCP app — APIs + OAuth client (1). */
 // Indices map to the google-workspace `setupSteps` order in mcp-catalog.ts:

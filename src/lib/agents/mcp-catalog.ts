@@ -28,6 +28,8 @@
  *                   secret server-side). Not used by the local build.
  */
 
+import { buildSlackCreateUrl, buildSlackManifestJson } from "./slack-manifest";
+
 export type TrustTier = "official" | "registry" | "cabinet" | "community";
 
 export type AuthBackend = "cli-pkce" | "user-app" | "token" | "cabinet-broker";
@@ -52,6 +54,21 @@ export interface CatalogSetupStep {
   copy?: string;
   /** Optional external link the user opens to perform this step. */
   href?: string;
+  /**
+   * Primary call-to-action — rendered as a filled button, not a text link. Use
+   * for the one thing the user should click (e.g. Slack's prefilled create-app
+   * deep link), never for secondary reading material.
+   */
+  action?: { label: string; href: string };
+  /**
+   * A make-or-break caveat, lifted out of the body prose so it can't be skimmed
+   * past. `warning` = skip this and setup fails.
+   */
+  callout?: { tone: "warning" | "info"; body: string };
+  /** Cropped screenshot of the real third-party control this step refers to. */
+  image?: { src: string; alt: string; caption?: string; frameLabel?: string };
+  /** Collapsed escape hatch for users who can't or won't use `action`. */
+  fallback?: { summary: string; body: string; copy?: string };
 }
 
 export interface CatalogEntry {
@@ -148,6 +165,14 @@ export interface CatalogEntry {
      */
     scopes?: string;
   };
+  /**
+   * User-facing copy shown when `claude mcp get <server>` reports "failed to
+   * connect" for a server that HAS a token (registered + authenticated, but
+   * still rejected by the remote). Curated per integration because the CLI's
+   * own output carries no vendor-specific reason (see `claude-mcp-login.ts`).
+   * Omit for a neutral, vendor-agnostic fallback.
+   */
+  connectFailureHint?: string;
   /** Credentials collected for `token` / `user-app` backends. */
   credentials: CatalogCredential[];
   /** Display-only: what the agent can do once connected. */
@@ -180,6 +205,25 @@ export interface CatalogEntry {
   };
 }
 
+/**
+ * Single source of truth for Slack's scopes. Feeds BOTH `oauthClient.scopes`
+ * (what the CLI requests at sign-in) and the manifest (what the app is created
+ * with). Widening the list here widens both — they cannot drift.
+ *
+ * Deliberately 6, not the ~26 Slack auto-adds when you flip the MCP toggle by
+ * hand. The manifest path is what makes this small set achievable.
+ */
+const SLACK_SCOPES =
+  "chat:write channels:read channels:history users:read search:read.public search:read.users";
+
+const SLACK_CALLBACK_PORT = 8765;
+
+const SLACK_MANIFEST_OPTIONS = {
+  appName: "Cabinet",
+  scopes: SLACK_SCOPES,
+  callbackPort: SLACK_CALLBACK_PORT,
+};
+
 const SLACK: CatalogEntry = {
   id: "slack",
   label: "Slack",
@@ -203,14 +247,15 @@ const SLACK: CatalogEntry = {
   oauthClient: {
     clientIdEnvKey: "SLACK_CLIENT_ID",
     clientSecretEnvKey: "SLACK_CLIENT_SECRET",
-    callbackPort: 8765,
-    // Pinned to a read + post + search set so a self-made app only needs these
-    // 6 user-token scopes granted — avoids the full ~26 (and sensitive ones like
-    // users:read.email that locked-down workspaces block). Widen to add files,
-    // private channels, DMs, canvases, or reactions as needed.
-    scopes:
-      "chat:write channels:read channels:history users:read search:read.public search:read.users",
+    callbackPort: SLACK_CALLBACK_PORT,
+    scopes: SLACK_SCOPES,
   },
+  // Users of the 3-step flow above get the MCP toggle turned ON by
+  // construction (the manifest sets `is_mcp_enabled`), so a "failed to
+  // connect" on a registered + authenticated server is now most likely an
+  // app that was never installed to the workspace, not the toggle.
+  connectFailureHint:
+    "Slack rejected the connection. Most likely the app hasn't been installed to your workspace yet, so go to OAuth & Permissions and click Install to Workspace. If it's already installed, check your app's MCP toggle under Features → Agents, then sign in again.",
   credentials: [
     {
       envKey: "SLACK_CLIENT_ID",
@@ -218,7 +263,7 @@ const SLACK: CatalogEntry = {
       kind: "plain",
       required: true,
       placeholder: "1234567890.1234567890",
-      hint: "From your Slack app's Basic Information page. Required — Slack's MCP server needs your own app (it has no one-click sign-in).",
+      hint: "From your Slack app's Basic Information page. Required, because Slack's MCP server needs your own app (it has no one-click sign-in).",
     },
     {
       envKey: "SLACK_CLIENT_SECRET",
@@ -237,27 +282,48 @@ const SLACK: CatalogEntry = {
   ],
   setupSteps: [
     {
-      title: "Create your own Slack app",
-      body: "Slack's MCP server has no one-click sign-in — it requires an app you own. Open Slack's app dashboard, click Create New App → From scratch, give it a name (e.g. \"Cabinet\"), and pick your workspace.",
-      href: "https://api.slack.com/apps",
+      title: "Create your Slack app",
+      body: "Slack's MCP server has no one-click sign-in, so it needs an app you own. This button opens Slack with everything already filled in: pick your workspace, check the summary, and click Create.",
+      action: { label: "Create my Slack app", href: buildSlackCreateUrl(SLACK_MANIFEST_OPTIONS) },
+      callout: {
+        tone: "warning",
+        body: "Choose the workspace carefully. Slack won't let an app move to a different one later.",
+      },
+      image: {
+        src: "/integrations/slack/01-create.png",
+        alt: "Slack's review summary dialog showing User Scopes (6) and Redirect URLs (1), with a Create button",
+        caption: "Slack shows you exactly what it's about to create: 6 scopes, one redirect URL.",
+        frameLabel: "What you'll see in Slack",
+      },
+      fallback: {
+        summary: "Prefer to paste it yourself?",
+        body: "In Slack, choose Create an App → From a manifest, pick your workspace, and paste this:",
+        copy: buildSlackManifestJson(SLACK_MANIFEST_OPTIONS),
+      },
     },
     {
-      title: "Enable MCP server access",
-      body: "Slack only allows MCP for apps that opt in. In your app settings, open Agents & AI Apps (App Assistant) and turn on MCP server access. Skip this and you'll sign in fine but every connection is rejected with \"App is not enabled for Slack MCP server access.\"",
-      href: "https://api.slack.com/apps",
+      title: "Install it into your workspace",
+      body: "Slack drops you on your new app's page. Open OAuth & Permissions, click Install to Workspace (Slack shows your workspace's name on the button), then Allow.",
+      image: {
+        src: "/integrations/slack/02-install.png",
+        alt: "Slack's permission review screen for the Cabinet app with Cancel and Allow buttons",
+        caption: "Approving here is what gives your agents access.",
+        frameLabel: "What you'll see in Slack",
+      },
     },
     {
-      title: "Add the redirect URL and scopes",
-      body: "In OAuth & Permissions, add the redirect URL http://localhost:8765/callback (click Save URLs), then add these scopes under User Token Scopes (not Bot Token Scopes — Slack signs you in with a user token), and Install to Workspace. They let agents read public channels, search, and post.",
-      copy: "chat:write channels:read channels:history users:read search:read.public search:read.users",
-    },
-    {
-      title: "Paste your Client ID & Secret below",
-      body: "On the app's Basic Information page, copy the Client ID and Client Secret into the fields in the connect panel. Slack needs these because it doesn't support automatic client registration; they're stored in .cabinet.env (0600).",
-    },
-    {
-      title: "Connect & sign in",
-      body: "Click Connect & sign in. Cabinet opens Slack in your browser to approve access — once you do, your agents can use Slack and the \"does not support dynamic client registration\" error is gone.",
+      title: "Paste your Client ID & Secret, then connect",
+      body: "On the app's Basic Information page, copy the Client ID and Client Secret into the fields below, then click Connect & sign in and approve in your browser.",
+      image: {
+        src: "/integrations/slack/03-credentials.png",
+        alt: "Slack's App Credentials panel showing Client ID and a masked Client Secret with a Show button",
+        caption: "The Client Secret is hidden until you press Show.",
+        frameLabel: "What you'll see in Slack",
+      },
+      callout: {
+        tone: "info",
+        body: "Both are stored in .cabinet.env (permissions 0600) on this device. The secret is never written into any config file.",
+      },
     },
   ],
 };
