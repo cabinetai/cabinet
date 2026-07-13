@@ -141,6 +141,7 @@ test("buildRuntimePath uses Windows delimiters and npm global bin paths", () => 
     [
       "C:\\Users\\TestUser\\AppData\\Roaming\\npm",
       "C:\\Users\\TestUser\\.local\\bin",
+      "C:\\Users\\TestUser\\.bun\\bin",
       "C:\\Windows\\System32",
     ].join(";")
   );
@@ -162,6 +163,7 @@ test("buildRuntimePath uses requested platform path semantics even on a differen
     [
       "C:\\Users\\TestUser\\AppData\\Roaming\\npm",
       "C:\\Users\\TestUser\\.local\\bin",
+      "C:\\Users\\TestUser\\.bun\\bin",
       "C:\\Users\\TestUser\\.nvm\\bin",
       "C:/Windows/System32",
     ].join(";")
@@ -184,10 +186,60 @@ test("buildRuntimePath uses POSIX separators when a POSIX platform is requested"
       "/home/test-user/.local/bin",
       "/usr/local/bin",
       "/opt/homebrew/bin",
+      "/home/test-user/.local/share/pnpm",
+      "/home/test-user/.bun/bin",
       "/home/test-user/.nvm/versions/node/v22/bin",
       "/usr/bin",
     ].join(":")
   );
+});
+
+// #39: a codex CLI installed via pnpm lands in `~/Library/pnpm/codex` on
+// macOS. Cabinet's daemon starts without a login shell so `$PATH` alone can
+// miss it. `buildRuntimePath` bakes the platform defaults in so detection
+// works out of the box.
+test("buildRuntimePath includes pnpm + bun global-bin dirs on macOS", () => {
+  const runtimePath = buildRuntimePath({
+    platform: "darwin",
+    env: testEnv({
+      HOME: "/Users/test-user",
+      PATH: "/usr/bin",
+    }),
+    nvmBin: null,
+  });
+
+  assert.ok(runtimePath.includes("/Users/test-user/Library/pnpm"), runtimePath);
+  assert.ok(runtimePath.includes("/Users/test-user/.bun/bin"), runtimePath);
+});
+
+test("buildRuntimePath honours an explicit PNPM_HOME env var", () => {
+  const runtimePath = buildRuntimePath({
+    platform: "linux",
+    env: testEnv({
+      HOME: "/home/test-user",
+      PATH: "/usr/bin",
+      PNPM_HOME: "/opt/pnpm-custom",
+    }),
+    nvmBin: null,
+  });
+
+  assert.ok(runtimePath.includes("/opt/pnpm-custom"), runtimePath);
+});
+
+test("buildRuntimePath includes pnpm + bun global-bin dirs on Windows", () => {
+  const runtimePath = buildRuntimePath({
+    platform: "win32",
+    env: testEnv({
+      USERPROFILE: "C:/Users/TestUser",
+      APPDATA: "C:/Users/TestUser/AppData/Roaming",
+      LOCALAPPDATA: "C:/Users/TestUser/AppData/Local",
+      PATH: "C:/Windows/System32",
+    }),
+    nvmBin: null,
+  });
+
+  assert.ok(runtimePath.includes("C:\\Users\\TestUser\\AppData\\Local\\pnpm"), runtimePath);
+  assert.ok(runtimePath.includes("C:\\Users\\TestUser\\.bun\\bin"), runtimePath);
 });
 
 test("buildCommandCandidates only returns Windows cmd paths plus bare command", () => {
@@ -204,9 +256,26 @@ test("buildCommandCandidates only returns Windows cmd paths plus bare command", 
   assert.deepEqual(candidates, [
     "C:\\Users\\TestUser\\AppData\\Roaming\\npm\\codex.cmd",
     "C:\\Users\\TestUser\\.local\\bin\\codex.cmd",
+    "C:\\Users\\TestUser\\.bun\\bin\\codex.cmd",
     "C:\\Users\\TestUser\\.nvm\\bin\\codex.cmd",
     "codex",
   ]);
+});
+
+// #39: without pnpm bins in the candidate list, an explicit-path detection of
+// `codex` installed via `pnpm add -g` at `~/Library/pnpm/codex` never fires.
+test("buildCommandCandidates surfaces pnpm + bun global bins on macOS", () => {
+  const candidates = buildCommandCandidates("codex", {
+    platform: "darwin",
+    env: testEnv({
+      HOME: "/Users/test-user",
+      PATH: "/usr/bin",
+    }),
+    nvmBin: null,
+  });
+
+  assert.ok(candidates.includes("/Users/test-user/Library/pnpm/codex"), candidates.join("\n"));
+  assert.ok(candidates.includes("/Users/test-user/.bun/bin/codex"), candidates.join("\n"));
 });
 
 test("resolveCliCommand prefers a bare Windows command when it is on PATH", () => {

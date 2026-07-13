@@ -55,6 +55,44 @@ function getPlatformPathTools(platform: NodeJS.Platform) {
   };
 }
 
+/**
+ * Well-known global-bin directories for package managers whose installers
+ * write CLIs outside `/usr/local/bin` and outside `$PATH` when a shell profile
+ * hasn't sourced them (Electron ships with an environment closer to launchd's
+ * than a login shell's).
+ *
+ * `PNPM_HOME` is set by `pnpm setup` and is authoritative when present. Fall
+ * back to platform defaults so a pnpm install that predates `setup` still
+ * gets detected. Bun's `~/.bun/bin` follows the same pattern for symmetry so
+ * a bun-installed CLI (#39-flavoured issue) is visible too.
+ */
+function packageManagerBinDirs(
+  platform: NodeJS.Platform,
+  env: NodeJS.ProcessEnv,
+  pathApi: typeof path.posix | typeof path.win32,
+): string[] {
+  const homeDir = resolveHomeDir(env);
+  const dirs: string[] = [];
+
+  const pnpmHome = env.PNPM_HOME?.trim();
+  if (pnpmHome) dirs.push(pathApi.normalize(pnpmHome));
+
+  if (platform === "win32") {
+    if (env.LOCALAPPDATA) dirs.push(pathApi.join(env.LOCALAPPDATA, "pnpm"));
+    dirs.push(pathApi.join(homeDir, ".bun", "bin"));
+  } else if (platform === "darwin") {
+    dirs.push(pathApi.join(homeDir, "Library", "pnpm"));
+    dirs.push(pathApi.join(homeDir, ".local", "share", "pnpm")); // linux-style fallback
+    dirs.push(pathApi.join(homeDir, ".bun", "bin"));
+  } else {
+    dirs.push(pathApi.join(homeDir, ".local", "share", "pnpm"));
+    dirs.push(pathApi.join(homeDir, ".bun", "bin"));
+  }
+
+  // Dedupe so `PNPM_HOME` pointing at the platform default doesn't repeat.
+  return Array.from(new Set(dirs.filter(Boolean)));
+}
+
 export function buildRuntimePath(options?: {
   platform?: NodeJS.Platform;
   env?: NodeJS.ProcessEnv;
@@ -64,12 +102,14 @@ export function buildRuntimePath(options?: {
   const env = options?.env || process.env;
   const runtimeNvmBin = options?.nvmBin === undefined ? nvmBin : options.nvmBin;
   const { api: pathApi, delimiter } = getPlatformPathTools(platform);
+  const pmDirs = packageManagerBinDirs(platform, env, pathApi);
 
   if (platform === "win32") {
     const homeDir = resolveHomeDir(env);
     return [
       env.APPDATA ? pathApi.join(env.APPDATA, "npm") : "",
       pathApi.join(homeDir, ".local", "bin"),
+      ...pmDirs,
       ...(runtimeNvmBin ? [pathApi.normalize(runtimeNvmBin)] : []),
       env.PATH || "",
     ].filter(Boolean).join(delimiter);
@@ -79,6 +119,7 @@ export function buildRuntimePath(options?: {
     `${env.HOME || ""}/.local/bin`,
     "/usr/local/bin",
     "/opt/homebrew/bin",
+    ...pmDirs,
     ...(runtimeNvmBin ? [pathApi.normalize(runtimeNvmBin)] : []),
     env.PATH || "",
   ].filter(Boolean).join(delimiter);
@@ -130,13 +171,16 @@ export function buildCommandCandidates(
   const env = options?.env || process.env;
   const runtimeNvmBin = options?.nvmBin ?? null;
   const { api: pathApi } = getPlatformPathTools(platform);
+  const suffix = platform === "win32" ? ".cmd" : "";
+  const pmDirs = packageManagerBinDirs(platform, env, pathApi);
 
   if (platform === "win32") {
     const homeDir = resolveHomeDir(env);
     return [
-      env.APPDATA ? pathApi.join(env.APPDATA, "npm", `${command}.cmd`) : "",
-      pathApi.join(homeDir, ".local", "bin", `${command}.cmd`),
-      ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, `${command}.cmd`)] : []),
+      env.APPDATA ? pathApi.join(env.APPDATA, "npm", `${command}${suffix}`) : "",
+      pathApi.join(homeDir, ".local", "bin", `${command}${suffix}`),
+      ...pmDirs.map((dir) => pathApi.join(dir, `${command}${suffix}`)),
+      ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, `${command}${suffix}`)] : []),
       command,
     ].filter(Boolean);
   }
@@ -145,6 +189,7 @@ export function buildCommandCandidates(
     `${env.HOME || ""}/.local/bin/${command}`,
     `/usr/local/bin/${command}`,
     `/opt/homebrew/bin/${command}`,
+    ...pmDirs.map((dir) => pathApi.join(dir, command)),
     ...(runtimeNvmBin ? [pathApi.join(runtimeNvmBin, command)] : []),
     command,
   ].filter(Boolean);
