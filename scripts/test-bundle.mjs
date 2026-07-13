@@ -33,6 +33,7 @@ import net from "net";
 import path from "path";
 import { spawn } from "child_process";
 import { fileURLToPath } from "url";
+import { runChecks } from "./smoke-checks.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -212,6 +213,17 @@ try {
   else info("app responded but no <title> seen (continuing)");
 } catch {
   info("could not fetch / for HTML check (continuing — health already passed)");
+}
+
+// ─── 6. Journey checks against the live pair ──────────────────────────────────
+
+try {
+  await runChecks({
+    appUrl: `http://127.0.0.1:${appPort}`,
+    daemonUrl: `http://127.0.0.1:${daemonPort}`,
+  });
+} catch (err) {
+  fail(`journey check failed: ${err.message}`);
 }
 
 console.log(`\n\x1b[32m✓ Bundle boot smoke test passed — \`cabinetai run\` boots the real bundle.\x1b[0m`);
