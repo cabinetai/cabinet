@@ -23,7 +23,7 @@
     "electron:package:win": "npm run build && npm run electron:prep -- --platform=win32 && electron-forge package --platform win32",
     "electron:make": "npm run build && npm run electron:prep && electron-forge make",
     "electron:make:win": "npm run build && npm run electron:prep -- --platform=win32 && electron-forge make --platform win32",
-    "lint": "eslint src server electron scripts test eslint.config.mjs next.config.ts",
+    "lint": "eslint --max-warnings 110 src server electron scripts test eslint.config.mjs next.config.ts",
     "skills:sync": "tsx scripts/skills-sync.ts",
     "test:unit": "tsx --test test/update-system.test.ts",
     "test:zero-install": "node scripts/test-zero-install.mjs",

@@ -44,14 +44,12 @@ jobs:
       - name: Boot smoke test (cabinetai run → app + daemon health)
         run: npm run test:bundle
 
-  # Non-blocking for now: lint and the unit suite both have pre-existing
-  # failures on a clean checkout (lint errors; cabinet-v2 tests depend on an
-  # untracked ambient data/ fixture). Surfaced here for visibility without
-  # blocking merges. Flip `continue-on-error` to false once those are green.
+  # Blocking: lint (0 errors) and the full unit suite (391 tests) must stay
+  # green. Both are fast (<2 min) and run on the same Ubuntu runner class as
+  # the build job.
   lint-and-unit:
-    name: Lint & unit tests (non-blocking)
+    name: Lint & unit tests
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
