@@ -1,2 +1,3 @@
 # PR approvals on main must come from cabinet-core
+# Maintainers/admins may bypass review (PR flow only)
 * @cabinetai/cabinet-core
