@@ -17,6 +17,12 @@ import { readStringConfig, readEffortConfig } from "./_shared/cli-args";
 import type { AdapterSessionCodec, AgentExecutionAdapter } from "./types";
 import type { ConversationErrorClassification } from "@/types/conversations";
 import { getAdapterRuntimePath, runChildProcess } from "./utils";
+import {
+  buildCodexCLIProxyArgs,
+  buildCodexCLIProxyEnv,
+  resolveCLIProxyConnection,
+} from "../cli-proxy-routing";
+import type { CLIProxyConnection } from "../cli-proxy-runtime";
 
 /**
  * Match codex's backend-rejection events for "this model isn't available on
@@ -33,6 +39,7 @@ function classifyCodexModelUnavailable(
   stderr: string,
   _exitCode: number | null
 ): ConversationErrorClassification | null {
+  void _exitCode;
   const text = (stderr || "").toLowerCase();
   if (!text.trim()) return null;
 
@@ -87,7 +94,10 @@ function firstNonEmptyLine(text: string): string | null {
   );
 }
 
-function buildCodexArgs(config: Record<string, unknown>): string[] {
+function buildCodexArgs(
+  config: Record<string, unknown>,
+  proxyConnection: CLIProxyConnection | null
+): string[] {
   const args = [
     "exec",
     "--json",
@@ -109,6 +119,10 @@ function buildCodexArgs(config: Record<string, unknown>): string[] {
   const effort = readEffortConfig(config);
   if (effort) {
     args.push("-c", `model_reasoning_effort="${effort}"`);
+  }
+
+  if (proxyConnection) {
+    args.push(...buildCodexCLIProxyArgs(proxyConnection));
   }
 
   return args;
@@ -157,7 +171,8 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
   async execute(ctx) {
     const command =
       readStringConfig(ctx.config, "command") || resolveCliCommand(codexCliProvider);
-    const args = buildCodexArgs(ctx.config);
+    const proxyConnection = resolveCLIProxyConnection(ctx.config, "codex");
+    const args = buildCodexArgs(ctx.config, proxyConnection);
     const stdoutAccumulator = createCodexStreamAccumulator();
     const stderrAccumulator = createCodexStderrAccumulator();
 
@@ -173,6 +188,7 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
 
     const result = await runChildProcess(command, args, {
       cwd: ctx.cwd,
+      env: proxyConnection ? buildCodexCLIProxyEnv(proxyConnection) : undefined,
       stdin: ctx.prompt,
       timeoutMs: ctx.timeoutMs,
       onSpawn: ctx.onSpawn,

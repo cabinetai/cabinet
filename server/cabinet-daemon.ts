@@ -97,6 +97,10 @@ import {
   initTelegramGateway,
   shutdownTelegramGateway,
 } from "./telegram/gateway";
+import {
+  initWhatsAppGateway,
+  shutdownWhatsAppGateway,
+} from "./whatsapp/gateway";
 import { loadAgentDocs, loadTaskDocs } from "./search/index-agents-tasks";
 import type { SearchScope } from "./search/types";
 import {
@@ -106,6 +110,10 @@ import {
   printStartupBannerIfNeeded,
   startTelemetryFlusher,
 } from "../src/lib/telemetry";
+import {
+  cliProxyRuntime,
+  type CLIProxyOAuthProvider,
+} from "../src/lib/agents/cli-proxy-runtime";
 
 const PORT = getDaemonPort();
 const CABINET_MANIFEST_FILE = ".cabinet";
@@ -1930,6 +1938,103 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // CLIProxyAPI is a connector sidecar, not an agent adapter. Keep its
+  // management secret inside the daemon and expose only the small set of
+  // lifecycle/OAuth operations Cabinet's UI needs. The daemon bearer gate
+  // above protects every route in this block.
+  if (url.pathname.startsWith("/cli-proxy/")) {
+    if (process.env.CABINET_CLOUD === "1") {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Not found" }));
+      return;
+    }
+    const action = url.pathname.slice("/cli-proxy/".length);
+    const sendJson = (code: number, body: unknown) => {
+      res.writeHead(code, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(body));
+    };
+    const readBody = (): Promise<Record<string, unknown>> =>
+      new Promise((resolve, reject) => {
+        let body = "";
+        let tooLarge = false;
+        req.on("data", (chunk) => {
+          if (tooLarge) return;
+          body += chunk;
+          if (body.length > 16_384) {
+            tooLarge = true;
+            body = "";
+          }
+        });
+        req.on("end", () => {
+          if (tooLarge) return reject(new Error("request body too large"));
+          try { resolve(JSON.parse(body || "{}")); } catch { resolve({}); }
+        });
+      });
+
+    (async () => {
+      try {
+        if (action === "status" && req.method === "GET") {
+          return sendJson(200, cliProxyRuntime.status());
+        }
+        if (action === "install" && req.method === "POST") {
+          await cliProxyRuntime.install();
+          return sendJson(200, await cliProxyRuntime.start());
+        }
+        if (action === "start" && req.method === "POST") {
+          return sendJson(200, await cliProxyRuntime.start());
+        }
+        if (action === "stop" && req.method === "POST") {
+          await cliProxyRuntime.stop();
+          return sendJson(200, cliProxyRuntime.status());
+        }
+        if (action === "models" && req.method === "GET") {
+          return sendJson(200, await cliProxyRuntime.listModels());
+        }
+        if (action === "accounts" && req.method === "GET") {
+          return sendJson(200, { accounts: await cliProxyRuntime.listAccounts() });
+        }
+        if (action === "routing" && req.method === "POST") {
+          const { enabled } = await readBody();
+          if (typeof enabled !== "boolean") {
+            return sendJson(400, { error: "enabled boolean required" });
+          }
+          return sendJson(200, await cliProxyRuntime.setRoutingEnabled(enabled));
+        }
+        if (action === "oauth/start" && req.method === "POST") {
+          const { provider } = await readBody();
+          if (
+            typeof provider !== "string" ||
+            !["anthropic", "codex"].includes(provider)
+          ) {
+            return sendJson(400, { error: "unsupported OAuth provider" });
+          }
+          return sendJson(
+            200,
+            await cliProxyRuntime.startOAuth(provider as CLIProxyOAuthProvider)
+          );
+        }
+        if (action === "oauth/status" && req.method === "GET") {
+          const state = url.searchParams.get("state")?.trim();
+          if (!state) return sendJson(400, { error: "state required" });
+          return sendJson(200, await cliProxyRuntime.oauthStatus(state));
+        }
+        if (action === "oauth/cancel" && req.method === "POST") {
+          const { state } = await readBody();
+          if (typeof state !== "string" || !state.trim()) {
+            return sendJson(400, { error: "state required" });
+          }
+          return sendJson(200, await cliProxyRuntime.cancelOAuth(state));
+        }
+        return sendJson(404, { error: "unknown CLIProxyAPI action" });
+      } catch (error) {
+        return sendJson(error instanceof Error && error.message === "request body too large" ? 413 : 500, {
+          error: error instanceof Error ? error.message : "CLIProxyAPI operation failed",
+        });
+      }
+    })();
+    return;
+  }
+
   // ── Claude Code login ── one-click `claude setup-token` orchestration. Works on
   // cloud tenants and desktop/self-host alike (both just drive the local `claude`
   // CLI over a PTY). Bearer-gated above like the rest of the daemon API.
@@ -2180,6 +2285,10 @@ server.listen(PORT, () => {
       };
     },
   });
+  // WhatsApp read-only gateway (docs/WHATSAPP_CONNECTOR.md). No-op unless
+  // WHATSAPP_ACCOUNTS is set; watches .cabinet.env so enabling it takes
+  // effect without a restart. Inbound-only: messages land on a channel board.
+  initWhatsAppGateway();
   void (async () => {
     try {
       const { loadExternalAdapters } = await import(
@@ -2193,11 +2302,27 @@ server.listen(PORT, () => {
       );
     }
   })();
+  if (process.env.CABINET_CLOUD !== "1") {
+    void cliProxyRuntime.startConfigured().then((status) => {
+      if (status.running) {
+        console.log(`[cli-proxy] restored managed sidecar v${status.version}`);
+      }
+    }).catch((error) => {
+      console.warn(
+        "[cli-proxy] could not restore managed sidecar:",
+        error instanceof Error ? error.message : error
+      );
+    });
+  }
 });
 
 // ===== Graceful Shutdown =====
 
-function shutdown(): void {
+let shutdownStarted = false;
+
+async function shutdown(): Promise<void> {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
   console.log("\nShutting down...");
   emitTelemetry("app.exited", {});
   clearSessionId();
@@ -2212,15 +2337,19 @@ function shutdown(): void {
       session.stop("SIGTERM");
     } catch {}
   }
-  void scheduleWatcher.close();
-  void shutdownTelegramGateway();
+  await Promise.allSettled([
+    scheduleWatcher.close(),
+    shutdownTelegramGateway(),
+    shutdownWhatsAppGateway(),
+    cliProxyRuntime.stopForShutdown(),
+  ]);
   closeDb();
   server.close();
   process.exit(0);
 }
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+process.on("SIGINT", () => { void shutdown(); });
+process.on("SIGTERM", () => { void shutdown(); });
 
 wssPty.on("error", (err) => {
   console.error("PTY WebSocket error:", err.message);
