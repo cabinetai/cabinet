@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRemoteJWKSet, jwtVerify } from "jose";
 import {
   KB_AUTH_COOKIE,
   expectedToken,
   isAuthEnabled,
   timingSafeEqualHex,
 } from "./kb-auth";
+import {
+  CABINET_JWT_COOKIE,
+  cloudGateActive,
+  verifyCloudToken,
+} from "./cloud-token";
+
+export { CABINET_JWT_COOKIE, cloudGateActive };
 
 // Shared auth decision used by BOTH the proxy (src/proxy.ts) and API routes
 // that are excluded from the proxy matcher. Large-body routes (/api/upload)
@@ -13,32 +19,6 @@ import {
 // of every matched request body in memory (and truncates it at
 // proxyClientMaxBodySize) — so those routes enforce the same gate themselves
 // via requireApiAuth().
-
-/** Cookie the panel sets on `.runcabinet.com` (Supabase ES256 access token). */
-export const CABINET_JWT_COOKIE = "cabinet_jwt";
-
-// A remote JWK set caches keys and rate-limits refetches internally, so build
-// it ONCE per JWKS URL and reuse it across requests (rebuilding per request
-// would defeat jose's caching and hammer the auth server). Memoized on the URL
-// so an env change (e.g. in tests) still rebuilds.
-let jwksMemo: {
-  url: string;
-  jwks: ReturnType<typeof createRemoteJWKSet>;
-} | null = null;
-
-function getJwks(url: string): ReturnType<typeof createRemoteJWKSet> {
-  if (jwksMemo && jwksMemo.url === url) return jwksMemo.jwks;
-  const jwks = createRemoteJWKSet(new URL(url));
-  jwksMemo = { url, jwks };
-  return jwks;
-}
-
-/** Whether the hosted-edition Supabase-JWT gate is active for this process. */
-export function cloudGateActive(): boolean {
-  return (
-    process.env.CABINET_CLOUD === "1" && !!process.env.CABINET_JWT_JWKS_URL
-  );
-}
 
 /**
  * Verify the `cabinet_jwt` cookie and return the token subject (the Supabase
@@ -48,20 +28,7 @@ export function cloudGateActive(): boolean {
  * enforces `exp`/`nbf`, so expired sessions fail closed here.
  */
 export async function cloudUserSub(req: NextRequest): Promise<string | null> {
-  const jwksUrl = process.env.CABINET_JWT_JWKS_URL;
-  if (!jwksUrl) return null; // Not configured -> deny (fail closed).
-
-  const token = req.cookies.get(CABINET_JWT_COOKIE)?.value;
-  if (!token) return null;
-
-  try {
-    const { payload } = await jwtVerify(token, getJwks(jwksUrl), {
-      algorithms: ["ES256"],
-    });
-    return typeof payload.sub === "string" && payload.sub ? payload.sub : null;
-  } catch {
-    return null;
-  }
+  return verifyCloudToken(req.cookies.get(CABINET_JWT_COOKIE)?.value);
 }
 
 /** Constant-time check of the local KB_PASSWORD auth cookie. */
