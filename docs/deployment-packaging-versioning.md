@@ -67,7 +67,7 @@ npm run dev:all
 
 Custom source installs still get update checks, but Cabinet will not overwrite app code automatically. They receive manual upgrade guidance instead.
 
-## 3. Electron macOS app
+## 3. Electron desktop apps
 
 Electron is the desktop packaging track for Cabinet.
 
@@ -82,7 +82,7 @@ That uses Electron Forge and produces packaged desktop artifacts under `out/`.
 
 ### Release packaging
 
-On release tags, GitHub Actions builds the macOS desktop artifacts and publishes them to the GitHub Release. The release manifest also records the expected macOS asset names.
+For tagged releases, the manually dispatched GitHub Actions desktop workflow builds native macOS and Windows artifacts and publishes them to the GitHub Release. The release manifest records the expected DMG, installer, and ZIP asset names.
 
 The manually dispatched `electron-release.yml` also supports a validation mode:
 leave its `tag` input empty and select a branch. The macOS job builds the DMG
@@ -94,9 +94,17 @@ notarization, before the release job is considered successful.
 
 The Windows job performs the equivalent installed-package check: it runs the
 generated Squirrel `Setup.exe`, launches the installed `Cabinet.exe`, verifies
-the app and daemon health routes, and uninstalls the test copy. Windows signing
-is enabled automatically for tagged builds after these GitHub Actions secrets
-are configured:
+the app and daemon health routes, and uninstalls the test copy. This gate runs
+for unsigned and signed packages alike.
+
+Windows signing is deliberately optional. If neither signing secret is present,
+a tagged release is built, smoke-tested, and uploaded unsigned; signing must not
+block v0.5.1. Users can still install and run that build, but Windows may display
+“Unknown publisher” and Microsoft Defender SmartScreen warnings. Do not create a
+self-signed certificate to suppress those warnings.
+
+The current optional `.pfx` path is enabled automatically only when these
+GitHub Actions secrets are configured:
 
 - `WINDOWS_CERTIFICATE_BASE64` — base64-encoded Authenticode `.pfx`
 - `WINDOWS_CERTIFICATE_PASSWORD` — password for that certificate
@@ -104,7 +112,10 @@ are configured:
 Branch validation remains unsigned so certificates are never exposed to branch
 builds. When signing is configured, tagged builds also require both the
 installer and installed executable to report a valid Authenticode signature
-before release artifacts are uploaded.
+before release artifacts are uploaded. For a future production signing project,
+prefer Microsoft Artifact Signing or another hardware-backed cloud-signing
+provider with short-lived GitHub OIDC authentication; modern public signing
+certificates generally should not be handled as exportable certificate files.
 
 A separate `publish-app-bundles` job (in `release.yml`) builds the zero-install standalone bundles per platform (`darwin-arm64`, `darwin-x64`, `linux-arm64`, `linux-x64`; Windows `win32-x64` pending PR #192) with `npm run build && npm run electron:prep`, then uploads each `cabinet-app-<key>-vX.Y.Z.tgz` + `.sha256` to the Release. The release manifest records these under `appBundles`, and `cabinetai run` consumes them (see docs/CABINETAI.md → `ensureApp`).
 
@@ -278,7 +289,9 @@ After GitHub Actions finishes, verify:
 - the GitHub Release exists for `vX.Y.Z`
 - `cabinet-release.json` is attached to that release
 - `create-cabinet@X.Y.Z` is visible on npm
-- the Electron macOS artifacts are attached to the GitHub Release
+- the signed/notarized macOS DMG and ZIP are attached and their packaged-app smoke test passed
+- the Windows installer and ZIP are attached and the installed-app smoke test passed
+- Windows signatures are valid when signing credentials were configured; an unsigned build is expected otherwise
 - the latest manifest URL resolves to the new version
 - a fresh `npx create-cabinet@latest` install pulls the expected release
 
