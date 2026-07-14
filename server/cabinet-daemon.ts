@@ -80,10 +80,10 @@ import {
   writeSession,
 } from "../src/lib/agents/conversation-store";
 import {
+  getOrCreateDaemonTokenSync,
   getTokenFromAuthorizationHeader,
   isDaemonTokenValid,
 } from "../src/lib/agents/daemon-auth";
-import { authCookieHeader } from "../src/lib/auth/kb-auth";
 import {
   normalizeJobConfig,
   normalizeJobId,
@@ -1260,16 +1260,21 @@ function ensureAuthEnvFromDotEnv(): void {
   }
 }
 
+/**
+ * The daemon hosts /api itself now, so scheduler triggers call the local
+ * server with the daemon bearer token — no more replicating the browser's
+ * kb-auth cookie.
+ */
+function selfApiUrl(pathname: string): string {
+  return `http://127.0.0.1:${PORT}${pathname}`;
+}
+
 async function putJson(url: string, body: Record<string, unknown>): Promise<void> {
-  // Attach the same `kb-auth` cookie a logged-in browser carries, so these
-  // server-to-server triggers pass the gate instead of silently 401ing. No-op
-  // when auth is disabled (authCookieHeader() returns {}).
-  ensureAuthEnvFromDotEnv();
   const response = await fetch(url, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      ...(await authCookieHeader()),
+      Authorization: `Bearer ${getOrCreateDaemonTokenSync()}`,
     },
     body: JSON.stringify(body),
   });
@@ -1307,7 +1312,7 @@ function scheduleJob(job: JobConfig): void {
       if (!job.oneShot) return;
       try {
         await putJson(
-          `${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`,
+          selfApiUrl(`/api/agents/${job.agentSlug}/jobs/${job.id}`),
           {
             action: "update",
             cabinetPath: job.cabinetPath,
@@ -1322,7 +1327,7 @@ function scheduleJob(job: JobConfig): void {
       scheduledJobs.delete(key);
       console.log(`  One-shot job fired and disabled: ${key}`);
     };
-    void putJson(`${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`, {
+    void putJson(selfApiUrl(`/api/agents/${job.agentSlug}/jobs/${job.id}`), {
       action: "run",
       source: "scheduler",
       cabinetPath: job.cabinetPath,
@@ -1356,7 +1361,7 @@ function scheduleHeartbeat(slug: string, cronExpr: string, cabinetPath: string):
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering heartbeat ${key} @ ${scheduledAt}`);
     recordTriggerAttempt(scheduledAt);
-    void putJson(`${getAppOrigin()}/api/agents/personas/${slug}`, {
+    void putJson(selfApiUrl(`/api/agents/personas/${slug}`), {
       action: "run",
       source: "scheduler",
       cabinetPath,
