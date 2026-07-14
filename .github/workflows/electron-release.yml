@@ -3,10 +3,9 @@ name: Electron Release (manual)
 # Triggered manually. Two modes:
 #  * RELEASE  — dispatch with a `tag` (e.g. v0.4.0): macOS job signs/notarizes/
 #    publishes; Windows job builds and attaches artifacts to that release.
-#  * VALIDATE — dispatch with NO tag (against a branch): macOS job is skipped,
-#    the Windows job builds the current branch and only uploads the build as a
-#    run artifact (no release writes). Used to smoke-test the Windows packaging
-#    of a branch/PR before merging.
+#  * VALIDATE — dispatch with NO tag (against a branch): macOS and Windows build
+#    the current branch, smoke-test their packaged output, and upload artifacts
+#    without writing to a release.
 
 on:
   workflow_dispatch:
@@ -23,14 +22,11 @@ permissions:
 jobs:
   electron-macos:
     runs-on: macos-latest
-    # Release-only: this job signs, notarizes and publishes, so never run it for
-    # a branch validation (no tag).
-    if: ${{ inputs.tag != '' }}
     steps:
-      - name: Checkout tag
+      - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -41,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Import Apple Developer certificate
-        if: ${{ env.APPLE_CERTIFICATE != '' }}
+        if: ${{ inputs.tag != '' }}
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -56,14 +52,54 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -k "" "$KEYCHAIN_PATH"
           security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
 
-      - name: Build and publish Electron app
+      - name: Build standalone app and daemon
+        run: npm run build && npm run electron:prep
+
+      - name: Smoke-test standalone app and daemon
+        run: npm run test:bundle
+
+      - name: Build unsigned validation DMG and ZIP
+        if: ${{ inputs.tag == '' }}
+        run: npx electron-forge make
+
+      - name: Build, sign, and notarize release DMG and ZIP
+        if: ${{ inputs.tag != '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
-        run: npm run build && npm run electron:prep && npx electron-forge publish
+        run: npx electron-forge publish --dry-run
+
+      - name: Smoke-test packaged macOS application
+        env:
+          CABINET_ELECTRON_SMOKE_LOG_DIR: ${{ runner.temp }}/cabinet-electron-smoke-logs
+        run: npm run test:electron:macos
+
+      - name: Verify release signing and notarization
+        if: ${{ inputs.tag != '' }}
+        run: |
+          APP_PATH="$(find out -type d -name Cabinet.app -print -quit)"
+          test -n "$APP_PATH"
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          spctl --assess --type execute --verbose=4 "$APP_PATH"
+
+      - name: Publish validated release artifacts
+        if: ${{ inputs.tag != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-forge publish --from-dry-run
+
+      - name: Upload macOS build artifacts and smoke-test logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: cabinet-macos-${{ inputs.tag || github.sha }}
+          path: |
+            out/make/**
+            ${{ runner.temp }}/cabinet-electron-smoke-logs/**
+          if-no-files-found: warn
 
       - name: Clean up keychain
         if: always()

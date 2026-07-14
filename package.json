@@ -28,6 +28,7 @@
     "test:unit": "tsx --test test/update-system.test.ts",
     "test:zero-install": "node scripts/test-zero-install.mjs",
     "test:bundle": "node scripts/test-bundle.mjs",
+    "test:electron:macos": "node scripts/test-electron-macos-package.mjs",
     "test": "tsx --test $(find test src -name '*.test.ts')",
     "i18n:extract": "node scripts/i18n-extract.mjs",
     "i18n:check": "node scripts/i18n-extract.mjs --check",
