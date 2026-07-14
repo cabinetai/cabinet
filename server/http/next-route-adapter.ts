@@ -62,7 +62,13 @@ export async function sendWebResponse(
     );
     body.once("error", reject);
     res.once("error", reject);
-    res.once("close", resolve);
+    res.once("close", () => {
+      // If the client vanished before the body finished, destroy the source
+      // so the underlying web stream's cancel() runs and long-lived handlers
+      // (SSE) stop producing.
+      if (!body.readableEnded) body.destroy();
+      resolve();
+    });
     body.pipe(res);
   });
 }

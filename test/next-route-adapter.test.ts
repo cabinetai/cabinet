@@ -88,3 +88,39 @@ test("adapter maps a thrown handler error to a 500 via the error middleware", as
     assert.equal(res.status, 500);
   });
 });
+
+test("adapter cancels the source stream when the client disconnects early", async () => {
+  let resolveCancel: () => void;
+  const cancelled = new Promise<void>((r) => {
+    resolveCancel = r;
+  });
+  const mod: RouteModule = {
+    GET: async () => {
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode("chunk1"));
+          // Never close: this simulates a long-lived SSE-style response.
+        },
+        cancel() {
+          resolveCancel();
+        },
+      });
+      return new NextResponse(stream, {
+        headers: { "content-type": "text/event-stream" },
+      });
+    },
+  };
+  await withApp([["/api/sse", mod]], async (origin) => {
+    const controller = new AbortController();
+    const res = await fetch(`${origin}/api/sse`, { signal: controller.signal });
+    const reader = res.body!.getReader();
+    await reader.read();
+    reader.releaseLock();
+    controller.abort();
+
+    const deadline = new Promise<void>((_, reject) =>
+      setTimeout(() => reject(new Error("cancel() was not called within timeout")), 2000)
+    );
+    await Promise.race([cancelled, deadline]);
+  });
+});
