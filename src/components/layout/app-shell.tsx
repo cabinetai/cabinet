@@ -799,19 +799,29 @@ export function AppShell() {
   const effectiveUpdateDialogOpen =
     updateDialogOpen || hasPersistentUpdateState || shouldPromptForUpdate;
 
-  // Auto-collapse sidebar + AI panel when entering app mode
+  // Auto-collapse sidebar + AI panel when entering app mode, and restore
+  // whatever they were before on the way out — whether that's via the
+  // explicit exit-fullscreen button or by just navigating to a non-app node.
+  // Previously only the button restored state, so leaving any other way left
+  // the sidebar collapsed (and persisted collapsed) indefinitely.
   const prevIsApp = useRef(false);
+  const preAppSidebarCollapsed = useRef(sidebarCollapsed);
+  const preAppAiPanelCollapsed = useRef(false);
   useEffect(() => {
     if (isApp && !prevIsApp.current) {
+      preAppSidebarCollapsed.current = useAppStore.getState().sidebarCollapsed;
       setSidebarCollapsed(true);
       setAiPanelCollapsed(true);
+    } else if (!isApp && prevIsApp.current) {
+      setSidebarCollapsed(preAppSidebarCollapsed.current);
+      setAiPanelCollapsed(preAppAiPanelCollapsed.current);
     }
     prevIsApp.current = !!isApp;
   }, [isApp, setSidebarCollapsed, setAiPanelCollapsed]);
 
   const handleExitApp = () => {
-    setSidebarCollapsed(false);
-    setAiPanelCollapsed(false);
+    setSidebarCollapsed(preAppSidebarCollapsed.current);
+    setAiPanelCollapsed(preAppAiPanelCollapsed.current);
   };
 
   // Determine what to render in the main area
