@@ -1,6 +1,6 @@
 {
   "name": "cabinet",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Cabinet is an AI-first, self-hosted knowledge base and startup OS. Your files, your agents, on your machine.",
   "private": true,
   "license": "MIT",

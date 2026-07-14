@@ -1,26 +1,44 @@
 {
   "manifestVersion": 1,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "channel": "stable",
-  "releaseDate": "2026-07-04T16:12:09.311Z",
-  "gitTag": "v0.5.0",
+  "releaseDate": "2026-07-14T14:47:13.638Z",
+  "gitTag": "v0.5.1",
   "repositoryUrl": "https://github.com/cabinetai/cabinet",
-  "releaseNotesUrl": "https://github.com/cabinetai/cabinet/releases/tag/v0.5.0",
-  "sourceTarballUrl": "https://github.com/cabinetai/cabinet/archive/refs/tags/v0.5.0.tar.gz",
+  "releaseNotesUrl": "https://github.com/cabinetai/cabinet/releases/tag/v0.5.1",
+  "sourceTarballUrl": "https://github.com/cabinetai/cabinet/archive/refs/tags/v0.5.1.tar.gz",
+  "appBundles": {
+    "darwin-arm64": {
+      "assetName": "cabinet-app-darwin-arm64-v0.5.1.tgz",
+      "url": "https://github.com/cabinetai/cabinet/releases/download/v0.5.1/cabinet-app-darwin-arm64-v0.5.1.tgz"
+    },
+    "darwin-x64": {
+      "assetName": "cabinet-app-darwin-x64-v0.5.1.tgz",
+      "url": "https://github.com/cabinetai/cabinet/releases/download/v0.5.1/cabinet-app-darwin-x64-v0.5.1.tgz"
+    },
+    "linux-arm64": {
+      "assetName": "cabinet-app-linux-arm64-v0.5.1.tgz",
+      "url": "https://github.com/cabinetai/cabinet/releases/download/v0.5.1/cabinet-app-linux-arm64-v0.5.1.tgz"
+    },
+    "linux-x64": {
+      "assetName": "cabinet-app-linux-x64-v0.5.1.tgz",
+      "url": "https://github.com/cabinetai/cabinet/releases/download/v0.5.1/cabinet-app-linux-x64-v0.5.1.tgz"
+    }
+  },
   "npmPackage": "create-cabinet",
-  "createCabinetVersion": "0.5.0",
+  "createCabinetVersion": "0.5.1",
   "cabinetaiPackage": "cabinetai",
-  "cabinetaiVersion": "0.5.0",
+  "cabinetaiVersion": "0.5.1",
   "electron": {
     "macos": {
       "arch": "arm64",
-      "zipAssetName": "Cabinet-darwin-arm64-0.5.0.zip",
-      "dmgAssetName": "Cabinet-0.5.0-arm64.dmg"
+      "zipAssetName": "Cabinet-darwin-arm64-0.5.1.zip",
+      "dmgAssetName": "Cabinet-0.5.1-arm64.dmg"
     },
     "windows": {
-      "zipAssetName": "Cabinet-win32-x64-0.5.0.zip",
-      "setupExeAssetName": "Cabinet-0.5.0.Setup.exe",
-      "nupkgAssetName": "cabinet-0.5.0-full.nupkg",
+      "zipAssetName": "Cabinet-win32-x64-0.5.1.zip",
+      "setupExeAssetName": "Cabinet-0.5.1.Setup.exe",
+      "nupkgAssetName": "cabinet-0.5.1-full.nupkg",
       "releasesAssetName": "RELEASES"
     }
   }
