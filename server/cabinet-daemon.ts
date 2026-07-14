@@ -27,6 +27,16 @@ loadCabinetEnv();
 import { initProcessLogging } from "../src/lib/log/logger";
 initProcessLogging("daemon");
 
+// The embedded /api gate derives the same kb-auth token the browser carries,
+// so the per-install salt must exist before the first request (Next's
+// instrumentation hook also calls this; it is idempotent).
+import { ensureAuthSalt } from "../src/lib/auth/kb-auth-salt.node";
+try {
+  ensureAuthSalt();
+} catch (err) {
+  console.error("daemon: ensureAuthSalt failed", err);
+}
+
 // Mark this process as the daemon itself. conversation-runner reads this to
 // route continued turns through the daemon's session machinery (addressable,
 // stoppable run ids) instead of the un-cancellable in-process path — the
@@ -114,6 +124,7 @@ import {
   cliProxyRuntime,
   type CLIProxyOAuthProvider,
 } from "../src/lib/agents/cli-proxy-runtime";
+import { buildApiApp } from "./http/api-app";
 
 const PORT = getDaemonPort();
 const CABINET_MANIFEST_FILE = ".cabinet";
@@ -1502,6 +1513,8 @@ function queueScheduleReload(): void {
 
 // ===== HTTP Server =====
 
+const apiApp = buildApiApp();
+
 const server = http.createServer(async (req, res) => {
   applyCors(req, res);
 
@@ -1512,6 +1525,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   const url = new URL(req.url || "", `http://localhost:${PORT}`);
+
+  // The former Next.js /api surface, served by the embedded Express app. It
+  // applies its own auth gate (kb-auth cookie / cloud JWT / daemon bearer),
+  // so the daemon token check below must not run for these paths. WS upgrade
+  // paths (/api/daemon/pty, /api/daemon/events) never reach this handler.
+  if (url.pathname === "/api" || url.pathname.startsWith("/api/")) {
+    apiApp(req, res);
+    return;
+  }
+
   if (url.pathname !== "/health" && !isDaemonTokenValid(requestToken(req, url))) {
     rejectUnauthorized(res);
     return;
@@ -2227,6 +2250,11 @@ scheduleWatcher.on("error", (err: unknown) => {
     /* already closing */
   });
 });
+
+// KB_PASSWORD (and salt/iters overrides) may live only in `.env`; the
+// embedded /api auth gate needs them in process.env before the first
+// browser request, not just before the first scheduler trigger.
+ensureAuthEnvFromDotEnv();
 
 server.listen(PORT, () => {
   console.log(`Cabinet Daemon running on port ${PORT}`);
