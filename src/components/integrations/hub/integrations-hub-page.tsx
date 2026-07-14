@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -52,40 +52,57 @@ export function IntegrationsHubPage() {
   // Which connectors (and suites) are actually connected — drives the only badge
   // we show. Re-checked when returning from a detail (a connect may have landed).
   const [connectedIds, setConnectedIds] = useState<Set<string>>(new Set());
+  const [connectionStatusById, setConnectionStatusById] = useState<
+    Map<string, "connected" | "needs-attention" | "not-connected">
+  >(new Map());
   // Whether the connected Microsoft 365 account is work/school (has its own
   // Entra app credentials, i.e. `--org-mode`) rather than personal. Teams and
   // SharePoint have no data on a personal Microsoft account, so their
   // "Connected" badge must reflect this instead of just riding on
   // microsoft-365's connected state.
   const [msWorkAccountConnected, setMsWorkAccountConnected] = useState(false);
+  const refreshConnectionState = useCallback(async () => {
+    const res = await fetch("/api/agents/config/mcp-catalog", { cache: "no-store" });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data?.approved) return;
+    const approved = data.approved as {
+      id: string;
+      connectedProviderIds?: string[];
+      connectionStatus?: "connected" | "needs-attention" | "not-connected";
+      credentialStatus?: Record<string, { hasValue: boolean }>;
+    }[];
+    setConnectionStatusById(
+      new Map(
+        approved.map((a) => [
+          a.id,
+          a.connectionStatus ?? "not-connected",
+        ]),
+      ),
+    );
+    setConnectedIds(
+      new Set(
+        approved
+          .filter((a) => (a.connectedProviderIds?.length ?? 0) > 0)
+          .map((a) => a.id),
+      ),
+    );
+    const m365 = approved.find((a) => a.id === "microsoft-365");
+    setMsWorkAccountConnected(
+      !!m365?.credentialStatus?.MS365_MCP_CLIENT_ID?.hasValue,
+    );
+  }, []);
+
   useEffect(() => {
-    let alive = true;
-    fetch("/api/agents/config/mcp-catalog", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (!alive || !data?.approved) return;
-        const approved = data.approved as {
-          id: string;
-          connectedProviderIds?: string[];
-          credentialStatus?: Record<string, { hasValue: boolean }>;
-        }[];
-        setConnectedIds(
-          new Set(
-            approved
-              .filter((a) => (a.connectedProviderIds?.length ?? 0) > 0)
-              .map((a) => a.id),
-          ),
-        );
-        const m365 = approved.find((a) => a.id === "microsoft-365");
-        setMsWorkAccountConnected(
-          !!m365?.credentialStatus?.MS365_MCP_CLIENT_ID?.hasValue,
-        );
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
+    refreshConnectionState().catch(() => {});
+    const onFocus = () => {
+      refreshConnectionState().catch(() => {});
     };
-  }, [selectedId]);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [refreshConnectionState, selectedId]);
 
   const isMac =
     typeof navigator !== "undefined" &&
@@ -176,6 +193,7 @@ export function IntegrationsHubPage() {
           <LayoutGallery
             items={filtered}
             connectedIds={connectedIds}
+            connectionStatusById={connectionStatusById}
             msWorkAccountConnected={msWorkAccountConnected}
             onOpen={(id) => {
               // Google Drive (Drive-for-Desktop) and Gmail (IMAP) each have

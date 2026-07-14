@@ -104,9 +104,15 @@ export function IntegrationDetailPage({
                   {item.name}
                 </h1>
                 {item.implemented ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                    <Check className="h-3 w-3" /> Available now
-                  </span>
+                  item.availability === "beta" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-medium text-sky-700 dark:text-sky-400">
+                      <Sparkles className="h-3 w-3" /> Beta
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                      <Check className="h-3 w-3" /> Available now
+                    </span>
+                  )
                 ) : (
                   <span className="inline-flex items-center rounded-full bg-foreground/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
                     Coming soon
@@ -120,6 +126,13 @@ export function IntegrationDetailPage({
               <p className="mt-2 text-[12px] font-medium uppercase tracking-wide text-muted-foreground/70">
                 {category}
               </p>
+              {item.availability === "beta" && (
+                <p className="mt-3 max-w-xl rounded-xl bg-sky-500/10 px-3 py-2 text-[12px] leading-relaxed text-sky-800 dark:text-sky-200">
+                  This connector is wired in Cabinet&apos;s MCP catalog. You can
+                  connect it now, but the team has not fully verified the setup
+                  flow yet.
+                </p>
+              )}
             </div>
           </div>
         </div>
