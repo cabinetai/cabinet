@@ -84,6 +84,14 @@ That uses Electron Forge and produces packaged desktop artifacts under `out/`.
 
 On release tags, GitHub Actions builds the macOS desktop artifacts and publishes them to the GitHub Release. The release manifest also records the expected macOS asset names.
 
+The manually dispatched `electron-release.yml` also supports a validation mode:
+leave its `tag` input empty and select a branch. The macOS job builds the DMG
+and ZIP without publishing, mounts the generated DMG, launches the packaged
+`Cabinet.app`, and verifies both `/api/health` and `/api/health/daemon`. Build
+artifacts and runtime logs are retained for inspection even when the smoke test
+fails. Tagged runs perform the same runtime smoke test after signing and
+notarization, before the release job is considered successful.
+
 A separate `publish-app-bundles` job (in `release.yml`) builds the zero-install standalone bundles per platform (`darwin-arm64`, `darwin-x64`, `linux-arm64`, `linux-x64`; Windows `win32-x64` pending PR #192) with `npm run build && npm run electron:prep`, then uploads each `cabinet-app-<key>-vX.Y.Z.tgz` + `.sha256` to the Release. The release manifest records these under `appBundles`, and `cabinetai run` consumes them (see docs/CABINETAI.md → `ensureApp`).
 
 ### Desktop data location
