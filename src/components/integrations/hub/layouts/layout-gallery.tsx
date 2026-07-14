@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { AlertTriangle, Check, Loader2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { showError, showSuccess } from "@/lib/ui/toast";
@@ -54,19 +54,21 @@ function persistRequested(ids: Set<string>): void {
  * Evokes a marketing "Connect to everything" section — large logo tiles laid
  * out in airy, flex-wrapped rows under generous category headers. Each tile
  * lifts on hover and casts a soft glow in the integration's own brand colour
- * (an eased shadow fade, not a hard border). Coming-soon items are dimmed via
- * DimWhenComingSoon, disabled (not clickable), and carry a "Soon" badge.
+ * (an eased shadow fade, not a hard border). Planned items are dimmed and use
+ * the request flow; catalog-wired beta items remain clickable.
  */
 export function LayoutGallery({
   items,
   onOpen,
   connectedIds,
+  connectionStatusById,
   msWorkAccountConnected,
 }: {
   items: IntegrationItem[];
   onOpen: (id: string) => void;
   /** Ids (incl. suite ids) that are currently connected. */
   connectedIds: Set<string>;
+  connectionStatusById: Map<string, "connected" | "needs-attention" | "not-connected">;
   /** Whether the connected Microsoft 365 account is work/school, not personal. */
   msWorkAccountConnected: boolean;
 }) {
@@ -139,6 +141,7 @@ export function LayoutGallery({
                         revealIndex={revealIndex++}
                         onOpen={onOpen}
                         connectedIds={connectedIds}
+                        connectionStatusById={connectionStatusById}
                         msWorkAccountConnected={msWorkAccountConnected}
                         requested={requestedIds.has(item.id)}
                         requesting={requestingId === item.id}
@@ -193,6 +196,7 @@ function GalleryTile({
   revealIndex,
   onOpen,
   connectedIds,
+  connectionStatusById,
   msWorkAccountConnected,
   requested,
   requesting,
@@ -203,6 +207,7 @@ function GalleryTile({
   revealIndex: number;
   onOpen: (id: string) => void;
   connectedIds: Set<string>;
+  connectionStatusById: Map<string, "connected" | "needs-attention" | "not-connected">;
   /** Whether the connected Microsoft 365 account is work/school, not personal. */
   msWorkAccountConnected: boolean;
   /** This coming-soon connector has already been requested from the team. */
@@ -215,6 +220,10 @@ function GalleryTile({
   const suiteConnected =
     connectedIds.has(item.id) ||
     (!!item.coveredBy && connectedIds.has(item.coveredBy));
+  const connectionStatus =
+    connectionStatusById.get(item.id) ??
+    (!!item.coveredBy ? connectionStatusById.get(item.coveredBy) : undefined) ??
+    "not-connected";
   // Teams / SharePoint ride on the microsoft-365 suite connection, but a
   // personal Microsoft account can't actually reach either — only badge them
   // "Connected" once the work/school credentials are in place.
@@ -241,7 +250,8 @@ function GalleryTile({
     animRef.current = null;
   };
 
-  const soon = !item.implemented;
+  const soon = item.availability === "planned";
+  const beta = item.availability === "beta";
   // A soon tile is still actionable: clicking it asks the team to prioritize
   // the connector. Once requested (or while sending) it goes inert.
   const soonActionable = soon && !requested && !requesting;
@@ -278,7 +288,7 @@ function GalleryTile({
         soonActionable || !soon ? "cursor-pointer" : "cursor-default",
       )}
     >
-      {/* Visual stack — coming-soon tiles are dimmed and inert. */}
+      {/* Visual stack — planned tiles are dimmed and use the request flow. */}
       <DimWhenComingSoon
         implemented={item.implemented}
         className="flex w-full flex-col items-center gap-2.5"
@@ -306,10 +316,7 @@ function GalleryTile({
         </span>
       </DimWhenComingSoon>
 
-      {/* Coming-soon always reads "Soon" — even with a live connection from an
-          earlier build — so gated tiles never advertise a state you can't open.
-          "Connected" is reserved for launched integrations. Once the user pings
-          the team, the badge flips to "Requested". */}
+      {/* Planned cards stay request-only. Beta cards open the connect panel. */}
       {soon ? (
         requesting ? (
           <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.04] px-2 py-0.5 text-[10px] font-medium text-muted-foreground/80">
@@ -322,9 +329,17 @@ function GalleryTile({
         ) : (
           <StatusBadge implemented={false} />
         )
+      ) : connected && connectionStatus === "needs-attention" ? (
+        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400">
+          <AlertTriangle className="h-2.5 w-2.5" /> Needs attention
+        </span>
       ) : connected ? (
         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
           <Check className="h-2.5 w-2.5" /> Connected
+        </span>
+      ) : beta ? (
+        <span className="inline-flex items-center rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-700 dark:text-sky-400">
+          Beta
         </span>
       ) : null}
     </button>

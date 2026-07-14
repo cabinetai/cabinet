@@ -40,6 +40,19 @@ export async function GET(): Promise<NextResponse> {
     : MCP_CATALOG;
 
   const approved = catalog.map((entry) => {
+    const authBackend = resolveAuthBackend(entry, mode);
+    const credentials = credentialStatus(entry.credentials.map((c) => c.envKey));
+    const connectedProviderIds = connectedProvidersForEntry(entry);
+    const missingRequiredCredential = entry.credentials.some(
+      (credential) => credential.required && !credentials[credential.envKey]?.hasValue,
+    );
+    const connectionStatus =
+      connectedProviderIds.length === 0
+        ? "not-connected"
+        : (authBackend === "token" || authBackend === "user-app") &&
+            missingRequiredCredential
+          ? "needs-attention"
+          : "connected";
     const supportedProviderIds = MCP_PROVIDERS.filter(
       (p) => p.mcpConfig?.transports.includes(entry.transport),
     ).map((p) => p.id);
@@ -56,10 +69,11 @@ export async function GET(): Promise<NextResponse> {
       credentials: entry.credentials,
       transport: entry.transport,
       verifiedTier: verifyTier(entry.trustTier, entry.registryId, presence),
-      authBackend: resolveAuthBackend(entry, mode),
+      authBackend,
       supportedProviderIds,
-      connectedProviderIds: connectedProvidersForEntry(entry),
-      credentialStatus: credentialStatus(entry.credentials.map((c) => c.envKey)),
+      connectedProviderIds,
+      connectionStatus,
+      credentialStatus: credentials,
       // How (if at all) the connect panel can sign in at connect time:
       // "http" → driven through Claude Code; "stdio" → daemon runs the server's
       // own browser-OAuth loopback (connectAuth); null → deferred/none.

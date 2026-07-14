@@ -28,6 +28,8 @@ export type IntegrationCategory =
   | "hr"
   | "automation";
 
+export type IntegrationAvailability = "stable" | "beta" | "planned";
+
 export interface IntegrationItem {
   /** Stable slug; also the i18n/analytics key. */
   id: string;
@@ -43,6 +45,8 @@ export interface IntegrationItem {
   brand: string;
   /** false → rendered dimmed as "coming soon". */
   implemented: boolean;
+  /** stable = launched, beta = catalog-wired, planned = no connector wiring yet. */
+  availability?: IntegrationAvailability;
   /**
    * Cabinet-native integration: configured by an in-app UI (the detail page
    * renders a custom panel), NOT an MCP/OAuth connector. Always treated as
@@ -710,10 +714,8 @@ const COVERED_BY: Record<string, string> = {
   confluence: "jira", // the Atlassian server covers Jira + Confluence
 };
 
-// Launch gate: only these connectors are live right now. Everything else is
-// shown grayed-out + unclickable with a "Soon" badge, even if it already has
-// an MCP catalog entry. Widen this set (or drop it back to the CONNECTABLE
-// derivation below) as connectors are ready to ship.
+// Launch gate: these connectors have been fully verified in the hub. Other
+// catalog-wired connectors are still connectable, but shown as beta.
 const LAUNCHED = new Set([
   "telegram",
   "discord",
@@ -734,12 +736,17 @@ export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) 
   const coveredBy = COVERED_BY[i.id];
   const connectable =
     CONNECTABLE.has(i.id) || (!!coveredBy && CONNECTABLE.has(coveredBy));
+  const launched = i.native || LAUNCHED.has(i.id) || (!!coveredBy && LAUNCHED.has(coveredBy));
+  const availability: IntegrationAvailability = launched
+    ? "stable"
+    : connectable
+      ? "beta"
+      : "planned";
   return {
     ...i,
     coveredBy,
-    // Native integrations are always available (in-app UI). MCP/OAuth connectors
-    // are gated by the launch list until their connect flow is ready.
-    implemented: i.native ? true : connectable && LAUNCHED.has(i.id),
+    availability,
+    implemented: i.native ? true : connectable,
   };
 });
 
