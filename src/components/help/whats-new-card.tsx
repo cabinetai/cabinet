@@ -24,6 +24,18 @@ interface ReleaseEntry {
 
 const RELEASE_HIGHLIGHTS: ReleaseEntry[] = [
   {
+    version: "0.5.1",
+    date: "2026-07-14",
+    headline: "Desktop delivery, guided setup, and reliability",
+    bullets: [
+      "🟢 Guided provider setup: install, sign in, and verify agent CLIs in one flow",
+      "🟢 Drag files and folders into Cabinet with progress and uploads up to 1 GB",
+      "🟢 Meta Ads, a daily Meta Ads Reporter agent, and StackAdapt integrations",
+      "🟢 Full-screen viewer focus mode and one-click supervised backend restart",
+      "🔵 Native Windows installer/ZIP packaging with installed-app smoke testing",
+    ],
+  },
+  {
     version: "0.5.0",
     date: "2026-07-04",
     headline: "Largest release since v0.4.0 (238 commits)",

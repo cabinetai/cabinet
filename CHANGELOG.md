@@ -6,6 +6,33 @@ All notable changes to Cabinet.
 
 ---
 
+## v0.5.1 · 2026-07-14
+
+A focused desktop, setup, and reliability release: Cabinet can now ship a Windows installer alongside its macOS builds, provider setup is guided end to end, files and folders can be dropped straight into a room, and the CLI starts from verified prebuilt app bundles on macOS and Linux.
+
+### 🟢 New
+- 🟢 **Guided provider setup:** install, sign in, and verify supported agent CLIs from one self-advancing dialog. Browser-based and interactive terminal login flows are handled in-app, with clearer setup states and a home prompt when no provider is ready.
+- 🟢 **Native drag and drop:** drop files or whole folders into Cabinet with visible import progress. Uploads now stream instead of silently truncating at 10 MB and support files up to 1 GB.
+- 🟢 **Integrations:** added the official hosted Meta Ads integration, a daily Meta Ads Reporter agent, and StackAdapt. Vendor-published connectors now show who published them, and monday.com, Motion, Clockwise, and Miro have proper catalog artwork.
+- 🟢 **Viewer focus mode:** open documents in a full-screen, distraction-free view. Supervised desktop installs also gain a one-click backend restart action.
+- 🟢 **Cabinet Cloud groundwork:** workspace-first free-tier onboarding, storage-aware upgrade surfaces, and a guided Connect Claude flow.
+
+### 🔵 Improved
+- 🔵 **Zero-install CLI runtime:** `cabinetai run` prefers checksum-verified, prebuilt macOS and Linux bundles with atomic extraction and source-install fallback. It also prefers a newer complete app already installed on disk instead of being pinned to an older CLI version.
+- 🔵 **Providers:** refreshed the setup experience and official provider artwork, added Grok 4.5, fixed Pi model discovery, and detect CLIs installed by pnpm or Bun as well as npm.
+- 🔵 **Desktop delivery:** the native desktop workflow now builds macOS DMG/ZIP and Windows Squirrel installer/ZIP artifacts on their native GitHub runners, then launches the packaged macOS app and installs, launches, health-checks, and uninstalls the Windows app before upload.
+
+### 🟡 Fixed
+- 🟡 **Security:** sanitize rich HTML at the final render boundary, including URL schemes and SVG content, and preserve the Windows-backslash path-traversal regression guard.
+- 🟡 **Reliability:** count symlinked directories in the large-tree startup guard, keep dialogs inside the viewport, show a neutral badge for unknown task triggers, and warn when `KB_PASSWORD` is present but empty.
+- 🟡 **Desktop and chat:** surface Electron startup failures, keep macOS top bars draggable, render inline code and links with the theme accent, and make packaged-app smoke tests prove that the app is authenticated to its daemon.
+
+### Windows signing status
+
+Windows signing is intentionally optional for v0.5.1. When signing credentials are absent, the pipeline still builds, installs, smoke-tests, and uploads the unsigned installer normally; users may therefore see an “Unknown publisher” label or Microsoft Defender SmartScreen warning. If signing is configured in a future release, the same smoke test additionally requires valid signatures on both the installer and the installed application.
+
+---
+
 ## v0.5.0 · 2026-07-04
 
 The largest release since v0.4.0 (238 commits): Connect Knowledge brings your cloud drives into every room, a much bigger Integrations Hub (Slack, Google, Microsoft 365, Snowflake, LinkedIn, Discord, Telegram), agents get their own Channels, a Telegram remote-control gateway, clean-path routing, a borderless "Manila Arc" redesign, and a deep editor + knowledge-import pass.
