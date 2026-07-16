@@ -4,11 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 
 /**
- * Manual-testing endpoint for the WhatsApp connector's pairing-code flow
- * (docs/WHATSAPP_CONNECTOR.md). Reads the status file the daemon's
- * AccountConnection mirrors on every connection.update — not part of the
- * connector's public feature surface yet, just so the Settings page can
- * show the pairing code without tailing the daemon log.
+ * Reads the status file the daemon's AccountConnection mirrors on every
+ * connection.update (docs/WHATSAPP_CONNECTOR.md) — backs the WhatsApp
+ * connector card's pairing/connected state polling.
  */
 
 const STORE_DIR = path.join(DATA_DIR, ".agents", ".whatsapp", "store");

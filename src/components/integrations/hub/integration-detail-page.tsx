@@ -10,6 +10,7 @@ import { useIsCloud } from "@/lib/cloud/client-tier";
 import { AppleNotesSection } from "@/components/settings/apple-notes-section";
 import { GoogleDriveSection } from "@/components/settings/google-drive-section";
 import { GmailSection } from "@/components/settings/gmail-section";
+import { WhatsAppSection } from "@/components/settings/whatsapp-section";
 import { SetupGuide } from "@/components/integrations/hub/setup-guide";
 import { stepArtFor } from "@/components/integrations/hub/generic-setup-art";
 import { getCatalogEntry } from "@/lib/agents/mcp-catalog";
@@ -265,6 +266,13 @@ export function IntegrationDetailPage({
             // routes + skill), not the generic MCP connect flow.
             <div className="rounded-2xl border border-border bg-card/40 p-5">
               <GmailSection />
+            </div>
+          ) : item.id === "whatsapp" ? (
+            // WhatsApp is a read-only Baileys connection managed by the
+            // daemon (server/whatsapp/), not an MCP server — pairing-code
+            // flow, own routes, no generic ConnectPanel.
+            <div className="rounded-2xl border border-border bg-card/40 p-5">
+              <WhatsAppSection />
             </div>
           ) : item.implemented ? (
             <ConnectPanel

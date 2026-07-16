@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 
 import {
   makeWASocket,
@@ -15,6 +16,27 @@ import qrcode from "qrcode-terminal";
 import type { MessageBus } from "./bus";
 import { normalizeMessage } from "./normalize";
 import type { AccountConfig, ConnectionStatus } from "./types";
+
+// Baileys 6.x bug: getPlatformId sends a charCode instead of the enum value,
+// which makes pairing-code linking fail ("couldn't link device", surfaces as
+// an immediate close/401 the instant requestPairingCode is called). Fixed in
+// 7.x. ESM `import *` namespaces are read-only, so patch via createRequire.
+// Same workaround as the moomacha whatsapp-sidecar this connector was ported
+// from (~/projects/moomacha/whatsapp-sidecar/src/pair.ts).
+const _require = createRequire(import.meta.url);
+const _generics = _require("@whiskeysockets/baileys/lib/Utils/generics") as Record<
+  string,
+  unknown
+>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { proto } = _require("@whiskeysockets/baileys") as { proto: any };
+_generics.getPlatformId = (browser: string): string => {
+  const t =
+    proto.DeviceProps.PlatformType[
+      browser.toUpperCase() as keyof typeof proto.DeviceProps.PlatformType
+    ];
+  return t ? t.toString() : "1";
+};
 
 // Baileys logs through a pino-shaped logger; we keep it silent so the daemon
 // log only carries our own lifecycle lines.
@@ -50,6 +72,11 @@ export class AccountConnection {
   private readonly statusPath: string;
   private sock: ReturnType<typeof makeWASocket> | undefined;
   private stopped = false;
+  // Request a pairing code at most once per Connect click. Without this,
+  // every auto-reconnect during the handshake (still unregistered) would
+  // fire another requestPairingCode, hammering WhatsApp and making a benign
+  // transient close look like a hard rate-limit/block.
+  private pairingRequested = false;
 
   constructor(
     account: AccountConfig,
@@ -132,24 +159,34 @@ export class AccountConnection {
     sock.ev.on("creds.update", saveCreds);
 
     // Manual-testing path: request a pairing code instead of waiting for the
-    // QR event. Only meaningful on first pairing (no saved session yet).
-    if (!state.creds.registered && this.pairingPhone) {
+    // QR event. Only meaningful on first pairing (no saved session yet), and
+    // only once — see `pairingRequested`. A short delay before requesting
+    // mirrors the working reference implementation (moomacha's
+    // whatsapp-sidecar/src/pair.ts): asking immediately after socket
+    // creation races the handshake and Baileys 6.x's getPlatformId bug.
+    if (!state.creds.registered && this.pairingPhone && !this.pairingRequested) {
+      this.pairingRequested = true;
       this.status = "pairing";
       this.writeStatusFile({ method: "code" });
-      sock
-        .requestPairingCode(this.pairingPhone)
-        .then((code) => {
-          this.log(
-            `[${this.id}] pairing code: ${code} — enter it in WhatsApp → ` +
-              `Settings → Linked Devices → Link a Device → Link with phone number instead`
-          );
-          this.writeStatusFile({ method: "code", code });
-        })
-        .catch((err) => {
-          const message = err instanceof Error ? err.message : String(err);
-          this.log(`[${this.id}] failed to request pairing code: ${message}`);
-          this.writeStatusFile({ method: "code", error: message });
-        });
+      setTimeout(() => {
+        if (this.sock !== sock || this.stopped) return; // superseded by a newer connect()
+        sock
+          .requestPairingCode(this.pairingPhone!)
+          .then((code) => {
+            if (this.sock !== sock) return;
+            this.log(
+              `[${this.id}] pairing code: ${code} — enter it in WhatsApp → ` +
+                `Settings → Linked Devices → Link a Device → Link with phone number instead`
+            );
+            this.writeStatusFile({ method: "code", code });
+          })
+          .catch((err) => {
+            if (this.sock !== sock) return;
+            const message = err instanceof Error ? err.message : String(err);
+            this.log(`[${this.id}] failed to request pairing code: ${message}`);
+            this.writeStatusFile({ method: "code", error: message });
+          });
+      }, 3000);
     }
 
     sock.ev.on("connection.update", (update) => {
