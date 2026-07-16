@@ -235,9 +235,6 @@ renames are internal, not breaking API changes, and need no deprecation window.
 **Verified (2026-07-16):** `/api/jobs/library` has no frontend consumer at all, so the Job Library
 empty-state card below is net-new UI rather than a re-wire.
 
-The directory rename does not rewrite user disks and must not attempt to. Already-scaffolded Cabinets
-keep their `getting-started/` directory. Do not write a migration that renames directories inside user
-data. See Risks for what the rename *does* break.
 
 ### 2. Discoverability
 
