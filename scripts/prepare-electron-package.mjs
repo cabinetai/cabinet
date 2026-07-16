@@ -162,7 +162,16 @@ async function bundleDaemon() {
     outfile: daemonBundlePath,
     platform: "node",
     target: "node20",
-    external: ["better-sqlite3", "node-pty"],
+    external: [
+      "better-sqlite3",
+      "node-pty",
+      // Baileys optional peers, require()'d lazily only for link previews and
+      // media re-encoding — paths the read-only WhatsApp gateway never hits.
+      // Not installed, so esbuild must not try to resolve them.
+      "link-preview-js",
+      "jimp",
+      "sharp",
+    ],
     // CJS bundles emit `var import_meta = {}; import_meta.url` which is
     // undefined at runtime. createRequire(undefined) and fileURLToPath(undefined)
     // both crash the daemon at startup (v0.4.0/v0.4.1 Electron bug). Polyfill

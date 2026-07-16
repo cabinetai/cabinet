@@ -97,6 +97,10 @@ import {
   initTelegramGateway,
   shutdownTelegramGateway,
 } from "./telegram/gateway";
+import {
+  initWhatsAppGateway,
+  shutdownWhatsAppGateway,
+} from "./whatsapp/gateway";
 import { loadAgentDocs, loadTaskDocs } from "./search/index-agents-tasks";
 import type { SearchScope } from "./search/types";
 import {
@@ -2180,6 +2184,10 @@ server.listen(PORT, () => {
       };
     },
   });
+  // WhatsApp read-only gateway (docs/WHATSAPP_CONNECTOR.md). No-op unless
+  // WHATSAPP_ACCOUNTS is set; watches .cabinet.env so enabling it takes
+  // effect without a restart. Inbound-only: messages land on a channel board.
+  initWhatsAppGateway();
   void (async () => {
     try {
       const { loadExternalAdapters } = await import(
@@ -2214,6 +2222,7 @@ function shutdown(): void {
   }
   void scheduleWatcher.close();
   void shutdownTelegramGateway();
+  void shutdownWhatsAppGateway();
   closeDb();
   server.close();
   process.exit(0);
