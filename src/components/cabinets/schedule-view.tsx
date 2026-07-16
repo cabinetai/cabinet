@@ -40,7 +40,7 @@ import type { ScheduleEvent } from "@/lib/agents/cron-compute";
 // developer term "daemon" (which end users can't act on) with plain, actionable
 // guidance. `action` is the specific "Couldn't …" clause per call site.
 function serviceDownMessage(action: string): string {
-  return `${action} — Cabinet's background service isn't responding. Make sure Cabinet is fully started, then try again.`;
+  return `${action}. Cabinet's background service isn't responding. Make sure Cabinet is fully started, then try again.`;
 }
 
 type RepeatMode = "none" | "daily" | "weekly" | "custom";
@@ -455,7 +455,7 @@ export function ScheduleView({
           });
           if (!res.ok) throw new Error();
         } else {
-          showInfo("This is a past run — open it to view the log.");
+          showInfo("This is a past run. Open it to view the log.");
           return;
         }
         showSuccess(`Running ${event.label} now…`);

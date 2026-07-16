@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Download, FileCode, FileDown, Sparkles } from "lucide-react";
+import { Copy, Download, FileCode, FileDown, Asterisk } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,7 +68,7 @@ export function Header() {
               {t("editor:header.copyMarkdown")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleCopyForLLM}>
-              <Sparkles className="h-4 w-4 mr-2" />
+              <Asterisk className="h-4 w-4 mr-2" />
               {t("editor:header.copyForLlms")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleCopyHTML}>

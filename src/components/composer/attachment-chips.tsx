@@ -55,7 +55,7 @@ export function AttachmentChips({ attachments, onRemove }: AttachmentChipsProps)
             key={attachment.id}
             title={
               errored
-                ? `${attachment.displayName} — ${attachment.error || "Upload failed"}`
+                ? `${attachment.displayName}: ${attachment.error || "Upload failed"}`
                 : `${attachment.displayName} (${formatSize(attachment.size)})`
             }
             className={

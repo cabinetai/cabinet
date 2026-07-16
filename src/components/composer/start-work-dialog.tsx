@@ -619,7 +619,7 @@ export function WhenChip({
         // Audit #002: title now matches the visible label so screen readers
         // hear "Run now, menu" rather than "Run now, menu, When should this
         // run?". The dropdown's content already explains the choice.
-        title={`${label} — change schedule`}
+        title={`${label}: change schedule`}
         aria-label={`Schedule: ${label}. Click to change.`}
       >
         <Icon className="h-3.5 w-3.5" />

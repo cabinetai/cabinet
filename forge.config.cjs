@@ -221,7 +221,7 @@ module.exports = {
         name: "cabinet",
       },
       prerelease: false,
-      draft: false,
+      draft: true,
     }),
   ],
 };

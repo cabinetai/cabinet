@@ -312,7 +312,7 @@ export function NewRoutineDialog({
                   title={
                     draft?.enabled === false
                       ? "Enable this routine so it runs on its schedule"
-                      : "Disable this routine — it stays saved but won't fire on its schedule"
+                      : "Disable this routine. It stays saved but won't fire on its schedule"
                   }
                 >
                   <Switch

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { Check, Loader2, Asterisk } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { showError, showSuccess } from "@/lib/ui/toast";
@@ -246,10 +246,10 @@ function GalleryTile({
   // the connector. Once requested (or while sending) it goes inert.
   const soonActionable = soon && !requested && !requesting;
   const soonTitle = requested
-    ? `${item.name} — requested. We’ll let you know when it’s ready.`
+    ? `${item.name} requested. We’ll let you know when it’s ready.`
     : requesting
       ? `Requesting ${item.name}…`
-      : `${item.name} (coming soon) — click to request it`;
+      : `${item.name} is coming soon. Click to request it.`;
 
   return (
     <button
@@ -346,7 +346,7 @@ function RequestSection() {
     });
     setSubmitting(false);
     if (result.ok) {
-      showSuccess(`Thanks — we’ll look into “${v}”.`);
+      showSuccess(`Thanks, we’ll look into “${v}”.`);
       setValue("");
     } else {
       showError("Couldn’t send that just now. Please try again in a bit.");
@@ -355,13 +355,13 @@ function RequestSection() {
   return (
     <section className="mt-12 rounded-2xl bg-foreground/[0.025] px-6 py-8 text-center">
       <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-foreground/[0.06]">
-        <Sparkles className="h-5 w-5 text-muted-foreground" />
+        <Asterisk className="h-5 w-5 text-muted-foreground" />
       </div>
       <h3 className="mt-3 text-[14px] font-semibold text-foreground">
         Don’t see your integration?
       </h3>
       <p className="mt-1 text-[13px] text-muted-foreground">
-        Tell us what you need — we prioritize what people ask for most.
+        Tell us what you need. We prioritize what people ask for most.
       </p>
       <form onSubmit={submit} className="mx-auto mt-4 flex max-w-md items-center gap-2">
         <input

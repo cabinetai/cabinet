@@ -69,12 +69,12 @@ export default function HeartbeatsTab() {
               <p>
                 A heartbeat is what makes your agent feel alive. Every time
                 it ticks, the agent wakes up, looks around, and decides what
-                to do next — no instructions needed. It&apos;s the
+                to do next, no instructions needed. It&apos;s the
                 difference between an agent that waits to be told and one
                 that takes initiative.
               </p>
               <p>
-                Pick a rhythm that fits the work — every few minutes for
+                Pick a rhythm that fits the work: every few minutes for
                 fast-moving things, once a day for quieter ones. Switch it
                 off any time to give the agent a break without stopping it
                 completely.

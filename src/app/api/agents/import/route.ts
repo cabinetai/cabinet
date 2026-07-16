@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     if (bundle.workspaceIndex) {
       const { data: wsFm, content: wsBody } = matter(bundle.workspaceIndex);
-      wsFm.title = `${fm.name || slug} — Workspace`;
+      wsFm.title = `${fm.name || slug} Workspace`;
       const newWsContent = matter.stringify(wsBody, wsFm);
       await fs.writeFile(path.join(workspaceDir, "index.md"), newWsContent, "utf-8");
     }

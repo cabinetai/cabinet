@@ -5,7 +5,7 @@ import {
   Wrench,
   MessageSquare,
   ListChecks,
-  Sparkles,
+  Asterisk,
   Terminal,
   Globe,
   type LucideIcon,
@@ -30,7 +30,7 @@ interface BuiltIn {
 const ICONS: Record<string, LucideIcon> = {
   MessageSquare,
   ListChecks,
-  Sparkles,
+  Asterisk,
   Terminal,
   Globe,
 };
@@ -69,7 +69,7 @@ export function BuiltInToolsSection(): React.ReactElement | null {
         </span>
       </div>
       <p className="text-xs text-muted-foreground mb-4">
-        Capabilities every agent has out of the box — no setup needed.
+        Capabilities every agent has out of the box, no setup needed.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

@@ -74,7 +74,7 @@
       "customColor": "Custom color",
       "preset": "Preset",
       "editIconColor": "Edit icon, color, or avatar",
-      "sharedAcrossCabinetsHint": "Shared across all cabinets — edits apply everywhere",
+      "sharedAcrossCabinetsHint": "Shared across all cabinets, edits apply everywhere",
       "inbox": "Inbox",
       "conversations": "Conversations",
       "recentWork": "Recent work",
@@ -92,8 +92,8 @@
       "workspace": "Workspace",
       "tags": "Tags",
       "openSkillsSettings": "Open Settings → Skills",
-      "notInCatalog": "Not found in catalog — click to remove",
-      "recommendedForRole": "Recommended for this role — click to attach",
+      "notInCatalog": "Not found in catalog. Click to remove",
+      "recommendedForRole": "Recommended for this role. Click to attach",
       "promise": "Promise",
       "saved": "Saved",
       "iconLabel": "Icon"
@@ -148,9 +148,9 @@
   },
   "tasksBoard": {
     "title": "Tasks",
-    "manualTooltip": "Manual — tasks you launched directly",
-    "jobsTooltip": "Jobs — scheduled recurring runs",
-    "heartbeatTooltip": "Heartbeat — self-directed agent runs",
+    "manualTooltip": "Manual: tasks you launched directly",
+    "jobsTooltip": "Jobs: scheduled recurring runs",
+    "heartbeatTooltip": "Heartbeat: self-directed agent runs",
     "clearSelection": "Clear selection (Esc)",
     "createTask": "Create a new task",
     "moreNewTypes": "More new item types",
@@ -159,7 +159,7 @@
     "viewKanban": "Kanban",
     "viewList": "List",
     "viewSchedule": "Schedule",
-    "viewKanbanHint": "Board view — tasks grouped into Inbox / Your turn / Running / Just Finished / Archive",
+    "viewKanbanHint": "Board view: tasks grouped into Inbox / Your turn / Running / Just Finished / Archive",
     "viewListHint": "Flat list of every task, newest activity first",
     "viewScheduleHint": "Calendar of scheduled routines and upcoming runs",
     "filterByAgent": "Filter by agent: {{name}}",
@@ -184,8 +184,8 @@
   "runtime": {
     "noProvider": "No provider selected",
     "modeAriaLabel": "Runtime mode",
-    "nativeTranscriptTitle": "Cabinet's native transcript — structured JSON stream, artifacts, summary, the full UX",
-    "ptyWarningTitle": "Requires an OpenAI API key. Not available on ChatGPT-plan Codex accounts — picking this model will fail with 'model not supported when using Codex with a ChatGPT account'.",
+    "nativeTranscriptTitle": "Cabinet's native transcript: structured JSON stream, artifacts, summary, the full UX",
+    "ptyWarningTitle": "Requires an OpenAI API key. Not available on ChatGPT-plan Codex accounts. Picking this model will fail with 'model not supported when using Codex with a ChatGPT account'.",
     "native": "Native",
     "terminal": "Terminal",
     "terminalTitle": "Run the CLI in a live PTY terminal session (experimental hacker mode)",
@@ -205,7 +205,7 @@
     "loadingProviders": "Loading providers...",
     "loadingAvailableProviders": "Loading available providers…",
     "triggerSummary": "Model: {{model}} · Effort: {{effort}} · via {{provider}}",
-    "triggerSystemDefault": "Task model — using system default (click to pick)",
+    "triggerSystemDefault": "Task model: using system default (click to pick)",
     "clickToLaunch": "Click to launch {{name}} in a PTY terminal",
     "sentenceRunWith": "Run agents with",
     "sentenceUsing": "using",
@@ -263,7 +263,7 @@
     "collapseColumn": "Collapse column",
     "kill": "Kill",
     "laneInbox": "Inbox",
-    "laneInboxHint": "Drafted — waiting for you to start",
+    "laneInboxHint": "Drafted, waiting for you to start",
     "laneNeeds": "Your turn",
     "laneNeedsHint": "Agent asked a question or needs approval",
     "laneRunning": "Running",
@@ -286,7 +286,7 @@
     "jobNamePlaceholder": "Weekly strategy digest",
     "schedule": "Schedule",
     "jobId": "Job id",
-    "enabled": "Enabled — run on this schedule"
+    "enabled": "Enabled: run on this schedule"
   },
   "editIdentity": {
     "title": "Edit agent",
@@ -301,9 +301,9 @@
     "stopAllSubtitle": "Pause heartbeats and cron jobs"
   },
   "skillLibrary": {
-    "readOnly": "Read-only — cannot edit from Cabinet",
-    "noUpstream": "Authored directly in this cabinet — no upstream git source recorded",
-    "executableWarning": "Bundle includes executable scripts — review before approving",
+    "readOnly": "Read-only: cannot edit from Cabinet",
+    "noUpstream": "Authored directly in this cabinet. No upstream git source recorded",
+    "executableWarning": "Bundle includes executable scripts. Review before approving",
     "skills": "Skills",
     "imported": "Imported",
     "importing": "Importing…",
@@ -359,7 +359,7 @@
     "ctaCheatSheet": "Open cheat sheet",
     "ctaComingSoon": "Coming soon",
     "discordHeading": "Didn't find what you're looking for?",
-    "discordSubheading": "We're in the Discord — come say hi, ask questions, share what you're building.",
+    "discordSubheading": "We're in the Discord. Come say hi, ask questions, share what you're building.",
     "discordCta": "Join the Discord",
     "items": {
       "tour": {
@@ -376,11 +376,11 @@
       },
       "knowledge": {
         "title": "Your <accent>knowledge base</accent>.",
-        "description": "Markdown, CSV, PDF, code, notebooks, mermaid, images, audio — everything renders inline. Your data stays on your machine; it's yours, not ours."
+        "description": "Markdown, CSV, PDF, code, notebooks, mermaid, images, audio: everything renders inline. Your data stays on your machine; it's yours, not ours."
       },
       "cabinets": {
         "title": "A team of <accent>AI teams</accent>.",
-        "description": "Cabinets nest inside cabinets. Each one is its own AI team with its own data, agents, and visibility scope — and they can collaborate up and down the tree."
+        "description": "Cabinets nest inside cabinets. Each one is its own AI team with its own data, agents, and visibility scope, and they can collaborate up and down the tree."
       },
       "routines": {
         "title": "<accent>Routines</accent> & schedules.",
@@ -388,31 +388,31 @@
       },
       "conversations": {
         "title": "Conversations & <accent>approvals</accent>.",
-        "description": "Agents propose actions — launch a task, schedule a job — and you approve before anything runs."
+        "description": "Agents propose actions (launch a task, schedule a job) and you approve before anything runs."
       },
       "themes": {
         "title": "Make it <accent>yours</accent>.",
-        "description": "Pick from a curated set of light and dark themes — Paper, Slate, Claude, Ink, and more."
+        "description": "Pick from a curated set of light and dark themes: Paper, Slate, Claude, Ink, and more."
       },
       "providers": {
-        "title": "<accent>BYOAI</accent> — bring your own AI.",
-        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor — bring whichever providers you already pay for. Pick a default, or override per task."
+        "title": "<accent>BYOAI</accent>: bring your own AI.",
+        "description": "Claude, GPT, Gemini, Grok, Codex, Cursor. Bring whichever providers you already pay for. Pick a default, or override per task."
       },
       "shortcuts": {
         "title": "<accent>Keyboard</accent> shortcuts.",
-        "description": "Every Cabinet shortcut on one searchable card. Press ? from anywhere to reopen it. Filter by name or key — passes for navigation, editing, tasks, panels, and slash commands."
+        "description": "Every Cabinet shortcut on one searchable card. Press ? from anywhere to reopen it. Filter by name or key. Passes for navigation, editing, tasks, panels, and slash commands."
       },
       "skills": {
         "title": "<accent>Skills</accent> for your agents.",
-        "description": "Installable Agent Skills — playbooks the model pulls in for a task. Install from GitHub or skills.sh, attach to a persona, or @-mention one in any composer for a single run."
+        "description": "Installable Agent Skills: playbooks the model pulls in for a task. Install from GitHub or skills.sh, attach to a persona, or @-mention one in any composer for a single run."
       },
       "apiKeysItem": {
         "title": "<accent>API keys</accent> for your tools.",
-        "description": "Plug in your OpenAI, Anthropic, or GitHub account once — every agent and skill in Cabinet will use it. You pay your own bills, use your own quota, no middleman."
+        "description": "Plug in your OpenAI, Anthropic, or GitHub account once, and every agent and skill in Cabinet will use it. You pay your own bills, use your own quota, no middleman."
       },
       "integrations": {
         "title": "<accent>MCP servers</accent> & integrations.",
-        "description": "MCP servers, Slack, Telegram, Gmail, and Calendar OAuth — connect once and Cabinet handles the tokens. Coming soon."
+        "description": "MCP servers, Slack, Telegram, Gmail, and Calendar OAuth. Connect once and Cabinet handles the tokens. Coming soon."
       }
     }
   },
@@ -466,7 +466,7 @@
     "headlineSentence": "Your <accent>single source</accent> of truth.",
     "paragraphPrefix": "Markdown, PDFs, spreadsheets, slides, images, video, audio, linked repos, embedded web apps, Google Docs. Mention any of it with ",
     "paragraphSuffix": ".",
-    "secondParagraphPrefix": "One place for everything — so you and your AI team read, edit, and ship from the ",
+    "secondParagraphPrefix": "One place for everything, so you and your AI team read, edit, and ship from the ",
     "sameFiles": "same files",
     "secondParagraphSuffix": ", not copies of copies.",
     "mockTitle": "Jane's Cabinet"
@@ -476,7 +476,7 @@
     "thailandCaption": "View all your files in one place.",
     "videoTitle": "Night market.mp4",
     "taxRootLabel": "Tax 2026",
-    "taxCaption": "Tax 2026 — a live calculator web app, embedded right in your cabinet.",
+    "taxCaption": "Tax 2026: a live calculator web app, embedded right in your cabinet.",
     "calculatorTitle": "Calculator",
     "liveAppBadge": "Live app",
     "taxEstimateLabel": "2026 tax estimate",
@@ -485,14 +485,14 @@
     "taxBracket": "Tax bracket",
     "estimatedTax": "Estimated tax",
     "healthRootLabel": "Health",
-    "healthCaption": "Vitamins & labs — a spreadsheet that feels like a page.",
+    "healthCaption": "Vitamins & labs: a spreadsheet that feels like a page.",
     "csvTitle": "Daily vitamins.csv",
     "csvColVitamin": "Vitamin",
     "csvColDose": "Dose",
     "csvColTime": "Time",
     "csvColDone": "Done",
     "repoRootLabel": "cabinet-repo",
-    "repoCaption": "Codebases — link any Git repo, searchable by your agents.",
+    "repoCaption": "Codebases: link any Git repo, searchable by your agents.",
     "schemaTitle": "schema.ts",
     "tsBadge": "TS"
   },
@@ -525,7 +525,7 @@
     "scheduleWord": "schedule",
     "paragraphMiddle2": ", and a ",
     "memoryWord": "memory",
-    "paragraphSuffix": ". Your AI agents get the work done, 24/7. Go be human — they'll handle the rest.",
+    "paragraphSuffix": ". Your AI agents get the work done, 24/7. Go be human. They'll handle the rest.",
     "aiTeamSentence": "Your <accent>AI team</accent>."
   },
   "startWork": {
@@ -543,7 +543,7 @@
     "saving": "Saving…",
     "current": "current",
     "modeInboxLabel": "→ Inbox",
-    "modeInboxHint": "Save to Inbox — start it when you're ready",
+    "modeInboxHint": "Save to Inbox: start it when you're ready",
     "modeNowLabel": "Run now",
     "modeNowHint": "Start this conversation right away",
     "modeRecurringLabel": "On a schedule",
@@ -569,8 +569,8 @@
     "starsCount": "{{n}} star",
     "starsCountPlural": "{{n}} stars",
     "likeCabinet": "Like Cabinet?",
-    "starTooltipUnknown": "Star Cabinet on GitHub — if it's useful to you, a star really helps",
-    "starTooltipWithCount": "{{count}} GitHub stars — click to add yours",
+    "starTooltipUnknown": "Star Cabinet on GitHub. If it's useful to you, a star really helps",
+    "starTooltipWithCount": "{{count}} GitHub stars. Click to add yours",
     "starLabel": "Star",
     "backgroundLabel": "What's your background?",
     "optional": "(optional)",
@@ -602,7 +602,7 @@
   "linkRepo": {
     "title": "Connect Knowledge",
     "intro": "Point Cabinet to any folder on your machine. Cabinet creates a symlink so the folder's contents appear in your Knowledge Base and are available to AI agents as context. The original folder is never moved or copied.",
-    "symlinkNote": "This creates a symbolic link — the files stay where they are.",
+    "symlinkNote": "This creates a symbolic link. The files stay where they are.",
     "autoDetectPlaceholder": "Auto-detect from git remote (optional)",
     "shortSummaryPlaceholder": "Optional short summary for agents"
   },
@@ -647,7 +647,7 @@
     "title": "Create New File",
     "subtitle": "Pick a file type. Cabinet opens it in the editor when it's ready.",
     "groupNative": "Edit in Cabinet",
-    "groupOffice": "Office (blank — edit externally)",
+    "groupOffice": "Office (blank, edit externally)",
     "groupGoogle": "Google (linked)",
     "namePlaceholder": "File name",
     "create": "Create",
@@ -659,7 +659,7 @@
       "markdown": "Markdown Page",
       "markdownDesc": "Rich text notes, editable in Cabinet",
       "code": "Code File",
-      "codeDesc": "Any source/text file — pick the extension",
+      "codeDesc": "Any source/text file, pick the extension",
       "mermaid": "Mermaid Diagram",
       "mermaidDesc": "Flowcharts and diagrams as code",
       "csv": "CSV Table",
@@ -679,7 +679,7 @@
     },
     "codeExtLabel": "Extension",
     "googleTag": "Google",
-    "extHint": "Just type the name — Cabinet adds the {{ext}} extension.",
+    "extHint": "Just type the name. Cabinet adds the {{ext}} extension.",
     "createFailed": "Couldn't create the file."
   },
   "fileSettings": {
@@ -877,14 +877,14 @@
   },
   "taskDetail": {
     "close": "Close (Esc)",
-    "muteTask": "Mute this task — its done runs go straight to Archive",
-    "unmuteTask": "Unmute this task — its done runs resurface in Just Finished"
+    "muteTask": "Mute this task: its done runs go straight to Archive",
+    "unmuteTask": "Unmute this task: its done runs resurface in Just Finished"
   },
   "rowActionsPlus": {
     "edit": "Edit",
     "editHint": "Edit this saved draft before it starts",
     "delete": "Delete",
-    "deleteHint": "Delete permanently — this can't be undone"
+    "deleteHint": "Delete permanently. This can't be undone"
   },
   "taskCard": {
     "ptyMode": "Running in terminal (PTY) mode"
@@ -919,9 +919,9 @@
     "scopeTooltip": "Cabinet scope: {{label}}. Click to change."
   },
   "composerExtras": {
-    "skillAttached": "Skill — attached to this run only",
+    "skillAttached": "Skill: attached to this run only",
     "pageTitlePlaceholder": "Page title…",
-    "active": "Active — wake the agent on this schedule",
+    "active": "Active: wake the agent on this schedule",
     "pickCliPty": "Pick a CLI to spawn in a PTY:"
   },
   "editorExtras": {
@@ -1013,7 +1013,7 @@
     "deleteWarningJobs": "Scheduled jobs and routines in this room",
     "deleteWarningChat": "Team chat history for this room",
     "deleteWarningSearch": "The room's search index (rebuilt automatically if restored)",
-    "deleteRecoveryNote": "Recovery: the room is moved to data/.trash/ — restore it by moving the folder back into data/.",
+    "deleteRecoveryNote": "Recovery: the room is moved to data/.trash/. Restore it by moving the folder back into data/.",
     "deleteConfirmLabel": "Type {{slug}} to confirm",
     "deleteConfirmButton": "Delete room",
     "deleting": "Deleting…",
@@ -1181,10 +1181,10 @@
     "greetingWithName": "{{greeting}}, {{name}}.",
     "greetingNoName": "{{greeting}}.",
     "composerPlaceholder": "I want to create...",
-    "composerDaemonDown": "Agent daemon offline — restart to send",
+    "composerDaemonDown": "Agent daemon offline. Restart to send",
     "providersEmpty": {
       "title": "No AI provider is set up yet",
-      "body": "Agents need an AI CLI to run. Set one up — it takes a minute, no terminal required.",
+      "body": "Agents need an AI CLI to run. Set one up. It takes a minute, no terminal required.",
       "cta": "Set up Claude",
       "seeAll": "See all providers"
     }
@@ -1256,9 +1256,9 @@
       "subCabinets": "{{count}} sub-cabinets"
     },
     "cloud": {
-      "alreadyOnList": "You're already on the list — we'll be in touch.",
+      "alreadyOnList": "You're already on the list. We'll be in touch.",
       "aside": "Cabinet Cloud is coming soon. Same product, none of the self-hosting plumbing.",
-      "description": "Open your Cabinet from any device while your AI agents keep working — drafting, researching, organizing — even when your laptop is closed.",
+      "description": "Open your Cabinet from any device while your AI agents keep working (drafting, researching, organizing) even when your laptop is closed.",
       "error": "Something went wrong. Check the email and try again.",
       "joinWaitlist": "Join waitlist",
       "onList": "You're on the list. We'll email you when Cabinet Cloud opens up.",
@@ -1331,7 +1331,7 @@
     },
     "knowledge": {
       "heading": "All your knowledge, in one Cabinet",
-      "subtitle": "Cabinet connects to the tools where your work already lives — your docs, drives, and inboxes — so your AI team can draw on everything from a single place.",
+      "subtitle": "Cabinet connects to the tools where your work already lives (your docs, drives, and inboxes) so your AI team can draw on everything from a single place.",
       "footnote": "Connect any of these later from Integrations. Nothing leaves your machine until you choose to share it."
     },
     "access": {
@@ -1394,7 +1394,7 @@
       },
       "study": {
         "label": "Study",
-        "tagline": "Your second brain — writing, notes, personal assistant.",
+        "tagline": "Your second brain: writing, notes, personal assistant.",
         "workspaceLabel": "Name your cabinet",
         "workspacePlaceholder": "My Study",
         "descriptionLabel": "What areas of life do you want help with?",
@@ -1438,7 +1438,7 @@
         "workspaceLabel": "Name your cabinet",
         "workspacePlaceholder": "My Cabinet",
         "descriptionLabel": "What's it for?",
-        "descriptionPlaceholder": "Anything — leave blank if you're not sure yet",
+        "descriptionPlaceholder": "Anything. Leave blank if you're not sure yet",
         "departmentNoun": "Group",
         "exampleAgents": {
           "0": "Your call"
@@ -1477,10 +1477,10 @@
     "demo": {
       "greeting": {
         "office": "Good morning team! Welcome to {{workspace}}. Let's hit the ground running.",
-        "study": "Morning. Your second brain is online — welcome back to {{home}}.",
-        "lab": "Research desk ready — \"{{workspace}}\". What are we digging into today?",
-        "family-room": "Home HQ booting up — {{home}}. Let's get everyone where they need to be.",
-        "blank": "Blank slate — \"{{workspace}}\". What do you want to build here, {{home}}?"
+        "study": "Morning. Your second brain is online. Welcome back to {{home}}.",
+        "lab": "Research desk ready: \"{{workspace}}\". What are we digging into today?",
+        "family-room": "Home HQ booting up: {{home}}. Let's get everyone where they need to be.",
+        "blank": "Blank slate: \"{{workspace}}\". What do you want to build here, {{home}}?"
       },
       "assign": "{{name}}, can you take on {{topic}}?",
       "fallbackTopic": "what's next",
@@ -1500,7 +1500,7 @@
       "study": {
         "replies": {
           "0": "I'll triage the inbox and surface what needs you.",
-          "1": "Calendar looks clear until 3pm — good window for writing.",
+          "1": "Calendar looks clear until 3pm, good window for writing.",
           "2": "I've linked three new notes to the 'Daily' index already."
         },
         "topics": {
@@ -1508,11 +1508,11 @@
           "1": "this week's writing",
           "2": "my reading list"
         },
-        "closing": "Good. Ping me when anything needs me — otherwise I'll stay out of your way."
+        "closing": "Good. Ping me when anything needs me. Otherwise I'll stay out of your way."
       },
       "lab": {
         "replies": {
-          "0": "Pulling the latest paper on this now — draft summary in an hour.",
+          "0": "Pulling the latest paper on this now. Draft summary in an hour.",
           "1": "I'll sync the bibliography after this and flag duplicates.",
           "2": "Lecture outline for Thursday is almost ready for review."
         },
@@ -1526,7 +1526,7 @@
       "family-room": {
         "replies": {
           "0": "Schedule looks clear after 4. Flagging overlapping drop-offs.",
-          "1": "Menu drafted for the week — grocery list is ready to review.",
+          "1": "Menu drafted for the week. Grocery list is ready to review.",
           "2": "Kids' activities synced. DnD night is still on for Friday."
         },
         "topics": {
@@ -1610,7 +1610,7 @@
       "chineseSimplified": "简体中文",
       "chineseTraditional": "繁體中文",
       "moreLanguages": "More languages",
-      "moreLanguagesHint": "Click any to tell us you'd like Cabinet in that language — we'll prioritize the most-requested ones.",
+      "moreLanguagesHint": "Click any to tell us you'd like Cabinet in that language. We'll prioritize the most-requested ones.",
       "comingSoon": "Coming soon",
       "requestSubmitted": "Thanks! We've noted your request for {{language}}. We'll prioritize the most-asked languages.",
       "requestFailed": "Couldn't reach the server. Please try again in a moment."
@@ -1744,7 +1744,7 @@
       "telemetryHint": "Event counts, versions, and platform info only. Toggle off to stop sending.",
       "cabinetCloud": "Cabinet Cloud",
       "cloudBody": "Connect to your Cabinet from anywhere, while your AI team works 24/7 for you. Drop your email below and we'll let you know when Cabinet Cloud opens up.",
-      "cloudAlready": "You're already on the list — we'll be in touch.",
+      "cloudAlready": "You're already on the list. We'll be in touch.",
       "cloudSuccess": "You're on the list. We'll email you when Cabinet Cloud opens up.",
       "cloudSending": "Sending…",
       "cloudJoinWaitlist": "Join waitlist",
@@ -1799,7 +1799,7 @@
       "installForMe": "Install for me",
       "installing": "Installing…",
       "installOk": "Installed",
-      "installFail": "Install didn't complete — see the output or open a terminal.",
+      "installFail": "Install didn't complete. See the output or open a terminal.",
       "noAutoInstall": "This provider has no automatic installer. Open Settings to see manual steps.",
       "loginTitle": "Log in",
       "connectClaude": "Connect Claude",
@@ -1808,14 +1808,14 @@
       "pasteCodeHint": "Authenticate in the tab that opens, then paste the code here:",
       "codePlaceholder": "Paste the code from Claude",
       "connect": "Connect",
-      "terminalLoginHint": "Running {{command}} — approve in the browser it opens, then re-check.",
-      "recheck": "I've logged in — re-check",
+      "terminalLoginHint": "Running {{command}}: approve in the browser it opens, then re-check.",
+      "recheck": "I've logged in, re-check",
       "loginApiKeyHint": "This provider signs in with an API key. Add it in Settings → Providers.",
       "addApiKey": "Add API key in Settings",
-      "apiKeyFieldHint": "Paste your {{envVar}} — it is saved to .cabinet.env and used for every agent run.",
+      "apiKeyFieldHint": "Paste your {{envVar}}. It is saved to .cabinet.env and used for every agent run.",
       "saveKey": "Save key",
       "verify": "Run verify",
-      "verifyPass": "Verified — agents can use this provider.",
+      "verifyPass": "Verified: agents can use this provider.",
       "openSettings": "Open provider settings",
       "done": "Done",
       "installIntro": "Cabinet will install this for you. No terminal needed.",
@@ -1879,10 +1879,10 @@
     "refreshDescription": "Refresh sidebar (re-read data folder)",
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
-    "resizeHandle": "Resize sidebar — double-click to reset",
+    "resizeHandle": "Resize sidebar. Double-click to reset",
     "resetWidth": "Double-click to reset width",
-    "refreshedNoChanges": "Refreshed — no changes.",
-    "refreshedWithChanges": "Refreshed — {{added}} added, {{removed}} removed.",
+    "refreshedNoChanges": "Refreshed, no changes.",
+    "refreshedWithChanges": "Refreshed: {{added}} added, {{removed}} removed.",
     "refreshFailed": "Refresh failed.",
     "searchPlaceholder": "Search files…",
     "searchSearching": "Searching…",
@@ -1896,7 +1896,7 @@
       "sendHint": "↵ to send"
     },
     "server": {
-      "serverStatusAriaLabel": "Server status — click for details",
+      "serverStatusAriaLabel": "Server status. Click for details",
       "checking": "Checking server status…",
       "allRunning": "All systems running",
       "appNotResponding": "App server is not responding",
@@ -1933,10 +1933,10 @@
     },
     "save": {
       "retryTitle": "Click to retry the failed save",
-      "retryAriaLabel": "Save failed — click to retry",
+      "retryAriaLabel": "Save failed. Click to retry",
       "autoSaving": "Auto-saving…",
       "forceSave": "Force save: ⌘S",
-      "editing": "Editing — autosave will run when you pause",
+      "editing": "Editing: autosave will run when you pause",
       "wordCountTitle": "Word count for this page (markdown syntax excluded)",
       "savedJustNow": "just now",
       "savedNever": "never",
@@ -1944,7 +1944,7 @@
       "savedAgoMinutes": "{{n}}m ago",
       "savedAgoHours": "{{n}}h ago",
       "savedAgoDays": "{{n}}d ago",
-      "saveFailedRetry": "Save failed — retry",
+      "saveFailedRetry": "Save failed. Retry",
       "savingText": "Saving…",
       "savedText": "Saved",
       "editingText": "Editing…",
@@ -1970,8 +1970,8 @@
       "githubSubtitle": "Source, issues, PRs",
       "ifUseful": "If you find it useful",
       "label": "Help",
-      "starsAriaLabel": "{{count}} GitHub stars — open Cabinet on GitHub",
-      "starsTitle": "{{count}} GitHub stars — star Cabinet on GitHub",
+      "starsAriaLabel": "{{count}} GitHub stars. Open Cabinet on GitHub",
+      "starsTitle": "{{count}} GitHub stars. Star Cabinet on GitHub",
       "share": "Share",
       "shareSubtitle": "Copy an invite link & spread the word",
       "shareCopied": "You're awesome, {{name}} 🩷 Thank you for bringing future Cabinet members on board. Link copied, go share the love!",
@@ -1982,12 +1982,12 @@
       "allCommitted": "All committed",
       "uncommittedFile": "{{count}} uncommitted file",
       "uncommittedFiles": "{{count}} uncommitted files",
-      "uncommittedFilesAria": "{{count}} uncommitted file(s) — click to see the list",
+      "uncommittedFilesAria": "{{count}} uncommitted file(s). Click to see the list",
       "uncommittedFileTip": "Click to see uncommitted file",
       "uncommittedFilesTip": "Click to see uncommitted files",
       "uncommittedFilesHeading": "{{count}} uncommitted file",
       "uncommittedFilesHeadingPlural": "{{count}} uncommitted files",
-      "truncatedHint": "Only the first {{count}} files shown — run `git status` for the full list.",
+      "truncatedHint": "Only the first {{count}} files shown. Run `git status` for the full list.",
       "commitDefault": "Update {{count}} file",
       "commitDefaultPlural": "Update {{count}} files",
       "committing": "Committing…",
@@ -2037,7 +2037,7 @@
       "ptyMode": "Running in terminal (PTY) mode",
       "compactContext": "Collapse prior turns into a digest to free context window",
       "noSummary": "No summary yet.",
-      "sessionEnded": "Session ended — type to continue in the same terminal.",
+      "sessionEnded": "Session ended. Type to continue in the same terminal.",
       "terminalLive": "Terminal live. Your next prompt queues after this turn finishes."
     }
   },
@@ -2066,7 +2066,7 @@
     "itemDone": "{{title}} · done · {{when}}",
     "itemArchived": "{{title}} · archived",
     "itemDefault": "{{title}} · {{when}}",
-    "toggleRunning": "{{count}} running — show tasks rail"
+    "toggleRunning": "{{count}} running, show tasks rail"
   },
   "chrome": {
     "nav": {

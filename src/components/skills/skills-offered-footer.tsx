@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { Asterisk } from "lucide-react";
 import type { ConversationMeta } from "@/types/conversations";
 import { useLocale } from "@/i18n/use-locale";
 
@@ -25,13 +25,13 @@ export function SkillsOfferedFooter({ meta }: { meta: ConversationMeta }) {
   return (
     <div className="mt-3 pt-3 border-t border-border/60 text-[11px]">
       <div className="flex items-start gap-2 text-muted-foreground">
-        <Sparkles className="size-3 mt-0.5 shrink-0" />
+        <Asterisk className="size-3 mt-0.5 shrink-0" />
         <div>
           <span className="font-medium">{t("tinyExtras:skillsOffered")}</span>{" "}
           {offered.map((key, i) => (
             <span key={key}>
               {i > 0 && ", "}
-              <span title={`Skill: ${key} — manage in Settings → Skills`}>{key}</span>
+              <span title={`Skill: ${key} (manage in Settings → Skills)`}>{key}</span>
             </span>
           ))}
         </div>

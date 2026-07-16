@@ -50,7 +50,7 @@ export function notifyExternalArtifact(path: string): void {
   if (typeof window === "undefined") return;
   window.dispatchEvent(
     new CustomEvent("cabinet:toast", {
-      detail: { kind: "info", message: `Outside cabinet — ${path}` },
+      detail: { kind: "info", message: `Outside cabinet: ${path}` },
     })
   );
 }

@@ -189,7 +189,7 @@ export function MediaPopover({ kind, pagePath, onCancel, onInsert, anchor }: Pro
         <Clipboard className="w-3 h-3 shrink-0 mt-[1px]" />
         <span>
           Tip: you can also <strong className="text-foreground/80">paste</strong> or{" "}
-          <strong className="text-foreground/80">drag &amp; drop</strong> files directly into the page — they&apos;ll be saved alongside this page automatically.
+          <strong className="text-foreground/80">drag &amp; drop</strong> files directly into the page. They&apos;ll be saved alongside this page automatically.
         </span>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
-import { Sparkles, Loader2, FilePlus, Lock } from "lucide-react";
+import { Asterisk, Loader2, FilePlus, Lock } from "lucide-react";
 import { editorExtensions } from "./extensions";
 import { EditorToolbar } from "./editor-toolbar";
 import { SlashCommands } from "./slash-commands";
@@ -645,7 +645,7 @@ export function KBEditor() {
                   This folder doesn&apos;t have an{" "}
                   <code className="px-1 py-0.5 rounded bg-muted text-[12px]">index.md</code>
                   {hasChildren
-                    ? " yet — its contents are listed below."
+                    ? " yet. Its contents are listed below."
                     : " yet."}
                 </p>
                 <button
@@ -770,7 +770,7 @@ export function KBEditor() {
             {isReadOnlyMount && (
               <div className="mx-auto mt-3 flex max-w-3xl items-center gap-2 rounded-md border border-border bg-muted/40 px-3 py-1.5 text-[12px] text-muted-foreground">
                 <Lock className="h-3.5 w-3.5 shrink-0" />
-                Read-only — this folder is connected for viewing. Edits are disabled.
+                Read-only: this folder is connected for viewing. Edits are disabled.
               </div>
             )}
             <EditorContent editor={editor} />
@@ -794,7 +794,7 @@ export function KBEditor() {
                 onClick={handleOpenAI}
                 className="group flex items-center gap-2 text-[13px] text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer"
               >
-                <Sparkles className="h-3.5 w-3.5 group-hover:text-primary transition-colors" />
+                <Asterisk className="h-3.5 w-3.5 group-hover:text-primary transition-colors" />
                 <span>{t("editorExtras:editWithAi")}</span>
               </button>
               <span className="text-[11px] text-muted-foreground/60 select-none">

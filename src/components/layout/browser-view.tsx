@@ -1925,7 +1925,7 @@ export function BrowserView() {
       {bookmarksMenuOpen && bookmarksMenuPosition ? (
         <div
           ref={bookmarksMenuRef}
-          className="fixed z-120 w-[320px] rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
+          className="fixed z-120 w-[320px] rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
           style={{ top: bookmarksMenuPosition.top, left: bookmarksMenuPosition.left }}
         >
           <div className="overflow-auto" style={{ maxHeight: `${bookmarksMenuPosition.maxHeight}px` }}>

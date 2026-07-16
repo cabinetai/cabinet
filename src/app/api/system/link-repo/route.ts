@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
         ".repo.yaml"
       );
       if (await fileExists(repoYamlPath)) {
-        warning = ".repo.yaml already exists in the target directory — skipped writing.";
+        warning = ".repo.yaml already exists in the target directory, so writing was skipped.";
       } else {
         const repoConfig = {
           name: derivedName,

@@ -442,7 +442,7 @@ function ProviderModelCombobox({
           type="text"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search models — e.g. minimax, glm, gpt"
+          placeholder="Search models (e.g. minimax, glm, gpt)"
           className="min-w-0 flex-1 bg-transparent text-[11px] outline-none placeholder:text-muted-foreground/50"
           autoFocus
         />
@@ -453,7 +453,7 @@ function ProviderModelCombobox({
           type="button"
           onClick={handleRefresh}
           disabled={refreshing}
-          title="Refresh — re-read the CLI's model list (use after adding an API key)"
+          title="Refresh: re-read the CLI's model list (use after adding an API key)"
           className="shrink-0 rounded p-0.5 text-muted-foreground/60 transition-colors hover:text-foreground disabled:opacity-50"
         >
           <RefreshCw className={cn("size-3", refreshing && "animate-spin")} />
@@ -462,7 +462,7 @@ function ProviderModelCombobox({
 
       {discovery === "offline" && (
         <div className="border-b border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5 text-[9.5px] leading-relaxed text-amber-700 dark:text-amber-400">
-          Showing offline defaults — {provider.name} couldn&apos;t be queried.
+          Showing offline defaults. {provider.name} couldn&apos;t be queried.
           Install &amp; configure it (set a provider API key or run{" "}
           <code className="rounded bg-amber-500/15 px-1 py-px font-mono">
             {provider.id === "pi" ? "pi --list-models" : "opencode auth login"}
@@ -535,7 +535,7 @@ function ProviderModelCombobox({
         )}
         {filtered.length > COMBOBOX_RENDER_CAP && (
           <div className="px-2.5 py-1.5 text-center text-[8.5px] text-muted-foreground/60">
-            +{filtered.length - COMBOBOX_RENDER_CAP} more — keep typing to filter
+            +{filtered.length - COMBOBOX_RENDER_CAP} more, keep typing to filter
           </div>
         )}
       </div>
@@ -941,7 +941,7 @@ export function RuntimeMatrixPicker({
                     title={
                       ready
                         ? provider.name
-                        : `${provider.name} — ${unreadyReason || t("runtime:notAvailable")}`
+                        : `${provider.name}: ${unreadyReason || t("runtime:notAvailable")}`
                     }
                     className={cn(
                       "flex w-full items-center gap-2 px-3 py-1.5 text-left transition-colors",
@@ -1135,7 +1135,7 @@ function TerminalProviderPanel({
               title={
                 ready
                   ? t("runtime:clickToLaunch", { name: provider.name })
-                  : `${provider.name} — ${unreadyReason || t("runtime:notAvailable")}`
+                  : `${provider.name}: ${unreadyReason || t("runtime:notAvailable")}`
               }
               className={cn(
                 "group relative flex flex-col items-start gap-1.5 rounded-md border px-2.5 py-2 text-left transition-all",
@@ -1194,11 +1194,11 @@ function TerminalProviderPanel({
             Hacker mode
           </span>
           <span className="text-zinc-300">
-            Cabinet still writes to your KB — the agent uses its own tools.
+            Cabinet still writes to your KB. The agent uses its own tools.
             What you lose is the structured UI layer: no artifact extraction
             from the stream, no live summaries, no &quot;what happened&quot;
             panels. You&apos;re watching the raw CLI. Think of it as running
-            your own tmux inside Cabinet — for hackers who want to drive the
+            your own tmux inside Cabinet, for hackers who want to drive the
             CLI directly.
           </span>
         </p>
@@ -1216,8 +1216,8 @@ function TerminalProviderPanel({
             className="font-medium text-emerald-400 underline-offset-2 hover:underline"
           >
             Join our Discord
-          </a>{" "}
-          — happy to help wire up stream-parsing + session resume for it.
+          </a>
+          {", "}we&apos;re happy to help wire up stream-parsing + session resume for it.
         </p>
       </div>
     </div>

@@ -78,7 +78,7 @@ export async function DELETE(request: Request, context: RouteContext): Promise<N
   }
   if (!bundle.editable) {
     return NextResponse.json(
-      { error: `skill is read-only (origin: ${bundle.origin}) — cannot delete from this surface` },
+      { error: `skill is read-only (origin: ${bundle.origin}), cannot delete from this surface` },
       { status: 403 },
     );
   }

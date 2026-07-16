@@ -576,65 +576,65 @@ const VARIANTS: Variant[] = [
   },
   {
     id: "a",
-    title: "A — Cabinet plaque",
+    title: "A: Cabinet plaque",
     summary:
       "One rounded container; brass-plate header strip above the tabs (shared ring, inner divider). 13px title, icon h-4.",
     Component: VariantA,
   },
   {
     id: "b",
-    title: "B — Drawer face",
+    title: "B: Drawer face",
     summary:
       "Single card, hairline seam between title and tabs. Title 14px semibold, h-5 icon, ALL becomes a pill chip.",
     Component: VariantB,
   },
   {
     id: "c",
-    title: "C — Heading + shelf",
+    title: "C: Heading + shelf",
     summary:
       "Typographic hierarchy: title 15px, icons-only tabs with the active tab showing its label. Most minimal.",
     Component: VariantC,
   },
   {
     id: "d",
-    title: "D — Labelled dock",
+    title: "D: Labelled dock",
     summary:
       "Title rail with rounded-top corners fuses into the tab strip (rounded-bottom). Title 14px medium, h-[18px] icon.",
     Component: VariantD,
   },
   {
     id: "e",
-    title: "E — Drawer pulls (D + handles)",
+    title: "E: Drawer pulls (D + handles)",
     summary:
       "Same dock as D, but each tab grows a small amber handle bar at the top like a physical drawer pull. Active pull goes gold, inactive stays muted. Labels shrink to 8px with wider tracking.",
     Component: VariantE,
   },
   {
     id: "f",
-    title: "F — Crown dock (E + muted title)",
+    title: "F: Crown dock (E + muted title)",
     summary:
       "Same pulls as E, but the cabinet name drops to `text-muted-foreground` to match inactive tab labels, and the drawer frame is inset `mx-1` so the header plate reads like a slightly wider crown over the drawers.",
     Component: VariantF,
   },
   {
     id: "g",
-    title: "G — Crown dock, soft amber pulls",
+    title: "G: Crown dock, soft amber pulls",
     summary:
-      "F with subtler handles: height drops from 3px to 2px and the active handle is `bg-amber-400/50` — still amber to keep the cabinet/brass vibe, but softer. Inactive pulls stay muted.",
+      "F with subtler handles: height drops from 3px to 2px and the active handle is `bg-amber-400/50`, still amber to keep the cabinet/brass vibe, but softer. Inactive pulls stay muted.",
     Component: VariantG,
   },
   {
     id: "h",
-    title: "H — Flush crown (G, touching)",
+    title: "H: Flush crown (G, touching)",
     summary:
-      "Exactly G with three changes: removed the `mt-1` gap so the drawer frame sits flush against the header; frame corners go `rounded-lg` → `rounded-b-lg` (flat top, rounded bottom); frame horizontal inset is `mx-[9px]` so it's 5px narrower per side than G — gives a modest crown/lip.",
+      "Exactly G with three changes: removed the `mt-1` gap so the drawer frame sits flush against the header; frame corners go `rounded-lg` → `rounded-b-lg` (flat top, rounded bottom); frame horizontal inset is `mx-[9px]` so it's 5px narrower per side than G, giving a modest crown/lip.",
     Component: VariantH,
   },
   {
     id: "i",
-    title: "I — H + full-strength title (recommended)",
+    title: "I: H + full-strength title (recommended)",
     summary:
-      "Identical to H, but the cabinet name returns from `text-muted-foreground` to `text-foreground` so it reads clearly at a glance — amber icon stays as the accent, not the sole anchor. The ALL chip keeps its muted tone.",
+      "Identical to H, but the cabinet name returns from `text-muted-foreground` to `text-foreground` so it reads clearly at a glance. The amber icon stays as the accent, not the sole anchor. The ALL chip keeps its muted tone.",
     Component: VariantI,
   },
 ];

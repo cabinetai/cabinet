@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Sparkles,
+  Asterisk,
   Github,
   ShieldCheck,
   Plus,
@@ -65,7 +65,7 @@ function SlideWhatIsSkill() {
       }
       description={
         <>
-          A skill is a drop-in playbook your agent can pull in for a task —
+          A skill is a drop-in playbook your agent can pull in for a task:
           image generation, SEO research, code review, ops integrations.
           Cabinet ships a few; the rest you install from{" "}
           <code style={{ background: P.paperWarm, padding: "1px 6px", borderRadius: 4 }}>
@@ -150,7 +150,7 @@ function SlideWhatIsSkill() {
             animation: "cabinet-skill-pop-in 0.5s ease-out 1100ms forwards",
           }}
         >
-          <Sparkles className="h-5 w-5" style={{ color: P.accent }} />
+          <Asterisk className="h-5 w-5" style={{ color: P.accent }} />
         </div>
       </div>
     </DemoSlideShell>
@@ -175,7 +175,7 @@ const CATALOG: CatalogResult[] = [
     source: "anthropics/skills",
     installs: "12.4k",
     audits: "4/4",
-    description: "Master code review practices — feedback, bug catching, refactor advice.",
+    description: "Master code review practices: feedback, bug catching, refactor advice.",
   },
   {
     name: "seo-research",
@@ -189,7 +189,7 @@ const CATALOG: CatalogResult[] = [
     source: "claude-plugins/discord",
     installs: "8.7k",
     audits: "4/4",
-    description: "Discord ops via the message tool — channel routing, threading.",
+    description: "Discord ops via the message tool: channel routing, threading.",
   },
 ];
 
@@ -230,12 +230,12 @@ function SlideInstall() {
           className="flex items-center gap-2 px-3 py-2.5"
           style={{ borderBottom: `1px solid ${P.border}` }}
         >
-          <Sparkles className="h-3.5 w-3.5" style={{ color: P.accent }} />
+          <Asterisk className="h-3.5 w-3.5" style={{ color: P.accent }} />
           <span
             className="font-mono text-[12px]"
             style={{ color: P.textSecondary }}
           >
-            search skills.sh — &quot;code&quot;
+            search skills.sh: &quot;code&quot;
           </span>
         </div>
 
@@ -250,7 +250,7 @@ function SlideInstall() {
                 animationDelay: `${300 + i * 120}ms`,
               }}
             >
-              <Sparkles
+              <Asterisk
                 className="h-3 w-3 mt-1 shrink-0"
                 style={{ color: P.accent }}
               />
@@ -356,7 +356,7 @@ function SlideAttach() {
           <code style={{ background: P.paperWarm, padding: "1px 6px", borderRadius: 4 }}>
             skills:
           </code>{" "}
-          list and they&apos;re mounted on every run. Or skip the persona —{" "}
+          list and they&apos;re mounted on every run. Or skip the persona:{" "}
           <code style={{ background: P.paperWarm, padding: "1px 6px", borderRadius: 4 }}>
             @
           </code>
@@ -409,7 +409,7 @@ function SlideAttach() {
                   animationDelay: `${300 + i * 120}ms`,
                 }}
               >
-                <Sparkles className="h-2.5 w-2.5" />
+                <Asterisk className="h-2.5 w-2.5" />
                 {s}
                 <Check className="h-2.5 w-2.5" />
               </span>
@@ -441,7 +441,7 @@ function SlideAttach() {
                   animationDelay: `${600 + i * 120}ms`,
                 }}
               >
-                <Sparkles className="h-2.5 w-2.5" style={{ color: P.accent }} />
+                <Asterisk className="h-2.5 w-2.5" style={{ color: P.accent }} />
                 {s}
                 <Plus className="h-2.5 w-2.5" />
               </span>
@@ -470,7 +470,7 @@ function SlideMention() {
             @
           </code>{" "}
           in any composer and pick a skill from the dropdown alongside agents
-          and pages. The skill mounts for that one run only — never persisted
+          and pages. The skill mounts for that one run only. Never persisted
           to the persona, no permanent change.
         </>
       }
@@ -506,7 +506,7 @@ function SlideMention() {
                   animationDelay: `${250 + i * 120}ms`,
                 }}
               >
-                <Sparkles
+                <Asterisk
                   className="h-3 w-3 shrink-0"
                   style={{ color: P.accent }}
                 />
@@ -568,7 +568,7 @@ function SlideMention() {
 export function buildSkillsDemo(): DemoConfig {
   return {
     id: "skills",
-    ariaLabel: "Skills — guided demo",
+    ariaLabel: "Skills: guided demo",
     slides: [
       { id: "what-is-skill", render: () => <SlideWhatIsSkill /> },
       { id: "install", render: () => <SlideInstall /> },

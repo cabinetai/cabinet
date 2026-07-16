@@ -93,7 +93,7 @@ function SlideGlobal() {
           <span style={{ color: P.accent }}>fast</span>.
         </>
       }
-      description="Global shortcuts work from any surface — editor, agents, tasks, terminal. No hunting through menus."
+      description="Global shortcuts work from any surface: editor, agents, tasks, terminal. No hunting through menus."
     >
       <div style={{ width: 360 }} className="space-y-1">
         <SectionLabel>{t("demos:global")}</SectionLabel>
@@ -178,7 +178,7 @@ function SlideEditor() {
 export function buildShortcutsDemo(): DemoConfig {
   return {
     id: "shortcuts",
-    ariaLabel: "Keyboard shortcuts — reference",
+    ariaLabel: "Keyboard shortcuts reference",
     slides: [
       { id: "global", render: () => <SlideGlobal /> },
       { id: "editor", render: () => <SlideEditor /> },

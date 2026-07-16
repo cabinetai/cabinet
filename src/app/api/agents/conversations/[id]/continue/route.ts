@@ -87,7 +87,7 @@ export async function POST(
       {
         ok: false,
         error:
-          "The agent is still working on this task. Wait for the current turn to finish — or stop it — before sending another message.",
+          "The agent is still working on this task. Wait for the current turn to finish (or stop it) before sending another message.",
         errorKind: "busy",
       },
       { status: 409 }

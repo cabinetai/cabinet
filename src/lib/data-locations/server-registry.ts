@@ -11,7 +11,7 @@ export function getServerDataLocations(): DataLocation[] {
       label: "Cabinet data folder",
       pathOrKey: DATA_DIR,
       contains:
-        "All your cabinets, pages, conversations, agent files, jobs — the source of truth.",
+        "All your cabinets, pages, conversations, agent files, and jobs. The source of truth.",
       leavesDevice: false,
       scope: "fs",
       onboarding: false,

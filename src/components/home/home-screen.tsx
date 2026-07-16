@@ -76,14 +76,14 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "Daily review at 9am",
     preferredAgents: LEAD_FALLBACKS,
     prompt:
-      "Schedule a SCHEDULE_JOB on the editor with cron `0 9 * * *` — every day at 9am, write a short daily review of yesterday and what's on today, and append it to @Daily Review.",
+      "Schedule a SCHEDULE_JOB on the editor with cron `0 9 * * *`: every day at 9am, write a short daily review of yesterday and what's on today, and append it to @Daily Review.",
   },
   {
     labelKey: "weeklyReview",
     label: "Weekly review next Monday",
     preferredAgents: LEAD_FALLBACKS,
     prompt:
-      "Schedule a SCHEDULE_TASK on the assistant for next Monday 09:00 — review what I worked on this past week by inspecting recently-modified files in this cabinet, then write @Weekly Review and a @Tasks for Next Week list.",
+      "Schedule a SCHEDULE_TASK on the assistant for next Monday 09:00: review what I worked on this past week by inspecting recently-modified files in this cabinet, then write @Weekly Review and a @Tasks for Next Week list.",
   },
   {
     labelKey: "thailandTrip",
@@ -128,14 +128,14 @@ const QUICK_ACTIONS: QuickAction[] = [
     labelKey: "shortStory",
     label: "Outline a short story",
     prompt:
-      "Outline a 5-chapter short story with a clear arc, a protagonist, and a twist in chapter 4. Save it as @Story Outline. Don't write the prose yet — just chapter titles and 3–4 beats each.",
+      "Outline a 5-chapter short story with a clear arc, a protagonist, and a twist in chapter 4. Save it as @Story Outline. Don't write the prose yet, just chapter titles and 3–4 beats each.",
   },
   {
     labelKey: "hourlyStandup",
     label: "Hourly stand-up nudge",
     preferredAgents: LEAD_FALLBACKS,
     prompt:
-      "Schedule a SCHEDULE_JOB on the assistant with cron `0 9-18 * * 1-5` — every weekday hour from 9am–6pm, ask me what I'm working on right now and append the answer to @Hourly Log.",
+      "Schedule a SCHEDULE_JOB on the assistant with cron `0 9-18 * * 1-5`: every weekday hour from 9am–6pm, ask me what I'm working on right now and append the answer to @Hourly Log.",
   },
   {
     labelKey: "researchPhone",
@@ -155,7 +155,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     labelKey: "refactorNotes",
     label: "Refactor my note-taking system",
     prompt:
-      "Audit the structure of this cabinet — folders, naming, orphans, duplicates. Propose a cleaner structure as @Note System Audit with concrete moves (don't apply them yet).",
+      "Audit the structure of this cabinet: folders, naming, orphans, duplicates. Propose a cleaner structure as @Note System Audit with concrete moves (don't apply them yet).",
   },
   {
     labelKey: "birthdayParty",
@@ -174,7 +174,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "Simulate 5 customer interviews",
     preferredAgents: LEAD_FALLBACKS,
     prompt:
-      "Dispatch 5 LAUNCH_TASKs to the editor — each writes a transcript of a customer interview from a different persona (busy parent, freelancer, student, retiree, founder). Use my product as the subject. Save under @Interviews.",
+      "Dispatch 5 LAUNCH_TASKs to the editor: each writes a transcript of a customer interview from a different persona (busy parent, freelancer, student, retiree, founder). Use my product as the subject. Save under @Interviews.",
   },
 ];
 

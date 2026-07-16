@@ -473,7 +473,7 @@ const NOTION: CatalogEntry = {
   setupSteps: [
     {
       title: "Connect Notion",
-      body: "Click Connect to register Notion. The first time an agent uses it, its CLI opens Notion in the browser — approve access and pick which pages or databases to share.",
+      body: "Click Connect to register Notion. The first time an agent uses it, its CLI opens Notion in the browser. Approve access and pick which pages or databases to share.",
     },
     {
       title: "Choose what to share",
@@ -509,7 +509,7 @@ const GITHUB: CatalogEntry = {
   setupSteps: [
     {
       title: "Sign in with GitHub",
-      body: "Click Connect & sign in — your agent's CLI opens GitHub in the browser. Authorize access and choose which organizations/repositories to grant.",
+      body: "Click Connect & sign in. Your agent's CLI opens GitHub in the browser. Authorize access and choose which organizations/repositories to grant.",
     },
     {
       title: "Scope the access",
@@ -543,7 +543,7 @@ const LINEAR: CatalogEntry = {
   setupSteps: [
     {
       title: "Sign in with Linear",
-      body: "Click Connect & sign in — your agent's CLI opens Linear in the browser. Approve access to your workspace.",
+      body: "Click Connect & sign in. Your agent's CLI opens Linear in the browser. Approve access to your workspace.",
     },
   ],
 };
@@ -573,7 +573,7 @@ const ATLASSIAN: CatalogEntry = {
   setupSteps: [
     {
       title: "Sign in with Atlassian",
-      body: "Click Connect & sign in — your agent's CLI opens Atlassian in the browser. Approve access to your Jira / Confluence site.",
+      body: "Click Connect & sign in. Your agent's CLI opens Atlassian in the browser. Approve access to your Jira / Confluence site.",
     },
   ],
 };
@@ -581,7 +581,7 @@ const ATLASSIAN: CatalogEntry = {
 const STRIPE: CatalogEntry = {
   id: "stripe",
   label: "Stripe",
-  blurb: "Query payments, customers, and invoices — and take action.",
+  blurb: "Query payments, customers, and invoices, and take action.",
   iconSlug: "stripe",
   bgImage: "/integrations/stripe-bg.webp",
   logo: "/logos/stripe.svg",
@@ -602,7 +602,7 @@ const STRIPE: CatalogEntry = {
   setupSteps: [
     {
       title: "Sign in with Stripe",
-      body: "Click Connect & sign in — your agent's CLI opens Stripe in the browser and authorizes access (scoped by a restricted key under the hood).",
+      body: "Click Connect & sign in. Your agent's CLI opens Stripe in the browser and authorizes access (scoped by a restricted key under the hood).",
     },
   ],
 };
@@ -646,7 +646,7 @@ const MICROSOFT_365: CatalogEntry = {
       kind: "plain",
       required: false,
       placeholder: "00000000-0000-0000-0000-000000000000",
-      hint: "Work/school only — from your Microsoft Entra (Azure AD) app registration. Leave blank for a personal account.",
+      hint: "Work/school only: from your Microsoft Entra (Azure AD) app registration. Leave blank for a personal account.",
     },
     {
       envKey: "MS365_MCP_TENANT_ID",
@@ -662,7 +662,7 @@ const MICROSOFT_365: CatalogEntry = {
       kind: "secret",
       required: false,
       placeholder: "••••••••",
-      hint: "Saved securely on this device only — never uploaded.",
+      hint: "Saved securely on this device only, never uploaded.",
     },
   ],
   actions: [
@@ -715,7 +715,7 @@ const TELEGRAM: CatalogEntry = {
       kind: "secret",
       required: true,
       placeholder: "123456:ABC-DEF…",
-      hint: "Saved securely on this device only — never uploaded.",
+      hint: "Saved securely on this device only, never uploaded.",
     },
     {
       envKey: "TELEGRAM_CHAT_ID",
@@ -757,7 +757,7 @@ const TELEGRAM: CatalogEntry = {
     },
     {
       title: "Paste the bot token",
-      body: "Paste the token below — it's stored only on this device.",
+      body: "Paste the token below. It's stored only on this device.",
     },
     {
       title: "Add the bot to your chat",
@@ -805,7 +805,7 @@ const DISCORD: CatalogEntry = {
       kind: "secret",
       required: true,
       placeholder: "your bot token",
-      hint: "Saved securely on this device only — never uploaded.",
+      hint: "Saved securely on this device only, never uploaded.",
     },
     {
       envKey: "DISCORD_GUILD_ID",
@@ -834,11 +834,11 @@ const DISCORD: CatalogEntry = {
     },
     {
       title: "Enable Message Content Intent",
-      body: "Under Bot → Privileged Gateway Intents, enable Message Content Intent so the bot can read message text. Leave Server Members off — Cabinet's server never lists members.",
+      body: "Under Bot → Privileged Gateway Intents, enable Message Content Intent so the bot can read message text. Leave Server Members off; Cabinet's server never lists members.",
     },
     {
       title: "Invite the bot to your server",
-      body: "Open OAuth2 → URL Generator. Tick the `bot` scope, then under Bot Permissions tick what it needs (View Channels, Read Message History, Send Messages, Create Public Threads, Add Reactions). Copy the URL it builds at the bottom, open it in a browser, choose your server, and click Authorize. (This step is easy to miss — the panel will warn you if the bot isn't in the server yet.)",
+      body: "Open OAuth2 → URL Generator. Tick the `bot` scope, then under Bot Permissions tick what it needs (View Channels, Read Message History, Send Messages, Create Public Threads, Add Reactions). Copy the URL it builds at the bottom, open it in a browser, choose your server, and click Authorize. (This step is easy to miss; the panel will warn you if the bot isn't in the server yet.)",
       href: "https://discord.com/developers/applications",
     },
     {
@@ -888,12 +888,12 @@ const LINKEDIN: CatalogEntry = {
     },
     {
       title: "Log in to LinkedIn once",
-      body: "Run the login command in a terminal. A browser window opens — sign in (handle any 2FA / captcha) and it saves a private session profile under ~/.linkedin-mcp on this device. Nothing to paste here.",
+      body: "Run the login command in a terminal. A browser window opens. Sign in (handle any 2FA / captcha) and it saves a private session profile under ~/.linkedin-mcp on this device. Nothing to paste here.",
       copy: "uvx linkedin-scraper-mcp --login",
     },
     {
       title: "Connect",
-      body: "Click Connect — Cabinet registers the server with your agent's CLI. It drives your own logged-in session locally; your credentials never leave this device. It's an unofficial scraper for personal use — mind LinkedIn's terms and go easy on volume.",
+      body: "Click Connect, and Cabinet registers the server with your agent's CLI. It drives your own logged-in session locally; your credentials never leave this device. It's an unofficial scraper for personal use, so mind LinkedIn's terms and go easy on volume.",
     },
   ],
 };
@@ -1035,7 +1035,7 @@ const GOOGLE_ADS: CatalogEntry = {
     },
     {
       title: "Create Application Default Credentials",
-      body: "Run the gcloud command below in a terminal. It opens a browser to authorize, then saves a credentials JSON file — paste its path into the field below.",
+      body: "Run the gcloud command below in a terminal. It opens a browser to authorize, then saves a credentials JSON file. Paste its path into the field below.",
       copy: "gcloud auth application-default login --scopes https://www.googleapis.com/auth/adwords,https://www.googleapis.com/auth/cloud-platform",
     },
     {
@@ -1135,7 +1135,7 @@ function officialRemote(o: {
     setupSteps: [
       {
         title: `Sign in with ${o.label}`,
-        body: `Click Connect & sign in — your agent's CLI opens ${o.label} in the browser to authorize access. Nothing to paste.`,
+        body: `Click Connect & sign in. Your agent's CLI opens ${o.label} in the browser to authorize access. Nothing to paste.`,
       },
     ],
   };
@@ -1185,7 +1185,7 @@ function byoRemote(o: {
     actions: o.actions,
     setupSteps: [
       { title: `Get your ${o.label} MCP URL`, body: o.where },
-      { title: "Paste the server URL", body: "Paste it below — it's stored only on this device." },
+      { title: "Paste the server URL", body: "Paste it below. It's stored only on this device." },
     ],
   };
 }
@@ -1202,13 +1202,13 @@ const EXTENDED: CatalogEntry[] = [
 
   // Official, special transport
   {
-    id: "shopify", label: "Shopify", blurb: "Build on Shopify — search the dev docs & GraphQL schema.",
+    id: "shopify", label: "Shopify", blurb: "Build on Shopify: search the dev docs & GraphQL schema.",
     iconSlug: "shopify", bgImage: "/integrations/shopify-bg.webp", logo: "/logos/shopify.svg",
     sourceUrl: "https://github.com/Shopify/dev-mcp", registryId: "shopify", trustTier: "official",
     authBackend: "token", transport: "stdio", mcpServerName: "cabinet-shopify",
     command: "npx", args: ["-y", "@shopify/dev-mcp@latest"], credentials: [],
     actions: ["Search Shopify.dev docs", "Explore the Admin GraphQL schema", "Validate queries", "Reference APIs"],
-    setupSteps: [{ title: "Connect", body: "No sign-in needed — runs Shopify's official dev MCP locally via npx (docs + GraphQL schema). For live store data, use a storefront/admin MCP URL via the bring-your-own option." }],
+    setupSteps: [{ title: "Connect", body: "No sign-in needed. Runs Shopify's official dev MCP locally via npx (docs + GraphQL schema). For live store data, use a storefront/admin MCP URL via the bring-your-own option." }],
   },
   {
     id: "figma", label: "Figma", blurb: "Pull design context and generate code from frames.",
@@ -1362,7 +1362,7 @@ sql_statement_permissions:
         kind: "plain",
         required: false,
         placeholder: "MCP_READONLY",
-        hint: "Role to run as — a least-privilege role is recommended. Leave blank for the user's default.",
+        hint: "Role to run as (a least-privilege role is recommended). Leave blank for the user's default.",
       },
     ],
     actions: [
@@ -1384,13 +1384,13 @@ sql_statement_permissions:
       },
       {
         title: "Attach a network policy (required for PAT auth)",
-        body: "A PAT can't authenticate unless its user has a network policy — otherwise connecting fails with \"Network policy is required\" and the server hangs on \"still connecting\" with no error. In a Snowsight SQL worksheet (role ACCOUNTADMIN), run the SQL below, swapping YOUR_USER for your username and YOUR_IP for the public IP (or CIDR range) you connect from. Skip this only if you're using a raw account password instead of a PAT.",
+        body: "A PAT can't authenticate unless its user has a network policy; otherwise connecting fails with \"Network policy is required\" and the server hangs on \"still connecting\" with no error. In a Snowsight SQL worksheet (role ACCOUNTADMIN), run the SQL below, swapping YOUR_USER for your username and YOUR_IP for the public IP (or CIDR range) you connect from. Skip this only if you're using a raw account password instead of a PAT.",
         copy: "USE ROLE ACCOUNTADMIN;\nCREATE NETWORK POLICY IF NOT EXISTS cabinet_mcp_policy ALLOWED_IP_LIST = ('YOUR_IP/32');\nALTER USER YOUR_USER SET NETWORK_POLICY = cabinet_mcp_policy;",
         href: "https://docs.snowflake.com/en/user-guide/network-policies",
       },
       {
         title: "Paste your account, user & token",
-        body: "Enter your account identifier, username, and the PAT below. They're stored in .cabinet.env (0600) and injected into the server's environment at run time — never written into the CLI config.",
+        body: "Enter your account identifier, username, and the PAT below. They're stored in .cabinet.env (0600) and injected into the server's environment at run time, never written into the CLI config.",
       },
       {
         title: "Read-only by default",
@@ -1458,14 +1458,14 @@ export const BUILT_IN_TOOLS: BuiltInTool[] = [
   {
     id: "task-dispatch",
     label: "Task & job dispatch",
-    description: "Agents can hand off work — launch tasks, schedule jobs, and queue future runs for other agents.",
+    description: "Agents can hand off work: launch tasks, schedule jobs, and queue future runs for other agents.",
     icon: "ListChecks",
   },
   {
     id: "skills",
     label: "Skills",
     description: "Installed skills extend what agents can do. Browse and manage them on the Skills page.",
-    icon: "Sparkles",
+    icon: "Asterisk",
     href: "#/skills",
   },
   {

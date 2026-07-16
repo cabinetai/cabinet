@@ -276,7 +276,7 @@ export function AgentsContextProvider({
       if (failed === 0) {
         showSuccess(
           turningOff
-            ? `Team paused. Running tasks will finish on their own — nothing new fires until you switch the team back on.`
+            ? `Team paused. Running tasks will finish on their own. Nothing new fires until you switch the team back on.`
             : `Team active. Heartbeats and routines will fire on their next scheduled tick.`
         );
       } else if (failed === affectedCount) {
@@ -286,7 +286,7 @@ export function AgentsContextProvider({
         );
       } else {
         showError(
-          `${failed} of ${affectedCount} agents couldn't be ${turningOff ? "paused" : "started"} — the rest were updated.`
+          `${failed} of ${affectedCount} agents couldn't be ${turningOff ? "paused" : "started"}. The rest were updated.`
         );
       }
     } catch {
@@ -359,7 +359,7 @@ export function AgentsContextProvider({
         );
       } else {
         showError(
-          `${failed} of ${affectedCount} heartbeats couldn't be ${anyEnabled ? "paused" : "resumed"} — the rest were updated.`
+          `${failed} of ${affectedCount} heartbeats couldn't be ${anyEnabled ? "paused" : "resumed"}. The rest were updated.`
         );
       }
     } catch {

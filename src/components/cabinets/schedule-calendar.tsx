@@ -194,7 +194,7 @@ function EventPill({
       type="button"
       {...(dragHandlers ?? defaultHandlers)}
       onContextMenu={onContextMenu}
-      title={`${event.label} · ${typeMeta.word} · ${event.agentName} · ${formatTime(event.time)}${dragHandlers && !blocked ? " · drag to reschedule" : ""}${missed ? " · no run logged — click to run now" : ""}`}
+      title={`${event.label} · ${typeMeta.word} · ${event.agentName} · ${formatTime(event.time)}${dragHandlers && !blocked ? " · drag to reschedule" : ""}${missed ? " · no run logged, click to run now" : ""}`}
       className={cn(
         "flex items-center gap-1 rounded-md px-1.5 text-left transition-all",
         "hover:ring-1 hover:ring-foreground/20 hover:shadow-sm",
@@ -490,10 +490,10 @@ function TimeGridView({
 
   const blockedReason = (event: ScheduleEvent): string => {
     if (event.sourceType === "heartbeat")
-      return "Heartbeats are set per agent — open the agent to change its check-in time.";
+      return "Heartbeats are set per agent. Open the agent to change its check-in time.";
     if (event.sourceType === "manual")
-      return "Past runs can't be moved — click to open the log.";
-    return "This run already happened — it can't be rescheduled.";
+      return "Past runs can't be moved. Click to open the log.";
+    return "This run already happened, so it can't be rescheduled.";
   };
 
   const makeMoveHandlers = (
@@ -689,7 +689,7 @@ function TimeGridView({
         <button
           type="button"
           onClick={expandStart}
-          title={`Show ${formatHour(visibleStartHour - 1)} — ${beforeCount} event${beforeCount === 1 ? "" : "s"} earlier`}
+          title={`Show ${formatHour(visibleStartHour - 1)}: ${beforeCount} event${beforeCount === 1 ? "" : "s"} earlier`}
           className="flex w-full items-center justify-center gap-1.5 border-b border-border/30 bg-muted/20 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground"
         >
           <ChevronUp className="h-3 w-3" />
@@ -869,7 +869,7 @@ function TimeGridView({
         <button
           type="button"
           onClick={expandEnd}
-          title={`Show ${formatHour(visibleEndHour)} — ${afterCount} event${afterCount === 1 ? "" : "s"} later`}
+          title={`Show ${formatHour(visibleEndHour)}: ${afterCount} event${afterCount === 1 ? "" : "s"} later`}
           className="flex w-full items-center justify-center gap-1.5 border-t border-border/30 bg-muted/20 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground"
         >
           <ChevronDown className="h-3 w-3" />

@@ -128,8 +128,20 @@ export function Sidebar() {
     };
   }, []);
 
+  // Mobile forces the sidebar into a closed drawer. Restore whatever the
+  // user had before crossing the breakpoint instead of leaving `true`
+  // persisted forever (e.g. a briefly-narrowed desktop window shouldn't
+  // permanently collapse the sidebar).
+  const wasMobile = useRef(isMobile);
+  const preMobileCollapsed = useRef(collapsed);
   useEffect(() => {
-    if (isMobile) setCollapsed(true);
+    if (isMobile && !wasMobile.current) {
+      preMobileCollapsed.current = useAppStore.getState().sidebarCollapsed;
+      setCollapsed(true);
+    } else if (!isMobile && wasMobile.current) {
+      setCollapsed(preMobileCollapsed.current);
+    }
+    wasMobile.current = isMobile;
   }, [isMobile, setCollapsed]);
 
   function startResize(event: ReactPointerEvent<HTMLDivElement>) {

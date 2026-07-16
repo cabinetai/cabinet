@@ -164,8 +164,8 @@ function SparklineChart({ history, current, target }: { history: GoalHistoryEntr
         {trend === "flat" && <Minus className="h-3 w-3 text-muted-foreground/40" />}
         <span>
           {history.length > 0
-            ? `${history.length} past period${history.length > 1 ? "s" : ""} — avg ${Math.round(history.reduce((s, h) => s + h.actual, 0) / history.length)}/${target}`
-            : "First period — no historical data yet"}
+            ? `${history.length} past period${history.length > 1 ? "s" : ""}: avg ${Math.round(history.reduce((s, h) => s + h.actual, 0) / history.length)}/${target}`
+            : "First period, no historical data yet"}
         </span>
       </div>
     </div>
@@ -276,7 +276,7 @@ export function GoalBar({ label, current, target, unit, floor, compact, history,
         <div className="px-2 pb-2 animate-in slide-in-from-top-1 duration-150">
           {periodStart && periodEnd && (
             <div className="text-[10px] text-muted-foreground/40 mt-1">
-              Current period: {formatPeriod(periodStart)} — {formatPeriod(periodEnd)}
+              Current period: {formatPeriod(periodStart)} to {formatPeriod(periodEnd)}
             </div>
           )}
           <SparklineChart

@@ -18,7 +18,7 @@ import {
   ChevronDown,
   ChevronRight,
   RefreshCw,
-  Sparkles,
+  Asterisk,
   Star,
   Terminal,
   Zap,
@@ -2162,7 +2162,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           description:
             "Early features, fast answers, behind-the-scenes progress, and the occasional delightful chaos of building in public.",
           cta: "",
-          icon: <Sparkles className="size-4" />,
+          icon: <Asterisk className="size-4" />,
           iconClassName: "",
         },
       ],

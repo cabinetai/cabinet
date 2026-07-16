@@ -355,7 +355,7 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
       // it verbatim instead of letting the start time out opaquely.
       if (!settled && /already in use/i.test(session.output)) {
         fail(
-          "OAuth callback port is already in use — close any other sign-in in progress and try again.",
+          "OAuth callback port is already in use. Close any other sign-in in progress and try again.",
         );
         return;
       }

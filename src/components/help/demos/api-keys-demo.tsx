@@ -57,7 +57,7 @@ function SlideSetOnce() {
       description={
         <>
           Pick a provider, paste your key, save. Cabinet remembers it so every
-          task you run uses <em>your</em> account — you pay your own bills, use
+          task you run uses <em>your</em> account. You pay your own bills, use
           your own quota, no middleman.
           <DevFootnote>
             stored in{" "}
@@ -164,7 +164,7 @@ function SlideUsedEverywhere() {
       description={
         <>
           Once a key is saved, every agent and skill in Cabinet picks it up on
-          its own. No copy-pasting into each task, no hunting for it later — it
+          its own. No copy-pasting into each task, no hunting for it later. It
           just works.
           <DevFootnote>
             merged into every CLI subprocess at spawn (Claude, Codex, Gemini
@@ -245,7 +245,7 @@ function SlideUsedEverywhere() {
 export function buildApiKeysDemo(): DemoConfig {
   return {
     id: "api-keys",
-    ariaLabel: "API Keys — guided demo",
+    ariaLabel: "API Keys: guided demo",
     slides: [
       { id: "set-once", render: () => <SlideSetOnce /> },
       { id: "used-everywhere", render: () => <SlideUsedEverywhere /> },

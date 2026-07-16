@@ -193,7 +193,7 @@ export async function probeStdioMcp(
       finish({
         valid: false,
         detail:
-          "The server didn't respond in 25s. On its first run it may still be downloading — try again in a moment.",
+          "The server didn't respond in 25s. On its first run it may still be downloading, so try again in a moment.",
       });
     }, PROBE_TIMEOUT_MS);
     timer.unref?.();
@@ -216,8 +216,8 @@ export async function probeStdioMcp(
           finish({
             valid: true,
             detail: info?.name
-              ? `Connected — ${info.name} is responding.`
-              : "Connected — the server is responding.",
+              ? `Connected: ${info.name} is responding.`
+              : "Connected: the server is responding.",
           });
           return;
         }

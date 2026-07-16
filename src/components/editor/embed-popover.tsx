@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { detectEmbed, providerLabel } from "@/lib/embeds/detect";
-import { Sparkles, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { useLocale } from "@/i18n/use-locale";
 
 interface Props {
@@ -37,7 +37,7 @@ export function EmbedPopover({ anchor, onCancel, onInsert }: Props) {
     >
       <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <div className="flex items-center gap-1.5 text-[12px] font-medium">
-          <Sparkles className="w-3.5 h-3.5 text-primary" /> Embed anything
+          Embed anything
         </div>
         <button
           type="button"

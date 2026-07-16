@@ -73,14 +73,14 @@ export default function AgentsTab() {
           body={
             <>
               <p>
-                Your AI teammates. Each one has a specialty — a writer, a
+                Your AI teammates. Each one has a specialty: a writer, a
                 researcher, a planner. Click any agent to set them up or read
                 what they&apos;ve been doing.
               </p>
               <p>
                 The switch on each row is the agent&apos;s on / off button.
                 When it&apos;s on, the agent does its scheduled work on its
-                own. When it&apos;s off, nothing fires automatically — but
+                own. When it&apos;s off, nothing fires automatically, but
                 you can still chat with the agent any time.
               </p>
             </>

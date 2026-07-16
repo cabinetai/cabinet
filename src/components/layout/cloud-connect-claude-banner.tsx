@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 // Hosted-edition (CABINET_CLOUD=1) affordance: until the tenant's Claude
 // credentials are provisioned, agents can't run — so prompt the user to connect
@@ -63,7 +63,6 @@ export function CloudConnectClaudeBanner() {
       role="status"
       className="ms-2.5 mt-2 mb-1.5 flex items-center gap-2.5 rounded-xl border border-primary/25 bg-primary/[0.06] px-3.5 py-2.5 text-[12px] text-foreground shadow-sm"
     >
-      <Sparkles className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <span className="font-medium">Connect Claude to power your agents</span>
         <span className="ms-2 text-muted-foreground">

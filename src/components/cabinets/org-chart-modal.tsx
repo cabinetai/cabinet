@@ -34,7 +34,7 @@ export function OrgChartModal({
       <DialogContent className="h-[92vh] max-h-none w-[96vw] max-w-none overflow-hidden p-0 sm:max-w-none">
         <DialogHeader className="border-b border-border/70 px-6 py-4">
           <DialogTitle className="text-[14px] font-semibold tracking-tight">
-            {cabinetName} — org chart
+            {cabinetName}: org chart
           </DialogTitle>
         </DialogHeader>
         <div className="h-[calc(92vh-64px)] overflow-auto px-6 py-8">

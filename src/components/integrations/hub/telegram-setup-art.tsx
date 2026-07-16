@@ -28,7 +28,7 @@ export function TelegramStepArt({ step, brand }: { step: number; brand: string }
             </Bubble>
           </div>
           <Hint brand={brand}>
-            Copy the token <b>@BotFather</b> sends — you&apos;ll paste it next.
+            Copy the token <b>@BotFather</b> sends, you&apos;ll paste it next.
           </Hint>
         </MockWindow>
       );

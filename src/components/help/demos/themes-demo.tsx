@@ -36,7 +36,7 @@ function SlidePickVibe() {
       }
       description={
         <>
-          Cabinet ships with curated themes — a quiet Paper, a moody Claude,
+          Cabinet ships with curated themes: a quiet Paper, a moody Claude,
           a bright Aurora, a focused Forest. Same product, your aesthetic.
         </>
       }
@@ -207,7 +207,7 @@ function SlideSameProduct() {
       }
       description={
         <>
-          Themes are skin-deep — the agents, the data, the routines stay
+          Themes are skin-deep. The agents, the data, the routines stay
           exactly where you left them. Switch back any time.
         </>
       }
@@ -309,7 +309,7 @@ function ThemedSidebar({ theme, delay, selected }: { theme: ThemePreview; delay:
 export function buildThemesDemo(): DemoConfig {
   return {
     id: "themes",
-    ariaLabel: "Themes — guided demo",
+    ariaLabel: "Themes: guided demo",
     slides: [
       { id: "vibe", render: () => <SlidePickVibe /> },
       { id: "light-dark", render: () => <SlideLightDark /> },

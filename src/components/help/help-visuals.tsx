@@ -14,7 +14,7 @@ import {
   Notebook,
   Palette,
   Plug,
-  Sparkles,
+  Asterisk,
   SquareKanban,
   Users,
 } from "lucide-react";
@@ -479,7 +479,7 @@ export function ProvidersVisual() {
 }
 
 /** Coming-soon placeholder — used for Skills and Integrations. */
-export function ComingSoonVisual({ icon: Icon }: { icon: typeof Sparkles }) {
+export function ComingSoonVisual({ icon: Icon }: { icon: typeof Asterisk }) {
   const { t } = useLocale();
   return (
     <Stage>
@@ -509,7 +509,7 @@ export function ComingSoonVisual({ icon: Icon }: { icon: typeof Sparkles }) {
 }
 
 export function SkillsVisual() {
-  return <ComingSoonVisual icon={Sparkles} />;
+  return <ComingSoonVisual icon={Asterisk} />;
 }
 
 export function IntegrationsVisual() {

@@ -85,7 +85,7 @@ export function classifyCommonError(
   ) {
     return {
       kind: "context_exceeded",
-      hint: "This conversation is too long for the provider's context window. Try compacting — click the Compact button in the top bar.",
+      hint: "This conversation is too long for the provider's context window. Try compacting: click the Compact button in the top bar.",
     };
   }
 

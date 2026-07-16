@@ -43,7 +43,7 @@ import {
   History,
   Search,
   Download,
-  Sparkles,
+  Asterisk,
   FileCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -867,7 +867,7 @@ function TreeNodeImpl({
             {node.knowledgeProvider && isReadOnly && (
               <span
                 className="ms-1 shrink-0 rounded bg-foreground/[0.05] px-1 py-px font-mono text-[9px] font-medium text-muted-foreground/60"
-                title="Read-only — connected for viewing"
+                title="Read-only, connected for viewing"
               >
                 view
               </span>
@@ -1046,7 +1046,7 @@ function TreeNodeImpl({
                         })
                       }
                     >
-                      <Sparkles className="h-4 w-4 me-2" />
+                      <Asterisk className="h-4 w-4 me-2" />
                       Copy for LLMs
                     </ContextMenuItem>
                     <ContextMenuItem onClick={() => void runExport((c) => copyAsHtml(c, node.path))}>
@@ -1303,7 +1303,7 @@ function TreeNodeImpl({
                   {node.isLinked
                     ? `This will remove the link from your knowledge base. The original folder on disk will not be affected.`
                     : node.type === "cabinet"
-                      ? `This will permanently delete the cabinet and everything inside it — all pages, agents, jobs, and tasks. This cannot be undone.`
+                      ? `This will permanently delete the cabinet and everything inside it: all pages, agents, jobs, and tasks. This cannot be undone.`
                       : `This will permanently delete this ${node.type === "directory" ? "page and all its sub-pages" : "file"}. This cannot be undone.`
                   }
                 </DialogDescription>

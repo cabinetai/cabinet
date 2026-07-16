@@ -6,7 +6,7 @@ import {
   ChevronDown,
   Cpu,
   KeyRound,
-  Sparkles,
+  Asterisk,
   Zap,
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
@@ -56,7 +56,7 @@ function SlideBring() {
       description={
         <>
           Cabinet doesn&apos;t add another subscription. Plug in the providers
-          you already use — Claude, GPT, Gemini, Grok, Codex, Cursor — and
+          you already use (Claude, GPT, Gemini, Grok, Codex, Cursor) and
           your tokens stay yours.
         </>
       }
@@ -122,7 +122,7 @@ function SlidePerAgent() {
       }
       description={
         <>
-          Pick a default brain per agent — the writer gets GPT, the engineer
+          Pick a default brain per agent: the writer gets GPT, the engineer
           gets Codex, the analyst gets Gemini. Or override on any single task
           when the job calls for it.
         </>
@@ -161,7 +161,7 @@ function SlidePerAgent() {
                 className="flex h-6 w-6 items-center justify-center rounded-md shrink-0"
                 style={{ background: P.bgCard, border: `1px solid ${P.borderLight}` }}
               >
-                <Sparkles className="h-3 w-3" style={{ color: P.accent }} />
+                <Asterisk className="h-3 w-3" style={{ color: P.accent }} />
               </span>
               <span className="text-[11px] font-semibold" style={{ color: P.text }}>
                 {a.name}
@@ -217,7 +217,7 @@ function SlideKeys() {
       description={
         <>
           API keys live on your machine. Tokens go straight from your
-          provider to your wallet — Cabinet never proxies, never marks up,
+          provider to your wallet. Cabinet never proxies, never marks up,
           never sees the conversation. Works with Claude Code subscriptions
           too, no API key required.
         </>
@@ -297,7 +297,7 @@ function SlideKeys() {
 export function buildByoaiDemo(): DemoConfig {
   return {
     id: "byoai",
-    ariaLabel: "BYOAI — bring your own AI — guided demo",
+    ariaLabel: "BYOAI (bring your own AI): guided demo",
     slides: [
       { id: "bring", render: () => <SlideBring /> },
       { id: "per-agent", render: () => <SlidePerAgent /> },

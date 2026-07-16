@@ -434,7 +434,7 @@ export function GoogleDriveSection() {
       {/* OAuth coming soon */}
       <div className="rounded-md border border-border/50 bg-muted/10 px-3 py-2.5 text-[12px] text-muted-foreground">
         <span className="font-medium text-foreground/70">Don&apos;t have Google Drive for Desktop?</span>{" "}
-        OAuth API support is coming soon — connect via your Google account without installing anything.
+        OAuth API support is coming soon: connect via your Google account without installing anything.
       </div>
     </div>
   );

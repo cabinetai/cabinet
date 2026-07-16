@@ -16,7 +16,7 @@ import {
   Info,
   AlertTriangle,
   Video,
-  Sparkles,
+  Asterisk,
   File,
   FileText,
   Sigma,
@@ -70,7 +70,7 @@ const commands: SlashCommand[] = [
   // Media — each opens a popover with Upload + URL tabs
   { label: "Image", icon: ImageIcon, description: "Upload, paste URL, or drop an image", category: "media", action: { type: "popover", kind: { type: "media", kind: "image" } } },
   { label: "Video", icon: Video, description: "Upload or paste a video URL", category: "media", action: { type: "popover", kind: { type: "media", kind: "video" } } },
-  { label: "Embed", icon: Sparkles, description: "YouTube, X, Vimeo, Loom, TikTok, Spotify…", category: "media", action: { type: "popover", kind: { type: "embed" } } },
+  { label: "Embed", icon: Asterisk, description: "YouTube, X, Vimeo, Loom, TikTok, Spotify…", category: "media", action: { type: "popover", kind: { type: "embed" } } },
   { label: "File", icon: File, description: "Attach any file to this page", category: "media", action: { type: "popover", kind: { type: "media", kind: "file" } } },
 
   // Advanced

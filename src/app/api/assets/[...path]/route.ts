@@ -246,7 +246,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     // Free cloud tier at its storage cap: block content writes (mirrors /api/pages and /api/upload).
     if (await storageOverCap()) {
       return NextResponse.json(
-        { error: "Storage full — the free plan is capped. Upgrade for more room.", errorKind: "storage" },
+        { error: "Storage full: the free plan is capped. Upgrade for more room.", errorKind: "storage" },
         { status: 402 }
       );
     }

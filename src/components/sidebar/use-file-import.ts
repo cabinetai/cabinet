@@ -66,7 +66,7 @@ export function useFileImport() {
             await uploadOne(dir, item.file);
           } catch (err) {
             skipped.push(
-              `${item.file.name} — ${err instanceof Error ? err.message : String(err)}`
+              `${item.file.name}: ${err instanceof Error ? err.message : String(err)}`
             );
           }
           done++;

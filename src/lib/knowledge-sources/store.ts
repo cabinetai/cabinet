@@ -275,7 +275,7 @@ export async function removeInlineSourceByTreePath(
 /** Thrown when a write targets a path under a read-only inline mount. */
 export class ReadOnlySourceError extends Error {
   constructor(name: string) {
-    super(`"${name}" is connected read-only — editing is disabled here.`);
+    super(`"${name}" is connected read-only, so editing is disabled here.`);
     this.name = "ReadOnlySourceError";
   }
 }

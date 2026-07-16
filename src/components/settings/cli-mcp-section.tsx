@@ -93,7 +93,7 @@ export function CliMcpSection() {
       </div>
       <p className="text-xs text-muted-foreground mb-4">
         MCP servers configured in your CLIs. Cabinet auto-discovers them from
-        Claude Code, Codex, and Gemini — edit via the CLI for now.
+        Claude Code, Codex, and Gemini. Edit via the CLI for now.
       </p>
 
       {loading && (

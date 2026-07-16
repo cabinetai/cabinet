@@ -10,7 +10,7 @@ import {
   Pause,
   PenLine,
   Search,
-  Sparkles,
+  Asterisk,
   Wand2,
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
@@ -236,7 +236,7 @@ function SlideTeamSchedule() {
                     animation: "cabinet-tour-fade-up 0.35s ease-out forwards",
                     animationDelay: `${400 + i * 90}ms`,
                   }}
-                  title={`${block.agent} — ${block.label}`}
+                  title={`${block.agent}: ${block.label}`}
                 >
                   <Icon
                     className="h-2.5 w-2.5 shrink-0"
@@ -296,7 +296,7 @@ function SlideManage() {
   const runs = [
     { time: "Today · 09:00", status: "ok", note: "18 articles · digest sent" },
     { time: "Yesterday · 09:00", status: "ok", note: "14 articles · digest sent" },
-    { time: "Mon · 09:00", status: "warn", note: "Skipped — agent paused" },
+    { time: "Mon · 09:00", status: "warn", note: "Skipped, agent paused" },
   ];
 
   return (
@@ -351,7 +351,7 @@ function SlideManage() {
         >
           {[
             { icon: Pause, label: "Pause" },
-            { icon: Sparkles, label: "Run now" },
+            { icon: Asterisk, label: "Run now" },
             { icon: Calendar, label: "Edit" },
             { icon: History, label: "History" },
           ].map((a) => {
@@ -420,7 +420,7 @@ function SlideManage() {
 export function buildRoutinesDemo(): DemoConfig {
   return {
     id: "routines",
-    ariaLabel: "Routines & schedules — guided demo",
+    ariaLabel: "Routines & schedules: guided demo",
     slides: [
       { id: "three-ways", render: () => <SlideThreeWays /> },
       { id: "team-schedule", render: () => <SlideTeamSchedule /> },

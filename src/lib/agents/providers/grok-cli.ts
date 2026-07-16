@@ -27,12 +27,12 @@ const GROK_MODELS = [
   {
     id: "grok-4.5",
     name: "Grok 4.5",
-    description: "xAI's recommended default — powers Grok Build, most intelligent",
+    description: "xAI's recommended default: powers Grok Build, most intelligent",
   },
   {
     id: "grok-4.3",
     name: "Grok 4.3",
-    description: "Previous flagship — fast, intelligent (1M context)",
+    description: "Previous flagship: fast, intelligent (1M context)",
   },
   { id: "grok-4", name: "Grok 4", description: "Frontier reasoning workloads" },
   {
@@ -43,7 +43,7 @@ const GROK_MODELS = [
   {
     id: "grok-4.1-fast",
     name: "Grok 4.1 Fast",
-    description: "Cheapest Grok 4.x — high-throughput, low-latency",
+    description: "Cheapest Grok 4.x: high-throughput, low-latency",
   },
   {
     id: "grok-code-fast-1",

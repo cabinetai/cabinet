@@ -104,7 +104,7 @@ export function DataLocationsSection() {
         "Your cabinets, conversations, agents, and data folder will NOT be touched.\n\n" +
         "This will clear:\n" +
         (onboardingMatchSummary ||
-          "• (no onboarding flags currently set — nothing to clear)"),
+          "• (no onboarding flags currently set, nothing to clear)"),
       confirmText: "Reset onboarding",
       cancelText: "Cancel",
       destructive: true,
@@ -146,7 +146,7 @@ export function DataLocationsSection() {
       new CustomEvent("cabinet:toast", {
         detail: {
           kind: "success",
-          message: `Reset onboarding — cleared ${cleared} key(s). Reloading…`,
+          message: `Reset onboarding: cleared ${cleared} key(s). Reloading…`,
         },
       })
     );

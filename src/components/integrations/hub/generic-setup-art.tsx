@@ -96,7 +96,7 @@ function OAuthConsentArt({ step, label, brand }: { step: number; label: string; 
         </div>
       </div>
       <Hint brand={brand}>
-        Your agent&apos;s CLI opens this in the browser the first time — approve once, nothing to paste.
+        Your agent&apos;s CLI opens this in the browser the first time. Approve once, nothing to paste.
       </Hint>
     </MockWindow>
   );
@@ -115,7 +115,7 @@ function ByoUrlArt({ step, label, brand }: { step: number; label: string; brand:
           <BtnMock brand={brand}>Copy</BtnMock>
         </div>
         <Hint brand={brand}>
-          Copy your MCP URL from {label} — or a hosted gateway (Composio, Pipedream, Zapier).
+          Copy your MCP URL from {label}, or a hosted gateway (Composio, Pipedream, Zapier).
         </Hint>
       </MockWindow>
     );
@@ -190,9 +190,9 @@ function ShopifyArt({ brand }: { brand: string }) {
         <div className="text-muted-foreground">
           <span style={{ color: brand }}>$</span> npx -y @shopify/dev-mcp@latest
         </div>
-        <div className="text-foreground">✓ Shopify dev MCP ready — docs + GraphQL schema</div>
+        <div className="text-foreground">✓ Shopify dev MCP ready: docs + GraphQL schema</div>
       </div>
-      <Hint brand={brand}>No sign-in — it runs locally. Just click Connect.</Hint>
+      <Hint brand={brand}>No sign-in, it runs locally. Just click Connect.</Hint>
     </MockWindow>
   );
 }
@@ -218,7 +218,7 @@ function SalesforceArt({ brand }: { brand: string }) {
         <div className="text-muted-foreground">
           <span style={{ color: brand }}>$</span> sf org login web
         </div>
-        <div className="text-foreground">✓ Logged in to org — DEFAULT_TARGET_ORG</div>
+        <div className="text-foreground">✓ Logged in to org: DEFAULT_TARGET_ORG</div>
       </div>
       <Hint brand={brand}>Authorize your org once; the MCP uses your CLI&apos;s default org.</Hint>
     </MockWindow>
@@ -234,7 +234,7 @@ function LinkedInArt({ step, brand }: { step: number; brand: string }) {
           <div className="text-muted-foreground">
             <span style={{ color: brand }}>$</span> curl -LsSf https://astral.sh/uv/install.sh | sh
           </div>
-          <div className="text-foreground">✓ uv installed — uvx ready</div>
+          <div className="text-foreground">✓ uv installed, uvx ready</div>
         </div>
         <Hint brand={brand}>One-time: installs uv so Cabinet can launch the server locally.</Hint>
       </MockWindow>
@@ -255,7 +255,7 @@ function LinkedInArt({ step, brand }: { step: number; brand: string }) {
           </BtnMock>
         </div>
         <Hint brand={brand}>
-          <b>uvx linkedin-scraper-mcp --login</b> opens this in a browser — sign in once; the session stays on this device.
+          <b>uvx linkedin-scraper-mcp --login</b> opens this in a browser. Sign in once; the session stays on this device.
         </Hint>
       </MockWindow>
     );
@@ -263,9 +263,9 @@ function LinkedInArt({ step, brand }: { step: number; brand: string }) {
   return (
     <MockWindow title="Terminal" brand={brand}>
       <div className="rounded-md bg-foreground/[0.06] p-2 font-mono text-[10px] leading-relaxed">
-        <div className="text-foreground">✓ Logged in — session saved to ~/.linkedin-mcp</div>
+        <div className="text-foreground">✓ Logged in, session saved to ~/.linkedin-mcp</div>
       </div>
-      <Hint brand={brand}>Now click Connect — your agent drives your own logged-in session.</Hint>
+      <Hint brand={brand}>Now click Connect. Your agent drives your own logged-in session.</Hint>
     </MockWindow>
   );
 }
@@ -344,7 +344,7 @@ function GithubArt({ step, label, brand }: { step: number; label: string; brand:
         <KvRow k="Repository access" v="Only select repos" />
       </div>
       <Hint brand={brand}>
-        Grant only the orgs/repos the agent needs — review or revoke here anytime.
+        Grant only the orgs/repos the agent needs. Review or revoke here anytime.
       </Hint>
     </MockWindow>
   );
@@ -364,7 +364,7 @@ function NotionArt({ step, label, brand }: { step: number; label: string; brand:
         <CheckRow brand={brand}>🗄 Tasks database</CheckRow>
       </div>
       <Hint brand={brand}>
-        Tick exactly the pages/databases to share — change it anytime in Notion → Connections.
+        Tick exactly the pages/databases to share. Change it anytime in Notion → Connections.
       </Hint>
     </MockWindow>
   );

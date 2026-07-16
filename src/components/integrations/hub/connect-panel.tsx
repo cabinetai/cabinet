@@ -660,7 +660,7 @@ export function ConnectPanel({
               </span>
               <span className="mt-0.5 block text-[11px] text-muted-foreground">
                 {msPersonalDisabled
-                  ? "Not available — no Teams or SharePoint on personal accounts."
+                  ? "Not available: no Teams or SharePoint on personal accounts."
                   : "outlook.com, hotmail. One-click sign-in, nothing to set up."}
               </span>
             </button>
@@ -945,7 +945,7 @@ export function ConnectPanel({
       {entry.signinKind != null && !isM365 && authState === "authenticated" && (
         <>
           <p className="mt-2 flex items-center gap-1.5 text-[12px] text-emerald-600 dark:text-emerald-400">
-            <Check className="h-3.5 w-3.5 shrink-0" /> Signed in — ready for your agents.
+            <Check className="h-3.5 w-3.5 shrink-0" /> Signed in and ready for your agents.
           </p>
           <div className="mt-2">
             <button

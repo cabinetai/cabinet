@@ -67,7 +67,7 @@ npm run dev:all
 
 Custom source installs still get update checks, but Cabinet will not overwrite app code automatically. They receive manual upgrade guidance instead.
 
-## 3. Electron macOS app
+## 3. Electron desktop apps
 
 Electron is the desktop packaging track for Cabinet.
 
@@ -82,7 +82,7 @@ That uses Electron Forge and produces packaged desktop artifacts under `out/`.
 
 ### Release packaging
 
-On release tags, GitHub Actions builds the macOS desktop artifacts and publishes them to the GitHub Release. The release manifest also records the expected macOS asset names.
+For tagged releases, the manually dispatched GitHub Actions desktop workflow builds native macOS and Windows artifacts and publishes them to the GitHub Release. The release manifest records the expected DMG, installer, and ZIP asset names.
 
 The manually dispatched `electron-release.yml` also supports a validation mode:
 leave its `tag` input empty and select a branch. The macOS job builds the DMG
@@ -94,9 +94,17 @@ notarization, before the release job is considered successful.
 
 The Windows job performs the equivalent installed-package check: it runs the
 generated Squirrel `Setup.exe`, launches the installed `Cabinet.exe`, verifies
-the app and daemon health routes, and uninstalls the test copy. Windows signing
-is enabled automatically for tagged builds after these GitHub Actions secrets
-are configured:
+the app and daemon health routes, and uninstalls the test copy. This gate runs
+for unsigned and signed packages alike.
+
+Windows signing is deliberately optional. If neither signing secret is present,
+a tagged release is built, smoke-tested, and uploaded unsigned. Users can still
+install and run that build, but Windows may display “Unknown publisher” and
+Microsoft Defender SmartScreen warnings. Do not create a self-signed certificate
+to suppress those warnings.
+
+The current optional `.pfx` path is enabled automatically only when these
+GitHub Actions secrets are configured:
 
 - `WINDOWS_CERTIFICATE_BASE64` — base64-encoded Authenticode `.pfx`
 - `WINDOWS_CERTIFICATE_PASSWORD` — password for that certificate
@@ -104,7 +112,9 @@ are configured:
 Branch validation remains unsigned so certificates are never exposed to branch
 builds. When signing is configured, tagged builds also require both the
 installer and installed executable to report a valid Authenticode signature
-before release artifacts are uploaded.
+before release artifacts are uploaded. For a future production signing project,
+prefer Microsoft Artifact Signing or another hardware-backed cloud-signing
+provider with short-lived GitHub OIDC authentication.
 
 A separate `publish-app-bundles` job (in `release.yml`) builds the zero-install standalone bundles per platform (`darwin-arm64`, `darwin-x64`, `linux-arm64`, `linux-x64`; Windows `win32-x64` pending PR #192) with `npm run build && npm run electron:prep`, then uploads each `cabinet-app-<key>-vX.Y.Z.tgz` + `.sha256` to the Release. The release manifest records these under `appBundles`, and `cabinetai run` consumes them (see docs/CABINETAI.md → `ensureApp`).
 
@@ -213,10 +223,12 @@ This is the release flow to use right now.
 
 ### Release prerequisites
 
-npm publishing uses **npm trusted publishing (OIDC)**, not an `NPM_TOKEN` secret. Both `cabinetai` and `create-cabinet` must have this repo + the `Release` workflow registered as a trusted publisher on npmjs.com; CI upgrades to `npm@latest` in the publish jobs because OIDC auth needs npm >= 11.5.1 (Node 22 ships npm 10.x, which only does OIDC provenance, not auth). There is no npm token to rotate.
+npm publishing uses the `NPM_TOKEN` GitHub Actions secret. It must contain a granular npm access token with write access to both `cabinetai` and `create-cabinet`. The publish jobs expose it only as `NODE_AUTH_TOKEN`; GitHub OIDC remains enabled to generate npm provenance attestations.
 
 macOS notarization/signing still needs GitHub Actions secrets (consumed by the separate `electron-release.yml`):
 
+- `APPLE_CERTIFICATE` - base64-encoded Apple Developer ID Application certificate
+- `APPLE_CERTIFICATE_PASSWORD` - password for the certificate bundle
 - `APPLE_ID` - required for macOS notarization
 - `APPLE_APP_PASSWORD` - required for macOS notarization
 - `APPLE_TEAM_ID` - required for macOS notarization
@@ -249,9 +261,9 @@ npm run build
 npm run electron:make
 ```
 
-7. Commit the release changes.
-8. Push the commit to GitHub.
-9. Create and push the release tag.
+7. Commit the release changes on a release branch and open a reviewed PR.
+8. Merge the release PR, then update your local `main` to that exact commit.
+9. Create and push the release tag from the verified merged `main` commit.
 
 ```bash
 git tag v0.2.1
@@ -278,7 +290,9 @@ After GitHub Actions finishes, verify:
 - the GitHub Release exists for `vX.Y.Z`
 - `cabinet-release.json` is attached to that release
 - `create-cabinet@X.Y.Z` is visible on npm
-- the Electron macOS artifacts are attached to the GitHub Release
+- the signed/notarized macOS DMG and ZIP are attached and their packaged-app smoke test passed
+- the Windows installer and ZIP are attached and the installed-app smoke test passed
+- Windows signatures are valid when signing credentials were configured; an unsigned build is expected otherwise
 - the latest manifest URL resolves to the new version
 - a fresh `npx create-cabinet@latest` install pulls the expected release
 
@@ -295,7 +309,10 @@ npm run build
 npm run electron:make
 git add package.json cli/package.json package-lock.json cabinet-release.json
 git commit -m "Release v0.2.1"
-git push origin main
+git push -u origin release/v0.2.1
+# open and merge the release PR, then update local main
+git switch main
+git pull --ff-only origin main
 git tag v0.2.1
 git push origin v0.2.1
 ```
@@ -356,9 +373,9 @@ electron-packager crashes during *Copying files* stat-ing a dangling symlink. Ne
 
 The Squirrel maker outputs `Cabinet-<version> Setup.exe`, but GitHub replaces the space with a dot when storing the release asset (`Cabinet-<version>.Setup.exe`). `generate-release-manifest.mjs` now advertises the as-uploaded (dot) name.
 
-### Getting a build-config fix into an already-tagged release
+### Fixing a release after it has been tagged
 
-`electron-release.yml` checks out `ref: <tag>`, so a fix on `main` is not built until the tag includes it. To rebuild desktop artifacts for the same version, force-move the tag (`git tag -f vX.Y.Z <fix-sha>; git push -f origin vX.Y.Z`) and re-dispatch. Re-pushing the tag re-fires `release.yml`; its two npm-publish jobs fail harmlessly because the version is already on npm (cosmetic), while `release-assets` refreshes the draft release + manifest.
+Release tags are immutable. If a source or workflow change is required after tagging, prepare the next patch version from current `main`, run the full release gates again, and leave the failed release draft unpublished. Do not force-move a tag or overwrite an npm version.
 
 ## Recommended Operating Model Today
 

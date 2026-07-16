@@ -250,7 +250,7 @@ export function GmailSection() {
       {/* OAuth coming soon */}
       <div className="rounded-md border border-border/50 bg-muted/10 px-3 py-2.5 text-[12px] text-muted-foreground">
         <span className="font-medium text-foreground/70">Prefer not to create an App Password?</span>{" "}
-        OAuth sign-in is coming soon — connect with your Google account directly.
+        OAuth sign-in is coming soon: connect with your Google account directly.
       </div>
     </div>
   );

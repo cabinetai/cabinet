@@ -680,7 +680,7 @@ export function TreeView() {
                         role="tab"
                         aria-selected={active}
                         aria-label={`${drawer.label} drawer (${shortcutHint})`}
-                        title={`${drawer.label} — ${shortcutHint}`}
+                        title={`${drawer.label} (${shortcutHint})`}
                         onClick={() => {
                           setActiveDrawer(drawer.id);
                           drawer.onOpen();
@@ -1097,7 +1097,7 @@ export function TreeView() {
                 Delete Cabinet &ldquo;{activeCabinet?.frontmatter?.title || activeCabinet?.name || cabinetPath}&rdquo;
               </DialogTitle>
               <DialogDescription>
-                This will permanently delete the cabinet and everything inside it — all pages, agents, jobs, and tasks. This cannot be undone.
+                This will permanently delete the cabinet and everything inside it: all pages, agents, jobs, and tasks. This cannot be undone.
               </DialogDescription>
             </div>
           </div>

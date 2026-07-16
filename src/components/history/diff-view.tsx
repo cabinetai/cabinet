@@ -102,7 +102,7 @@ export function DiffView({ diff }: { diff: string }) {
   if (isBinary && !pretty.some((l) => l.kind === "add" || l.kind === "del")) {
     return (
       <p className="p-4 text-[12px] text-muted-foreground">
-        This file is binary (image, media, …) — its content changed, but
+        This file is binary (image, media, …). Its content changed, but
         there&apos;s no text to compare.
       </p>
     );

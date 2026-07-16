@@ -40,11 +40,11 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ["/"], description: "Open search palette (when not editing)" },
       {
         keys: ["/", "theme"],
-        description: "Slash command — switch theme",
+        description: "Slash command: switch theme",
       },
       {
         keys: ["/", "open"],
-        description: "Slash command — open a section",
+        description: "Slash command: open a section",
       },
     ],
   },

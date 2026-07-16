@@ -621,13 +621,13 @@ export function StatusBar() {
                         isCloudEdition ? (
                           <p className="text-[10px] text-muted-foreground">
                             {!appAlive
-                              ? "Your cabinet is restarting itself. This page should recover within a minute — if it doesn't, refresh your browser."
-                              : "The background service stopped. Click Restart above — your cabinet will be back in about a minute."}
+                              ? "Your cabinet is restarting itself. This page should recover within a minute. If it doesn't, refresh your browser."
+                              : "The background service stopped. Click Restart above. Your cabinet will be back in about a minute."}
                           </p>
                         ) : isElectronInstall ? (
                           <p className="text-[10px] text-muted-foreground">
                             {!appAlive
-                              ? "The app server is not responding. It restarts itself automatically — if this message persists, quit and reopen the Cabinet app."
+                              ? "The app server is not responding. It restarts itself automatically. If this message persists, quit and reopen the Cabinet app."
                               : "The background daemon is not running. Click Restart above; if the issue persists, quit and reopen the Cabinet app."}
                           </p>
                         ) : installKind === "source-managed" ? (
@@ -888,7 +888,7 @@ export function StatusBar() {
               </ul>
               {uncommittedTruncated && (
                 <p className="mt-1 border-t border-border/60 pt-1 text-[10px] text-muted-foreground">
-                  Only the first {uncommittedFiles.length} files shown — run{" "}
+                  Only the first {uncommittedFiles.length} files shown. Run{" "}
                   <code className="rounded bg-muted px-1 py-0.5">git status</code>{" "}
                   for the full list.
                 </p>
