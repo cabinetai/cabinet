@@ -9,6 +9,12 @@ import {
 import { buildPtyCliInvocation } from "../../src/lib/agents/provider-cli";
 import { resolveLegacyExecutionProviderId } from "../../src/lib/agents/adapters";
 import { createClaudeStreamAccumulator } from "../../src/lib/agents/adapters/claude-stream";
+import {
+  buildClaudeCLIProxyEnv,
+  buildCodexCLIProxyArgs,
+  buildCodexCLIProxyEnv,
+  resolveCLIProxyConnection,
+} from "../../src/lib/agents/cli-proxy-routing";
 import { stripAnsi } from "./ansi";
 import {
   claudePromptReady,
@@ -121,6 +127,16 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
             resumeId,
           });
     const resolvedProviderId = isShell ? "shell" : resolveProviderId(executionProviderId);
+    const proxyConnection =
+      resolvedProviderId === "claude-code"
+        ? resolveCLIProxyConnection(input.adapterConfig || {}, "claude")
+        : resolvedProviderId === "codex-cli"
+          ? resolveCLIProxyConnection(input.adapterConfig || {}, "codex")
+          : null;
+
+    if (proxyConnection && resolvedProviderId === "codex-cli") {
+      launch = { ...launch, args: [...launch.args, ...buildCodexCLIProxyArgs(proxyConnection)] };
+    }
 
     if (
       input.launchMode === "one-shot" &&
@@ -164,6 +180,12 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
       env: {
         ...cabinetEnvValues,
         ...(process.env as Record<string, string>),
+        ...(proxyConnection && resolvedProviderId === "claude-code"
+          ? buildClaudeCLIProxyEnv(proxyConnection)
+          : {}),
+        ...(proxyConnection && resolvedProviderId === "codex-cli"
+          ? buildCodexCLIProxyEnv(proxyConnection)
+          : {}),
         PATH: deps.enrichedPath,
         TERM: "xterm-256color",
         COLORTERM: "truecolor",

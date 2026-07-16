@@ -13,6 +13,10 @@ import {
 import type { AdapterSessionCodec, AgentExecutionAdapter } from "./types";
 import { getAdapterRuntimePath, runChildProcess } from "./utils";
 import { readStringConfig, readEffortConfig } from "./_shared/cli-args";
+import {
+  buildClaudeCLIProxyEnv,
+  resolveCLIProxyConnection,
+} from "../cli-proxy-routing";
 
 const claudeSessionCodec: AdapterSessionCodec = {
   deserialize(raw) {
@@ -136,6 +140,7 @@ export const claudeLocalAdapter: AgentExecutionAdapter = {
     const command =
       readStringConfig(ctx.config, "command") || resolveCliCommand(claudeCodeProvider);
     const args = buildClaudeArgs(ctx.config, ctx.sessionId ?? null);
+    const proxyConnection = resolveCLIProxyConnection(ctx.config, "claude");
     const accumulator = createClaudeStreamAccumulator();
 
     await ctx.onMeta?.({
@@ -150,6 +155,7 @@ export const claudeLocalAdapter: AgentExecutionAdapter = {
 
     const result = await runChildProcess(command, args, {
       cwd: ctx.cwd,
+      env: proxyConnection ? buildClaudeCLIProxyEnv(proxyConnection) : undefined,
       stdin: ctx.prompt,
       timeoutMs: ctx.timeoutMs,
       onSpawn: ctx.onSpawn,

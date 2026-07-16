@@ -27,6 +27,16 @@ loadCabinetEnv();
 import { initProcessLogging } from "../src/lib/log/logger";
 initProcessLogging("daemon");
 
+// The embedded /api gate derives the same kb-auth token the browser carries,
+// so the per-install salt must exist before the first request (Next's
+// instrumentation hook also calls this; it is idempotent).
+import { ensureAuthSalt } from "../src/lib/auth/kb-auth-salt.node";
+try {
+  ensureAuthSalt();
+} catch (err) {
+  console.error("daemon: ensureAuthSalt failed", err);
+}
+
 // Mark this process as the daemon itself. conversation-runner reads this to
 // route continued turns through the daemon's session machinery (addressable,
 // stoppable run ids) instead of the un-cancellable in-process path — the
@@ -70,10 +80,10 @@ import {
   writeSession,
 } from "../src/lib/agents/conversation-store";
 import {
+  getOrCreateDaemonTokenSync,
   getTokenFromAuthorizationHeader,
   isDaemonTokenValid,
 } from "../src/lib/agents/daemon-auth";
-import { authCookieHeader } from "../src/lib/auth/kb-auth";
 import {
   normalizeJobConfig,
   normalizeJobId,
@@ -106,6 +116,11 @@ import {
   printStartupBannerIfNeeded,
   startTelemetryFlusher,
 } from "../src/lib/telemetry";
+import {
+  cliProxyRuntime,
+  type CLIProxyOAuthProvider,
+} from "../src/lib/agents/cli-proxy-runtime";
+import { buildApiApp } from "./http/api-app";
 
 const PORT = getDaemonPort();
 const CABINET_MANIFEST_FILE = ".cabinet";
@@ -1245,16 +1260,21 @@ function ensureAuthEnvFromDotEnv(): void {
   }
 }
 
+/**
+ * The daemon hosts /api itself now, so scheduler triggers call the local
+ * server with the daemon bearer token — no more replicating the browser's
+ * kb-auth cookie.
+ */
+function selfApiUrl(pathname: string): string {
+  return `http://127.0.0.1:${PORT}${pathname}`;
+}
+
 async function putJson(url: string, body: Record<string, unknown>): Promise<void> {
-  // Attach the same `kb-auth` cookie a logged-in browser carries, so these
-  // server-to-server triggers pass the gate instead of silently 401ing. No-op
-  // when auth is disabled (authCookieHeader() returns {}).
-  ensureAuthEnvFromDotEnv();
   const response = await fetch(url, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      ...(await authCookieHeader()),
+      Authorization: `Bearer ${getOrCreateDaemonTokenSync()}`,
     },
     body: JSON.stringify(body),
   });
@@ -1292,7 +1312,7 @@ function scheduleJob(job: JobConfig): void {
       if (!job.oneShot) return;
       try {
         await putJson(
-          `${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`,
+          selfApiUrl(`/api/agents/${job.agentSlug}/jobs/${job.id}`),
           {
             action: "update",
             cabinetPath: job.cabinetPath,
@@ -1307,7 +1327,7 @@ function scheduleJob(job: JobConfig): void {
       scheduledJobs.delete(key);
       console.log(`  One-shot job fired and disabled: ${key}`);
     };
-    void putJson(`${getAppOrigin()}/api/agents/${job.agentSlug}/jobs/${job.id}`, {
+    void putJson(selfApiUrl(`/api/agents/${job.agentSlug}/jobs/${job.id}`), {
       action: "run",
       source: "scheduler",
       cabinetPath: job.cabinetPath,
@@ -1341,7 +1361,7 @@ function scheduleHeartbeat(slug: string, cronExpr: string, cabinetPath: string):
     const scheduledAt = new Date(Math.round(Date.now() / 60000) * 60000).toISOString();
     console.log(`Triggering heartbeat ${key} @ ${scheduledAt}`);
     recordTriggerAttempt(scheduledAt);
-    void putJson(`${getAppOrigin()}/api/agents/personas/${slug}`, {
+    void putJson(selfApiUrl(`/api/agents/personas/${slug}`), {
       action: "run",
       source: "scheduler",
       cabinetPath,
@@ -1494,6 +1514,8 @@ function queueScheduleReload(): void {
 
 // ===== HTTP Server =====
 
+const apiApp = buildApiApp();
+
 const server = http.createServer(async (req, res) => {
   applyCors(req, res);
 
@@ -1504,6 +1526,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   const url = new URL(req.url || "", `http://localhost:${PORT}`);
+
+  // The former Next.js /api surface, served by the embedded Express app. It
+  // applies its own auth gate (kb-auth cookie / cloud JWT / daemon bearer),
+  // so the daemon token check below must not run for these paths. WS upgrade
+  // paths (/api/daemon/pty, /api/daemon/events) never reach this handler.
+  if (url.pathname === "/api" || url.pathname.startsWith("/api/")) {
+    apiApp(req, res);
+    return;
+  }
+
   if (url.pathname !== "/health" && !isDaemonTokenValid(requestToken(req, url))) {
     rejectUnauthorized(res);
     return;
@@ -1930,6 +1962,103 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // CLIProxyAPI is a connector sidecar, not an agent adapter. Keep its
+  // management secret inside the daemon and expose only the small set of
+  // lifecycle/OAuth operations Cabinet's UI needs. The daemon bearer gate
+  // above protects every route in this block.
+  if (url.pathname.startsWith("/cli-proxy/")) {
+    if (process.env.CABINET_CLOUD === "1") {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Not found" }));
+      return;
+    }
+    const action = url.pathname.slice("/cli-proxy/".length);
+    const sendJson = (code: number, body: unknown) => {
+      res.writeHead(code, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(body));
+    };
+    const readBody = (): Promise<Record<string, unknown>> =>
+      new Promise((resolve, reject) => {
+        let body = "";
+        let tooLarge = false;
+        req.on("data", (chunk) => {
+          if (tooLarge) return;
+          body += chunk;
+          if (body.length > 16_384) {
+            tooLarge = true;
+            body = "";
+          }
+        });
+        req.on("end", () => {
+          if (tooLarge) return reject(new Error("request body too large"));
+          try { resolve(JSON.parse(body || "{}")); } catch { resolve({}); }
+        });
+      });
+
+    (async () => {
+      try {
+        if (action === "status" && req.method === "GET") {
+          return sendJson(200, cliProxyRuntime.status());
+        }
+        if (action === "install" && req.method === "POST") {
+          await cliProxyRuntime.install();
+          return sendJson(200, await cliProxyRuntime.start());
+        }
+        if (action === "start" && req.method === "POST") {
+          return sendJson(200, await cliProxyRuntime.start());
+        }
+        if (action === "stop" && req.method === "POST") {
+          await cliProxyRuntime.stop();
+          return sendJson(200, cliProxyRuntime.status());
+        }
+        if (action === "models" && req.method === "GET") {
+          return sendJson(200, await cliProxyRuntime.listModels());
+        }
+        if (action === "accounts" && req.method === "GET") {
+          return sendJson(200, { accounts: await cliProxyRuntime.listAccounts() });
+        }
+        if (action === "routing" && req.method === "POST") {
+          const { enabled } = await readBody();
+          if (typeof enabled !== "boolean") {
+            return sendJson(400, { error: "enabled boolean required" });
+          }
+          return sendJson(200, await cliProxyRuntime.setRoutingEnabled(enabled));
+        }
+        if (action === "oauth/start" && req.method === "POST") {
+          const { provider } = await readBody();
+          if (
+            typeof provider !== "string" ||
+            !["anthropic", "codex"].includes(provider)
+          ) {
+            return sendJson(400, { error: "unsupported OAuth provider" });
+          }
+          return sendJson(
+            200,
+            await cliProxyRuntime.startOAuth(provider as CLIProxyOAuthProvider)
+          );
+        }
+        if (action === "oauth/status" && req.method === "GET") {
+          const state = url.searchParams.get("state")?.trim();
+          if (!state) return sendJson(400, { error: "state required" });
+          return sendJson(200, await cliProxyRuntime.oauthStatus(state));
+        }
+        if (action === "oauth/cancel" && req.method === "POST") {
+          const { state } = await readBody();
+          if (typeof state !== "string" || !state.trim()) {
+            return sendJson(400, { error: "state required" });
+          }
+          return sendJson(200, await cliProxyRuntime.cancelOAuth(state));
+        }
+        return sendJson(404, { error: "unknown CLIProxyAPI action" });
+      } catch (error) {
+        return sendJson(error instanceof Error && error.message === "request body too large" ? 413 : 500, {
+          error: error instanceof Error ? error.message : "CLIProxyAPI operation failed",
+        });
+      }
+    })();
+    return;
+  }
+
   // ── Claude Code login ── one-click `claude setup-token` orchestration. Works on
   // cloud tenants and desktop/self-host alike (both just drive the local `claude`
   // CLI over a PTY). Bearer-gated above like the rest of the daemon API.
@@ -2123,6 +2252,11 @@ scheduleWatcher.on("error", (err: unknown) => {
   });
 });
 
+// KB_PASSWORD (and salt/iters overrides) may live only in `.env`; the
+// embedded /api auth gate needs them in process.env before the first
+// browser request, not just before the first scheduler trigger.
+ensureAuthEnvFromDotEnv();
+
 server.listen(PORT, () => {
   console.log(`Cabinet Daemon running on port ${PORT}`);
   console.log(`  Terminal WebSocket: ws://localhost:${PORT}/api/daemon/pty`);
@@ -2193,11 +2327,27 @@ server.listen(PORT, () => {
       );
     }
   })();
+  if (process.env.CABINET_CLOUD !== "1") {
+    void cliProxyRuntime.startConfigured().then((status) => {
+      if (status.running) {
+        console.log(`[cli-proxy] restored managed sidecar v${status.version}`);
+      }
+    }).catch((error) => {
+      console.warn(
+        "[cli-proxy] could not restore managed sidecar:",
+        error instanceof Error ? error.message : error
+      );
+    });
+  }
 });
 
 // ===== Graceful Shutdown =====
 
-function shutdown(): void {
+let shutdownStarted = false;
+
+async function shutdown(): Promise<void> {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
   console.log("\nShutting down...");
   emitTelemetry("app.exited", {});
   clearSessionId();
@@ -2212,15 +2362,18 @@ function shutdown(): void {
       session.stop("SIGTERM");
     } catch {}
   }
-  void scheduleWatcher.close();
-  void shutdownTelegramGateway();
+  await Promise.allSettled([
+    scheduleWatcher.close(),
+    shutdownTelegramGateway(),
+    cliProxyRuntime.stopForShutdown(),
+  ]);
   closeDb();
   server.close();
   process.exit(0);
 }
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+process.on("SIGINT", () => { void shutdown(); });
+process.on("SIGTERM", () => { void shutdown(); });
 
 wssPty.on("error", (err) => {
   console.error("PTY WebSocket error:", err.message);
