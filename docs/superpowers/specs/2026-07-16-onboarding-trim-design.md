@@ -98,7 +98,7 @@ The wizard's job is to get the user *into* a Cabinet, not to populate it.
 
 #### 2.1 Everything that depends on a step index
 
-This is the main breakage risk. `STEP_COUNT` is hardcoded and eight other things are keyed off the
+This is the main breakage risk. `STEP_COUNT` is hardcoded and everything below is keyed off the
 same integers. All of the following must move to the derived list, or the flow silently lies:
 
 | Site | What breaks if missed |
