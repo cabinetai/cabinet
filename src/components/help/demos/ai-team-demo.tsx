@@ -16,7 +16,7 @@ import {
   Megaphone,
   PenLine,
   Search,
-  Sparkles,
+  Asterisk,
   Users,
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
@@ -59,7 +59,7 @@ function SlideHire() {
       }
       description={
         <>
-          Hire leads and specialists. Each one has a name, a role, a personality — and a model that fits the job.
+          Hire leads and specialists. Each one has a name, a role, a personality, and a model that fits the job.
         </>
       }
     >
@@ -139,10 +139,10 @@ function SlidePersona() {
       }
       description={
         <>
-          Open any agent and edit who they are — their expertise, their voice,
+          Open any agent and edit who they are: their expertise, their voice,
           their constraints. A 30-year veteran lawyer reads contracts
           differently than a low-level systems engineer. Spin up a Lead
-          Marketer, a Salesforce expert, a Mom on speed-dial — anyone you can
+          Marketer, a Salesforce expert, a Mom on speed-dial, anyone you can
           describe.
         </>
       }
@@ -249,7 +249,7 @@ function SlidePersona() {
                 </span>{" "}
                 of contract law experience. Read every clause for ambiguity,
                 hidden risk, and edge cases. Cite case law when relevant.
-                Speak plainly to non-lawyers — but never soften a legal point.
+                Speak plainly to non-lawyers, but never soften a legal point.
                 <span
                   className="ml-0.5 inline-block h-3 w-[1.5px] align-middle"
                   style={{
@@ -316,7 +316,7 @@ function SlideDepartments() {
       }
       description={
         <>
-          Marketing, Engineering, Operations — each department has a lead and a roster of specialists.
+          Marketing, Engineering, Operations: each department has a lead and a roster of specialists.
           The structure carries through to who can dispatch work to whom.
         </>
       }
@@ -545,7 +545,7 @@ function SlideHeartbeats() {
   const beats: { time: string; note: string }[] = [
     { time: "Mon · 09:00", note: "Scanned 18 articles · drafted digest" },
     { time: "Tue · 09:00", note: "Flagged 2 competitor launches" },
-    { time: "Wed · 09:00", note: "Pinged Editor — needs follow-up" },
+    { time: "Wed · 09:00", note: "Pinged Editor, needs follow-up" },
   ];
 
   return (
@@ -557,7 +557,7 @@ function SlideHeartbeats() {
       }
       description={
         <>
-          Pick a frequency — every minute, every hour, every weekday morning.
+          Pick a frequency: every minute, every hour, every weekday morning.
           On every beat, your agent re-runs its persona, scans the world, and
           proposes what&apos;s next. Example: the Researcher beats every
           weekday at 9am to read the news.
@@ -671,7 +671,7 @@ function SlideRoutines() {
       description={
         <>
           Routines are recurring jobs. Cron syntax, natural language, or once
-          next Monday — every routine across the team lands in one schedule.
+          next Monday. Every routine across the team lands in one schedule.
           Example: News scan weekday mornings, Weekly digest Friday at 6pm,
           Backlog triage Monday 10am.
         </>
@@ -791,7 +791,7 @@ function SlideApprovals() {
       }
       description={
         <>
-          Every dispatch waits for your approval. Review the action, see the cost, then say go — or decline.
+          Every dispatch waits for your approval. Review the action, see the cost, then say go or decline.
         </>
       }
     >
@@ -860,7 +860,7 @@ function SlideApprovals() {
               className="flex flex-1 items-center justify-center gap-1 rounded-lg py-1.5 text-[11px] font-semibold transition-transform hover:-translate-y-px"
               style={{ background: P.accent, color: P.paper }}
             >
-              <Sparkles className="h-3 w-3" />
+              <Asterisk className="h-3 w-3" />
               Approve
             </button>
             <button
@@ -885,7 +885,7 @@ function SlideApprovals() {
 export function buildAiTeamDemo(): DemoConfig {
   return {
     id: "ai-team",
-    ariaLabel: "Your AI team — guided demo",
+    ariaLabel: "Your AI team: guided demo",
     slides: [
       { id: "hire", render: () => <SlideHire /> },
       { id: "persona", render: () => <SlidePersona /> },

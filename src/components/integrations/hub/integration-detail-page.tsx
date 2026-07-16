@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Check, Lock, Sparkles, ShieldCheck, Bell, ChevronDown } from "lucide-react";
+import { ArrowLeft, Check, Lock, Asterisk, ShieldCheck, Bell, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { showSuccess } from "@/lib/ui/toast";
@@ -279,7 +279,7 @@ export function IntegrationDetailPage({
                 className="mx-auto flex h-10 w-10 items-center justify-center rounded-full"
                 style={{ background: `${item.brand}1f` }}
               >
-                <Sparkles className="h-5 w-5" style={{ color: item.brand }} />
+                <Asterisk className="h-5 w-5" style={{ color: item.brand }} />
               </div>
               <h3 className="mt-3 text-[14px] font-semibold text-foreground">
                 Not available yet
@@ -315,7 +315,7 @@ function TierBadge({ tier, vendorName }: { tier: string; vendorName?: string }) 
   if (tier === "cabinet") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.05] px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-        <Sparkles className="h-3 w-3" /> Maintained by Cabinet
+        <Asterisk className="h-3 w-3" /> Maintained by Cabinet
       </span>
     );
   }

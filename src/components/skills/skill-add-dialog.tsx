@@ -349,7 +349,7 @@ export function SkillAddDialog({
               {previewRequestedSkill && !previewSkillMeta && (
                 <p className="text-[11px] text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
                   <AlertTriangle className="size-3 shrink-0 mt-0.5" />
-                  Couldn&apos;t find <code className="font-mono">{previewRequestedSkill}</code> in this repo&apos;s file tree — install will still attempt a recursive search.
+                  Couldn&apos;t find <code className="font-mono">{previewRequestedSkill}</code> in this repo&apos;s file tree. Install will still attempt a recursive search.
                 </p>
               )}
               <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
@@ -379,19 +379,19 @@ export function SkillAddDialog({
                     <div className="text-[11px] text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
                       <AlertTriangle className="size-3 shrink-0 mt-0.5" />
                       {previewAudits.total - previewAudits.passed} of {previewAudits.total}{" "}
-                      external audits flagged risk — review source before installing.
+                      external audits flagged risk. Review source before installing.
                     </div>
                   )}
                   {lowStars && (
                     <div className="text-[11px] text-amber-600 dark:text-amber-400 flex items-start gap-1.5">
                       <AlertTriangle className="size-3 shrink-0 mt-0.5" />
-                      Few stars — this skill has limited community adoption.
+                      Few stars: this skill has limited community adoption.
                     </div>
                   )}
                   {stale === "red" && (
                     <div className="text-[11px] text-red-500 flex items-start gap-1.5">
                       <AlertTriangle className="size-3 shrink-0 mt-0.5" />
-                      Stale — last commit over a year ago. May be unmaintained.
+                      Stale: last commit over a year ago. May be unmaintained.
                     </div>
                   )}
                   {stale === "yellow" && (

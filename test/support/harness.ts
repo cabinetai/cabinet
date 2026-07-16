@@ -18,7 +18,7 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 
-import { createFakeAgentCli, type FakeAgentCli } from "./fake-agent-cli";
+import { createFakeAgentCli, type FakeAgentCli, type FakeStep } from "./fake-agent-cli";
 
 // Resolved by walking up to the nearest package.json rather than from
 // import.meta: the repo is CommonJS, and Playwright transpiles specs to CJS
@@ -45,8 +45,10 @@ function findRepoRoot(start: string): string {
 export interface FakeAgentSpec {
   /** Command the adapter looks for on PATH, e.g. "claude". */
   name: string;
-  /** Stream-JSON lines the fake CLI emits. */
-  lines: string[];
+  /** Steps consumed one per invocation. See FakeStep. */
+  steps?: FakeStep[];
+  /** Answers every invocation past the end of `steps`. */
+  fallback?: FakeStep;
 }
 
 export interface BootOptions {
@@ -54,12 +56,28 @@ export interface BootOptions {
   seed?: string;
   /** Fake agent CLIs to place on PATH, shadowing any real install. */
   fakeAgents?: FakeAgentSpec[];
+  /**
+   * Extra files written into the state root after the seed is copied, keyed by
+   * path relative to it. Lets a test add a persona, a job config or a skill
+   * without forking the whole fixture directory.
+   */
+  files?: Record<string, string>;
 }
 
 export interface CabinetInstance {
   appUrl: string;
   daemonUrl: string;
   dataDir: string;
+  /**
+   * The fake CLI installed as `name`. Program it, or read back what Cabinet
+   * actually spawned. Throws if no such fake was requested at boot — a typo'd
+   * name would otherwise surface as a mystifying "0 invocations".
+   */
+  agent(name: string): FakeAgentCli;
+  /** Read a file from the state root, relative to it. */
+  read(relativePath: string): Promise<string>;
+  /** Everything the app and daemon have written to stdout/stderr. */
+  logs(): string;
   close(): Promise<void>;
 }
 
@@ -82,9 +100,18 @@ export async function bootCabinet(options: BootOptions = {}): Promise<CabinetIns
   const binDir = path.join(home, ".local", "bin");
   await fs.mkdir(binDir, { recursive: true });
 
-  const fakes: FakeAgentCli[] = [];
+  for (const [relativePath, content] of Object.entries(options.files ?? {})) {
+    const dest = path.join(dataDir, relativePath);
+    await fs.mkdir(path.dirname(dest), { recursive: true });
+    await fs.writeFile(dest, content, "utf8");
+  }
+
+  const fakes = new Map<string, FakeAgentCli>();
   for (const agent of options.fakeAgents ?? []) {
-    fakes.push(await createFakeAgentCli(agent.name, agent.lines, binDir));
+    fakes.set(
+      agent.name,
+      await createFakeAgentCli(agent.name, agent.steps ?? [], binDir, agent.fallback)
+    );
   }
 
   const appPort = await freePort();
@@ -128,9 +155,18 @@ export async function bootCabinet(options: BootOptions = {}): Promise<CabinetIns
 
   const close = async () => {
     for (const child of children) child.kill("SIGTERM");
-    await Promise.all(fakes.map((f) => f.cleanup()));
+    await Promise.all([...fakes.values()].map((fake) => fake.cleanup()));
     await fs.rm(dataDir, { recursive: true, force: true });
     await fs.rm(home, { recursive: true, force: true });
+  };
+
+  const agent = (name: string): FakeAgentCli => {
+    const fake = fakes.get(name);
+    if (!fake) {
+      const known = [...fakes.keys()].join(", ") || "none";
+      throw new Error(`no fake agent named "${name}" was booted (have: ${known})`);
+    }
+    return fake;
   };
 
   try {
@@ -145,7 +181,16 @@ export async function bootCabinet(options: BootOptions = {}): Promise<CabinetIns
     throw new Error(`${(error as Error).message}\n--- app/daemon output ---\n${tail}`);
   }
 
-  return { appUrl, daemonUrl, dataDir, close };
+  return {
+    appUrl,
+    daemonUrl,
+    dataDir,
+    agent,
+    read: (relativePath: string) =>
+      fs.readFile(path.join(dataDir, relativePath), "utf8"),
+    logs: () => logs.join(""),
+    close,
+  };
 }
 
 async function waitForOk(url: string, timeoutMs = 90_000): Promise<void> {

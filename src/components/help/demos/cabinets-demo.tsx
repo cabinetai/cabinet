@@ -59,7 +59,7 @@ function SlideNested() {
       description={
         <>
           A cabinet is a self-contained AI team. Nest cabinets inside cabinets
-          and you have a whole org chart of teams — each with their own
+          and you have a whole org chart of teams, each with their own
           agents, their own data, their own way of working.
         </>
       }
@@ -126,7 +126,7 @@ function SlideEachATeam() {
       }
       description={
         <>
-          Open a cabinet and you find a real workspace — its own agents, its
+          Open a cabinet and you find a real workspace: its own agents, its
           own pages, its own routines. The Engineering cabinet has different
           people doing different things than Marketing.
         </>
@@ -257,7 +257,7 @@ function SlideVisibility() {
       }
       description={
         <>
-          Just like in a real org — the CEO can peek at the C-suite&apos;s
+          Just like in a real org, the CEO can peek at the C-suite&apos;s
           work, then zoom all the way down to the people on the ground. You
           decide: just this cabinet&apos;s tasks and agents, the close teams,
           or everyone, all the way down.
@@ -331,7 +331,7 @@ function SlideVisibility() {
             animationDelay: "1100ms",
           }}
         >
-          Switch any time — it&apos;s just a view setting.
+          Switch any time; it&apos;s just a view setting.
         </div>
       </CardChrome>
     </DemoSlideShell>
@@ -454,7 +454,7 @@ function SlideContextFlows() {
 export function buildCabinetsDemo(): DemoConfig {
   return {
     id: "cabinets",
-    ariaLabel: "A team of AI teams — guided demo",
+    ariaLabel: "A team of AI teams: guided demo",
     slides: [
       { id: "nested", render: () => <SlideNested /> },
       { id: "each-team", render: () => <SlideEachATeam /> },

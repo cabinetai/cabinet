@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ExternalLink, FileText, Files, PackageOpen, Sparkles, CheckCircle, XCircle, Clock } from "lucide-react";
+import { ExternalLink, FileText, Files, PackageOpen, CheckCircle, XCircle, Clock } from "lucide-react";
 import type { ConversationDetail } from "@/types/conversations";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -130,7 +130,6 @@ export function ConversationResultView({
         <section className="rounded-2xl border border-border bg-background p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
               <h4 className="text-[13px] font-semibold">{t("conversationResult:result")}</h4>
             </div>
             <StatusBadge status={detail.meta.status} />

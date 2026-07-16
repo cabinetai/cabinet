@@ -8,7 +8,7 @@ import {
   CheckCircle,
   XCircle,
   RefreshCw,
-  Sparkles,
+  Asterisk,
   Blocks,
   Bell,
   Cpu,
@@ -772,7 +772,7 @@ export function SettingsPage() {
           icon: <Blocks className="h-3.5 w-3.5" />,
           onSelect: () => useAppStore.getState().setSection({ type: "integrations" }),
         },
-        { id: "skills", label: t("settings:tabs.skills"), icon: <Sparkles className="h-3.5 w-3.5" /> },
+        { id: "skills", label: t("settings:tabs.skills"), icon: <Asterisk className="h-3.5 w-3.5" /> },
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
       ],
     },
@@ -2049,7 +2049,7 @@ function SkillsSettings() {
           </h3>
         </div>
         <p>
-          Cabinet&apos;s philosophy is to connect you to the world — safely. A
+          Cabinet&apos;s philosophy is to connect you to the world, safely. A
           skill runs real code on your computer, so treat each one like you
           would any app you install: read what it does before you trust it.
         </p>
@@ -2597,7 +2597,7 @@ function ProfileTab() {
           if (contrast === null || contrast >= 3) return null;
           return (
             <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
-              Low contrast ({contrast.toFixed(1)}:1) — initials may be hard to read on this background.
+              Low contrast ({contrast.toFixed(1)}:1). Initials may be hard to read on this background.
             </p>
           );
         })()}

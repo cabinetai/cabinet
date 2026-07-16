@@ -95,7 +95,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     if (denied) return denied;
     if (await storageOverCap()) {
       return NextResponse.json(
-        { error: "Storage full — the free plan is capped. Upgrade for more room.", errorKind: "storage" },
+        { error: "Storage full: the free plan is capped. Upgrade for more room.", errorKind: "storage" },
         { status: 402 },
       );
     }
@@ -155,7 +155,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     if (denied) return denied;
     if (await storageOverCap()) {
       return NextResponse.json(
-        { error: "Storage full — the free plan is capped. Upgrade for more room.", errorKind: "storage" },
+        { error: "Storage full: the free plan is capped. Upgrade for more room.", errorKind: "storage" },
         { status: 402 },
       );
     }

@@ -14,7 +14,7 @@ import { storageOverCap } from "@/lib/cloud/tier";
 // renames, and deletes stay allowed). Inert off-cloud — storageOverCap is always false there.
 const storageFull = () =>
   NextResponse.json(
-    { error: "Storage full — the free plan is capped. Upgrade for more room.", errorKind: "storage" },
+    { error: "Storage full: the free plan is capped. Upgrade for more room.", errorKind: "storage" },
     { status: 402 }
   );
 

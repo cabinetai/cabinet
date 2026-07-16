@@ -10,7 +10,7 @@ import {
   Clock,
   DollarSign,
   FileText,
-  Sparkles,
+  Asterisk,
   Users,
 } from "lucide-react";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
@@ -119,12 +119,12 @@ function SlideTalkBack() {
               animationDelay: "1500ms",
             }}
           >
-            <Sparkles className="h-3 w-3" style={{ color: P.accent }} />
+            <Asterisk className="h-3 w-3" style={{ color: P.accent }} />
             <span
               className="text-[10px] font-semibold uppercase tracking-wider"
               style={{ color: P.accent }}
             >
-              4 actions queued — review below
+              4 actions queued, review below
             </span>
           </div>
         </div>
@@ -152,7 +152,7 @@ function SlideQueue() {
       }
       description={
         <>
-          When agents propose actions they stack up here — and on the kanban
+          When agents propose actions they stack up here, and on the kanban
           they surface in the &ldquo;Your turn&rdquo; lane. Skim them,
           approve the easy ones in batch, and look twice at the ones flagged
           for cost, conflicts, or destructive changes.
@@ -260,7 +260,7 @@ function SlideQueue() {
             className="flex items-center gap-1 rounded-md px-2.5 py-1 text-[10px] font-semibold"
             style={{ background: P.accent, color: P.paper }}
           >
-            <Sparkles className="h-2.5 w-2.5" />
+            <Asterisk className="h-2.5 w-2.5" />
             Approve 3
           </span>
         </div>
@@ -280,7 +280,7 @@ function SlideAudit() {
       }
       description={
         <>
-          Tap any action to see exactly what will happen before you say yes —
+          Tap any action to see exactly what will happen before you say yes:
           which agent, what prompt, which files it&apos;ll touch, the
           estimated cost and runtime. No surprises.
         </>
@@ -402,7 +402,7 @@ function SlideAudit() {
               className="flex flex-1 items-center justify-center gap-1 rounded-lg py-2 text-[11px] font-semibold"
               style={{ background: P.accent, color: P.paper }}
             >
-              <Sparkles className="h-3 w-3" />
+              <Asterisk className="h-3 w-3" />
               Approve & run
               <ArrowRight className="h-3 w-3 rtl:rotate-180" />
             </span>
@@ -426,7 +426,7 @@ function SlideAudit() {
 export function buildConversationsDemo(): DemoConfig {
   return {
     id: "conversations",
-    ariaLabel: "Conversations & approvals — guided demo",
+    ariaLabel: "Conversations & approvals: guided demo",
     slides: [
       { id: "talk-back", render: () => <SlideTalkBack /> },
       { id: "queue", render: () => <SlideQueue /> },

@@ -20,8 +20,8 @@ export function DensityToggle({
     <IconHint
       label={
         value === "compact"
-          ? "Comfortable rows — more spacing and a second line of card detail"
-          : "Compact rows — denser cards so more fit without scrolling"
+          ? "Comfortable rows: more spacing and a second line of card detail"
+          : "Compact rows: denser cards so more fit without scrolling"
       }
       side="bottom"
     >

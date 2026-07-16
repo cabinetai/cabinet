@@ -186,7 +186,7 @@ export function HeartbeatDialog({
                 )}
                 title={
                   enabled
-                    ? "Disable the heartbeat — it won't fire on its schedule"
+                    ? "Disable the heartbeat. It won't fire on its schedule"
                     : "Enable the heartbeat so it fires on its schedule"
                 }
               >
@@ -202,7 +202,7 @@ export function HeartbeatDialog({
           </div>
           <DialogDescription className="text-[13px] leading-6">
             A heartbeat wakes this agent on its own rhythm. Each time it
-            fires, the agent checks in and decides what to work on — driven by
+            fires, the agent checks in and decides what to work on, driven by
             its persona instructions. Set how often it should wake up here; to
             change what it does each time, open the agent page.
           </DialogDescription>

@@ -88,7 +88,7 @@ export function DataDirPrompt({ onConfirmed }: { onConfirmed: () => void }) {
 
         <p className="mb-4 text-[12.5px] text-muted-foreground leading-relaxed">
           Cabinet stores all your cabinets, conversations, and agent files in one
-          folder on your computer. Pick where it should live — you can always
+          folder on your computer. Pick where it should live. You can always
           change this later in Settings.
         </p>
 

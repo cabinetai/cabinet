@@ -70,7 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         : u.global_name || u.username;
   } catch {
     return NextResponse.json({
-      token: { ok: false, error: "Couldn't reach Discord — check your connection." },
+      token: { ok: false, error: "Couldn't reach Discord. Check your connection." },
       guild: { unknown: true },
     });
   }

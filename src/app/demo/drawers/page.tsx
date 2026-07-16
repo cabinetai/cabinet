@@ -85,7 +85,7 @@ export default function DrawersDemoPage() {
           Task drawer demo
         </h1>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          The single unified drawer — compose a new task, or load an existing
+          The single unified drawer: compose a new task, or load an existing
           conversation. Best viewed on a wide desktop window.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">

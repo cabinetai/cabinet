@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { Sparkles, X, ExternalLink } from "lucide-react";
+import { X, ExternalLink } from "lucide-react";
 import { version as pkgVersion } from "../../../package.json";
 import { useLocale } from "@/i18n/use-locale";
 
@@ -77,13 +77,13 @@ const RELEASE_HIGHLIGHTS: ReleaseEntry[] = [
   {
     version: "0.4.0",
     date: "2026-04-30",
-    headline: "Biggest release yet — 433 commits since v0.3.4",
+    headline: "Biggest release yet: 433 commits since v0.3.4",
     bullets: [
-      "🟣 Skills system — installable agent skills, tiered trust, registry page",
-      "🟣 Multi-provider runtime — 8 CLI providers with shared runtime picker",
-      "🟢 Tasks Board v2 — drag-and-drop, undo, multi-select, lane filters",
-      "🟢 Search palette — Cmd+K opens a 2-pane FlexSearch-backed surface",
-      "🟢 Themes — Windows 95, Windows XP, Matrix, Apple",
+      "🟣 Skills system: installable agent skills, tiered trust, registry page",
+      "🟣 Multi-provider runtime: 8 CLI providers with shared runtime picker",
+      "🟢 Tasks Board v2: drag-and-drop, undo, multi-select, lane filters",
+      "🟢 Search palette: Cmd+K opens a 2-pane FlexSearch-backed surface",
+      "🟢 Themes: Windows 95, Windows XP, Matrix, Apple",
     ],
   },
 ];
@@ -158,9 +158,8 @@ export function WhatsNewCard() {
     // hidden sm:block — on a phone this card sits right on top of the composer's Send button;
     // release notes are desktop furniture, so small screens just skip them (watermark still
     // advances on dismiss/next visit from a desktop).
-    <div className="pointer-events-auto fixed end-4 bottom-12 z-40 hidden w-[360px] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-card p-3 shadow-2xl ring-1 ring-foreground/10 sm:block">
+    <div className="pointer-events-auto fixed end-4 bottom-12 z-40 hidden w-[360px] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-card p-3 shadow-2xl sm:block">
       <div className="flex items-start gap-2">
-        <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" />
         <div className="flex flex-1 flex-col gap-1">
           <div className="flex items-baseline gap-2">
             <span className="text-[13px] font-semibold">

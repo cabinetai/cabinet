@@ -270,7 +270,7 @@ async function processHeartbeatOutput(
         channel: persona.channels?.[0] || "general",
         agent: slug, emoji: persona.emoji, displayName: persona.name,
         type: "task",
-        content: `📋 Task created for **@${toAgent}**: ${title}${description ? ` — ${description}` : ""}`,
+        content: `📋 Task created for **@${toAgent}**: ${title}${description ? `. ${description}` : ""}`,
         mentions: [toAgent], kbRefs: [],
       }, cabinetPath);
     }
@@ -344,7 +344,7 @@ async function processHeartbeatOutput(
         const exists = await fs.stat(indexPath).catch(() => null);
         if (!exists) {
           const fileList = files.map((f) => f.isDirectory() ? `- [${f.name}/](./${f.name}/)` : `- [${f.name}](./${f.name})`).join("\n");
-          await fs.writeFile(indexPath, `---\ntitle: "${persona.name} — Workspace"\nmodified: "${timestamp}"\n---\n\n# ${persona.name} Workspace\n\n## Files\n${fileList}\n`, "utf-8");
+          await fs.writeFile(indexPath, `---\ntitle: "${persona.name} Workspace"\nmodified: "${timestamp}"\n---\n\n# ${persona.name} Workspace\n\n## Files\n${fileList}\n`, "utf-8");
         }
       }
     }

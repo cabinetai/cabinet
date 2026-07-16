@@ -66,14 +66,14 @@ export function GoogleDriveStepArt({ step, brand }: { step: number; brand: strin
             </div>
           </div>
           <Hint brand={brand}>
-            Install it and sign in — it mounts your Drive as a local folder.
+            Install it and sign in. It mounts your Drive as a local folder.
           </Hint>
         </MockWindow>
       );
 
     case 1: // Make folders available offline
       return (
-        <MockWindow title="Reports — right-click" brand={brand}>
+        <MockWindow title="Reports (right-click)" brand={brand}>
           <div className="overflow-hidden rounded-md border border-border text-[10.5px]">
             <MenuRow>Open</MenuRow>
             <MenuRow>Share</MenuRow>
@@ -125,7 +125,7 @@ export function GoogleDriveStepArt({ step, brand }: { step: number; brand: strin
             </FileRow>
           </div>
           <Hint brand={brand}>
-            Click any file — it opens inline in Cabinet&apos;s viewer.
+            Click any file, it opens inline in Cabinet&apos;s viewer.
           </Hint>
         </MockWindow>
       );

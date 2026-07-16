@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     if (!restored) {
       return NextResponse.json(
-        { error: "Failed to restore — file may not exist at that commit" },
+        { error: "Failed to restore. The file may not exist at that commit" },
         { status: 404 }
       );
     }

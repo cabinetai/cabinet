@@ -90,7 +90,7 @@ export function CloudTierBanner() {
             </>
           ) : (
             <span className="font-medium">
-              {pct != null && pct >= 100 ? "Storage full — writes are paused." : "You're almost out of storage."}
+              {pct != null && pct >= 100 ? "Storage full. Writes are paused." : "You're almost out of storage."}
             </span>
           )}
         </div>

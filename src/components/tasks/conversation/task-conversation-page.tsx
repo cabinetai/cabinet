@@ -20,7 +20,7 @@ import {
   RefreshCw,
   RotateCcw,
   ScrollText,
-  Sparkles,
+  Asterisk,
   Square,
   Terminal,
   Trash2,
@@ -1294,7 +1294,7 @@ export function TaskConversationPage({
                   : "border-transparent bg-zinc-900/40 text-zinc-500 hover:bg-zinc-900/60 hover:text-zinc-200"
               )}
             >
-              <Sparkles className="size-3.5" />
+              <Asterisk className="size-3.5" />
               <span>{t("tasks:conversation.details")}</span>
               {detail?.artifacts?.length ? (
                 <span className="rounded-full bg-emerald-500/20 px-1.5 py-px text-[9.5px] font-semibold text-emerald-300">
@@ -1455,7 +1455,7 @@ export function TaskConversationPage({
               className="shrink-0 inline-flex items-center gap-1 rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-medium text-violet-300"
               title={`Skills attached: ${attachedSkills.join(", ")}`}
             >
-              <Sparkles className="size-3" />
+              <Asterisk className="size-3" />
               {attachedSkills.length === 1
                 ? attachedSkills[0]
                 : `${attachedSkills.length} skills`}
@@ -1841,7 +1841,7 @@ export function TaskConversationPage({
                   className="inline-flex items-center gap-1 rounded bg-violet-500/15 px-1.5 py-0.5 text-[9px] font-medium text-violet-700 dark:text-violet-400"
                   title={`Skills attached: ${attachedSkills.join(", ")}`}
                 >
-                  <Sparkles className="size-3" />
+                  <Asterisk className="size-3" />
                   {attachedSkills.length === 1
                     ? attachedSkills[0]
                     : `${attachedSkills.length} skills`}

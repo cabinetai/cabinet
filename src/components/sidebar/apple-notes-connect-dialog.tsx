@@ -135,7 +135,7 @@ export function AppleNotesConnectDialog({
         <DialogHeader>
           <DialogTitle>Import Apple Notes</DialogTitle>
           <DialogDescription>
-            Bring your Apple Notes in as editable Markdown — offline, searchable,
+            Bring your Apple Notes in as editable Markdown: offline, searchable,
             and available to agents. This reads Notes directly on your Mac.
           </DialogDescription>
         </DialogHeader>
@@ -152,7 +152,7 @@ export function AppleNotesConnectDialog({
               <p className="text-[13px] leading-relaxed text-muted-foreground">
                 macOS will ask you to <b className="text-foreground">allow Cabinet to control Notes</b>.
                 Click OK. Locked (password-protected) notes are skipped. Importing
-                images also needs Full Disk Access. Nothing is sent anywhere — it
+                images also needs Full Disk Access. Nothing is sent anywhere, it
                 stays on this Mac.
               </p>
             </div>

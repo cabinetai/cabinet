@@ -32,7 +32,7 @@ import {
   Plus,
   Send,
   Share2,
-  Sparkles,
+  Asterisk,
   Trash2,
   Download,
   Inbox as InboxIcon,
@@ -148,7 +148,7 @@ function triggerIcon(trigger: ConversationMeta["trigger"]) {
     case "job":
       return Briefcase;
     case "heartbeat":
-      return Sparkles;
+      return Asterisk;
     case "telegram":
       return TelegramMark;
     default:
@@ -584,8 +584,8 @@ function TopBar({
                   <div className="text-muted-foreground">
                     Try:{" "}
                     <span className="italic">
-                      &ldquo;Launch 5 research tasks — one per top
-                      competitor — each on its own task.&rdquo;
+                      &ldquo;Launch 5 research tasks, one per top
+                      competitor, each on its own task.&rdquo;
                     </span>
                   </div>
                   {canDispatch && (
@@ -1126,7 +1126,7 @@ function Composer({
               ]}
               selectedSlug={persona.slug}
               disabled
-              disabledReason={`Locked to ${name} — this is their workspace`}
+              disabledReason={`Locked to ${name}. This is their workspace`}
             />
             <TaskRuntimePicker value={runtime} onChange={setRuntime} />
           </>
@@ -1376,7 +1376,7 @@ function RecentWorkSection({
       {top.length === 0 ? (
         <div className="py-6 text-center space-y-1">
           <p className="text-[12px] text-muted-foreground">
-            No edits yet — an edit is any file write this agent performs.
+            No edits yet. An edit is any file write this agent performs.
           </p>
           <p className="text-[11px] text-muted-foreground/60">
             Run a task to see entries here. Past runs appear in Conversations below.
@@ -1629,7 +1629,7 @@ function DetailsSection({
     <Section title={t("agents:detail.details")}>
       {persona.scope === "global" && (
         <div className="mb-3 rounded-lg border border-violet-500/30 bg-violet-500/10 px-3 py-2 text-[12px] text-violet-200">
-          <span className="font-medium">{t("agents:detail.editingGlobalAgent")}</span> — changes
+          <span className="font-medium">{t("agents:detail.editingGlobalAgent")}</span>: changes
           apply across every cabinet that uses this agent.
         </div>
       )}
@@ -1695,7 +1695,7 @@ function DetailsSection({
                   value={p.id}
                   disabled={!p.available && p.id !== persona.provider}
                 >
-                  {p.name}{p.available ? "" : " — install required"}
+                  {p.name}{p.available ? "" : " (install required)"}
                 </option>
               ))
             )}
@@ -1853,7 +1853,7 @@ function SkillsMultiSelect({
                 {isOn ? (
                   <Check className="size-3" />
                 ) : (
-                  <Sparkles className="size-3 text-muted-foreground/60" />
+                  <Asterisk className="size-3 text-muted-foreground/60" />
                 )}
                 {entry.name}
                 {/* Audit #029: only show the slug subscript when it's
@@ -1899,7 +1899,7 @@ function SkillsMultiSelect({
                     title={t("agents:detail.recommendedForRole")}
                     className="inline-flex items-center gap-1 rounded-full border border-dashed border-violet-500/40 bg-violet-500/5 px-2.5 py-1 text-[12.5px] font-medium text-violet-700 dark:text-violet-300 hover:bg-violet-500/15"
                   >
-                    <Sparkles className="size-3" />
+                    <Asterisk className="size-3" />
                     {rec.key}
                     <span className="ml-0.5 text-[10.5px] opacity-70">attach</span>
                   </button>
@@ -1910,7 +1910,7 @@ function SkillsMultiSelect({
                   key={rec.key}
                   type="button"
                   onClick={() => rec.source && setInstallSource(rec.source)}
-                  title={`Recommended but not installed — click to preview & install from ${rec.source}`}
+                  title={`Recommended but not installed. Click to preview & install from ${rec.source}`}
                   className="inline-flex items-center gap-1 rounded-full border border-dashed border-muted-foreground/30 bg-muted/40 px-2.5 py-1 text-[12.5px] font-medium text-muted-foreground hover:bg-muted/70"
                 >
                   <Download className="size-3" />

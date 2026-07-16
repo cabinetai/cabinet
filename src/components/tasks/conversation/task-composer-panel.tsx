@@ -328,7 +328,7 @@ export function TaskComposerPanel({
         <div className="mb-2 flex items-center gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
           <Terminal className="size-3" />
           <span>
-            Sending in <strong>terminal mode</strong> — opens a live PTY stream
+            Sending in <strong>terminal mode</strong>, which opens a live PTY stream
           </span>
         </div>
       ) : null}
@@ -344,7 +344,7 @@ export function TaskComposerPanel({
           <Terminal className="size-3 mt-[2px] shrink-0" />
           <span>
             <strong>{t("tinyExtras:headsUp")}</strong> mid-session skill mentions in terminal
-            mode reach the model via prompt text only — not as live{" "}
+            mode reach the model via prompt text only, not as live{" "}
             <code className="text-[10px]">/skill</code> commands. New tasks
             (non-terminal) get the full mount.
           </span>
@@ -380,7 +380,7 @@ export function TaskComposerPanel({
                 agents={[agent]}
                 selectedSlug={agent.slug}
                 disabled
-                disabledReason={`Continuing with ${agent.displayName ?? agent.name} — agent can't change mid-conversation`}
+                disabledReason={`Continuing with ${agent.displayName ?? agent.name}. The agent can't change mid-conversation`}
               />
             ) : null}
             <TaskRuntimePicker

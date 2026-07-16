@@ -16,7 +16,7 @@ import {
   Notebook,
   Quote,
   Slash,
-  Sparkles,
+  Asterisk,
   Table,
   Video,
 } from "lucide-react";
@@ -53,7 +53,7 @@ function SlideAnything() {
     { icon: ImageIcon, label: "Images", ext: ".png .jpg .svg" },
     { icon: Video, label: "Video", ext: ".mp4 .mov" },
     { icon: Music, label: "Audio", ext: ".mp3 .wav" },
-    { icon: Sparkles, label: "Mermaid", ext: ".mmd" },
+    { icon: Asterisk, label: "Mermaid", ext: ".mmd" },
   ];
 
   return (
@@ -66,7 +66,7 @@ function SlideAnything() {
       description={
         <>
           Markdown, spreadsheets, PDFs, notebooks, source code, images, video,
-          audio, mermaid diagrams — drop any file in your cabinet and Cabinet
+          audio, mermaid diagrams: drop any file in your cabinet and Cabinet
           knows how to render it.
         </>
       }
@@ -123,8 +123,8 @@ function SlideRenders() {
       }
       description={
         <>
-          Open a CSV — see a table. Open a notebook — see the cells.
-          Mermaid diagram — actual diagram. No detours, no downloads.
+          Open a CSV, see a table. Open a notebook, see the cells.
+          Mermaid diagram? Actual diagram. No detours, no downloads.
         </>
       }
     >
@@ -173,7 +173,7 @@ function SlideRenders() {
         {/* Mermaid preview */}
         <CardChrome width={380}>
           <div className="flex items-center gap-2 px-3 pt-2.5 pb-1.5">
-            <Sparkles className="h-3 w-3" style={{ color: P.accent }} />
+            <Asterisk className="h-3 w-3" style={{ color: P.accent }} />
             <span className="font-mono text-[10px]" style={{ color: P.textSecondary }}>
               org-chart.mmd
             </span>
@@ -209,7 +209,7 @@ function SlideSlash() {
     { icon: List, label: "Bullet List", hint: "Create a bullet list" },
     { icon: Code, label: "Code Block", hint: "Insert a code block" },
     { icon: Quote, label: "Blockquote", hint: "Insert a blockquote" },
-    { icon: Sparkles, label: "Math", hint: "Insert a LaTeX expression" },
+    { icon: Asterisk, label: "Math", hint: "Insert a LaTeX expression" },
     { icon: Table, label: "Table", hint: "Insert a 3×3 table" },
   ];
 
@@ -223,7 +223,7 @@ function SlideSlash() {
       description={
         <>
           Slash commands let you drop in headings, lists, code blocks,
-          callouts, math, embeds, and more — without taking your hands off the
+          callouts, math, embeds, and more, without taking your hands off the
           keyboard.
         </>
       }
@@ -447,7 +447,7 @@ function SlideYours() {
     { name: "Q2 review.md", depth: 2, icon: FileText },
     { name: "metrics.csv", depth: 2, icon: FileSpreadsheet },
     { name: "Engineering", depth: 1, icon: Folder, isFolder: true },
-    { name: "architecture.mmd", depth: 2, icon: Sparkles },
+    { name: "architecture.mmd", depth: 2, icon: Asterisk },
   ];
 
   return (
@@ -527,7 +527,7 @@ function SlideYours() {
 export function buildKnowledgeDemo(): DemoConfig {
   return {
     id: "knowledge",
-    ariaLabel: "Your knowledge base — guided demo",
+    ariaLabel: "Your knowledge base: guided demo",
     slides: [
       { id: "anything", render: () => <SlideAnything /> },
       { id: "renders", render: () => <SlideRenders /> },

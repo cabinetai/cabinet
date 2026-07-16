@@ -169,7 +169,7 @@ export function NotionConnectDialog({
               </div>
               <p className="max-w-xs text-[13px] leading-relaxed text-muted-foreground">
                 Unzipping, tidying page names, and rewriting links. Large workspaces
-                can take a moment — you can keep working while it finishes.
+                can take a moment. You can keep working while it finishes.
               </p>
             </div>
           )}
@@ -239,7 +239,7 @@ export function NotionConnectDialog({
             <ChooserCard
               icon={<FileArchive className="h-5 w-5" aria-hidden="true" />}
               title="Import from an export"
-              body="One-time import. Your pages become editable Markdown files in this room — offline, searchable, no account needed."
+              body="One-time import. Your pages become editable Markdown files in this room: offline, searchable, no account needed."
               onClick={() => setStep("export")}
             />
           )}
@@ -304,7 +304,7 @@ const EXPORT_STEPS = [
   },
   {
     title: "Grab the .zip",
-    body: "Notion prepares a .zip and downloads it — big workspaces arrive as an emailed link. Then choose it below.",
+    body: "Notion prepares a .zip and downloads it (big workspaces arrive as an emailed link). Then choose it below.",
   },
 ];
 
@@ -340,7 +340,7 @@ const EXPORT_ART = [
       Export
     </BtnMock>
     <Hint brand={BRAND}>
-      Use <b>Markdown &amp; CSV</b> — PDF/HTML won&apos;t import.
+      Use <b>Markdown &amp; CSV</b>. PDF/HTML won&apos;t import.
     </Hint>
   </MockWindow>,
 
@@ -353,7 +353,7 @@ const EXPORT_ART = [
       <span className="text-[10px] text-muted-foreground">34.8 MB</span>
     </div>
     <Hint brand={BRAND}>
-      Keep the <b>.zip</b> as-is — no need to unzip it first.
+      Keep the <b>.zip</b> as-is, no need to unzip it first.
     </Hint>
   </MockWindow>,
 ];

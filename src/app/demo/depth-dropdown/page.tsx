@@ -184,37 +184,37 @@ type Variant = {
 const VARIANTS: Variant[] = [
   {
     id: "a",
-    title: "A — Bordered pill (current tasks board)",
+    title: "A: Bordered pill (current tasks board)",
     summary:
       "The live DepthDropdown from tasks board, unchanged: `rounded-md border border-border/60`, Layers icon + shortLabel + chevron. Most structural/visible.",
     Trigger: TriggerA,
   },
   {
     id: "b",
-    title: "B — Ghost minimal",
+    title: "B: Ghost minimal",
     summary:
       "No border, transparent. Hover fills with `bg-muted/50`, open state stays filled. Same content (Layers + shortLabel + chevron). Lowest visual weight.",
     Trigger: TriggerB,
   },
   {
     id: "c",
-    title: "C — Text chip (no icon)",
+    title: "C: Text chip (no icon)",
     summary:
       "Matches the current sidebar's micro-uppercase treatment: no Layers icon, `font-semibold uppercase tracking-wide`. Tightest footprint; best if icon feels redundant.",
     Trigger: TriggerC,
   },
   {
     id: "d",
-    title: "D — Soft capsule",
+    title: "D: Soft capsule",
     summary:
       "Rounded-full pill with `bg-muted/50` + thin ring. Layers + shortLabel + chevron. Reads as a persistent chip / filter indicator even when not hovered.",
     Trigger: TriggerD,
   },
   {
     id: "e",
-    title: "E — Labeled (Depth: +1)",
+    title: "E: Labeled (Depth: +1)",
     summary:
-      "Ghost style but with a `Depth` word label next to the shortLabel. Most explicit — no title attribute needed — but takes the most horizontal space.",
+      "Ghost style but with a `Depth` word label next to the shortLabel. Most explicit (no title attribute needed) but takes the most horizontal space.",
     Trigger: TriggerE,
   },
 ];
@@ -419,7 +419,7 @@ const ICON_OPTIONS: Array<{
   {
     name: "Layers",
     Icon: Layers,
-    note: "Current. Abstract stacked sheets — reads as 'levels'.",
+    note: "Current. Abstract stacked sheets, reads as 'levels'.",
   },
   {
     name: "Layers3",
@@ -429,12 +429,12 @@ const ICON_OPTIONS: Array<{
   {
     name: "FolderTree",
     Icon: FolderTree,
-    note: "Literal folder hierarchy — matches the cabinet-tree metaphor directly.",
+    note: "Literal folder hierarchy, matches the cabinet-tree metaphor directly.",
   },
   {
     name: "ListTree",
     Icon: ListTree,
-    note: "Tree with leaves — the most common 'nested list' icon. Slightly busy.",
+    note: "Tree with leaves, the most common 'nested list' icon. Slightly busy.",
   },
   {
     name: "Network",
@@ -478,7 +478,7 @@ function IconAlternatesSection() {
       <h2 className="text-sm font-semibold text-foreground">Icon alternates</h2>
       <p className="mt-1 max-w-2xl text-[12px] leading-snug text-muted-foreground">
         The trigger above uses <code className="font-mono text-xs">Layers</code> by default.
-        Here&apos;s the same trigger (Variant B — ghost minimal) swapped across other
+        Here&apos;s the same trigger (Variant B, ghost minimal) swapped across other
         lucide icons that could represent &ldquo;depth of view into a cabinet hierarchy&rdquo;.
         Click any to open its menu and feel how it reads at the target size.
       </p>
@@ -523,7 +523,7 @@ export default function DepthDropdownDemoPage() {
       <div className="mx-auto max-w-6xl">
         <header className="mb-8">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Depth dropdown — unified trigger variants
+            Depth dropdown: unified trigger variants
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             Today the depth selector (<span className="tabular-nums">Own / +1 / +2 / All</span>) renders as a

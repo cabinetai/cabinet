@@ -420,7 +420,7 @@ export function SkillLibrary({ cabinetPath }: SkillLibraryProps = {}) {
                   <ChevronRight className="size-3" />
                 )}
                 <Download className="size-3" />
-                Discoverable in your workspace ({discovered.length}) — click to import
+                Discoverable in your workspace ({discovered.length}), click to import
               </button>
               {discoverOpen && (
                 <div className="flex flex-col gap-1.5 mt-1 ps-2 border-s border-border">

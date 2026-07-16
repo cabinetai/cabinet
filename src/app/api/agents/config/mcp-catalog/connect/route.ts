@@ -209,7 +209,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
     removableEnvKeys: entry.credentials.map((c) => c.envKey),
     note:
       entry.transport === "http"
-        ? "Removed. OAuth tokens are held by each CLI — revoke in the service for full removal."
+        ? "Removed. OAuth tokens are held by each CLI; revoke in the service for full removal."
         : "Removed. Saved credentials are kept unless you remove them.",
   });
 }

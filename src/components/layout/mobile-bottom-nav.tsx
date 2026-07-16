@@ -1,12 +1,12 @@
 "use client";
 
-import { Home, Users, ListChecks, Sparkles, Menu } from "lucide-react";
+import { Home, Users, ListChecks, Blocks, Asterisk, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import { useLocale } from "@/i18n/use-locale";
 
-type TabId = "home" | "agents" | "tasks" | "ai" | "menu";
+type TabId = "home" | "agents" | "tasks" | "integrations" | "ai" | "menu";
 
 interface TabSpec {
   id: TabId;
@@ -17,7 +17,8 @@ const TABS: TabSpec[] = [
   { id: "home", icon: Home },
   { id: "agents", icon: Users },
   { id: "tasks", icon: ListChecks },
-  { id: "ai", icon: Sparkles },
+  { id: "integrations", icon: Blocks },
+  { id: "ai", icon: Asterisk },
   { id: "menu", icon: Menu },
 ];
 
@@ -36,8 +37,8 @@ export function MobileBottomNav() {
       ? "agents"
       : section.type === "tasks" || section.type === "task"
         ? "tasks"
-        : section.type === "home"
-          ? "home"
+        : section.type === "integrations"
+          ? "integrations"
           : "home";
 
   const onSelect = (id: TabId) => {
@@ -65,6 +66,10 @@ export function MobileBottomNav() {
     }
     if (id === "tasks") {
       setSection({ type: "tasks", cabinetPath: ROOT_CABINET_PATH });
+      return;
+    }
+    if (id === "integrations") {
+      setSection({ type: "integrations" });
       return;
     }
   };
@@ -106,7 +111,9 @@ export function MobileBottomNav() {
                     isActive && "text-primary"
                   )}
                 />
-                <span>{label}</span>
+                {/* "Integrations" outgrows a 1/6-width tab on small phones —
+                    clip instead of letting the row overflow. */}
+                <span className="max-w-full truncate px-0.5">{label}</span>
               </button>
             </li>
           );

@@ -82,7 +82,7 @@ export function UninstallSection() {
         <span className="font-mono text-[11px] rounded bg-muted px-1 py-0.5">
           {dataPath}
         </span>{" "}
-        is <strong>not</strong> deleted — open that folder in Finder if you
+        is <strong>not</strong> deleted. Open that folder in Finder if you
         want to back it up before reinstalling.
       </p>
       <Button

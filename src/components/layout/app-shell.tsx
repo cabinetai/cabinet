@@ -423,13 +423,13 @@ export function AppShell() {
         title = base;
         break;
       case "page":
-        title = pageDisplayTitle ? `${pageDisplayTitle} — ${base}` : base;
+        title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
         break;
       case "cabinet":
-        title = pageDisplayTitle ? `${pageDisplayTitle} — ${base}` : base;
+        title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
         break;
       case "agents":
-        title = `Agents — ${base}`;
+        title = `Agents – ${base}`;
         break;
       case "agent":
         // Audit #025: title-case the slug so the tab title matches the
@@ -439,30 +439,30 @@ export function AppShell() {
           ? `${section.slug
               .split("-")
               .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))
-              .join(" ")} — ${base}`
-          : `Agents — ${base}`;
+              .join(" ")} – ${base}`
+          : `Agents – ${base}`;
         break;
       case "tasks":
-        title = `Tasks — ${base}`;
+        title = `Tasks – ${base}`;
         break;
       case "task":
-        title = `Task — ${base}`;
+        title = `Task – ${base}`;
         break;
       case "settings":
         // Audit #062: include the active settings tab in the title so window
         // history shows "Appearance — Settings — Cabinet" not just "Settings".
         title = section.slug
-          ? `${section.slug.charAt(0).toUpperCase() + section.slug.slice(1)} — Settings — ${base}`
-          : `Settings — ${base}`;
+          ? `${section.slug.charAt(0).toUpperCase() + section.slug.slice(1)} – Settings – ${base}`
+          : `Settings – ${base}`;
         break;
       case "help":
-        title = `Help — ${base}`;
+        title = `Help – ${base}`;
         break;
       case "registry":
-        title = `Registry — ${base}`;
+        title = `Registry – ${base}`;
         break;
       case "integrations":
-        title = `Integrations — ${base}`;
+        title = `Integrations – ${base}`;
         break;
       default:
         title = base;
@@ -678,7 +678,7 @@ export function AppShell() {
         | undefined;
       const fileName = detail?.fileName || "this file";
       const greeting = userFirstName
-        ? `Hi ${userFirstName} — what would you like to do in ${fileName}?`
+        ? `Hi ${userFirstName}, what would you like to do in ${fileName}?`
         : `What would you like to do in ${fileName}?`;
       useAppStore.getState().openTaskPanelCompose({
         source: "editor",

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Bot, Sparkles } from "lucide-react";
+import { FileText, Bot, Asterisk } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { MentionableItem } from "@/hooks/use-composer";
 
@@ -100,7 +100,7 @@ export function MentionDropdown({
           {visibleSkills.map((item) =>
             renderItem(
               item,
-              <Sparkles className="h-3.5 w-3.5 shrink-0 text-violet-500/70" />,
+              <Asterisk className="h-3.5 w-3.5 shrink-0 text-violet-500/70" />,
               "skill",
             ),
           )}

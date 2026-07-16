@@ -100,14 +100,14 @@ export const codexCliProvider: AgentProvider = {
     {
       id: "gpt-5.5",
       name: "GPT-5.5",
-      description: "Recommended default — strongest coding model (ChatGPT sign-in only)",
+      description: "Recommended default: strongest coding model (ChatGPT sign-in only)",
       requires: "chatgpt_plan",
       effortLevels: [...CODEX_EXTENDED_REASONING_LEVELS],
     },
     {
       id: "gpt-5.4",
       name: "GPT-5.4",
-      description: "Previous flagship — works with both ChatGPT and API key",
+      description: "Previous flagship, works with both ChatGPT and API key",
       requires: "any",
       effortLevels: [...CODEX_EXTENDED_REASONING_LEVELS],
     },

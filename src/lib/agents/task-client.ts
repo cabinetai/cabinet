@@ -107,7 +107,7 @@ export async function postTurn(
   } catch (err) {
     if (err instanceof DOMException && err.name === "TimeoutError") {
       throw new Error(
-        "The server didn't accept the message within 30 seconds — it may be restarting. Your draft was kept; try again."
+        "The server didn't accept the message within 30 seconds. It may be restarting. Your draft was kept; try again."
       );
     }
     throw err;

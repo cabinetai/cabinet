@@ -8,7 +8,7 @@ import { Command, Palette, Settings as SettingsIcon } from "lucide-react";
 import {
   FileText,
   Search as SearchIcon,
-  Sparkles,
+  Asterisk,
   Tag as TagIcon,
   User,
   CheckSquare,
@@ -704,7 +704,7 @@ export function SearchPalette() {
                     <div className="mt-3">
                       {!aiPending && !aiResult && (
                         <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={askAi}>
-                          <Sparkles className="h-3 w-3" />
+                          <Asterisk className="h-3 w-3" />
                           Ask the cabinet
                         </Button>
                       )}
@@ -928,7 +928,7 @@ function DetailPane({
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="border-b border-border px-4 py-3">
           <div className="flex items-center gap-2 text-[12px] font-medium">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <Asterisk className="h-3.5 w-3.5 text-primary" />
             Cabinet AI answer
           </div>
         </div>
@@ -1003,7 +1003,7 @@ function PageDetail({
         {hit.matches.length === 0 ? (
           <p className="text-[12px] text-muted-foreground">
             Matched by{" "}
-            {hit.matchedFields.join(", ") || "title"}. No inline snippet — try broadening your query.
+            {hit.matchedFields.join(", ") || "title"}. No inline snippet. Try broadening your query.
           </p>
         ) : (
           <ol className="space-y-2">

@@ -107,7 +107,7 @@ export function LogsPanel({
               {meta.lastResumeAttempt ? (
                 <p className="text-[11px] leading-relaxed text-muted-foreground">
                   Last attempt: <span className="font-medium">{meta.lastResumeAttempt.result}</span>
-                  {meta.lastResumeAttempt.reason ? ` — ${meta.lastResumeAttempt.reason}` : ""}
+                  {meta.lastResumeAttempt.reason ? `: ${meta.lastResumeAttempt.reason}` : ""}
                   {" ("}
                   {new Date(meta.lastResumeAttempt.at).toLocaleTimeString()}
                   {")"}

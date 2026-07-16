@@ -212,7 +212,7 @@ export function CabinetTaskComposer({
           </div>
           <p className="font-medium text-foreground">No agents in this cabinet yet</p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            Add your first agent to start delegating work — then this composer comes alive.
+            Add your first agent to start delegating work, then this composer comes alive.
           </p>
           <button
             type="button"
