@@ -19,6 +19,13 @@ export interface WhatsAppGatewayConfig {
   channel: string;
   /** Include the account's own outgoing messages (WHATSAPP_INCLUDE_FROM_ME=1). */
   includeFromMe: boolean;
+  /**
+   * Manual-testing knob: phone number (digits + country code, no "+") used to
+   * request a Baileys pairing code instead of printing a QR, for any account
+   * that has no saved session yet. WHATSAPP_PAIRING_PHONE. Not part of the
+   * public feature surface yet — see docs/WHATSAPP_CONNECTOR.md.
+   */
+  pairingPhone?: string | null;
 }
 
 function envValue(key: string): string | null {
@@ -56,6 +63,7 @@ export function readWhatsAppGatewayConfig(): WhatsAppGatewayConfig {
     accounts: parseAccounts(envValue("WHATSAPP_ACCOUNTS")),
     channel: envValue("WHATSAPP_CHANNEL") ?? "whatsapp",
     includeFromMe: envValue("WHATSAPP_INCLUDE_FROM_ME") === "1",
+    pairingPhone: envValue("WHATSAPP_PAIRING_PHONE"),
   };
 }
 

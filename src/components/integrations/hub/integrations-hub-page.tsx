@@ -14,6 +14,7 @@ import { LayoutGallery } from "@/components/integrations/hub/layouts/layout-gall
 import { useAppStore } from "@/stores/app-store";
 import { CliMcpSection } from "@/components/settings/cli-mcp-section";
 import { ApiKeysSection } from "@/components/settings/api-keys-section";
+import { WhatsAppPairingStatus } from "@/components/settings/whatsapp-pairing-status";
 import { BuiltInToolsSection } from "@/components/settings/built-in-tools-section";
 
 /**
@@ -205,8 +206,9 @@ export function IntegrationsHubPage() {
         )}
         {tab === "keys" && (
           <div className="h-full overflow-y-auto">
-            <div className="mx-auto max-w-4xl px-6 py-6">
+            <div className="mx-auto max-w-4xl px-6 py-6 space-y-4">
               <ApiKeysSection />
+              <WhatsAppPairingStatus />
             </div>
           </div>
         )}

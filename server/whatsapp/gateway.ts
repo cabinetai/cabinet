@@ -198,7 +198,9 @@ async function startInstance(cfg: WhatsAppGatewayConfig): Promise<void> {
   const bus = new MessageBus();
   const unsubscribe = bus.subscribe(makeSink(cfg));
 
-  const connections = cfg.accounts.map((acct) => new AccountConnection(acct, STORE_DIR, bus, log));
+  const connections = cfg.accounts.map(
+    (acct) => new AccountConnection(acct, STORE_DIR, bus, log, cfg.pairingPhone)
+  );
 
   instance = {
     connections,

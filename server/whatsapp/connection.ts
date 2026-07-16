@@ -47,6 +47,7 @@ export class AccountConnection {
   private status: ConnectionStatus = "connecting";
   private readonly authDir: string;
   private readonly qrPath: string;
+  private readonly statusPath: string;
   private sock: ReturnType<typeof makeWASocket> | undefined;
   private stopped = false;
 
@@ -54,12 +55,28 @@ export class AccountConnection {
     account: AccountConfig,
     storeDir: string,
     private readonly bus: MessageBus,
-    private readonly log: (line: string) => void
+    private readonly log: (line: string) => void,
+    private readonly pairingPhone?: string | null
   ) {
     this.id = account.id;
     this.label = account.label ?? account.id;
     this.authDir = path.join(storeDir, account.id);
     this.qrPath = path.join(path.dirname(this.authDir), `qr-${account.id}.txt`);
+    // Manual-testing surface: mirrors status/pairing-code so the Settings UI
+    // can poll instead of tailing the daemon log. Not a public feature yet.
+    this.statusPath = path.join(path.dirname(this.authDir), `status-${account.id}.json`);
+  }
+
+  private writeStatusFile(extra: Record<string, unknown> = {}): void {
+    try {
+      fs.writeFileSync(
+        this.statusPath,
+        JSON.stringify({ status: this.status, updatedAt: new Date().toISOString(), ...extra }),
+        { mode: 0o600 }
+      );
+    } catch {
+      /* best-effort */
+    }
   }
 
   getStatus(): ConnectionStatus {
@@ -110,13 +127,35 @@ export class AccountConnection {
       markOnlineOnConnect: false,
     });
     this.sock = sock;
+    this.writeStatusFile();
 
     sock.ev.on("creds.update", saveCreds);
+
+    // Manual-testing path: request a pairing code instead of waiting for the
+    // QR event. Only meaningful on first pairing (no saved session yet).
+    if (!state.creds.registered && this.pairingPhone) {
+      this.status = "pairing";
+      this.writeStatusFile({ method: "code" });
+      sock
+        .requestPairingCode(this.pairingPhone)
+        .then((code) => {
+          this.log(
+            `[${this.id}] pairing code: ${code} — enter it in WhatsApp → ` +
+              `Settings → Linked Devices → Link a Device → Link with phone number instead`
+          );
+          this.writeStatusFile({ method: "code", code });
+        })
+        .catch((err) => {
+          const message = err instanceof Error ? err.message : String(err);
+          this.log(`[${this.id}] failed to request pairing code: ${message}`);
+          this.writeStatusFile({ method: "code", error: message });
+        });
+    }
 
     sock.ev.on("connection.update", (update) => {
       const { connection, lastDisconnect, qr } = update;
 
-      if (qr) {
+      if (qr && !this.pairingPhone) {
         this.status = "pairing";
         this.log(
           `[${this.id}] pairing required — scan this QR with WhatsApp ` +
@@ -128,12 +167,14 @@ export class AccountConnection {
         } catch {
           /* QR file is a convenience for future UI; terminal print suffices */
         }
+        this.writeStatusFile({ method: "qr" });
       }
 
       if (connection === "open") {
         this.status = "open";
         this.clearQrFile();
         this.log(`[${this.id}] connected`);
+        this.writeStatusFile();
       } else if (connection === "close") {
         this.status = "close";
         const reason = (lastDisconnect?.error as { output?: { statusCode?: number } })?.output
@@ -143,8 +184,10 @@ export class AccountConnection {
         if (this.stopped) return;
         if (loggedOut) {
           this.log(`[${this.id}] logged out — delete ${this.authDir} and re-pair`);
+          this.writeStatusFile({ loggedOut: true });
           return;
         }
+        this.writeStatusFile({ reason: reason ?? null });
         // Reconnect; one delayed retry if the immediate attempt throws.
         this.connect().catch(() => {
           setTimeout(() => {
