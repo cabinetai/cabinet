@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { encryptPassword } from "@/lib/gmail/crypto";
-import { validateCredentials } from "@/lib/gmail/imap-client";
+import { accountKey, validateCredentials } from "@/lib/gmail/imap-client";
 import { installGmailSkill } from "@/lib/gmail/skill";
 
 export async function POST(request: NextRequest) {
@@ -26,13 +26,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Rows are keyed by lowercased email — each connect adds (or refreshes)
+    // one account; other connected accounts are untouched.
+    const id = accountKey(email);
     const encrypted = encryptPassword(password);
     const db = getDb();
     db.prepare(
       `INSERT INTO gmail_credentials (id, method, email, imap_password)
-       VALUES ('default', 'imap', ?, ?)
+       VALUES (?, 'imap', ?, ?)
        ON CONFLICT(id) DO UPDATE SET email = excluded.email, imap_password = excluded.imap_password, method = 'imap'`
-    ).run(email, encrypted);
+    ).run(id, email, encrypted);
 
     // Install the Gmail skill so agents can use email tools immediately. If
     // this fails, roll back the just-stored credentials so the persisted state
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest) {
     try {
       await installGmailSkill();
     } catch (err) {
-      db.prepare("DELETE FROM gmail_credentials WHERE id = 'default'").run();
+      db.prepare("DELETE FROM gmail_credentials WHERE id = ?").run(id);
       throw err;
     }
 

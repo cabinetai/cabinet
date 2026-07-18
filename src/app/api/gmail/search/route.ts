@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       unseen: unseenStr === "true" ? true : undefined,
     };
 
-    const results = await searchEmails(criteria);
+    const results = await searchEmails(criteria, searchParams.get("account") ?? undefined);
     return NextResponse.json({ results });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

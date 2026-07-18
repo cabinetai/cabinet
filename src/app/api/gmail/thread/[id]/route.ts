@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { readThread } from "@/lib/gmail/imap-client";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -11,7 +11,8 @@ export async function GET(
       return NextResponse.json({ error: "Message ID is required" }, { status: 400 });
     }
 
-    const thread = await readThread(decodeURIComponent(id));
+    const account = request.nextUrl.searchParams.get("account") ?? undefined;
+    const thread = await readThread(decodeURIComponent(id), account);
     return NextResponse.json(thread);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Mail, CheckCircle, Loader2, Trash2 } from "lucide-react";
+import { Mail, CheckCircle, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+interface GmailAccount {
+  email: string;
+  needsReconnect: boolean;
+  lastIndexed: string | null;
+}
 
 interface GmailStatus {
   connected: boolean;
@@ -11,6 +17,7 @@ interface GmailStatus {
   email: string | null;
   method: "imap" | null;
   lastIndexed: string | null;
+  accounts?: GmailAccount[];
 }
 
 export function GmailSection() {
@@ -19,16 +26,15 @@ export function GmailSection() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [connecting, setConnecting] = useState(false);
-  const [disconnecting, setDisconnecting] = useState(false);
+  const [disconnecting, setDisconnecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
 
   const loadStatus = useCallback(async () => {
     try {
       const res = await fetch("/api/gmail/status", { cache: "no-store" });
       const data = await res.json() as GmailStatus;
       setStatus(data);
-      // Reconnect flow: keep the saved address so only the password is retyped.
-      if (data.needsReconnect && data.email) setEmail((v) => v || data.email!);
     } catch {
       // ignore
     } finally {
@@ -39,6 +45,9 @@ export function GmailSection() {
   useEffect(() => {
     void loadStatus();
   }, [loadStatus]);
+
+  const accounts = status?.accounts ?? [];
+  const showForm = accounts.length === 0 || adding;
 
   const handleConnect = async () => {
     setError(null);
@@ -56,6 +65,7 @@ export function GmailSection() {
       }
       setEmail("");
       setPassword("");
+      setAdding(false);
       await loadStatus();
       window.dispatchEvent(
         new CustomEvent("cabinet:toast", {
@@ -69,18 +79,20 @@ export function GmailSection() {
     }
   };
 
-  const handleDisconnect = async () => {
-    setDisconnecting(true);
+  const handleDisconnect = async (account: string) => {
+    setDisconnecting(account);
     try {
-      await fetch("/api/gmail/disconnect", { method: "DELETE" });
+      await fetch(`/api/gmail/disconnect?account=${encodeURIComponent(account)}`, {
+        method: "DELETE",
+      });
       await loadStatus();
       window.dispatchEvent(
         new CustomEvent("cabinet:toast", {
-          detail: { kind: "info", message: "Gmail disconnected" },
+          detail: { kind: "info", message: `Disconnected ${account}` },
         })
       );
     } finally {
-      setDisconnecting(false);
+      setDisconnecting(null);
     }
   };
 
@@ -97,53 +109,87 @@ export function GmailSection() {
       <div>
         <h3 className="text-[14px] font-semibold mb-1">Gmail</h3>
         <p className="text-[12px] text-muted-foreground">
-          Connect Gmail via IMAP so agents can read, search, and summarize your inbox. Sending always requires your approval.
+          Connect one or more Gmail accounts via IMAP so agents can read, search, and summarize your inbox. Sending always requires your approval.
         </p>
       </div>
 
-      {status?.connected ? (
-        /* Connected state */
-        <div className="space-y-3">
-          <div className="flex items-start gap-2.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5">
-            <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-            <div className="text-[12px]">
-              <div className="font-medium text-emerald-700 dark:text-emerald-400">
-                Connected via IMAP
-              </div>
-              <div className="text-muted-foreground mt-0.5">{status.email}</div>
-              {status.lastIndexed && (
-                <div className="text-muted-foreground/70 mt-0.5 text-[11px]">
-                  Last indexed: {new Date(status.lastIndexed).toLocaleString()}
+      {accounts.length > 0 && (
+        <div className="space-y-2">
+          {accounts.map((account) => (
+            <div
+              key={account.email}
+              className={
+                account.needsReconnect
+                  ? "flex items-start justify-between gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5"
+                  : "flex items-start justify-between gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5"
+              }
+            >
+              <div className="flex items-start gap-2.5 min-w-0">
+                <CheckCircle
+                  className={
+                    account.needsReconnect
+                      ? "h-4 w-4 text-amber-500 mt-0.5 shrink-0"
+                      : "h-4 w-4 text-emerald-500 mt-0.5 shrink-0"
+                  }
+                />
+                <div className="text-[12px] min-w-0">
+                  <div className="truncate font-medium">{account.email}</div>
+                  {account.needsReconnect ? (
+                    <div className="text-amber-700 dark:text-amber-300 mt-0.5">
+                      Reconnect needed — Cabinet can no longer read the saved App
+                      Password (its encryption key changed).{" "}
+                      <button
+                        type="button"
+                        className="underline underline-offset-2"
+                        onClick={() => {
+                          setEmail(account.email);
+                          setAdding(true);
+                        }}
+                      >
+                        Re-enter it
+                      </button>
+                    </div>
+                  ) : account.lastIndexed ? (
+                    <div className="text-muted-foreground/70 mt-0.5 text-[11px]">
+                      Last indexed: {new Date(account.lastIndexed).toLocaleString()}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground mt-0.5 text-[11px]">Connected via IMAP</div>
+                  )}
                 </div>
-              )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-[11px] text-destructive hover:text-destructive shrink-0"
+                disabled={disconnecting === account.email}
+                onClick={() => handleDisconnect(account.email)}
+              >
+                {disconnecting === account.email ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="h-3.5 w-3.5" />
+                )}
+              </Button>
             </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-[12px] text-destructive hover:text-destructive"
-            disabled={disconnecting}
-            onClick={handleDisconnect}
-          >
-            {disconnecting ? (
-              <Loader2 className="h-3.5 w-3.5 me-1.5 animate-spin" />
-            ) : (
-              <Trash2 className="h-3.5 w-3.5 me-1.5" />
-            )}
-            Disconnect Gmail
-          </Button>
-        </div>
-      ) : (
-        /* Not connected state */
-        <div className="space-y-3">
-          {status?.needsReconnect && (
-            <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-[12px] text-amber-900 dark:text-amber-100">
-              <span className="font-medium">Reconnect needed.</span> Cabinet can no
-              longer read the saved App Password for {status.email} (its encryption
-              key changed). Paste the App Password again — the one Google already
-              gave you usually still works.
-            </div>
+          ))}
+
+          {!showForm && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-[12px]"
+              onClick={() => setAdding(true)}
+            >
+              <Plus className="h-3.5 w-3.5 me-1.5" />
+              Add another account
+            </Button>
           )}
+        </div>
+      )}
+
+      {showForm && (
+        <div className="space-y-3">
           <div className="space-y-2">
             <label className="text-[12px] font-medium" htmlFor="gmail-email">
               Gmail address
@@ -177,19 +223,34 @@ export function GmailSection() {
             <p className="text-[12px] text-destructive">{error}</p>
           )}
 
-          <Button
-            size="sm"
-            className="text-[12px]"
-            disabled={connecting || !email || !password}
-            onClick={handleConnect}
-          >
-            {connecting ? (
-              <Loader2 className="h-3.5 w-3.5 me-1.5 animate-spin" />
-            ) : (
-              <Mail className="h-3.5 w-3.5 me-1.5" />
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              className="text-[12px]"
+              disabled={connecting || !email || !password}
+              onClick={handleConnect}
+            >
+              {connecting ? (
+                <Loader2 className="h-3.5 w-3.5 me-1.5 animate-spin" />
+              ) : (
+                <Mail className="h-3.5 w-3.5 me-1.5" />
+              )}
+              Connect
+            </Button>
+            {accounts.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[12px]"
+                onClick={() => {
+                  setAdding(false);
+                  setError(null);
+                }}
+              >
+                Cancel
+              </Button>
             )}
-            Connect
-          </Button>
+          </div>
         </div>
       )}
 
