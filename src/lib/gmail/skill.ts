@@ -40,6 +40,15 @@ Search params:
 - \`since\` — ISO date (e.g. \`2024-01-15\`)
 - \`before\` — ISO date
 - \`unseen\` — \`true\` for unread only
+- \`account\` — which connected Gmail account to use (its email address)
+
+## Multiple accounts
+
+More than one Gmail account can be connected. \`GET ${origin}/api/gmail/status\` returns an
+\`accounts\` array (\`{email, needsReconnect}\`); skip accounts with \`needsReconnect: true\`.
+Every read endpoint accepts \`?account=EMAIL\` (POST endpoints take \`"account"\` in the body).
+Omitting it uses the first-connected account — fine when only one is connected, ambiguous
+otherwise, so pass it explicitly whenever \`accounts\` has more than one entry.
 
 ## Sending emails
 
