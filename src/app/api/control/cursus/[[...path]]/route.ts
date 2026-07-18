@@ -50,8 +50,11 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
     const path = (await params).path?.join("/");
     const workspaceId = new URL(request.url).searchParams.get("workspaceId") ?? "";
     const controlPlane = getCursusControlPlane();
-    if (path === "workspaces/snapshot" || path === "workspaces/run-status") {
+    if (path === "workspaces/snapshot") {
       return NextResponse.json(controlPlane.readSnapshot(workspaceId, authorizationToken(request) ?? ""));
+    }
+    if (path === "workspaces/run-status") {
+      return NextResponse.json(controlPlane.readWorkspaceRunStatus(workspaceId, authorizationToken(request) ?? ""));
     }
     throw new CursusControlPlaneError("route_not_found", 404, "Cursus control-plane route was not found");
   } catch (error) {
@@ -122,6 +125,15 @@ export async function POST(request: NextRequest, { params }: RouteParams): Promi
           workspaceId: bodyValue(body, "workspaceId") ?? "",
           authorizationToken: authorizationToken(request) ?? "",
           receipt: bodyValue(body, "receipt") ?? "",
+          expectedAction: bodyValue(body, "expectedAction") ?? "",
+        }));
+      case "verification-receipts":
+        return NextResponse.json(controlPlane.issueVerificationReceipt({
+          workspaceId: bodyValue(body, "workspaceId") ?? "",
+          authorizationToken: authorizationToken(request) ?? "",
+          report: body.report,
+          expectedRevision: body.expectedRevision,
+          snapshotHash: bodyValue(body, "snapshotHash"),
         }));
       default:
         throw new CursusControlPlaneError("route_not_found", 404, "Cursus control-plane route was not found");

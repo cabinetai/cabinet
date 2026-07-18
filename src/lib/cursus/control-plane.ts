@@ -53,6 +53,68 @@ type AuthorizationRecord = {
   revoked_at: number | null;
 };
 
+const CANONICAL_RUN_STATES: Record<string, true> = {
+  INBOXED: true,
+  SCOPING: true,
+  NEEDS_INTERVIEW: true,
+  GATED: true,
+  RUNNING: true,
+  VERIFYING: true,
+  BLOCKED: true,
+  DONE: true,
+  ARCHIVED: true,
+};
+
+const ALLOWED_RUN_STATE_TRANSITIONS: Record<string, Record<string, true>> = {
+  INBOXED: { SCOPING: true, NEEDS_INTERVIEW: true },
+  SCOPING: { NEEDS_INTERVIEW: true, GATED: true, BLOCKED: true },
+  NEEDS_INTERVIEW: { GATED: true, BLOCKED: true },
+  GATED: { RUNNING: true, BLOCKED: true },
+  RUNNING: { RUNNING: true, VERIFYING: true, BLOCKED: true },
+  VERIFYING: { RUNNING: true, BLOCKED: true, DONE: true },
+  BLOCKED: { SCOPING: true, NEEDS_INTERVIEW: true, GATED: true },
+  DONE: { ARCHIVED: true },
+  ARCHIVED: {},
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function readRunState(snapshot: unknown): string | null {
+  if (!isRecord(snapshot) || typeof snapshot.stage !== "string" || !CANONICAL_RUN_STATES[snapshot.stage]) return null;
+  return snapshot.stage;
+}
+
+function validateRunStateTransition(previousSnapshot: unknown, nextSnapshot: unknown): boolean {
+  const previousStage = isRecord(previousSnapshot) && Object.hasOwn(previousSnapshot, "stage") ? previousSnapshot.stage : undefined;
+  const nextStage = isRecord(nextSnapshot) && Object.hasOwn(nextSnapshot, "stage") ? nextSnapshot.stage : undefined;
+  if (previousStage !== undefined && (typeof previousStage !== "string" || !CANONICAL_RUN_STATES[previousStage])) {
+    fail("stored_snapshot_invalid", 500, "Workspace snapshot has an invalid run state");
+  }
+  if (nextStage !== undefined && (typeof nextStage !== "string" || !CANONICAL_RUN_STATES[nextStage])) {
+    fail("run_state_invalid", 400, "Workspace snapshot has an invalid run state");
+  }
+  if (previousStage === nextStage || (previousStage === undefined && nextStage === undefined)) return false;
+  if (previousStage === undefined) {
+    if (nextStage === "INBOXED") return false;
+    fail("run_transition_not_allowed", 409, "A new run must begin in INBOXED");
+  }
+  if (nextStage === undefined || !ALLOWED_RUN_STATE_TRANSITIONS[previousStage][nextStage]) {
+    fail("run_transition_not_allowed", 409, `Cannot move this run from ${previousStage} to ${String(nextStage)}`);
+  }
+  return previousStage === "VERIFYING" && nextStage === "DONE";
+}
+
+function readRunStatus(snapshot: unknown): { state: string | null; verification: "passed" | "pending"; sourceCount: number; artifactCount: number } {
+  const state = readRunState(snapshot);
+  const sources = isRecord(snapshot) && Array.isArray(snapshot.sources) ? snapshot.sources : [];
+  const loopRun = isRecord(snapshot) && isRecord(snapshot.loopRun) ? snapshot.loopRun : null;
+  const artifacts = loopRun && Array.isArray(loopRun.artifacts) ? loopRun.artifacts : [];
+  const verificationPassed = isRecord(snapshot) && isRecord(snapshot.verification) && snapshot.verification.pass === true;
+  return { state, verification: verificationPassed ? "passed" : "pending", sourceCount: sources.length, artifactCount: artifacts.length };
+}
+
 export type CursusControlPlaneConfig = {
   rpID: string;
   allowedOrigins: readonly string[];
@@ -388,10 +450,24 @@ export class CursusControlPlane {
     const expiresAt = nowMs() + this.authorizationTtlMs;
     this.db.transaction(() => {
       const update = this.db.prepare("UPDATE cursus_passkey_credentials SET counter = ?, updated_at = ? WHERE credential_id = ? AND counter = ?").run(newCounter, nowMs(), credential.credential_id, credential.counter);
+
       if (update.changes !== 1) fail("credential_counter_conflict", 409, "Passkey credential changed during authentication");
       this.db.prepare("INSERT INTO cursus_workspace_authorization_sessions (token_hash, workspace_id, principal_id, credential_id, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?)").run(tokenHash(workspaceAuthorization), workspaceId, credential.principal_id, credential.credential_id, expiresAt, nowMs());
     })();
     return { workspaceAuthorization, expiresAt, principalId: credential.principal_id };
+  }
+
+  readWorkspaceRunStatus(workspaceId: string, authorizationToken: string): { workspaceId: string; revision: number; run: { state: string | null; verification: "passed" | "pending"; sourceCount: number; artifactCount: number } } {
+    this.mustAuthorize(requireNonEmpty(workspaceId, "workspaceId"), requireNonEmpty(authorizationToken, "workspace authorization"), nowMs());
+    const row = this.db.prepare("SELECT revision, snapshot_json FROM cursus_workspaces WHERE workspace_id = ?").get(workspaceId) as { revision: number; snapshot_json: string } | undefined;
+    if (!row) fail("workspace_not_found", 404, "Workspace does not exist");
+    let snapshot: unknown;
+    try {
+      snapshot = JSON.parse(row.snapshot_json);
+    } catch {
+      fail("stored_snapshot_invalid", 500, "Workspace snapshot could not be read");
+    }
+    return { workspaceId, revision: row.revision, run: readRunStatus(snapshot) };
   }
 
   readSnapshot(workspaceId: string, authorizationToken: string): { workspaceId: string; revision: number; snapshot: unknown } {
@@ -413,12 +489,28 @@ export class CursusControlPlane {
       fail("invalid_snapshot", 400, "snapshot must be JSON serializable");
     }
     if (snapshotJson === undefined) fail("invalid_snapshot", 400, "snapshot must be JSON serializable");
-    const result = this.db.prepare("UPDATE cursus_workspaces SET snapshot_json = ?, revision = revision + 1, updated_at = ? WHERE workspace_id = ? AND revision = ?").run(snapshotJson, nowMs(), workspaceId, expectedRevision);
-    if (result.changes !== 1) {
-      const row = this.db.prepare("SELECT revision FROM cursus_workspaces WHERE workspace_id = ?").get(workspaceId) as { revision: number } | undefined;
-      if (!row) fail("workspace_not_found", 404, "Workspace does not exist");
-      fail("revision_conflict", 409, "Workspace snapshot revision is stale", { revision: row.revision });
-    }
+    this.db.transaction(() => {
+      const current = this.db.prepare("SELECT revision, snapshot_json FROM cursus_workspaces WHERE workspace_id = ?").get(workspaceId) as { revision: number; snapshot_json: string } | undefined;
+      if (!current) fail("workspace_not_found", 404, "Workspace does not exist");
+      if (current.revision !== expectedRevision) {
+        fail("revision_conflict", 409, "Workspace snapshot revision is stale", { revision: current.revision });
+      }
+      let previousSnapshot: unknown;
+      try {
+        previousSnapshot = JSON.parse(current.snapshot_json);
+      } catch {
+        fail("stored_snapshot_invalid", 500, "Workspace snapshot could not be read");
+      }
+      const finalizing = validateRunStateTransition(previousSnapshot, input.snapshot);
+      if (finalizing) {
+        const verificationReceipt = isRecord(input.snapshot) && typeof input.snapshot.verificationReceipt === "string"
+          ? input.snapshot.verificationReceipt
+          : "";
+        this.consumeVerificationReceipt(workspaceId, verificationReceipt, current.revision, current.snapshot_json);
+      }
+      const result = this.db.prepare("UPDATE cursus_workspaces SET snapshot_json = ?, revision = revision + 1, updated_at = ? WHERE workspace_id = ? AND revision = ?").run(snapshotJson, nowMs(), workspaceId, expectedRevision);
+      if (result.changes !== 1) fail("revision_conflict", 409, "Workspace snapshot revision is stale");
+    })();
     return { workspaceId, revision: expectedRevision + 1 };
   }
 
@@ -444,23 +536,69 @@ export class CursusControlPlane {
     return { receipt, expiresAt };
   }
 
-  consumeReceipt(input: { workspaceId: string; authorizationToken: string; receipt: string }): { workspaceId: string; principalId: string; action: string; payload: unknown } {
+  issueVerificationReceipt(input: { workspaceId: string; authorizationToken: string; report: unknown; expectedRevision: unknown; snapshotHash: unknown }): { receipt: string; expiresAt: number } {
+    const workspaceId = requireNonEmpty(input.workspaceId, "workspaceId");
+    this.mustAuthorize(workspaceId, requireNonEmpty(input.authorizationToken, "workspace authorization"), nowMs());
+    if (typeof input.expectedRevision !== "number" || !Number.isSafeInteger(input.expectedRevision) || input.expectedRevision < 0 || typeof input.snapshotHash !== "string" || !/^[A-Za-z0-9_-]{43}$/.test(input.snapshotHash)) {
+      fail("verification_receipt_request_invalid", 400, "Verification receipt request is invalid");
+    }
+    const expectedRevision = input.expectedRevision as number;
+    const snapshotHash = input.snapshotHash as string;
+    if (!isRecord(input.report) || input.report.pass !== true || !Array.isArray(input.report.criteria) || input.report.criteria.length === 0 ||
+      input.report.criteria.some((criterion) => !isRecord(criterion) || criterion.pass !== true || typeof criterion.criterion !== "string" || !criterion.criterion.trim() || typeof criterion.evidence !== "string" || !criterion.evidence.trim()) ||
+      (Array.isArray(input.report.unresolved) && input.report.unresolved.length > 0) ||
+      (Array.isArray(input.report.blockers) && input.report.blockers.length > 0)) {
+      fail("verification_report_invalid", 400, "A passing independent verification report is required");
+    }
+    const workspace = this.db.prepare("SELECT revision, snapshot_json FROM cursus_workspaces WHERE workspace_id = ?").get(workspaceId) as { revision: number; snapshot_json: string } | undefined;
+    if (!workspace) fail("workspace_not_found", 404, "Workspace does not exist");
+    if (workspace.revision !== expectedRevision || tokenHash(workspace.snapshot_json) !== snapshotHash) {
+      fail("verification_snapshot_conflict", 409, "Workspace changed before verification receipt issuance");
+    }
+    const reportJson = JSON.stringify(input.report);
+    const receiptId = randomUUID();
+    const receipt = `${receiptId}.${this.sign(receiptId)}`;
+    const expiresAt = nowMs() + this.receiptTtlMs;
+    this.db.prepare("INSERT INTO cursus_verification_receipts (receipt_id, receipt_hash, workspace_id, report_json, snapshot_revision, snapshot_hash, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)").run(receiptId, tokenHash(receipt), workspaceId, reportJson, workspace.revision, snapshotHash, expiresAt, nowMs());
+    return { receipt, expiresAt };
+  }
+
+  consumeReceipt(input: { workspaceId: string; authorizationToken: string; receipt: string; expectedAction: string }): { workspaceId: string; principalId: string; action: string; payload: unknown } {
     const workspaceId = requireNonEmpty(input.workspaceId, "workspaceId");
     this.mustAuthorize(workspaceId, requireNonEmpty(input.authorizationToken, "workspace authorization"), nowMs());
     const receipt = requireNonEmpty(input.receipt, "receipt");
+    const expectedAction = requireNonEmpty(input.expectedAction, "expectedAction");
     const [receiptId, signature, ...extra] = receipt.split(".");
     if (!receiptId || !signature || extra.length !== 0 || !this.signatureMatches(receiptId, signature)) fail("invalid_receipt", 403, "Approval receipt is invalid");
     const now = nowMs();
-    const result = this.db.prepare("UPDATE cursus_approval_receipts SET consumed_at = ? WHERE receipt_id = ? AND receipt_hash = ? AND workspace_id = ? AND consumed_at IS NULL AND expires_at > ?").run(now, receiptId, tokenHash(receipt), workspaceId, now);
+    const result = this.db.prepare("UPDATE cursus_approval_receipts SET consumed_at = ? WHERE receipt_id = ? AND receipt_hash = ? AND workspace_id = ? AND action = ? AND consumed_at IS NULL AND expires_at > ?").run(now, receiptId, tokenHash(receipt), workspaceId, expectedAction, now);
     if (result.changes !== 1) {
-      const row = this.db.prepare("SELECT workspace_id, consumed_at, expires_at FROM cursus_approval_receipts WHERE receipt_id = ? AND receipt_hash = ?").get(receiptId, tokenHash(receipt)) as { workspace_id: string; consumed_at: number | null; expires_at: number } | undefined;
+      const row = this.db.prepare("SELECT workspace_id, action, consumed_at, expires_at FROM cursus_approval_receipts WHERE receipt_id = ? AND receipt_hash = ?").get(receiptId, tokenHash(receipt)) as { workspace_id: string; action: string; consumed_at: number | null; expires_at: number } | undefined;
       if (row?.workspace_id !== workspaceId) fail("workspace_authorization_denied", 403, "Approval receipt is not valid for this workspace");
+      if (row?.action !== expectedAction) fail("receipt_action_mismatch", 403, "Approval receipt is not valid for this action");
       if (row?.consumed_at) fail("receipt_already_consumed", 409, "Approval receipt was already consumed");
       if (row && row.expires_at <= now) fail("receipt_expired", 409, "Approval receipt has expired");
       fail("invalid_receipt", 403, "Approval receipt is invalid");
     }
     const row = this.db.prepare("SELECT principal_id, action, payload_json FROM cursus_approval_receipts WHERE receipt_id = ?").get(receiptId) as { principal_id: string; action: string; payload_json: string | null };
     return { workspaceId, principalId: row.principal_id, action: row.action, payload: row.payload_json ? JSON.parse(row.payload_json) : null };
+  }
+
+  private consumeVerificationReceipt(workspaceId: string, receipt: string, snapshotRevision: number, snapshotJson: string): void {
+    const [receiptId, signature, ...extra] = receipt.split(".");
+    if (!receiptId || !signature || extra.length !== 0 || !this.signatureMatches(receiptId, signature)) {
+      fail("verification_receipt_invalid", 403, "Verification receipt is invalid");
+    }
+    const now = nowMs();
+    const result = this.db.prepare("UPDATE cursus_verification_receipts SET consumed_at = ? WHERE receipt_id = ? AND receipt_hash = ? AND workspace_id = ? AND snapshot_revision = ? AND snapshot_hash = ? AND consumed_at IS NULL AND expires_at > ?").run(now, receiptId, tokenHash(receipt), workspaceId, snapshotRevision, tokenHash(snapshotJson), now);
+    if (result.changes !== 1) {
+      const row = this.db.prepare("SELECT workspace_id, snapshot_revision, snapshot_hash, consumed_at, expires_at FROM cursus_verification_receipts WHERE receipt_id = ? AND receipt_hash = ?").get(receiptId, tokenHash(receipt)) as { workspace_id: string; snapshot_revision: number; snapshot_hash: string; consumed_at: number | null; expires_at: number } | undefined;
+      if (row?.workspace_id !== workspaceId) fail("workspace_authorization_denied", 403, "Verification receipt is not valid for this workspace");
+      if (row && (row.snapshot_revision !== snapshotRevision || row.snapshot_hash !== tokenHash(snapshotJson))) fail("verification_snapshot_conflict", 409, "Workspace changed after verification");
+      if (row?.consumed_at) fail("verification_receipt_consumed", 409, "Verification receipt has already been consumed");
+      if (row && row.expires_at <= now) fail("verification_receipt_expired", 409, "Verification receipt has expired");
+      fail("verification_receipt_invalid", 403, "Verification receipt is invalid");
+    }
   }
 
   private consumeChallenge(workspaceId: string, challengeId: string, type: ChallengeType): ChallengeRecord {

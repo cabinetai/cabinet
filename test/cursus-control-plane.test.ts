@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import Database from "better-sqlite3";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import {
   CursusControlPlane,
   CursusControlPlaneError,
@@ -52,6 +53,7 @@ function createControlPlane(): { db: Database.Database; controlPlane: CursusCont
   db.pragma("foreign_keys = ON");
   db.exec(readFileSync("server/migrations/002_cursus_control_plane.sql", "utf8"));
   db.exec(readFileSync("server/migrations/003_cursus_bootstrap_claim.sql", "utf8"));
+  db.exec(readFileSync("server/migrations/004_cursus_verification_receipts.sql", "utf8"));
   return {
     db,
     controlPlane: new CursusControlPlane(db, {
@@ -111,6 +113,49 @@ test("rejects stale workspace snapshot writes atomically", async () => {
       assertControlError(error, "revision_conflict");
       return true;
     }
+  );
+});
+
+test("enforces canonical run transitions and independent verification before completion", async () => {
+  const { controlPlane } = createControlPlane();
+  const workspace = controlPlane.createWorkspace();
+  await registerOwner(controlPlane, workspace);
+  const authorizationToken = await authorizeOwner(controlPlane, workspace.workspaceId);
+  const write = (expectedRevision: number, snapshot: unknown) => controlPlane.writeSnapshot({
+    workspaceId: workspace.workspaceId, authorizationToken, expectedRevision, snapshot,
+  });
+
+  write(0, { stage: "INBOXED" });
+  write(1, { stage: "SCOPING" });
+  write(2, { stage: "GATED" });
+  write(3, { stage: "RUNNING" });
+  write(4, { stage: "VERIFYING" });
+  assert.throws(
+    () => write(5, { stage: "DONE", verificationReceipt: "forged.receipt" }),
+    (error) => {
+      assertControlError(error, "verification_receipt_invalid");
+      return true;
+    },
+  );
+  const verification = controlPlane.issueVerificationReceipt({
+    workspaceId: workspace.workspaceId,
+    authorizationToken,
+    report: {
+      pass: true,
+      criteria: [{ criterion: "Contract satisfied", pass: true, evidence: "Verified against the declared gate." }],
+      unresolved: [],
+      blockers: [],
+    },
+    expectedRevision: 5,
+    snapshotHash: createHash("sha256").update(JSON.stringify({ stage: "VERIFYING" })).digest("base64url"),
+  });
+  write(5, { stage: "DONE", verificationReceipt: verification.receipt });
+  assert.throws(
+    () => write(6, { stage: "BLOCKED" }),
+    (error) => {
+      assertControlError(error, "run_transition_not_allowed");
+      return true;
+    },
   );
 });
 
@@ -214,25 +259,80 @@ test("denies workspace-scoped authorization tokens outside their workspace", asy
   );
 });
 
+test("returns authenticated run status without exposing workspace contents", async () => {
+  const { controlPlane } = createControlPlane();
+  const workspace = controlPlane.createWorkspace();
+  await registerOwner(controlPlane, workspace);
+  const authorizationToken = await authorizeOwner(controlPlane, workspace.workspaceId);
+  controlPlane.writeSnapshot({
+    workspaceId: workspace.workspaceId,
+    authorizationToken,
+    expectedRevision: 0,
+    snapshot: { stage: "INBOXED" },
+  });
+  controlPlane.writeSnapshot({
+    workspaceId: workspace.workspaceId,
+    authorizationToken,
+    expectedRevision: 1,
+    snapshot: {
+      stage: "SCOPING",
+      captureNote: "confidential work request",
+      sources: [{ content: "private source contents" }, { content: "another private source" }],
+      loopRun: { artifacts: [{ summary: "private artifact" }] },
+      verification: { pass: true, evidence: "private verification evidence" },
+    },
+  });
+
+  const status = controlPlane.readWorkspaceRunStatus(workspace.workspaceId, authorizationToken);
+  assert.deepEqual(status, {
+    workspaceId: workspace.workspaceId,
+    revision: 2,
+    run: { state: "SCOPING", verification: "passed", sourceCount: 2, artifactCount: 1 },
+  });
+  assert.equal(JSON.stringify(status).includes("private"), false);
+});
+
 test("consumes approval receipts only once", async () => {
   const { controlPlane } = createControlPlane();
   const workspace = controlPlane.createWorkspace();
   await registerOwner(controlPlane, workspace);
   const authorizationToken = await authorizeOwner(controlPlane, workspace.workspaceId);
   const issued = controlPlane.issueReceipt({ workspaceId: workspace.workspaceId, authorizationToken, action: "deploy", payload: { revision: 3 } });
-  assert.deepEqual(controlPlane.consumeReceipt({ workspaceId: workspace.workspaceId, authorizationToken, receipt: issued.receipt }), {
+  assert.deepEqual(controlPlane.consumeReceipt({ workspaceId: workspace.workspaceId, authorizationToken, receipt: issued.receipt, expectedAction: "deploy" }), {
     workspaceId: workspace.workspaceId,
     principalId: "owner",
     action: "deploy",
     payload: { revision: 3 },
   });
   assert.throws(
-    () => controlPlane.consumeReceipt({ workspaceId: workspace.workspaceId, authorizationToken, receipt: issued.receipt }),
+    () => controlPlane.consumeReceipt({ workspaceId: workspace.workspaceId, authorizationToken, receipt: issued.receipt, expectedAction: "deploy" }),
     (error) => {
       assertControlError(error, "receipt_already_consumed");
       return true;
     }
   );
+});
+
+test("binds receipt consumption to the approved action", async () => {
+  const { controlPlane } = createControlPlane();
+  const workspace = controlPlane.createWorkspace();
+  await registerOwner(controlPlane, workspace);
+  const authorizationToken = await authorizeOwner(controlPlane, workspace.workspaceId);
+  const issued = controlPlane.issueReceipt({ workspaceId: workspace.workspaceId, authorizationToken, action: "vendor_handoff_review" });
+
+  assert.throws(
+    () => controlPlane.consumeReceipt({ workspaceId: workspace.workspaceId, authorizationToken, receipt: issued.receipt, expectedAction: "stripe_checkout" }),
+    (error) => {
+      assertControlError(error, "receipt_action_mismatch");
+      return true;
+    }
+  );
+  assert.deepEqual(controlPlane.consumeReceipt({ workspaceId: workspace.workspaceId, authorizationToken, receipt: issued.receipt, expectedAction: "vendor_handoff_review" }), {
+    workspaceId: workspace.workspaceId,
+    principalId: "owner",
+    action: "vendor_handoff_review",
+    payload: null,
+  });
 });
 
 test("persists the verified passkey signature counter update", async () => {
