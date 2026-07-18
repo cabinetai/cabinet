@@ -7,7 +7,9 @@ import { installGmailSkill } from "@/lib/gmail/skill";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as { email?: string; password?: string };
-    const { email, password } = body;
+    // Google displays App Passwords as "xxxx xxxx xxxx xxxx" — strip the spaces.
+    const email = body.email?.trim();
+    const password = body.password?.replace(/\s+/g, "");
 
     if (!email || !password) {
       return NextResponse.json({ error: "email and password are required" }, { status: 400 });

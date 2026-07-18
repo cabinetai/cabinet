@@ -377,9 +377,41 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     category: "productivity",
     logo: L("gmail.svg"),
     blurb: "Triage, search, and draft replies to email.",
-    brand: "#ea4335",
+    // Google blue, not Gmail red — red reads as an error/danger button in the
+    // setup guide (matches the other Google cards).
+    brand: "#4285f4",
     implemented: false,
     actions: ["Search inbox", "Summarise threads", "Send & reply (with approval)"],
+    // Gmail connects over IMAP with a Google App Password (see GmailSection),
+    // so the guide walks through Google's 2-Step Verification → App passwords
+    // flow. Stylized mockups come from GmailArt in generic-setup-art.tsx.
+    setupSteps: [
+      {
+        title: "Turn on 2-Step Verification",
+        body: "Open your Google Account's Security page. Under \"How you sign in to Google\", check 2-Step Verification: if it's off, click it and follow Google's prompts to turn it on (App Passwords only exist on accounts with 2-Step Verification).",
+        action: { label: "Open Google Security", href: "https://myaccount.google.com/security" },
+      },
+      {
+        title: "Open App passwords",
+        body: "Click 2-Step Verification and scroll to the bottom of the page — the App passwords section is under the second-step options.",
+        fallback: {
+          summary: "Don't see App passwords?",
+          body: "Go to it directly at myaccount.google.com/apppasswords. It's hidden for some Workspace accounts (admin-disabled) and for accounts using only passkeys — in that case add a phone or authenticator second step first.",
+        },
+      },
+      {
+        title: "Create a password named \"Cabinet\"",
+        body: "Type \"Cabinet\" as the app name and click Create. Google shows a 16-character password once — copy it now.",
+      },
+      {
+        title: "Connect in Cabinet",
+        body: "Paste your Gmail address and the 16-character App Password into the panel on the right and click Connect. Spaces in the password don't matter.",
+        callout: {
+          tone: "info",
+          body: "The App Password is stored encrypted on this device only. You can revoke it anytime from Google's App passwords page.",
+        },
+      },
+    ],
   },
 
   // ── Files & Storage (folded into Knowledge) ─────────────────────
