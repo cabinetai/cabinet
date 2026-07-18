@@ -261,7 +261,7 @@ export class CursusControlPlane {
     const displayName = requireNonEmpty(input.displayName, "displayName");
     const now = nowMs();
 
-    const principal = this.db.transaction(() => {
+    const registration = this.db.transaction(() => {
       const workspace = this.db.prepare("SELECT workspace_id FROM cursus_workspaces WHERE workspace_id = ?").get(workspaceId) as { workspace_id: string } | undefined;
       if (!workspace) fail("workspace_not_found", 404, "Workspace must be created by the Cursus control plane");
       const owner = this.db.prepare("SELECT principal_id FROM cursus_principals WHERE workspace_id = ? AND is_owner = 1").get(workspaceId) as { principal_id: string } | undefined;
@@ -269,7 +269,7 @@ export class CursusControlPlane {
         this.mustBootstrap(workspaceId, requireNonEmpty(input.bootstrapCapability, "workspace bootstrap capability"), now);
         const existing = this.db.prepare("SELECT workspace_id FROM cursus_principals WHERE principal_id = ?").get(principalId) as { workspace_id: string } | undefined;
         if (existing) fail("principal_workspace_mismatch", 409, "Principal already belongs to a workspace");
-        return { principal_id: principalId, workspace_id: workspaceId, is_owner: 1 };
+        return { bootstrap: true, principalId };
       }
       const authorizationToken = requireNonEmpty(input.authorizationToken, "workspace authorization");
       const authorization = this.mustAuthorize(workspaceId, authorizationToken, now);
@@ -280,10 +280,10 @@ export class CursusControlPlane {
       if (!existing) {
         this.db.prepare("INSERT INTO cursus_principals (principal_id, workspace_id, display_name, is_owner, created_at) VALUES (?, ?, ?, 0, ?)").run(principalId, workspaceId, displayName, now);
       }
-      return this.db.prepare("SELECT principal_id, workspace_id, is_owner FROM cursus_principals WHERE principal_id = ? AND workspace_id = ?").get(principalId, workspaceId) as PrincipalRecord;
+      return { bootstrap: false, principalId };
     })();
 
-    const credentials = this.db.prepare("SELECT credential_id, transports_json FROM cursus_passkey_credentials WHERE principal_id = ? AND workspace_id = ?").all(principal.principal_id, workspaceId) as Pick<CredentialRecord, "credential_id" | "transports_json">[];
+    const credentials = this.db.prepare("SELECT credential_id, transports_json FROM cursus_passkey_credentials WHERE principal_id = ? AND workspace_id = ?").all(registration.principalId, workspaceId) as Pick<CredentialRecord, "credential_id" | "transports_json">[];
     const options = await this.webauthn.registrationOptions({
       rpID: this.config.rpID,
       rpName: "Cursus",
@@ -293,7 +293,14 @@ export class CursusControlPlane {
       excludeCredentials: credentials.map((credential) => ({ id: credential.credential_id, transports: parseTransports(credential.transports_json) })),
     });
     const challengeId = randomUUID();
-    this.db.prepare("INSERT INTO cursus_webauthn_challenges (challenge_id, workspace_id, principal_id, display_name, ceremony_type, challenge, expires_at, created_at) VALUES (?, ?, ?, ?, 'registration', ?, ?, ?)").run(challengeId, workspaceId, principalId, displayName, options.challenge, now + this.challengeTtlMs, now);
+    if (registration.bootstrap) {
+      this.db.transaction(() => {
+        this.claimBootstrap(workspaceId, requireNonEmpty(input.bootstrapCapability, "workspace bootstrap capability"), challengeId, now);
+        this.db.prepare("INSERT INTO cursus_webauthn_challenges (challenge_id, workspace_id, principal_id, display_name, ceremony_type, challenge, expires_at, created_at) VALUES (?, ?, ?, ?, 'registration', ?, ?, ?)").run(challengeId, workspaceId, principalId, displayName, options.challenge, now + this.challengeTtlMs, now);
+      })();
+    } else {
+      this.db.prepare("INSERT INTO cursus_webauthn_challenges (challenge_id, workspace_id, principal_id, display_name, ceremony_type, challenge, expires_at, created_at) VALUES (?, ?, ?, ?, 'registration', ?, ?, ?)").run(challengeId, workspaceId, principalId, displayName, options.challenge, now + this.challengeTtlMs, now);
+    }
     return { challengeId, options };
   }
 
@@ -319,7 +326,7 @@ export class CursusControlPlane {
       this.db.transaction(() => {
         const principal = this.db.prepare("SELECT is_owner FROM cursus_principals WHERE principal_id = ? AND workspace_id = ?").get(challenge.principal_id, workspaceId) as { is_owner: number } | undefined;
         if (!principal) {
-          this.consumeBootstrap(workspaceId, requireNonEmpty(input.bootstrapCapability, "workspace bootstrap capability"), now);
+          this.consumeBootstrap(workspaceId, requireNonEmpty(input.bootstrapCapability, "workspace bootstrap capability"), challenge.challenge_id, now);
           this.db.prepare("INSERT INTO cursus_principals (principal_id, workspace_id, display_name, is_owner, created_at) VALUES (?, ?, ?, 1, ?)").run(challenge.principal_id, workspaceId, challenge.display_name ?? challenge.principal_id, now);
         }
         this.db.prepare("INSERT INTO cursus_passkey_credentials (credential_id, workspace_id, principal_id, public_key, counter, transports_json, device_type, backed_up, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").run(info.credentialID, workspaceId, challenge.principal_id, Buffer.from(info.credentialPublicKey), info.counter, info.transports ? JSON.stringify(info.transports) : null, info.credentialDeviceType, info.credentialBackedUp ? 1 : 0, now, now);
@@ -468,9 +475,14 @@ export class CursusControlPlane {
     }
   }
 
-  private consumeBootstrap(workspaceId: string, capability: string, now: number): void {
-    const result = this.db.prepare("UPDATE cursus_workspaces SET bootstrap_consumed_at = ?, updated_at = ? WHERE workspace_id = ? AND bootstrap_capability_hash = ? AND bootstrap_consumed_at IS NULL AND bootstrap_expires_at > ?").run(now, now, workspaceId, tokenHash(capability), now);
-    if (result.changes !== 1) fail("workspace_bootstrap_denied", 403, "Workspace bootstrap capability is invalid, expired, or already consumed");
+  private claimBootstrap(workspaceId: string, capability: string, challengeId: string, now: number): void {
+    const result = this.db.prepare("UPDATE cursus_workspaces SET bootstrap_claim_id = ?, updated_at = ? WHERE workspace_id = ? AND bootstrap_capability_hash = ? AND bootstrap_claim_id IS NULL AND bootstrap_consumed_at IS NULL AND bootstrap_expires_at > ?").run(challengeId, now, workspaceId, tokenHash(capability), now);
+    if (result.changes !== 1) fail("workspace_bootstrap_denied", 403, "Workspace bootstrap capability is invalid, expired, already consumed, or already claimed");
+  }
+
+  private consumeBootstrap(workspaceId: string, capability: string, challengeId: string, now: number): void {
+    const result = this.db.prepare("UPDATE cursus_workspaces SET bootstrap_consumed_at = ?, updated_at = ? WHERE workspace_id = ? AND bootstrap_capability_hash = ? AND bootstrap_claim_id = ? AND bootstrap_consumed_at IS NULL AND bootstrap_expires_at > ?").run(now, now, workspaceId, tokenHash(capability), challengeId, now);
+    if (result.changes !== 1) fail("workspace_bootstrap_denied", 403, "Workspace bootstrap capability is invalid, expired, already consumed, or not bound to this ceremony");
   }
 
 

@@ -51,6 +51,7 @@ function createControlPlane(): { db: Database.Database; controlPlane: CursusCont
   const db = new Database(":memory:");
   db.pragma("foreign_keys = ON");
   db.exec(readFileSync("server/migrations/002_cursus_control_plane.sql", "utf8"));
+  db.exec(readFileSync("server/migrations/003_cursus_bootstrap_claim.sql", "utf8"));
   return {
     db,
     controlPlane: new CursusControlPlane(db, {
@@ -113,7 +114,7 @@ test("rejects stale workspace snapshot writes atomically", async () => {
   );
 });
 
-test("denies preclaiming arbitrary workspace IDs and allows exactly one bootstrap owner", async () => {
+test("denies preclaiming and binds bootstrap capability to one pending owner ceremony", async () => {
   const { controlPlane, db } = createControlPlane();
   await assert.rejects(
     controlPlane.beginRegistration({ workspaceId: "attacker-chosen", principalId: "attacker", displayName: "Attacker", bootstrapCapability: "not-a-capability" }),
@@ -124,15 +125,25 @@ test("denies preclaiming arbitrary workspace IDs and allows exactly one bootstra
   );
 
   const workspace = controlPlane.createWorkspace();
-  const [first, second] = await Promise.all([
+  const attempts = await Promise.allSettled([
     controlPlane.beginRegistration({ workspaceId: workspace.workspaceId, principalId: "owner-one", displayName: "Owner one", bootstrapCapability: workspace.bootstrapCapability }),
     controlPlane.beginRegistration({ workspaceId: workspace.workspaceId, principalId: "owner-two", displayName: "Owner two", bootstrapCapability: workspace.bootstrapCapability }),
   ]);
-  const completions = await Promise.allSettled([
-    controlPlane.finishRegistration({ workspaceId: workspace.workspaceId, challengeId: first.challengeId, response: { origin: ORIGIN }, bootstrapCapability: workspace.bootstrapCapability }),
-    controlPlane.finishRegistration({ workspaceId: workspace.workspaceId, challengeId: second.challengeId, response: { origin: ORIGIN }, bootstrapCapability: workspace.bootstrapCapability }),
-  ]);
-  assert.equal(completions.filter((completion) => completion.status === "fulfilled").length, 1);
+  assert.equal(attempts.filter((attempt) => attempt.status === "fulfilled").length, 1);
+  const rejected = attempts.find((attempt) => attempt.status === "rejected");
+  assert(rejected && rejected.status === "rejected");
+  assertControlError(rejected.reason, "workspace_bootstrap_denied");
+  const fulfilled = attempts.find((attempt) => attempt.status === "fulfilled");
+  assert(fulfilled && fulfilled.status === "fulfilled");
+
+  await controlPlane.finishRegistration({ workspaceId: workspace.workspaceId, challengeId: fulfilled.value.challengeId, response: { origin: ORIGIN }, bootstrapCapability: workspace.bootstrapCapability });
+  await assert.rejects(
+    controlPlane.beginRegistration({ workspaceId: workspace.workspaceId, principalId: "owner-two", displayName: "Owner two", bootstrapCapability: workspace.bootstrapCapability }),
+    (error) => {
+      assertControlError(error, "invalid_request");
+      return true;
+    }
+  );
   assert.equal((db.prepare("SELECT COUNT(*) AS count FROM cursus_principals WHERE workspace_id = ? AND is_owner = 1").get(workspace.workspaceId) as { count: number }).count, 1);
 });
 
