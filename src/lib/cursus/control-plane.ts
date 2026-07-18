@@ -317,10 +317,14 @@ export class CursusControlPlane {
         expectedRPID: this.config.rpID,
       });
     } catch {
+      this.releaseBootstrapClaim(workspaceId, challenge.challenge_id);
       fail("registration_verification_failed", 403, "Passkey registration verification failed");
     }
     const info = verification.verified ? verification.registrationInfo : undefined;
-    if (!info) fail("registration_verification_failed", 403, "Passkey registration verification failed");
+    if (!info) {
+      this.releaseBootstrapClaim(workspaceId, challenge.challenge_id);
+      fail("registration_verification_failed", 403, "Passkey registration verification failed");
+    }
     const now = nowMs();
     try {
       this.db.transaction(() => {
@@ -332,6 +336,7 @@ export class CursusControlPlane {
         this.db.prepare("INSERT INTO cursus_passkey_credentials (credential_id, workspace_id, principal_id, public_key, counter, transports_json, device_type, backed_up, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").run(info.credentialID, workspaceId, challenge.principal_id, Buffer.from(info.credentialPublicKey), info.counter, info.transports ? JSON.stringify(info.transports) : null, info.credentialDeviceType, info.credentialBackedUp ? 1 : 0, now, now);
       })();
     } catch (error) {
+      this.releaseBootstrapClaim(workspaceId, challenge.challenge_id);
       if (error instanceof CursusControlPlaneError) throw error;
       fail("credential_exists", 409, "Passkey credential already exists");
     }
@@ -463,7 +468,10 @@ export class CursusControlPlane {
     const row = this.db.prepare("SELECT challenge_id, workspace_id, principal_id, display_name, ceremony_type, challenge, expires_at FROM cursus_webauthn_challenges WHERE challenge_id = ? AND workspace_id = ? AND ceremony_type = ?").get(challengeId, workspaceId, type) as ChallengeRecord | undefined;
     const result = this.db.prepare("UPDATE cursus_webauthn_challenges SET consumed_at = ? WHERE challenge_id = ? AND workspace_id = ? AND ceremony_type = ? AND consumed_at IS NULL AND expires_at > ?").run(now, challengeId, workspaceId, type, now);
     if (result.changes !== 1) {
-      if (row && row.expires_at <= now) fail("challenge_expired", 409, "WebAuthn challenge has expired");
+      if (row && row.expires_at <= now) {
+        this.releaseBootstrapClaim(workspaceId, challengeId);
+        fail("challenge_expired", 409, "WebAuthn challenge has expired");
+      }
       fail("challenge_invalid_or_used", 409, "WebAuthn challenge is invalid or already used");
     }
     return row!;
@@ -483,6 +491,9 @@ export class CursusControlPlane {
   private consumeBootstrap(workspaceId: string, capability: string, challengeId: string, now: number): void {
     const result = this.db.prepare("UPDATE cursus_workspaces SET bootstrap_consumed_at = ?, updated_at = ? WHERE workspace_id = ? AND bootstrap_capability_hash = ? AND bootstrap_claim_id = ? AND bootstrap_consumed_at IS NULL AND bootstrap_expires_at > ?").run(now, now, workspaceId, tokenHash(capability), challengeId, now);
     if (result.changes !== 1) fail("workspace_bootstrap_denied", 403, "Workspace bootstrap capability is invalid, expired, already consumed, or not bound to this ceremony");
+  }
+  private releaseBootstrapClaim(workspaceId: string, challengeId: string): void {
+    this.db.prepare("UPDATE cursus_workspaces SET bootstrap_claim_id = NULL, updated_at = ? WHERE workspace_id = ? AND bootstrap_claim_id = ? AND bootstrap_consumed_at IS NULL").run(nowMs(), workspaceId, challengeId);
   }
 
 

@@ -185,6 +185,21 @@ test("denies passkey responses from an unconfigured origin", async () => {
   );
 });
 
+test("releases a failed bootstrap ceremony claim so the owner can retry", async () => {
+  const { controlPlane } = createControlPlane();
+  const workspace = controlPlane.createWorkspace();
+  const failed = await controlPlane.beginRegistration({ workspaceId: workspace.workspaceId, principalId: "owner", displayName: "Owner", bootstrapCapability: workspace.bootstrapCapability });
+  await assert.rejects(
+    controlPlane.finishRegistration({ workspaceId: workspace.workspaceId, challengeId: failed.challengeId, response: { origin: "https://attacker.example.test" }, bootstrapCapability: workspace.bootstrapCapability }),
+    (error) => {
+      assertControlError(error, "registration_verification_failed");
+      return true;
+    }
+  );
+  const retry = await controlPlane.beginRegistration({ workspaceId: workspace.workspaceId, principalId: "owner", displayName: "Owner", bootstrapCapability: workspace.bootstrapCapability });
+  await controlPlane.finishRegistration({ workspaceId: workspace.workspaceId, challengeId: retry.challengeId, response: { origin: ORIGIN }, bootstrapCapability: workspace.bootstrapCapability });
+});
+
 test("denies workspace-scoped authorization tokens outside their workspace", async () => {
   const { controlPlane } = createControlPlane();
   const workspace = controlPlane.createWorkspace();
