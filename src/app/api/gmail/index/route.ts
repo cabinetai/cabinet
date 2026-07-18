@@ -1,41 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { searchEmails } from "@/lib/gmail/imap-client";
+import { accountKey, searchEmails } from "@/lib/gmail/imap-client";
 
 const DEFAULT_DAYS = 7;
 
 export async function POST(request: NextRequest) {
   try {
     const db = getDb();
-    const row = db
-      .prepare("SELECT email FROM gmail_credentials WHERE id = 'default'")
-      .get() as { email: string } | undefined;
-    if (!row) {
-      return NextResponse.json({ error: "Gmail not connected" }, { status: 400 });
-    }
 
     let days = DEFAULT_DAYS;
+    let account: string | undefined;
     try {
-      const body = await request.json() as { days?: number };
+      const body = await request.json() as { days?: number; account?: string };
       if (typeof body.days === "number" && body.days > 0) days = body.days;
+      if (typeof body.account === "string" && body.account.trim()) account = body.account;
     } catch {
-      // no body or invalid JSON — use default
+      // no body or invalid JSON — use defaults
+    }
+
+    const row = (account
+      ? db.prepare("SELECT id FROM gmail_credentials WHERE id = ?").get(accountKey(account))
+      : db.prepare("SELECT id FROM gmail_credentials ORDER BY rowid LIMIT 1").get()) as
+      | { id: string }
+      | undefined;
+    if (!row) {
+      return NextResponse.json({ error: "Gmail not connected" }, { status: 400 });
     }
 
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const emails = await searchEmails({ since });
+    const emails = await searchEmails({ since }, row.id);
 
     const insert = db.prepare(
-      `INSERT INTO gmail_index (message_id, thread_id, subject, sender, date, snippet, body_text, labels, indexed_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      `INSERT INTO gmail_index (message_id, thread_id, subject, sender, date, snippet, body_text, labels, account, indexed_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
        ON CONFLICT(message_id) DO UPDATE SET
          subject = excluded.subject,
          sender = excluded.sender,
          date = excluded.date,
          snippet = excluded.snippet,
          body_text = excluded.body_text,
+         account = excluded.account,
          indexed_at = excluded.indexed_at`
     );
 
@@ -49,7 +55,8 @@ export async function POST(request: NextRequest) {
           email.date,
           email.snippet,
           email.snippet, // body_text — snippet is the best we have from search
-          "[]"
+          "[]",
+          row.id
         );
       }
     });

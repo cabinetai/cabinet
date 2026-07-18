@@ -45,20 +45,36 @@ export interface SearchCriteria {
   unseen?: boolean;
 }
 
-export function getCredentials(): GmailCredentials {
+/** Normalize an account param to the credentials row key. */
+export function accountKey(account: string): string {
+  return account.trim().toLowerCase();
+}
+
+/**
+ * Load credentials for `account` (an email address), or — when omitted — for
+ * the first-connected account, so single-account installs and existing callers
+ * keep working unchanged after multi-account support.
+ */
+export function getCredentials(account?: string): GmailCredentials {
   const db = getDb();
-  const row = db
-    .prepare("SELECT email, imap_password FROM gmail_credentials WHERE id = 'default'")
-    .get() as { email: string; imap_password: string } | undefined;
-  if (!row) throw new Error("Gmail not connected");
+  const row = (account?.trim()
+    ? db
+        .prepare("SELECT email, imap_password FROM gmail_credentials WHERE id = ?")
+        .get(accountKey(account))
+    : db
+        .prepare("SELECT email, imap_password FROM gmail_credentials ORDER BY rowid LIMIT 1")
+        .get()) as { email: string; imap_password: string } | undefined;
+  if (!row) {
+    throw new Error(account?.trim() ? `Gmail account ${account.trim()} not connected` : "Gmail not connected");
+  }
   return {
     email: row.email,
     password: decryptPassword(row.imap_password),
   };
 }
 
-export function createImapClient(creds?: GmailCredentials): ImapFlow {
-  const credentials = creds ?? getCredentials();
+export function createImapClient(creds?: GmailCredentials, account?: string): ImapFlow {
+  const credentials = creds ?? getCredentials(account);
   return new ImapFlow({
     host: IMAP_HOST,
     port: IMAP_PORT,
@@ -75,8 +91,8 @@ function extractSnippet(text: string, maxLen = 200): string {
   return text.replace(/\s+/g, " ").trim().slice(0, maxLen);
 }
 
-export async function searchEmails(criteria: SearchCriteria): Promise<EmailSummary[]> {
-  const client = createImapClient();
+export async function searchEmails(criteria: SearchCriteria, account?: string): Promise<EmailSummary[]> {
+  const client = createImapClient(undefined, account);
   await client.connect();
   const results: EmailSummary[] = [];
 
@@ -122,8 +138,8 @@ export async function searchEmails(criteria: SearchCriteria): Promise<EmailSumma
   return results;
 }
 
-export async function readThread(messageId: string): Promise<EmailThread> {
-  const client = createImapClient();
+export async function readThread(messageId: string, account?: string): Promise<EmailThread> {
+  const client = createImapClient(undefined, account);
   await client.connect();
   const messages: EmailMessage[] = [];
 
@@ -182,8 +198,8 @@ function validateLabelName(name: unknown): string {
 /**
  * Gmail exposes labels as IMAP mailboxes. System folders live under [Gmail]/.
  */
-export async function listLabels(): Promise<GmailLabel[]> {
-  const client = createImapClient();
+export async function listLabels(account?: string): Promise<GmailLabel[]> {
+  const client = createImapClient(undefined, account);
   await client.connect();
   try {
     const boxes = await client.list();
@@ -210,9 +226,9 @@ async function ensureMailbox(client: ImapFlow, path: string): Promise<void> {
   }
 }
 
-export async function createLabel(name: string): Promise<string> {
+export async function createLabel(name: string, account?: string): Promise<string> {
   const label = validateLabelName(name);
-  const client = createImapClient();
+  const client = createImapClient(undefined, account);
   await client.connect();
   try {
     await ensureMailbox(client, label);
@@ -226,10 +242,10 @@ export async function createLabel(name: string): Promise<string> {
  * Applying a Gmail label over IMAP = copying the message into the label's
  * mailbox. The message stays in the inbox. Creates the label if missing.
  */
-export async function applyLabel(messageId: string, name: string): Promise<string> {
+export async function applyLabel(messageId: string, name: string, account?: string): Promise<string> {
   if (typeof messageId !== "string" || !messageId.trim()) throw new Error("messageId required");
   const label = validateLabelName(name);
-  const client = createImapClient();
+  const client = createImapClient(undefined, account);
   await client.connect();
   try {
     await ensureMailbox(client, label);
@@ -244,8 +260,8 @@ export async function applyLabel(messageId: string, name: string): Promise<strin
   }
 }
 
-export async function getUnread(maxResults = 20): Promise<EmailSummary[]> {
-  const all = await searchEmails({ unseen: true });
+export async function getUnread(maxResults = 20, account?: string): Promise<EmailSummary[]> {
+  const all = await searchEmails({ unseen: true }, account);
   // Sort newest first
   return all
     .sort((a, b) => (b.date > a.date ? 1 : -1))
