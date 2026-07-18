@@ -1,4 +1,4 @@
-export type AppBundleKey = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64";
+export type AppBundleKey = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64" | "win32-x64";
 
 export interface ReleaseAppBundle {
   assetName: string;
@@ -46,6 +46,7 @@ export function getAppBundleKey(platform = process.platform, arch = process.arch
   if (platform === "darwin" && arch === "x64") return "darwin-x64";
   if (platform === "linux" && arch === "arm64") return "linux-arm64";
   if (platform === "linux" && arch === "x64") return "linux-x64";
+  if (platform === "win32" && arch === "x64") return "win32-x64";
   return null;
 }
 
