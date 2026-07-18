@@ -5,7 +5,7 @@ import {
   AlertCircle,
   Loader2,
   ScrollText,
-  Sparkles,
+  Asterisk,
   User,
   Wrench,
 } from "lucide-react";
@@ -191,7 +191,7 @@ function TurnCard({ turn }: { turn: ClaudeTranscriptTurn }) {
           </>
         ) : (
           <>
-            <Sparkles className="size-3.5 text-primary" />
+            <Asterisk className="size-3.5 text-primary" />
             Claude
           </>
         )}

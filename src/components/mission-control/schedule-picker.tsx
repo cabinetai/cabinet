@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { Clock, ChevronDown, Loader2, Sparkles } from "lucide-react";
+import { Clock, ChevronDown, Loader2, Asterisk } from "lucide-react";
 import { cronToHuman } from "@/lib/agents/cron-utils";
 import { useLocale } from "@/i18n/use-locale";
 
@@ -232,7 +232,7 @@ export function SchedulePicker({ value, onChange, label }: SchedulePickerProps) 
       {/* Natural language input */}
       <div className="flex gap-1.5">
         <div className="relative flex-1">
-          <Sparkles className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40 pointer-events-none" />
+          <Asterisk className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40 pointer-events-none" />
           <input
             value={state.nlInput}
             onChange={(e) => update({ nlInput: e.target.value, nlError: "" })}

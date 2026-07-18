@@ -171,7 +171,7 @@ function readDocument(cfg: ProviderMcpConfig): Record<string, unknown> {
     return {};
   } catch {
     throw new Error(
-      `Could not parse ${cfg.displayPath}. Fix or remove it, then retry — Cabinet won't overwrite a config it can't read.`,
+      `Could not parse ${cfg.displayPath}. Fix or remove it, then retry. Cabinet won't overwrite a config it can't read.`,
     );
   }
 }

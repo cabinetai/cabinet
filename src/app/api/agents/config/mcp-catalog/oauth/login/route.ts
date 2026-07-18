@@ -5,7 +5,7 @@ import {
   getMcpLoginStatus,
   completeMcpLogin,
   cancelMcpLogin,
-  readServerAuthState,
+  readServerAuthDetail,
 } from "@/lib/agents/claude-mcp-login";
 import {
   startStdioLogin,
@@ -28,7 +28,11 @@ import {
  * POST   { sessionId, callbackUrl } — fallback: submit the pasted callback URL.
  * GET    ?sessionId                 — poll: pending | success | error | expired.
  * GET    ?id                        — current auth state for an integration:
- *                                      { authenticated: boolean }.
+ *                                      { authenticated: boolean, state, detail? }.
+ *                                      `detail` is a user-facing hint when a
+ *                                      registered server with a token still
+ *                                      fails to connect (e.g. Slack MCP toggle
+ *                                      off).
  * DELETE ?sessionId                 — cancel an in-flight sign-in.
  *
  * No secrets are handled here; the OAuth token is cached by the CLI.
@@ -104,8 +108,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (id) {
     const entry = getCatalogEntry(id);
     if (entry?.transport === "http") {
-      const state = await readServerAuthState(entry.mcpServerName);
-      return NextResponse.json({ authenticated: state === "authenticated", applicable: true, state });
+      const { state, detail } = await readServerAuthDetail(
+        entry.mcpServerName,
+        entry.connectFailureHint,
+      );
+      return NextResponse.json({
+        authenticated: state === "authenticated",
+        applicable: true,
+        state,
+        detail,
+      });
     }
     if (entry?.connectAuth?.kind === "stdio-loopback") {
       const state = readStdioAuthState(entry);

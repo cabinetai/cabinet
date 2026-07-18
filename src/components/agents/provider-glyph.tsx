@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Bot, Sparkles, Terminal } from "lucide-react";
+import { Bot, Asterisk, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PROVIDER_IMAGE_BY_ICON: Record<string, string> = {
@@ -42,7 +42,7 @@ export function ProviderGlyph({
   }
 
   if (icon === "sparkles") {
-    return <Sparkles className={className} />;
+    return <Asterisk className={className} />;
   }
 
   return <Bot className={className} />;

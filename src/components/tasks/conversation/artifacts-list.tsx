@@ -66,7 +66,7 @@ export function ArtifactsList({
   if (paths.length === 0) {
     return (
       <div className="px-6 py-12 text-center text-sm text-muted-foreground">
-        No KB pages touched yet — they&rsquo;ll appear as the agent writes files.
+        No KB pages touched yet. They&rsquo;ll appear as the agent writes files.
       </div>
     );
   }

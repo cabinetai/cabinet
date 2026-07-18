@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       }
       if (!(await fileExists(path.join(dir, "index.html")))) {
         return NextResponse.json(
-          { error: "Folder has no index.html — not a web app." },
+          { error: "Folder has no index.html, so it is not a web app." },
           { status: 400 }
         );
       }

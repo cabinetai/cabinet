@@ -1,0 +1,9 @@
+schemaVersion: 1
+id: home
+name: Test Home
+kind: home
+version: 0.1.0
+description: Cabinet home for the test suite (root manifest).
+entry: index.md
+room:
+  icon: home

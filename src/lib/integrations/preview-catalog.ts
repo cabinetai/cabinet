@@ -164,7 +164,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     name: "Instagram",
     category: "social",
     logo: L("instagram.svg"),
-    blurb: "Read posts, comments, and DMs — and draft replies.",
+    blurb: "Read posts, comments, and DMs, and draft replies.",
     brand: "#E4405F",
     implemented: false,
     actions: ["Read posts & insights", "Triage comments & DMs", "Draft replies"],
@@ -190,6 +190,21 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     actions: ["Search posts & mentions", "Summarise threads", "Draft posts"],
   },
   {
+    id: "google-ads",
+    name: "Google Ads",
+    category: "social",
+    logo: L("google-ads.svg"),
+    blurb: "Read campaigns, ad groups, and reporting data from Google Ads.",
+    brand: "#4285f4",
+    implemented: false,
+    actions: [
+      "Query campaigns, ad groups & ads",
+      "Pull performance metrics & reporting",
+      "Manage customer lists & audiences",
+      "Run raw GAQL queries",
+    ],
+  },
+  {
     id: "meta-ads",
     name: "Meta Ads",
     category: "social",
@@ -211,7 +226,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     category: "knowledge",
     platform: "macos",
     logo: "/logos/apple-notes.svg",
-    blurb: "Import your notes as searchable, editable Markdown — offline and available to agents.",
+    blurb: "Import your notes as searchable, editable Markdown, offline and available to agents.",
     brand: "#F2B600",
     implemented: true,
     native: true,
@@ -255,7 +270,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     setupSteps: [
       {
         title: "Install Google Drive for Desktop",
-        body: "Download Google Drive for Desktop for your OS (macOS or Windows) and sign in. It mounts your Drive as a local folder Cabinet can read — no OAuth or Google Cloud setup needed.",
+        body: "Download Google Drive for Desktop for your OS (macOS or Windows) and sign in. It mounts your Drive as a local folder Cabinet can read. No OAuth or Google Cloud setup needed.",
         href: "https://support.google.com/a/users/answer/13022292?hl=en",
       },
       {
@@ -268,7 +283,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
       },
       {
         title: "Open files in Cabinet",
-        body: "Click any mounted file to view it inline — PDFs, images, Office docs, and native Google Docs/Sheets/Slides all render in Cabinet's viewers.",
+        body: "Click any mounted file to view it inline: PDFs, images, Office docs, and native Google Docs/Sheets/Slides all render in Cabinet's viewers.",
       },
     ],
   },
@@ -416,7 +431,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     name: "GitHub",
     category: "development",
     logo: L("github.svg"),
-    blurb: "Read repos, issues, and PRs — and act on them.",
+    blurb: "Read repos, issues, and PRs, and act on them.",
     brand: "#181717",
     implemented: true,
     actions: ["Read code & issues", "Triage PRs", "Open issues"],
@@ -608,6 +623,16 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     actions: ["Run queries", "Explore schemas", "Query Cortex & semantic views"],
   },
   {
+    id: "stackadapt",
+    name: "StackAdapt",
+    category: "data",
+    logo: L("stackadapt.svg"),
+    blurb: "Read programmatic campaign delivery, pacing, and ROAS.",
+    brand: "#111827",
+    implemented: false,
+    actions: ["Read campaign delivery", "Compare ROAS", "Run read-only GraphQL reports"],
+  },
+  {
     id: "bigquery",
     name: "BigQuery",
     category: "data",
@@ -699,7 +724,7 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
   { id: "sentry", name: "Sentry", category: "development", logo: L("sentry.svg"), blurb: "Triage errors, issues, and releases.", brand: "#362d59", implemented: true, actions: ["Search issues", "Read stack traces", "Triage & resolve"] },
   { id: "pagerduty", name: "PagerDuty", category: "development", logo: L("pagerduty.svg"), blurb: "Incidents, services, and on-call schedules.", brand: "#06ac38", implemented: true, actions: ["Read & create incidents", "Check on-call", "Read schedules"] },
   { id: "pipedrive", name: "Pipedrive", category: "crm", logo: L("pipedrive.svg"), blurb: "Deals, contacts, and pipelines.", brand: "#017737", implemented: true, actions: ["Search deals", "Update stages", "Create contacts"] },
-  { id: "shopify", name: "Shopify", category: "finance", logo: L("shopify.svg"), blurb: "Build on Shopify — docs & GraphQL schema.", brand: "#95bf47", implemented: true, actions: ["Search dev docs", "Explore GraphQL schema", "Validate queries"] },
+  { id: "shopify", name: "Shopify", category: "finance", logo: L("shopify.svg"), blurb: "Build on Shopify: docs & GraphQL schema.", brand: "#95bf47", implemented: true, actions: ["Search dev docs", "Explore GraphQL schema", "Validate queries"] },
   { id: "expensify", name: "Expensify", category: "finance", logo: L("expensify.svg"), blurb: "Expense reports and reimbursements.", brand: "#03d47c", implemented: true, actions: ["Read reports", "Create expenses", "Check status"] },
   { id: "zapier", name: "Zapier", category: "automation", logo: L("zapier.svg"), blurb: "Reach 8,000+ apps through one MCP endpoint.", brand: "#ff4f00", implemented: true, actions: ["Run actions across 8,000+ apps", "Trigger Zaps", "Search app data"] },
   { id: "make", name: "Make", category: "automation", logo: L("make.svg"), blurb: "Run scenarios across 2,000+ apps.", brand: "#6d00cc", implemented: true, actions: ["Trigger scenarios", "Run app actions", "Read data"] },
@@ -743,6 +768,8 @@ const LAUNCHED = new Set([
   "slack",
   "snowflake",
   "meta-ads",
+  "google-ads",
+  "stackadapt",
 ]);
 
 export const PREVIEW_INTEGRATIONS: IntegrationItem[] = RAW_INTEGRATIONS.map((i) => {

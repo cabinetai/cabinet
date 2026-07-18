@@ -107,6 +107,8 @@ jobs:
 
   electron-windows:
     runs-on: windows-latest
+    env:
+      WINDOWS_SIGNING_CONFIGURED: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 != '' && '1' || '0' }}
     steps:
       # With a tag -> build that release; without -> build the dispatched branch.
       - name: Checkout
@@ -122,11 +124,36 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Signing is opt-in until the Authenticode certificate secrets are added.
+      # Once configured, tagged builds are signed and the smoke test below
+      # requires both the installer and installed executable to verify as Valid.
+      - name: Prepare Windows signing certificate
+        if: ${{ inputs.tag != '' && env.WINDOWS_SIGNING_CONFIGURED == '1' }}
+        shell: pwsh
+        env:
+          WINDOWS_CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}
+        run: |
+          $certificatePath = Join-Path $env:RUNNER_TEMP "cabinet-signing.pfx"
+          [IO.File]::WriteAllBytes(
+            $certificatePath,
+            [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE_BASE64)
+          )
+          "WINDOWS_CERTIFICATE_FILE=$certificatePath" >> $env:GITHUB_ENV
+
       # Produces the portable ZIP (MakerZIP win32) and the Squirrel .exe
       # installer (+ .nupkg + RELEASES) under out/make/. Failing here blocks
       # the Windows release before any artifact is published.
       - name: Build Windows Electron app (ZIP + Squirrel installer)
+        env:
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
         run: npm run electron:make:win
+
+      - name: Install and smoke-test packaged Windows application
+        shell: pwsh
+        env:
+          CABINET_ELECTRON_SMOKE_LOG_DIR: ${{ runner.temp }}/cabinet-electron-smoke-logs
+          CABINET_WINDOWS_REQUIRE_SIGNING: ${{ inputs.tag != '' && env.WINDOWS_SIGNING_CONFIGURED == '1' && '1' || '0' }}
+        run: ./scripts/test-electron-windows-package.ps1
 
       # Always keep the build for download/smoke-testing, even if the upload
       # step below is skipped (e.g. the release doesn't exist yet).
@@ -135,7 +162,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: cabinet-windows-${{ inputs.tag || github.sha }}
-          path: out/make/**
+          path: |
+            out/make/**
+            ${{ runner.temp }}/cabinet-electron-smoke-logs/**
           if-no-files-found: warn
 
       # Release-only: only attach to a GitHub release when a tag was given.
@@ -149,3 +178,8 @@ jobs:
             out/make/zip/win32/x64/* \
             out/make/squirrel.windows/x64/* \
             --clobber
+
+      - name: Remove Windows signing certificate
+        if: ${{ always() && env.WINDOWS_SIGNING_CONFIGURED == '1' }}
+        shell: pwsh
+        run: Remove-Item (Join-Path $env:RUNNER_TEMP "cabinet-signing.pfx") -Force -ErrorAction SilentlyContinue

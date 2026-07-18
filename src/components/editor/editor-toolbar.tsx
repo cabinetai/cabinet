@@ -32,7 +32,7 @@ import {
   Link as LinkIcon,
   ImageIcon,
   Video as VideoIcon,
-  Sparkles,
+  Asterisk,
   ChevronLeft,
   ChevronRight,
   Code2,
@@ -398,7 +398,7 @@ export function EditorToolbar({ editor, sourceMode, onToggleSource, wideMode, on
       label: t("editor:toolbar.insertVideo"),
     },
     {
-      icon: Sparkles,
+      icon: Asterisk,
       action: (e) => openPopoverFromButton(e, (anchor) => ({ type: "embed", anchor })),
       isActive: false,
       label: t("editor:toolbar.embed"),

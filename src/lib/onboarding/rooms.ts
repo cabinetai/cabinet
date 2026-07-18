@@ -4,7 +4,7 @@ import {
   Brain,
   FlaskConical,
   Home,
-  Sparkles,
+  Asterisk,
   TrendingUp,
   Users,
   Package,
@@ -192,7 +192,7 @@ export const ROOMS: Record<RoomType, RoomConfig> = {
   study: {
     id: "study",
     label: "Study",
-    tagline: "Your second brain — writing, notes, personal assistant.",
+    tagline: "Your second brain: writing, notes, personal assistant.",
     icon: Brain,
     workspaceLabel: "Name your cabinet",
     workspacePlaceholder: "My Study",
@@ -213,7 +213,7 @@ export const ROOMS: Record<RoomType, RoomConfig> = {
       [/note|wiki|link|synthes|second brain|pkm/, ["note-synthesizer"]],
     ],
     greetingTemplate: (home, workspace) =>
-      `Morning. Your second brain is online${home ? ` — welcome back to ${home}` : ""}.`,
+      `Morning. Your second brain is online${home ? `, welcome back to ${home}` : ""}.`,
   },
 
   lab: {
@@ -239,7 +239,7 @@ export const ROOMS: Record<RoomType, RoomConfig> = {
       [/research|topic|question|hypothesis/, ["researcher"]],
     ],
     greetingTemplate: (_home, workspace) =>
-      `Research desk ready${workspace ? ` — "${workspace}"` : ""}. What are we digging into today?`,
+      `Research desk ready${workspace ? `: "${workspace}"` : ""}. What are we digging into today?`,
   },
 
   "family-room": {
@@ -266,18 +266,18 @@ export const ROOMS: Record<RoomType, RoomConfig> = {
       [/plugin|script|tool|automat|dashboard|tinker/, ["tinkerer"]],
     ],
     greetingTemplate: (home, _workspace) =>
-      `Home HQ booting up${home ? ` — ${home}` : ""}. Let's get everyone where they need to be.`,
+      `Home HQ booting up${home ? `, ${home}` : ""}. Let's get everyone where they need to be.`,
   },
 
   blank: {
     id: "blank",
     label: "Blank Room",
     tagline: "Nothing yet. Bring your own agents, your own shape.",
-    icon: Sparkles,
+    icon: Asterisk,
     workspaceLabel: "Name your cabinet",
     workspacePlaceholder: "My Cabinet",
     descriptionLabel: "What's it for?",
-    descriptionPlaceholder: "Anything — leave blank if you're not sure yet",
+    descriptionPlaceholder: "Anything, or leave blank if you're not sure yet",
     askTeamSize: false,
     mandatoryAgents: ["editor"],
     suggestedAgents: [],
@@ -285,7 +285,7 @@ export const ROOMS: Record<RoomType, RoomConfig> = {
     departmentNoun: "Group",
     keywordMap: [],
     greetingTemplate: (home, workspace) =>
-      `Blank slate${workspace ? ` — "${workspace}"` : ""}. What do you want to build${home ? ` here, ${home}` : ""}?`,
+      `Blank slate${workspace ? `: "${workspace}"` : ""}. What do you want to build${home ? ` here, ${home}` : ""}?`,
   },
 };
 

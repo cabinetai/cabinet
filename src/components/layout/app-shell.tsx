@@ -423,13 +423,13 @@ export function AppShell() {
         title = base;
         break;
       case "page":
-        title = pageDisplayTitle ? `${pageDisplayTitle} — ${base}` : base;
+        title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
         break;
       case "cabinet":
-        title = pageDisplayTitle ? `${pageDisplayTitle} — ${base}` : base;
+        title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
         break;
       case "agents":
-        title = `Agents — ${base}`;
+        title = `Agents – ${base}`;
         break;
       case "agent":
         // Audit #025: title-case the slug so the tab title matches the
@@ -439,30 +439,30 @@ export function AppShell() {
           ? `${section.slug
               .split("-")
               .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))
-              .join(" ")} — ${base}`
-          : `Agents — ${base}`;
+              .join(" ")} – ${base}`
+          : `Agents – ${base}`;
         break;
       case "tasks":
-        title = `Tasks — ${base}`;
+        title = `Tasks – ${base}`;
         break;
       case "task":
-        title = `Task — ${base}`;
+        title = `Task – ${base}`;
         break;
       case "settings":
         // Audit #062: include the active settings tab in the title so window
         // history shows "Appearance — Settings — Cabinet" not just "Settings".
         title = section.slug
-          ? `${section.slug.charAt(0).toUpperCase() + section.slug.slice(1)} — Settings — ${base}`
-          : `Settings — ${base}`;
+          ? `${section.slug.charAt(0).toUpperCase() + section.slug.slice(1)} – Settings – ${base}`
+          : `Settings – ${base}`;
         break;
       case "help":
-        title = `Help — ${base}`;
+        title = `Help – ${base}`;
         break;
       case "registry":
-        title = `Registry — ${base}`;
+        title = `Registry – ${base}`;
         break;
       case "integrations":
-        title = `Integrations — ${base}`;
+        title = `Integrations – ${base}`;
         break;
       default:
         title = base;
@@ -678,7 +678,7 @@ export function AppShell() {
         | undefined;
       const fileName = detail?.fileName || "this file";
       const greeting = userFirstName
-        ? `Hi ${userFirstName} — what would you like to do in ${fileName}?`
+        ? `Hi ${userFirstName}, what would you like to do in ${fileName}?`
         : `What would you like to do in ${fileName}?`;
       useAppStore.getState().openTaskPanelCompose({
         source: "editor",
@@ -799,19 +799,29 @@ export function AppShell() {
   const effectiveUpdateDialogOpen =
     updateDialogOpen || hasPersistentUpdateState || shouldPromptForUpdate;
 
-  // Auto-collapse sidebar + AI panel when entering app mode
+  // Auto-collapse sidebar + AI panel when entering app mode, and restore
+  // whatever they were before on the way out — whether that's via the
+  // explicit exit-fullscreen button or by just navigating to a non-app node.
+  // Previously only the button restored state, so leaving any other way left
+  // the sidebar collapsed (and persisted collapsed) indefinitely.
   const prevIsApp = useRef(false);
+  const preAppSidebarCollapsed = useRef(sidebarCollapsed);
+  const preAppAiPanelCollapsed = useRef(false);
   useEffect(() => {
     if (isApp && !prevIsApp.current) {
+      preAppSidebarCollapsed.current = useAppStore.getState().sidebarCollapsed;
       setSidebarCollapsed(true);
       setAiPanelCollapsed(true);
+    } else if (!isApp && prevIsApp.current) {
+      setSidebarCollapsed(preAppSidebarCollapsed.current);
+      setAiPanelCollapsed(preAppAiPanelCollapsed.current);
     }
     prevIsApp.current = !!isApp;
   }, [isApp, setSidebarCollapsed, setAiPanelCollapsed]);
 
   const handleExitApp = () => {
-    setSidebarCollapsed(false);
-    setAiPanelCollapsed(false);
+    setSidebarCollapsed(preAppSidebarCollapsed.current);
+    setAiPanelCollapsed(preAppAiPanelCollapsed.current);
   };
 
   // Determine what to render in the main area

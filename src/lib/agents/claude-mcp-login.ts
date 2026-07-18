@@ -135,6 +135,24 @@ function parseAuthorizeUrl(text: string): string | undefined {
   return urls.find((u) => /redirect_uri=|code_challenge=|client_id=/.test(u));
 }
 
+export type ServerAuthState = "authenticated" | "needs-auth" | "unknown";
+
+/**
+ * Finding (measured 2026-07-11 against a real app with the MCP toggle off, not
+ * assumed): with a valid token in hand but the server rejecting it, `claude mcp
+ * get cabinet-slack` prints ONLY:
+ *
+ *     Status: ✘ Failed to connect
+ *
+ * Slack's own wording ("App is not enabled for Slack MCP server access") never
+ * reaches the CLI's output, so there is nothing to scrape out of it. A
+ * `failed to connect` on a server that HAS a token can only be explained with a
+ * curated, per-integration hint (see `CatalogEntry.connectFailureHint`) rather
+ * than by parsing the CLI's text.
+ */
+const GENERIC_CONNECT_FAILURE_HINT =
+  "The server rejected the connection. Check the app's configuration, then sign in again.";
+
 /**
  * Vendor OAuth errors that are meaningless on their own, mapped to copy that
  * names the cause and the fix. Returns null when nothing matches — we never
@@ -158,14 +176,19 @@ export function friendlyLoginError(output: string, serverName: string): string |
 
 /**
  * Read the server's connection status from a *separate* process, which only
- * succeeds once Claude Code has persisted the OAuth token to disk. Resolves:
- *   - "authenticated": connected / no longer needs auth
- *   - "needs-auth":    still awaiting sign-in
- *   - "unknown":       couldn't tell (treat as still pending)
+ * succeeds once Claude Code has persisted the OAuth token to disk. Unlike the
+ * old boolean-ish read, this keeps WHY a connection failed — a registered server
+ * with a valid token can still be rejected (e.g. a Slack app that isn't
+ * installed to the workspace), and the user can't fix what we don't show them.
+ *
+ * `hint` is the caller-supplied, integration-specific copy to surface for a
+ * "failed to connect" result (typically `CatalogEntry.connectFailureHint`).
+ * This function itself stays vendor-agnostic; callers own the wording.
  */
-export function readServerAuthState(
+export function readServerAuthDetail(
   serverName: string,
-): Promise<"authenticated" | "needs-auth" | "unknown"> {
+  hint?: string,
+): Promise<{ state: ServerAuthState; detail?: string }> {
   return new Promise((resolve) => {
     execFile(
       claudeCommand(),
@@ -177,20 +200,27 @@ export function readServerAuthState(
         // its "No MCP server named …" error, so this must be checked BEFORE the
         // name-presence fallback below — otherwise a missing server reads as
         // authenticated (the panel would falsely show "Signed in").
-        if (/no mcp server named/i.test(out)) return resolve("needs-auth");
-        if (/needs authentication/i.test(out)) return resolve("needs-auth");
-        // Registered + has a token, but the server rejects the connection (e.g.
-        // Slack app not enabled for MCP). Not usable → don't report it as signed
-        // in; surface it as needing attention so the panel offers reconnect.
-        if (/failed to connect/i.test(out)) return resolve("needs-auth");
-        if (/\bconnected\b/i.test(out)) return resolve("authenticated");
-        if (err) return resolve("unknown");
+        if (/no mcp server named/i.test(out)) return resolve({ state: "needs-auth" });
+        if (/needs authentication/i.test(out)) return resolve({ state: "needs-auth" });
+        // Registered + has a token, but the server rejects the connection. Not
+        // usable → don't report it as signed in; surface the reason so the panel
+        // can tell the user what to go fix.
+        if (/failed to connect/i.test(out)) {
+          return resolve({ state: "needs-auth", detail: hint ?? GENERIC_CONNECT_FAILURE_HINT });
+        }
+        if (/\bconnected\b/i.test(out)) return resolve({ state: "authenticated" });
+        if (err) return resolve({ state: "unknown" });
         // Got a clean read with neither marker → server is configured and not
         // flagged as needing auth, so treat as authenticated.
-        return resolve(out.includes(serverName) ? "authenticated" : "unknown");
+        return resolve({ state: out.includes(serverName) ? "authenticated" : "unknown" });
       },
     );
   });
+}
+
+/** Back-compat wrapper: the state alone, for callers that don't need the reason. */
+export function readServerAuthState(serverName: string): Promise<ServerAuthState> {
+  return readServerAuthDetail(serverName).then((r) => r.state);
 }
 
 /**
@@ -325,7 +355,7 @@ export async function startMcpLogin(serverName: string): Promise<McpLoginStartRe
       // it verbatim instead of letting the start time out opaquely.
       if (!settled && /already in use/i.test(session.output)) {
         fail(
-          "OAuth callback port is already in use — close any other sign-in in progress and try again.",
+          "OAuth callback port is already in use. Close any other sign-in in progress and try again.",
         );
         return;
       }

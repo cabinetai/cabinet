@@ -1,0 +1,41 @@
+{
+  "name": "cabinet-mcp-stackadapt",
+  "version": "0.1.0",
+  "description": "Cabinet-maintained, read-only StackAdapt MCP server for campaign delivery and GraphQL reporting.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "cabinet-mcp-stackadapt": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "smoke": "npm run build && node scripts/smoke.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "stackadapt",
+    "cabinet",
+    "advertising"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "esbuild": "^0.24.0",
+    "typescript": "^5"
+  }
+}

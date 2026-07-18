@@ -410,7 +410,7 @@ export function KanbanView({
     if ((running > 0 || finished > 0) && typeof window !== "undefined") {
       const ok = window.confirm(
         running > 0
-          ? `Restart ${restartable.length} task${restartable.length === 1 ? "" : "s"}? This stops ${running} live run${running === 1 ? "" : "s"} and starts over — in-progress work is lost.`
+          ? `Restart ${restartable.length} task${restartable.length === 1 ? "" : "s"}? This stops ${running} live run${running === 1 ? "" : "s"} and starts over. In-progress work is lost.`
           : `Restart ${restartable.length} finished task${restartable.length === 1 ? "" : "s"}? Their previous output will be replaced.`
       );
       if (!ok) return;
@@ -534,7 +534,7 @@ export function KanbanView({
                   restartLabel={isNeeds ? `Restart failed (${failedCount})` : undefined}
                   restartHint={
                     isNeeds
-                      ? "Restart only the failed tasks — questions and approvals are left untouched"
+                      ? "Restart only the failed tasks (questions and approvals are left untouched)"
                       : undefined
                   }
                 />

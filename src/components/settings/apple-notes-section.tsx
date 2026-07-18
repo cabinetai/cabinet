@@ -152,7 +152,7 @@ export function AppleNotesSection() {
         <p className="text-[12px] leading-relaxed text-muted-foreground">
           macOS will ask you to{" "}
           <b className="text-foreground">allow Cabinet to control Notes</b>.
-          Nothing is sent anywhere — stays on this Mac. Re-import any time to pick up changes.
+          Nothing is sent anywhere, it stays on this Mac. Re-import any time to pick up changes.
         </p>
       </div>
       <Button className="w-full text-black" style={{ background: BRAND }} onClick={runImport}>

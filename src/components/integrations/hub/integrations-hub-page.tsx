@@ -125,7 +125,7 @@ export function IntegrationsHubPage() {
                 Integrations
               </h1>
               <p className="mt-1 text-[13px] text-muted-foreground">
-                Connect Cabinet to everything that runs your work — your agents can act on all of it.
+                Connect Cabinet to everything that runs your work, so your agents can act on all of it.
               </p>
             </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { X, FileText, Bot, Sparkles } from "lucide-react";
+import { X, FileText, Bot, Asterisk } from "lucide-react";
 import type { MentionableItem } from "@/hooks/use-composer";
 import { useLocale } from "@/i18n/use-locale";
 
@@ -67,7 +67,7 @@ export function MentionChips({
           className="group inline-flex items-center gap-1 rounded-full bg-violet-500/10 px-2.5 py-1 text-[11px] text-violet-700 dark:text-violet-300"
           title={t("composerExtras:skillAttached")}
         >
-          <Sparkles className="h-3 w-3" />
+          <Asterisk className="h-3 w-3" />
           {findLabel("skill", key)}
           <button
             onClick={() => onRemove("skill", key)}

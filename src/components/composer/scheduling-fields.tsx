@@ -138,7 +138,7 @@ export function HeartbeatFields({
           Heartbeats run the agent&apos;s persona instructions.
         </div>
         <p>
-          Each time it fires, the agent checks in and decides what to work on —
+          Each time it fires, the agent checks in and decides what to work on,
           driven by its persona. Set how often it should wake up here; to
           change what it does, edit the agent instructions.
         </p>

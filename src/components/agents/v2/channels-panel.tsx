@@ -555,7 +555,7 @@ export function ChannelsPanel({ height: initialHeight = 200, onOpenFile, fill = 
               <span className="text-[11px] font-medium text-muted-foreground">{t("slackPanel:thread")}</span>
               {parent && (
                 <span className="text-[11px] text-muted-foreground/50 truncate">
-                  — {parent.displayName || parent.agent}: {parent.content.slice(0, 60)}
+                  {parent.displayName || parent.agent}: {parent.content.slice(0, 60)}
                 </span>
               )}
             </div>

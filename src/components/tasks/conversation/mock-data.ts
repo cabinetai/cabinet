@@ -57,7 +57,7 @@ export const MOCK_TASK: Task = {
       turn: 3,
       role: "user",
       ts: new Date(Date.now() - 1000 * 60 * 4).toISOString(),
-      content: "Nice. Now also handle SSO — same module.",
+      content: "Nice. Now also handle SSO, same module.",
     },
     {
       id: "t2a",
@@ -67,7 +67,7 @@ export const MOCK_TASK: Task = {
       tokens: { input: 4_100, output: 320, cache: 9_100 },
       awaitingInput: true,
       content:
-        "Before I scaffold this — should SSO use **SAML 2.0** or **OIDC**? They land in different files and different dependencies. If you're agnostic, I'd default to OIDC (simpler, JSON-native, fewer cert headaches).",
+        "Before I scaffold this: should SSO use **SAML 2.0** or **OIDC**? They land in different files and different dependencies. If you're agnostic, I'd default to OIDC (simpler, JSON-native, fewer cert headaches).",
       artifacts: [
         { kind: "tool-call", tool: "Read", target: "src/auth/login.ts" },
         { kind: "tool-call", tool: "Grep", target: "saml|oidc" },

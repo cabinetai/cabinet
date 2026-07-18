@@ -203,6 +203,12 @@ module.exports = {
         // Squirrel maker fails ("Description is required").
         description:
           "Cabinet is an AI-first, self-hosted knowledge base and startup OS.",
+        ...(process.env.WINDOWS_CERTIFICATE_FILE
+          ? {
+              certificateFile: process.env.WINDOWS_CERTIFICATE_FILE,
+              certificatePassword: process.env.WINDOWS_CERTIFICATE_PASSWORD,
+            }
+          : {}),
       },
       ["win32"]
     ),
@@ -215,7 +221,7 @@ module.exports = {
         name: "cabinet",
       },
       prerelease: false,
-      draft: false,
+      draft: true,
     }),
   ],
 };

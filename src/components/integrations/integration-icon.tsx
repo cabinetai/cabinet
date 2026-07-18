@@ -20,6 +20,7 @@ const integrationMeta: Record<string, { label: string; color: string; bg: string
   "twitter":    { label: "X / Twitter", color: "#1DA1F2", bg: "bg-[#1DA1F2]/10", icon: "𝕏" },
   "reddit":     { label: "Reddit",      color: "#FF4500", bg: "bg-[#FF4500]/10", icon: "🔴" },
   "instagram":  { label: "Instagram",   color: "#E4405F", bg: "bg-[#E4405F]/10", icon: "📷" },
+  "google-ads": { label: "Google Ads",   color: "#4285F4", bg: "bg-[#4285F4]/10", icon: "📢" },
   "meta-ads":   { label: "Meta Ads",     color: "#0668E1", bg: "bg-[#0668E1]/10", icon: "📣" },
   "tiktok":     { label: "TikTok",      color: "#000000", bg: "bg-[#010101]/10", icon: "🎵" },
   "youtube":    { label: "YouTube",     color: "#FF0000", bg: "bg-[#FF0000]/10", icon: "▶️" },
@@ -53,6 +54,7 @@ const integrationMeta: Record<string, { label: string; color: string; bg: string
   "mixpanel":  { label: "Mixpanel",  color: "#7856FF", bg: "bg-[#7856FF]/10", icon: "📊" },
   "amplitude": { label: "Amplitude", color: "#1C1C1C", bg: "bg-[#1C1C1C]/10", icon: "📈" },
   "segment":   { label: "Segment",   color: "#52BD95", bg: "bg-[#52BD95]/10", icon: "🔗" },
+  "stackadapt": { label: "StackAdapt", color: "#111827", bg: "bg-[#111827]/10", icon: "SA" },
 
   // Email
   "sendgrid":  { label: "SendGrid",  color: "#1A82E2", bg: "bg-[#1A82E2]/10", icon: "📧" },

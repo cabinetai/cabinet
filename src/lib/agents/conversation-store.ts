@@ -728,7 +728,7 @@ export async function recoverConversationMeta(
     artifactPaths: [],
     errorKind: "unknown",
     errorHint:
-      "This task's metadata was unreadable — likely a crash mid-write. The transcript is whatever was saved before it failed.",
+      "This task's metadata was unreadable, likely a crash mid-write. The transcript is whatever was saved before it failed.",
   };
 }
 

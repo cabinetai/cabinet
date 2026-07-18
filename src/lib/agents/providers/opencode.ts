@@ -213,7 +213,7 @@ export const openCodeProvider: AgentProvider = {
             ? ` · ${auth.credentials + auth.envProviders} provider${
                 auth.credentials + auth.envProviders === 1 ? "" : "s"
               } configured`
-            : " · no provider keys — Zen free models only";
+            : " · no provider keys (Zen free models only)";
         } catch {
           // auth list unavailable (old CLI / odd output) — don't regress,
           // just show the plain version string.

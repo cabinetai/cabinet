@@ -82,7 +82,7 @@ export default function RoutinesTab() {
               <p>
                 A routine is a recurring task you give an agent. Write it
                 once, pick when it should run, and your agent handles it on
-                schedule — like <em>&ldquo;every weekday at 9am, summarize
+                schedule, like <em>&ldquo;every weekday at 9am, summarize
                 yesterday&rsquo;s work.&rdquo;</em>
               </p>
               <p>

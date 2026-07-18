@@ -6,6 +6,34 @@ All notable changes to Cabinet.
 
 ---
 
+## v0.5.3 · 2026-07-14
+
+Cabinet v0.5.3 brings the complete desktop delivery and provider-setup work prepared for v0.5.1, plus a clearer Slack setup flow and Google Ads integration. The unpublished v0.5.1 and v0.5.2 candidates were superseded after their release gates caught npm authorization and early-publication failures.
+
+### 🟢 New
+- 🟢 **Guided provider setup:** install, sign in, and verify supported agent CLIs from one self-advancing dialog, with browser and interactive terminal login flows handled in-app.
+- 🟢 **Slack setup:** create and connect a Slack app through a focused three-step guide with actions, callouts, screenshots, connection testing, and useful sign-in failure messages.
+- 🟢 **Integrations:** added Google Ads, the official hosted Meta Ads integration, a daily Meta Ads Reporter agent, and StackAdapt.
+- 🟢 **Native drag and drop:** drop files or folders into Cabinet with visible import progress and streamed uploads up to 1 GB.
+- 🟢 **Desktop delivery:** downloadable macOS DMG/ZIP and Windows installer/ZIP artifacts, validated on native GitHub-hosted runners before publication.
+
+### 🔵 Improved
+- 🔵 **Integration setup:** setup guides now support contextual actions and callouts, readable contrast, brand-neutral framing, and server-scoped connection verification.
+- 🔵 **Zero-install CLI runtime:** `cabinetai run` prefers checksum-verified prebuilt macOS and Linux bundles with atomic extraction and source-install fallback.
+- 🔵 **Viewer and supervision:** documents gain a full-screen focus mode, and supervised desktop installs gain one-click backend restart.
+
+### 🟡 Fixed
+- 🟡 **Release publishing:** npm publication now uses the repository's granular `NPM_TOKEN`, the `cabinetai` executable path remains valid, and every artifact uploader preserves the draft until final approval.
+- 🟡 **Security:** integration verification is restricted to the selected MCP server's tools; rich HTML is sanitized at the final render boundary.
+- 🟡 **Reliability:** packaged-app smoke tests prove the app can reach its daemon; provider connection failures now explain the underlying rejection.
+- 🟡 **Layout state:** temporarily opening the sidebar or AI panel now restores its prior collapsed state instead of leaving it forced open.
+
+### Windows signing status
+
+Windows signing is intentionally optional for v0.5.3. The pipeline still installs, launches, health-checks, and uninstalls the unsigned application before upload. Users may see an “Unknown publisher” label or Microsoft Defender SmartScreen warning until production signing is added.
+
+---
+
 ## v0.5.0 · 2026-07-04
 
 The largest release since v0.4.0 (238 commits): Connect Knowledge brings your cloud drives into every room, a much bigger Integrations Hub (Slack, Google, Microsoft 365, Snowflake, LinkedIn, Discord, Telegram), agents get their own Channels, a Telegram remote-control gateway, clean-path routing, a borderless "Manila Arc" redesign, and a deep editor + knowledge-import pass.

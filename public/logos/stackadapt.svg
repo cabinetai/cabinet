@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48" role="img" aria-labelledby="title">
+  <title id="title">StackAdapt</title>
+  <rect width="220" height="48" rx="8" fill="#111827"/>
+  <path fill="#3B82F6" d="M22 14h28l-7 8H15l7-8Z"/>
+  <path fill="#22C55E" d="M15 24h28l-7 8H8l7-8Z"/>
+  <path fill="#F59E0B" d="M29 34h28l-7 8H22l7-8Z"/>
+  <text x="70" y="31" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">StackAdapt</text>
+</svg>

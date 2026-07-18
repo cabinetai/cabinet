@@ -265,18 +265,18 @@ export function RecentTasks({
           dotClass = "";
           dotStyle = { backgroundColor: agentTint };
           dotPulseColor = agentTint;
-          tooltip = `${task.title} — running`;
+          tooltip = `${task.title}: running`;
         } else if (task.status === "awaiting-input") {
           dotClass = "bg-amber-500";
-          tooltip = `${task.title} — needs reply`;
+          tooltip = `${task.title}: needs reply`;
         } else if (task.status === "failed") {
           dotClass = "bg-red-500";
-          tooltip = `${task.title} — failed`;
+          tooltip = `${task.title}: failed`;
         } else if (task.status === "archived") {
           dotClass = "bg-muted-foreground/20";
         } else if (fresh) {
           dotClass = "bg-emerald-500";
-          tooltip = `${task.title} — just finished`;
+          tooltip = `${task.title}: just finished`;
         }
 
         const taskArtifacts = Array.from(

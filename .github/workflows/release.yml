@@ -95,6 +95,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
+          draft: true
           files: |
             ${{ steps.package.outputs.bundle_name }}
             ${{ steps.package.outputs.bundle_name }}.sha256
@@ -124,17 +125,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      # OIDC trusted-publishing *auth* requires npm >= 11.5.1; Node 22 ships
-      # npm 10.x (which only does OIDC provenance, not auth → unauthenticated
-      # PUT → 404). Upgrade before publishing.
-      - name: Upgrade npm for trusted publishing
-        run: npm install -g npm@latest
-
-      # Auth via npm trusted publishing (OIDC). Requires the cabinetai package
-      # on npmjs.com to have this repo + workflow registered as a trusted
-      # publisher. No NPM_TOKEN secret needed.
+      # Authenticate with the granular npm token stored as the NPM_TOKEN
+      # Actions secret. id-token: write remains enabled for provenance.
       - name: Publish cabinetai
         run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-cli:
     runs-on: ubuntu-latest
@@ -155,13 +151,12 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      # OIDC trusted-publishing auth requires npm >= 11.5.1 (see publish-cabinetai).
-      - name: Upgrade npm for trusted publishing
-        run: npm install -g npm@latest
-
       - name: Install dependencies
         run: npm ci
 
-      # Auth via npm trusted publishing (OIDC). Same setup as cabinetai.
+      # Use the same granular npm token for create-cabinet. The token must have
+      # write access to both packages.
       - name: Publish create-cabinet
         run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

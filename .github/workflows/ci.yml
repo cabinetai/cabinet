@@ -1,7 +1,7 @@
 name: CI
 
 # Runs on every PR (and pushes to main) so a broken build or a broken
-# install flow is caught before merge — not after a release goes out.
+# install flow is caught before merge, not after a release goes out.
 on:
   pull_request:
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   # Blocking gate: the build must compile + type-check, the standalone bundle
-  # must assemble, and BOTH install flows must work — the npx download/extract
+  # must assemble, and BOTH install flows must work: the npx download/extract
   # path (test:zero-install) and the `cabinetai run` boot path (test:bundle,
   # which asserts the app + daemon actually serve health). This is the check
   # that would have caught the type-error build break and any native-module /
@@ -44,14 +44,30 @@ jobs:
       - name: Boot smoke test (cabinetai run → app + daemon health)
         run: npm run test:bundle
 
-  # Non-blocking for now: lint and the unit suite both have pre-existing
-  # failures on a clean checkout (lint errors; cabinet-v2 tests depend on an
-  # untracked ambient data/ fixture). Surfaced here for visibility without
-  # blocking merges. Flip `continue-on-error` to false once those are green.
+      # The e2e job runs `next start` against this, rather than rebuilding.
+      # include-hidden-files is REQUIRED: upload-artifact@v4 skips hidden files
+      # by default, and `.next` is a hidden directory. Without it the upload
+      # silently matches nothing, publishes no artifact, and still reports green,
+      # while the e2e job fails downstream with "Artifact not found".
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          path: |
+            .next
+            !.next/cache
+          include-hidden-files: true
+          retention-days: 1
+
+  # Blocking. This job used to carry `continue-on-error: true`, justified by
+  # "pre-existing failures on a clean checkout". That justification was stale:
+  # lint passes (0 errors), and the suite was 353/354. The single failure was
+  # cabinet-v2 reading an ambient, git-ignored data/ dir. That fixture is now
+  # committed (test/support/fixtures/seed-cabinet), so the suite is hermetic
+  # and 354 unit tests are a real gate instead of decoration.
   lint-and-unit:
-    name: Lint & unit tests (non-blocking)
+    name: Lint & unit tests
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -68,3 +84,51 @@ jobs:
 
       - name: Unit tests
         run: npm test
+
+  # Blocking, and safe to block: the e2e drives a real browser against a real
+  # app + daemon, but the coding agent it talks to is a FAKE CLI emitting canned
+  # stream JSON. No API key, no network, no model nondeterminism, so this runs
+  # on fork PRs and cannot flake on a model's mood. Audits against the REAL
+  # agent CLIs are metered and nondeterministic, so they live in the nightly
+  # agent-audits workflow and never gate a merge.
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    needs: build-and-install-smoke
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
+
+      # The harness runs `next start`, which needs a real build. Fail loudly here
+      # rather than deep inside Playwright if the artifact ever arrives empty.
+      - name: Verify build artifact
+        run: test -f .next/BUILD_ID || { echo "::error::.next/BUILD_ID missing — the build artifact did not download"; exit 1; }
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e
+        run: npm run test:e2e
+
+      - name: Upload traces & screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7

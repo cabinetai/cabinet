@@ -275,7 +275,7 @@ function SlideScheduleView() {
       }
       description={
         <>
-          Switch to Schedule and the same tasks land on a real calendar — see
+          Switch to Schedule and the same tasks land on a real calendar: see
           what&apos;s running now, what&apos;s queued for later today, and
           what&apos;s coming up the rest of the week.
         </>
@@ -484,7 +484,7 @@ function SlideFilters() {
       description={
         <>
           Narrow by agent, status, effort, schedule, or search. The board
-          stays in the same view — only the cards change.
+          stays in the same view; only the cards change.
         </>
       }
     >
@@ -601,7 +601,7 @@ function SlideRuntime() {
       description={
         <>
           Some tasks are quick lookups; some are 20-minute deep research.
-          Choose provider, model, and effort per task — or accept the
+          Choose provider, model, and effort per task, or accept the
           agent&apos;s default.
         </>
       }
@@ -807,7 +807,7 @@ function SlideInside() {
 export function buildTaskBoardDemo(): DemoConfig {
   return {
     id: "task-board",
-    ariaLabel: "The task board — guided demo",
+    ariaLabel: "The task board: guided demo",
     slides: [
       { id: "board", render: () => <SlideBoard /> },
       { id: "views", render: () => <SlideThreeViews /> },

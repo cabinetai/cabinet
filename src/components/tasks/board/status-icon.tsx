@@ -36,28 +36,28 @@ const STATUS_STYLE: Record<
   running: {
     icon: Loader2,
     color: "text-sky-500",
-    label: "Running — the agent is working on this now",
+    label: "Running: the agent is working on this now",
     animate: "animate-spin [animation-duration:1.6s]",
   },
   ask: {
     icon: MessageCircleQuestion,
     color: "text-amber-500",
-    label: "Your turn — the agent asked a question or needs approval",
+    label: "Your turn: the agent asked a question or needs approval",
   },
   failed: {
     icon: AlertCircle,
     color: "text-red-500",
-    label: "Failed — the last run ended with an error (Restart to retry)",
+    label: "Failed: the last run ended with an error (Restart to retry)",
   },
   "just-done": {
     icon: CheckCircle2,
     color: "text-emerald-500",
-    label: "Just finished — completed within the last hour",
+    label: "Just finished: completed within the last hour",
   },
   idle: {
     icon: Circle,
     color: "text-muted-foreground/50",
-    label: "Idle — no activity yet",
+    label: "Idle: no activity yet",
   },
 };
 

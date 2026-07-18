@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { ChevronRight, Pause, Sparkles, User } from "lucide-react";
+import { ChevronRight, Pause, Asterisk, User } from "lucide-react";
 import {
   resolveArtifactTreePath,
   isExternalArtifactPath,
@@ -243,12 +243,16 @@ export function TurnBlock({
     <AgentAvatar agent={agent} size="sm" shape="circle" className="shrink-0" />
   ) : (
     <div className="flex size-5 shrink-0 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400">
-      <Sparkles className="size-3" />
+      <Asterisk className="size-3" />
     </div>
   );
 
   return (
-    <div className={cn("group/turn py-5 pl-6 pr-3", !isUser && "bg-muted/20")}>
+    <div
+      data-testid="turn"
+      data-turn-role={isUser ? "user" : "agent"}
+      className={cn("group/turn py-5 pl-6 pr-3", !isUser && "bg-muted/20")}
+    >
       <div className="mb-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
         {avatarNode}
         <span className="font-medium text-foreground/80">{isUser ? userLabel : agentLabel}</span>

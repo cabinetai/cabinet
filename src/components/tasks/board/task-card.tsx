@@ -126,7 +126,7 @@ export function TaskCard({
               </span>
             </IconHint>
           ) : (
-            <IconHint label="The agent asked a question — open the task to reply">
+            <IconHint label="The agent asked a question. Open the task to reply">
               <span className="inline-flex items-center gap-0.5 rounded bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-400">
                 <MessageCircleQuestion className="size-2.5" />
                 Question
@@ -135,7 +135,7 @@ export function TaskCard({
           )
         )}
         {lane === "needs" && task.status === "failed" && (
-          <IconHint label="The last run failed — open the task to see the error, or Restart to retry">
+          <IconHint label="The last run failed. Open the task to see the error, or Restart to retry">
             <span className="inline-flex items-center rounded bg-destructive/10 px-1.5 py-0.5 text-[9px] font-semibold text-destructive opacity-75">
               Failed
             </span>

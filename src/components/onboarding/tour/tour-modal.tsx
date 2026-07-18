@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
-import { ArrowLeft, ArrowRight, X, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, X, Asterisk } from "lucide-react";
 import { SlideIntro } from "./slide-intro";
 import { SlideData, DATA_SCENE_COUNT } from "./slide-data";
 import { SlideAgents } from "./slide-agents";
@@ -208,7 +208,7 @@ function TourBody({
                 boxShadow: `0 10px 25px -10px ${P.accent}80`,
               }}
             >
-              <Sparkles className="h-4 w-4" />
+              <Asterisk className="h-4 w-4" />
               <span className="hidden sm:inline">{t("tour:writeFirstTask")}</span>
               <span className="sm:hidden">{t("tour:next")}</span>
               <DirIcon

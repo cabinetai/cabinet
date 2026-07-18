@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
-import { ArrowLeft, ArrowRight, Sparkles, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Asterisk, X } from "lucide-react";
 import { DirIcon } from "@/components/ui/dir-icon";
 import { TOUR_PALETTE as P } from "@/components/onboarding/tour/palette";
 import { useLocale } from "@/i18n/use-locale";
@@ -192,7 +192,7 @@ function DemoBody({ demo, onClose }: { demo: DemoConfig; onClose: () => void }) 
                 boxShadow: `0 10px 25px -10px ${P.accent}80`,
               }}
             >
-              <Sparkles className="h-4 w-4" />
+              <Asterisk className="h-4 w-4" />
               {demo.finalCta.label}
               <DirIcon ltr={ArrowRight} rtl={ArrowLeft} className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
             </button>

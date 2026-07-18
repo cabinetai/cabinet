@@ -199,7 +199,7 @@ async function findJsonlForSession(opts: {
     sessionId: firstSessionId ?? sessionId,
     note: inWindow.length
       ? undefined
-      : "Fell back to most-recent JSONL — no file mtime matched the task's time window.",
+      : "Fell back to most-recent JSONL because no file mtime matched the task's time window.",
   };
 }
 

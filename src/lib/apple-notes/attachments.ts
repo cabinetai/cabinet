@@ -54,7 +54,7 @@ async function copyDb(dest: string): Promise<string> {
       );
     }
     throw new AppleNotesAttachmentsUnavailable(
-      "Apple Notes database not found — text imported without images.",
+      "Apple Notes database not found. Text imported without images.",
       "none"
     );
   }
@@ -117,7 +117,7 @@ export async function collectNoteAttachments(
     const have = new Set(cols.map((c) => c.name));
     if (have.size === 0 || !REQUIRED_COLS.every((c) => have.has(c))) {
       throw new AppleNotesAttachmentsUnavailable(
-        "Apple Notes uses an unfamiliar database layout on this macOS version — text imported without images.",
+        "Apple Notes uses an unfamiliar database layout on this macOS version. Text imported without images.",
         "schema"
       );
     }

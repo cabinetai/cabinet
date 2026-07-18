@@ -80,3 +80,8 @@ skills-lock.json
 
 # UI-audit screenshots — local artifacts, not repo content (untracked 2026-07-09; 39MB)
 .audit-shots/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/

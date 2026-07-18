@@ -189,7 +189,7 @@ export function SkillDetail({ skillKey, cabinetPath, onClose }: SkillDetailProps
           {readOnly && (
             <Lock
               className="size-3.5 text-muted-foreground shrink-0"
-              aria-label={`Read-only — origin ${bundle.origin}`}
+              aria-label={`Read-only (origin ${bundle.origin})`}
             />
           )}
         </div>
@@ -382,7 +382,7 @@ function AuditsSection({
       </div>
       {!audits || !audits.available ? (
         <p className="text-[11px] text-muted-foreground/70 mt-2">
-          Audits unavailable — no upstream source recorded.
+          Audits unavailable: no upstream source recorded.
         </p>
       ) : (
         <div className="mt-2 flex flex-wrap gap-1.5">
@@ -430,7 +430,7 @@ function AuditsSection({
             );
             const activeTitle = `${label}: ${block.risk}${
               block.alerts != null ? ` · ${block.alerts} alerts` : ""
-            }${href ? " — open full report on skills.sh" : ""}`;
+            }${href ? ". Open full report on skills.sh" : ""}`;
             const activeContent = (
               <>
                 {passed ? (
