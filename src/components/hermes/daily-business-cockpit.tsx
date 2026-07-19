@@ -22,7 +22,7 @@ import type { CockpitAction, CockpitCard, DailyBusinessCockpit } from "@/lib/her
 import { CockpitInspector } from "./cockpit/cockpit-inspector";
 import {
   type CockpitView,
-  formatExactTime,
+  formatCompactDate,
   formatRelativeTime,
 } from "./cockpit/cockpit-model";
 import { CockpitQueueRow } from "./cockpit/cockpit-queue-row";
@@ -76,6 +76,7 @@ export function DailyBusinessCockpit() {
   const [missionOffset, setMissionOffset] = useState(0);
   const [resume, setResume] = useState<{ cardId: string; lastStep: string } | null>(null);
   const [completionMessage, setCompletionMessage] = useState<string | null>(null);
+  const [clearingCardId, setClearingCardId] = useState<string | null>(null);
   const [riskOpen, setRiskOpen] = useState(false);
   const [risk, setRisk] = useState({ title: "", whyItMatters: "", recommendedNextStep: "", urgency: "normal" });
   const viewed = useRef(false);
@@ -94,13 +95,16 @@ export function DailyBusinessCockpit() {
         const nextIds = new Set(next.cards.map((card) => card.id));
         const cleared = current.cards.find((card) => !nextIds.has(card.id));
         if (cleared) {
+          setClearingCardId(cleared.id);
           setCompletionMessage(`${cleared.title} cleared.`);
           if (completionTimer.current !== null) window.clearTimeout(completionTimer.current);
           completionTimer.current = window.setTimeout(() => setCompletionMessage(null), 2_400);
+          await new Promise((resolve) => window.setTimeout(resolve, 210));
         }
       }
       cockpitRef.current = next;
       setCockpit(next);
+      setClearingCardId(null);
       setError(null);
     } catch (refreshError) {
       setError(refreshError instanceof Error ? refreshError.message : "Daily Business Intake is unavailable.");
@@ -214,16 +218,17 @@ export function DailyBusinessCockpit() {
 
   return (
     <div className="flex h-full min-h-0 flex-col" data-testid="daily-business-cockpit">
-      <header className="shrink-0 border-b border-border px-4 py-3 md:px-5">
+      <header className="relative shrink-0 overflow-hidden border-b border-border px-4 py-3 md:px-5">
+        {busy?.key === "intake" ? <span className="cockpit-intelligence-sweep" aria-hidden="true" /> : null}
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="flex items-baseline gap-3">
               <h1 className="text-2xl font-semibold tracking-tight">Today</h1>
-              {cockpit ? <span className="hidden text-xs text-muted-foreground sm:inline">{formatRelativeTime(cockpit.telemetry.lastIntakeAt)} · {allSystemsHealthy ? "All systems ready" : "System attention needed"}</span> : null}
+              {cockpit ? <span className="hidden text-xs text-muted-foreground sm:inline">{formatRelativeTime(cockpit.telemetry.lastIntakeAt)} · {formatCompactDate(cockpit.telemetry.lastIntakeAt)} · {allSystemsHealthy ? "All systems ready" : "System attention needed"}</span> : null}
             </div>
             {cockpit ? (
               <p className="mt-0.5 text-[11px] text-muted-foreground sm:hidden">
-                {formatRelativeTime(cockpit.telemetry.lastIntakeAt)} · {allSystemsHealthy ? "Ready" : "Attention"} · Radar {cockpit.potentiallyMissed.length}
+                {formatRelativeTime(cockpit.telemetry.lastIntakeAt)} · {formatCompactDate(cockpit.telemetry.lastIntakeAt).replace(/^[^,]+,\s*/, "")} · {allSystemsHealthy ? "Ready" : "Attention"} · Radar {cockpit.potentiallyMissed.length}
               </p>
             ) : null}
             <p className="mt-0.5 hidden text-xs text-muted-foreground sm:block">Know what matters. Clear the path.</p>
@@ -247,10 +252,10 @@ export function DailyBusinessCockpit() {
           </Alert>
         ) : null}
 
-        {completionMessage ? <div className="mb-3 rounded-xl bg-success/10 px-4 py-3 text-sm font-semibold text-success ring-1 ring-success/20 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2" role="status">{completionMessage}</div> : null}
+        {completionMessage ? <div className="cockpit-completion-sweep mb-3 overflow-hidden rounded-xl bg-success/10 px-4 py-3 text-sm font-semibold text-success ring-1 ring-success/20" role="status">{completionMessage}</div> : null}
 
         {cockpit && view === "today" ? (
-          <div className="mx-auto flex max-w-6xl flex-col gap-3 motion-safe:[&>*]:animate-in motion-safe:[&>*]:fade-in motion-safe:[&>*]:slide-in-from-bottom-1">
+          <div className="cockpit-first-view mx-auto flex max-w-6xl flex-col gap-3">
             <SystemFailureAlert cockpit={cockpit} onReauthenticate={startGoogleWorkspaceReauthentication} />
             {resumeCard && resume && resumeCard.id !== nextBest?.id ? <ResumeBanner card={resumeCard} lastStep={resume.lastStep} onResume={() => openCard(resumeCard)} /> : null}
             <div className="grid gap-3 lg:grid-cols-[minmax(280px,0.78fr)_minmax(0,1.22fr)]">
@@ -265,7 +270,7 @@ export function DailyBusinessCockpit() {
               </div>
               {upNext.length ? upNext.map((card, index) => (
                 <div key={card.id} className={index === 2 ? "hidden sm:block" : undefined}>
-                  <CockpitQueueRow card={card} freshness={cockpit.telemetry.lastIntakeAt} busy={busy} compact onOpen={openCard} onAction={onAction} />
+                  <CockpitQueueRow card={card} freshness={cockpit.telemetry.lastIntakeAt} busy={busy} compact exiting={clearingCardId === card.id} onOpen={openCard} onAction={onAction} />
                 </div>
               )) : <p className="rounded-xl bg-muted/35 px-4 py-3 text-sm text-muted-foreground">Nothing else is competing for attention.</p>}
             </section>
@@ -283,7 +288,7 @@ export function DailyBusinessCockpit() {
         {cockpit && view === "queue" ? (
           <section className="mx-auto flex max-w-4xl flex-col gap-3" data-testid="cockpit-queue-view">
             <div className="flex items-end justify-between gap-3"><div><h2 className="text-2xl font-semibold tracking-tight">Queue</h2><p className="mt-1 text-sm text-muted-foreground">One ordered path through decisions and exceptions.</p></div><span className="text-sm font-medium text-muted-foreground">{queue.length} open</span></div>
-            <div className="flex flex-col gap-2">{queue.map((card) => <CockpitQueueRow key={card.id} card={card} freshness={cockpit.telemetry.lastIntakeAt} busy={busy} onOpen={openCard} onAction={onAction} />)}</div>
+            <div className="flex flex-col gap-2">{queue.map((card) => <CockpitQueueRow key={card.id} card={card} freshness={cockpit.telemetry.lastIntakeAt} busy={busy} exiting={clearingCardId === card.id} onOpen={openCard} onAction={onAction} />)}</div>
           </section>
         ) : null}
 

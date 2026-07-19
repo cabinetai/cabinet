@@ -43,6 +43,17 @@ export function formatRelativeTime(value: string | null, now = Date.now()): stri
   return minutes > 0 ? `In ${days}d` : `${days}d ago`;
 }
 
+export function formatCompactDate(value: string | null): string {
+  if (!value) return "No intake yet";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function sourceLabel(source: CockpitCard["sourceType"]): string {
   return source.replaceAll("_", " ");
 }

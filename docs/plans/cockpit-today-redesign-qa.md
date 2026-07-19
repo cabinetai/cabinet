@@ -41,7 +41,8 @@ All existing business fields are reused. The only additive cockpit response fiel
 | Queue anatomy | Expanded two-column cards exposed every action. | Ordered rows expose one primary action and move secondary actions to a menu. | Governed-action browser test verifies the unchanged payload and idempotency key. |
 | Inspector anatomy | Evidence expanded the main page vertically. | Summary, impact, move, missing facts, context, and result are visible; audit sections are collapsed. | Desktop open/close and mobile full-height sheet tests. |
 | Mobile layout | Existing Cabinet and cockpit navigation competed; long text created intrinsic-width overflow. | Cabinet mobile nav yields to Today; modules are single-column and min-width constrained. | 390 by 844 test reports no horizontal overflow. |
-| Motion | No outcome-oriented hierarchy or completion behavior. | Restrained entry, 220 ms sheet, row transition, Momentum transition, and completion sweep; all disable under reduced motion. | Playwright reduced-motion run and production render without framework overlay. |
+| Motion | No outcome-oriented hierarchy or completion behavior. | Explicit 220 ms hierarchy entry, one cyan refresh sweep, one critical-item entrance pulse, resolved-row contraction, Momentum transition, and one completion sweep; all disable under reduced motion. | Playwright reduced-motion run and production render without framework overlay. |
+| Orientation | Freshness was present without the compact date required by the audit. | Relative freshness now precedes a compact local date and the source-health state. | Desktop and 390 px live headers. |
 | Accessibility | Expanded content made focus and action priority ambiguous. | Semantic regions, named navigation, one primary action, keyboard-closing sheet, focus-managed shadcn primitives, and non-color status labels. | Role-based Playwright locators and keyboard Escape verification. |
 
 ## Preserved boundaries

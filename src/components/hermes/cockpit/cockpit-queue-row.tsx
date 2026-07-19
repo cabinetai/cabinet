@@ -30,6 +30,7 @@ export function CockpitQueueRow({
   freshness,
   busy,
   compact = false,
+  exiting = false,
   onOpen,
   onAction,
 }: {
@@ -37,6 +38,7 @@ export function CockpitQueueRow({
   freshness: string | null;
   busy: LoadingState;
   compact?: boolean;
+  exiting?: boolean;
   onOpen: (card: CockpitCard) => void;
   onAction: (action: CockpitAction, card: CockpitCard) => Promise<void>;
 }) {
@@ -53,7 +55,9 @@ export function CockpitQueueRow({
       className={cn(
         "group relative grid min-h-20 grid-cols-[4px_minmax(0,1fr)_auto] overflow-hidden rounded-xl border border-card-edge bg-card shadow-sm transition-[transform,opacity,background-color] duration-200 motion-reduce:transition-none",
         compact ? "min-h-18" : "min-h-22",
-        snoozed ? "opacity-60" : "hover:-translate-y-0.5 hover:bg-accent/35"
+        snoozed ? "opacity-60" : "hover:-translate-y-0.5 hover:bg-accent/35",
+        exiting ? "cockpit-queue-exit pointer-events-none" : null,
+        card.urgency === "critical" && !exiting ? "cockpit-critical-entrance" : null
       )}
       data-testid={`cockpit-queue-row-${card.id}`}
     >

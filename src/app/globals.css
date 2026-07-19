@@ -1407,6 +1407,62 @@ html[data-custom-theme="cyber"] :where(button:not([data-no-bevel])):hover {
   }
 }
 
+@keyframes cockpit-first-view-entry {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cockpit-intelligence-sweep {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(110%); }
+}
+@keyframes cockpit-queue-resolve {
+  from { max-height: 96px; opacity: 1; transform: scaleY(1); }
+  to { max-height: 0; min-height: 0; opacity: 0; transform: scaleY(0.82); }
+}
+@keyframes cockpit-critical-entrance {
+  0%, 100% { box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 6%, transparent); }
+  50% { box-shadow: 0 0 0 2px color-mix(in srgb, var(--destructive) 28%, transparent); }
+}
+@keyframes cockpit-completion-sweep {
+  from { opacity: 0; transform: translateY(-4px); background-color: color-mix(in srgb, var(--cockpit-success) 22%, transparent); }
+  to { opacity: 1; transform: translateY(0); background-color: color-mix(in srgb, var(--cockpit-success) 10%, transparent); }
+}
+.cockpit-first-view > * {
+  animation: cockpit-first-view-entry 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cockpit-first-view > :nth-child(2) { animation-delay: 35ms; }
+.cockpit-first-view > :nth-child(3) { animation-delay: 70ms; }
+.cockpit-first-view > :nth-child(4) { animation-delay: 105ms; }
+.cockpit-first-view > :nth-child(5) { animation-delay: 140ms; }
+.cockpit-intelligence-sweep {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--cockpit-live);
+  opacity: 0.75;
+  animation: cockpit-intelligence-sweep 900ms cubic-bezier(0.22, 1, 0.36, 1) 1;
+}
+.cockpit-queue-exit {
+  transform-origin: top;
+  animation: cockpit-queue-resolve 210ms ease-in forwards;
+}
+.cockpit-critical-entrance {
+  animation: cockpit-critical-entrance 420ms ease-out 1;
+}
+.cockpit-completion-sweep {
+  animation: cockpit-completion-sweep 240ms ease-out 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cockpit-first-view > *,
+  .cockpit-intelligence-sweep,
+  .cockpit-queue-exit,
+  .cockpit-critical-entrance,
+  .cockpit-completion-sweep {
+    animation: none;
+  }
+}
+
 /* Tour data slide — 3-column grid at md+ (sidebar / viewer / copy). */
 @media (min-width: 768px) {
   .cabinet-tour-data-grid {
