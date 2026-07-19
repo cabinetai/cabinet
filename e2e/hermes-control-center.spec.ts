@@ -8,7 +8,7 @@ const capabilities = [
   ["chat", "Chat and sessions", "Sessions", "operator", "Operator", "mapped", "connected"],
   ["agents-subagents", "Agents and subagents", "Agents", "operator", "Operator", "visible_read_only", "available"],
   ["messaging", "Messaging", "Messaging", "operator", "Operator", "visible_read_only", "available"],
-  ["browser-opencli", "Browser and OpenCLI", "Tools", "operator", "Operator", "first_class", "connected"],
+  ["browser-opencli", "Browser and OpenCLI", "Tools", "operator", "Operator", "visible_read_only", "connected"],
   ["billing", "Billing", "Providers and models", "management", "Operator", "unsupported", "unsupported"],
   ["terminal", "Terminal", "Developer", "developer", "Developer", "mapped", "available"],
   ["raw-logs", "Raw logs", "Developer", "developer", "Developer", "diagnostic_only", "disabled"],
@@ -25,7 +25,7 @@ const fixture = {
   installed: { desktopVersion: "0.17.0", desktopCommit: "311a5b0a552b", backendVersion: "0.18.2", upstreamCommit: "e361c5e20402", upstreamAheadBy: 325, cabinetCommit: "test", adapter: "desktop-0.18", updateAvailable: true },
   health: { runtime: "online", gateway: "running", profile: "operator-os", openCli: "connected" },
   summary: { available: 3, connected: 2, degraded: 0, disabled: 1, unsupported: 1, needs_setup: 0 },
-  parity: { operator: 74, management: 60, developer: 78 }, capabilities,
+  parity: { operator: 71, management: 60, developer: 78 }, capabilities,
   live: { profiles: 1, skills: 12, jobs: 0, mcpServers: 2, plugins: 1, openCliProfiles: 1, openCliVersion: "1.8.5", openCliBinaryLocation: "/opt/homebrew/bin/opencli", openCliCapabilities: { screenshot: true, domRead: true, formInteraction: true, download: true }, memoryProvider: "supermemory", memoryNamespace: "operator-os:supermemory", diagnostics: [] },
 };
 
