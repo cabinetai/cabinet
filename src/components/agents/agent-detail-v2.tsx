@@ -103,6 +103,7 @@ import { editorExtensions } from "@/components/editor/extensions";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
 import { useLocale } from "@/i18n/use-locale";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 import { DirIcon } from "@/components/ui/dir-icon";
 import { TelegramMark } from "@/components/integrations/telegram-mark";
 
@@ -474,6 +475,7 @@ function TopBar({
   pulseToken?: number;
 }) {
   const { t } = useLocale();
+  const hermesMode = useHermesMode();
   const palette = persona.color
     ? tintFromHex(persona.color)
     : getAgentColor(persona.slug);
@@ -498,7 +500,7 @@ function TopBar({
       </nav>
 
       <div className="flex items-center gap-1">
-        <Tooltip>
+        {!hermesMode && <Tooltip>
           <TooltipTrigger
             render={
               <Button
@@ -521,9 +523,9 @@ function TopBar({
               ? "Return to the profile view"
               : "See past and upcoming runs for this agent"}
           </TooltipContent>
-        </Tooltip>
+        </Tooltip>}
 
-        <Tooltip>
+        {!hermesMode && <Tooltip>
           <TooltipTrigger
             render={
               <label
@@ -547,9 +549,9 @@ function TopBar({
               ? "Stop this agent. Scheduled heartbeat and routines won't fire. Manual chats and any in-flight runs keep working."
               : "Start this agent. Scheduled heartbeat and routines resume on their own rhythm."}
           </TooltipContent>
-        </Tooltip>
+        </Tooltip>}
 
-        {(() => {
+        {!hermesMode && (() => {
           const canDispatch =
             typeof persona.canDispatch === "boolean"
               ? persona.canDispatch
@@ -1616,13 +1618,15 @@ function DetailsSection({
   onSaveSkills: (slugs: string[]) => void;
 }) {
   const { t } = useLocale();
+  const hermesMode = useHermesMode();
   const [providers, setProviders] = useState<ProviderInfo[]>([]);
   useEffect(() => {
+    if (hermesMode) return;
     fetch("/api/agents/providers")
       .then((r) => r.json())
       .then((d) => setProviders((d.providers as ProviderInfo[]) ?? []))
       .catch(() => {});
-  }, []);
+  }, [hermesMode]);
   const selectableProviders = providers.filter(isAgentProviderSelectable);
 
   return (
@@ -1671,7 +1675,7 @@ function DetailsSection({
           className="col-span-4"
           onSave={(v) => onSaveField("tags", v)}
         />
-        <div className="col-span-2 flex flex-col gap-1 min-w-0">
+        {!hermesMode && <div className="col-span-2 flex flex-col gap-1 min-w-0">
           <label className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
             Provider
           </label>
@@ -1700,15 +1704,15 @@ function DetailsSection({
               ))
             )}
           </select>
-        </div>
-        <div className="col-span-6">
+        </div>}
+        {!hermesMode && <div className="col-span-6">
           <SkillsMultiSelect
             selected={persona.skills ?? []}
             recommended={persona.recommendedSkills ?? []}
             agentSlug={persona.slug}
             onChange={onSaveSkills}
           />
-        </div>
+        </div>}
       </div>
     </Section>
   );
@@ -2110,6 +2114,7 @@ export function AgentDetailV2({
   onSeeAllConversations?: () => void;
 }) {
   const { t } = useLocale();
+  const hermesMode = useHermesMode();
   const [persona, setPersona] = useState<AgentPersona | null>(null);
   const [conversations, setConversations] = useState<ConversationMeta[]>([]);
   const [jobs, setJobs] = useState<AgentJob[]>([]);
@@ -2603,7 +2608,7 @@ export function AgentDetailV2({
                 artifacts={artifacts}
                 onOpenPath={handleOpenPath}
               />
-              <ScheduleSection
+              {!hermesMode && <ScheduleSection
                 persona={persona}
                 jobs={jobs}
                 onToggleJob={toggleJob}
@@ -2621,7 +2626,7 @@ export function AgentDetailV2({
                 onToggleHeartbeat={toggleHeartbeat}
                 onLockedChildClick={pulseMaster}
                 onManage={() => setScheduleOpen(true)}
-              />
+              />}
               <DetailsSection
                 persona={persona}
                 onSaveField={saveField}
@@ -2634,7 +2639,7 @@ export function AgentDetailV2({
             </div>
           </div>
         )}
-        <NewRoutineDialog
+        {!hermesMode && <NewRoutineDialog
           open={routineDialogOpen}
           onOpenChange={setRoutineDialogOpen}
           agent={{
@@ -2656,9 +2661,9 @@ export function AgentDetailV2({
             setRoutineEditJob(null);
             void refresh();
           }}
-        />
+        />}
 
-        <HeartbeatDialog
+        {!hermesMode && <HeartbeatDialog
           open={heartbeatDialogOpen}
           onOpenChange={setHeartbeatDialogOpen}
           agent={{
@@ -2673,7 +2678,7 @@ export function AgentDetailV2({
           onToggledEnabled={(heartbeatEnabled) => {
             setPersona((prev) => (prev ? { ...prev, heartbeatEnabled } : prev));
           }}
-        />
+        />}
 
         <StartWorkDialog
           open={handoffOpen}

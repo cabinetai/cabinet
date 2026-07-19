@@ -12,6 +12,13 @@ import {
 } from "@/lib/agents/library-manager";
 import { ensureAgentScaffold } from "@/lib/agents/scaffold";
 import { getRoomConfig, type RoomType } from "@/lib/onboarding/rooms";
+import { writePersona } from "@/lib/agents/persona-manager";
+import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
+import {
+  enforceHermesPersonaWrite,
+  HERMES_ADAPTER_TYPE,
+  HERMES_PROVIDER_ID,
+} from "@/lib/hermes/product-mode";
 
 // Global, app-level config stays at the data-dir root (the "home" container) so
 // onboarding detection (/api/agents/config) and provider/user config survive
@@ -293,6 +300,21 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    if (getCabinetRuntimeMode() === "hermes") {
+      await writePersona(
+        "editor",
+        enforceHermesPersonaWrite({
+          name: "Operator",
+          displayName: "Operator",
+          role: "Hermes operator for this Cabinet",
+          emoji: "⚡",
+          heartbeat: "",
+          heartbeatEnabled: false,
+        }),
+        roomSlug
+      );
+    }
+
     // 4b. Create the user's first agent (configured from scratch in the team
     // step). We write persona.md directly — like the library templates above —
     // so it doesn't depend on a configured provider (the user may skip provider
@@ -316,15 +338,19 @@ export async function POST(req: NextRequest) {
         await fs.mkdir(agentDir, { recursive: true });
         const personaBody =
           (firstAgent.instructions || "").trim() || `You are ${agentName}.`;
+        const hermesMode = getCabinetRuntimeMode() === "hermes";
         const personaMd = matter.stringify(`\n${personaBody}\n`, {
           name: agentName,
           slug,
           emoji: "🤖",
           type: "specialist",
           role: (firstAgent.role || "").trim(),
-          provider: firstAgent.provider?.trim() || "claude-code",
-          heartbeat: firstAgent.heartbeat?.trim() || "",
-          heartbeatEnabled: firstAgent.heartbeatEnabled === true,
+          provider: hermesMode
+            ? HERMES_PROVIDER_ID
+            : firstAgent.provider?.trim() || "claude-code",
+          adapterType: hermesMode ? HERMES_ADAPTER_TYPE : undefined,
+          heartbeat: hermesMode ? "" : firstAgent.heartbeat?.trim() || "",
+          heartbeatEnabled: hermesMode ? false : firstAgent.heartbeatEnabled === true,
           budget: 100,
           active: true,
           workdir: "/data",

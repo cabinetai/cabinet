@@ -19,7 +19,7 @@ test("Hermes runtime mode routes native work through the isolated Hermes adapter
       {
         providerId: "hermes",
         adapterType: "hermes_runtime",
-        adapterConfig: { effort: "high", model: "requested-model" },
+        adapterConfig: undefined,
         isTerminal: false,
       }
     );
@@ -29,7 +29,7 @@ test("Hermes runtime mode routes native work through the isolated Hermes adapter
   }
 });
 
-test("explicit terminal work keeps its legacy PTY route in Hermes runtime mode", () => {
+test("explicit terminal work cannot escape the Hermes route in Hermes runtime mode", () => {
   const previous = process.env.CABINET_RUNTIME_MODE;
   process.env.CABINET_RUNTIME_MODE = "hermes";
 
@@ -44,10 +44,10 @@ test("explicit terminal work keeps its legacy PTY route in Hermes runtime mode",
         }
       ),
       {
-        providerId: "codex-cli",
-        adapterType: "codex_cli_legacy",
+        providerId: "hermes",
+        adapterType: "hermes_runtime",
         adapterConfig: undefined,
-        isTerminal: true,
+        isTerminal: false,
       }
     );
   } finally {

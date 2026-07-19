@@ -21,6 +21,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { useVisibleInterval } from "@/hooks/use-visible-interval";
 import type { TFunction } from "i18next";
 import { HermesConnectionStatus } from "@/components/layout/hermes-connection-status";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
 const GITHUB_REPO_URL = "https://github.com/cabinetai/cabinet";
@@ -120,6 +121,7 @@ function formatRelativeSavedAgo(ts: number, now: number, t: TFunction): string {
 }
 
 export function StatusBar() {
+  const hermesMode = useHermesMode();
   const { t } = useLocale();
   const profileState = useUserProfile();
   // First name only — a warm, personal "thanks" beats a sterile
@@ -298,10 +300,11 @@ export function StatusBar() {
   const [providersLoaded, setProvidersLoaded] = useState(false);
   const { update } = useCabinetUpdate();
 
-  const anyProviderReady = useMemo(
+  const legacyProviderReady = useMemo(
     () => !providersLoaded || providerStatuses.some((p) => p.available && p.authenticated),
     [providersLoaded, providerStatuses],
   );
+  const anyProviderReady = hermesMode || legacyProviderReady;
 
   const fetchProviderStatus = useCallback(async () => {
     try {
@@ -319,8 +322,9 @@ export function StatusBar() {
 
   // Fetch provider status once on mount
   useEffect(() => {
+    if (hermesMode) return;
     void fetchProviderStatus();
-  }, [fetchProviderStatus]);
+  }, [fetchProviderStatus, hermesMode]);
 
   const fetchGitStatus = async () => {
     try {
@@ -563,7 +567,7 @@ export function StatusBar() {
                   </div>
 
                   {/* Agent Providers */}
-                  <div className="space-y-1">
+                  {!hermesMode && <div className="space-y-1">
                     <div className="flex items-center gap-2 text-[11px]">
                       <span className={`inline-block h-1.5 w-1.5 rounded-full shrink-0 ${
                         anyProviderReady ? "bg-green-500" : "bg-red-500"
@@ -613,7 +617,7 @@ export function StatusBar() {
                         </span>
                       </div>
                     ))}
-                  </div>
+                  </div>}
 
                   {/* Troubleshooting tips */}
                   {(!appAlive || !daemonAlive || !anyProviderReady) && (
@@ -681,7 +685,9 @@ export function StatusBar() {
                   {/* All good state */}
                   {appAlive && daemonAlive && anyProviderReady && (
                     <p className="text-[10px] text-muted-foreground/60 pt-1 border-t border-border">
-                      Cabinet is fully operational. All features are available.
+                      {hermesMode
+                        ? "Cabinet is connected to the Hermes Operator."
+                        : "Cabinet is fully operational. All features are available."}
                     </p>
                   )}
                 </div>

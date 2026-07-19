@@ -14,8 +14,10 @@ import {
   useExplainerState,
 } from "./tab-explainer";
 import { AgentRow } from "./agent-row";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 export function AgentsTab() {
+  const hermesMode = useHermesMode();
   const { t } = useLocale();
   const { loading, agents, jobs, toggleAgentActive, setOrgChartOpen } =
     useAgentsContext();
@@ -76,33 +78,48 @@ export function AgentsTab() {
     <ListShell
       explainer={
         <ExplainerCard state={explainer}>
-          <p>
-            Your AI teammates. Each one has a specialty, a writer, a
-            researcher, a planner. Click any agent to set them up or read
-            what they&apos;ve been doing.
-          </p>
-          <p>
-            The switch on each row is the agent&apos;s on / off button. When
-            it&apos;s on, the agent does its scheduled work on its own. When
-            it&apos;s off, nothing fires automatically, but you can still
-            chat with the agent any time.
-          </p>
+          {hermesMode ? (
+            <>
+              <p>
+                Operator is your Hermes interface. Additional cards are working
+                roles for the same operator, not separate providers, models, or profiles.
+              </p>
+              <p>
+                Every conversation runs through the operator-os Hermes profile.
+                Hermes remains the source of truth for execution and session state.
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                Your AI teammates. Each one has a specialty, a writer, a
+                researcher, a planner. Click any agent to set them up or read
+                what they&apos;ve been doing.
+              </p>
+              <p>
+                The switch on each row is the agent&apos;s on / off button. When
+                it&apos;s on, the agent does its scheduled work on its own. When
+                it&apos;s off, nothing fires automatically, but you can still
+                chat with the agent any time.
+              </p>
+            </>
+          )}
         </ExplainerCard>
       }
       stats={
         <>
-          <span className="tabular-nums text-foreground">{activeCount}</span>{" "}
-          active
-          {" · "}
-          <span className="tabular-nums text-foreground">{departmentCount}</span>{" "}
-          departments
+          <span className="tabular-nums text-foreground">
+            {hermesMode ? agents.length : activeCount}
+          </span>{" "}
+          {hermesMode ? "Operator roles" : "active"}
+          {!hermesMode ? <>{" · "}<span className="tabular-nums text-foreground">{departmentCount}</span>{" "}departments</> : null}
           <ExplainerIcon state={explainer} ariaLabel="About your agents" />
         </>
       }
       query={query}
       setQuery={setQuery}
       searchPlaceholder="Search by name, role, or department"
-      filters={
+      filters={!hermesMode ? (
         <>
           <FilterChip
             ariaLabel="Filter by department"
@@ -124,8 +141,8 @@ export function AgentsTab() {
             ]}
           />
         </>
-      }
-      trailingActions={
+      ) : null}
+      trailingActions={!hermesMode ? (
         <button
           type="button"
           onClick={() => setOrgChartOpen(true)}
@@ -135,13 +152,15 @@ export function AgentsTab() {
           <Network className="size-3.5" />
           {t("agents:workspace.orgChart")}
         </button>
-      }
+      ) : undefined}
       bare
       loading={loading}
       empty={{
         title:
           agents.length === 0
-            ? "No agents yet. Click + New Agent to add one."
+            ? hermesMode
+              ? "No Operator roles yet. Add one to begin."
+              : "No agents yet. Click + New Agent to add one."
             : "No agents match your filters.",
         hint:
           agents.length > 0 && filtered.length === 0
@@ -158,6 +177,7 @@ export function AgentsTab() {
               key={agent.scopedId}
               agent={agent}
               routines={jobsByAgent.get(agent.slug) || []}
+              hermesMode={hermesMode}
               onToggleActive={() => toggleAgentActive(agent)}
               onOpen={() =>
                 setSection({

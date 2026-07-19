@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/i18n/use-locale";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 interface AgentTemplate {
   slug: string;
@@ -44,6 +45,7 @@ export function NewAgentDialog({
   onCreateFromScratch?: () => void;
 }) {
   const { t } = useLocale();
+  const hermesMode = useHermesMode();
   const [templates, setTemplates] = useState<AgentTemplate[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -161,7 +163,9 @@ export function NewAgentDialog({
             ) : null}
           </DialogTitle>
           <DialogDescription>
-            {t("agents:dialog.addAgentDescription")}
+            {hermesMode
+              ? "Add working roles for the Operator. Every role uses the same operator-os Hermes profile."
+              : t("agents:dialog.addAgentDescription")}
           </DialogDescription>
         </DialogHeader>
 

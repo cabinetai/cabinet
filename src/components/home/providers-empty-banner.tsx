@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { useAppStore } from "@/stores/app-store";
 import { useLocale } from "@/i18n/use-locale";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 // Loud first-run state: with zero installed+logged-in providers, agents can't
 // run at all — that deserves a prominent CTA on the home screen, not just a
 // color in the footer status pill. One click opens the setup dialog.
 export function ProvidersEmptyBanner() {
+  const hermesMode = useHermesMode();
   const { t } = useLocale();
   const openProviderSetup = useAppStore((s) => s.openProviderSetup);
   const setSection = useAppStore((s) => s.setSection);
@@ -31,7 +33,7 @@ export function ProvidersEmptyBanner() {
     return () => { alive = false; window.removeEventListener("focus", onFocus); };
   }, []);
 
-  if (state !== "empty") return null;
+  if (hermesMode || state !== "empty") return null;
 
   return (
     <div className="w-full rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">

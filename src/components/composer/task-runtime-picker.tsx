@@ -14,6 +14,7 @@ import {
 import { ProviderGlyph } from "@/components/agents/provider-glyph";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/i18n/use-locale";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 import {
   formatEffortName,
   getModelEffortLevels,
@@ -1225,6 +1226,20 @@ function TerminalProviderPanel({
 }
 
 export function TaskRuntimePicker({
+  ...props
+}: {
+  value: TaskRuntimeSelection;
+  onChange: (value: TaskRuntimeSelection) => void;
+  align?: "start" | "center" | "end";
+  className?: string;
+  compact?: boolean;
+}) {
+  const hermesMode = useHermesMode();
+  if (hermesMode) return null;
+  return <CabinetTaskRuntimePicker {...props} />;
+}
+
+function CabinetTaskRuntimePicker({
   value,
   onChange,
   align = "start",

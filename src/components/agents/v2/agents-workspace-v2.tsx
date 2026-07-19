@@ -10,6 +10,7 @@ import { CreateAgentDialog } from "@/components/mission-control/create-agent-dia
 import { AgentsContextProvider, useAgentsContext } from "./agents-context";
 import { TabsLayout, type AgentsTabKey } from "./tabs-layout";
 import { NewAgentDialog } from "./new-agent-dialog";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 const ALL_TABS: readonly AgentsTabKey[] = [
   "agents",
@@ -53,6 +54,7 @@ export function AgentsWorkspaceV2({
  * identical to the cabinet view, tasks board, etc.
  */
 function Dialogs() {
+  const hermesMode = useHermesMode();
   const {
     cabinetPath,
     agents,
@@ -117,7 +119,7 @@ function Dialogs() {
 
   return (
     <>
-      <HeartbeatDialog
+      {!hermesMode && <HeartbeatDialog
         open={heartbeatDialog !== null}
         onOpenChange={(next) => {
           if (!next) setHeartbeatDialog(null);
@@ -130,9 +132,9 @@ function Dialogs() {
           void refresh();
         }}
         onToggledEnabled={() => void refresh()}
-      />
+      />}
 
-      <NewRoutineDialog
+      {!hermesMode && <NewRoutineDialog
         open={routineDialog !== null}
         onOpenChange={(next) => {
           if (!next) setRoutineDialog(null);
@@ -147,7 +149,7 @@ function Dialogs() {
           setRoutineDialog(null);
           void refresh();
         }}
-      />
+      />}
 
       <NewAgentDialog
         open={newAgentOpen}
@@ -168,7 +170,7 @@ function Dialogs() {
         }}
       />
 
-      <OrgChartModal
+      {!hermesMode && <OrgChartModal
         open={orgChartOpen}
         onOpenChange={setOrgChartOpen}
         cabinetName={orgChartName}
@@ -197,7 +199,7 @@ function Dialogs() {
             cabinetPath: child.path,
           })
         }
-      />
+      />}
     </>
   );
 }

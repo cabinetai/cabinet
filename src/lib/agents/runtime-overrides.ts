@@ -45,6 +45,8 @@ export interface NormalizedRuntime {
  * `adapterType`, `adapterConfig`.
  *
  * Rules:
+ *   0. Hermes mode: force the Hermes provider and adapter and discard every
+ *      request-level execution override, including terminal mode.
  *   1. providerId: request wins, else fallback.
  *   2. adapterType: request wins. If only providerId was given, derive the
  *      provider's default adapter. Otherwise fallback.
@@ -82,16 +84,11 @@ export function normalizeRuntimeOverride(
       : undefined;
   const isTerminal = requested.runtimeMode === "terminal";
 
-  if (getCabinetRuntimeMode() === "hermes" && !isTerminal) {
-    const adapterConfig = {
-      ...(fallback.adapterConfig ?? {}),
-      ...(requested.model?.trim() ? { model: requested.model.trim() } : {}),
-      ...(requested.effort?.trim() ? { effort: requested.effort.trim() } : {}),
-    };
+  if (getCabinetRuntimeMode() === "hermes") {
     return {
       providerId: "hermes",
       adapterType: "hermes_runtime",
-      adapterConfig: Object.keys(adapterConfig).length ? adapterConfig : undefined,
+      adapterConfig: undefined,
       isTerminal: false,
     };
   }

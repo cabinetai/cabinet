@@ -6,6 +6,9 @@ import { ensureAgentScaffold } from "@/lib/agents/scaffold";
 import { resolveAgentTemplateDir } from "@/lib/agents/library-manager";
 import { normalizeCabinetPath } from "@/lib/cabinets/paths";
 import { resolveCabinetDir } from "@/lib/cabinets/server-paths";
+import { writePersona } from "@/lib/agents/persona-manager";
+import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
+import { enforceHermesPersonaWrite } from "@/lib/hermes/product-mode";
 
 export async function POST(
   req: NextRequest,
@@ -49,6 +52,10 @@ export async function POST(
     await copyDir(templateDir, targetDir);
 
     await ensureAgentScaffold(targetDir);
+
+    if (getCabinetRuntimeMode() === "hermes") {
+      await writePersona(slug, enforceHermesPersonaWrite({}), cabinetPath);
+    }
 
     // Promote `recommendedSkills` into active `skills` for fresh agents (C8).
     // The library template's `recommendedSkills:` are sensible defaults per

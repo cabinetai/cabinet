@@ -62,6 +62,8 @@ export interface BootOptions {
    * without forking the whole fixture directory.
    */
   files?: Record<string, string>;
+  /** Product-mode environment overrides applied to both child processes. */
+  env?: Partial<NodeJS.ProcessEnv>;
 }
 
 export interface CabinetInstance {
@@ -127,6 +129,7 @@ export async function bootCabinet(options: BootOptions = {}): Promise<CabinetIns
     // Auth is enabled exactly when KB_PASSWORD is non-empty. Keep it off so the
     // bullet tests the agent loop, not the login wall.
     KB_PASSWORD: "",
+    ...options.env,
   };
 
   const children: ChildProcess[] = [];

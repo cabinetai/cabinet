@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Check, X, ExternalLink, Copy, ChevronDown } from "lucide-react";
 import { useAppStore } from "@/stores/app-store";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 import { useLocale } from "@/i18n/use-locale";
 import { cn } from "@/lib/utils";
 import { WebTerminal, type WebTerminalHandle } from "@/components/terminal/web-terminal";
@@ -60,8 +61,9 @@ async function promoteSoleReadyDefault(providerId: string): Promise<void> {
 }
 
 export function ProviderSetupDialog() {
+  const hermesMode = useHermesMode();
   const providerId = useAppStore((s) => s.providerSetupId);
-  if (!providerId) return null;
+  if (hermesMode || !providerId) return null;
   return <ProviderSetupPanel key={providerId} providerId={providerId} />;
 }
 

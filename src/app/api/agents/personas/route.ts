@@ -13,6 +13,11 @@ import { getRunningConversationCounts } from "@/lib/agents/conversation-store";
 import { ensureAgentScaffold } from "@/lib/agents/scaffold";
 import { defaultAdapterTypeForProvider } from "@/lib/agents/adapters";
 import { getDefaultProviderId } from "@/lib/agents/provider-runtime";
+import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
+import {
+  enforceHermesPersonaWrite,
+  projectHermesPersona,
+} from "@/lib/hermes/product-mode";
 
 // Initialize heartbeats on first request
 let initialized = false;
@@ -35,7 +40,9 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     personas: personas.map((persona) => ({
-      ...persona,
+      ...(getCabinetRuntimeMode() === "hermes"
+        ? projectHermesPersona(persona)
+        : persona),
       runningCount: runningCounts[persona.slug] || 0,
     })),
     activeHeartbeats,
@@ -54,14 +61,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "slug is required" }, { status: 400 });
   }
 
-  await writePersona(slug, {
+  const writeData = {
     provider: personaData.provider || getDefaultProviderId(),
     adapterType:
       typeof personaData.adapterType === "string" && personaData.adapterType.trim()
         ? personaData.adapterType.trim()
         : defaultAdapterTypeForProvider(personaData.provider || getDefaultProviderId()),
     ...personaData,
-  }, cabinetPath);
+  };
+  await writePersona(
+    slug,
+    getCabinetRuntimeMode() === "hermes"
+      ? enforceHermesPersonaWrite(writeData)
+      : writeData,
+    cabinetPath
+  );
 
   // Globals scaffold under data/.global-agents/<slug>/, not under any cabinet.
   // Re-read the persona so we know where writePersona actually landed it.
