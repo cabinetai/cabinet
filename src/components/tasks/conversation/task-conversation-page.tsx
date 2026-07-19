@@ -53,6 +53,7 @@ import { FolderTabs } from "@/components/layout/folder-tabs";
 import { TurnBlock, type TurnBlockAgent } from "./turn-block";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { ConversationApprovalPanel } from "@/components/agents/conversation-approval-panel";
+import { HermesActivityPanel } from "@/components/agents/hermes-activity-panel";
 import { ArtifactsList } from "./artifacts-list";
 import { DiffPanel } from "./diff-panel";
 import { LogsPanel } from "./logs-panel";
@@ -2092,6 +2093,23 @@ export function TaskConversationPage({
                 />
               ))}
             </div>
+            {task.meta.adapterType === "hermes_runtime" ? (
+              <div className="mx-auto max-w-3xl px-4 pt-3">
+                <HermesActivityPanel
+                  conversationId={taskId}
+                  cabinetPath={task.meta.cabinetPath}
+                  status={task.meta.status}
+                  onChanged={async () => {
+                    try {
+                      const fresh = await fetchTask(taskId, task.meta.cabinetPath);
+                      setTask(fresh);
+                    } catch {
+                      // SSE and the safety poll will reconcile transient misses.
+                    }
+                  }}
+                />
+              </div>
+            ) : null}
             {/* Proposed agent actions — sibling views: conversation-result-view.tsx, conversation-live-view.tsx */}
             <div className="mx-auto max-w-3xl px-1 pt-2">
               <ConversationApprovalPanel

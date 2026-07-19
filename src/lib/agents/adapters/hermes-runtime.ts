@@ -19,6 +19,16 @@ function requestId(event: HermesGatewayEvent): string | null {
   return typeof value === "string" ? value : null;
 }
 
+function redactSensitiveFlow(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(redactSensitiveFlow);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.keys(value as Record<string, unknown>).map((key) => [key, "[REDACTED]"])
+    );
+  }
+  return typeof value === "string" ? "[REDACTED]" : value;
+}
+
 function classifyGatewayFailure(error: unknown): ConversationErrorClassification {
   if (error instanceof HermesGatewayError) {
     if (error.kind === "timeout") {
@@ -47,6 +57,7 @@ async function executeHermes(ctx: AdapterExecutionContext): Promise<AdapterExecu
   let liveSessionId = "";
   let durableSessionId = ctx.sessionId || "";
   let completed = false;
+  let sensitiveFlowActive = false;
 
   try {
     await client.connect();
@@ -63,18 +74,28 @@ async function executeHermes(ctx: AdapterExecutionContext): Promise<AdapterExecu
     const terminal = new Promise<AdapterExecutionResult>((resolve) => {
       const unsubscribe = client.onEvent((event) => {
         if (event.session_id && event.session_id !== liveSessionId) return;
+        const rawPayload = eventPayload(event);
+        const payload = sensitiveFlowActive
+          ? (redactSensitiveFlow(rawPayload) as Record<string, unknown>)
+          : rawPayload;
         const normalized: AdapterRuntimeEvent = {
           type: event.type,
           sessionId: durableSessionId,
+          liveSessionId,
           runId: ctx.runId,
           requestId: requestId(event),
-          payload: eventPayload(event),
+          payload,
           occurredAt: new Date().toISOString(),
         };
         events.push(normalized);
         void ctx.onEvent?.(normalized);
 
+        if (event.type === "secret.request" || event.type === "sudo.request") {
+          sensitiveFlowActive = true;
+        }
+
         if (event.type === "message.delta") {
+          if (sensitiveFlowActive) return;
           const text = normalized.payload?.text;
           if (typeof text === "string" && text) void ctx.onLog("stdout", text);
           return;
@@ -83,8 +104,12 @@ async function executeHermes(ctx: AdapterExecutionContext): Promise<AdapterExecu
           completed = true;
           unsubscribe();
           const text =
-            typeof normalized.payload?.text === "string" ? normalized.payload.text : "";
-          const status = normalized.payload?.status;
+            sensitiveFlowActive
+              ? "Sensitive Hermes response omitted from Cabinet persistence."
+              : typeof normalized.payload?.text === "string"
+                ? normalized.payload.text
+                : "";
+          const status = rawPayload.status;
           const interrupted = status === "interrupted";
           resolve({
             exitCode: interrupted ? 130 : status === "error" ? 1 : 0,

@@ -24,6 +24,8 @@ export interface AdapterInvocationMeta {
 export interface AdapterRuntimeEvent {
   type: string;
   sessionId?: string | null;
+  /** Ephemeral gateway connection identity. Durable history remains sessionId. */
+  liveSessionId?: string | null;
   runId: string;
   requestId?: string | null;
   payload?: Record<string, unknown>;

@@ -116,3 +116,44 @@ test("delivers structured events and classifies stale sessions", async () => {
   });
   client.close();
 });
+
+test("sends governed responses with exact Hermes request identity", async () => {
+  const socket = new FakeSocket();
+  const client = new HermesGatewayClient(
+    config,
+    (() => {
+      queueMicrotask(() => socket.open());
+      return socket;
+    }) as never
+  );
+  await client.connect();
+
+  const clarification = client.respondClarification("clarify-1", "Scope A");
+  socket.respond(0, { status: "ok" });
+  await clarification;
+  assert.deepEqual(socket.sent[0], {
+    jsonrpc: "2.0",
+    id: "cabinet-1",
+    method: "clarify.respond",
+    params: { request_id: "clarify-1", answer: "Scope A" },
+  });
+
+  const approval = client.respondApproval("live-1", "once");
+  socket.respond(1, { resolved: true });
+  assert.deepEqual(await approval, { resolved: true });
+
+  const secret = client.respondSecret("secret-1", "never-persist-this");
+  socket.respond(2, { status: "ok" });
+  assert.deepEqual(await secret, { status: "ok" });
+
+  const sudo = client.respondSudo("sudo-1", "never-persist-this-either");
+  socket.respond(3, { status: "expired" });
+  assert.deepEqual(await sudo, { status: "expired" });
+
+  assert.deepEqual(socket.sent.slice(1).map((frame) => frame.method), [
+    "approval.respond",
+    "secret.respond",
+    "sudo.respond",
+  ]);
+  client.close();
+});

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   deleteConversation,
+  appendEventLog,
   finalizeConversation,
   readConversationDetail,
+  readEventLog,
   readConversationMeta,
   updateConversationPrompt,
   writeConversationMeta,
@@ -15,6 +17,7 @@ import {
 import { normalizeRuntimeOverride } from "@/lib/agents/runtime-overrides";
 import { publishConversationEvent } from "@/lib/agents/conversation-events";
 import type { ConversationMeta } from "@/types/conversations";
+import { normalizeHermesActivity } from "@/lib/hermes/activity";
 
 export const dynamic = "force-dynamic";
 
@@ -105,6 +108,12 @@ export async function PATCH(
 
   if (action === "stop") {
     const beforeStop = await readConversationMeta(id, cabinetPath);
+    const pendingHermesDecisions =
+      beforeStop?.adapterType === "hermes_runtime"
+        ? normalizeHermesActivity(await readEventLog(id, { cabinetPath })).decisions.filter(
+            (decision) => decision.status === "pending" || decision.status === "commented"
+          )
+        : [];
     await stopDaemonSession(id);
     const stopped = await finalizeConversation(
       id,
@@ -123,6 +132,22 @@ export async function PATCH(
           updatedAt: new Date().toISOString(),
         },
       });
+    }
+    for (const decision of pendingHermesDecisions) {
+      await appendEventLog(
+        id,
+        {
+          type: "runtime.decision",
+          kind: decision.kind,
+          requestId: decision.requestId,
+          requestEventSeq: decision.eventSeq,
+          sessionId: decision.sessionId,
+          runId: decision.runId,
+          status: "cancelled",
+          decision: "run_cancelled",
+        },
+        cabinetPath
+      );
     }
     publishConversationEvent({
       type: "task.updated",

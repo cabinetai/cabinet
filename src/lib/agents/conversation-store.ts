@@ -2318,6 +2318,13 @@ export async function appendRuntimeEvent(
   cabinetPath?: string
 ): Promise<number | null> {
   const sensitiveKey = /authorization|api[_-]?key|password|secret|token|credential|sudo|value/i;
+  const redactString = (input: string): string =>
+    input
+      .replace(/\bBearer\s+[A-Za-z0-9._~-]+/gi, "Bearer [REDACTED]")
+      .replace(/\b(?:sk|ghp|github_pat|xox[baprs])-?[A-Za-z0-9_-]{12,}\b/g, "[REDACTED TOKEN]")
+      .replace(/\bAKIA[A-Z0-9]{16}\b/g, "[REDACTED AWS KEY]")
+      .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[REDACTED JWT]")
+      .replace(/\b[A-Z0-9_]*(?:SECRET|TOKEN|PASSWORD|API_KEY)[A-Z0-9_]*\s*[=:]\s*\S+/gi, "[REDACTED SECRET]");
   const redact = (value: unknown, key = ""): unknown => {
     if (sensitiveKey.test(key)) return "[REDACTED]";
     if (Array.isArray(value)) return value.map((item) => redact(item));
@@ -2329,7 +2336,7 @@ export async function appendRuntimeEvent(
         ])
       );
     }
-    return value;
+    return typeof value === "string" ? redactString(value) : value;
   };
   const safePayload = redact(event.payload ?? {}) as Record<string, unknown>;
   if (
@@ -2345,6 +2352,7 @@ export async function appendRuntimeEvent(
       runtimeType: event.type,
       runId: event.runId,
       sessionId: event.sessionId ?? null,
+      liveSessionId: event.liveSessionId ?? null,
       requestId: event.requestId ?? null,
       payload: safePayload,
       occurredAt: event.occurredAt,
@@ -2360,6 +2368,7 @@ export async function appendRuntimeEvent(
       runtimeType: event.type,
       runId: event.runId,
       sessionId: event.sessionId ?? null,
+      liveSessionId: event.liveSessionId ?? null,
       requestId: event.requestId ?? null,
       payload: safePayload,
       occurredAt: event.occurredAt,
@@ -2369,6 +2378,27 @@ export async function appendRuntimeEvent(
   const meta = await readConversationMeta(id, cabinetPath);
   if (meta && seq != null) {
     const cp = meta.cabinetPath || cabinetPath;
+    if (meta.adapterType === "hermes_runtime" && event.sessionId) {
+      const priorRunId = meta.hermes?.runId;
+      const nextMeta: ConversationMeta = {
+        ...meta,
+        hermes: {
+          profile: meta.hermes?.profile || process.env.CABINET_HERMES_PROFILE || "",
+          sessionId: event.sessionId,
+          liveSessionId: event.liveSessionId || meta.hermes?.liveSessionId || undefined,
+          runId: event.runId,
+          parentRunId:
+            priorRunId && priorRunId !== event.runId
+              ? priorRunId
+              : meta.hermes?.parentRunId,
+          eventSequence: seq,
+          status: "streaming",
+          artifactPaths: meta.artifactPaths,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+      await writeConversationMeta(nextMeta);
+    }
     const telemetry = {
       session_id: event.sessionId ?? meta.hermes?.sessionId ?? null,
       run_id: event.runId,
@@ -2468,6 +2498,46 @@ export async function readEventLog(
   } catch {
     return [];
   }
+}
+
+export async function claimHermesDecision(
+  id: string,
+  identity: string,
+  record: Record<string, unknown>,
+  cabinetPath?: string
+): Promise<boolean> {
+  const meta = await readConversationMeta(id, cabinetPath);
+  if (!meta) return false;
+  const cp = meta.cabinetPath || cabinetPath;
+  const dir = path.join(conversationDir(id, cp), ".hermes-decisions");
+  await ensureDirectory(dir);
+  const digest = createHash("sha256").update(identity).digest("hex");
+  const marker = path.join(dir, `${digest}.json`);
+  try {
+    const handle = await fs.open(marker, "wx", 0o600);
+    try {
+      await handle.writeFile(`${JSON.stringify(record)}\n`, "utf-8");
+    } finally {
+      await handle.close();
+    }
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") return false;
+    throw error;
+  }
+}
+
+export async function releaseHermesDecision(
+  id: string,
+  identity: string,
+  cabinetPath?: string
+): Promise<void> {
+  const meta = await readConversationMeta(id, cabinetPath);
+  if (!meta) return;
+  const cp = meta.cabinetPath || cabinetPath;
+  const digest = createHash("sha256").update(identity).digest("hex");
+  const marker = path.join(conversationDir(id, cp), ".hermes-decisions", `${digest}.json`);
+  await fs.unlink(marker).catch(() => undefined);
 }
 
 function aggregateTokens(turns: ConversationTurn[]): ConversationTokens {

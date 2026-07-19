@@ -53,6 +53,8 @@ export type HermesGatewaySession = {
   messages: unknown[];
 };
 
+export type HermesSensitiveResponseStatus = "ok" | "expired";
+
 export class HermesGatewayClient {
   private socket: Socket | null = null;
   private nextId = 0;
@@ -140,6 +142,39 @@ export class HermesGatewayClient {
 
   async interrupt(liveSessionId: string): Promise<void> {
     await this.request("session.interrupt", { session_id: liveSessionId }, 10_000);
+  }
+
+  async respondClarification(requestId: string, answer: string): Promise<void> {
+    await this.request("clarify.respond", { request_id: requestId, answer }, 30_000);
+  }
+
+  async respondApproval(
+    liveSessionId: string,
+    choice: "once" | "session" | "always" | "deny"
+  ): Promise<{ resolved: boolean }> {
+    return this.request(
+      "approval.respond",
+      { session_id: liveSessionId, choice },
+      30_000
+    );
+  }
+
+  async respondSecret(
+    requestId: string,
+    value: string
+  ): Promise<{ status: HermesSensitiveResponseStatus }> {
+    return this.request("secret.respond", { request_id: requestId, value }, 30_000);
+  }
+
+  async respondSudo(
+    requestId: string,
+    password: string
+  ): Promise<{ status: HermesSensitiveResponseStatus }> {
+    return this.request(
+      "sudo.respond",
+      { request_id: requestId, password },
+      30_000
+    );
   }
 
   async branch(sessionId: string): Promise<Record<string, unknown>> {
