@@ -94,6 +94,39 @@ test("management snapshot normalizes canonical surfaces and never returns its se
   assert.ok(config.managementToken && !JSON.stringify(result).includes(config.managementToken));
 });
 
+test("operator projection returns exact live records while stripping credential fields", async () => {
+  const fetchImpl: typeof fetch = async (input) => {
+    const url = String(input);
+    if (url.includes("/api/plugins/kanban/workers/active")) return response({ workers: [{ id: "worker_1", run_id: "run_1", session_id: "session_1", task: "Review invoices", profile: "operator-os", state: "running", current_tool: "browser", started_at: 1_784_400_000 }] });
+    if (url.includes("/api/plugins/kanban/board")) return response({ columns: [{ name: "Done", tasks: [{ id: "worker_0", task: "Check calendar", profile: "operator-os", status: "completed", result: "No conflict" }] }] });
+    if (url.includes("/api/messaging/platforms")) return response({ platforms: [{ id: "telegram", name: "Telegram", enabled: true, configured: true, state: "connected", updated_at: "2026-07-19T20:00:00Z", home_channel: "Operations", env_vars: [{ key: "TELEGRAM_BOT_TOKEN", redacted_value: secret }] }] });
+    if (url.includes("/api/sessions?")) return response({ sessions: [{ id: "session_1", title: "Invoice review", profile_name: "operator-os", source: "cabinet", is_active: true, started_at: 1_784_400_000, last_active: 1_784_400_300, archived: false, model: "model-a", preview: "Review the invoice" }] });
+    if (url.includes("/api/learning/graph")) return response({ nodes: [{ id: "node_1", label: "Tax deadline", source: "manual", profile: "operator-os", updated_at: "2026-07-19T20:00:00Z" }], edges: [{ source: "node_1", target: "node_2", relationship: "supports" }] });
+    if (url.includes("/api/model/info")) return response({ provider: "provider-a", model: "model-a", effective_context_length: 128_000, capabilities: { supports_tools: true, supports_vision: false, supports_reasoning: true }, api_key: secret });
+    if (url.includes("/api/model/options")) return response({ providers: [{ slug: "provider-a", name: "Provider A", authenticated: true, is_current: true, models: ["model-a"], total_models: 1, access_token: secret }] });
+    if (url.includes("/api/files")) return response({ entries: [{ name: "invoice-report.pdf", path: "/safe/invoice-report.pdf", mime_type: "application/pdf", size: 42, mtime: 1_784_400_000, is_directory: false }] });
+    if (url.endsWith("/api/status")) return response({ profiles: ["operator-os"], gateway_mode: "single", gateway_state: "running", gateway_running: true, gateway_updated_at: "2026-07-19T20:00:00Z", active_agents: 1, active_sessions: 1 });
+    if (url.includes("/api/profiles")) return response({ profiles: [{ name: "operator-os" }] });
+    if (url.includes("/soul")) return response({ exists: true, content: "Operator rules" });
+    if (url.includes("/api/memory")) return response({ active: "supermemory", providers: [{ name: "supermemory", configured: true, available: true }], builtin_files: {} });
+    if (url.includes("/api/mcp/servers")) return response({ servers: [] });
+    return response([]);
+  };
+  const health = { enabled: true, status: "online" as const, version: "0.18.2", profile: "operator-os", gatewayState: "running", checkedAt: "2026-07-19T20:00:00Z", message: "online" };
+  const result = await new HermesManagementClient(config, fetchImpl).snapshot(health);
+
+  assert.equal(result.operator.agents.active[0]?.task, "Review invoices");
+  assert.equal(result.operator.agents.recent[0]?.result, "No conflict");
+  assert.equal(result.operator.messaging[0]?.accountOrChannel, "Operations");
+  assert.equal(result.operator.sessions[0]?.profile, "operator-os");
+  assert.equal(result.operator.artifacts[0]?.kind, "report");
+  assert.equal(result.operator.memoryGraph.edges[0]?.relationship, "supports");
+  assert.equal(result.operator.model.model, "model-a");
+  assert.equal(result.operator.providers[0]?.authenticated, true);
+  assert.equal(JSON.stringify(result).includes(secret), false);
+  assert.equal(JSON.stringify(result).includes("TELEGRAM_BOT_TOKEN"), false);
+});
+
 test("management writes scope hub installs and job skill attachments to the active profile", async () => {
   const requests: Array<{ url: string; method: string; body: unknown }> = [];
   const fetchImpl: typeof fetch = async (input, init) => {

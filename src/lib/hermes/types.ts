@@ -164,6 +164,112 @@ export type HermesManagementSnapshot = {
     invocation: "terminal";
     message: string;
   };
+  operator: {
+    runtime: {
+      gatewayMode: string;
+      gatewayState: string;
+      gatewayRunning: boolean;
+      gatewayBusy: boolean;
+      lastConnection: string | null;
+      activeAgentCount: number;
+      activeSessionCount: number;
+    };
+    agents: {
+      available: boolean;
+      active: Array<{
+        id: string;
+        parentSessionId: string | null;
+        runId: string | null;
+        task: string;
+        profile: string | null;
+        state: string;
+        currentAction: string | null;
+        startedAt: string | null;
+        result: string | null;
+        error: string | null;
+        canInterrupt: boolean;
+      }>;
+      recent: Array<{
+        id: string;
+        parentSessionId: string | null;
+        runId: string | null;
+        task: string;
+        profile: string | null;
+        state: string;
+        currentAction: string | null;
+        startedAt: string | null;
+        result: string | null;
+        error: string | null;
+        canInterrupt: boolean;
+      }>;
+    };
+    messaging: Array<{
+      id: string;
+      name: string;
+      configured: boolean;
+      enabled: boolean;
+      connectionState: string;
+      accountOrChannel: string | null;
+      incomingTriggers: boolean;
+      outboundDelivery: "permitted" | "not_configured" | "unknown";
+      lastSuccessfulEvent: string | null;
+      lastError: string | null;
+    }>;
+    sessions: Array<{
+      id: string;
+      title: string;
+      profile: string | null;
+      source: string;
+      status: string;
+      createdAt: string | null;
+      updatedAt: string | null;
+      archived: boolean;
+      pinned: boolean | null;
+      model: string | null;
+      preview: string | null;
+    }>;
+    artifacts: Array<{
+      id: string;
+      name: string;
+      kind: "file" | "screenshot" | "diff" | "report" | "document" | "log";
+      path: string;
+      mimeType: string | null;
+      size: number;
+      createdAt: string | null;
+      sessionId: string | null;
+      runId: string | null;
+      capability: string | null;
+      agent: string | null;
+    }>;
+    memoryGraph: {
+      nodes: Array<{ id: string; label: string; source: string | null; age: string | null; profile: string | null; category: string | null }>;
+      edges: Array<{ source: string; target: string; relationship: string | null }>;
+      stats: { nodes: number; edges: number };
+    };
+    providers: Array<{
+      id: string;
+      name: string;
+      authenticated: boolean;
+      current: boolean;
+      models: string[];
+      totalModels: number;
+      warning: string | null;
+    }>;
+    model: {
+      provider: string | null;
+      model: string | null;
+      contextLength: number | null;
+      supportsTools: boolean | null;
+      supportsVision: boolean | null;
+      supportsReasoning: boolean | null;
+    };
+    voice: {
+      transcriptionAvailable: boolean;
+      speechAvailable: boolean;
+      transcriptionInterface: string;
+      speechInterface: string;
+    };
+  };
   diagnostics: Array<{ area: string; status: "healthy" | "degraded"; message: string }>;
 };
 

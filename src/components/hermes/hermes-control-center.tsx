@@ -31,6 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { cn } from "@/lib/utils";
+import { HermesLiveModules } from "@/components/hermes/hermes-live-modules";
 import type {
   HermesCapabilityProjection,
   HermesCapabilityStatus,
@@ -120,6 +121,12 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
     ["Risk", capability.readWriteRisk],
     ["Mode", capability.mode],
   ];
+  const creditRows = [
+    ["Discoverable", capability.credit.discoverability],
+    ["Live details", capability.credit.liveVisibility],
+    ["Governed control", capability.credit.governedManagement],
+    ["Live proven", capability.credit.liveProven],
+  ] as const;
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="hermes-capability-inspector">
       <div className="flex flex-col gap-2 p-5 pe-12">
@@ -141,6 +148,18 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
               </div>
             ))}
           </dl>
+          <Separator />
+          <section className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold">Parity credit</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {creditRows.map(([label, earned]) => (
+                <div key={label} className="flex items-center justify-between gap-2 rounded-md border border-border px-2.5 py-2 text-xs">
+                  <span className="text-muted-foreground">{label}</span>
+                  <Badge variant={earned ? "secondary" : "outline"}>{earned ? "Credited" : "Not credited"}</Badge>
+                </div>
+              ))}
+            </div>
+          </section>
           <Separator />
           <section className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">Missing work</h3>
@@ -168,7 +187,7 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
           <section className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">Evidence</h3>
             <p className="text-sm leading-6 text-muted-foreground">{capability.testEvidence}</p>
-            <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion} ({snapshot.installed.desktopCommit}) · Backend {snapshot.installed.backendVersion ?? "unknown"}</p>
+            <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion ?? "Unknown"} ({snapshot.installed.desktopCommit ?? "commit unknown"}) · Backend {snapshot.installed.backendVersion ?? "Unknown"} ({snapshot.installed.backendCommit ?? "commit unknown"})</p>
           </section>
           <Button variant="outline" size="sm" onClick={() => { window.location.href = capability.cabinetHref; }}>
             Open Cabinet surface
@@ -270,10 +289,14 @@ export function HermesControlCenter() {
         {snapshot ? (
           <div className="flex items-center gap-2 overflow-x-auto text-xs text-muted-foreground" data-testid="hermes-version-strip">
             <Badge variant={snapshot.health.runtime === "online" ? "default" : "destructive"}>Runtime {snapshot.installed.backendVersion ?? "unknown"}</Badge>
-            <Badge variant="outline">Desktop {snapshot.installed.desktopVersion}</Badge>
+            <Badge variant="outline">Desktop {snapshot.installed.desktopVersion ?? "Unknown"}</Badge>
             <span className="whitespace-nowrap">Gateway {snapshot.health.gateway}</span>
             <span className="whitespace-nowrap">Profile {snapshot.health.profile}</span>
-            {snapshot.installed.updateAvailable ? <span className="whitespace-nowrap text-warning">Upstream is {snapshot.installed.upstreamAheadBy} commits ahead</span> : null}
+            <span className="whitespace-nowrap text-warning">
+              {snapshot.installed.upstreamAudit.stale
+                ? "Upstream audit is stale"
+                : `Audited upstream: ${snapshot.installed.upstreamAudit.commitsBehind} commits ahead`}
+            </span>
           </div>
         ) : null}
       </header>
@@ -306,13 +329,21 @@ export function HermesControlCenter() {
             ) : null}
             <ScrollArea className="min-h-0 flex-1">
               <div className="mx-auto w-full max-w-4xl p-3 md:p-4">
+                {(["agents", "messaging", "artifacts", "memory", "sessions", "settings", "tools"] as Section[]).includes(section) ? (
+                  <div className="mb-4">
+                    <HermesLiveModules section={section as "agents" | "messaging" | "artifacts" | "memory" | "sessions" | "settings" | "tools"} snapshot={snapshot} query={query} onRefresh={refresh} refreshing={refreshing} />
+                  </div>
+                ) : null}
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-sm font-semibold">{mode === "developer" ? "Developer capabilities" : SECTIONS.find((item) => item.id === section)?.label}</h2>
                     <p className="text-xs text-muted-foreground">{capabilities.length} capabilities visible</p>
                   </div>
-                  <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
-                    <span>Operator {snapshot.parity.operator}%</span><span>Management {snapshot.parity.management}%</span><span>Developer {snapshot.parity.developer}%</span>
+                  <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex" data-testid="hermes-parity-metrics">
+                    <span>Discoverable {snapshot.parity.discoverability.percentage}%</span>
+                    <span>Live {snapshot.parity.liveVisibility.percentage}%</span>
+                    <span>Managed {snapshot.parity.governedManagement.percentage}%</span>
+                    <span>Proven {snapshot.parity.liveProven.percentage}%</span>
                   </div>
                 </div>
                 <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm" data-testid="hermes-capability-list">

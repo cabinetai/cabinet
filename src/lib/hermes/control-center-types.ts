@@ -39,19 +39,43 @@ export type HermesCapabilityDefinition = {
 export type HermesCapabilityProjection = HermesCapabilityDefinition & {
   status: HermesCapabilityStatus;
   statusDetail: string;
+  credit: {
+    discoverability: boolean;
+    liveVisibility: boolean;
+    governedManagement: boolean;
+    liveProven: boolean;
+  };
+};
+
+export type HermesParityMetric = {
+  covered: number;
+  total: number;
+  percentage: number;
+};
+
+export type HermesParityMetrics = {
+  discoverability: HermesParityMetric;
+  liveVisibility: HermesParityMetric;
+  governedManagement: HermesParityMetric;
+  liveProven: HermesParityMetric;
 };
 
 export type HermesControlCenterSnapshot = {
   checkedAt: string;
   installed: {
-    desktopVersion: string;
-    desktopCommit: string;
+    desktopVersion: string | null;
+    desktopCommit: string | null;
     backendVersion: string | null;
-    upstreamCommit: string;
-    upstreamAheadBy: number;
-    cabinetCommit: string;
+    backendCommit: string | null;
+    cabinetCommit: string | null;
     adapter: string;
-    updateAvailable: boolean;
+    upstreamAudit: {
+      auditedAt: string;
+      auditedCommit: string;
+      installedBackendVersion: string;
+      commitsBehind: number;
+      stale: boolean;
+    };
   };
   health: {
     runtime: string;
@@ -60,7 +84,9 @@ export type HermesControlCenterSnapshot = {
     openCli: string;
   };
   summary: Record<HermesCapabilityStatus, number>;
-  parity: Record<HermesCapabilityAudience, number>;
+  parity: HermesParityMetrics & {
+    byAudience: Record<HermesCapabilityAudience, HermesParityMetrics>;
+  };
   capabilities: HermesCapabilityProjection[];
   live: {
     profiles: number;
@@ -75,5 +101,6 @@ export type HermesControlCenterSnapshot = {
     memoryProvider: string;
     memoryNamespace: string;
     diagnostics: Array<{ area: string; status: "healthy" | "degraded"; message: string }>;
+    operator: import("./types").HermesManagementSnapshot["operator"];
   };
 };

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { HERMES_CAPABILITY_REGISTRY, parityPercentage } from "./capability-registry";
+import { HERMES_CAPABILITY_REGISTRY } from "./capability-registry";
 import { HERMES_PARITY_STATES } from "./control-center-types";
 
 test("every Hermes capability has a complete and valid parity record", () => {
@@ -25,13 +25,9 @@ test("operator and developer visibility are intentionally distinct", () => {
   assert.ok(developer.every((item) => item.group === "Developer"));
 });
 
-test("parity percentages include unsupported and diagnostic capabilities", () => {
-  for (const audience of ["operator", "management", "developer"] as const) {
-    const percentage = parityPercentage(audience);
-    assert.ok(percentage > 0 && percentage < 100);
-  }
+test("unsupported and mapped capabilities remain explicit", () => {
   assert.equal(HERMES_CAPABILITY_REGISTRY.find((item) => item.id === "billing")?.parityState, "unsupported");
-  assert.equal(HERMES_CAPABILITY_REGISTRY.find((item) => item.id === "notifications")?.parityState, "diagnostic_only");
+  assert.equal(HERMES_CAPABILITY_REGISTRY.find((item) => item.id === "notifications")?.parityState, "mapped");
 });
 
 test("read-only registry data contains no secret material", () => {

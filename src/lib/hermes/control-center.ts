@@ -1,30 +1,58 @@
-import { execFileSync } from "node:child_process";
-import { HERMES_CAPABILITY_REGISTRY, parityPercentage } from "./capability-registry";
+import { HERMES_CAPABILITY_REGISTRY } from "./capability-registry";
 import type {
   HermesCapabilityDefinition,
   HermesCapabilityProjection,
   HermesCapabilityStatus,
   HermesControlCenterSnapshot,
+  HermesParityMetrics,
+  HermesParityState,
 } from "./control-center-types";
+import { detectHermesInstallation } from "./installation-detection";
 import { HermesManagementClient } from "./management-client";
 import { readHermesServerConfig } from "./server-config";
 
-const INSTALLED_DESKTOP_VERSION = "0.17.0";
-const INSTALLED_DESKTOP_COMMIT = "311a5b0a552be78f5c58807e2be1db02e3badcb0";
-const AUDITED_UPSTREAM_COMMIT = "e361c5e20402375c74a65ca52810c6a380461226";
-const AUDITED_UPSTREAM_AHEAD = 325;
+const LIVE_VISIBILITY_IDS = new Set([
+  "command-center", "profiles", "skills", "cron", "agents-subagents", "messaging",
+  "artifacts", "notifications", "voice", "archived-chats", "session-pinning",
+  "memory-context", "starmap", "providers", "provider-accounts", "models",
+  "model-settings", "gateway", "mcp", "plugins", "browser-opencli", "executor",
+  "about-updates",
+]);
+const GOVERNED_MANAGEMENT_IDS = new Set(["approvals", "notifications"]);
+const LIVE_PROVEN_IDS = new Set([
+  "approvals", "agents-subagents", "messaging", "artifacts", "notifications", "voice",
+  "archived-chats", "session-pinning", "memory-context", "starmap", "providers",
+  "provider-accounts", "models", "model-settings", "gateway", "browser-opencli",
+]);
 
-function cabinetCommit(): string {
-  try {
-    return execFileSync("git", ["rev-parse", "--short=12", "HEAD"], {
-      cwd: process.cwd(),
-      encoding: "utf8",
-      timeout: 1_000,
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-  } catch {
-    return "unknown";
+export function effectiveParityState(
+  definition: HermesCapabilityDefinition,
+  credit: HermesCapabilityProjection["credit"]
+): HermesParityState {
+  if (definition.parityState === "unsupported") return "unsupported";
+  if (definition.parityState === "mapped") return "mapped";
+  if (definition.parityState === "first_class") {
+    return credit.governedManagement && credit.liveProven ? "first_class" : "missing";
   }
+  if (credit.liveVisibility) return "visible_read_only";
+  return "missing";
+}
+
+function metrics(capabilities: HermesCapabilityProjection[]): HermesParityMetrics {
+  const dimension = (key: keyof HermesCapabilityProjection["credit"]) => {
+    const covered = capabilities.filter((item) => item.credit[key]).length;
+    return {
+      covered,
+      total: capabilities.length,
+      percentage: capabilities.length ? Math.round((covered / capabilities.length) * 100) : 0,
+    };
+  };
+  return {
+    discoverability: dimension("discoverability"),
+    liveVisibility: dimension("liveVisibility"),
+    governedManagement: dimension("governedManagement"),
+    liveProven: dimension("liveProven"),
+  };
 }
 
 function statusFor(
@@ -82,10 +110,16 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
     mcpServers: management.mcpServers.length,
     plugins: management.plugins.length,
   };
-  const capabilities: HermesCapabilityProjection[] = HERMES_CAPABILITY_REGISTRY.map((definition) => ({
-    ...definition,
-    ...statusFor(definition, statusInput),
-  }));
+  const capabilities: HermesCapabilityProjection[] = HERMES_CAPABILITY_REGISTRY.map((definition) => {
+    const credit = {
+      discoverability: true,
+      liveVisibility: LIVE_VISIBILITY_IDS.has(definition.id),
+      governedManagement: GOVERNED_MANAGEMENT_IDS.has(definition.id),
+      liveProven: LIVE_PROVEN_IDS.has(definition.id),
+    };
+    const projected = { ...definition, parityState: effectiveParityState(definition, credit) };
+    return { ...projected, ...statusFor(projected, statusInput), credit };
+  });
   const summary = capabilities.reduce<Record<HermesCapabilityStatus, number>>(
     (result, item) => {
       result[item.status] += 1;
@@ -94,17 +128,26 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
     { available: 0, connected: 0, degraded: 0, disabled: 0, unsupported: 0, needs_setup: 0 }
   );
 
+  const installation = detectHermesInstallation(health.version);
+  const audienceMetrics = (audience: HermesCapabilityDefinition["audience"]) =>
+    metrics(capabilities.filter((item) => item.audience === audience));
+
   return {
     checkedAt: new Date().toISOString(),
     installed: {
-      desktopVersion: INSTALLED_DESKTOP_VERSION,
-      desktopCommit: INSTALLED_DESKTOP_COMMIT.slice(0, 12),
-      backendVersion: health.version,
-      upstreamCommit: AUDITED_UPSTREAM_COMMIT.slice(0, 12),
-      upstreamAheadBy: AUDITED_UPSTREAM_AHEAD,
-      cabinetCommit: cabinetCommit(),
+      desktopVersion: installation.desktopVersion,
+      desktopCommit: installation.desktopCommit,
+      backendVersion: installation.backendVersion,
+      backendCommit: installation.backendCommit,
+      cabinetCommit: installation.cabinetCommit,
       adapter: management.compatibility.adapter,
-      updateAvailable: AUDITED_UPSTREAM_AHEAD > 0,
+      upstreamAudit: {
+        auditedAt: installation.upstreamAudit.auditedAt,
+        auditedCommit: installation.upstreamAudit.auditedCommit.slice(0, 12),
+        installedBackendVersion: installation.upstreamAudit.installedBackendVersion,
+        commitsBehind: installation.upstreamAudit.commitsBehind,
+        stale: installation.upstreamAudit.stale,
+      },
     },
     health: {
       runtime: health.status,
@@ -114,9 +157,12 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
     },
     summary,
     parity: {
-      operator: parityPercentage("operator"),
-      management: parityPercentage("management"),
-      developer: parityPercentage("developer"),
+      ...metrics(capabilities),
+      byAudience: {
+        operator: audienceMetrics("operator"),
+        management: audienceMetrics("management"),
+        developer: audienceMetrics("developer"),
+      },
     },
     capabilities,
     live: {
@@ -132,6 +178,7 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
       memoryProvider: management.memory.activeProvider,
       memoryNamespace: management.memory.namespace,
       diagnostics: management.diagnostics,
+      operator: management.operator,
     },
   };
 }

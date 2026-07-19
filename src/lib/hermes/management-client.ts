@@ -138,7 +138,7 @@ export class HermesManagementClient {
         return fallback;
       }
     };
-    const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw, openCli] =
+    const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw, openCli, runtimeRaw, workersRaw, boardRaw, messagingRaw, sessionsRaw, graphRaw, modelRaw, modelOptionsRaw, filesRaw] =
       await Promise.all([
         healthOverride ?? this.health(),
         read("profiles", "/api/profiles", { profiles: [] }),
@@ -150,6 +150,15 @@ export class HermesManagementClient {
         read("toolsets", this.profilePath("/api/tools/toolsets"), []),
         read("plugins", this.profilePath("/api/dashboard/plugins"), []),
         readOpenCliDiagnostics(),
+        read("runtime status", "/api/status", {}),
+        read("active agents", "/api/plugins/kanban/workers/active", { workers: [], unavailable: true }),
+        read("recent agents", "/api/plugins/kanban/board", { columns: [] }),
+        read("messaging", "/api/messaging/platforms", { platforms: [] }),
+        read("sessions", "/api/sessions?limit=100", { sessions: [] }),
+        read("memory graph", "/api/learning/graph", { nodes: [], edges: [], stats: {} }),
+        read("current model", "/api/model/info", {}),
+        read("model options", "/api/model/options", { providers: [] }),
+        read("artifacts", "/api/files", { entries: [] }),
       ]);
 
     const profiles = array(record(profilesRaw).profiles).map((item) => {
@@ -226,6 +235,131 @@ export class HermesManagementClient {
         enabled: true,
       };
     });
+    const runtime = record(runtimeRaw);
+    const agent = (item: unknown) => {
+      const source = record(item);
+      const id = value(source.id) ?? value(source.worker_id) ?? value(source.run_id) ?? "unknown";
+      return {
+        id,
+        parentSessionId: value(source.parent_session_id) ?? value(source.session_id),
+        runId: value(source.run_id),
+        task: value(source.task) ?? value(source.task_title) ?? value(source.title) ?? "Untitled agent task",
+        profile: value(source.profile) ?? value(source.profile_name),
+        state: value(source.state) ?? value(source.status) ?? "unknown",
+        currentAction: value(source.current_action) ?? value(source.current_tool) ?? value(source.tool),
+        startedAt: timestamp(source.started_at),
+        result: value(source.result) ?? value(source.latest_result),
+        error: value(source.error) ?? value(source.last_error),
+        canInterrupt: source.can_interrupt === true || Boolean(value(source.run_id)),
+      };
+    };
+    const activeAgents = array(record(workersRaw).workers).map(agent);
+    const recentAgents = array(record(boardRaw).columns)
+      .flatMap((column) => array(record(column).tasks))
+      .filter((item) => {
+        const state = value(record(item).state) ?? value(record(item).status) ?? "";
+        return ["done", "completed", "failed", "cancelled"].includes(state.toLowerCase());
+      })
+      .slice(0, 20)
+      .map(agent);
+    const messaging = array(record(messagingRaw).platforms).map((item) => {
+      const source = record(item);
+      const enabled = source.enabled === true;
+      const configured = source.configured === true;
+      const homeChannel = value(source.home_channel) ?? value(source.home_channel_name);
+      const lastError = value(source.error_message) ?? value(source.error_code);
+      return {
+        id: value(source.id) ?? "unknown",
+        name: value(source.name) ?? value(source.id) ?? "Unknown platform",
+        configured,
+        enabled,
+        connectionState: value(source.state) ?? (enabled ? "unknown" : "disabled"),
+        accountOrChannel: homeChannel,
+        incomingTriggers: enabled && configured,
+        outboundDelivery: homeChannel ? "permitted" as const : configured ? "unknown" as const : "not_configured" as const,
+        lastSuccessfulEvent: lastError ? null : timestamp(source.updated_at),
+        lastError,
+      };
+    });
+    const sessions = array(record(sessionsRaw).sessions).map((item) => {
+      const source = record(item);
+      const archived = source.archived === true;
+      return {
+        id: value(source.id) ?? "unknown",
+        title: value(source.title) ?? "Untitled session",
+        profile: value(source.profile_name) ?? value(source.profile),
+        source: value(source.source) ?? "unknown",
+        status: source.is_active === true ? "active" : archived ? "archived" : value(source.end_reason) ?? "inactive",
+        createdAt: timestamp(source.started_at) ?? timestamp(source.created_at),
+        updatedAt: timestamp(source.last_active) ?? timestamp(source.updated_at) ?? timestamp(source.ended_at),
+        archived,
+        pinned: typeof source.pinned === "boolean" ? source.pinned : null,
+        model: value(source.model),
+        preview: value(source.preview),
+      };
+    });
+    const artifactKind = (name: string, mime: string | null): "file" | "screenshot" | "diff" | "report" | "document" | "log" => {
+      const normalized = `${name} ${mime ?? ""}`.toLowerCase();
+      if (/screenshot|image\/(png|jpeg|webp)/.test(normalized)) return "screenshot";
+      if (/\.diff\b|\.patch\b/.test(normalized)) return "diff";
+      if (/report/.test(normalized)) return "report";
+      if (/\.log\b|text\/log/.test(normalized)) return "log";
+      if (/\.pdf\b|\.docx?\b|\.xlsx?\b|\.pptx?\b|text\/markdown/.test(normalized)) return "document";
+      return "file";
+    };
+    const artifacts = array(record(filesRaw).entries)
+      .filter((item) => record(item).is_directory !== true)
+      .slice(0, 200)
+      .map((item) => {
+        const source = record(item);
+        const name = value(source.name) ?? "Untitled artifact";
+        const mimeType = value(source.mime_type);
+        return {
+          id: value(source.path) ?? name,
+          name,
+          kind: artifactKind(name, mimeType),
+          path: value(source.path) ?? name,
+          mimeType,
+          size: integer(source.size),
+          createdAt: timestamp(source.mtime),
+          sessionId: value(source.session_id),
+          runId: value(source.run_id),
+          capability: value(source.capability),
+          agent: value(source.agent),
+        };
+      });
+    const graph = record(graphRaw);
+    const graphNodes = array(graph.nodes).map((item) => {
+      const source = record(item);
+      return {
+        id: value(source.id) ?? value(source.node_id) ?? "unknown",
+        label: value(source.label) ?? value(source.title) ?? value(source.name) ?? "Memory node",
+        source: value(source.source),
+        age: timestamp(source.updated_at) ?? timestamp(source.created_at),
+        profile: value(source.profile) ?? value(source.profile_name),
+        category: value(source.category) ?? value(source.type),
+      };
+    });
+    const graphEdges = array(graph.edges).flatMap((item) => {
+      const source = record(item);
+      const from = value(source.source) ?? value(source.from) ?? value(source.source_id);
+      const to = value(source.target) ?? value(source.to) ?? value(source.target_id);
+      return from && to ? [{ source: from, target: to, relationship: value(source.relationship) ?? value(source.type) }] : [];
+    });
+    const currentModel = record(modelRaw);
+    const capabilities = record(currentModel.capabilities);
+    const modelProviders = array(record(modelOptionsRaw).providers).map((item) => {
+      const source = record(item);
+      return {
+        id: value(source.slug) ?? value(source.id) ?? "unknown",
+        name: value(source.name) ?? value(source.slug) ?? "Unknown provider",
+        authenticated: source.authenticated === true,
+        current: source.is_current === true,
+        models: stringArray(source.models).slice(0, 100),
+        totalModels: integer(source.total_models) || stringArray(source.models).length,
+        warning: value(source.warning),
+      };
+    });
     if (!diagnostics.length) diagnostics.push({ area: "management", status: "healthy", message: "Hermes management surfaces responded." });
     return {
       checkedAt: new Date().toISOString(),
@@ -251,6 +385,41 @@ export class HermesManagementClient {
       toolsets,
       plugins,
       openCli,
+      operator: {
+        runtime: {
+          gatewayMode: value(runtime.gateway_mode) ?? "unknown",
+          gatewayState: value(runtime.gateway_state) ?? health.gatewayState ?? "unknown",
+          gatewayRunning: runtime.gateway_running === true,
+          gatewayBusy: runtime.gateway_busy === true,
+          lastConnection: timestamp(runtime.gateway_updated_at),
+          activeAgentCount: integer(runtime.active_agents),
+          activeSessionCount: integer(runtime.active_sessions),
+        },
+        agents: { available: record(workersRaw).unavailable !== true, active: activeAgents, recent: recentAgents },
+        messaging,
+        sessions,
+        artifacts,
+        memoryGraph: {
+          nodes: graphNodes,
+          edges: graphEdges,
+          stats: { nodes: graphNodes.length, edges: graphEdges.length },
+        },
+        providers: modelProviders,
+        model: {
+          provider: value(currentModel.provider),
+          model: value(currentModel.model),
+          contextLength: finite(currentModel.effective_context_length),
+          supportsTools: booleanOrNull(capabilities.supports_tools),
+          supportsVision: booleanOrNull(capabilities.supports_vision),
+          supportsReasoning: booleanOrNull(capabilities.supports_reasoning),
+        },
+        voice: {
+          transcriptionAvailable: true,
+          speechAvailable: true,
+          transcriptionInterface: "/api/audio/transcribe",
+          speechInterface: "/api/audio/speak",
+        },
+      },
       diagnostics,
     };
   }
@@ -322,5 +491,15 @@ function array(value: unknown): unknown[] { return Array.isArray(value) ? value 
 function value(input: unknown): string | null { return typeof input === "string" && input.trim() ? input.trim() : null; }
 function integer(input: unknown): number { return typeof input === "number" && Number.isFinite(input) ? Math.max(0, Math.round(input)) : 0; }
 function finite(input: unknown): number | null { return typeof input === "number" && Number.isFinite(input) ? input : null; }
+function booleanOrNull(input: unknown): boolean | null { return typeof input === "boolean" ? input : null; }
+function timestamp(input: unknown): string | null {
+  if (typeof input === "string" && input.trim()) return input.trim();
+  if (typeof input === "number" && Number.isFinite(input)) {
+    const milliseconds = input > 10_000_000_000 ? input : input * 1_000;
+    const date = new Date(milliseconds);
+    return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  }
+  return null;
+}
 function requiredValue(input: unknown, label: string): string { const result = value(input); if (!result) throw new Error(`Missing ${label}.`); return result; }
 function stringArray(input: unknown): string[] { return array(input).filter((item): item is string => typeof item === "string" && Boolean(item.trim())).map((item) => item.trim()); }
