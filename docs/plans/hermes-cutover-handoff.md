@@ -6,7 +6,7 @@ Cabinet is now Jeremy's primary Hermes UI. This approval closes M7 and authorize
 
 ## Branch, build, and launch
 
-The approved source is branch `feat/hermes-runtime` at or after commit `f975f27f`.
+The approved source is branch `feat/hermes-runtime` at or after commit `3fadd337`, which includes the M8 shadow cockpit.
 
 From `/Users/ignitabull/projects/active/hermes-cabinet`, with the server-only Hermes variables from `.env.example` configured in the launch environment:
 
