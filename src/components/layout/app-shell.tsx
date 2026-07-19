@@ -126,6 +126,10 @@ const DailyBusinessCockpit = dynamic(
   () => import("@/components/hermes/daily-business-cockpit").then((m) => m.DailyBusinessCockpit),
   { ssr: false }
 );
+const HermesControlCenter = dynamic(
+  () => import("@/components/hermes/hermes-control-center").then((m) => m.HermesControlCenter),
+  { ssr: false }
+);
 const OnboardingWizard = dynamic(
   () =>
     import("@/components/onboarding/onboarding-wizard").then(
@@ -428,6 +432,9 @@ export function AppShell() {
         break;
       case "cockpit":
         title = `Daily Business Intake – ${base}`;
+        break;
+      case "hermes":
+        title = `Hermes | ${base}`;
         break;
       case "page":
         title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
@@ -830,7 +837,7 @@ export function AppShell() {
   // Collapse Cabinet's drawer on entry so it cannot cover the mission or
   // compete with that focused navigation surface.
   useEffect(() => {
-    if (isMobile && section.type === "cockpit") setSidebarCollapsed(true);
+    if (isMobile && (section.type === "cockpit" || section.type === "hermes")) setSidebarCollapsed(true);
   }, [isMobile, section.type, setSidebarCollapsed]);
 
   const handleExitApp = () => {
@@ -843,6 +850,7 @@ export function AppShell() {
     // System sections (non-page views)
     if (section.type === "home") return <HomeScreen />;
     if (section.type === "cockpit") return <DailyBusinessCockpit />;
+    if (section.type === "hermes") return <HermesControlCenter />;
     if (section.type === "registry") return <RegistryBrowser />;
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "integrations") return <IntegrationsHubPage />;
@@ -1113,6 +1121,7 @@ export function AppShell() {
     section.type === "tasks" ||
     section.type === "agents" ||
     section.type === "cockpit" ||
+    section.type === "hermes" ||
     // The room/cabinet dashboard puts its header on the desk and wraps its body
     // in a ContentSheet, like agents/tasks — but only in edit mode; browse mode
     // hands off to BrowserView, which still wants the app-shell sheet.
@@ -1198,7 +1207,7 @@ export function AppShell() {
           </div>
         )}
       </div>
-      {!focusMode && section.type !== "cockpit" ? <MobileBottomNav /> : null}
+      {!focusMode && section.type !== "cockpit" && section.type !== "hermes" ? <MobileBottomNav /> : null}
       {terminalOpen && terminalPosition === "right" && <TerminalTabs />}
       {!isMobile && (
         <div className={focusMode ? "hidden" : "contents"}>

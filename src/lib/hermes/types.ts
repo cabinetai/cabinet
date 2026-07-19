@@ -159,6 +159,8 @@ export type HermesManagementSnapshot = {
     daemon: "running" | "stopped" | "unknown";
     extension: "connected" | "disconnected" | "unknown";
     profiles: Array<{ name: string; status: "connected" | "disconnected" | "unknown"; version: string | null }>;
+    binaryLocation: string | null;
+    capabilities: { screenshot: boolean; domRead: boolean; formInteraction: boolean; download: boolean };
     invocation: "terminal";
     message: string;
   };

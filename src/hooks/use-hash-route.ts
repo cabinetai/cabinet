@@ -135,6 +135,7 @@ function buildHash(section: SectionState, pagePath: string | null): string {
   }
   if (section.type === "help") return "#/help";
   if (section.type === "cockpit") return "#/cockpit";
+  if (section.type === "hermes") return "#/hermes";
   if (section.type === "home") return "#/home";
   return "#/home";
 }
@@ -149,6 +150,10 @@ function parseHash(hash: string): RouteState {
 
   if (parts[0] === "cockpit") {
     return { section: { type: "cockpit" }, pagePath: null };
+  }
+
+  if (parts[0] === "hermes") {
+    return { section: { type: "hermes" }, pagePath: null };
   }
 
   // New canonical short forms (audit #122)
@@ -392,6 +397,8 @@ async function applyCleanRoute(route: CleanRoute): Promise<void> {
       return goGlobal({ type: "home" });
     case "cockpit":
       return goGlobal({ type: "cockpit" });
+    case "hermes":
+      return goGlobal({ type: "hermes" });
     case "settings":
       return goGlobal({ type: "settings", slug: route.slug });
     case "integrations":

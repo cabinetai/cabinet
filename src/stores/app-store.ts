@@ -14,6 +14,7 @@ const inflightModelFetches = new Map<string, Promise<void>>();
 export type SectionType =
   | "home"
   | "cockpit"
+  | "hermes"
   | "cabinet"
   | "page"
   | "agents"

@@ -17,6 +17,7 @@ import {
   RefreshCw,
   Settings,
   LayoutDashboard,
+  Orbit,
   UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -294,6 +295,20 @@ export function Sidebar() {
             <LayoutDashboard className="h-4 w-4 shrink-0" />
             <span className="min-w-0 truncate">Daily Business Intake</span>
             <span className="ms-auto shrink-0 rounded-full border border-blue-500/25 bg-blue-500/5 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Shadow</span>
+          </button>
+          <button
+            type="button"
+            title="Hermes Control Center"
+            onClick={() => setSection({ type: "hermes" })}
+            className={cn(
+              "mt-1 flex w-full min-w-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs transition-colors cursor-pointer",
+              section.type === "hermes"
+                ? "bg-accent text-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+            )}
+          >
+            <Orbit className="h-4 w-4 shrink-0" />
+            <span className="min-w-0 truncate">Hermes</span>
           </button>
         </div>}
 

@@ -10,6 +10,8 @@ test("OpenCLI diagnostics distinguish external CLI connectivity from a Hermes sk
   assert.equal(result.extension, "connected");
   assert.deepEqual(result.profiles, [{ name: "r6gdu7du", status: "connected", version: "1.0.22" }]);
   assert.equal(result.invocation, "terminal");
+  assert.equal(result.binaryLocation, "/opt/homebrew/bin/opencli");
+  assert.equal(result.capabilities.screenshot, true);
 });
 
 test("OpenCLI diagnostics fail closed when the binary is unavailable", async () => {

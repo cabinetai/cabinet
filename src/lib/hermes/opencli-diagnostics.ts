@@ -1,4 +1,7 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
+
+const OPENCLI_BINARY = "/opt/homebrew/bin/opencli";
 
 export type OpenCliDiagnostics = {
   available: boolean;
@@ -6,6 +9,8 @@ export type OpenCliDiagnostics = {
   daemon: "running" | "stopped" | "unknown";
   extension: "connected" | "disconnected" | "unknown";
   profiles: Array<{ name: string; status: "connected" | "disconnected" | "unknown"; version: string | null }>;
+  binaryLocation: string | null;
+  capabilities: { screenshot: boolean; domRead: boolean; formInteraction: boolean; download: boolean };
   invocation: "terminal";
   message: string;
 };
@@ -39,6 +44,8 @@ export function parseOpenCliDoctor(output: string): OpenCliDiagnostics {
     daemon,
     extension,
     profiles,
+    binaryLocation: available ? "/opt/homebrew/bin/opencli" : null,
+    capabilities: { screenshot: available, domRead: available, formInteraction: available, download: available },
     invocation: "terminal",
     message: connected
       ? `OpenCLI ${version} is available through the enabled Hermes Terminal toolset with ${profiles.filter((profile) => profile.status === "connected").length} connected browser profile.`
@@ -53,12 +60,13 @@ export async function readOpenCliDiagnostics(runner: Runner = defaultRunner): Pr
     return cachedDiagnostic.value;
   }
   try {
-    const result = await runner("opencli", ["doctor"]);
+    const command = runner === defaultRunner && existsSync(OPENCLI_BINARY) ? OPENCLI_BINARY : "opencli";
+    const result = await runner(command, ["doctor"]);
     const value = parseOpenCliDoctor(`${result.stdout}\n${result.stderr}`);
     if (runner === defaultRunner) cachedDiagnostic = { expiresAt: Date.now() + DIAGNOSTIC_CACHE_MS, value };
     return value;
   } catch {
-    const value: OpenCliDiagnostics = { available: false, version: null, daemon: "unknown", extension: "unknown", profiles: [], invocation: "terminal", message: "OpenCLI is not available on the Cabinet server PATH." };
+    const value: OpenCliDiagnostics = { available: false, version: null, daemon: "unknown", extension: "unknown", profiles: [], binaryLocation: null, capabilities: { screenshot: false, domRead: false, formInteraction: false, download: false }, invocation: "terminal", message: "OpenCLI is not available on the Cabinet server PATH." };
     if (runner === defaultRunner) cachedDiagnostic = { expiresAt: Date.now() + DIAGNOSTIC_CACHE_MS, value };
     return value;
   }
