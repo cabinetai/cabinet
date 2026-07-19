@@ -42,7 +42,29 @@ function jsonPayload(output: string): unknown {
   try { return JSON.parse(candidate); } catch {}
   const start = candidate.indexOf("{");
   const end = candidate.lastIndexOf("}");
-  if (start >= 0 && end > start) return JSON.parse(candidate.slice(start, end + 1));
+  if (start >= 0 && end > start) {
+    const objectCandidate = candidate.slice(start, end + 1);
+    try { return JSON.parse(objectCandidate); } catch (error) {
+      // Hermes occasionally closes the rankingRationale string with an extra
+      // array delimiter before the schema's evidence field. Repair only that
+      // exact impossible sequence, then require the full object to parse.
+      const repaired = objectCandidate
+        .replace(
+          /("rankingRationale"\s*:\s*"(?:\\.|[^"\\])*")\]\s*,\s*("evidence"\s*:)/g,
+          "$1,$2"
+        )
+        .replace(
+          /"(cards|potentiallyMissed|relatedItemDates|missingFacts|contextNotes|evidence)"\s*\[/g,
+          '"$1":['
+        )
+        .replace(
+          /"(cards|potentiallyMissed|relatedItemDates|missingFacts|contextNotes|evidence)\[/g,
+          '"$1":['
+        );
+      if (repaired === objectCandidate) throw error;
+      return JSON.parse(repaired);
+    }
+  }
   throw new Error("Hermes intake output did not contain a JSON object.");
 }
 
@@ -122,7 +144,10 @@ function potentialMiss(value: unknown, generatedAt: string): CockpitPotentialMis
 
 export function parseCockpitIntake(output: string, runId: string, now = new Date()): CockpitIntakeSnapshot {
   const source = record(jsonPayload(output));
-  const generatedAt = date(source.generatedAt ?? source.generated_at) ?? now.toISOString();
+  const reportedAt = date(source.generatedAt ?? source.generated_at);
+  const generatedAt = reportedAt && Math.abs(new Date(reportedAt).getTime() - now.getTime()) <= 15 * 60_000
+    ? reportedAt
+    : now.toISOString();
   const coverage = record(source.sourceCoverage ?? source.source_coverage);
   return {
     schemaVersion: 1,
@@ -154,13 +179,15 @@ Inspect only read-only sources available through Hermes: Gmail requiring Jeremy'
 
 Freshness is mandatory. Gmail and Calendar status must come from a live read operation in THIS run. Never label either source connected by reusing prior run output, cached snippets, session history, or supplied recentRuns. If a live operation fails authentication or otherwise fails, use status error and describe the failure without exposing credentials. Use connected_empty only when a live operation succeeds and returns zero relevant records. Use unavailable only when the capability is absent. Older evidence may appear only in potentiallyMissed with an explicit stale-evidence warning.
 
-The authenticated Google Workspace CLI is named \`gws\` and is available to Hermes through the enabled Terminal toolset. Never inspect credential files, tokens, keyrings, or OAuth client configuration. For Gmail, use only read operations under \`gws gmail users messages list/get\`, scoped to \`userId=me\`. Review enough recent unread, important, compliance, account-change, billing, inventory, and security-notice metadata/snippets to rank the inbox rather than querying only \`is:important\`. Compliance deadlines, account cancellation/closure verification, inventory alerts, and unexpected login/install notices must either become a card or appear in potentiallyMissed. Group messages about the same company/account and obligation into one card; include relatedItemCount, all related message dates, and missingFacts such as amount or due date when absent. Group related security notices into one verification item and suppress expected setup only when evidence proves it expected.
+The authenticated Google Workspace CLI is named \`gws\` and is available to Hermes through the enabled Terminal toolset. Never inspect credential files, tokens, keyrings, or OAuth client configuration. For Gmail, use only read operations under \`gws gmail users messages list/get\`, scoped to \`userId=me\`. Review enough recent unread, important, compliance, account-change, billing, inventory, and security-notice metadata/snippets to rank the inbox rather than querying only \`is:important\`. Compliance deadlines, account cancellation/closure verification, inventory alerts, and unexpected login/install notices must either become a card or appear in potentiallyMissed. Group messages about the same company/account and obligation into one card; include relatedItemCount, all related message dates, and missingFacts such as amount or due date when absent. If a source states that a fee was charged, preserve that verified fact in the card summary or contextNotes; when the fee type or amount is absent, list each absent detail in missingFacts. Group related security notices into one verification item and suppress expected setup only when evidence proves it expected.
+
+Run each \`gws\` read directly and inspect its returned JSON. Do not pipe, redirect, interpolate, or feed \`gws\` output into Python, Node, jq, shell loops, or any other command or interpreter. If a bounded direct read is too large, issue multiple smaller direct \`gws\` reads. A read-only intake must not request a governed shell approval merely to reshape Google Workspace output.
 
 For Calendar, use only \`gws calendar events list\` against the primary calendar from the start of today through the next seven days in ${input.timezone}, expand single events, and order by start time. For recurring events, inspect the recurring-series identity and every nearby pending occurrence. State whether RSVP scope is one occurrence or the series when the API evidence establishes it; otherwise add it to missingFacts. Include missing agenda, description, meeting link, location, or preparation context in contextNotes/missingFacts.
 
 Never use send, modify, insert, update, delete, trash, batchModify, or any other write method. Do not put message bodies, credentials, tokens, private raw payloads, or meeting links in the output. Keep only decision summaries and stable non-secret source references.
 
-Every open manual risk must remain a business_risk card until explicitly resolved. Search only the active operator-os Supermemory scope for the overdue tax/accounting risk. Report whether that deliberate memory exists; do not infer it from archived sessions or recentRuns.
+Every open manual risk must remain a business_risk card until explicitly resolved. Search only the active operator-os Supermemory scope for the overdue tax/accounting risk. Report whether that deliberate memory exists; do not infer it from archived sessions or recentRuns. The supplied manual risk is canonical and must remain the only record of this risk. Never recommend creating, copying, duplicating, or storing a Supermemory entry for it now or later, even after more facts are confirmed. Its recommendedNextStep, missingFacts, and contextNotes must keep remediation inside the canonical manual risk.
 
 For every promoted card, provide rankingRationale explaining briefly why it outranked other unread or time-sensitive items. Put reviewed but unpromoted candidates in potentiallyMissed so shadow-mode ranking failures remain visible.
 
@@ -176,6 +203,6 @@ ${JSON.stringify(input.recentRuns)}
 Open owner-reported potentially missed items. A live source check must either promote each item to a card, keep it in potentiallyMissed with current status, or state that its source could not be checked:
 ${JSON.stringify(input.ownerPotentialMisses ?? [])}
 
-Return exactly one JSON object and no prose. Use this schema:
+Return exactly one syntactically valid JSON object and no prose before or after it. Before responding, verify that every object and array closes with the matching delimiter and that the full response parses as JSON. Use this schema:
 {"generatedAt":"ISO-8601","sourceCoverage":{"gmail":{"status":"connected|connected_empty|partial|unavailable|error","message":"...","evidenceCount":0},"calendar":{"status":"...","message":"...","evidenceCount":0},"hermesJobs":{"status":"...","message":"...","evidenceCount":0},"manualRisks":{"status":"...","message":"...","evidenceCount":0},"supermemory":{"status":"...","message":"...","evidenceCount":0}},"cards":[{"kind":"needs_jeremy|business_risk|todays_mission|recent_win","title":"...","summary":"...","whyItMatters":"...","recommendedNextStep":"...","urgency":"critical|high|normal|low","sourceType":"gmail|calendar|hermes_job|manual_risk|hermes_run|memory","sourceId":"stable grouped source identity","createdAt":"ISO-8601","relatedItemCount":1,"relatedItemDates":["ISO-8601"],"missingFacts":["fact absent from source"],"contextNotes":["recurrence or grouping context"],"rankingRationale":"why this outranked other reviewed items","evidence":[{"source":"gmail|calendar|hermes_job|manual_risk|hermes_run|memory","label":"...","reference":"non-secret source reference","occurredAt":"ISO-8601 or null"}],"approval":{"state":"not_required|pending|approved|rejected","runId":null,"requestId":null}}],"potentiallyMissed":[{"title":"reviewed candidate","sourceType":"gmail|calendar|hermes_job|manual_risk|hermes_run|memory","sourceId":"stable source identity","whyPotentiallyMissed":"why it was not promoted or why evidence is stale","reviewQuestion":"what Jeremy should verify","createdAt":"ISO-8601","evidence":[]}]}`;
 }

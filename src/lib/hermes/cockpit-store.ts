@@ -23,12 +23,22 @@ function statePath() { return path.join(getManagedDataDir(), ".cabinet-state", "
 export async function readCockpitState(): Promise<FileShape> {
   try {
     const parsed = JSON.parse(await fs.readFile(statePath(), "utf8")) as Partial<FileShape>;
+    const actions = Array.isArray(parsed.actions) ? parsed.actions : [];
+    const futureCutoff = Date.now() + 15 * 60_000;
+    const snapshots = (Array.isArray(parsed.snapshots) ? parsed.snapshots : []).map((snapshot) => {
+      const generatedTime = new Date(snapshot.generatedAt).getTime();
+      if (!Number.isFinite(generatedTime) || generatedTime <= futureCutoff) return snapshot;
+      const completion = actions.find((action) =>
+        action.runId === snapshot.runId && action.action === "intake_completed" && action.outcome === "completed"
+      );
+      return completion ? { ...snapshot, generatedAt: completion.at } : snapshot;
+    }).sort((a, b) => b.generatedAt.localeCompare(a.generatedAt));
     return {
       schemaVersion: 1,
       manualRisks: Array.isArray(parsed.manualRisks) ? parsed.manualRisks : [],
-      snapshots: Array.isArray(parsed.snapshots) ? parsed.snapshots : [],
+      snapshots,
       cardState: parsed.cardState && typeof parsed.cardState === "object" ? parsed.cardState : {},
-      actions: Array.isArray(parsed.actions) ? parsed.actions : [],
+      actions,
       ownerReview: parsed.ownerReview && typeof parsed.ownerReview === "object" ? {
         classifications: parsed.ownerReview.classifications && typeof parsed.ownerReview.classifications === "object" ? parsed.ownerReview.classifications : {},
         potentialMisses: Array.isArray(parsed.ownerReview.potentialMisses) ? parsed.ownerReview.potentialMisses : [],

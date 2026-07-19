@@ -60,6 +60,37 @@ test("cockpit intake rejects prose without a JSON contract", () => {
   assert.throws(() => parseCockpitIntake("Here is your morning update.", "run_bad"), /JSON object/);
 });
 
+test("cockpit intake clamps a future-skewed generated timestamp to run time", () => {
+  const runTime = new Date("2026-07-19T04:55:35Z");
+  const output = `{"generatedAt":"2026-07-19T11:53:29Z","sourceCoverage":{},"cards":[],"potentiallyMissed":[]}`;
+  const snapshot = parseCockpitIntake(output, "run_future", runTime);
+  assert.equal(snapshot.generatedAt, runTime.toISOString());
+});
+
+test("cockpit intake narrowly repairs an extra delimiter after ranking rationale", () => {
+  const output = `{"generatedAt":"2026-07-19T04:48:43Z","sourceCoverage":{},"cards":[{"kind":"needs_jeremy","title":"Review account","sourceType":"gmail","sourceId":"message-1","rankingRationale":"This outranked routine receipts."],"evidence":[],"approval":{"state":"not_required","runId":null,"requestId":null}}],"potentiallyMissed":[]}`;
+  const snapshot = parseCockpitIntake(output, "run_repaired");
+  assert.equal(snapshot.cards[0]?.rankingRationale, "This outranked routine receipts.");
+});
+
+test("cockpit intake narrowly repairs a missing colon on missingFacts", () => {
+  const output = `{"generatedAt":"2026-07-19T04:53:29Z","sourceCoverage":{},"cards":[{"kind":"needs_jeremy","title":"Review meeting","sourceType":"calendar","sourceId":"event-1","missingFacts"["Agenda"],"evidence":[],"approval":{"state":"not_required","runId":null,"requestId":null}}],"potentiallyMissed":[]}`;
+  const snapshot = parseCockpitIntake(output, "run_repaired_colon");
+  assert.deepEqual(snapshot.cards[0]?.missingFacts, ["Agenda"]);
+});
+
+test("cockpit intake narrowly repairs a missing quote and colon on missingFacts", () => {
+  const output = `{"generatedAt":"2026-07-19T04:53:29Z","sourceCoverage":{},"cards":[{"kind":"needs_jeremy","title":"Review meeting","sourceType":"calendar","sourceId":"event-1","missingFacts["Agenda"],"evidence":[],"approval":{"state":"not_required","runId":null,"requestId":null}}],"potentiallyMissed":[]}`;
+  const snapshot = parseCockpitIntake(output, "run_repaired_quote_colon");
+  assert.deepEqual(snapshot.cards[0]?.missingFacts, ["Agenda"]);
+});
+
+test("cockpit intake limits missing array separators to named schema fields", () => {
+  const output = `{"generatedAt":"2026-07-19T04:53:29Z","sourceCoverage":{},"cards":[{"kind":"needs_jeremy","title":"Review meeting","sourceType":"calendar","sourceId":"event-1","contextNotes["Recurring series"],"evidence":[],"approval":{"state":"not_required","runId":null,"requestId":null}}],"potentiallyMissed":[]}`;
+  const snapshot = parseCockpitIntake(output, "run_repaired_named_array");
+  assert.deepEqual(snapshot.cards[0]?.contextNotes, ["Recurring series"]);
+});
+
 test("intake prompt enforces read-only behavior and explicit unavailable coverage", () => {
   const prompt = buildIntakePrompt({ now: "2026-07-18T16:00:00-07:00", timezone: "America/Vancouver", manualRisks: [], jobs: [], recentRuns: [] });
   assert.match(prompt, /Do not send, modify, schedule, approve, reject/);
@@ -68,8 +99,14 @@ test("intake prompt enforces read-only behavior and explicit unavailable coverag
   assert.match(prompt, /Never use send, modify, insert, update, delete/);
   assert.match(prompt, /Freshness is mandatory/);
   assert.match(prompt, /Never inspect credential files/);
+  assert.match(prompt, /Do not pipe, redirect, interpolate/);
+  assert.match(prompt, /must not request a governed shell approval/);
+  assert.match(prompt, /manual risk is canonical/);
+  assert.match(prompt, /Never recommend creating, copying, duplicating, or storing a Supermemory entry/);
+  assert.match(prompt, /fee type or amount is absent/);
   assert.match(prompt, /connected_empty/);
   assert.match(prompt, /potentiallyMissed/);
   assert.match(prompt, /next seven days/);
-  assert.match(prompt, /Return exactly one JSON object/);
+  assert.match(prompt, /Return exactly one syntactically valid JSON object/);
+  assert.match(prompt, /full response parses as JSON/);
 });

@@ -104,7 +104,7 @@ async function ingestCompletedIntakes(runs: HermesRunProjection[]): Promise<void
   for (const run of runs) {
     if (!run.context.startsWith("cockpit:intake:") || run.status !== "completed" || !run.result || known.has(run.runId)) continue;
     try {
-      const snapshot = parseCockpitIntake(run.result, run.runId);
+      const snapshot = parseCockpitIntake(run.result, run.runId, new Date(run.updatedAt));
       await recordCockpitSnapshot(snapshot);
       await recordCockpitAction({ cardId: "intake", action: "intake_completed", actor: "Hermes", runId: run.runId, requestId: null, outcome: "completed", detail: `${snapshot.cards.length} normalized cards.` });
     } catch (error) {

@@ -16,15 +16,16 @@ test("cockpit projection store persists bounded human state without runtime cred
     await classifyCard("card-1", "missing_context", "Recurring occurrence omitted.", "Jeremy");
     await addOwnerPotentialMiss({ title: "Compliance reminder", sourceType: "gmail", sourceId: "owner:compliance", whyPotentiallyMissed: "Deadline item was omitted.", reviewQuestion: "Should this be promoted?", actor: "Jeremy" });
     await recordOwnerFriction("Calendar recurrence was unclear.", "Jeremy");
-    await recordCockpitSnapshot({ schemaVersion: 1, runId: "run_intake", generatedAt: "2026-07-18T23:00:00.000Z", sourceCoverage: {
+    await recordCockpitSnapshot({ schemaVersion: 1, runId: "run_intake", generatedAt: "2099-07-18T23:00:00.000Z", sourceCoverage: {
       gmail: { status: "unavailable", message: "No connector", evidenceCount: 0 }, calendar: { status: "unavailable", message: "No connector", evidenceCount: 0 },
       hermesJobs: { status: "connected", message: "Inspected", evidenceCount: 0 }, manualRisks: { status: "connected", message: "Inspected", evidenceCount: 1 },
       supermemory: { status: "connected", message: "Healthy", evidenceCount: 1 },
     }, cards: [] });
-    await recordCockpitAction({ cardId: "intake", action: "intake_completed", actor: "Hermes", runId: "run_intake", requestId: null, outcome: "completed", detail: "Normalized." });
+    await recordCockpitAction({ cardId: "intake", action: "intake_completed", actor: "Hermes", runId: "run_intake", requestId: null, outcome: "completed", detail: "Normalized.", at: "2026-07-18T23:00:00.000Z" });
     const state = await readCockpitState();
     assert.equal(state.manualRisks[0]?.title, "Runway");
     assert.equal(state.snapshots[0]?.runId, "run_intake");
+    assert.equal(state.snapshots[0]?.generatedAt, "2026-07-18T23:00:00.000Z");
     assert.equal(state.cardState[`manual-risk-${risk.id}`]?.comments[0]?.actor, "Jeremy");
     assert.equal(state.actions[0]?.runId, "run_intake");
     assert.equal(state.ownerReview.classifications["card-1"]?.classification, "missing_context");
