@@ -10,7 +10,7 @@ import type { SelectedSection } from "@/stores/app-store";
  *                                        (resolved downstream — see CleanRoute.content)
  *   /room/<cab>/-/agents[/<sub|slug>]  → a cabinet's agents view / sub-tab / agent
  *   /room/<cab>/-/tasks[/<id>]         → a cabinet's tasks / a task
- *   /settings[/<tab>]  /integrations[/<id>]  /help  /registry
+ *   /cockpit  /settings[/<tab>]  /integrations[/<id>]  /help  /registry
  *
  * `-` is a reserved view marker that terminates the cabinet path (a folder
  * can't be named `-`). `#` is left entirely for in-page section anchors.
@@ -25,6 +25,7 @@ export type AgentsTab = "agents" | "routines" | "heartbeats" | "schedule" | "cha
 
 export type CleanRoute =
   | { kind: "home" }
+  | { kind: "cockpit" }
   | { kind: "settings"; slug?: string }
   | { kind: "integrations"; slug?: string }
   | { kind: "help" }
@@ -64,6 +65,8 @@ export function buildPath(
   switch (section.type) {
     case "home":
       return "/";
+    case "cockpit":
+      return "/cockpit";
     case "settings":
       return section.slug ? `/settings/${enc(section.slug)}` : "/settings";
     case "integrations":
@@ -120,6 +123,7 @@ export function parsePath(pathname: string): CleanRoute {
   const [head, ...rest] = segs;
 
   if (head === "home") return { kind: "home" };
+  if (head === "cockpit") return { kind: "cockpit" };
   if (head === "help") return { kind: "help" };
   if (head === "registry") return { kind: "registry" };
   if (head === "settings") return { kind: "settings", slug: rest[0] };

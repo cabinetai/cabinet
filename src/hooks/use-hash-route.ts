@@ -17,6 +17,7 @@ import { useEditorStore } from "@/stores/editor-store";
  *
  * Root cabinet (implicit):
  *   #/home
+ *   #/cockpit              ← Hermes Daily Business Intake
  *   #/p/{pagePath}           ← page in root cabinet
  *   #/agents                 ← agents list (root cabinet)
  *   #/a/{slug}               ← agent detail (root cabinet)
@@ -133,6 +134,7 @@ function buildHash(section: SectionState, pagePath: string | null): string {
       : "#/integrations";
   }
   if (section.type === "help") return "#/help";
+  if (section.type === "cockpit") return "#/cockpit";
   if (section.type === "home") return "#/home";
   return "#/home";
 }
@@ -143,6 +145,10 @@ function parseHash(hash: string): RouteState {
 
   if (parts.length === 0 || parts[0] === "home") {
     return { section: { type: "home" }, pagePath: null };
+  }
+
+  if (parts[0] === "cockpit") {
+    return { section: { type: "cockpit" }, pagePath: null };
   }
 
   // New canonical short forms (audit #122)
@@ -384,6 +390,8 @@ async function applyCleanRoute(route: CleanRoute): Promise<void> {
   switch (route.kind) {
     case "home":
       return goGlobal({ type: "home" });
+    case "cockpit":
+      return goGlobal({ type: "cockpit" });
     case "settings":
       return goGlobal({ type: "settings", slug: route.slug });
     case "integrations":

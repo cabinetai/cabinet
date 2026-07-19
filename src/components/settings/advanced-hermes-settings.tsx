@@ -161,7 +161,13 @@ function ToolingPanel({ snapshot, busy, act }: PanelProps) {
     <Rows>{snapshot.mcpServers.map((server) => <Row key={`mcp-${server.name}`} title={`MCP · ${server.name}`} detail={`${server.transport} · ${server.auth || "no auth"} · ${server.configured ? "configured" : "configuration missing"}`} badge={server.enabled ? "Enabled" : "Disabled"} action={<Button size="sm" variant="ghost" disabled={busy !== null} onClick={() => void act("mcp.toggle", { name: server.name, enabled: !server.enabled }, `${server.enabled ? "Disable" : "Enable"} Hermes MCP server ${server.name}`)}>{server.enabled ? "Disable" : "Enable"}</Button>} />)}
       {snapshot.toolsets.map((tool) => <Row key={`tool-${tool.name}`} title={`Executor · ${tool.label}`} detail={`${tool.toolCount} tools · ${tool.configured ? "configured" : "needs configuration"}`} badge={tool.enabled ? "Enabled" : "Disabled"} action={<Button size="sm" variant="ghost" disabled={busy !== null} onClick={() => void act("toolset.toggle", { name: tool.name, enabled: !tool.enabled }, `${tool.enabled ? "Disable" : "Enable"} Hermes toolset ${tool.label}`)}>{tool.enabled ? "Disable" : "Enable"}</Button>} />)}
       {snapshot.plugins.map((plugin) => <Row key={`plugin-${plugin.name}`} title={`Plugin · ${plugin.label}`} detail={`${plugin.version} · ${plugin.source}`} badge="Available" />)}
-      <Row title="OpenCLI" detail={snapshot.skills.some((skill) => skill.name.toLowerCase().includes("opencli")) ? "Hermes skill available" : "No Hermes OpenCLI capability advertised"} badge={snapshot.skills.some((skill) => skill.name.toLowerCase().includes("opencli")) ? "Available" : "Diagnostic"} />
+      <Row
+        title="OpenCLI"
+        detail={snapshot.openCli
+          ? `${snapshot.openCli.message}${snapshot.skills.some((skill) => skill.name.toLowerCase().includes("opencli")) ? " A Hermes-native OpenCLI skill is also installed." : " No separate Hermes-native OpenCLI skill is installed."}`
+          : snapshot.skills.some((skill) => skill.name.toLowerCase().includes("opencli")) ? "Hermes skill available" : "OpenCLI diagnostics unavailable"}
+        badge={snapshot.openCli?.available && snapshot.openCli.daemon === "running" && snapshot.openCli.extension === "connected" ? "Connected" : snapshot.openCli?.available ? "Degraded" : "Unavailable"}
+      />
     </Rows>
   </Section>;
 }

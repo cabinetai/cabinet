@@ -5,6 +5,7 @@ import type {
   HermesManagementStatus,
 } from "./types";
 import type { HermesServerConfig } from "./server-config";
+import { readOpenCliDiagnostics } from "./opencli-diagnostics";
 
 type Fetch = typeof fetch;
 
@@ -137,7 +138,7 @@ export class HermesManagementClient {
         return fallback;
       }
     };
-    const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw] =
+    const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw, openCli] =
       await Promise.all([
         this.health(),
         read("profiles", "/api/profiles", { profiles: [] }),
@@ -148,6 +149,7 @@ export class HermesManagementClient {
         read("mcp", this.profilePath("/api/mcp/servers"), { servers: [] }),
         read("toolsets", this.profilePath("/api/tools/toolsets"), []),
         read("plugins", this.profilePath("/api/dashboard/plugins"), []),
+        readOpenCliDiagnostics(),
       ]);
 
     const profiles = array(record(profilesRaw).profiles).map((item) => {
@@ -248,6 +250,7 @@ export class HermesManagementClient {
       mcpServers,
       toolsets,
       plugins,
+      openCli,
       diagnostics,
     };
   }

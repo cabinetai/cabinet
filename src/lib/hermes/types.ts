@@ -153,6 +153,15 @@ export type HermesManagementSnapshot = {
     source: string;
     enabled: boolean;
   }>;
+  openCli: {
+    available: boolean;
+    version: string | null;
+    daemon: "running" | "stopped" | "unknown";
+    extension: "connected" | "disconnected" | "unknown";
+    profiles: Array<{ name: string; status: "connected" | "disconnected" | "unknown"; version: string | null }>;
+    invocation: "terminal";
+    message: string;
+  };
   diagnostics: Array<{ area: string; status: "healthy" | "degraded"; message: string }>;
 };
 

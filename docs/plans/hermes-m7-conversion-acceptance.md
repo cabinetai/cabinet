@@ -1,8 +1,8 @@
 # M7 Full Conversion Acceptance and Cutover Evidence
 
-Status: automated and technical acceptance complete on 2026-07-18; operator cutover decision pending
+Status: cutover approved by Jeremy Hamilton on 2026-07-18; M7 complete
 
-This document is the evidence package for IG-448, IG-449, IG-419, and Jeremy's review in IG-450. It is not an approval to make Cabinet the primary Hermes interface. Only Jeremy can record Approve cutover or Reject cutover, after which the M7 gate can be resolved.
+This document is the evidence package for IG-448, IG-449, IG-419, and Jeremy's decision in IG-450. Jeremy recorded **Approve cutover** on 2026-07-18. Cabinet is now approved as his primary Hermes interface. That decision does not authorize merging GitHub PR #1.
 
 ## Technical verdict
 
@@ -83,11 +83,11 @@ The first full browser attempt exposed two test-quality problems: an ambiguous A
 
 These are documented technical constraints, not hidden dependencies on Hermes Desktop for routine work. Jeremy decides whether they are acceptable for daily cutover.
 
-## Remaining gate
+## Gate resolution
 
-- IG-448: technically complete
-- IG-449: technically complete
-- IG-419: technically complete
-- IG-450: pending Jeremy's explicit Approve cutover or Reject cutover decision
-- IG-447: remains In Progress until IG-450 is decided
-- M8: remains blocked by IG-447
+- IG-448: complete
+- IG-449: complete
+- IG-419: complete
+- IG-450: **Approve cutover** recorded by Jeremy on 2026-07-18
+- IG-447: complete
+- M8: authorized to begin after the cutover handoff is recorded

@@ -122,6 +122,10 @@ const IntegrationsHubPage = dynamic(
     ),
   { ssr: false }
 );
+const DailyBusinessCockpit = dynamic(
+  () => import("@/components/hermes/daily-business-cockpit").then((m) => m.DailyBusinessCockpit),
+  { ssr: false }
+);
 const OnboardingWizard = dynamic(
   () =>
     import("@/components/onboarding/onboarding-wizard").then(
@@ -421,6 +425,9 @@ export function AppShell() {
     switch (section.type) {
       case "home":
         title = base;
+        break;
+      case "cockpit":
+        title = `Daily Business Intake – ${base}`;
         break;
       case "page":
         title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
@@ -828,6 +835,7 @@ export function AppShell() {
   const renderContent = () => {
     // System sections (non-page views)
     if (section.type === "home") return <HomeScreen />;
+    if (section.type === "cockpit") return <DailyBusinessCockpit />;
     if (section.type === "registry") return <RegistryBrowser />;
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "integrations") return <IntegrationsHubPage />;
@@ -1097,6 +1105,7 @@ export function AppShell() {
     isSelfSheetedViewer ||
     section.type === "tasks" ||
     section.type === "agents" ||
+    section.type === "cockpit" ||
     // The room/cabinet dashboard puts its header on the desk and wraps its body
     // in a ContentSheet, like agents/tasks — but only in edit mode; browse mode
     // hands off to BrowserView, which still wants the app-shell sheet.
@@ -1275,4 +1284,3 @@ export function AppShell() {
     </TaskRailProvider>
   );
 }
-

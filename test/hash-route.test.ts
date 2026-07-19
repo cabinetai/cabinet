@@ -4,6 +4,7 @@ import {
   parseHashForTest as parseHash,
   buildHashForTest as buildHash,
 } from "@/hooks/use-hash-route";
+import { buildPath, parsePath } from "@/lib/navigation/route-scheme";
 
 test("parseHash handles canonical agents route under root cabinet", () => {
   const route = parseHash("#/cabinet/./agents");
@@ -15,6 +16,16 @@ test("parseHash handles canonical tasks route under root cabinet", () => {
   const route = parseHash("#/cabinet/./tasks");
   assert.equal(route.section.type, "tasks");
   assert.equal(route.section.cabinetPath, ".");
+});
+
+test("Daily Business Intake cockpit has a canonical route", () => {
+  assert.deepEqual(parseHash("#/cockpit"), {
+    section: { type: "cockpit" },
+    pagePath: null,
+  });
+  assert.equal(buildHash({ type: "cockpit" }, null), "#/cockpit");
+  assert.deepEqual(parsePath("/cockpit"), { kind: "cockpit" });
+  assert.equal(buildPath({ type: "cockpit" }, null), "/cockpit");
 });
 
 test("parseHash handles canonical page-with-cabinet form", () => {

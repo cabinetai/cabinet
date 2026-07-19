@@ -16,6 +16,7 @@ import {
   Plus,
   RefreshCw,
   Settings,
+  LayoutDashboard,
   UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ import { useConnectedIntegrations } from "@/hooks/use-connected-integrations";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
 import type { TreeNode } from "@/types";
 import { useLocale } from "@/i18n/use-locale";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 function collectPaths(nodes: TreeNode[], out: Set<string> = new Set()): Set<string> {
   for (const n of nodes) {
@@ -78,6 +80,7 @@ export function Sidebar() {
   const setSection = useAppStore((s) => s.setSection);
   const sidebarDrawer = useAppStore((s) => s.sidebarDrawer);
   const connectedIntegrations = useConnectedIntegrations();
+  const hermesMode = useHermesMode();
   const defaultRoom = useRoomsStore((s) => s.defaultRoom);
   // The cabinet new pages/cabinets should be created *inside* (a child of the
   // cabinet you're currently in). The data-dir root (".") is the neutral home
@@ -275,6 +278,24 @@ export function Sidebar() {
           </div>
         </div>
         <TreeView />
+
+        {hermesMode && <div className="px-2 pt-2">
+          <button
+            type="button"
+            title="Daily Business Intake"
+            onClick={() => setSection({ type: "cockpit" })}
+            className={cn(
+              "flex w-full min-w-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs transition-colors cursor-pointer",
+              section.type === "cockpit"
+                ? "bg-accent text-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+            )}
+          >
+            <LayoutDashboard className="h-4 w-4 shrink-0" />
+            <span className="min-w-0 truncate">Daily Business Intake</span>
+            <span className="ms-auto shrink-0 rounded-full border border-blue-500/25 bg-blue-500/5 px-1.5 py-px text-[9px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">Shadow</span>
+          </button>
+        </div>}
 
         {/* Integrations gets a labeled rail entry instead of hiding as a
             footer icon — the hub is the front door for connecting tools, so
