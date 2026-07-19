@@ -399,8 +399,8 @@ export class HermesManagementClient {
       operator: {
         runtime: {
           gatewayMode: value(runtime.gateway_mode) ?? "unknown",
-          gatewayState: value(runtime.gateway_state) ?? health.gatewayState ?? "unknown",
-          gatewayRunning: runtime.gateway_running === true,
+          gatewayState: value(runtime.gateway_state) ?? "unknown",
+          gatewayRunning: booleanOrNull(runtime.gateway_running),
           gatewayBusy: runtime.gateway_busy === true,
           lastConnection: timestamp(runtime.gateway_updated_at),
           observedAt: new Date().toISOString(),
@@ -426,8 +426,8 @@ export class HermesManagementClient {
           supportsReasoning: booleanOrNull(capabilities.supports_reasoning),
         },
         voice: {
-          transcriptionAvailable: true,
-          speechAvailable: true,
+          transcriptionAvailable: null,
+          speechAvailable: null,
           transcriptionInterface: "/api/audio/transcribe",
           speechInterface: "/api/audio/speak",
         },

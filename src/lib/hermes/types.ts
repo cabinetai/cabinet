@@ -168,7 +168,7 @@ export type HermesManagementSnapshot = {
     runtime: {
       gatewayMode: string;
       gatewayState: string;
-      gatewayRunning: boolean;
+      gatewayRunning: boolean | null;
       gatewayBusy: boolean;
       lastConnection: string | null;
       observedAt: string;
@@ -265,8 +265,8 @@ export type HermesManagementSnapshot = {
       supportsReasoning: boolean | null;
     };
     voice: {
-      transcriptionAvailable: boolean;
-      speechAvailable: boolean;
+      transcriptionAvailable: boolean | null;
+      speechAvailable: boolean | null;
       transcriptionInterface: string;
       speechInterface: string;
     };

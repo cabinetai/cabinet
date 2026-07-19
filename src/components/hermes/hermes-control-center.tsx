@@ -138,7 +138,7 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
   ];
   const creditRows = [
     ["Discoverable", capability.credit.discoverability],
-    ["Live details", capability.credit.liveVisibility],
+    ["Current live visibility", capability.credit.liveVisibility],
     ["Governed control", capability.credit.governedManagement],
     ["Live proven", capability.credit.liveProven],
   ] as const;
@@ -321,7 +321,7 @@ export function HermesControlCenter() {
         </div>
         {snapshot ? (
           <div className="flex items-center gap-2 overflow-x-auto text-xs text-muted-foreground" data-testid="hermes-version-strip">
-            <Badge variant={snapshot.health.runtime === "online" ? "default" : "destructive"}>Runtime {snapshot.installed.backendVersion ?? "unknown"}</Badge>
+            <Badge variant={snapshot.health.runtime === "healthy" ? "default" : "destructive"}>Runtime {snapshot.installed.backendVersion ?? "unknown"}</Badge>
             <Badge variant="outline">Desktop {snapshot.installed.desktopVersion ?? "Unknown"}</Badge>
             <span className="whitespace-nowrap">Gateway {snapshot.health.gateway}</span>
             <span className="whitespace-nowrap">Profile {snapshot.health.profile}</span>
@@ -333,6 +333,17 @@ export function HermesControlCenter() {
           </div>
         ) : null}
       </header>
+
+      {snapshot?.provenance.kind === "acceptance_fixture" ? (
+        <Alert className="m-3 mb-0 border-warning/40 bg-warning/5 md:ms-28" data-testid="hermes-fixture-provenance">
+          <TriangleAlert aria-hidden="true" />
+          <AlertTitle>{snapshot.provenance.label}</AlertTitle>
+          <AlertDescription className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>Fixture ID: {snapshot.provenance.fixtureId}</span>
+            <span>Captured: {snapshot.provenance.capturedAt}</span>
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {error ? <div className="m-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive" role="alert">{error}</div> : null}
       {snapshot ? (
@@ -425,7 +436,17 @@ export function HermesControlCenter() {
           {isMobile ? (
             <Sheet open={mobileMoreOpen} onOpenChange={setMobileMoreOpen}>
               <SheetContent side="right" className="w-[82vw] max-w-sm p-0">
-                <SheetHeader className="border-b border-border p-4"><SheetTitle>Hermes sections</SheetTitle><SheetDescription>Choose an operator capability area.</SheetDescription></SheetHeader>
+                <SheetHeader className="border-b border-border p-4">
+                  <SheetTitle>Hermes sections</SheetTitle>
+                  <SheetDescription>Choose an operator capability area.</SheetDescription>
+                  {snapshot.provenance.kind === "acceptance_fixture" ? (
+                    <div className="mt-2 rounded-md border border-warning/40 bg-warning/5 p-2 text-xs text-muted-foreground" data-testid="hermes-mobile-fixture-provenance">
+                      <p className="font-medium text-foreground">{snapshot.provenance.label}</p>
+                      <p>Fixture ID: {snapshot.provenance.fixtureId}</p>
+                      <p>Captured: {snapshot.provenance.capturedAt}</p>
+                    </div>
+                  ) : null}
+                </SheetHeader>
                 <div className="grid gap-1 p-3">
                   {(mode === "developer" ? ["developer"] : ["messaging", "artifacts", "memory", "automations", "settings"]).map((itemId) => {
                     const item = SECTIONS.find((entry) => entry.id === itemId)!;

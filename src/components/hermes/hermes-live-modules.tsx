@@ -238,7 +238,7 @@ function VoiceModule({ data }: { data: OperatorData }) {
     <ModuleShell title="Voice" detail="Voice input can prepare text, but never executes consequential work automatically." icon={Mic}>
       <div className="grid gap-3 p-4 sm:grid-cols-2">
         <div className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">Microphone permission</p><p className="mt-1 text-sm font-medium">{permission}</p></div>
-        <div className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">Hermes audio interfaces</p><p className="mt-1 text-sm font-medium">Transcribe {data.voice.transcriptionAvailable ? "available" : "unavailable"} · Speak {data.voice.speechAvailable ? "available" : "unavailable"}</p></div>
+        <div className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">Hermes audio interfaces</p><p className="mt-1 text-sm font-medium">Transcribe {data.voice.transcriptionAvailable === null ? "unknown" : data.voice.transcriptionAvailable ? "available" : "unavailable"} · Speak {data.voice.speechAvailable === null ? "unknown" : data.voice.speechAvailable ? "available" : "unavailable"}</p></div>
       </div>
       <Separator />
       <div className="flex flex-wrap gap-2 p-4">

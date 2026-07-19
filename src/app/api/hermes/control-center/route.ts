@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireApiAuth } from "@/lib/auth/request-gate";
 import { getHermesControlCenterSnapshot } from "@/lib/hermes/control-center";
+import { sanitizeHermesText } from "@/lib/hermes/control-center-sanitizer";
 import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Hermes Control Center is unavailable." },
+      { error: error instanceof Error ? sanitizeHermesText(error.message, 240) : "Hermes Control Center is unavailable." },
       { status: 502 }
     );
   }
