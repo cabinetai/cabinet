@@ -197,6 +197,7 @@ export function TerminalTabs() {
         sessionId={tab.id}
         prompt={tab.prompt}
         adapterType={tab.adapterType}
+        initialInput={tab.initialInput}
         cwd={tab.cwd}
         themeSurface="page"
         onClose={() => removeTerminalTab(tab.id)}

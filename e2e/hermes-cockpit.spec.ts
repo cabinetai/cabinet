@@ -4,12 +4,13 @@ import { bootCabinet, type CabinetInstance } from "../test/support/harness";
 test.describe.configure({ mode: "serial" });
 let cabinet: CabinetInstance;
 
-const coverage = Object.fromEntries(
-  ["gmail", "calendar", "hermesJobs", "manualRisks", "supermemory"].map((name) => [
-    name,
-    { status: "connected", message: `${name} read-only evidence connected.`, evidenceCount: 1 },
-  ])
-);
+const coverage = {
+  gmail: { status: "error", message: "Live Gmail check failed with invalid_grant.", evidenceCount: 0 },
+  calendar: { status: "error", message: "Live Calendar check failed with invalid_grant.", evidenceCount: 0 },
+  hermesJobs: { status: "connected_empty", message: "No Hermes jobs found.", evidenceCount: 0 },
+  manualRisks: { status: "connected", message: "One manual risk inspected.", evidenceCount: 1 },
+  supermemory: { status: "connected", message: "Supermemory is healthy.", evidenceCount: 1 },
+};
 
 const card = {
   id: "decision-1",
@@ -37,7 +38,7 @@ const cockpit = {
   memory: { namespace: "operator-os:supermemory", provider: "supermemory", captureState: "active", recallHealth: "healthy" },
   sourceCoverage: coverage,
   cards: [card],
-  potentiallyMissed: [{ id: "miss-1", title: "Inventory alert needs context", sourceType: "gmail", sourceId: "gmail:inventory-1", whyPotentiallyMissed: "The affected inventory may no longer be active.", reviewQuestion: "Is the inventory still active?", evidence: [], createdAt: "2026-07-18T18:00:00.000Z" }],
+  potentiallyMissed: [{ id: "miss-1", title: "Inventory alert needs context", sourceType: "gmail", sourceId: "gmail:inventory-1", whyPotentiallyMissed: "STALE-EVIDENCE WARNING: The affected inventory may no longer be active.", reviewQuestion: "Is the inventory still active?", evidence: [], createdAt: "2026-07-18T18:00:00.000Z" }],
   ownerReview: { classifications: { "decision-1": { classification: "correct", note: "Verified", actor: "Jeremy", reviewedAt: "2026-07-18T20:00:00.000Z" } }, potentialMisses: [], friction: [] },
   runs: [],
   telemetry: { cockpitViews: 1, actionsStarted: 0, actionsCompleted: 0, sourceSystemsCovered: 5, estimatedToolSwitchesAvoided: 4, lastIntakeAt: "2026-07-18T20:00:00.000Z" },
@@ -84,9 +85,12 @@ test("daily intake renders decision cards and keeps governed action results in c
   await expect(root.getByText("operator-os:supermemory")).toBeVisible();
   await expect(root.getByRole("heading", { name: "Needs Jeremy" })).toBeVisible();
   await expect(root.getByText("Review a time-sensitive account notice")).toBeVisible();
-  await expect(root.getByText("gmail read-only evidence connected.")).toBeVisible();
+  await expect(root.getByText("Live Gmail check failed with invalid_grant.")).toBeVisible();
+  await expect(root.getByRole("button", { name: "Reauthenticate Google Workspace" })).toBeVisible();
+  await expect(root.getByText("Current live check failed", { exact: false }).first()).toBeVisible();
   await expect(root.getByRole("heading", { name: "Potentially missed" })).toBeVisible();
   await expect(root.getByText("Inventory alert needs context")).toBeVisible();
+  await expect(root.getByText("stale retained evidence")).toBeVisible();
   await expect(root.getByText("Owner review: correct")).toBeVisible();
 
   await root.getByRole("button", { name: "Track risk" }).click();

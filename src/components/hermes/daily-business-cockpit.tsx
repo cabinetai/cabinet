@@ -9,6 +9,7 @@ import {
   CircleHelp,
   Clock3,
   HeartPulse,
+  KeyRound,
   Loader2,
   MessageSquare,
   Plus,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/stores/app-store";
 import type {
   CockpitAction,
   CockpitCard,
@@ -30,6 +32,7 @@ import type {
 } from "@/lib/hermes/cockpit-types";
 
 type LoadingState = { key: string; label: string } | null;
+const GOOGLE_WORKSPACE_REAUTH_COMMAND = "gws auth login --readonly --services gmail,calendar";
 
 const SECTION_META: Record<CockpitCardKind, { title: string; description: string; icon: typeof Target }> = {
   needs_jeremy: { title: "Needs Jeremy", description: "Decisions and exceptions that need your judgment.", icon: ShieldCheck },
@@ -64,6 +67,14 @@ function coverageTone(status: CockpitSourceCoverage["gmail"]["status"]): string 
   if (status === "connected_empty") return "border-blue-500/25 bg-blue-500/5 text-blue-700 dark:text-blue-300";
   if (status === "partial") return "border-amber-500/25 bg-amber-500/5 text-amber-700 dark:text-amber-300";
   return "border-border bg-muted/30 text-muted-foreground";
+}
+
+function freshnessLabel(status: CockpitSourceCoverage["gmail"]["status"]): string {
+  if (status === "connected") return "Current live check";
+  if (status === "connected_empty") return "Current live check, no items";
+  if (status === "partial") return "Current check is partial";
+  if (status === "error") return "Current live check failed";
+  return "Not currently verified";
 }
 
 function Card({ card, runs, busy, nowMs, review, onAction }: {
@@ -117,11 +128,13 @@ function Card({ card, runs, busy, nowMs, review, onAction }: {
 }
 
 export function DailyBusinessCockpit() {
+  const addTerminalTab = useAppStore((state) => state.addTerminalTab);
   const [cockpit, setCockpit] = useState<DailyBusinessCockpit | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<LoadingState>(null);
   const [riskOpen, setRiskOpen] = useState(false);
+  const [reauthStarted, setReauthStarted] = useState(false);
   const [risk, setRisk] = useState({ title: "", whyItMatters: "", recommendedNextStep: "", urgency: "normal" });
   const viewed = useRef(false);
 
@@ -161,6 +174,15 @@ export function DailyBusinessCockpit() {
     for (const card of cockpit?.cards ?? []) result[card.kind].push(card);
     return result;
   }, [cockpit?.cards]);
+
+  const googleWorkspaceAuthFailed = cockpit ? [cockpit.sourceCoverage.gmail, cockpit.sourceCoverage.calendar].some(
+    (source) => source.status === "error" && source.message.toLowerCase().includes("invalid_grant")
+  ) : false;
+
+  function startGoogleWorkspaceReauthentication() {
+    addTerminalTab("Google Workspace reauthentication", undefined, "shell", GOOGLE_WORKSPACE_REAUTH_COMMAND);
+    setReauthStarted(true);
+  }
 
   async function startIntake() {
     setBusy({ key: "intake", label: "Running intake" });
@@ -212,14 +234,15 @@ export function DailyBusinessCockpit() {
         {error ? <div className="mb-4 flex items-start justify-between rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-xs text-destructive" role="alert"><span>{error}</span><button type="button" onClick={() => setError(null)} aria-label="Dismiss"><X className="size-3.5" /></button></div> : null}
         {riskOpen ? <div className="mb-4 rounded-xl border bg-card p-4"><h2 className="text-sm font-semibold">Track a manual business risk</h2><div className="mt-3 grid gap-3 md:grid-cols-2"><input className="h-9 rounded-md border bg-background px-3 text-xs" placeholder="Risk title" value={risk.title} onChange={(event) => setRisk({ ...risk, title: event.target.value })} /><select className="h-9 rounded-md border bg-background px-3 text-xs" value={risk.urgency} onChange={(event) => setRisk({ ...risk, urgency: event.target.value })}><option value="critical">Critical</option><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option></select><textarea className="min-h-20 rounded-md border bg-background p-3 text-xs" placeholder="Why it matters" value={risk.whyItMatters} onChange={(event) => setRisk({ ...risk, whyItMatters: event.target.value })} /><textarea className="min-h-20 rounded-md border bg-background p-3 text-xs" placeholder="Recommended next step" value={risk.recommendedNextStep} onChange={(event) => setRisk({ ...risk, recommendedNextStep: event.target.value })} /></div><div className="mt-3 flex justify-end gap-2"><Button size="sm" variant="ghost" onClick={() => setRiskOpen(false)}>Cancel</Button><Button size="sm" disabled={busy !== null} onClick={() => void addRisk()}>{busy?.key === "add-risk" ? <Loader2 className="me-1 size-3 animate-spin" /> : null}Record risk</Button></div></div> : null}
         {cockpit ? <>
+          {googleWorkspaceAuthFailed ? <section className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4" aria-label="Google Workspace connection repair"><div className="flex flex-wrap items-start justify-between gap-3"><div className="max-w-2xl"><div className="flex items-center gap-2"><KeyRound className="size-4 text-amber-700 dark:text-amber-300" /><h2 className="text-sm font-semibold">Google Workspace authentication required</h2></div><p className="mt-2 text-xs leading-relaxed text-muted-foreground">Gmail or Calendar returned <code>invalid_grant</code>. Reauthenticate with read-only Gmail and Calendar scopes, complete Google consent in the browser, then run a new intake. Cabinet will not inspect credential files.</p><code className="mt-3 block w-fit max-w-full overflow-x-auto rounded bg-background px-2 py-1 text-[11px]">{GOOGLE_WORKSPACE_REAUTH_COMMAND}</code>{reauthStarted ? <p className="mt-2 text-xs font-medium text-amber-800 dark:text-amber-200">Authentication opened in the terminal. Complete the Google browser step, then return here and run a new intake.</p> : null}</div><Button size="sm" variant="outline" onClick={startGoogleWorkspaceReauthentication}><KeyRound className="me-1 size-3.5" />Reauthenticate Google Workspace</Button></div></section> : null}
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2 text-xs font-semibold"><HeartPulse className="size-4 text-emerald-600" />Hermes Health</div><p className="mt-3 text-lg font-semibold capitalize">{cockpit.health.status.replaceAll("_", " ")}</p><p className="mt-1 text-xs text-muted-foreground">{cockpit.health.version} · {cockpit.profile} · gateway {cockpit.health.gatewayState ?? "unknown"}</p></div>
             <div className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2 text-xs font-semibold"><ShieldCheck className="size-4 text-blue-600" />Supermemory</div><p className="mt-3 text-sm font-semibold">{cockpit.memory.namespace}</p><p className="mt-1 text-xs text-muted-foreground">Capture {cockpit.memory.captureState} · recall {cockpit.memory.recallHealth}</p></div>
             <div className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2 text-xs font-semibold"><CalendarClock className="size-4 text-amber-600" />Last intake</div><p className="mt-3 text-sm font-semibold">{formatTime(cockpit.telemetry.lastIntakeAt)}</p><p className="mt-1 text-xs text-muted-foreground">{cockpit.runs.filter((run) => run.context.startsWith("cockpit:intake:")).length} retained intake runs</p></div>
             <div className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2 text-xs font-semibold"><ChevronRight className="size-4 text-violet-600" />Tool switching</div><p className="mt-3 text-lg font-semibold">{cockpit.telemetry.estimatedToolSwitchesAvoided}</p><p className="mt-1 text-xs text-muted-foreground">Estimated switches avoided across {cockpit.telemetry.sourceSystemsCovered} covered sources</p></div>
           </section>
-          <section className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5" aria-label="Source coverage">{Object.entries(cockpit.sourceCoverage).map(([name, source]) => <div key={name} className={cn("rounded-lg border p-3", coverageTone(source.status))}><div className="flex items-center justify-between gap-2"><p className="text-[10px] font-semibold uppercase tracking-wide">{name.replace(/([A-Z])/g, " $1")}</p><span className="text-[10px]">{source.status.replaceAll("_", "-")}</span></div><p className="mt-1 text-[11px] leading-relaxed opacity-80">{source.message}</p></div>)}</section>
-          <section className="mt-6" data-testid="cockpit-potentially-missed"><div className="mb-3 flex items-center gap-2"><CircleHelp className="size-4 text-amber-600" /><div><h2 className="text-sm font-semibold">Potentially missed</h2><p className="text-[11px] text-muted-foreground">Owner-reported and lower-ranked items kept visible during shadow review.</p></div><span className="ms-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{cockpit.potentiallyMissed.length}</span></div>{cockpit.potentiallyMissed.length ? <div className="grid gap-3 xl:grid-cols-2">{cockpit.potentiallyMissed.map((item) => <article key={item.id} className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4"><div className="flex items-center gap-2"><span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">{item.sourceType.replaceAll("_", " ")}</span><span className="text-[10px] text-muted-foreground">shadow review</span></div><h3 className="mt-2 text-sm font-semibold">{item.title}</h3><p className="mt-2 text-xs text-muted-foreground">{item.whyPotentiallyMissed}</p><p className="mt-2 text-xs font-medium">{item.reviewQuestion}</p></article>)}</div> : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-muted-foreground">No potentially missed items were retained.</div>}</section>
+          <section className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5" aria-label="Source coverage">{Object.entries(cockpit.sourceCoverage).map(([name, source]) => <div key={name} className={cn("rounded-lg border p-3", coverageTone(source.status))}><div className="flex items-center justify-between gap-2"><p className="text-[10px] font-semibold uppercase tracking-wide">{name.replace(/([A-Z])/g, " $1")}</p><span className="text-[10px]">{source.status.replaceAll("_", "-")}</span></div><p className="mt-1 text-[11px] leading-relaxed opacity-80">{source.message}</p><p className="mt-2 border-t border-current/10 pt-2 text-[10px] font-medium opacity-80">Freshness: {freshnessLabel(source.status)} as of {formatTime(cockpit.telemetry.lastIntakeAt)}</p></div>)}</section>
+          <section className="mt-6" data-testid="cockpit-potentially-missed"><div className="mb-3 flex items-center gap-2"><CircleHelp className="size-4 text-amber-600" /><div><h2 className="text-sm font-semibold">Potentially missed</h2><p className="text-[11px] text-muted-foreground">Owner-reported and lower-ranked items kept visible during shadow review.</p></div><span className="ms-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{cockpit.potentiallyMissed.length}</span></div>{cockpit.potentiallyMissed.length ? <div className="grid gap-3 xl:grid-cols-2">{cockpit.potentiallyMissed.map((item) => { const stale = item.whyPotentiallyMissed.includes("STALE-EVIDENCE"); return <article key={item.id} className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4"><div className="flex items-center gap-2"><span className="text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">{item.sourceType.replaceAll("_", " ")}</span><span className="text-[10px] font-medium text-muted-foreground">{stale ? "stale retained evidence" : "shadow review"}</span></div><h3 className="mt-2 text-sm font-semibold">{item.title}</h3><p className="mt-2 text-xs text-muted-foreground">{item.whyPotentiallyMissed}</p><p className="mt-2 text-xs font-medium">{item.reviewQuestion}</p></article>; })}</div> : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-muted-foreground">No potentially missed items were retained.</div>}</section>
           {(Object.keys(SECTION_META) as CockpitCardKind[]).map((kind) => { const meta = SECTION_META[kind]; const Icon = meta.icon; return <section key={kind} className="mt-6"><div className="mb-3 flex items-center gap-2"><Icon className="size-4 text-muted-foreground" /><div><h2 className="text-sm font-semibold">{meta.title}</h2><p className="text-[11px] text-muted-foreground">{meta.description}</p></div><span className="ms-auto rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium">{grouped[kind].length}</span></div>{grouped[kind].length ? <div className="grid gap-3 xl:grid-cols-2">{grouped[kind].map((card) => <Card key={card.id} card={card} runs={cockpit.runs} busy={busy} nowMs={new Date(cockpit.generatedAt).getTime()} review={cockpit.ownerReview.classifications[card.id]} onAction={onAction} />)}</div> : <div className="rounded-xl border border-dashed p-5 text-center text-xs text-muted-foreground">No current {meta.title.toLowerCase()}.</div>}</section>; })}
           <footer className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg border bg-muted/20 p-3 text-[11px] text-muted-foreground"><span><Clock3 className="me-1 inline size-3" />Generated {formatTime(cockpit.generatedAt)}</span><span><MessageSquare className="me-1 inline size-3" />{cockpit.telemetry.actionsStarted} actions started, {cockpit.telemetry.actionsCompleted} completed</span><span><Check className="me-1 inline size-3" />Hermes remains source of truth</span><span><CircleHelp className="me-1 inline size-3" />Shadow mode grants no write autonomy</span></footer>
         </> : null}

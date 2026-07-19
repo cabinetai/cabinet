@@ -107,6 +107,7 @@ interface TerminalTab {
   label: string;
   prompt?: string;
   adapterType?: string;
+  initialInput?: string;
   cwd?: string;
 }
 
@@ -182,7 +183,7 @@ interface AppState {
   popReturnTo: () => void;
   toggleTerminal: () => void;
   closeTerminal: () => void;
-  addTerminalTab: (label?: string, prompt?: string, adapterType?: string) => void;
+  addTerminalTab: (label?: string, prompt?: string, adapterType?: string, initialInput?: string) => void;
   removeTerminalTab: (id: string) => void;
   setActiveTerminalTab: (id: string) => void;
   openAgentTab: (taskTitle: string, prompt: string) => void;
@@ -482,14 +483,14 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   closeTerminal: () => set({ terminalOpen: false, terminalTabs: [], activeTerminalTab: null }),
 
-  addTerminalTab: (label?: string, prompt?: string, adapterType?: string) => {
+  addTerminalTab: (label?: string, prompt?: string, adapterType?: string, initialInput?: string) => {
     const { terminalTabs, terminalCwd } = get();
     const num = terminalTabs.length + 1;
     const id = `term-${Date.now()}`;
     set({
       terminalTabs: [
         ...terminalTabs,
-        { id, label: label || `Terminal ${num}`, prompt, adapterType: adapterType || "shell", cwd: terminalCwd ?? undefined },
+        { id, label: label || `Terminal ${num}`, prompt, adapterType: adapterType || "shell", initialInput, cwd: terminalCwd ?? undefined },
       ],
       activeTerminalTab: id,
       terminalOpen: true,
