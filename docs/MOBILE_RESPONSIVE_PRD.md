@@ -48,7 +48,7 @@ Codebase has moved on a lot since #21 (i18n, RTL, Team tabs, heartbeats, mission
 11. `home-screen` — greeting, prompt, templates carousel, recents
 12. `onboarding-wizard` — steps, inputs, CTAs
 13. `onboarding/tour` — tooltips don't overflow viewport
-14. `data-dir-prompt`, `feedback-popup`
+14. `data-dir-prompt`
 
 ### Editor & viewers
 15. `editor` — toolbar, bubble menu, table menu, slash commands, mention picker, emoji picker

@@ -58,7 +58,6 @@ import {
   DataDirPrompt,
   isDataDirConfirmed,
 } from "@/components/onboarding/data-dir-prompt";
-import { FeedbackPopup } from "@/components/onboarding/feedback-popup";
 import { DiagnosticsBoot } from "@/components/feedback/diagnostics-boot";
 import { StartWorkDialog, type StartWorkMode } from "@/components/composer/start-work-dialog";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
@@ -1248,7 +1247,6 @@ export function AppShell() {
       <NotificationToasts />
       <SystemToasts />
       <ProviderSetupDialog />
-      <FeedbackPopup />
       <DiagnosticsBoot />
       <TourModal
         open={tour.open}
