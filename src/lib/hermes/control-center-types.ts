@@ -17,6 +17,30 @@ export type HermesCapabilityStatus =
   | "unsupported"
   | "needs_setup";
 
+export const HERMES_OPERATIONAL_HEALTH_STATES = [
+  "healthy",
+  "degraded",
+  "conflicting_evidence",
+  "not_configured",
+  "unavailable",
+  "unknown",
+] as const;
+
+export type HermesOperationalHealth = (typeof HERMES_OPERATIONAL_HEALTH_STATES)[number];
+export type HermesProofKind = "live" | "exact_fixture" | "historical_audit";
+export type HermesEvidenceOutcome = "success" | "empty" | "unavailable" | "conflict" | "failure";
+
+export type HermesCapabilityEvidence = {
+  source: string;
+  observedAt: string | null;
+  stale: boolean;
+  proofKind: HermesProofKind;
+  outcome: HermesEvidenceOutcome;
+  summary: string;
+  installedBackendVersion: string | null;
+  installedBackendCommit: string | null;
+};
+
 export type HermesCapabilityDefinition = {
   id: string;
   name: string;
@@ -37,6 +61,11 @@ export type HermesCapabilityDefinition = {
 };
 
 export type HermesCapabilityProjection = HermesCapabilityDefinition & {
+  installedSupport: { supported: boolean; detail: string };
+  surfaceState: HermesParityState;
+  operationalHealth: HermesOperationalHealth;
+  operationalDetail: string;
+  evidence: HermesCapabilityEvidence[];
   status: HermesCapabilityStatus;
   statusDetail: string;
   credit: {
@@ -83,6 +112,12 @@ export type HermesControlCenterSnapshot = {
     profile: string;
     openCli: string;
   };
+  exceptions: Array<{
+    capabilityId: string;
+    title: string;
+    health: Extract<HermesOperationalHealth, "degraded" | "conflicting_evidence" | "unavailable">;
+    summary: string;
+  }>;
   summary: Record<HermesCapabilityStatus, number>;
   parity: HermesParityMetrics & {
     byAudience: Record<HermesCapabilityAudience, HermesParityMetrics>;

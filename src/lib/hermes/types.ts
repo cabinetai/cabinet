@@ -171,6 +171,7 @@ export type HermesManagementSnapshot = {
       gatewayRunning: boolean;
       gatewayBusy: boolean;
       lastConnection: string | null;
+      observedAt: string;
       activeAgentCount: number;
       activeSessionCount: number;
     };

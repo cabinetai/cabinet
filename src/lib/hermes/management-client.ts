@@ -13,6 +13,17 @@ function text(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
+/** Keep operational failures useful while preventing credential material from reaching the browser. */
+export function boundedHermesFailureSummary(input: unknown, maxLength = 240): string | null {
+  const raw = text(input);
+  if (!raw) return null;
+  const redacted = raw
+    .replace(/https?:\/\/[^\s)\]}]+/gi, "[redacted URL]")
+    .replace(/\b(?:authorization|x-hermes-session-token|api[_ -]?key|access[_ -]?token|refresh[_ -]?token|bot[_ -]?token|token)\b\s*[:=]\s*[^\s,;]+/gi, "[redacted credential]")
+    .replace(/\b(?:bearer|basic)\s+[a-z0-9._~+/=-]+/gi, "[redacted authorization]");
+  return redacted.length > maxLength ? `${redacted.slice(0, maxLength - 1).trimEnd()}…` : redacted;
+}
+
 function snapshot(
   config: HermesServerConfig,
   status: HermesHealthSnapshot["status"],
@@ -267,7 +278,7 @@ export class HermesManagementClient {
       const enabled = source.enabled === true;
       const configured = source.configured === true;
       const homeChannel = value(source.home_channel) ?? value(source.home_channel_name);
-      const lastError = value(source.error_message) ?? value(source.error_code);
+      const lastError = boundedHermesFailureSummary(source.error_message ?? source.error_code);
       return {
         id: value(source.id) ?? "unknown",
         name: value(source.name) ?? value(source.id) ?? "Unknown platform",
@@ -392,6 +403,7 @@ export class HermesManagementClient {
           gatewayRunning: runtime.gateway_running === true,
           gatewayBusy: runtime.gateway_busy === true,
           lastConnection: timestamp(runtime.gateway_updated_at),
+          observedAt: new Date().toISOString(),
           activeAgentCount: integer(runtime.active_agents),
           activeSessionCount: integer(runtime.active_sessions),
         },

@@ -215,7 +215,7 @@ function NotificationsModule() {
     window.localStorage.setItem("cabinet.hermes.notifications.v1", JSON.stringify({ enabled: nextEnabled, sound: nextSound }));
   };
   return (
-    <ModuleShell title="Cabinet notifications" detail={`Mapped Cabinet surface · Browser permission ${permission}. No permission prompt is triggered here.`} icon={Bell}>
+    <ModuleShell title="Cabinet-local notification preferences" detail={`Cabinet-local preferences mapped to Hermes events · Browser permission ${permission}. These are not canonical Hermes Desktop notification settings, and no permission prompt is triggered here.`} icon={Bell}>
       <FieldSet className="gap-0">
         <FieldLegend className="sr-only">Notification events</FieldLegend>
         <FieldGroup className="gap-0 divide-y divide-border">
@@ -250,13 +250,14 @@ function VoiceModule({ data }: { data: OperatorData }) {
   );
 }
 
-function SettingsModule({ data }: { data: OperatorData }) {
+function SettingsModule({ data, snapshot }: { data: OperatorData; snapshot: HermesControlCenterSnapshot }) {
+  const gateway = snapshot.capabilities.find((item) => item.id === "gateway");
   return (
     <div className="flex flex-col gap-3">
       <ModuleShell title="Providers, models, and gateway" detail="Authentication health is projected without keys, tokens, or secret-bearing URLs." icon={Server}>
         <div className="grid gap-3 border-b border-border p-4 sm:grid-cols-3">
           <div><p className="text-xs text-muted-foreground">Current model</p><p className="mt-1 truncate text-sm font-medium">{data.model.provider ?? "Unknown"} / {data.model.model ?? "Unknown"}</p></div>
-          <div><p className="text-xs text-muted-foreground">Gateway</p><p className="mt-1 text-sm font-medium">{data.runtime.gatewayMode} · {data.runtime.gatewayState}</p></div>
+          <div><p className="text-xs text-muted-foreground">Gateway</p><p className="mt-1 text-sm font-medium">{gateway?.operationalHealth === "conflicting_evidence" ? "Conflicting evidence" : `${data.runtime.gatewayMode} · ${data.runtime.gatewayState}`}</p></div>
           <div><p className="text-xs text-muted-foreground">Last connection</p><p className="mt-1 text-sm font-medium">{relativeTime(data.runtime.lastConnection)}</p></div>
         </div>
         <div className="divide-y divide-border">
@@ -303,7 +304,7 @@ export function HermesLiveModules({ section, snapshot, query, onRefresh, refresh
   if (section === "artifacts") return <ArtifactsModule data={data} query={query} />;
   if (section === "memory") return <MemoryModule data={data} />;
   if (section === "sessions") return <SessionsModule data={data} query={query} />;
-  if (section === "settings") return <SettingsModule data={data} />;
+  if (section === "settings") return <SettingsModule data={data} snapshot={snapshot} />;
   if (section === "tools") return <ToolsModule snapshot={snapshot} onRefresh={onRefresh} refreshing={refreshing} />;
   return null;
 }

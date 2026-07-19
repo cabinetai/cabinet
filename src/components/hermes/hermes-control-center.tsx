@@ -11,6 +11,7 @@ import {
   Clock3,
   Code2,
   Cpu,
+  Ellipsis,
   Gauge,
   MessageCircle,
   RefreshCw,
@@ -18,10 +19,12 @@ import {
   Server,
   Settings2,
   SlidersHorizontal,
+  TriangleAlert,
   Users,
   Wrench,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,6 +39,7 @@ import type {
   HermesCapabilityProjection,
   HermesCapabilityStatus,
   HermesControlCenterSnapshot,
+  HermesOperationalHealth,
 } from "@/lib/hermes/control-center-types";
 
 type Mode = "operator" | "developer";
@@ -63,6 +67,15 @@ const STATUS_LABELS: Record<HermesCapabilityStatus, string> = {
   needs_setup: "Needs setup",
 };
 
+const HEALTH_LABELS: Record<HermesOperationalHealth, string> = {
+  healthy: "Healthy",
+  degraded: "Degraded",
+  conflicting_evidence: "Conflicting evidence",
+  not_configured: "Not configured",
+  unavailable: "Unavailable",
+  unknown: "Unknown",
+};
+
 const ICONS: Record<string, typeof Gauge> = {
   Overview: Gauge,
   Agents: Bot,
@@ -85,7 +98,8 @@ function statusVariant(status: HermesCapabilityStatus): "default" | "secondary" 
   return "secondary";
 }
 
-function CapabilityStatus({ status }: { status: HermesCapabilityStatus }) {
+function CapabilityStatus({ status, surfaceState }: { status: HermesCapabilityStatus; surfaceState?: HermesCapabilityProjection["surfaceState"] }) {
+  if (surfaceState === "diagnostic_only") return <Badge variant="outline">Diagnostic only</Badge>;
   return <Badge variant={statusVariant(status)}>{STATUS_LABELS[status]}</Badge>;
 }
 
@@ -106,7 +120,7 @@ function CapabilityRow({ capability, active, onSelect }: { capability: HermesCap
         <span className="block truncate text-sm font-medium text-foreground">{capability.name}</span>
         <span className="block truncate text-xs text-muted-foreground">{capability.statusDetail}</span>
       </span>
-      <CapabilityStatus status={capability.status} />
+      <CapabilityStatus status={capability.status} surfaceState={capability.surfaceState} />
       <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
     </button>
   );
@@ -114,8 +128,9 @@ function CapabilityRow({ capability, active, onSelect }: { capability: HermesCap
 
 function CapabilityInspector({ capability, snapshot }: { capability: HermesCapabilityProjection; snapshot: HermesControlCenterSnapshot }) {
   const detailRows = [
-    ["Parity", capability.parityState],
-    ["Installed support", capability.installedVersionSupport],
+    ["Cabinet surface", capability.surfaceState],
+    ["Installed support", capability.installedSupport.detail],
+    ["Current health", HEALTH_LABELS[capability.operationalHealth]],
     ["Interface", capability.interface],
     ["Cabinet surface", capability.cabinetSurface],
     ["Risk", capability.readWriteRisk],
@@ -131,11 +146,11 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
     <div className="flex min-h-0 flex-1 flex-col" data-testid="hermes-capability-inspector">
       <div className="flex flex-col gap-2 p-5 pe-12">
         <div className="flex items-center gap-2">
-          <CapabilityStatus status={capability.status} />
+          <CapabilityStatus status={capability.status} surfaceState={capability.surfaceState} />
           <Badge variant="outline">{capability.parityState}</Badge>
         </div>
         <h2 className="font-heading text-xl font-semibold tracking-tight">{capability.name}</h2>
-        <p className="text-sm leading-6 text-muted-foreground">{capability.statusDetail}</p>
+        <p className="text-sm leading-6 text-muted-foreground">{capability.operationalDetail}</p>
       </div>
       <Separator />
       <ScrollArea className="min-h-0 flex-1">
@@ -186,7 +201,18 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
           ) : null}
           <section className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">Evidence</h3>
-            <p className="text-sm leading-6 text-muted-foreground">{capability.testEvidence}</p>
+            {capability.evidence.length ? capability.evidence.map((evidence, index) => (
+              <div key={`${evidence.source}-${index}`} className="rounded-lg border border-border p-3 text-xs">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Badge variant="outline">{evidence.proofKind.replaceAll("_", " ")}</Badge>
+                  <Badge variant={evidence.outcome === "failure" || evidence.outcome === "conflict" ? "destructive" : "secondary"}>{evidence.outcome}</Badge>
+                  {evidence.stale ? <Badge variant="outline">Stale</Badge> : null}
+                </div>
+                <p className="mt-2 font-medium">{evidence.source}</p>
+                <p className="mt-1 leading-5 text-muted-foreground">{evidence.summary}</p>
+                <p className="mt-1 text-muted-foreground">Observed {evidence.observedAt ?? "time unknown"} · Backend {evidence.installedBackendVersion ?? "unknown"}</p>
+              </div>
+            )) : <p className="text-sm text-muted-foreground">No current runtime evidence is available for this discoverable capability.</p>}
             <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion ?? "Unknown"} ({snapshot.installed.desktopCommit ?? "commit unknown"}) · Backend {snapshot.installed.backendVersion ?? "Unknown"} ({snapshot.installed.backendCommit ?? "commit unknown"})</p>
           </section>
           <Button variant="outline" size="sm" onClick={() => { window.location.href = capability.cabinetHref; }}>
@@ -217,6 +243,7 @@ export function HermesControlCenter() {
   const [mode, setMode] = useState<Mode>("operator");
   const [section, setSection] = useState<Section>("overview");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -258,6 +285,12 @@ export function HermesControlCenter() {
   }, [mode, query, section, snapshot]);
 
   const selected = snapshot?.capabilities.find((item) => item.id === selectedId) ?? null;
+  const derivedExceptions = snapshot?.capabilities.flatMap((capability) =>
+    capability.surfaceState !== "unsupported" && ["degraded", "conflicting_evidence", "unavailable"].includes(capability.operationalHealth)
+      ? [{ capabilityId: capability.id, title: capability.name, health: capability.operationalHealth as "degraded" | "conflicting_evidence" | "unavailable", summary: capability.operationalDetail }]
+      : []
+  ) ?? [];
+  const operationalExceptions = snapshot?.exceptions?.length ? snapshot.exceptions : derivedExceptions;
   if (!snapshot && !error) return <Loading />;
 
   return (
@@ -329,6 +362,23 @@ export function HermesControlCenter() {
             ) : null}
             <ScrollArea className="min-h-0 flex-1">
               <div className="mx-auto w-full max-w-4xl p-3 md:p-4">
+                {section === "overview" && !query && operationalExceptions.length ? (
+                  <section className="mb-4 space-y-2" data-testid="hermes-operational-exceptions">
+                    <div>
+                      <h2 className="text-sm font-semibold">Operational exceptions</h2>
+                      <p className="text-xs text-muted-foreground">Only degraded or contradictory observations are elevated.</p>
+                    </div>
+                    {operationalExceptions.map((exception) => (
+                      <button key={exception.capabilityId} type="button" className="block w-full text-left" onClick={() => setSelectedId(exception.capabilityId)}>
+                        <Alert variant="destructive" className="transition-colors hover:bg-destructive/5">
+                          <TriangleAlert aria-hidden="true" />
+                          <AlertTitle>{exception.title} · {HEALTH_LABELS[exception.health]}</AlertTitle>
+                          <AlertDescription className="line-clamp-2">{exception.summary}</AlertDescription>
+                        </Alert>
+                      </button>
+                    ))}
+                  </section>
+                ) : null}
                 {(["agents", "messaging", "artifacts", "memory", "sessions", "settings", "tools"] as Section[]).includes(section) ? (
                   <div className="mb-4">
                     <HermesLiveModules section={section as "agents" | "messaging" | "artifacts" | "memory" | "sessions" | "settings" | "tools"} snapshot={snapshot} query={query} onRefresh={refresh} refreshing={refreshing} />
@@ -362,12 +412,30 @@ export function HermesControlCenter() {
           </aside>
 
           <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-background/95 pb-[max(env(safe-area-inset-bottom),0px)] backdrop-blur md:hidden" aria-label="Hermes mobile">
-            {(["overview", "agents", "tools", "sessions", mode === "developer" ? "developer" : "settings"] as Section[]).map((itemId) => {
+            {(["overview", "agents", "tools", "sessions"] as Section[]).map((itemId) => {
               const item = SECTIONS.find((entry) => entry.id === itemId)!;
               const Icon = item.icon;
               return <button key={item.id} type="button" onClick={() => { setSection(item.id); setSelectedId(null); }} className={cn("flex min-h-14 flex-col items-center justify-center gap-1 text-[10px]", section === item.id ? "text-primary" : "text-muted-foreground")}><Icon className="size-4" aria-hidden="true" /><span>{item.label}</span></button>;
             })}
+            <Button variant="ghost" className={cn("h-auto min-h-14 rounded-none flex-col gap-1 text-[10px]", ["messaging", "artifacts", "memory", "automations", "settings", "developer"].includes(section) ? "text-primary" : "text-muted-foreground")} aria-label="More Hermes sections" onClick={() => setMobileMoreOpen(true)}>
+              <Ellipsis className="size-4" aria-hidden="true" /><span>More</span>
+            </Button>
           </nav>
+
+          {isMobile ? (
+            <Sheet open={mobileMoreOpen} onOpenChange={setMobileMoreOpen}>
+              <SheetContent side="right" className="w-[82vw] max-w-sm p-0">
+                <SheetHeader className="border-b border-border p-4"><SheetTitle>Hermes sections</SheetTitle><SheetDescription>Choose an operator capability area.</SheetDescription></SheetHeader>
+                <div className="grid gap-1 p-3">
+                  {(mode === "developer" ? ["developer"] : ["messaging", "artifacts", "memory", "automations", "settings"]).map((itemId) => {
+                    const item = SECTIONS.find((entry) => entry.id === itemId)!;
+                    const Icon = item.icon;
+                    return <Button key={item.id} variant="ghost" className="h-11 justify-start" onClick={() => { setSection(item.id); setSelectedId(null); setMobileMoreOpen(false); }}><Icon data-icon="inline-start" />{item.label}</Button>;
+                  })}
+                </div>
+              </SheetContent>
+            </Sheet>
+          ) : null}
 
           {isMobile && selected ? (
             <Sheet open onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
