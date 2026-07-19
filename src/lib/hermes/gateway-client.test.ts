@@ -9,6 +9,7 @@ const config: HermesServerConfig = {
   apiBaseUrl: "http://127.0.0.1:8642",
   apiKey: "server-only-test-key",
   managementBaseUrl: "http://127.0.0.1:8645",
+  managementToken: "management-secret",
   gatewayBaseUrl: "http://127.0.0.1:8645",
   gatewayToken: "server-only-test-key",
   profile: "operator-os",

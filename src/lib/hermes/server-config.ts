@@ -2,6 +2,7 @@ export type HermesServerConfig = {
   apiBaseUrl: string;
   apiKey: string;
   managementBaseUrl: string;
+  managementToken: string | null;
   gatewayBaseUrl: string;
   gatewayToken: string;
   profile: string;
@@ -36,6 +37,11 @@ function required(name: string, value: string | undefined): string {
     throw new HermesConfigurationError(`Missing server configuration: ${name}`);
   }
   return normalized;
+}
+
+function optional(value: string | undefined): string | null {
+  const normalized = value?.trim();
+  return normalized || null;
 }
 
 function baseUrl(name: string, value: string | undefined): string {
@@ -80,6 +86,7 @@ export function readHermesServerConfig(
       "CABINET_HERMES_MANAGEMENT_URL",
       env.CABINET_HERMES_MANAGEMENT_URL
     ),
+    managementToken: optional(env.CABINET_HERMES_MANAGEMENT_TOKEN ?? env.HERMES_DASHBOARD_SESSION_TOKEN),
     gatewayBaseUrl: baseUrl(
       "CABINET_HERMES_GATEWAY_URL",
       env.CABINET_HERMES_GATEWAY_URL

@@ -159,8 +159,8 @@ export async function bootCabinet(options: BootOptions = {}): Promise<CabinetIns
   const close = async () => {
     for (const child of children) child.kill("SIGTERM");
     await Promise.all([...fakes.values()].map((fake) => fake.cleanup()));
-    await fs.rm(dataDir, { recursive: true, force: true });
-    await fs.rm(home, { recursive: true, force: true });
+    await fs.rm(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    await fs.rm(home, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   };
 
   const agent = (name: string): FakeAgentCli => {
