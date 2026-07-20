@@ -1,25 +1,38 @@
 {
   "schemaVersion": "hermes-control-center-snapshot.v1",
-  "checkedAt": "2026-07-20T21:38:45.631Z",
+  "checkedAt": "2026-07-20T22:59:26.870Z",
   "provenance": {
     "kind": "live_runtime",
     "label": "Live runtime projection",
-    "capturedAt": "2026-07-20T21:38:45.631Z",
+    "capturedAt": "2026-07-20T22:59:26.870Z",
     "fixtureId": null
   },
   "evidenceProvenance": {
-    "implementationRevision": "9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030",
+    "implementationRevision": "ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff",
     "fixtureId": null,
     "fixtureCapturedAt": null,
-    "artifactGeneratedAt": "2026-07-20T21:40:01.333Z"
+    "artifactGeneratedAt": null
   },
   "installed": {
     "desktopVersion": "0.17.0",
     "desktopCommit": null,
     "backendVersion": "0.19.0",
     "backendCommit": "d7b36070ef80",
-    "cabinetCommit": "28bdaf4cc88c",
-    "adapter": "desktop-0.18",
+    "cabinetCommit": "ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff",
+    "adapter": "source-specific",
+    "observedRunningAgentVersion": "0.19.0",
+    "observedRunningAgentVersionSource": "GET /health/detailed",
+    "observedRunningAgentObservedAt": "2026-07-20T22:59:26.866Z",
+    "observedRunningAgentCommit": null,
+    "observedRunningAgentCommitSource": null,
+    "detectedAgentCheckoutCommit": "d7b36070ef80",
+    "detectedAgentCheckoutCommitSource": "local installation metadata",
+    "contracts": {
+      "agentApiHealth": "installed Agent 0.19.0 GET /health/detailed",
+      "management": "unavailable; prior 0.18.2 audit stale",
+      "gateway": "unavailable",
+      "desktop": "separately detected Desktop 0.17.0"
+    },
     "upstreamAudit": {
       "auditedAt": "2026-07-19T21:06:53Z",
       "auditedCommit": "0d2ad3993eb9",
@@ -30,169 +43,40 @@
   },
   "health": {
     "runtime": "degraded",
-    "gateway": "not_configured",
-    "profile": "operator-os",
+    "gateway": "unavailable",
+    "profile": "unknown",
+    "configuredProfile": "operator-os",
+    "observedActiveProfile": null,
+    "observedProfileSource": null,
     "openCli": "unavailable"
   },
   "exceptions": [
     {
-      "capabilityId": "chat",
-      "title": "Chat and sessions",
-      "health": "degraded",
-      "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "command-center",
-      "title": "Command Center",
-      "health": "degraded",
-      "summary": "Hermes detailed health responded. Hermes execution sources are unavailable."
-    },
-    {
-      "capabilityId": "skills",
-      "title": "Skills",
-      "health": "degraded",
-      "summary": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "messaging",
-      "title": "Messaging",
-      "health": "degraded",
-      "summary": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "artifacts",
-      "title": "Artifacts",
+      "kind": "source_group",
+      "capabilityId": null,
+      "sourceGroup": "management",
+      "dependentCount": 28,
+      "title": "Management unavailable",
       "health": "unavailable",
-      "summary": "Hermes artifact source is unavailable."
+      "summary": "28 dependent capability observations were not collected. Hermes Management is not configured for this review."
     },
     {
-      "capabilityId": "cron",
-      "title": "Cron and background jobs",
-      "health": "degraded",
-      "summary": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete. Hermes queue source is unavailable."
-    },
-    {
-      "capabilityId": "profiles",
-      "title": "Profiles",
-      "health": "degraded",
-      "summary": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "agents-subagents",
-      "title": "Agents and subagents",
+      "kind": "capability",
+      "capabilityId": "gateway",
+      "sourceGroup": null,
+      "dependentCount": null,
+      "title": "Gateway",
       "health": "unavailable",
-      "summary": "Hermes active-agent source is unavailable."
-    },
-    {
-      "capabilityId": "starmap",
-      "title": "Starmap and memory graph",
-      "health": "degraded",
-      "summary": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "providers",
-      "title": "Providers",
-      "health": "degraded",
-      "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "provider-accounts",
-      "title": "Provider accounts",
-      "health": "degraded",
-      "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "models",
-      "title": "Models",
-      "health": "degraded",
-      "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "api-keys-tools",
-      "title": "API keys and tools",
-      "health": "degraded",
-      "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "mcp",
-      "title": "MCP",
-      "health": "degraded",
-      "summary": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "plugins",
-      "title": "Plugins",
-      "health": "degraded",
-      "summary": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "archived-chats",
-      "title": "Archived chats",
-      "health": "degraded",
-      "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "model-settings",
-      "title": "Model settings",
-      "health": "degraded",
-      "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "memory-context",
-      "title": "Memory and context",
-      "health": "degraded",
-      "summary": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "files",
-      "title": "Files",
-      "health": "unavailable",
-      "summary": "Hermes artifact source is unavailable."
-    },
-    {
-      "capabilityId": "projects",
-      "title": "Projects",
-      "health": "unavailable",
-      "summary": "Hermes session project association is unavailable."
-    },
-    {
-      "capabilityId": "session-pinning",
-      "title": "Session pinning",
-      "health": "degraded",
-      "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "approvals",
-      "title": "Approvals and pending input",
-      "health": "unavailable",
-      "summary": "The installed runtime has no global pending-input enumeration interface."
-    },
-    {
-      "capabilityId": "browser-opencli",
-      "title": "Browser and OpenCLI",
-      "health": "unavailable",
-      "summary": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review."
-    },
-    {
-      "capabilityId": "executor",
-      "title": "Executor",
-      "health": "degraded",
-      "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
-    },
-    {
-      "capabilityId": "usage-insights",
-      "title": "Usage insights",
-      "health": "unavailable",
-      "summary": "Hermes usage source is unavailable."
+      "summary": "Hermes Gateway is not configured for this review. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Hermes Management is not configured for this review."
     }
   ],
   "summary": {
-    "available": 20,
+    "available": 18,
     "connected": 1,
-    "degraded": 25,
+    "degraded": 1,
     "disabled": 0,
     "unsupported": 1,
-    "needs_setup": 1
+    "needs_setup": 27
   },
   "parity": {
     "discoverability": {
@@ -201,9 +85,9 @@
       "percentage": 100
     },
     "liveVisibility": {
-      "covered": 1,
+      "covered": 0,
       "total": 48,
-      "percentage": 2
+      "percentage": 0
     },
     "governedManagement": {
       "covered": 3,
@@ -211,9 +95,9 @@
       "percentage": 6
     },
     "liveProven": {
-      "covered": 4,
+      "covered": 3,
       "total": 48,
-      "percentage": 8
+      "percentage": 6
     },
     "byAudience": {
       "operator": {
@@ -245,9 +129,9 @@
           "percentage": 100
         },
         "liveVisibility": {
-          "covered": 1,
+          "covered": 0,
           "total": 22,
-          "percentage": 5
+          "percentage": 0
         },
         "governedManagement": {
           "covered": 1,
@@ -255,9 +139,9 @@
           "percentage": 5
         },
         "liveProven": {
-          "covered": 1,
+          "covered": 0,
           "total": 22,
-          "percentage": 5
+          "percentage": 0
         }
       },
       "developer": {
@@ -311,30 +195,30 @@
         "detail": "Supported"
       },
       "surfaceState": "mapped",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes sessions",
           "interface": "/api/sessions",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -369,20 +253,20 @@
       },
       "surfaceState": "visible_read_only",
       "operationalHealth": "degraded",
-      "operationalDetail": "Hermes detailed health responded. Hermes execution sources are unavailable.",
+      "operationalDetail": "Hermes detailed health responded. Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes detailed health bridge",
           "interface": "/health/detailed",
-          "observedAt": "2026-07-20T21:38:45.628Z",
+          "observedAt": "2026-07-20T22:59:26.866Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "success",
           "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendCommit": null,
           "facts": {
             "connectionState": "online"
           },
@@ -393,17 +277,17 @@
           "origin": "raw_observation",
           "source": "Hermes runtime execution",
           "interface": "/api/sessions + /v1/runs/{run_id}",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.869Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "runtimeExecution": {
-              "observedAt": "2026-07-20T21:38:45.630Z",
+              "observedAt": "2026-07-20T22:59:26.869Z",
               "runs": [],
               "agents": {
                 "state": "unavailable",
@@ -440,14 +324,15 @@
                 "sessions": null,
                 "summary": "Hermes usage source is unavailable."
               }
-            }
+            },
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes execution sources are unavailable."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
       "status": "degraded",
-      "statusDetail": "Hermes detailed health responded. Hermes execution sources are unavailable.",
+      "statusDetail": "Hermes detailed health responded. Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -481,30 +366,30 @@
         "detail": "Supported"
       },
       "surfaceState": "mapped",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes skills",
           "interface": "/api/skills",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -538,27 +423,28 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes messaging platforms",
           "interface": "/api/messaging/platforms",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "configuredPlatforms": 0,
-            "failedPlatforms": 0
+            "failedPlatforms": 0,
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -579,8 +465,8 @@
           "summary": "Historical route support only. Current platform health requires a fresh platform observation."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -615,26 +501,27 @@
       },
       "surfaceState": "visible_read_only",
       "operationalHealth": "unavailable",
-      "operationalDetail": "Hermes artifact source is unavailable.",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes artifact metadata",
           "interface": "/api/files",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.869Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "total": 0,
-            "items": []
+            "items": [],
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes artifact source is unavailable."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -655,8 +542,8 @@
           "summary": "Historical route support only. Current artifact visibility requires a fresh files projection."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes artifact source is unavailable.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -690,49 +577,50 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete. Hermes queue source is unavailable.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review. Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes cron jobs",
           "interface": "/api/cron/jobs",
-          "observedAt": "2026-07-20T21:38:45.631Z",
-          "assertedFreshness": "fresh",
-          "effectiveFreshness": "fresh",
-          "proofKind": "live",
-          "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
-          "facts": {
-            "count": 0
-          },
-          "stale": false,
-          "summary": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete."
-        },
-        {
-          "origin": "raw_observation",
-          "source": "Hermes Kanban queue",
-          "interface": "/api/plugins/kanban/board",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "total": 0,
-            "counts": {}
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes queue source is unavailable."
+          "summary": "Hermes Management is not configured for this review."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Kanban queue",
+          "interface": "/api/plugins/kanban/board",
+          "observedAt": "2026-07-20T22:59:26.869Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
+          "facts": {
+            "total": 0,
+            "counts": {},
+            "sourceGroup": "management"
+          },
+          "stale": false,
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete. Hermes queue source is unavailable.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review. Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -766,30 +654,30 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes profiles",
           "interface": "/api/profiles",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -824,25 +712,26 @@
       },
       "surfaceState": "visible_read_only",
       "operationalHealth": "unavailable",
-      "operationalDetail": "Hermes active-agent source is unavailable.",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes active workers",
           "interface": "/api/plugins/kanban/workers/active",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.869Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "count": 0,
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes active-agent source is unavailable."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -863,8 +752,8 @@
           "summary": "Installed Desktop source exposes agent and subagent status surfaces."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes active-agent source is unavailable.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -898,26 +787,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes memory graph",
           "interface": "/api/learning/graph",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -938,8 +827,8 @@
           "summary": "Memory graph support was found in the historical source audit; node counts are observation-specific."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1011,26 +900,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes model options",
           "interface": "/api/model/options",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -1051,8 +940,8 @@
           "summary": "Provider settings were found in the historical source audit."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1086,26 +975,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes model options",
           "interface": "/api/model/options",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -1126,8 +1015,8 @@
           "summary": "Provider account surfaces were found without retaining credential material."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1161,26 +1050,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes current model",
           "interface": "/api/model/info",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -1201,8 +1090,8 @@
           "summary": "Model selection surfaces were found in the historical source audit."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1236,30 +1125,30 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes toolsets",
           "interface": "/api/tools/toolsets",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1293,21 +1182,21 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "not_configured",
-      "operationalDetail": "Hermes Gateway is not configured for direct Cabinet access. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Management gateway observation failed: Hermes management authentication a…",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Gateway is not configured for this review. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes health bridge",
           "interface": "/health/detailed gateway_state",
-          "observedAt": "2026-07-20T21:38:45.628Z",
+          "observedAt": "2026-07-20T22:59:26.866Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unknown",
           "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendCommit": null,
           "facts": {
             "state": "running"
           },
@@ -1318,37 +1207,39 @@
           "origin": "raw_observation",
           "source": "Hermes management status",
           "interface": "/api/status gateway state",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
+          "facts": {
+            "state": "unavailable",
+            "sourceGroup": "management"
+          },
+          "stale": false,
+          "summary": "Hermes Management is not configured for this review."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Cabinet Hermes Gateway configuration",
+          "interface": "server-only Gateway configuration",
+          "observedAt": "2026-07-20T22:59:26.866Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
           "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendCommit": null,
           "facts": {
-            "state": "unavailable"
+            "sourceState": "unavailable",
+            "sourceGroup": "gateway"
           },
           "stale": false,
-          "summary": "Management gateway observation failed: Hermes management authentication and profile configuration are incomplete."
-        },
-        {
-          "origin": "raw_observation",
-          "source": "Cabinet Hermes Gateway configuration",
-          "interface": "server-only Gateway configuration",
-          "observedAt": "2026-07-20T21:38:45.628Z",
-          "assertedFreshness": "fresh",
-          "effectiveFreshness": "fresh",
-          "proofKind": "live",
-          "proofScope": "live_runtime_operation",
-          "outcome": "not_configured",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
-          "facts": {
-            "sourceState": "unavailable"
-          },
-          "stale": false,
-          "summary": "Hermes Gateway is not configured for direct Cabinet access."
+          "summary": "Hermes Gateway is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -1370,7 +1261,7 @@
         }
       ],
       "status": "needs_setup",
-      "statusDetail": "Hermes Gateway is not configured for direct Cabinet access. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Management gateway observation failed: Hermes management authentication a…",
+      "statusDetail": "Hermes Gateway is not configured for this review. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1404,30 +1295,30 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes MCP servers",
           "interface": "/api/mcp/servers",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1461,30 +1352,30 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes dashboard plugins",
           "interface": "/api/dashboard/plugins",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1575,26 +1466,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes sessions",
           "interface": "/api/sessions",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -1615,8 +1506,8 @@
           "summary": "Archived session support was found in the historical source audit."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1689,35 +1580,42 @@
       },
       "surfaceState": "visible_read_only",
       "operationalHealth": "healthy",
-      "operationalDetail": "Hermes Agent detailed health confirmed the running backend identity.",
+      "operationalDetail": "Hermes Agent detailed health confirmed the running version identity only. Update checking was not performed.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes Agent detailed health identity",
           "interface": "/health/detailed",
-          "observedAt": "2026-07-20T21:38:45.628Z",
+          "observedAt": "2026-07-20T22:59:26.866Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "success",
           "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendCommit": null,
           "facts": {
             "reportedVersion": "0.19.0",
+            "versionSource": "GET /health/detailed",
+            "reportedRunningCommit": null,
+            "detectedAgentCheckoutCommit": "d7b36070ef80",
+            "detectedCommitSource": "local installation metadata",
+            "updateCheckPerformed": false,
+            "applicationUpdateAvailability": "unknown",
+            "partialClaim": true,
             "updateAuditStale": true
           },
           "stale": false,
-          "summary": "Hermes Agent detailed health confirmed the running backend identity."
+          "summary": "Hermes Agent detailed health confirmed the running version identity only. Update checking was not performed."
         }
       ],
       "status": "connected",
-      "statusDetail": "Hermes Agent detailed health confirmed the running backend identity.",
+      "statusDetail": "Hermes Agent detailed health confirmed the running version identity only. Update checking was not performed.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
       },
       "pathProof": {
         "proven": false,
@@ -1746,26 +1644,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes current model",
           "interface": "/api/model/info",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -1786,8 +1684,8 @@
           "summary": "Model settings were found in the historical source audit."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -1973,26 +1871,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes memory",
           "interface": "/api/memory",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -2013,8 +1911,8 @@
           "summary": "Memory management interfaces were found in the historical source audit."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2055,7 +1953,7 @@
           "origin": "raw_observation",
           "source": "Hermes audio interface detection",
           "interface": "/api/audio/transcribe and /api/audio/speak",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
@@ -2163,30 +2061,31 @@
       },
       "surfaceState": "mapped",
       "operationalHealth": "unavailable",
-      "operationalDetail": "Hermes artifact source is unavailable.",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes artifact metadata",
           "interface": "/api/files",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.869Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "total": 0,
-            "items": []
+            "items": [],
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes artifact source is unavailable."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes artifact source is unavailable.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2258,21 +2157,21 @@
         "detail": "Supported"
       },
       "surfaceState": "mapped",
-      "operationalHealth": "unknown",
-      "operationalDetail": "Hermes did not report a session working directory, so Git review was not queried.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes Git status and review",
           "interface": "/api/git/status + /api/git/review/list",
-          "observedAt": "2026-07-20T21:38:45.629Z",
+          "observedAt": "2026-07-20T22:59:26.867Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "unknown",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "repository": null,
             "branch": null,
@@ -2285,14 +2184,15 @@
             "ahead": null,
             "behind": null,
             "reviewAvailable": null,
-            "reviewCount": null
+            "reviewCount": null,
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes did not report a session working directory, so Git review was not queried."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "available",
-      "statusDetail": "Hermes did not report a session working directory, so Git review was not queried.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2327,34 +2227,35 @@
       },
       "surfaceState": "mapped",
       "operationalHealth": "unavailable",
-      "operationalDetail": "Hermes session project association is unavailable.",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes session project association",
           "interface": "/api/sessions?limit=100",
-          "observedAt": "2026-07-20T21:38:45.629Z",
+          "observedAt": "2026-07-20T22:59:26.867Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "project": null,
             "profile": "operator-os",
             "sessionAssociation": null,
             "workingDirectoryReported": false,
             "repositoryAssociated": false,
-            "repository": null
+            "repository": null,
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes session project association is unavailable."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes session project association is unavailable.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2388,33 +2289,34 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "unknown",
-      "operationalDetail": "Hermes did not report a session working directory, so worktrees were not queried.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes Git worktrees",
           "interface": "/api/git/worktrees",
-          "observedAt": "2026-07-20T21:38:45.629Z",
+          "observedAt": "2026-07-20T22:59:26.867Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "unknown",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "total": 0,
             "current": null,
             "ambiguousCurrent": false,
-            "items": []
+            "items": [],
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes did not report a session working directory, so worktrees were not queried."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "available",
-      "statusDetail": "Hermes did not report a session working directory, so worktrees were not queried.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2486,26 +2388,26 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes sessions",
           "interface": "/api/sessions",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -2526,8 +2428,8 @@
           "summary": "Session pinning was visible in the historical Desktop source audit."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2676,26 +2578,27 @@
       },
       "surfaceState": "first_class",
       "operationalHealth": "unavailable",
-      "operationalDetail": "The installed runtime has no global pending-input enumeration interface.",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes known-run pending input",
           "interface": "/v1/runs/{run_id} + /events",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.869Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "count": 0,
-            "rule": "Hermes prepares; Jeremy commits."
+            "rule": "Hermes prepares; Jeremy commits.",
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "The installed runtime has no global pending-input enumeration interface."
+          "summary": "Hermes Management is not configured for this review."
         },
         {
           "origin": "approved_evidence_catalog",
@@ -2734,8 +2637,8 @@
           "summary": "A governed approval decision completed with confirmation and duplicate-submission protection."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "The installed runtime has no global pending-input enumeration interface.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -2776,18 +2679,19 @@
           "origin": "raw_observation",
           "source": "OpenCLI doctor",
           "interface": "opencli doctor",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "daemon": "unknown",
             "extension": "unknown",
-            "connectedProfiles": 0
+            "connectedProfiles": 0,
+            "sourceGroup": "management"
           },
           "stale": false,
           "summary": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review."
@@ -2829,7 +2733,7 @@
           "summary": "A local read-only acceptance opened a test page, read its title and DOM, and captured a screenshot without an external write."
         }
       ],
-      "status": "degraded",
+      "status": "needs_setup",
       "statusDetail": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review.",
       "credit": {
         "discoverability": true,
@@ -2864,30 +2768,30 @@
         "detail": "Supported"
       },
       "surfaceState": "visible_read_only",
-      "operationalHealth": "degraded",
-      "operationalDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes toolsets",
           "interface": "/api/tools/toolsets",
-          "observedAt": "2026-07-20T21:38:45.631Z",
+          "observedAt": "2026-07-20T22:59:26.870Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
-          "outcome": "failure",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
-            "count": 0
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -3112,33 +3016,34 @@
       },
       "surfaceState": "visible_read_only",
       "operationalHealth": "unavailable",
-      "operationalDetail": "Hermes usage source is unavailable.",
+      "operationalDetail": "Hermes Management is not configured for this review.",
       "evidence": [
         {
           "origin": "raw_observation",
           "source": "Hermes usage analytics",
           "interface": "/api/analytics/usage",
-          "observedAt": "2026-07-20T21:38:45.630Z",
+          "observedAt": "2026-07-20T22:59:26.869Z",
           "assertedFreshness": "fresh",
           "effectiveFreshness": "fresh",
           "proofKind": "live",
           "proofScope": "live_runtime_operation",
           "outcome": "unavailable",
-          "installedBackendVersion": "0.19.0",
-          "installedBackendCommit": "d7b36070ef80",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": null,
           "facts": {
             "inputTokens": null,
             "outputTokens": null,
             "estimatedCostUsd": null,
             "actualCostUsd": null,
-            "sessions": null
+            "sessions": null,
+            "sourceGroup": "management"
           },
           "stale": false,
-          "summary": "Hermes usage source is unavailable."
+          "summary": "Hermes Management is not configured for this review."
         }
       ],
-      "status": "degraded",
-      "statusDetail": "Hermes usage source is unavailable.",
+      "status": "needs_setup",
+      "statusDetail": "Hermes Management is not configured for this review.",
       "credit": {
         "discoverability": true,
         "liveVisibility": false,
@@ -3170,94 +3075,9 @@
     "memoryNamespace": "operator-os:built-in",
     "diagnostics": [
       {
-        "area": "profiles",
+        "area": "management source",
         "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "agent manifest",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "skills",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "cron",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "memory",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "mcp",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "toolsets",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "plugins",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "active agents",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "recent agents",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "messaging",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "sessions",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "memory graph",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "current model",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "model options",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "artifacts",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "usage analytics",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
-      },
-      {
-        "area": "runtime status",
-        "status": "degraded",
-        "message": "Hermes management authentication and profile configuration are incomplete."
+        "message": "Hermes Management is not configured for this review."
       }
     ],
     "operator": {
@@ -3267,7 +3087,7 @@
         "gatewayRunning": null,
         "gatewayBusy": false,
         "lastConnection": null,
-        "observedAt": "2026-07-20T21:38:45.631Z",
+        "observedAt": "2026-07-20T22:59:26.870Z",
         "activeAgentCount": 0,
         "activeSessionCount": 0
       },
@@ -3310,7 +3130,7 @@
       "profile": "operator-os",
       "repositoryAssociated": false,
       "repository": null,
-      "observedAt": "2026-07-20T21:38:45.629Z"
+      "observedAt": "2026-07-20T22:59:26.867Z"
     },
     "worktree": {
       "label": null,
@@ -3318,11 +3138,11 @@
       "detached": null,
       "clean": null,
       "ambiguousCurrent": false,
-      "observedAt": "2026-07-20T21:38:45.629Z"
+      "observedAt": "2026-07-20T22:59:26.867Z"
     }
   },
   "runtimeExecution": {
-    "observedAt": "2026-07-20T21:38:45.630Z",
+    "observedAt": "2026-07-20T22:59:26.869Z",
     "runs": [],
     "agents": {
       "state": "unavailable",

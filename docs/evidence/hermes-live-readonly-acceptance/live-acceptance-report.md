@@ -1,10 +1,14 @@
-# Hermes Phase 4A partial live read-only acceptance
+# Hermes Phase 4A partial live read-only acceptance closeout
 
 - Classification: **Live runtime**
-- Captured: `2026-07-20T21:38:45.631Z`
-- Implementation: `9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030`
-- Installed Hermes Agent: `0.19.0` (`d7b36070ef80`)
-- Active profile: `operator-os`
+- Captured: `2026-07-20T22:59:26.870Z`
+- Implementation revision: `ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff`
+- Runtime Cabinet revision: `ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff`
+- Running Hermes Agent version: `0.19.0`, confirmed by `GET /health/detailed`
+- Running Hermes Agent commit: **Unknown**; the endpoint did not report it
+- Detected local Agent checkout: `d7b36070ef80`, from local installation metadata
+- Configured profile: `operator-os`
+- Observed active profile: **Unknown — Management source unavailable**
 - Configured source groups: Agent API
 - Unavailable source groups: Management, Gateway
 - Interventions: disabled
@@ -12,55 +16,75 @@
 
 ## Result
 
-Partial acceptance passed for the authenticated Agent API source at the safe loopback identity `http://127.0.0.1:8642`. The exact live Hermes endpoint reached was `GET /health/detailed`.
+The partial read-only acceptance passed for the authenticated Agent API at the safe loopback identity `http://127.0.0.1:8642`. The only live upstream Hermes endpoint reached was `GET /health/detailed`. The production review instance ran from the exact clean Commit A build on `127.0.0.1:4011` with isolated disposable Cabinet data.
 
-Management and Gateway remained independently unavailable. No Management or Gateway observation was promoted from the Agent health result, no OpenCLI diagnostic was run as a substitute for Management, and no unavailable sessions fallback was described as connected-empty project evidence.
+Configured identity and observed identity are now separate. `CABINET_HERMES_PROFILE` establishes only the configured profile `operator-os`; it does not establish the active runtime profile. No available live source explicitly confirmed the active profile, so the observed active profile remains unknown.
 
-The disposable production-build Cabinet review instance ran only on `127.0.0.1:4011` with an isolated temporary Cabinet data directory. It was not publicly exposed and did not restart or reconfigure any production process.
+Endpoint-confirmed and locally detected Agent identities are also separate. `/health/detailed` confirmed version `0.19.0` but did not report a running-process commit. The local checkout commit `d7b36070ef80` remains installation metadata and is not attributed to the running process.
 
-## Live discrepancies preserved
+## Source truth and requests
 
-- The running Hermes Agent identifies itself as `0.19.0` at commit `d7b36070ef80`; the prior installed-version source audit recorded `0.18.2` and is therefore stale.
-- Agent health reported an indirect Gateway state, while direct Gateway configuration was absent. The projection treats the direct Gateway source as unavailable and does not present the indirect state as proof that Gateway is running.
-- Management-backed sessions, messaging, skills, jobs, agents, artifacts, memory, models, plugins, repository context, runtime execution, and usage remained unavailable or degraded. Agent health did not replace those source-specific failures.
-- The About and updates registry surface describes a broader update/application-metadata interface, but this acceptance credited only the exact live Agent evidence from `/health/detailed`.
+| Source group | State | Upstream requests | Result |
+| --- | --- | ---: | --- |
+| Agent API | Configured | 1 live endpoint category | `GET /health/detailed` returned the running version identity |
+| Management | Unavailable | 0 | `Hermes Management is not configured for this review.` |
+| Gateway | Unavailable | 0 | No direct Gateway source was configured or contacted |
+
+The prior Hermes Agent 0.18.2 contract audit remains stale historical evidence. The successful live contract is source-specific: installed Agent 0.19.0 `GET /health/detailed`. Management remains unavailable with its prior audit stale; Gateway remains unavailable; Desktop `0.17.0` is separately detected. No global Desktop 0.18 compatibility claim is made.
+
+Management-backed observations are represented by one typed unavailable source and 28 derived dependent capability observations. The Overview elevates one grouped Management exception, not 28 duplicate exceptions. The independent Gateway condition remains separately visible because Agent health indirectly reported Gateway running while no direct Gateway source was configured; the UI does not treat that indirect fact as direct Gateway proof.
+
+Runtime execution now states: **“Runtime execution sources are unavailable. Active-run state is unknown.”** Zero displayed counts do not claim that zero runs exist.
+
+## About and updates claim scope
+
+The registry contract covers runtime identity, application metadata, and update-check interfaces. This review observed only `GET /health/detailed`, proving the runtime-version identity subclaim. Update checking was not performed and application update availability is unknown.
+
+That partial observation does not satisfy the full visible capability semantics, so About and updates receives no Current Live Visibility or Live-Proven credit from this run. The decision is deterministic across the projection, generated matrix, browser, and tests.
 
 ## Parity
 
 | Dimension | Result |
 | --- | ---: |
 | Discoverability | 48/48 (100%) |
-| Current Live Visibility | 1/48 (2%) |
+| Current Live Visibility | 0/48 (0%) |
 | Governed Management | 3/48 (6%) |
-| Live-Proven | 4/48 (8%) |
+| Live-Proven | 3/48 (6%) |
 
-Only About and updates earned fresh Current Live Visibility from this partial live run. Command Center and About and updates have live-operation proof; Approvals and Browser/OpenCLI retain separately labeled historical live proof. No fixture evidence earned live credit.
+The three retained Live-Proven credits are separately authorized historical-live proofs. No fixture or partial About observation earned current-live credit.
+
+## Cabinet daemon distinction and live discrepancy
+
+The visible daemon banner refers to Cabinet’s application agent daemon, not Hermes Agent. It now says: **“Cabinet agent daemon is unavailable. This is separate from the connected Hermes Agent runtime.”** The daemon was not restarted or hidden for this review.
+
+During the live browser review, the Control Center repeatedly obtained the current Agent 0.19.0 identity while the independently polling status bar intermittently reported a Hermes health timeout. This discrepancy is preserved rather than suppressed. It did not change the source-specific projection result and requires follow-up outside this read-only closeout if it recurs in normal use.
 
 ## Verification
 
-- Full unit suite: 569 passed, 0 failed.
-- Focused Hermes suite: 148 passed, 0 failed.
-- Focused partial-source correction suite: 62 passed, 0 failed.
-- Production browser workflows: 7 passed, 0 failed.
+- Full unit suite: 574 passed, 0 failed.
+- Focused Hermes and closeout regressions: passed.
+- Production browser workflows: 3 passed, 0 failed.
 - TypeScript: passed.
 - Focused ESLint: passed.
-- Production build: passed.
+- Exact Commit A production build: passed; the generated build identity contains `ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff`.
 - `git diff --check`: passed.
-- Live browser: desktop 1440×900 and mobile 390×844 passed with zero horizontal overflow, reduced-motion active, no framework overlay, and no relevant console errors.
-- Live browser request observation: zero non-read-only `/api/hermes/*` requests.
-- Recursive credential and local-identity non-egress tests: passed; committed text and binary evidence was also checked against the configured API credential without displaying it.
-- Matrix, machine projection, and browser percentages agree at 100% / 2% / 6% / 8%.
+- Live browser: desktop 1440×900 and mobile 390×844 passed; mobile horizontal overflow was 0 px.
+- Reduced-motion workflow: passed.
+- Relevant browser console/framework errors: none.
+- Matrix, machine projection, and browser percentages agree at 100% / 0% / 6% / 6%.
+- Management requests: 0. Gateway requests: 0. Hermes mutation calls: 0.
+- Recursive credential and local-identity non-egress checks: passed.
 
-Existing unrelated warnings remain: two Turbopack NFT trace warnings from the system file-picker import trace, plus Playwright's `NO_COLOR` / `FORCE_COLOR` notice. An over-broad exploratory test command also discovered two packaging smoke scripts that require an Electron bundle; the required full unit and focused Hermes suites were rerun correctly and passed.
+Existing unrelated warnings remain: the production build emits the known Turbopack NFT trace warnings from the system file-picker import trace, and Playwright may emit its existing `NO_COLOR` / `FORCE_COLOR` notice.
 
 ## Evidence
 
-- `live-runtime-projection.json`: sanitized canonical live projection with typed source evidence.
-- `configuration-readiness.json`: credential-free variable/source readiness.
-- `live-artifact-manifest.json`: shared provenance for every live artifact and screenshot.
-- `live-agent-overview-1440x900.png`: desktop live overview.
-- `live-agent-identity-inspector-1440x900.png`: exact Agent identity evidence.
-- `live-agent-overview-mobile-390x844.png`: mobile live overview.
-- `live-agent-identity-mobile-390x844.png`: mobile live Agent evidence sheet.
+- `live-runtime-projection.json`: sanitized canonical live projection from exact Commit A.
+- `configuration-readiness.json`: credential-free configured, unavailable, and identity status.
+- `live-artifact-manifest.json`: shared provenance for the evidence set.
+- `live-agent-overview-1440x900.png`: desktop live Overview with grouped Management and independent Gateway exceptions.
+- `live-agent-identity-inspector-1440x900.png`: desktop About inspector with identity and claim-scope separation.
+- `live-agent-overview-mobile-390x844.png`: mobile live Overview.
+- `live-agent-identity-mobile-390x844.png`: mobile live identity sheet.
 
-The earlier `acceptance-report.md` remains the immutable Stage A safe-block record. This report is the Stage B partial Agent API acceptance.
+The earlier `acceptance-report.md` remains the immutable Stage A safe-block record. This report is the Stage B partial Agent API closeout.

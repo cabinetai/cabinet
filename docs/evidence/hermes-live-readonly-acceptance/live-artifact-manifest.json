@@ -1,13 +1,21 @@
 {
   "classification": "Live runtime",
-  "capturedAt": "2026-07-20T21:38:45.631Z",
-  "artifactGeneratedAt": "2026-07-20T21:49:04.557Z",
-  "implementationRevision": "9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030",
-  "installedHermesAgent": {
+  "capturedAt": "2026-07-20T22:59:26.870Z",
+  "artifactGeneratedAt": "2026-07-20T22:59:24.000Z",
+  "implementationRevision": "ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff",
+  "runtimeCabinetRevision": "ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff",
+  "observedRunningAgent": {
     "version": "0.19.0",
-    "commit": "d7b36070ef80"
+    "source": "GET /health/detailed",
+    "commit": null
   },
-  "activeProfile": "operator-os",
+  "detectedAgentCheckout": {
+    "commit": "d7b36070ef80",
+    "source": "local installation metadata"
+  },
+  "configuredProfile": "operator-os",
+  "observedActiveProfile": null,
+  "observedProfileSource": null,
   "configuredSourceGroups": [
     {
       "id": "agent_api",
@@ -18,11 +26,13 @@
   "unavailableSourceGroups": [
     {
       "id": "management",
-      "state": "unavailable"
+      "state": "unavailable",
+      "requests": 0
     },
     {
       "id": "gateway",
-      "state": "unavailable"
+      "state": "unavailable",
+      "requests": 0
     }
   ],
   "interventionsEnabled": false,
@@ -34,6 +44,10 @@
     },
     {
       "file": "configuration-readiness.json",
+      "classification": "Live runtime"
+    },
+    {
+      "file": "live-acceptance-report.md",
       "classification": "Live runtime"
     },
     {

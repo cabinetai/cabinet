@@ -20,14 +20,14 @@ The persisted upstream audit was captured at `2026-07-19T21:06:53Z` from commit 
 Parity is reported as four independent dimensions so discoverability cannot disguise missing live data or controls. The percentages below are calculated from all 48 inventoried capabilities; unsupported and inconvenient capabilities are not omitted.
 
 <!-- GENERATED:HERMES_PARITY_SUMMARY:START -->
-Live-runtime projection captured 2026-07-20T21:38:45.631Z.
+Live-runtime projection captured 2026-07-20T22:59:26.870Z.
 
 | Audience | Discoverability | Current live visibility | Governed management | Live-proven |
 | --- | ---: | ---: | ---: | ---: |
 | Operator (14) | 100% | 0% | 14% | 21% |
-| Management (22) | 100% | 5% | 5% | 5% |
+| Management (22) | 100% | 0% | 5% | 0% |
 | Developer (12) | 100% | 0% | 0% | 0% |
-| All capabilities (48) | 100% | 2% | 6% | 8% |
+| All capabilities (48) | 100% | 0% | 6% | 6% |
 <!-- GENERATED:HERMES_PARITY_SUMMARY:END -->
 
 These are implementation-branch values, not a closure claim. The Control Center calculates and displays the same dimensions from the full registry at runtime.
@@ -147,66 +147,66 @@ Gateway reconciliation groups evidence by source and interface, retains the late
 <!-- GENERATED:HERMES_TRUTH_STATE:START -->
 ## Generated per-capability truth-state evidence
 
-Generated at 2026-07-20T21:40:01.333Z. Live runtime projection captured 2026-07-20T21:38:45.631Z.
+Generated at 2026-07-20T22:59:24.000Z. Live runtime projection captured 2026-07-20T22:59:26.870Z.
 
-Implementation revision: `9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030`. Artifact generated at: 2026-07-20T21:40:01.333Z.
+Implementation revision: `ffc3b1aa63910efa1d8d65cea9be7d8e5c87aaff`. Artifact generated at: 2026-07-20T22:59:24.000Z.
 
 Installed Desktop source commit: **unknown**. The commit `311a5b0a552be78f5c58807e2be1db02e3badcb0` is historical Desktop source-audit evidence only.
 
 All 48 rows and all displayed percentages use the production Hermes Control Center projection assembler. Generated time is not an observation time. Exact fixture path proof is non-parity evidence and never earns Live-Proven credit.
 
-Overall credits: Discoverability 48/48 (100%); Current Live Visibility 1/48 (2%); Governed Management 3/48 (6%); Live-Proven 4/48 (8%).
+Overall credits: Discoverability 48/48 (100%); Current Live Visibility 0/48 (0%); Governed Management 3/48 (6%); Live-Proven 3/48 (6%).
 
 | Capability | Installed | Cabinet surface | Operational health | Kind / scope / outcome | Source | Interface | Observed at | Asserted / effective freshness | Fixture path | Credits |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Chat and sessions | supported | `mapped` | `degraded` | live / live_runtime_operation / failure | Hermes sessions | /api/sessions | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Command Center | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / success | Hermes detailed health bridge | /health/detailed | 2026-07-20T21:38:45.628Z | fresh / fresh | no | D:yes L:no M:no P:yes |
-| Skills | supported | `mapped` | `degraded` | live / live_runtime_operation / failure | Hermes skills | /api/skills | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Messaging | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes messaging platforms | /api/messaging/platforms | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Artifacts | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes artifact metadata | /api/files | 2026-07-20T21:38:45.630Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Cron and background jobs | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes cron jobs | /api/cron/jobs | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Profiles | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes profiles | /api/profiles | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Agents and subagents | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes active workers | /api/plugins/kanban/workers/active | 2026-07-20T21:38:45.630Z | fresh / fresh | no | D:yes L:no M:yes P:no |
-| Starmap and memory graph | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes memory graph | /api/learning/graph | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Chat and sessions | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes sessions | /api/sessions | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Command Center | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / success | Hermes detailed health bridge | /health/detailed | 2026-07-20T22:59:26.866Z | fresh / fresh | no | D:yes L:no M:no P:yes |
+| Skills | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes skills | /api/skills | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Messaging | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes messaging platforms | /api/messaging/platforms | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Artifacts | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes artifact metadata | /api/files | 2026-07-20T22:59:26.869Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Cron and background jobs | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes cron jobs | /api/cron/jobs | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Profiles | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes profiles | /api/profiles | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Agents and subagents | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes active workers | /api/plugins/kanban/workers/active | 2026-07-20T22:59:26.869Z | fresh / fresh | no | D:yes L:no M:yes P:no |
+| Starmap and memory graph | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes memory graph | /api/learning/graph | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Settings | supported | `visible_read_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Providers | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes model options | /api/model/options | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Provider accounts | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes model options | /api/model/options | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Models | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes current model | /api/model/info | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| API keys and tools | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes toolsets | /api/tools/toolsets | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Gateway | supported | `visible_read_only` | `not_configured` | live / live_runtime_operation / unknown | Hermes health bridge | /health/detailed gateway_state | 2026-07-20T21:38:45.628Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| MCP | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes MCP servers | /api/mcp/servers | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Plugins | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes dashboard plugins | /api/dashboard/plugins | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Providers | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes model options | /api/model/options | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Provider accounts | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes model options | /api/model/options | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Models | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes current model | /api/model/info | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| API keys and tools | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes toolsets | /api/tools/toolsets | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Gateway | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unknown | Hermes health bridge | /health/detailed gateway_state | 2026-07-20T22:59:26.866Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| MCP | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes MCP servers | /api/mcp/servers | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Plugins | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes dashboard plugins | /api/dashboard/plugins | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Notifications | supported | `mapped` | `unknown` | historical_audit / source_audit / success | Cabinet notification preference component contract | Hermes Desktop source audit | 2026-07-19T21:06:53Z | stale / stale | no | D:yes L:no M:yes P:no |
-| Archived chats | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes sessions | /api/sessions | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Archived chats | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes sessions | /api/sessions | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Billing | unsupported | `unsupported` | `unavailable` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| About and updates | supported | `visible_read_only` | `healthy` | live / live_runtime_operation / success | Hermes Agent detailed health identity | /health/detailed | 2026-07-20T21:38:45.628Z | fresh / fresh | no | D:yes L:yes M:no P:yes |
-| Model settings | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes current model | /api/model/info | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| About and updates | supported | `visible_read_only` | `healthy` | live / live_runtime_operation / success | Hermes Agent detailed health identity | /health/detailed | 2026-07-20T22:59:26.866Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Model settings | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes current model | /api/model/info | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Chat settings | supported | `visible_read_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Appearance | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Workspace | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Safety | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Memory and context | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes memory | /api/memory | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Voice | supported | `visible_read_only` | `unknown` | live / live_runtime_operation / unknown | Hermes audio interface detection | /api/audio/transcribe and /api/audio/speak | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Memory and context | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes memory | /api/memory | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Voice | supported | `visible_read_only` | `unknown` | live / live_runtime_operation / unknown | Hermes audio interface detection | /api/audio/transcribe and /api/audio/speak | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Advanced configuration | supported | `diagnostic_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Files | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes artifact metadata | /api/files | 2026-07-20T21:38:45.630Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Files | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes artifact metadata | /api/files | 2026-07-20T22:59:26.869Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Terminal | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Source-control review | supported | `mapped` | `unknown` | live / live_runtime_operation / unknown | Hermes Git status and review | /api/git/status + /api/git/review/list | 2026-07-20T21:38:45.629Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Projects | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes session project association | /api/sessions?limit=100 | 2026-07-20T21:38:45.629Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Worktrees | supported | `visible_read_only` | `unknown` | live / live_runtime_operation / unknown | Hermes Git worktrees | /api/git/worktrees | 2026-07-20T21:38:45.629Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Source-control review | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes Git status and review | /api/git/status + /api/git/review/list | 2026-07-20T22:59:26.867Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Projects | supported | `mapped` | `unavailable` | live / live_runtime_operation / unavailable | Hermes session project association | /api/sessions?limit=100 | 2026-07-20T22:59:26.867Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Worktrees | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes Git worktrees | /api/git/worktrees | 2026-07-20T22:59:26.867Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Session tabs | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Session pinning | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes sessions | /api/sessions | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Session pinning | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes sessions | /api/sessions | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Command palette | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Keyboard shortcuts | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Layout controls | supported | `mapped` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Approvals and pending input | supported | `first_class` | `unavailable` | live / live_runtime_operation / unavailable | Hermes known-run pending input | /v1/runs/{run_id} + /events | 2026-07-20T21:38:45.630Z | fresh / fresh | no | D:yes L:no M:yes P:yes |
-| Browser and OpenCLI | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | OpenCLI doctor | opencli doctor | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:yes |
-| Executor | supported | `visible_read_only` | `degraded` | live / live_runtime_operation / failure | Hermes toolsets | /api/tools/toolsets | 2026-07-20T21:38:45.631Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Approvals and pending input | supported | `first_class` | `unavailable` | live / live_runtime_operation / unavailable | Hermes known-run pending input | /v1/runs/{run_id} + /events | 2026-07-20T22:59:26.869Z | fresh / fresh | no | D:yes L:no M:yes P:yes |
+| Browser and OpenCLI | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | OpenCLI doctor | opencli doctor | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:yes |
+| Executor | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes toolsets | /api/tools/toolsets | 2026-07-20T22:59:26.870Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Raw logs | supported | `diagnostic_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Low-level gateway diagnostics | supported | `diagnostic_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Computer Use | supported | `visible_read_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Backup and restore | supported | `diagnostic_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
 | Security audit | supported | `visible_read_only` | `unknown` | none | registry only | unknown | unknown | unknown / unknown | no | D:yes L:no M:no P:no |
-| Usage insights | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes usage analytics | /api/analytics/usage | 2026-07-20T21:38:45.630Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Usage insights | supported | `visible_read_only` | `unavailable` | live / live_runtime_operation / unavailable | Hermes usage analytics | /api/analytics/usage | 2026-07-20T22:59:26.869Z | fresh / fresh | no | D:yes L:no M:no P:no |
 
 Memory graph observation: no typed graph-count evidence was supplied. No node or edge count is inferred.
 <!-- GENERATED:HERMES_TRUTH_STATE:END -->
