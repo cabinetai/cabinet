@@ -41,6 +41,7 @@ import type {
   HermesControlCenterSnapshot,
   HermesOperationalHealth,
 } from "@/lib/hermes/control-center-types";
+import type { HermesExecutionRun, HermesExecutionState } from "@/lib/hermes/runtime-execution";
 
 type Mode = "operator" | "developer";
 type Section = "overview" | "agents" | "messaging" | "artifacts" | "memory" | "automations" | "tools" | "sessions" | "settings" | "developer";
@@ -134,6 +135,130 @@ function observationAge(value: string | null, reference = Date.now()): string {
   if (minutes < 1) return "Observed just now";
   if (minutes < 60) return `Observed ${minutes}m ago`;
   return `Observed ${Math.floor(minutes / 60)}h ago`;
+}
+
+const EXECUTION_LABELS: Record<HermesExecutionState, string> = {
+  active: "Active", queued: "Queued", waiting: "Waiting", blocked: "Blocked", paused: "Paused",
+  retrying: "Retrying", failed: "Failed", completed: "Completed", conflicting: "Conflicting", unknown: "Unknown",
+};
+
+function executionVariant(state: HermesExecutionState): "default" | "secondary" | "destructive" | "outline" {
+  if (state === "active" || state === "completed") return "default";
+  if (state === "failed" || state === "conflicting") return "destructive";
+  if (state === "waiting" || state === "blocked" || state === "retrying") return "secondary";
+  return "outline";
+}
+
+function formatDuration(value: number | null): string {
+  if (value === null) return "Not reported";
+  const minutes = Math.floor(value / 60_000);
+  if (minutes < 1) return `${Math.max(0, Math.round(value / 1_000))}s`;
+  if (minutes < 60) return `${minutes}m`;
+  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+}
+
+function RuntimeExecutionOverview({ snapshot, onSelectRun, onSelectCapability }: {
+  snapshot: HermesControlCenterSnapshot;
+  onSelectRun: (id: string) => void;
+  onSelectCapability: (id: string) => void;
+}) {
+  const execution = snapshot.runtimeExecution;
+  const counts = execution.runs.reduce<Record<string, number>>((result, run) => {
+    result[run.state] = (result[run.state] ?? 0) + 1;
+    return result;
+  }, {});
+  const sources = [
+    ["Agents", "agents-subagents", execution.agents.state],
+    ["Runs", "command-center", execution.runSource.state],
+    ["Queue", "cron", execution.queue.state],
+    ["Approvals", "approvals", execution.approvals.state],
+    ["Artifacts", "artifacts", execution.artifacts.state],
+    ["Usage", "usage-insights", execution.usage.state],
+  ] as const;
+  return (
+    <section className="mb-4 overflow-hidden rounded-xl border border-border bg-card shadow-sm" data-testid="hermes-runtime-execution-overview">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3">
+        <div>
+          <h2 className="text-sm font-semibold">Runtime execution</h2>
+          <p className="text-xs text-muted-foreground">Read-only run orientation. Hermes prepares; Jeremy commits.</p>
+        </div>
+        <span className="text-xs text-muted-foreground">{observationAge(execution.observedAt, Date.parse(snapshot.checkedAt))}</span>
+      </div>
+      <div className="grid grid-cols-5 border-b border-border" data-testid="hermes-runtime-counts">
+        {(["active", "waiting", "blocked", "failed", "completed"] as HermesExecutionState[]).map((state) => (
+          <div key={state} className="min-w-0 border-e border-border px-2 py-2 last:border-e-0 md:px-3">
+            <p className="text-base font-semibold tabular-nums">{counts[state] ?? 0}</p>
+            <p className="truncate text-[10px] text-muted-foreground md:text-xs">{EXECUTION_LABELS[state]}</p>
+          </div>
+        ))}
+      </div>
+      <div className="divide-y divide-border" data-testid="hermes-runtime-run-list">
+        {execution.runs.length ? execution.runs.slice(0, 6).map((run) => (
+          <button key={run.id} type="button" className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => onSelectRun(run.id)} data-testid={`hermes-runtime-run-${run.id.replaceAll(" ", "-")}`}>
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-medium">{run.id}</span>
+              <span className="block truncate text-xs text-muted-foreground">{run.waitingReason ? `Waiting for ${run.waitingReason}` : run.currentTool ?? run.currentStep ?? run.summary ?? "No current step reported"}</span>
+            </span>
+            <Badge variant={executionVariant(run.state)}>{EXECUTION_LABELS[run.state]}</Badge>
+            <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
+          </button>
+        )) : <p className="px-4 py-5 text-sm text-muted-foreground">No current execution records were reported.</p>}
+      </div>
+      <div className="grid grid-cols-3 border-t border-border md:grid-cols-6" data-testid="hermes-runtime-sources">
+        {sources.map(([label, capabilityId, state]) => (
+          <button key={label} type="button" className="min-w-0 border-e border-border px-2 py-2 text-left last:border-e-0 hover:bg-muted/40" onClick={() => onSelectCapability(capabilityId)}>
+            <span className="block truncate text-xs font-medium">{label}</span>
+            <span className="block truncate text-[10px] text-muted-foreground">{state.replaceAll("_", " ")}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RunInspector({ run, snapshot }: { run: HermesExecutionRun; snapshot: HermesControlCenterSnapshot }) {
+  const rows = [
+    ["State", EXECUTION_LABELS[run.state]],
+    ["Started", run.startedAt ?? "Not reported"],
+    ["Elapsed", formatDuration(run.durationMs)],
+    ["Last transition", run.lastTransitionAt ?? "Not reported"],
+    ["Current step", run.currentStep ?? "Not reported"],
+    ["Current tool", run.currentTool ?? "Not reported"],
+    ["Waiting reason", run.waitingReason ?? "Not waiting"],
+    ["Parent", run.parentRunId ?? "None reported"],
+    ["Child runs", String(run.childRunCount)],
+    ["Artifacts", String(run.artifactCount)],
+    ["Retry count", run.retryCount === null ? "Not reported" : String(run.retryCount)],
+    ["Tokens", run.totalTokens === null ? "Not reported" : run.totalTokens.toLocaleString()],
+    ["Cost", run.costUsd === null ? "Not reported" : `$${run.costUsd.toFixed(4)}`],
+  ] as const;
+  return (
+    <div className="flex min-h-0 flex-1 flex-col" data-testid="hermes-run-inspector">
+      <div className="flex flex-col gap-2 p-5 pe-12">
+        <Badge className="w-fit" variant={executionVariant(run.state)}>{EXECUTION_LABELS[run.state]}</Badge>
+        <h2 className="font-heading text-xl font-semibold tracking-tight">{run.id}</h2>
+        <p className="text-sm text-muted-foreground">Hermes prepares; Jeremy commits.</p>
+      </div>
+      <Separator />
+      <ScrollArea className="min-h-0 flex-1">
+        <div className="flex flex-col gap-5 p-5">
+          <dl className="flex flex-col gap-3">
+            {rows.map(([label, value]) => <div key={label} className="grid grid-cols-[7rem_minmax(0,1fr)] gap-3 text-sm"><dt className="text-muted-foreground">{label}</dt><dd className="break-words font-medium">{value}</dd></div>)}
+          </dl>
+          {run.summary ? <><Separator /><section><h3 className="text-sm font-semibold">Bounded outcome</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{run.summary}</p></section></> : null}
+          <Separator />
+          <section className="space-y-2 text-xs">
+            <h3 className="text-sm font-semibold">Evidence</h3>
+            <p><span className="text-muted-foreground">Source</span> {run.source}</p>
+            <p><span className="text-muted-foreground">Interface</span> {run.interface}</p>
+            <p><span className="text-muted-foreground">Observed</span> {run.lastTransitionAt ?? snapshot.runtimeExecution.observedAt}</p>
+            <p><span className="text-muted-foreground">Provenance</span> {snapshot.provenance.label}</p>
+            <p><span className="text-muted-foreground">Proof</span> {snapshot.provenance.kind === "acceptance_fixture" ? "exact fixture path" : "live runtime operation"}</p>
+          </section>
+        </div>
+      </ScrollArea>
+    </div>
+  );
 }
 
 function DeveloperRepositoryContext({ snapshot }: { snapshot: HermesControlCenterSnapshot }) {
@@ -309,6 +434,7 @@ export function HermesControlCenter() {
   const [mode, setMode] = useState<Mode>("operator");
   const [section, setSection] = useState<Section>("overview");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -354,6 +480,7 @@ export function HermesControlCenter() {
   }, [mode, query, section, snapshot]);
 
   const selected = snapshot?.capabilities.find((item) => item.id === selectedId) ?? null;
+  const selectedRun = snapshot?.runtimeExecution.runs.find((item) => item.id === selectedRunId) ?? null;
   const derivedExceptions = snapshot?.capabilities.flatMap((capability) =>
     capability.surfaceState !== "unsupported" && ["degraded", "conflicting_evidence", "unavailable"].includes(capability.operationalHealth)
       ? [{ capabilityId: capability.id, title: capability.name, health: capability.operationalHealth as "degraded" | "conflicting_evidence" | "unavailable", summary: capability.operationalDetail }]
@@ -374,7 +501,7 @@ export function HermesControlCenter() {
             <Search className="pointer-events-none absolute start-2.5 top-2 size-4 text-muted-foreground" aria-hidden="true" />
             <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search capabilities, tools, models..." aria-label="Search Hermes capabilities" className="ps-9" />
           </div>
-          <Tabs value={mode} onValueChange={(value) => { const next = value as Mode; setMode(next); setSection(next === "developer" ? "developer" : "overview"); setSelectedId(null); }}>
+          <Tabs value={mode} onValueChange={(value) => { const next = value as Mode; setMode(next); setSection(next === "developer" ? "developer" : "overview"); setSelectedId(null); setSelectedRunId(null); }}>
             <TabsList>
               <TabsTrigger value="operator"><Users data-icon="inline-start" />Operator</TabsTrigger>
               <TabsTrigger value="developer"><Code2 data-icon="inline-start" />Developer</TabsTrigger>
@@ -422,7 +549,7 @@ export function HermesControlCenter() {
             {SECTIONS.filter((item) => mode === "developer" ? item.id === "developer" : item.id !== "developer").map((item) => {
               const Icon = item.icon;
               return (
-                <button key={item.id} type="button" onClick={() => { setSection(item.id); setSelectedId(null); }} className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors", section === item.id ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground")}>
+                <button key={item.id} type="button" onClick={() => { setSection(item.id); setSelectedId(null); setSelectedRunId(null); }} className={cn("flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors", section === item.id ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground")}>
                   <Icon className="size-4" aria-hidden="true" /><span>{item.label}</span>
                 </button>
               );
@@ -450,7 +577,7 @@ export function HermesControlCenter() {
                       <p className="text-xs text-muted-foreground">Only degraded or contradictory observations are elevated.</p>
                     </div>
                     {operationalExceptions.map((exception) => (
-                      <button key={exception.capabilityId} type="button" className="block w-full text-left" onClick={() => setSelectedId(exception.capabilityId)}>
+                      <button key={exception.capabilityId} type="button" className="block w-full text-left" onClick={() => { setSelectedId(exception.capabilityId); setSelectedRunId(null); }}>
                         <Alert variant="destructive" className="transition-colors hover:bg-destructive/5">
                           <TriangleAlert aria-hidden="true" />
                           <AlertTitle>{exception.title} · {HEALTH_LABELS[exception.health]}</AlertTitle>
@@ -459,6 +586,9 @@ export function HermesControlCenter() {
                       </button>
                     ))}
                   </section>
+                ) : null}
+                {section === "overview" && !query ? (
+                  <RuntimeExecutionOverview snapshot={snapshot} onSelectRun={(id) => { setSelectedRunId(id); setSelectedId(null); }} onSelectCapability={(id) => { setSelectedId(id); setSelectedRunId(null); }} />
                 ) : null}
                 {(["agents", "messaging", "artifacts", "memory", "sessions", "settings", "tools"] as Section[]).includes(section) ? (
                   <div className="mb-4">
@@ -479,14 +609,14 @@ export function HermesControlCenter() {
                   </div>
                 </div>
                 <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm" data-testid="hermes-capability-list">
-                  {capabilities.length ? capabilities.map((item) => <CapabilityRow key={item.id} capability={item} active={selectedId === item.id} onSelect={() => setSelectedId(item.id)} />) : <div className="p-8 text-center text-sm text-muted-foreground">No capabilities match this view.</div>}
+                  {capabilities.length ? capabilities.map((item) => <CapabilityRow key={item.id} capability={item} active={selectedId === item.id} onSelect={() => { setSelectedId(item.id); setSelectedRunId(null); }} />) : <div className="p-8 text-center text-sm text-muted-foreground">No capabilities match this view.</div>}
                 </div>
               </div>
             </ScrollArea>
           </main>
 
           <aside className="hidden min-h-0 border-s border-border bg-background xl:flex">
-            {selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : (
+            {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-muted-foreground">
                 <Activity className="size-6" aria-hidden="true" /><p className="text-sm">Select a capability to inspect support, parity, risk, and evidence.</p>
               </div>
@@ -497,7 +627,7 @@ export function HermesControlCenter() {
             {(["overview", "agents", "tools", "sessions"] as Section[]).map((itemId) => {
               const item = SECTIONS.find((entry) => entry.id === itemId)!;
               const Icon = item.icon;
-              return <button key={item.id} type="button" onClick={() => { setSection(item.id); setSelectedId(null); }} className={cn("flex min-h-14 flex-col items-center justify-center gap-1 text-[10px]", section === item.id ? "text-primary" : "text-muted-foreground")}><Icon className="size-4" aria-hidden="true" /><span>{item.label}</span></button>;
+              return <button key={item.id} type="button" onClick={() => { setSection(item.id); setSelectedId(null); setSelectedRunId(null); }} className={cn("flex min-h-14 flex-col items-center justify-center gap-1 text-[10px]", section === item.id ? "text-primary" : "text-muted-foreground")}><Icon className="size-4" aria-hidden="true" /><span>{item.label}</span></button>;
             })}
             <Button variant="ghost" className={cn("h-auto min-h-14 rounded-none flex-col gap-1 text-[10px]", ["messaging", "artifacts", "memory", "automations", "settings", "developer"].includes(section) ? "text-primary" : "text-muted-foreground")} aria-label="More Hermes sections" onClick={() => setMobileMoreOpen(true)}>
               <Ellipsis className="size-4" aria-hidden="true" /><span>More</span>
@@ -523,18 +653,18 @@ export function HermesControlCenter() {
                   {(mode === "developer" ? ["developer"] : ["messaging", "artifacts", "memory", "automations", "settings"]).map((itemId) => {
                     const item = SECTIONS.find((entry) => entry.id === itemId)!;
                     const Icon = item.icon;
-                    return <Button key={item.id} variant="ghost" className="h-11 justify-start" onClick={() => { setSection(item.id); setSelectedId(null); setMobileMoreOpen(false); }}><Icon data-icon="inline-start" />{item.label}</Button>;
+                    return <Button key={item.id} variant="ghost" className="h-11 justify-start" onClick={() => { setSection(item.id); setSelectedId(null); setSelectedRunId(null); setMobileMoreOpen(false); }}><Icon data-icon="inline-start" />{item.label}</Button>;
                   })}
                 </div>
               </SheetContent>
             </Sheet>
           ) : null}
 
-          {isMobile && selected ? (
-            <Sheet open onOpenChange={(open) => { if (!open) setSelectedId(null); }}>
+          {isMobile && (selected || selectedRun) ? (
+            <Sheet open onOpenChange={(open) => { if (!open) { setSelectedId(null); setSelectedRunId(null); } }}>
               <SheetContent side="right" className="w-[92vw] max-w-none p-0">
-                <SheetHeader className="sr-only"><SheetTitle>{selected.name}</SheetTitle><SheetDescription>Hermes capability details</SheetDescription></SheetHeader>
-                <CapabilityInspector capability={selected} snapshot={snapshot} />
+                <SheetHeader className="sr-only"><SheetTitle>{selectedRun?.id ?? selected?.name}</SheetTitle><SheetDescription>Hermes runtime details</SheetDescription></SheetHeader>
+                {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : null}
               </SheetContent>
             </Sheet>
           ) : null}

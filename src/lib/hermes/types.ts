@@ -99,6 +99,7 @@ export type HermesManagementSnapshot = {
   profile: string;
   compatibility: { version: string | null; adapter: "desktop-0.18" };
   developerRepository: import("./developer-repository").HermesDeveloperRepositorySnapshot;
+  runtimeExecution: import("./runtime-execution").HermesRuntimeExecutionSnapshot;
   profiles: Array<{
     name: string;
     isDefault: boolean;

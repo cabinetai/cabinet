@@ -8,6 +8,7 @@ import {
   HERMES_ACCEPTANCE_FIXTURE_ID,
 } from "../src/lib/hermes/control-center-acceptance-fixture";
 import { buildHermesRepositoryFixtureProjection, HERMES_REPOSITORY_FIXTURE_ID } from "../src/lib/hermes/control-center-repository-fixture";
+import { buildHermesRuntimeExecutionFixtureProjection, HERMES_RUNTIME_EXECUTION_FIXTURE_ID } from "../src/lib/hermes/control-center-runtime-fixture";
 import { buildHermesControlCenterProjection, hermesParityMetrics, hermesProjectionMatrixRows } from "../src/lib/hermes/control-center-projection";
 import {
   HERMES_EVIDENCE_CATALOG_ID,
@@ -214,8 +215,9 @@ export async function loadExplicitProjection(args: { fixtureId?: string | null; 
   const selected = [args.fixtureId, args.observationsPath, args.projectionUrl].filter(Boolean);
   if (selected.length !== 1) throw new Error("Provide exactly one explicit input: --url <live Control Center URL>, --observations <raw projection-input.json>, or --fixture <fixture ID>.");
   if (args.fixtureId) {
-    if (![HERMES_ACCEPTANCE_FIXTURE_ID, HERMES_REPOSITORY_FIXTURE_ID].includes(args.fixtureId)) throw new Error(`Unknown Hermes fixture ID: ${args.fixtureId}.`);
+    if (![HERMES_ACCEPTANCE_FIXTURE_ID, HERMES_REPOSITORY_FIXTURE_ID, HERMES_RUNTIME_EXECUTION_FIXTURE_ID].includes(args.fixtureId)) throw new Error(`Unknown Hermes fixture ID: ${args.fixtureId}.`);
     if (!args.implementationRevision || !/^[0-9a-f]{40}$/i.test(args.implementationRevision)) throw new Error("Fixture evidence generation requires --implementation-revision with a full 40-character commit SHA.");
+    if (args.fixtureId === HERMES_RUNTIME_EXECUTION_FIXTURE_ID) return buildHermesRuntimeExecutionFixtureProjection({ implementationRevision: args.implementationRevision, artifactGeneratedAt: args.artifactGeneratedAt ?? null });
     return args.fixtureId === HERMES_REPOSITORY_FIXTURE_ID
       ? buildHermesRepositoryFixtureProjection({ implementationRevision: args.implementationRevision, artifactGeneratedAt: args.artifactGeneratedAt ?? null })
       : buildHermesAcceptanceFixtureProjection({ implementationRevision: args.implementationRevision, artifactGeneratedAt: args.artifactGeneratedAt ?? null });

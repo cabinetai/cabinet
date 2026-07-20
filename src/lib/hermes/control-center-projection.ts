@@ -17,6 +17,7 @@ import type {
 import { HERMES_SNAPSHOT_SCHEMA_VERSION } from "./control-center-types";
 import { validateHermesEvidenceAuthority } from "./control-center-authority";
 import { sanitizeHermesBrowserModel, sanitizeHermesText } from "./control-center-sanitizer";
+import { emptyRuntimeExecution, type HermesRuntimeExecutionSnapshot } from "./runtime-execution";
 
 const SUCCESS_OUTCOMES = new Set<HermesEvidenceOutcome>(["success", "connected_empty"]);
 const CONCRETE_GATEWAY_STATES = new Set(["running", "stopped"]);
@@ -364,9 +365,18 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
     item.origin === "raw_observation" && item.effectiveFreshness === "fresh" &&
     (item.proofScope === "live_runtime_operation" || item.proofScope === "exact_fixture_path")
   );
+  const freshEvidenceFrom = (id: string, source: string) => capabilities.find((item) => item.id === id)?.evidence.find((item) =>
+    item.source === source && item.origin === "raw_observation" && item.effectiveFreshness === "fresh" &&
+    (item.proofScope === "live_runtime_operation" || item.proofScope === "exact_fixture_path")
+  );
   const projectEvidence = freshEvidence("projects");
   const worktreeEvidence = freshEvidence("worktrees");
   const reviewEvidence = freshEvidence("source-review");
+  const runtimeEvidence = freshEvidenceFrom("command-center", "Hermes runtime execution");
+  const runtimeFacts = runtimeEvidence?.facts?.runtimeExecution;
+  const runtimeExecution = runtimeFacts && typeof runtimeFacts === "object" && !Array.isArray(runtimeFacts)
+    ? runtimeFacts as unknown as HermesRuntimeExecutionSnapshot
+    : emptyRuntimeExecution(input.now, "No fresh source-specific runtime execution observation is available.");
   const scalar = (facts: HermesCapabilityEvidence["facts"] | undefined, key: string) => {
     const value = facts?.[key];
     return typeof value === "string" || typeof value === "number" || typeof value === "boolean" || value === null ? value : null;
@@ -428,6 +438,7 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
         observedAt: reviewEvidence?.observedAt ?? worktreeEvidence?.observedAt ?? null,
       },
     },
+    runtimeExecution,
   };
   return sanitizeHermesBrowserModel(snapshot);
 }

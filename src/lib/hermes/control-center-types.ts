@@ -243,4 +243,5 @@ export type HermesControlCenterSnapshot = {
     project: { label: string | null; profile: string | null; repositoryAssociated: boolean | null; repository: string | null; observedAt: string | null };
     worktree: { label: string | null; branch: string | null; detached: boolean | null; clean: boolean | null; ambiguousCurrent: boolean; observedAt: string | null };
   };
+  runtimeExecution: import("./runtime-execution").HermesRuntimeExecutionSnapshot;
 };

@@ -13,6 +13,7 @@ import {
   unavailableDeveloperRepositorySnapshot,
   type HermesDeveloperRepositorySnapshot,
 } from "./developer-repository";
+import { normalizeRuntimeExecution } from "./runtime-execution";
 
 type Fetch = typeof fetch;
 
@@ -156,7 +157,7 @@ export class HermesManagementClient {
         return fallback;
       }
     };
-    const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw, openCli, runtimeRaw, workersRaw, boardRaw, messagingRaw, sessionsRaw, graphRaw, modelRaw, modelOptionsRaw, filesRaw] =
+    const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw, openCli, runtimeRaw, workersRaw, boardRaw, messagingRaw, sessionsRaw, graphRaw, modelRaw, modelOptionsRaw, filesRaw, usageRaw] =
       await Promise.all([
         healthOverride ?? this.health(),
         read("profiles", "/api/profiles", { profiles: [] }),
@@ -170,16 +171,25 @@ export class HermesManagementClient {
         readOpenCliDiagnostics(),
         read("runtime status", "/api/status", {}),
         read("active agents", "/api/plugins/kanban/workers/active", { workers: [], unavailable: true }),
-        read("recent agents", "/api/plugins/kanban/board", { columns: [] }),
+        read("recent agents", "/api/plugins/kanban/board", { columns: [], unavailable: true }),
         read("messaging", "/api/messaging/platforms", { platforms: [] }),
-        read("sessions", "/api/sessions?limit=100", { sessions: [] }),
+        read("sessions", "/api/sessions?limit=100&order=recent", { sessions: [], unavailable: true }),
         read("memory graph", "/api/learning/graph", { nodes: [], edges: [], stats: {} }),
         read("current model", "/api/model/info", {}),
         read("model options", "/api/model/options", { providers: [] }),
-        read("artifacts", "/api/files", { entries: [] }),
+        read("artifacts", "/api/files", { entries: [], unavailable: true }),
+        read("usage analytics", `/api/analytics/usage?days=30&profile=${encodeURIComponent(this.config.profile)}`, { totals: {}, unavailable: true }),
       ]);
 
     const developerRepository = await this.readDeveloperRepository(sessionsRaw, diagnostics);
+    const runtimeExecution = normalizeRuntimeExecution({
+      sessions: sessionsRaw,
+      workers: workersRaw,
+      board: boardRaw,
+      files: filesRaw,
+      usage: usageRaw,
+      knownRuns: { unavailable: true },
+    }, new Date().toISOString());
 
     const profiles = array(record(profilesRaw).profiles).map((item) => {
       const source = record(item);
@@ -386,6 +396,7 @@ export class HermesManagementClient {
       profile: this.config.profile,
       compatibility: { version: health.version, adapter: "desktop-0.18" },
       developerRepository,
+      runtimeExecution,
       profiles,
       agentManifest: {
         profile: this.config.profile,

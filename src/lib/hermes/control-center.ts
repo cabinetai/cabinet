@@ -102,8 +102,6 @@ function collectHermesObservations(
   endpoint({ ids: ["profiles"], area: "profiles", source: "Hermes profiles", interface: "/api/profiles", count: management.profiles.length, emptyOutcome: "not_configured" });
   endpoint({ ids: ["skills"], area: "skills", source: "Hermes skills", interface: "/api/skills", count: management.skills.length });
   endpoint({ ids: ["cron"], area: "cron", source: "Hermes cron jobs", interface: "/api/cron/jobs", count: management.jobs.length });
-  endpoint({ ids: ["agents-subagents"], area: "active agents", source: "Hermes active agents", interface: "/api/plugins/kanban/workers/active", count: management.operator.agents.active.length + management.operator.agents.recent.length });
-  endpoint({ ids: ["artifacts", "files"], area: "artifacts", source: "Hermes files", interface: "/api/files", count: management.operator.artifacts.length });
   endpoint({ ids: ["chat", "archived-chats", "session-pinning"], area: "sessions", source: "Hermes sessions", interface: "/api/sessions", count: management.operator.sessions.length });
   endpoint({ ids: ["memory-context"], area: "memory", source: "Hermes memory", interface: "/api/memory", count: management.memory.providers.length, successSummary: `Hermes memory reported provider ${management.memory.activeProvider}.` });
   endpoint({ ids: ["starmap"], area: "memory graph", source: "Hermes memory graph", interface: "/api/learning/graph", count: management.operator.memoryGraph.stats.nodes });
@@ -112,6 +110,33 @@ function collectHermesObservations(
   endpoint({ ids: ["mcp"], area: "mcp", source: "Hermes MCP servers", interface: "/api/mcp/servers", count: management.mcpServers.length });
   endpoint({ ids: ["plugins"], area: "plugins", source: "Hermes dashboard plugins", interface: "/api/dashboard/plugins", count: management.plugins.length });
   endpoint({ ids: ["executor", "api-keys-tools"], area: "toolsets", source: "Hermes toolsets", interface: "/api/tools/toolsets", count: management.toolsets.length });
+
+  const execution = management.runtimeExecution;
+  const executionOutcome = (state: typeof execution.runSource.state): HermesEvidenceOutcome => state;
+  add("command-center", "Hermes runtime execution", "/api/sessions + /v1/runs/{run_id}", executionOutcome(execution.runSource.state), execution.runSource.summary, {
+    observedAt: execution.observedAt,
+    facts: { runtimeExecution: execution },
+  });
+  add("agents-subagents", "Hermes active workers", "/api/plugins/kanban/workers/active", executionOutcome(execution.agents.state), execution.agents.summary, {
+    observedAt: execution.observedAt,
+    facts: { count: execution.agents.count },
+  });
+  add("cron", "Hermes Kanban queue", "/api/plugins/kanban/board", executionOutcome(execution.queue.state), execution.queue.summary, {
+    observedAt: execution.observedAt,
+    facts: { total: execution.queue.total, counts: execution.queue.counts },
+  });
+  add("approvals", "Hermes known-run pending input", "/v1/runs/{run_id} + /events", executionOutcome(execution.approvals.state), execution.approvals.summary, {
+    observedAt: execution.observedAt,
+    facts: { count: execution.approvals.count, rule: "Hermes prepares; Jeremy commits." },
+  });
+  for (const id of ["artifacts", "files"]) add(id, "Hermes artifact metadata", "/api/files", executionOutcome(execution.artifacts.state), execution.artifacts.summary, {
+    observedAt: execution.observedAt,
+    facts: { total: execution.artifacts.total, items: execution.artifacts.items },
+  });
+  add("usage-insights", "Hermes usage analytics", "/api/analytics/usage", executionOutcome(execution.usage.state), execution.usage.summary, {
+    observedAt: execution.observedAt,
+    facts: { inputTokens: execution.usage.inputTokens, outputTokens: execution.usage.outputTokens, estimatedCostUsd: execution.usage.estimatedCostUsd, actualCostUsd: execution.usage.actualCostUsd, sessions: execution.usage.sessions },
+  });
 
   const project = management.developerRepository.project;
   add("projects", "Hermes session project association", "/api/sessions?limit=100", developerOutcome(project.state), project.summary, {
