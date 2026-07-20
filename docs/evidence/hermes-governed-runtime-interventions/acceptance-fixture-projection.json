@@ -8,10 +8,10 @@
     "fixtureId": "hermes-phase-3b-governed-runtime-intervention-v1"
   },
   "evidenceProvenance": {
-    "implementationRevision": "0f8d48ee90db838ff3e3b7cfac133490f77889d4",
+    "implementationRevision": "ec08e0365b477e10660f8dc5009cfcb16f21cb68",
     "fixtureId": "hermes-phase-3b-governed-runtime-intervention-v1",
     "fixtureCapturedAt": "2026-07-20T03:30:00.000Z",
-    "artifactGeneratedAt": "2026-07-20T04:00:00.000Z"
+    "artifactGeneratedAt": "2026-07-20T03:50:30.000Z"
   },
   "installed": {
     "desktopVersion": "0.17.0",

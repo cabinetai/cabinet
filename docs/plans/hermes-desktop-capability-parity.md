@@ -147,9 +147,9 @@ Gateway reconciliation groups evidence by source and interface, retains the late
 <!-- GENERATED:HERMES_TRUTH_STATE:START -->
 ## Generated per-capability truth-state evidence
 
-Generated at 2026-07-20T04:00:00.000Z. Acceptance fixture — no live mutation performed. Fixture ID: `hermes-phase-3b-governed-runtime-intervention-v1`. Captured: 2026-07-20T03:30:00.000Z.
+Generated at 2026-07-20T03:50:30.000Z. Acceptance fixture — no live mutation performed. Fixture ID: `hermes-phase-3b-governed-runtime-intervention-v1`. Captured: 2026-07-20T03:30:00.000Z.
 
-Implementation revision: `0f8d48ee90db838ff3e3b7cfac133490f77889d4`. Artifact generated at: 2026-07-20T04:00:00.000Z.
+Implementation revision: `ec08e0365b477e10660f8dc5009cfcb16f21cb68`. Artifact generated at: 2026-07-20T03:50:30.000Z.
 
 Installed Desktop source commit: **unknown**. The commit `311a5b0a552be78f5c58807e2be1db02e3badcb0` is historical Desktop source-audit evidence only.
 
