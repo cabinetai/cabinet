@@ -106,6 +106,9 @@ const installedRuntime: HermesInstalledRuntime = {
     },
   },
   profile: "operator-os",
+  configuredProfile: "operator-os",
+  observedActiveProfile: "operator-os",
+  observedProfileSource: "Acceptance fixture Hermes profile observation",
   adapter: "desktop-0.18",
   provenance: {
     kind: "acceptance_fixture",

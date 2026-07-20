@@ -42,13 +42,24 @@ test("Agent API health normalizes version without returning credentials or follo
 
   assert.equal(result.status, "online");
   assert.equal(result.version, "0.18.2");
-  assert.equal(result.profile, "operator-os");
+  assert.equal(result.profile, null);
+  assert.equal(result.profileSource, null);
   assert.equal(result.gatewayState, "running");
   assert.equal(requests[0]?.authorization, `Bearer ${secret}`);
   assert.equal(requests[0]?.redirect, "error");
   assert.equal(requests.length, 1);
   assert.ok(!JSON.stringify(result).includes(secret));
   assert.ok(!JSON.stringify(result).toLowerCase().includes("authorization"));
+});
+
+test("Agent API health records an active profile only when the endpoint explicitly reports one", async () => {
+  const result = await new HermesManagementClient(config, async () => response({
+    status: "ok",
+    version: "0.19.0",
+    active_profile: "operator-os",
+  })).health();
+  assert.equal(result.profile, "operator-os");
+  assert.equal(result.profileSource, "GET /health/detailed");
 });
 
 test("Agent API health distinguishes authentication and connection failures", async () => {
@@ -100,6 +111,7 @@ test("Agent-only snapshot does not treat local OpenCLI diagnostics as a configur
   assert.equal(snapshot.openCli.available, false);
   assert.equal(snapshot.openCli.daemon, "unknown");
   assert.match(snapshot.openCli.message, /not probed/i);
+  assert.deepEqual(snapshot.diagnostics, [{ area: "management source", status: "degraded", message: "Hermes Management is not configured for this review." }]);
 });
 
 test("management status uses its session-token boundary and distinguishes source outcomes", async () => {
@@ -279,7 +291,7 @@ test("operator projection returns exact live records while stripping credential 
     if (url.includes("/api/mcp/servers")) return response({ servers: [] });
     return response([]);
   };
-  const health = { enabled: true, status: "online" as const, version: "0.18.2", profile: "operator-os", gatewayState: "running", checkedAt: "2026-07-19T20:00:00Z", message: "online" };
+  const health = { enabled: true, status: "online" as const, version: "0.18.2", profile: "operator-os", profileSource: "GET /health/detailed", gatewayState: "running", checkedAt: "2026-07-19T20:00:00Z", message: "online" };
   const result = await new HermesManagementClient(config, fetchImpl).snapshot(health);
 
   assert.equal(result.operator.agents.active[0]?.task, "Review invoices");

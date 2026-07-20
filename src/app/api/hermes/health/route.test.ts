@@ -86,12 +86,14 @@ test("Hermes health bridge returns only the normalized server-side snapshot", as
       "gatewayState",
       "message",
       "profile",
+      "profileSource",
       "status",
       "version",
     ].sort()
   );
   assert.equal(body.status, "online");
-  assert.equal(body.profile, "operator-os");
+  assert.equal(body.profile, null);
+  assert.equal(body.profileSource, null);
   assert.ok(!JSON.stringify(body).includes(secret));
   assert.ok(!JSON.stringify(body).toLowerCase().includes("authorization"));
 });

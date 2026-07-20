@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { buildHermesRuntimeExecutionFixtureProjection, HERMES_RUNTIME_EXECUTION_CAPTURED_AT } from './control-center-runtime-fixture';
-import { normalizeActiveWorkerRows, normalizeKnownRunRows, normalizeRuntimeExecution, safeRuntimeText } from './runtime-execution';
+import { emptyRuntimeExecution, normalizeActiveWorkerRows, normalizeKnownRunRows, normalizeRuntimeExecution, runtimeExecutionEmptyMessage, safeRuntimeText } from './runtime-execution';
 
 const at = HERMES_RUNTIME_EXECUTION_CAPTURED_AT;
 
@@ -78,6 +78,15 @@ test('keeps connected-empty, unavailable, and bounded failure source states dist
   assert.equal(failure.runSource.state, 'failure');
   assert.equal(failure.queue.state, 'failure');
   assert.doesNotMatch(JSON.stringify(failure), /Bearer secret|token=secret/);
+});
+
+test('runtime empty copy distinguishes unavailable, connected-empty, failed, stale, and unknown evidence', () => {
+  assert.equal(runtimeExecutionEmptyMessage(emptyRuntimeExecution(at)), 'Runtime execution sources are unavailable. Active-run state is unknown.');
+  const empty = normalizeRuntimeExecution({ sessions: { sessions: [] }, workers: { workers: [] }, board: { columns: [] }, files: { entries: [] }, usage: { totals: {} }, knownRuns: { runs: [] } }, at);
+  assert.equal(runtimeExecutionEmptyMessage(empty), 'Runtime execution sources responded with no current records.');
+  assert.match(runtimeExecutionEmptyMessage({ ...empty, queue: { ...empty.queue, state: 'failure' } }), /source failed/);
+  assert.match(runtimeExecutionEmptyMessage(empty, true), /evidence is stale/);
+  assert.match(runtimeExecutionEmptyMessage({ ...empty, queue: { ...empty.queue, state: 'unknown' } }), /state is unknown/);
 });
 
 test('does not infer clean, waiting, cost, tool, or completion from absent fields', () => {

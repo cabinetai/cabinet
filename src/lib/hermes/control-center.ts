@@ -55,7 +55,7 @@ function collectHermesObservations(
     interfaceIdentity: string,
     outcome: HermesEvidenceOutcome,
     summary: string,
-    options: Partial<Pick<HermesCapabilityObservation, "observedAt" | "assertedFreshness" | "facts">> = {}
+    options: Partial<Pick<HermesCapabilityObservation, "observedAt" | "assertedFreshness" | "facts" | "installedBackendVersion" | "installedBackendCommit">> = {}
   ) => observations.push({
     capabilityId,
     source,
@@ -66,8 +66,8 @@ function collectHermesObservations(
     proofScope: "live_runtime_operation",
     outcome,
     summary,
-    installedBackendVersion: installed.backendVersion,
-    installedBackendCommit: installed.backendCommit,
+    installedBackendVersion: options.installedBackendVersion === undefined ? installed.backendVersion : options.installedBackendVersion,
+    installedBackendCommit: options.installedBackendCommit === undefined ? installed.backendCommit : options.installedBackendCommit,
     facts: options.facts,
   });
   const endpoint = (input: {
@@ -79,6 +79,21 @@ function collectHermesObservations(
     emptyOutcome?: Extract<HermesEvidenceOutcome, "connected_empty" | "not_configured">;
     successSummary?: string;
   }) => {
+    if (!managementReady) {
+      for (const id of input.ids) add(
+        id,
+        input.source,
+        input.interface,
+        "unavailable",
+        "Hermes Management is not configured for this review.",
+        {
+          facts: { sourceGroup: "management" },
+          installedBackendVersion: installed.upstreamAudit.installedBackendVersion,
+          installedBackendCommit: null,
+        },
+      );
+      return;
+    }
     const failure = failed.get(input.area);
     const outcome: HermesEvidenceOutcome = failure
       ? "failure"
@@ -100,7 +115,12 @@ function collectHermesObservations(
     "/health/detailed",
     health.status === "online" ? "success" : "unavailable",
     health.status === "online" ? "Hermes detailed health responded." : health.message,
-    { observedAt: health.checkedAt, facts: { connectionState: health.status } }
+    {
+      observedAt: health.checkedAt,
+      facts: { connectionState: health.status },
+      installedBackendVersion: health.version,
+      installedBackendCommit: null,
+    }
   );
   endpoint({ ids: ["profiles"], area: "profiles", source: "Hermes profiles", interface: "/api/profiles", count: management.profiles.length, emptyOutcome: "not_configured" });
   endpoint({ ids: ["skills"], area: "skills", source: "Hermes skills", interface: "/api/skills", count: management.skills.length });
@@ -116,33 +136,45 @@ function collectHermesObservations(
 
   const execution = management.runtimeExecution;
   const executionOutcome = (state: typeof execution.runSource.state): HermesEvidenceOutcome => state;
-  add("command-center", "Hermes runtime execution", "/api/sessions + /v1/runs/{run_id}", executionOutcome(execution.runSource.state), execution.runSource.summary, {
+  add("command-center", "Hermes runtime execution", "/api/sessions + /v1/runs/{run_id}", managementReady ? executionOutcome(execution.runSource.state) : "unavailable", managementReady ? execution.runSource.summary : "Hermes Management is not configured for this review.", {
     observedAt: execution.observedAt,
-    facts: { runtimeExecution: execution },
+    facts: { runtimeExecution: execution, sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
-  add("agents-subagents", "Hermes active workers", "/api/plugins/kanban/workers/active", executionOutcome(execution.agents.state), execution.agents.summary, {
+  add("agents-subagents", "Hermes active workers", "/api/plugins/kanban/workers/active", managementReady ? executionOutcome(execution.agents.state) : "unavailable", managementReady ? execution.agents.summary : "Hermes Management is not configured for this review.", {
     observedAt: execution.observedAt,
-    facts: { count: execution.agents.count },
+    facts: { count: execution.agents.count, sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
-  add("cron", "Hermes Kanban queue", "/api/plugins/kanban/board", executionOutcome(execution.queue.state), execution.queue.summary, {
+  add("cron", "Hermes Kanban queue", "/api/plugins/kanban/board", managementReady ? executionOutcome(execution.queue.state) : "unavailable", managementReady ? execution.queue.summary : "Hermes Management is not configured for this review.", {
     observedAt: execution.observedAt,
-    facts: { total: execution.queue.total, counts: execution.queue.counts },
+    facts: { total: execution.queue.total, counts: execution.queue.counts, sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
-  add("approvals", "Hermes known-run pending input", "/v1/runs/{run_id} + /events", executionOutcome(execution.approvals.state), execution.approvals.summary, {
+  add("approvals", "Hermes known-run pending input", "/v1/runs/{run_id} + /events", managementReady ? executionOutcome(execution.approvals.state) : "unavailable", managementReady ? execution.approvals.summary : "Hermes Management is not configured for this review.", {
     observedAt: execution.observedAt,
-    facts: { count: execution.approvals.count, rule: "Hermes prepares; Jeremy commits." },
+    facts: { count: execution.approvals.count, rule: "Hermes prepares; Jeremy commits.", sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
-  for (const id of ["artifacts", "files"]) add(id, "Hermes artifact metadata", "/api/files", executionOutcome(execution.artifacts.state), execution.artifacts.summary, {
+  for (const id of ["artifacts", "files"]) add(id, "Hermes artifact metadata", "/api/files", managementReady ? executionOutcome(execution.artifacts.state) : "unavailable", managementReady ? execution.artifacts.summary : "Hermes Management is not configured for this review.", {
     observedAt: execution.observedAt,
-    facts: { total: execution.artifacts.total, items: execution.artifacts.items },
+    facts: { total: execution.artifacts.total, items: execution.artifacts.items, sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
-  add("usage-insights", "Hermes usage analytics", "/api/analytics/usage", executionOutcome(execution.usage.state), execution.usage.summary, {
+  add("usage-insights", "Hermes usage analytics", "/api/analytics/usage", managementReady ? executionOutcome(execution.usage.state) : "unavailable", managementReady ? execution.usage.summary : "Hermes Management is not configured for this review.", {
     observedAt: execution.observedAt,
-    facts: { inputTokens: execution.usage.inputTokens, outputTokens: execution.usage.outputTokens, estimatedCostUsd: execution.usage.estimatedCostUsd, actualCostUsd: execution.usage.actualCostUsd, sessions: execution.usage.sessions },
+    facts: { inputTokens: execution.usage.inputTokens, outputTokens: execution.usage.outputTokens, estimatedCostUsd: execution.usage.estimatedCostUsd, actualCostUsd: execution.usage.actualCostUsd, sessions: execution.usage.sessions, sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
 
   const project = management.developerRepository.project;
-  add("projects", "Hermes session project association", "/api/sessions?limit=100", developerOutcome(project.state), project.summary, {
+  add("projects", "Hermes session project association", "/api/sessions?limit=100", managementReady ? developerOutcome(project.state) : "unavailable", managementReady ? project.summary : "Hermes Management is not configured for this review.", {
     observedAt: project.observedAt,
     facts: {
       project: project.project,
@@ -151,15 +183,20 @@ function collectHermesObservations(
       workingDirectoryReported: project.workingDirectoryReported,
       repositoryAssociated: project.repositoryAssociated,
       repository: project.repository,
+      sourceGroup: "management",
     },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
   const worktrees = management.developerRepository.worktrees;
-  add("worktrees", "Hermes Git worktrees", "/api/git/worktrees", developerOutcome(worktrees.state), worktrees.summary, {
+  add("worktrees", "Hermes Git worktrees", "/api/git/worktrees", managementReady ? developerOutcome(worktrees.state) : "unavailable", managementReady ? worktrees.summary : "Hermes Management is not configured for this review.", {
     observedAt: worktrees.observedAt,
-    facts: { total: worktrees.total, current: worktrees.current, ambiguousCurrent: worktrees.ambiguousCurrent, items: worktrees.items },
+    facts: { total: worktrees.total, current: worktrees.current, ambiguousCurrent: worktrees.ambiguousCurrent, items: worktrees.items, sourceGroup: "management" },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
   const review = management.developerRepository.review;
-  add("source-review", "Hermes Git status and review", "/api/git/status + /api/git/review/list", developerOutcome(review.state), review.summary, {
+  add("source-review", "Hermes Git status and review", "/api/git/status + /api/git/review/list", managementReady ? developerOutcome(review.state) : "unavailable", managementReady ? review.summary : "Hermes Management is not configured for this review.", {
     observedAt: review.observedAt,
     facts: {
       repository: review.repository,
@@ -174,7 +211,10 @@ function collectHermesObservations(
       behind: review.behind,
       reviewAvailable: review.reviewAvailable,
       reviewCount: review.reviewCount,
+      sourceGroup: "management",
     },
+    installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+    installedBackendCommit: managementReady ? installed.backendCommit : null,
   });
 
   const messagingFailure = failed.get("messaging");
@@ -184,15 +224,21 @@ function collectHermesObservations(
     "messaging",
     "Hermes messaging platforms",
     "/api/messaging/platforms",
-    messagingFailure || platformFailures.length ? "failure" : configuredPlatforms.length ? "success" : "not_configured",
-    messagingFailure
+    !managementReady ? "unavailable" : messagingFailure || platformFailures.length ? "failure" : configuredPlatforms.length ? "success" : "not_configured",
+    !managementReady
+      ? "Hermes Management is not configured for this review."
+      : messagingFailure
       ? `Hermes messaging platforms failed: ${messagingFailure}`
       : platformFailures.length
         ? platformFailures.map((item) => `${item.name}: ${item.lastError}`).join(" ")
         : configuredPlatforms.length
           ? `${configuredPlatforms.length} configured messaging platform${configuredPlatforms.length === 1 ? "" : "s"} reported no failure.`
           : "Hermes messaging responded, but no platform is configured.",
-    { facts: { configuredPlatforms: configuredPlatforms.length, failedPlatforms: platformFailures.length } }
+    {
+      facts: { configuredPlatforms: configuredPlatforms.length, failedPlatforms: platformFailures.length, sourceGroup: "management" },
+      installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+      installedBackendCommit: managementReady ? installed.backendCommit : null,
+    }
   );
 
   const primaryState = gatewayState(health.gatewayState);
@@ -204,7 +250,7 @@ function collectHermesObservations(
     primaryState === "unknown"
       ? "Agent health did not report a Gateway state."
       : `Agent health bridge reported Gateway ${primaryState}; this does not prove the direct Gateway source is available.`,
-    { observedAt: health.checkedAt, facts: { state: primaryState } }
+    { observedAt: health.checkedAt, facts: { state: primaryState }, installedBackendVersion: health.version, installedBackendCommit: null }
   );
   const managementFailure = failed.get("runtime status");
   const managementState = gatewayState(management.operator.runtime.gatewayState, management.operator.runtime.gatewayRunning);
@@ -212,9 +258,18 @@ function collectHermesObservations(
     "gateway",
     "Hermes management status",
     "/api/status gateway state",
-    managementFailure ? "unavailable" : managementState === "unknown" ? "unknown" : "success",
-    managementFailure ? `Management gateway observation failed: ${managementFailure}` : `Management gateway state is ${managementState}.`,
-    { observedAt: management.operator.runtime.observedAt, facts: { state: managementFailure ? "unavailable" : managementState } }
+    !managementReady || managementFailure ? "unavailable" : managementState === "unknown" ? "unknown" : "success",
+    !managementReady
+      ? "Hermes Management is not configured for this review."
+      : managementFailure
+        ? `Management gateway observation failed: ${managementFailure}`
+        : `Management gateway state is ${managementState}.`,
+    {
+      observedAt: management.operator.runtime.observedAt,
+      facts: { state: !managementReady || managementFailure ? "unavailable" : managementState, sourceGroup: "management" },
+      installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+      installedBackendCommit: managementReady ? installed.backendCommit : null,
+    }
   );
   const gatewayReadiness = readiness?.sources.find((source) => source.id === "gateway");
   if (gatewayReadiness && gatewayReadiness.state !== "ready_to_probe") {
@@ -222,11 +277,11 @@ function collectHermesObservations(
       "gateway",
       "Cabinet Hermes Gateway configuration",
       "server-only Gateway configuration",
-      gatewayReadiness.state === "invalid" ? "failure" : "not_configured",
+      gatewayReadiness.state === "invalid" ? "failure" : "unavailable",
       gatewayReadiness.state === "invalid"
         ? "Hermes Gateway server configuration is invalid."
-        : "Hermes Gateway is not configured for direct Cabinet access.",
-      { observedAt: health.checkedAt, facts: { sourceState: gatewayReadiness.state } },
+        : "Hermes Gateway is not configured for this review.",
+      { observedAt: health.checkedAt, facts: { sourceState: gatewayReadiness.state, sourceGroup: "gateway" }, installedBackendCommit: null },
     );
   }
 
@@ -238,7 +293,11 @@ function collectHermesObservations(
     "opencli doctor",
     managementReady ? (openCliConnected ? "success" : openCli.available ? "failure" : "unavailable") : "unavailable",
     openCli.message,
-    { facts: { daemon: openCli.daemon, extension: openCli.extension, connectedProfiles: openCli.profiles.filter((profile) => profile.status === "connected").length } }
+    {
+      facts: { daemon: openCli.daemon, extension: openCli.extension, connectedProfiles: openCli.profiles.filter((profile) => profile.status === "connected").length, sourceGroup: "management" },
+      installedBackendVersion: managementReady ? installed.backendVersion : installed.upstreamAudit.installedBackendVersion,
+      installedBackendCommit: managementReady ? installed.backendCommit : null,
+    }
   );
 
   add(
@@ -256,9 +315,24 @@ function collectHermesObservations(
     "/health/detailed",
     agentIdentityConfirmed ? "success" : "unknown",
     agentIdentityConfirmed
-      ? "Hermes Agent detailed health confirmed the running backend identity."
+      ? "Hermes Agent detailed health confirmed the running version identity only. Update checking was not performed."
       : "The running Hermes Agent identity was not confirmed.",
-    { observedAt: health.checkedAt, facts: { reportedVersion: health.version, updateAuditStale: installed.upstreamAudit.stale } }
+    {
+      observedAt: health.checkedAt,
+      facts: {
+        reportedVersion: health.version,
+        versionSource: "GET /health/detailed",
+        reportedRunningCommit: null,
+        detectedAgentCheckoutCommit: installed.backendCommit,
+        detectedCommitSource: "local installation metadata",
+        updateCheckPerformed: false,
+        applicationUpdateAvailability: "unknown",
+        partialClaim: true,
+        updateAuditStale: installed.upstreamAudit.stale,
+      },
+      installedBackendVersion: health.version,
+      installedBackendCommit: null,
+    }
   );
   return observations;
 }
@@ -274,7 +348,10 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
   const installedRuntime: HermesInstalledRuntime = {
     installation,
     profile: config.profile ?? "unknown",
-    adapter: management.compatibility.adapter,
+    configuredProfile: config.profile ?? "unknown",
+    observedActiveProfile: health.profile,
+    observedProfileSource: health.profileSource,
+    adapter: "source-specific",
     provenance: { kind: "live_runtime", label: "Live runtime projection", capturedAt: now, fixtureId: null },
     live: {
       profiles: management.profiles.length,
@@ -298,7 +375,7 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
     observations: collectHermesObservations(health, management, installation, readiness),
     evidenceCatalog: HERMES_CAPABILITY_EVIDENCE_CATALOG,
     evidenceProvenance: {
-      implementationRevision: null,
+      implementationRevision: installation.cabinetCommit,
       fixtureId: null,
       fixtureCapturedAt: null,
       artifactGeneratedAt: null,

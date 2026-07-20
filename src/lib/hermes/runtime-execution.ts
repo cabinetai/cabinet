@@ -43,6 +43,15 @@ export type HermesRuntimeExecutionSnapshot = {
   usage: { state: HermesRuntimeSourceState; inputTokens: number | null; outputTokens: number | null; estimatedCostUsd: number | null; actualCostUsd: number | null; sessions: number | null; summary: string };
 };
 
+export function runtimeExecutionEmptyMessage(snapshot: HermesRuntimeExecutionSnapshot, staleEvidence = false): string {
+  const states = [snapshot.agents.state, snapshot.runSource.state, snapshot.queue.state, snapshot.approvals.state, snapshot.artifacts.state, snapshot.usage.state];
+  if (staleEvidence) return 'Runtime execution evidence is stale. Active-run state may have changed.';
+  if (states.every((state) => state === 'unavailable')) return 'Runtime execution sources are unavailable. Active-run state is unknown.';
+  if (states.some((state) => state === 'failure')) return 'A runtime execution source failed. Active-run state may be incomplete.';
+  if (states.every((state) => state === 'success' || state === 'connected_empty')) return 'Runtime execution sources responded with no current records.';
+  return 'Runtime execution state is unknown because current source evidence is incomplete.';
+}
+
 type RuntimeInputs = {
   sessions: unknown;
   workers: unknown;

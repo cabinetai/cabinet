@@ -79,6 +79,43 @@ test("the full acceptance fixture uses one assembler for all 48 rows, totals, an
   }
 });
 
+test("configured profile never becomes an observed active profile without explicit source evidence", () => {
+  const snapshot = buildWith((input) => {
+    input.installedRuntime.configuredProfile = "operator-os";
+    input.installedRuntime.observedActiveProfile = null;
+    input.installedRuntime.observedProfileSource = null;
+  });
+  assert.equal(snapshot.health.configuredProfile, "operator-os");
+  assert.equal(snapshot.health.observedActiveProfile, null);
+  assert.equal(snapshot.health.profile, "unknown");
+  assert.equal(snapshot.health.observedProfileSource, null);
+});
+
+test("shared Management unavailability produces one derived source-group exception", () => {
+  const snapshot = buildWith((input) => {
+    for (const capabilityId of ["profiles", "skills"]) replaceObservation(input, capabilityId, [observed(capabilityId, "unavailable", {
+      summary: "Hermes Management is not configured for this review.",
+      facts: { sourceGroup: "management" },
+    })]);
+  });
+  const grouped = snapshot.exceptions.filter((item) => item.kind === "source_group" && item.sourceGroup === "management");
+  assert.equal(grouped.length, 1);
+  assert.equal(grouped[0]?.dependentCount, 2);
+  assert.equal(snapshot.exceptions.some((item) => item.capabilityId === "profiles" || item.capabilityId === "skills"), false);
+});
+
+test("a partial About runtime-identity observation stays visible without earning live parity", () => {
+  const snapshot = liveSnapshot("about-updates", [observed("about-updates", "success", {
+    source: "Hermes Agent detailed health identity",
+    interface: "GET /health/detailed",
+    facts: { reportedVersion: "0.19.0", updateCheckPerformed: false, updateAvailability: "unknown", partialClaim: true },
+  })]);
+  const about = capability(snapshot, "about-updates");
+  assert.equal(about.operationalHealth, "healthy");
+  assert.equal(about.credit.liveVisibility, false);
+  assert.equal(about.credit.liveProven, false);
+});
+
 test("accepted Phase 2A machine evidence preserves its frozen truth observations", () => {
   const machine = JSON.parse(readFileSync(path.resolve("docs/evidence/hermes-truth-state/acceptance-fixture-projection.json"), "utf8"));
   const fixture = buildHermesAcceptanceFixtureProjection({

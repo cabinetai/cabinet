@@ -79,13 +79,14 @@ function snapshot(
   config: NormalizedClientConfig,
   status: HermesHealthSnapshot["status"],
   message: string,
-  values: Partial<Pick<HermesHealthSnapshot, "version" | "gatewayState">> = {}
+  values: Partial<Pick<HermesHealthSnapshot, "version" | "gatewayState" | "profile" | "profileSource">> = {}
 ): HermesHealthSnapshot {
   return {
     enabled: true,
     status,
     version: values.version ?? null,
-    profile: config.profileConfigured ? config.profile : null,
+    profile: values.profile ?? null,
+    profileSource: values.profileSource ?? null,
     gatewayState: values.gatewayState ?? null,
     checkedAt: new Date().toISOString(),
     message,
@@ -156,9 +157,12 @@ export class HermesManagementClient {
       const health = (await healthResponse.json()) as HermesApiHealth;
       const version = text(health.version);
       const gatewayState = text(health.gateway_state);
+      const observedProfile = text(health.active_profile) ?? text(health.profile);
       return snapshot(this.config, "online", "Hermes Agent API is online.", {
         version,
         gatewayState,
+        profile: observedProfile,
+        profileSource: observedProfile ? "GET /health/detailed" : null,
       });
     } catch (error) {
       const timedOut =
@@ -178,11 +182,11 @@ export class HermesManagementClient {
 
   async managementStatus(): Promise<HermesManagementStatusObservation> {
     const checkedAt = new Date().toISOString();
-    if (!this.config.managementBaseUrl || !this.config.managementToken || !this.config.profileConfigured) {
+    if (this.config.sourceStates.management !== "ready_to_probe" || !this.config.managementBaseUrl || !this.config.managementToken || !this.config.profileConfigured) {
       return {
         state: "not_configured",
         checkedAt,
-        message: "Hermes management authentication and profile configuration are incomplete.",
+        message: "Hermes Management is not configured for this review.",
         data: null,
       };
     }
@@ -226,7 +230,9 @@ export class HermesManagementClient {
 
   async snapshot(healthOverride?: HermesHealthSnapshot): Promise<HermesManagementSnapshot> {
     const diagnostics: HermesManagementSnapshot["diagnostics"] = [];
+    const managementReady = this.config.sourceStates.management === "ready_to_probe" && Boolean(this.config.managementBaseUrl && this.config.managementToken && this.config.profileConfigured);
     const read = async (area: string, path: string, fallback: unknown) => {
+      if (!managementReady) return fallback;
       try {
         return await this.managementRequest(path);
       } catch (error) {
@@ -250,7 +256,7 @@ export class HermesManagementClient {
         read("mcp", this.profilePath("/api/mcp/servers"), { servers: [] }),
         read("toolsets", this.profilePath("/api/tools/toolsets"), []),
         read("plugins", this.profilePath("/api/dashboard/plugins"), []),
-        this.config.sourceStates.management === "ready_to_probe"
+        managementReady
           ? readOpenCliDiagnostics()
           : Promise.resolve({
               available: false,
@@ -275,11 +281,15 @@ export class HermesManagementClient {
         read("usage analytics", `/api/analytics/usage?days=30&profile=${encodeURIComponent(this.config.profile)}`, { totals: {}, unavailable: true }),
       ]);
     const runtimeRaw = runtimeStatus.data ?? {};
-    if (runtimeStatus.state !== "success") {
+    if (!managementReady) {
+      diagnostics.push({ area: "management source", status: "degraded", message: "Hermes Management is not configured for this review." });
+    } else if (runtimeStatus.state !== "success") {
       diagnostics.push({ area: "runtime status", status: "degraded", message: runtimeStatus.message });
     }
 
-    const developerRepository = await this.readDeveloperRepository(sessionsRaw, diagnostics);
+    const developerRepository = managementReady
+      ? await this.readDeveloperRepository(sessionsRaw, diagnostics)
+      : unavailableDeveloperRepositorySnapshot(this.config.profile, new Date().toISOString(), "Hermes Management is not configured for this review.");
     const runtimeExecution = normalizeRuntimeExecution({
       sessions: sessionsRaw,
       workers: workersRaw,
@@ -492,7 +502,10 @@ export class HermesManagementClient {
     return {
       checkedAt: new Date().toISOString(),
       profile: this.config.profile,
-      compatibility: { version: health.version, adapter: "desktop-0.18" },
+      compatibility: {
+        version: health.version,
+        adapter: managementReady ? "installed-management-contract" : "source-specific",
+      },
       developerRepository,
       runtimeExecution,
       profiles,

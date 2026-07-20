@@ -14,6 +14,7 @@ export type HermesHealthSnapshot = {
   status: HermesConnectionState;
   version: string | null;
   profile: string | null;
+  profileSource: string | null;
   gatewayState: string | null;
   checkedAt: string;
   message: string;
@@ -23,6 +24,8 @@ export type HermesApiHealth = {
   status?: unknown;
   version?: unknown;
   gateway_state?: unknown;
+  active_profile?: unknown;
+  profile?: unknown;
 };
 
 export type HermesManagementStatus = {
@@ -97,7 +100,7 @@ export type HermesRunFailureCode =
 export type HermesManagementSnapshot = {
   checkedAt: string;
   profile: string;
-  compatibility: { version: string | null; adapter: "desktop-0.18" };
+  compatibility: { version: string | null; adapter: string };
   developerRepository: import("./developer-repository").HermesDeveloperRepositorySnapshot;
   runtimeExecution: import("./runtime-execution").HermesRuntimeExecutionSnapshot;
   profiles: Array<{

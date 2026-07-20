@@ -238,7 +238,8 @@ function statusFor(surface: HermesCapabilityDefinition["parityState"], health: H
   if (surface === "diagnostic_only") return "available";
   if (health === "healthy") return surface === "mapped" ? "available" : "connected";
   if (health === "not_configured") return "needs_setup";
-  if (["degraded", "conflicting_evidence", "unavailable"].includes(health)) return "degraded";
+  if (health === "unavailable") return "needs_setup";
+  if (["degraded", "conflicting_evidence"].includes(health)) return "degraded";
   return "available";
 }
 
@@ -308,11 +309,12 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
     const currentSuccess = observed.some((item) =>
       input.installedRuntime.provenance.kind === "live_runtime" &&
       item.origin === "raw_observation" && item.proofKind === "live" &&
-      item.effectiveFreshness === "fresh" && item.proofScope === "live_runtime_operation" && SUCCESS_OUTCOMES.has(item.outcome)
+      item.effectiveFreshness === "fresh" && item.proofScope === "live_runtime_operation" &&
+      SUCCESS_OUTCOMES.has(item.outcome) && item.facts?.partialClaim !== true
     );
     const liveProven = allObservations.some((item) =>
       SUCCESS_OUTCOMES.has(item.outcome) && item.authorityValid && (
-        (input.installedRuntime.provenance.kind === "live_runtime" && item.origin === "raw_observation" &&
+        (input.installedRuntime.provenance.kind === "live_runtime" && item.origin === "raw_observation" && item.facts?.partialClaim !== true &&
           item.proofKind === "live" && item.proofScope === "live_runtime_operation" && item.effectiveFreshness === "fresh") ||
         (item.origin === "approved_evidence_catalog" && item.proofKind === "historical_audit" &&
           item.proofScope === "historical_live_acceptance" &&
@@ -372,6 +374,7 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
   const projectEvidence = freshEvidence("projects");
   const worktreeEvidence = freshEvidence("worktrees");
   const reviewEvidence = freshEvidence("source-review");
+  const agentIdentityEvidence = freshEvidenceFrom("about-updates", "Hermes Agent detailed health identity");
   const runtimeEvidence = freshEvidenceFrom("command-center", "Hermes runtime execution");
   const runtimeFacts = runtimeEvidence?.facts?.runtimeExecution;
   const runtimeExecution = runtimeFacts && typeof runtimeFacts === "object" && !Array.isArray(runtimeFacts)
@@ -383,6 +386,36 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
   };
   const currentWorktree = worktreeEvidence?.facts?.current;
   const currentWorktreeRecord = currentWorktree && typeof currentWorktree === "object" && !Array.isArray(currentWorktree) ? currentWorktree : null;
+  const managementUnavailableCapabilityIds = new Set(capabilities.flatMap((capability) => capability.evidence.some((item) =>
+    item.origin === "raw_observation" && item.effectiveFreshness === "fresh" && item.outcome === "unavailable" && item.facts?.sourceGroup === "management"
+  ) ? [capability.id] : []));
+  const groupedExceptions: HermesControlCenterSnapshot["exceptions"] = managementUnavailableCapabilityIds.size
+    ? [{
+        kind: "source_group",
+        capabilityId: null,
+        sourceGroup: "management",
+        dependentCount: managementUnavailableCapabilityIds.size,
+        title: "Management unavailable",
+        health: "unavailable",
+        summary: `${managementUnavailableCapabilityIds.size} dependent capability observations were not collected. Hermes Management is not configured for this review.`,
+      }]
+    : [];
+  const capabilityExceptions: HermesControlCenterSnapshot["exceptions"] = capabilities.flatMap((capability) => {
+    if (capability.surfaceState === "unsupported" || !["degraded", "conflicting_evidence", "unavailable"].includes(capability.operationalHealth)) return [];
+    const activeEvidence = capability.evidence.filter((item) => item.origin === "raw_observation" && item.effectiveFreshness === "fresh");
+    const abnormal = activeEvidence.filter((item) => !SUCCESS_OUTCOMES.has(item.outcome) && item.outcome !== "unknown");
+    const onlySharedManagementUnavailable = abnormal.length > 0 && abnormal.every((item) => item.outcome === "unavailable" && item.facts?.sourceGroup === "management");
+    if (onlySharedManagementUnavailable) return [];
+    return [{
+      kind: "capability" as const,
+      capabilityId: capability.id,
+      sourceGroup: null,
+      dependentCount: null,
+      title: capability.name,
+      health: capability.operationalHealth as "degraded" | "conflicting_evidence" | "unavailable",
+      summary: capability.operationalDetail,
+    }];
+  });
   const snapshot: HermesControlCenterSnapshot = {
     schemaVersion: HERMES_SNAPSHOT_SCHEMA_VERSION,
     checkedAt: input.now,
@@ -395,6 +428,23 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
       backendCommit: installation.backendCommit,
       cabinetCommit: installation.cabinetCommit,
       adapter: input.installedRuntime.adapter,
+      observedRunningAgentVersion: (scalar(agentIdentityEvidence?.facts, "reportedVersion") ?? (input.installedRuntime.provenance.kind === "acceptance_fixture" ? installation.backendVersion : null)) as string | null,
+      observedRunningAgentVersionSource: (scalar(agentIdentityEvidence?.facts, "versionSource") ?? (input.installedRuntime.provenance.kind === "acceptance_fixture" ? "acceptance fixture installed identity" : null)) as string | null,
+      observedRunningAgentObservedAt: agentIdentityEvidence?.observedAt ?? (input.installedRuntime.provenance.kind === "acceptance_fixture" ? input.installedRuntime.provenance.capturedAt : null),
+      observedRunningAgentCommit: scalar(agentIdentityEvidence?.facts, "reportedRunningCommit") as string | null,
+      observedRunningAgentCommitSource: scalar(agentIdentityEvidence?.facts, "reportedRunningCommitSource") as string | null,
+      detectedAgentCheckoutCommit: installation.backendCommit,
+      detectedAgentCheckoutCommitSource: installation.backendCommit ? "local installation metadata" : null,
+      contracts: {
+        agentApiHealth: agentIdentityEvidence
+          ? `installed Agent ${scalar(agentIdentityEvidence.facts, "reportedVersion") ?? "unknown"} GET /health/detailed`
+          : input.installedRuntime.provenance.kind === "acceptance_fixture" ? `acceptance fixture contract ${input.installedRuntime.adapter}` : "Agent API health contract unavailable",
+        management: input.installedRuntime.provenance.kind === "acceptance_fixture"
+          ? `acceptance fixture contract ${input.installedRuntime.adapter}`
+          : `unavailable; prior ${installation.upstreamAudit.installedBackendVersion} audit ${installation.upstreamAudit.stale ? "stale" : "current"}`,
+        gateway: input.installedRuntime.provenance.kind === "acceptance_fixture" ? `acceptance fixture contract ${input.installedRuntime.adapter}` : "unavailable",
+        desktop: installation.desktopVersion ? `separately detected Desktop ${installation.desktopVersion}` : "Desktop version unknown",
+      },
       upstreamAudit: {
         auditedAt: installation.upstreamAudit.auditedAt,
         auditedCommit: installation.upstreamAudit.auditedCommit.slice(0, 12),
@@ -406,14 +456,13 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
     health: {
       runtime: runtime?.operationalHealth ?? "unknown",
       gateway: gateway?.operationalHealth === "conflicting_evidence" ? "conflicting evidence" : gateway?.operationalHealth ?? "unknown",
-      profile: input.installedRuntime.profile,
+      profile: input.installedRuntime.observedActiveProfile ?? "unknown",
+      configuredProfile: input.installedRuntime.configuredProfile,
+      observedActiveProfile: input.installedRuntime.observedActiveProfile,
+      observedProfileSource: input.installedRuntime.observedProfileSource,
       openCli: openCli?.operationalHealth ?? "unknown",
     },
-    exceptions: capabilities.flatMap((capability) =>
-      capability.surfaceState !== "unsupported" && ["degraded", "conflicting_evidence", "unavailable"].includes(capability.operationalHealth)
-        ? [{ capabilityId: capability.id, title: capability.name, health: capability.operationalHealth as "degraded" | "conflicting_evidence" | "unavailable", summary: capability.operationalDetail }]
-        : []
-    ),
+    exceptions: [...groupedExceptions, ...capabilityExceptions],
     summary,
     parity: {
       ...hermesParityMetrics(capabilities),

@@ -69,7 +69,7 @@ export function validateRawProjectionEnvelope(value: unknown): asserts value is 
   if (typeof value.capturedAt !== "string" || typeof value.now !== "string" || value.provenance.capturedAt !== value.capturedAt || !Number.isFinite(Date.parse(value.capturedAt)) || !Number.isFinite(Date.parse(value.now))) throw new Error("Raw observation envelope capturedAt/now provenance is invalid.");
   if (value.provenance.kind === "live_runtime" && value.provenance.fixtureId !== null) throw new Error("Live-runtime provenance cannot carry a fixture ID.");
   if (value.provenance.kind === "acceptance_fixture" && typeof value.provenance.fixtureId !== "string") throw new Error("Acceptance-fixture provenance requires a stable fixture ID.");
-  if (!isRecord(value.installedRuntime) || "provenance" in value.installedRuntime || !isRecord(value.installedRuntime.installation) || !isRecord(value.installedRuntime.live) || typeof value.installedRuntime.profile !== "string" || typeof value.installedRuntime.adapter !== "string") throw new Error("Raw observation envelope installed runtime is invalid.");
+  if (!isRecord(value.installedRuntime) || "provenance" in value.installedRuntime || !isRecord(value.installedRuntime.installation) || !isRecord(value.installedRuntime.live) || typeof value.installedRuntime.profile !== "string" || typeof value.installedRuntime.configuredProfile !== "string" || !(typeof value.installedRuntime.observedActiveProfile === "string" || value.installedRuntime.observedActiveProfile === null) || !(typeof value.installedRuntime.observedProfileSource === "string" || value.installedRuntime.observedProfileSource === null) || typeof value.installedRuntime.adapter !== "string") throw new Error("Raw observation envelope installed runtime is invalid.");
   if (!Array.isArray(value.observations) || !value.observations.every(validateObservation)) throw new Error("Raw observation envelope contains invalid or authored projection observations.");
   const provenanceKind = value.provenance.kind as "live_runtime" | "acceptance_fixture";
   if (value.observations.some((observation) => !validateHermesEvidenceAuthority({
@@ -182,7 +182,7 @@ export function renderHermesParityEvidence(snapshot: HermesControlCenterSnapshot
     ...rows,
     "",
     graph
-      ? `Memory graph observation: profile \`${cell(graph.facts?.profile ?? snapshot.health.profile)}\`, ${cell(graph.facts?.nodes)} nodes and ${cell(graph.facts?.edges)} edges, observed ${cell(graph.observedAt)}. This claim applies only to that profile and observation.`
+      ? `Memory graph observation: profile \`${cell(graph.facts?.profile ?? snapshot.health.observedActiveProfile ?? "unknown")}\`, ${cell(graph.facts?.nodes)} nodes and ${cell(graph.facts?.edges)} edges, observed ${cell(graph.observedAt)}. This claim applies only to that profile and observation.`
       : "Memory graph observation: no typed graph-count evidence was supplied. No node or edge count is inferred.",
     END,
   ].join("\n");

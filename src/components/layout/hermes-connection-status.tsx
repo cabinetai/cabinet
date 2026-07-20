@@ -38,6 +38,7 @@ export function HermesConnectionStatus() {
         status: "offline",
         version: null,
         profile: null,
+        profileSource: null,
         gatewayState: null,
         checkedAt: new Date().toISOString(),
         message: "Cabinet could not reach the Hermes health bridge.",

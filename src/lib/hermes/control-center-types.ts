@@ -157,7 +157,11 @@ export type HermesProjectionProvenance =
 
 export type HermesInstalledRuntime = {
   installation: HermesInstallationDetection;
+  /** Legacy fixture/profile context. Never use as an observed runtime fact. */
   profile: string;
+  configuredProfile: string;
+  observedActiveProfile: string | null;
+  observedProfileSource: string | null;
   adapter: string;
   provenance: HermesProjectionProvenance;
   live: {
@@ -220,6 +224,19 @@ export type HermesControlCenterSnapshot = {
     backendCommit: string | null;
     cabinetCommit: string | null;
     adapter: string;
+    observedRunningAgentVersion: string | null;
+    observedRunningAgentVersionSource: string | null;
+    observedRunningAgentObservedAt: string | null;
+    observedRunningAgentCommit: string | null;
+    observedRunningAgentCommitSource: string | null;
+    detectedAgentCheckoutCommit: string | null;
+    detectedAgentCheckoutCommitSource: string | null;
+    contracts: {
+      agentApiHealth: string;
+      management: string;
+      gateway: string;
+      desktop: string;
+    };
     upstreamAudit: {
       auditedAt: string;
       auditedCommit: string;
@@ -228,9 +245,21 @@ export type HermesControlCenterSnapshot = {
       stale: boolean;
     };
   };
-  health: { runtime: string; gateway: string; profile: string; openCli: string };
+  health: {
+    runtime: string;
+    gateway: string;
+    /** Legacy display field; equals observedActiveProfile or unknown. */
+    profile: string;
+    configuredProfile: string;
+    observedActiveProfile: string | null;
+    observedProfileSource: string | null;
+    openCli: string;
+  };
   exceptions: Array<{
-    capabilityId: string;
+    kind: "capability" | "source_group";
+    capabilityId: string | null;
+    sourceGroup: "management" | "gateway" | null;
+    dependentCount: number | null;
     title: string;
     health: Extract<HermesOperationalHealth, "degraded" | "conflicting_evidence" | "unavailable">;
     summary: string;

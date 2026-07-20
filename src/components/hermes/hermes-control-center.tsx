@@ -42,7 +42,7 @@ import type {
   HermesControlCenterSnapshot,
   HermesOperationalHealth,
 } from "@/lib/hermes/control-center-types";
-import type { HermesExecutionRun, HermesExecutionState } from "@/lib/hermes/runtime-execution";
+import { runtimeExecutionEmptyMessage, type HermesExecutionRun, type HermesExecutionState } from "@/lib/hermes/runtime-execution";
 
 type Mode = "operator" | "developer";
 type Section = "overview" | "agents" | "messaging" | "artifacts" | "memory" | "automations" | "tools" | "sessions" | "settings" | "developer";
@@ -176,6 +176,8 @@ function RuntimeExecutionOverview({ snapshot, onSelectRun, onSelectCapability }:
     ["Artifacts", "artifacts", execution.artifacts.state],
     ["Usage", "usage-insights", execution.usage.state],
   ] as const;
+  const runtimeCapabilityIds = new Set<string>(sources.map(([, capabilityId]) => capabilityId));
+  const staleRuntimeEvidence = snapshot.capabilities.some((capability) => runtimeCapabilityIds.has(capability.id) && capability.evidence.some((evidence) => evidence.origin === "raw_observation" && evidence.effectiveFreshness === "stale"));
   return (
     <section className="mb-4 overflow-hidden rounded-xl border border-border bg-card shadow-sm" data-testid="hermes-runtime-execution-overview">
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3">
@@ -203,7 +205,7 @@ function RuntimeExecutionOverview({ snapshot, onSelectRun, onSelectCapability }:
             <Badge variant={executionVariant(run.state)}>{EXECUTION_LABELS[run.state]}</Badge>
             <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
           </button>
-        )) : <p className="px-4 py-5 text-sm text-muted-foreground">No current execution records were reported.</p>}
+        )) : <p className="px-4 py-5 text-sm text-muted-foreground" data-testid="hermes-runtime-empty-state">{runtimeExecutionEmptyMessage(execution, staleRuntimeEvidence)}</p>}
       </div>
       <div className="grid grid-cols-3 border-t border-border md:grid-cols-6" data-testid="hermes-runtime-sources">
         {sources.map(([label, capabilityId, state]) => (
@@ -314,7 +316,7 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
     { id: "surface-state", label: "Surface state", value: capability.surfaceState },
     { id: "installed-support", label: "Installed support", value: capability.installedSupport.detail },
     { id: "current-health", label: "Current health", value: HEALTH_LABELS[capability.operationalHealth] },
-    { id: "interface", label: "Interface", value: capability.interface },
+    { id: "interface", label: capability.id === "about-updates" ? "Registry contract" : "Interface", value: capability.interface },
     { id: "cabinet-surface", label: "Cabinet surface", value: capability.cabinetSurface },
     { id: "risk", label: "Risk", value: capability.readWriteRisk },
     { id: "mode", label: "Mode", value: capability.mode },
@@ -346,6 +348,28 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
               </div>
             ))}
           </dl>
+          <Separator />
+          <section className="flex flex-col gap-2" data-testid="hermes-runtime-identity">
+            <h3 className="text-sm font-semibold">Runtime identity</h3>
+            <dl className="grid gap-2 text-xs">
+              <div><dt className="text-muted-foreground">Configured profile</dt><dd className="font-medium">{snapshot.health.configuredProfile}</dd></div>
+              <div><dt className="text-muted-foreground">Observed active profile</dt><dd className="font-medium">{snapshot.health.observedActiveProfile ?? "Unknown. Management source unavailable."}</dd></div>
+              <div><dt className="text-muted-foreground">Running Agent version</dt><dd className="font-medium">{snapshot.installed.observedRunningAgentVersion ?? "Unknown"}{snapshot.installed.observedRunningAgentVersionSource ? `, confirmed by ${snapshot.installed.observedRunningAgentVersionSource}` : ""}</dd></div>
+              <div><dt className="text-muted-foreground">Running process commit</dt><dd className="font-medium">{snapshot.installed.observedRunningAgentCommit ?? "Unknown"}</dd></div>
+              <div><dt className="text-muted-foreground">Detected local Agent checkout</dt><dd className="font-medium">{snapshot.installed.detectedAgentCheckoutCommit ?? "Unknown"}{snapshot.installed.detectedAgentCheckoutCommitSource ? `, ${snapshot.installed.detectedAgentCheckoutCommitSource}` : ""}</dd></div>
+            </dl>
+          </section>
+          {capability.id === "about-updates" ? (
+            <>
+              <Separator />
+              <section className="flex flex-col gap-2" data-testid="hermes-about-claim-scope">
+                <h3 className="text-sm font-semibold">Observed claim scope</h3>
+                <p className="text-xs text-muted-foreground"><span className="font-medium text-foreground">Registry contract:</span> runtime identity, application metadata, and update-check interfaces</p>
+                <p className="text-xs text-muted-foreground"><span className="font-medium text-foreground">Observed live source:</span> GET /health/detailed, runtime version identity only</p>
+                <p className="text-xs text-muted-foreground">Update checking was not performed. Application update availability is unknown.</p>
+              </section>
+            </>
+          ) : null}
           <Separator />
           <section className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">Parity credit</h3>
@@ -404,7 +428,7 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
                 <p className="mt-1 text-muted-foreground">Observed {evidence.observedAt ?? "time unknown"} · Freshness {evidence.effectiveFreshness} (source asserted {evidence.assertedFreshness}) · Backend {evidence.installedBackendVersion ?? "unknown"}</p>
               </div>
             )) : <p className="text-sm text-muted-foreground">No current runtime evidence is available for this discoverable capability.</p>}
-            <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion ?? "Unknown"} ({snapshot.installed.desktopCommit ?? "commit unknown"}) · Backend {snapshot.installed.backendVersion ?? "Unknown"} ({snapshot.installed.backendCommit ?? "commit unknown"})</p>
+            <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion ?? "Unknown"}. Running Agent {snapshot.installed.observedRunningAgentVersion ?? "Unknown"}. Detected checkout {snapshot.installed.detectedAgentCheckoutCommit ?? "unknown"}. Running commit {snapshot.installed.observedRunningAgentCommit ?? "unknown"}.</p>
           </section>
           {capability.surfaceState === "mapped" ? (
             <Button variant="outline" size="sm" onClick={() => { window.location.href = capability.id === "source-review" ? "/" : capability.cabinetHref; }}>
@@ -483,9 +507,9 @@ export function HermesControlCenter() {
 
   const selected = snapshot?.capabilities.find((item) => item.id === selectedId) ?? null;
   const selectedRun = snapshot?.runtimeExecution.runs.find((item) => item.id === selectedRunId) ?? null;
-  const derivedExceptions = snapshot?.capabilities.flatMap((capability) =>
+  const derivedExceptions: HermesControlCenterSnapshot["exceptions"] = snapshot?.capabilities.flatMap((capability) =>
     capability.surfaceState !== "unsupported" && ["degraded", "conflicting_evidence", "unavailable"].includes(capability.operationalHealth)
-      ? [{ capabilityId: capability.id, title: capability.name, health: capability.operationalHealth as "degraded" | "conflicting_evidence" | "unavailable", summary: capability.operationalDetail }]
+      ? [{ kind: "capability" as const, capabilityId: capability.id, sourceGroup: null, dependentCount: null, title: capability.name, health: capability.operationalHealth as "degraded" | "conflicting_evidence" | "unavailable", summary: capability.operationalDetail }]
       : []
   ) ?? [];
   const operationalExceptions = snapshot?.exceptions?.length ? snapshot.exceptions : derivedExceptions;
@@ -519,10 +543,11 @@ export function HermesControlCenter() {
         </div>
         {snapshot ? (
           <div className="flex items-center gap-2 overflow-x-auto text-xs text-muted-foreground" data-testid="hermes-version-strip">
-            <Badge variant={snapshot.health.runtime === "healthy" ? "default" : "destructive"}>Runtime {snapshot.installed.backendVersion ?? "unknown"}</Badge>
+            <Badge variant={snapshot.health.runtime === "healthy" ? "default" : "destructive"}>Running Agent {snapshot.installed.observedRunningAgentVersion ?? "unknown"}</Badge>
             <Badge variant="outline">Desktop {snapshot.installed.desktopVersion ?? "Unknown"}</Badge>
             <span className="whitespace-nowrap">Gateway {snapshot.health.gateway}</span>
-            <span className="whitespace-nowrap">Profile {snapshot.health.profile}</span>
+            <span className="whitespace-nowrap">Configured profile {snapshot.health.configuredProfile}</span>
+            <span className="whitespace-nowrap">Observed active profile {snapshot.health.observedActiveProfile ?? "Unknown. Management source unavailable."}</span>
             <span className="whitespace-nowrap text-warning">
               {snapshot.installed.upstreamAudit.stale
                 ? "Upstream audit is stale"
@@ -579,10 +604,10 @@ export function HermesControlCenter() {
                   <section className="mb-4 space-y-2" data-testid="hermes-operational-exceptions">
                     <div>
                       <h2 className="text-sm font-semibold">Operational exceptions</h2>
-                      <p className="text-xs text-muted-foreground">Only degraded or contradictory observations are elevated.</p>
+                      <p className="text-xs text-muted-foreground">Independent failures and conflicts are elevated. Shared unavailable sources are grouped.</p>
                     </div>
                     {operationalExceptions.map((exception) => (
-                      <button key={exception.capabilityId} type="button" className="block w-full text-left" onClick={() => { setSelectedId(exception.capabilityId); setSelectedRunId(null); }}>
+                      <button key={`${exception.kind}-${exception.capabilityId ?? exception.sourceGroup}`} type="button" className="block w-full text-left" disabled={!exception.capabilityId} onClick={() => { if (exception.capabilityId) setSelectedId(exception.capabilityId); setSelectedRunId(null); }}>
                         <Alert variant="destructive" className="transition-colors hover:bg-destructive/5">
                           <TriangleAlert aria-hidden="true" />
                           <AlertTitle>{exception.title} · {HEALTH_LABELS[exception.health]}</AlertTitle>

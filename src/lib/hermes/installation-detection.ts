@@ -65,7 +65,8 @@ export function detectHermesInstallation(
     desktopCommit: null,
     backendVersion,
     backendCommit: short(backendCommit),
-    cabinetCommit: short(cabinetCommit),
+    // Evidence generation must be able to prove the exact source revision.
+    cabinetCommit,
     upstreamAudit: { ...upstreamAudit, stale },
   };
 }

@@ -32,7 +32,7 @@ export function DaemonHealthBanner() {
     >
       <AlertTriangle className="mt-px h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
       <div className="flex-1 min-w-0">
-        <span className="font-medium text-destructive">{t("chrome:daemon.notResponding")}</span>
+        <span className="font-medium text-destructive">Cabinet agent daemon is unavailable. This is separate from the connected Hermes Agent runtime.</span>
         <span className="ms-2 text-muted-foreground">
           {t("chrome:daemon.willFail", { fixHint })}
         </span>
