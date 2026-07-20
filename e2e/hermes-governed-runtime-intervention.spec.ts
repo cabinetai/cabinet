@@ -52,6 +52,7 @@ async function openFixturePreview(page: Page) {
   await dialog.getByLabel("Reason").fill("Stop the duplicate worker safely");
   await dialog.getByRole("button", { name: "Prepare preview" }).click();
   await expect(dialog.getByTestId("hermes-intervention-preview")).toContainText("Run 17");
+  await expect(dialog.getByTestId("hermes-intervention-preview")).toContainText("TERMINATE RUN 17");
   await expect(dialog.getByRole("button", { name: "Confirm and terminate" })).toBeDisabled();
   return dialog;
 }
@@ -81,4 +82,17 @@ test("390x844 reduced-motion safety preview has zero overflow and no mutation re
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   expect(mutationRequests()).toBe(0);
   await page.screenshot({ path: path.join(evidenceDir, "mobile-governed-termination-preview-390x844.png"), fullPage: true });
+});
+
+test("fixture demonstrates unknown outcome and read-only reconciliation without a request", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const mutationRequests = await prepare(page);
+  const dialog = await openFixturePreview(page);
+  await dialog.getByRole("button", { name: "Show unknown-outcome example" }).click();
+  await expect(dialog.getByTestId("hermes-intervention-result")).toContainText("Outcome unknown");
+  await expect(dialog.getByTestId("hermes-intervention-result")).toContainText("Mutation attemptedYes");
+  await expect(dialog.getByTestId("hermes-intervention-result")).toContainText("RetryNo");
+  await expect(dialog.getByRole("button", { name: "Recheck outcome" })).toBeDisabled();
+  expect(mutationRequests()).toBe(0);
+  await page.screenshot({ path: path.join(evidenceDir, "unknown-outcome-reconciliation-1440x900.png"), fullPage: true });
 });

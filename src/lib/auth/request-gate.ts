@@ -88,3 +88,31 @@ export async function requireApiAuth(
   if (!isAuthEnabled()) return null;
   return (await hasValidKbAuthCookie(req)) ? null : unauthorized();
 }
+
+async function opaqueIdentity(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("").slice(0, 32);
+}
+
+/**
+ * Return an opaque, server-derived actor/session identity for binding a
+ * consequential preview to the authenticated Cabinet session. The raw JWT,
+ * local auth cookie, and user subject never cross the server boundary.
+ */
+export async function authenticatedCabinetActorIdentity(
+  req: NextRequest,
+): Promise<string | null> {
+  if (cloudGateActive()) {
+    const subject = await cloudUserSub(req);
+    return subject ? `cabinet-cloud-${await opaqueIdentity(`cloud:${subject}`)}` : null;
+  }
+  if (isAuthEnabled()) {
+    if (!(await hasValidKbAuthCookie(req))) return null;
+    const token = req.cookies.get(KB_AUTH_COOKIE)?.value ?? "";
+    return `cabinet-local-${await opaqueIdentity(`local:${token}`)}`;
+  }
+  return `cabinet-local-${await opaqueIdentity("local-auth-disabled")}`;
+}
