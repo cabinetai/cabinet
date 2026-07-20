@@ -1,0 +1,3363 @@
+{
+  "schemaVersion": "hermes-control-center-snapshot.v1",
+  "checkedAt": "2026-07-20T21:38:45.631Z",
+  "provenance": {
+    "kind": "live_runtime",
+    "label": "Live runtime projection",
+    "capturedAt": "2026-07-20T21:38:45.631Z",
+    "fixtureId": null
+  },
+  "evidenceProvenance": {
+    "implementationRevision": "9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030",
+    "fixtureId": null,
+    "fixtureCapturedAt": null,
+    "artifactGeneratedAt": "2026-07-20T21:40:01.333Z"
+  },
+  "installed": {
+    "desktopVersion": "0.17.0",
+    "desktopCommit": null,
+    "backendVersion": "0.19.0",
+    "backendCommit": "d7b36070ef80",
+    "cabinetCommit": "28bdaf4cc88c",
+    "adapter": "desktop-0.18",
+    "upstreamAudit": {
+      "auditedAt": "2026-07-19T21:06:53Z",
+      "auditedCommit": "0d2ad3993eb9",
+      "installedBackendVersion": "0.18.2",
+      "commitsBehind": 328,
+      "stale": true
+    }
+  },
+  "health": {
+    "runtime": "degraded",
+    "gateway": "not_configured",
+    "profile": "operator-os",
+    "openCli": "unavailable"
+  },
+  "exceptions": [
+    {
+      "capabilityId": "chat",
+      "title": "Chat and sessions",
+      "health": "degraded",
+      "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "command-center",
+      "title": "Command Center",
+      "health": "degraded",
+      "summary": "Hermes detailed health responded. Hermes execution sources are unavailable."
+    },
+    {
+      "capabilityId": "skills",
+      "title": "Skills",
+      "health": "degraded",
+      "summary": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "messaging",
+      "title": "Messaging",
+      "health": "degraded",
+      "summary": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "artifacts",
+      "title": "Artifacts",
+      "health": "unavailable",
+      "summary": "Hermes artifact source is unavailable."
+    },
+    {
+      "capabilityId": "cron",
+      "title": "Cron and background jobs",
+      "health": "degraded",
+      "summary": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete. Hermes queue source is unavailable."
+    },
+    {
+      "capabilityId": "profiles",
+      "title": "Profiles",
+      "health": "degraded",
+      "summary": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "agents-subagents",
+      "title": "Agents and subagents",
+      "health": "unavailable",
+      "summary": "Hermes active-agent source is unavailable."
+    },
+    {
+      "capabilityId": "starmap",
+      "title": "Starmap and memory graph",
+      "health": "degraded",
+      "summary": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "providers",
+      "title": "Providers",
+      "health": "degraded",
+      "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "provider-accounts",
+      "title": "Provider accounts",
+      "health": "degraded",
+      "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "models",
+      "title": "Models",
+      "health": "degraded",
+      "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "api-keys-tools",
+      "title": "API keys and tools",
+      "health": "degraded",
+      "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "mcp",
+      "title": "MCP",
+      "health": "degraded",
+      "summary": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "plugins",
+      "title": "Plugins",
+      "health": "degraded",
+      "summary": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "archived-chats",
+      "title": "Archived chats",
+      "health": "degraded",
+      "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "model-settings",
+      "title": "Model settings",
+      "health": "degraded",
+      "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "memory-context",
+      "title": "Memory and context",
+      "health": "degraded",
+      "summary": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "files",
+      "title": "Files",
+      "health": "unavailable",
+      "summary": "Hermes artifact source is unavailable."
+    },
+    {
+      "capabilityId": "projects",
+      "title": "Projects",
+      "health": "unavailable",
+      "summary": "Hermes session project association is unavailable."
+    },
+    {
+      "capabilityId": "session-pinning",
+      "title": "Session pinning",
+      "health": "degraded",
+      "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "approvals",
+      "title": "Approvals and pending input",
+      "health": "unavailable",
+      "summary": "The installed runtime has no global pending-input enumeration interface."
+    },
+    {
+      "capabilityId": "browser-opencli",
+      "title": "Browser and OpenCLI",
+      "health": "unavailable",
+      "summary": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review."
+    },
+    {
+      "capabilityId": "executor",
+      "title": "Executor",
+      "health": "degraded",
+      "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
+    },
+    {
+      "capabilityId": "usage-insights",
+      "title": "Usage insights",
+      "health": "unavailable",
+      "summary": "Hermes usage source is unavailable."
+    }
+  ],
+  "summary": {
+    "available": 20,
+    "connected": 1,
+    "degraded": 25,
+    "disabled": 0,
+    "unsupported": 1,
+    "needs_setup": 1
+  },
+  "parity": {
+    "discoverability": {
+      "covered": 48,
+      "total": 48,
+      "percentage": 100
+    },
+    "liveVisibility": {
+      "covered": 1,
+      "total": 48,
+      "percentage": 2
+    },
+    "governedManagement": {
+      "covered": 3,
+      "total": 48,
+      "percentage": 6
+    },
+    "liveProven": {
+      "covered": 4,
+      "total": 48,
+      "percentage": 8
+    },
+    "byAudience": {
+      "operator": {
+        "discoverability": {
+          "covered": 14,
+          "total": 14,
+          "percentage": 100
+        },
+        "liveVisibility": {
+          "covered": 0,
+          "total": 14,
+          "percentage": 0
+        },
+        "governedManagement": {
+          "covered": 2,
+          "total": 14,
+          "percentage": 14
+        },
+        "liveProven": {
+          "covered": 3,
+          "total": 14,
+          "percentage": 21
+        }
+      },
+      "management": {
+        "discoverability": {
+          "covered": 22,
+          "total": 22,
+          "percentage": 100
+        },
+        "liveVisibility": {
+          "covered": 1,
+          "total": 22,
+          "percentage": 5
+        },
+        "governedManagement": {
+          "covered": 1,
+          "total": 22,
+          "percentage": 5
+        },
+        "liveProven": {
+          "covered": 1,
+          "total": 22,
+          "percentage": 5
+        }
+      },
+      "developer": {
+        "discoverability": {
+          "covered": 12,
+          "total": 12,
+          "percentage": 100
+        },
+        "liveVisibility": {
+          "covered": 0,
+          "total": 12,
+          "percentage": 0
+        },
+        "governedManagement": {
+          "covered": 0,
+          "total": 12,
+          "percentage": 0
+        },
+        "liveProven": {
+          "covered": 0,
+          "total": 12,
+          "percentage": 0
+        }
+      }
+    }
+  },
+  "capabilities": [
+    {
+      "id": "chat",
+      "name": "Chat and sessions",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "/ and apps/desktop/src/app/chat",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway WebSocket sessions and /api/sessions",
+      "cabinetSurface": "Agents conversations",
+      "cabinetHref": "/agents",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Keep Hermes transcript and execution history canonical.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [
+        "conversation",
+        "chat",
+        "history"
+      ],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes sessions",
+          "interface": "/api/sessions",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "command-center",
+      "name": "Command Center",
+      "group": "Overview",
+      "audience": "operator",
+      "desktopSource": "/command-center",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/status, /api/system/stats, /api/ops/*",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Add confirmed maintenance actions after owner review.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes detailed health responded. Hermes execution sources are unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes detailed health bridge",
+          "interface": "/health/detailed",
+          "observedAt": "2026-07-20T21:38:45.628Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "success",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "connectionState": "online"
+          },
+          "stale": false,
+          "summary": "Hermes detailed health responded."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes runtime execution",
+          "interface": "/api/sessions + /v1/runs/{run_id}",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "runtimeExecution": {
+              "observedAt": "2026-07-20T21:38:45.630Z",
+              "runs": [],
+              "agents": {
+                "state": "unavailable",
+                "count": 0,
+                "summary": "Hermes active-agent source is unavailable."
+              },
+              "runSource": {
+                "state": "unavailable",
+                "summary": "Hermes execution sources are unavailable."
+              },
+              "queue": {
+                "state": "unavailable",
+                "total": 0,
+                "counts": {},
+                "summary": "Hermes queue source is unavailable."
+              },
+              "approvals": {
+                "state": "unavailable",
+                "count": 0,
+                "summary": "The installed runtime has no global pending-input enumeration interface."
+              },
+              "artifacts": {
+                "state": "unavailable",
+                "total": 0,
+                "items": [],
+                "summary": "Hermes artifact source is unavailable."
+              },
+              "usage": {
+                "state": "unavailable",
+                "inputTokens": null,
+                "outputTokens": null,
+                "estimatedCostUsd": null,
+                "actualCostUsd": null,
+                "sessions": null,
+                "summary": "Hermes usage source is unavailable."
+              }
+            }
+          },
+          "stale": false,
+          "summary": "Hermes execution sources are unavailable."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes detailed health responded. Hermes execution sources are unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": true
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "skills",
+      "name": "Skills",
+      "group": "Tools",
+      "audience": "operator",
+      "desktopSource": "/skills",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/skills and /api/skills/hub/*",
+      "cabinetSurface": "Cabinet Skills and Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "No duplicate catalog. Continue projecting Hermes skill provenance and enablement.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes skills",
+          "interface": "/api/skills",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes skills failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "messaging",
+      "name": "Messaging",
+      "group": "Messaging",
+      "audience": "operator",
+      "desktopSource": "/messaging",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/messaging/platforms and Gateway",
+      "cabinetSurface": "Hermes Messaging",
+      "cabinetHref": "/hermes?section=messaging",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add confirmed platform repair and test actions without exposing credentials.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes messaging platforms",
+          "interface": "/api/messaging/platforms",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "configuredPlatforms": 0,
+            "failedPlatforms": 0
+          },
+          "stale": false,
+          "summary": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop messaging route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Historical route support only. Current platform health requires a fresh platform observation."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes messaging platforms failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "artifacts",
+      "name": "Artifacts",
+      "group": "Artifacts",
+      "audience": "operator",
+      "desktopSource": "/artifacts",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/sessions/{id}/messages, /api/files, runtime tool events",
+      "cabinetSurface": "Hermes Artifacts",
+      "cabinetHref": "/hermes?section=artifacts",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Add safe preview, reveal, and download controls while preserving session and run association.",
+      "testEvidence": "Exact artifact projection contract plus installed Hermes /api/files response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes artifact source is unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes artifact metadata",
+          "interface": "/api/files",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "total": 0,
+            "items": []
+          },
+          "stale": false,
+          "summary": "Hermes artifact source is unavailable."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop artifacts route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Historical route support only. Current artifact visibility requires a fresh files projection."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes artifact source is unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "cron",
+      "name": "Cron and background jobs",
+      "group": "Automations",
+      "audience": "operator",
+      "desktopSource": "/cron",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/cron/jobs and /api/cron/jobs/{id}/runs",
+      "cabinetSurface": "Hermes Automations",
+      "cabinetHref": "/hermes?section=automations",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add a reviewed management surface; existing mutations remain confirmation and idempotency gated.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete. Hermes queue source is unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes cron jobs",
+          "interface": "/api/cron/jobs",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Kanban queue",
+          "interface": "/api/plugins/kanban/board",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "total": 0,
+            "counts": {}
+          },
+          "stale": false,
+          "summary": "Hermes queue source is unavailable."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes cron jobs failed: Hermes management authentication and profile configuration are incomplete. Hermes queue source is unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "profiles",
+      "name": "Profiles",
+      "group": "Agents",
+      "audience": "management",
+      "desktopSource": "/profiles",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/profiles and /api/profiles/{name}/soul",
+      "cabinetSurface": "Hermes Agents",
+      "cabinetHref": "/hermes?section=agents",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reviewed profile management and keep profile and runtime agent identities visually distinct.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes profiles",
+          "interface": "/api/profiles",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes profiles failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "agents-subagents",
+      "name": "Agents and subagents",
+      "group": "Agents",
+      "audience": "operator",
+      "desktopSource": "/agents",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway events, run state, kanban worker API when plugin is enabled",
+      "cabinetSurface": "Hermes Agents",
+      "cabinetHref": "/hermes?section=agents",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "The installed contract supports one governed termination category for an active Kanban run. Broader agent controls remain unavailable.",
+      "testEvidence": "Installed Hermes contract audit and Phase 3B governed intervention regressions",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes active-agent source is unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes active workers",
+          "interface": "/api/plugins/kanban/workers/active",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes active-agent source is unavailable."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop agents route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Installed Desktop source exposes agent and subagent status surfaces."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes active-agent source is unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": true,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "starmap",
+      "name": "Starmap and memory graph",
+      "group": "Memory",
+      "audience": "operator",
+      "desktopSource": "/starmap",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/learning/graph and /api/learning/node",
+      "cabinetSurface": "Hermes Memory",
+      "cabinetHref": "/hermes?section=memory",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Render only reported nodes and recall relationships. No fabricated edges.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes memory graph",
+          "interface": "/api/learning/graph",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop Starmap route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Memory graph support was found in the historical source audit; node counts are observation-specific."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes memory graph failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "settings",
+      "name": "Settings",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config/schema, /api/config and scoped management APIs",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Expose safe typed fields gradually; raw config remains Developer-only.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "providers",
+      "name": "Providers",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "/settings?tab=providers",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/auth/providers, /api/providers/oauth, /api/providers/validate",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "secret",
+      "mode": "Operator",
+      "missingWork": "Add safe OAuth/setup flows; never serialize tokens.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes model options",
+          "interface": "/api/model/options",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop provider settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Provider settings were found in the historical source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "provider-accounts",
+      "name": "Provider accounts",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "/settings?tab=providers&pview=accounts",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/providers/oauth and [redacted credential path]",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "secret",
+      "mode": "Operator",
+      "missingWork": "Expose account labels and health only.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes model options",
+          "interface": "/api/model/options",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop account settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Provider account surfaces were found without retaining credential material."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes model options failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "models",
+      "name": "Models",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:model",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/model/info, /api/model/options, /api/model/set",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add confirmed default and profile override controls.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes current model",
+          "interface": "/api/model/info",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop model settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Model selection surfaces were found in the historical source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "api-keys-tools",
+      "name": "API keys and tools",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/settings?tab=keys",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/env, /api/tools/toolsets",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "secret",
+      "mode": "Operator",
+      "missingWork": "Show configured/not configured only. Values stay server-side.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes toolsets",
+          "interface": "/api/tools/toolsets",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "gateway",
+      "name": "Gateway",
+      "group": "Runtime",
+      "audience": "management",
+      "desktopSource": "/settings?tab=gateway",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/gateway/start|stop|restart and detailed health",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes?capability=gateway",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add confirmed restart/reconnect with failure-log excerpt.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "not_configured",
+      "operationalDetail": "Hermes Gateway is not configured for direct Cabinet access. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Management gateway observation failed: Hermes management authentication a…",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes health bridge",
+          "interface": "/health/detailed gateway_state",
+          "observedAt": "2026-07-20T21:38:45.628Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "state": "running"
+          },
+          "stale": false,
+          "summary": "Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes management status",
+          "interface": "/api/status gateway state",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "state": "unavailable"
+          },
+          "stale": false,
+          "summary": "Management gateway observation failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Cabinet Hermes Gateway configuration",
+          "interface": "server-only Gateway configuration",
+          "observedAt": "2026-07-20T21:38:45.628Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "not_configured",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "sourceState": "unavailable"
+          },
+          "stale": false,
+          "summary": "Hermes Gateway is not configured for direct Cabinet access."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop gateway settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Gateway management support exists historically; current state requires fresh independent observations."
+        }
+      ],
+      "status": "needs_setup",
+      "statusDetail": "Hermes Gateway is not configured for direct Cabinet access. Agent health bridge reported Gateway running; this does not prove the direct Gateway source is available. Management gateway observation failed: Hermes management authentication a…",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "mcp",
+      "name": "MCP",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/skills?tab=mcp",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/mcp/servers and /api/mcp/catalog",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add a reviewed management surface; mutations remain confirmation gated.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes MCP servers",
+          "interface": "/api/mcp/servers",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes MCP servers failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "plugins",
+      "name": "Plugins",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/settings?tab=plugins",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/dashboard/plugins and /api/dashboard/agent-plugins/*",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add explicit install/update/disable confirmations.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes dashboard plugins",
+          "interface": "/api/dashboard/plugins",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes dashboard plugins failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "notifications",
+      "name": "Notifications",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=notifications",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Cabinet notification event settings plus browser permission state",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Browser/OS delivery remains subject to browser permission; Cabinet does not claim to edit Hermes Desktop local preferences.",
+      "testEvidence": "Cabinet notification settings and in-app test notification",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Cabinet notification preference component contract",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Cabinet-local preferences are mapped to Hermes events. This does not prove Hermes Desktop notification settings or current Hermes runtime health."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": true,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "archived-chats",
+      "name": "Archived chats",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "/settings?tab=sessions",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/sessions, search, export, delete",
+      "cabinetSurface": "Hermes Sessions",
+      "cabinetHref": "/hermes?section=sessions",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add restore/export and separately confirmed delete.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes sessions",
+          "interface": "/api/sessions",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop session route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Archived session support was found in the historical source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "billing",
+      "name": "Billing",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "Upstream /settings billing module",
+      "installedVersionSupport": "Not detected in the installed Desktop build",
+      "installedSupported": false,
+      "interface": "Upstream-only portal billing client",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "unsupported",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Upgrade installed Desktop/backend only after separate approval and re-audit.",
+      "testEvidence": "Present in explicit upstream audit and absent from the installed Desktop interface",
+      "keywords": [],
+      "installedSupport": {
+        "supported": false,
+        "detail": "Not detected in the installed Desktop build"
+      },
+      "surfaceState": "unsupported",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Not detected in the installed Desktop build",
+      "evidence": [],
+      "status": "unsupported",
+      "statusDetail": "Not detected in the installed Desktop build",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "about-updates",
+      "name": "About and updates",
+      "group": "Runtime",
+      "audience": "management",
+      "desktopSource": "/settings?tab=about",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/hermes/update/check and app metadata",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes?capability=about-updates",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Upgrade requires explicit owner approval and restart handoff.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes Agent detailed health confirmed the running backend identity.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Agent detailed health identity",
+          "interface": "/health/detailed",
+          "observedAt": "2026-07-20T21:38:45.628Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "success",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "reportedVersion": "0.19.0",
+            "updateAuditStale": true
+          },
+          "stale": false,
+          "summary": "Hermes Agent detailed health confirmed the running backend identity."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Hermes Agent detailed health confirmed the running backend identity.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": true,
+        "governedManagement": false,
+        "liveProven": true
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "model-settings",
+      "name": "Model settings",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:model",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/model/* and config schema",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reasoned, confirmed mutations.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes current model",
+          "interface": "/api/model/info",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop model settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Model settings were found in the historical source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes current model failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "chat-settings",
+      "name": "Chat settings",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:chat",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config/schema and /api/config",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Project safe fields into typed controls.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "appearance",
+      "name": "Appearance",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:appearance",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local theme and font preferences",
+      "cabinetSurface": "Cabinet appearance",
+      "cabinetHref": "/settings/appearance",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Desktop-only themes remain diagnostic because Cabinet has its own theme system.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "workspace",
+      "name": "Workspace",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:workspace",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config and /api/fs/default-cwd",
+      "cabinetSurface": "Cabinet rooms and linked repos",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Keep Hermes working directory visible without duplicating Cabinet workspace state.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "safety",
+      "name": "Safety",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:safety",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Approvals config, hooks, security audit",
+      "cabinetSurface": "Existing Hermes approval boundaries",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Do not weaken Jeremy-only approval gates.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "memory-context",
+      "name": "Memory and context",
+      "group": "Memory",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:memory",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/memory and /api/memory/providers/*",
+      "cabinetSurface": "Hermes Memory",
+      "cabinetHref": "/hermes?section=memory",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add safe inspect/search; delete/archive only when supported and confirmed.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes memory",
+          "interface": "/api/memory",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop memory route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Memory management interfaces were found in the historical source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes memory failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "voice",
+      "name": "Voice",
+      "group": "Settings",
+      "audience": "operator",
+      "desktopSource": "Chat composer and /settings voice fields",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/audio/transcribe, /api/audio/speak, browser permission status",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Owner must grant microphone permission before recording acceptance; voice input never executes consequential work automatically.",
+      "testEvidence": "Exact audio interface contract and non-prompting browser permission probe",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "Hermes audio interfaces were not probed. Browser microphone permission was not requested.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes audio interface detection",
+          "interface": "/api/audio/transcribe and /api/audio/speak",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "serverInterface": "unprobed",
+            "browserPermission": "not_requested"
+          },
+          "stale": false,
+          "summary": "Hermes audio interfaces were not probed. Browser microphone permission was not requested."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed audio interface source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Audio interfaces exist in the audited source. They were not probed in the current runtime."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Hermes audio interfaces were not probed. Browser microphone permission was not requested.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "advanced-config",
+      "name": "Advanced configuration",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "/settings?tab=config:*",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config/raw and /api/config/schema",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "secret",
+      "mode": "Developer",
+      "missingWork": "Provide redacted read-only projection before any raw editor.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "files",
+      "name": "Files",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Right sidebar Files",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/fs/* and /api/files/*",
+      "cabinetSurface": "Cabinet data tree and viewers",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Hermes remote files need association and safe reveal/download.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes artifact source is unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes artifact metadata",
+          "interface": "/api/files",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "total": 0,
+            "items": []
+          },
+          "stale": false,
+          "summary": "Hermes artifact source is unavailable."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes artifact source is unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "terminal",
+      "name": "Terminal",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Right sidebar Terminal",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Hermes PTY plus Cabinet daemon PTY",
+      "cabinetSurface": "Cabinet Terminal",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "No silent fallback between Hermes and Cabinet execution.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "source-review",
+      "name": "Source-control review",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Right sidebar Review",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/git/review/*",
+      "cabinetSurface": "Cabinet git history and diffs",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Ship/push actions remain outside read-only Control Center.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "Hermes did not report a session working directory, so Git review was not queried.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Git status and review",
+          "interface": "/api/git/status + /api/git/review/list",
+          "observedAt": "2026-07-20T21:38:45.629Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "repository": null,
+            "branch": null,
+            "detached": null,
+            "clean": null,
+            "staged": null,
+            "unstaged": null,
+            "untracked": null,
+            "conflicts": null,
+            "ahead": null,
+            "behind": null,
+            "reviewAvailable": null,
+            "reviewCount": null
+          },
+          "stale": false,
+          "summary": "Hermes did not report a session working directory, so Git review was not queried."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Hermes did not report a session working directory, so Git review was not queried.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "projects",
+      "name": "Projects",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Chat sidebar Projects",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Hermes project config and session cwd",
+      "cabinetSurface": "Cabinet rooms and linked repos",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Show Hermes project identity alongside Cabinet scope.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes session project association is unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes session project association",
+          "interface": "/api/sessions?limit=100",
+          "observedAt": "2026-07-20T21:38:45.629Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "project": null,
+            "profile": "operator-os",
+            "sessionAssociation": null,
+            "workingDirectoryReported": false,
+            "repositoryAssociated": false,
+            "repository": null
+          },
+          "stale": false,
+          "summary": "Hermes session project association is unavailable."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes session project association is unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "worktrees",
+      "name": "Worktrees",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Project and session controls",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/git/worktrees",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Add confirmed add/remove only after read-only inventory proves safe paths.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "Hermes did not report a session working directory, so worktrees were not queried.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Git worktrees",
+          "interface": "/api/git/worktrees",
+          "observedAt": "2026-07-20T21:38:45.629Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "total": 0,
+            "current": null,
+            "ambiguousCurrent": false,
+            "items": []
+          },
+          "stale": false,
+          "summary": "Hermes did not report a session working directory, so worktrees were not queried."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Hermes did not report a session working directory, so worktrees were not queried.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "session-tabs",
+      "name": "Session tabs",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Pane shell and session switcher",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop pane store and Hermes session routes",
+      "cabinetSurface": "Cabinet task tabs and rail",
+      "cabinetHref": "/tasks",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "Do not duplicate desktop pane layout state.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "session-pinning",
+      "name": "Session pinning",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "Session sidebar actions",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Session metadata and Desktop ordering",
+      "cabinetSurface": "Hermes Sessions",
+      "cabinetHref": "/hermes?section=sessions",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Stable remote pin mutation is not exposed by installed management API.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes sessions",
+          "interface": "/api/sessions",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop session action audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Session pinning was visible in the historical Desktop source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes sessions failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "command-palette",
+      "name": "Command palette",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Desktop command palette",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local contribution registry",
+      "cabinetSurface": "Cabinet command search",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "Hermes actions are discoverable through Control Center search.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "keyboard-shortcuts",
+      "name": "Keyboard shortcuts",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Desktop keybind panel",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local keybind store",
+      "cabinetSurface": "Cabinet keyboard shortcuts",
+      "cabinetHref": "/help",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "List Hermes-only keybindings diagnostically when safe source is available.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "layout-controls",
+      "name": "Layout controls",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Pane shell layouts",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local pane store",
+      "cabinetSurface": "Cabinet layout controls",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "No cross-application layout synchronization.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "approvals",
+      "name": "Approvals and pending input",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "Chat tool approvals",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway decision events and run approval endpoint",
+      "cabinetSurface": "Cabinet Hermes conversations",
+      "cabinetHref": "/agents",
+      "parityState": "first_class",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Existing confirmation, owner identity, and idempotency behavior is unchanged.",
+      "testEvidence": "Cabinet Hermes gateway and run contract tests",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "first_class",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "The installed runtime has no global pending-input enumeration interface.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes known-run pending input",
+          "interface": "/v1/runs/{run_id} + /events",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0,
+            "rule": "Hermes prepares; Jeremy commits."
+          },
+          "stale": false,
+          "summary": "The installed runtime has no global pending-input enumeration interface."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Cabinet Hermes M3-M7 source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "The approval contract exists in the audited source. Source existence does not prove a live operation."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Cabinet Hermes M3-M7 acceptance suite",
+          "interface": "Hermes gateway and run decision contract",
+          "observedAt": "2026-07-19T02:23:07Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "historical_live_acceptance",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "PROGRESS.md#2026-07-19-m7-technical-conversion-acceptance"
+          },
+          "stale": true,
+          "summary": "A governed approval decision completed with confirmation and duplicate-submission protection."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "The installed runtime has no global pending-input enumeration interface.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": true,
+        "liveProven": true
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "browser-opencli",
+      "name": "Browser and OpenCLI",
+      "group": "Tools",
+      "audience": "operator",
+      "desktopSource": "Hermes Terminal toolset",
+      "installedVersionSupport": "External OpenCLI installation detected at runtime",
+      "installedSupported": true,
+      "interface": "opencli doctor and browser bridge CLI",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?capability=browser-opencli",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reviewed repair/reconnect only when the installed CLI reports a safe supported action.",
+      "testEvidence": "OpenCLI doctor plus local read-only acceptance",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "External OpenCLI installation detected at runtime"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "OpenCLI doctor",
+          "interface": "opencli doctor",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "daemon": "unknown",
+            "extension": "unknown",
+            "connectedProfiles": 0
+          },
+          "stale": false,
+          "summary": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "OpenCLI interface source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "OpenCLI interface support was found in the audited integration source."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "OpenCLI read-only acceptance",
+          "interface": "opencli local page title, DOM read, and screenshot",
+          "observedAt": "2026-07-19T20:18:51Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "historical_live_acceptance",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "docs/plans/hermes-desktop-capability-parity.md#phase-4-opencli-browser-module"
+          },
+          "stale": true,
+          "summary": "A local read-only acceptance opened a test page, read its title and DOM, and captured a screenshot without an external write."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "OpenCLI was not probed because its supporting Hermes management source is unavailable for this partial review.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": true
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "executor",
+      "name": "Executor",
+      "group": "Tools",
+      "audience": "operator",
+      "desktopSource": "Hermes terminal/code execution",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Toolsets, runtime tool events, terminal backend",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Show backend and active action without creating a second executor.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes toolsets",
+          "interface": "/api/tools/toolsets",
+          "observedAt": "2026-07-20T21:38:45.631Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "failure",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes toolsets failed: Hermes management authentication and profile configuration are incomplete.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "raw-logs",
+      "name": "Raw logs",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Command Center maintenance",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/logs",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "secret",
+      "mode": "Developer",
+      "missingWork": "Redact secrets and bound log output before browser exposure.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "gateway-diagnostics",
+      "name": "Low-level gateway diagnostics",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Gateway settings and logs",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway health, logs, drain, restart",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "secret",
+      "mode": "Developer",
+      "missingWork": "Display URL identity without query tokens or authorization material.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "computer-use",
+      "name": "Computer Use",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/settings computer-use panel",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/tools/computer-use/status",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Permission grants remain explicit OS-scoped actions.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "backups",
+      "name": "Backup and restore",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "Command Center maintenance",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/ops/backup and /api/ops/import",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reviewed download/import workflow with confirmation.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "security-audit",
+      "name": "Security audit",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "Command Center maintenance",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/ops/security-audit",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Show bounded audit results without package credentials.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "No fresh source-specific observation is available.",
+      "evidence": [],
+      "status": "available",
+      "statusDetail": "No fresh source-specific observation is available.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "usage-insights",
+      "name": "Usage insights",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "Command Center analytics",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/analytics/usage and /api/analytics/models",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "read_only",
+      "mode": "Operator",
+      "missingWork": "Add bounded cost/rate-limit summaries when reported.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Hermes usage source is unavailable.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes usage analytics",
+          "interface": "/api/analytics/usage",
+          "observedAt": "2026-07-20T21:38:45.630Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "live",
+          "proofScope": "live_runtime_operation",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.19.0",
+          "installedBackendCommit": "d7b36070ef80",
+          "facts": {
+            "inputTokens": null,
+            "outputTokens": null,
+            "estimatedCostUsd": null,
+            "actualCostUsd": null,
+            "sessions": null
+          },
+          "stale": false,
+          "summary": "Hermes usage source is unavailable."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes usage source is unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    }
+  ],
+  "live": {
+    "profiles": 0,
+    "skills": 0,
+    "jobs": 0,
+    "mcpServers": 0,
+    "plugins": 0,
+    "openCliProfiles": 0,
+    "openCliVersion": null,
+    "openCliBinaryLocation": null,
+    "openCliCapabilities": {
+      "screenshot": false,
+      "domRead": false,
+      "formInteraction": false,
+      "download": false
+    },
+    "memoryProvider": "built-in",
+    "memoryNamespace": "operator-os:built-in",
+    "diagnostics": [
+      {
+        "area": "profiles",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "agent manifest",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "skills",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "cron",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "memory",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "mcp",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "toolsets",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "plugins",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "active agents",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "recent agents",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "messaging",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "sessions",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "memory graph",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "current model",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "model options",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "artifacts",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "usage analytics",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      },
+      {
+        "area": "runtime status",
+        "status": "degraded",
+        "message": "Hermes management authentication and profile configuration are incomplete."
+      }
+    ],
+    "operator": {
+      "runtime": {
+        "gatewayMode": "unknown",
+        "gatewayState": "unknown",
+        "gatewayRunning": null,
+        "gatewayBusy": false,
+        "lastConnection": null,
+        "observedAt": "2026-07-20T21:38:45.631Z",
+        "activeAgentCount": 0,
+        "activeSessionCount": 0
+      },
+      "agents": {
+        "available": false,
+        "active": [],
+        "recent": []
+      },
+      "messaging": [],
+      "sessions": [],
+      "artifacts": [],
+      "memoryGraph": {
+        "nodes": [],
+        "edges": [],
+        "stats": {
+          "nodes": 0,
+          "edges": 0
+        }
+      },
+      "providers": [],
+      "model": {
+        "provider": null,
+        "model": null,
+        "contextLength": null,
+        "supportsTools": null,
+        "supportsVision": null,
+        "supportsReasoning": null
+      },
+      "voice": {
+        "transcriptionAvailable": null,
+        "speechAvailable": null,
+        "transcriptionInterface": "/api/audio/transcribe",
+        "speechInterface": "/api/audio/speak"
+      }
+    }
+  },
+  "developerRepository": {
+    "project": {
+      "label": null,
+      "profile": "operator-os",
+      "repositoryAssociated": false,
+      "repository": null,
+      "observedAt": "2026-07-20T21:38:45.629Z"
+    },
+    "worktree": {
+      "label": null,
+      "branch": null,
+      "detached": null,
+      "clean": null,
+      "ambiguousCurrent": false,
+      "observedAt": "2026-07-20T21:38:45.629Z"
+    }
+  },
+  "runtimeExecution": {
+    "observedAt": "2026-07-20T21:38:45.630Z",
+    "runs": [],
+    "agents": {
+      "state": "unavailable",
+      "count": 0,
+      "summary": "Hermes active-agent source is unavailable."
+    },
+    "runSource": {
+      "state": "unavailable",
+      "summary": "Hermes execution sources are unavailable."
+    },
+    "queue": {
+      "state": "unavailable",
+      "total": 0,
+      "counts": {},
+      "summary": "Hermes queue source is unavailable."
+    },
+    "approvals": {
+      "state": "unavailable",
+      "count": 0,
+      "summary": "The installed runtime has no global pending-input enumeration interface."
+    },
+    "artifacts": {
+      "state": "unavailable",
+      "total": 0,
+      "items": [],
+      "summary": "Hermes artifact source is unavailable."
+    },
+    "usage": {
+      "state": "unavailable",
+      "inputTokens": null,
+      "outputTokens": null,
+      "estimatedCostUsd": null,
+      "actualCostUsd": null,
+      "sessions": null,
+      "summary": "Hermes usage source is unavailable."
+    }
+  }
+}

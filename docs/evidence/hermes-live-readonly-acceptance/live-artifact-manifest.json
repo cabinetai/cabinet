@@ -1,0 +1,56 @@
+{
+  "classification": "Live runtime",
+  "capturedAt": "2026-07-20T21:38:45.631Z",
+  "artifactGeneratedAt": "2026-07-20T21:49:04.557Z",
+  "implementationRevision": "9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030",
+  "installedHermesAgent": {
+    "version": "0.19.0",
+    "commit": "d7b36070ef80"
+  },
+  "activeProfile": "operator-os",
+  "configuredSourceGroups": [
+    {
+      "id": "agent_api",
+      "state": "ready_to_probe",
+      "safeEndpointIdentity": "http://127.0.0.1:8642"
+    }
+  ],
+  "unavailableSourceGroups": [
+    {
+      "id": "management",
+      "state": "unavailable"
+    },
+    {
+      "id": "gateway",
+      "state": "unavailable"
+    }
+  ],
+  "interventionsEnabled": false,
+  "mutationCalls": 0,
+  "artifacts": [
+    {
+      "file": "live-runtime-projection.json",
+      "classification": "Live runtime"
+    },
+    {
+      "file": "configuration-readiness.json",
+      "classification": "Live runtime"
+    },
+    {
+      "file": "live-agent-overview-1440x900.png",
+      "classification": "Live runtime"
+    },
+    {
+      "file": "live-agent-identity-inspector-1440x900.png",
+      "classification": "Live runtime"
+    },
+    {
+      "file": "live-agent-overview-mobile-390x844.png",
+      "classification": "Live runtime"
+    },
+    {
+      "file": "live-agent-identity-mobile-390x844.png",
+      "classification": "Live runtime"
+    }
+  ]
+}

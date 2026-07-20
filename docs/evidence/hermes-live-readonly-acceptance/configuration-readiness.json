@@ -1,83 +1,67 @@
 {
-  "schemaVersion": 1,
-  "capturedAt": "2026-07-20T04:26:28Z",
-  "implementationRevision": "0f257a380c6c1a02bd0cbca7f85b1db425c42f22",
-  "classification": "configuration_readiness_only",
-  "ready": false,
+  "classification": "Live runtime",
+  "capturedAt": "2026-07-20T21:38:45.631Z",
+  "artifactGeneratedAt": "2026-07-20T21:40:01.333Z",
+  "implementationRevision": "9319ffbecd7ae9c6c61f7dd58a6b64fd2bca2030",
+  "installedHermesAgent": {
+    "version": "0.19.0",
+    "commit": "d7b36070ef80"
+  },
+  "activeProfile": "operator-os",
+  "configuredSourceGroups": [
+    {
+      "id": "agent_api",
+      "state": "ready_to_probe",
+      "safeEndpointIdentity": "http://127.0.0.1:8642"
+    }
+  ],
+  "unavailableSourceGroups": [
+    {
+      "id": "management",
+      "state": "unavailable"
+    },
+    {
+      "id": "gateway",
+      "state": "unavailable"
+    }
+  ],
   "interventionsEnabled": false,
   "variables": [
     {
       "name": "CABINET_HERMES_API_URL",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
+      "status": "present"
     },
     {
       "name": "CABINET_HERMES_API_KEY",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
-    },
-    {
-      "name": "CABINET_HERMES_MANAGEMENT_URL",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
-    },
-    {
-      "name": "CABINET_HERMES_MANAGEMENT_TOKEN",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
-    },
-    {
-      "name": "CABINET_HERMES_GATEWAY_URL",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
-    },
-    {
-      "name": "CABINET_HERMES_GATEWAY_TOKEN",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
+      "status": "present"
     },
     {
       "name": "CABINET_HERMES_PROFILE",
-      "requiredForLiveReview": true,
-      "status": "absent",
-      "sourceType": "none",
-      "safeEndpointIdentity": null
-    },
-    {
-      "name": "CABINET_HERMES_TIMEOUT_MS",
-      "requiredForLiveReview": false,
-      "status": "absent",
-      "sourceType": "default",
-      "safeEndpointIdentity": null
+      "status": "present"
     },
     {
       "name": "CABINET_HERMES_INTERVENTIONS_ENABLED",
-      "requiredForLiveReview": false,
-      "status": "absent",
-      "sourceType": "default",
-      "safeEndpointIdentity": null
+      "status": "present"
+    },
+    {
+      "name": "CABINET_HERMES_MANAGEMENT_URL",
+      "status": "absent"
+    },
+    {
+      "name": "CABINET_HERMES_MANAGEMENT_TOKEN",
+      "status": "absent"
+    },
+    {
+      "name": "CABINET_HERMES_GATEWAY_URL",
+      "status": "absent"
+    },
+    {
+      "name": "CABINET_HERMES_GATEWAY_TOKEN",
+      "status": "absent"
     }
   ],
-  "missing": [
-    "CABINET_HERMES_API_URL",
-    "CABINET_HERMES_API_KEY",
-    "CABINET_HERMES_MANAGEMENT_URL",
-    "CABINET_HERMES_MANAGEMENT_TOKEN",
-    "CABINET_HERMES_GATEWAY_URL",
-    "CABINET_HERMES_GATEWAY_TOKEN",
-    "CABINET_HERMES_PROFILE"
+  "liveReadOnlyEndpointsReached": [
+    "/health/detailed"
   ],
-  "invalid": []
+  "mutationCalls": 0
 }
