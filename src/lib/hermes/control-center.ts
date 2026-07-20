@@ -52,14 +52,15 @@ function collectHermesObservations(
     interfaceIdentity: string,
     outcome: HermesEvidenceOutcome,
     summary: string,
-    options: Partial<Pick<HermesCapabilityObservation, "observedAt" | "freshness" | "facts">> = {}
+    options: Partial<Pick<HermesCapabilityObservation, "observedAt" | "assertedFreshness" | "facts">> = {}
   ) => observations.push({
     capabilityId,
     source,
     interface: interfaceIdentity,
     observedAt: options.observedAt ?? observedAt,
-    freshness: options.freshness ?? "fresh",
+    assertedFreshness: options.assertedFreshness ?? "fresh",
     proofKind: "live",
+    proofScope: "live_runtime_operation",
     outcome,
     summary,
     installedBackendVersion: installed.backendVersion,

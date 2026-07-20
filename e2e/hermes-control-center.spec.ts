@@ -14,7 +14,8 @@ const browserErrors = new WeakMap<Page, string[]>();
 async function prepare(page: Page) {
   const errors: string[] = [];
   browserErrors.set(page, errors);
-  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("console", (message) => { if (message.type() === "error") errors.push(`${message.text()} ${message.location().url}`.trim()); });
+  page.on("response", (response) => { if (response.status() >= 400) errors.push(`HTTP ${response.status()} ${response.url()}`); });
   page.on("pageerror", (error) => errors.push(error.message));
   await page.route("**/api/hermes/health", (route) => route.fulfill({ json: { enabled: true, status: "online", version: "0.18.2", profile: "operator-os", gatewayState: "running", checkedAt: fixture.provenance.capturedAt, message: "Acceptance fixture health bridge." } }));
   await page.route("**/api/hermes/control-center", (route) => route.fulfill({ json: fixture }));
@@ -59,6 +60,9 @@ test("Messaging failure inspector shows exact fixture failure without current vi
   await expect(inspector).toContainText("Fatal polling conflict");
   await expect(inspector).toContainText("exact fixture");
   await expect(inspector.getByText("Current live visibility").locator("..")).toContainText("Not credited");
+  await expect(inspector.getByText("Live-Proven").locator("..")).toContainText("Not credited");
+  await expect(inspector.getByTestId("hermes-fixture-path-proof")).toContainText("Exact fixture path");
+  await expect(inspector.getByTestId("hermes-fixture-path-proof")).toContainText("Proven");
   await expect(inspector).not.toContainText(/Bearer|api\.telegram\.org\/bot|Authorization:/i);
   await page.screenshot({ path: path.join(evidenceDir, "messaging-telegram-fatal.png"), fullPage: true });
 });
@@ -71,6 +75,8 @@ test("Gateway conflict inspector preserves both source facts without current vis
   await expect(inspector).toContainText("Hermes health bridge observed running");
   await expect(inspector).toContainText("Hermes management status observed stopped");
   await expect(inspector.getByText("Current live visibility").locator("..")).toContainText("Not credited");
+  await expect(inspector.getByText("Live-Proven").locator("..")).toContainText("Not credited");
+  await expect(inspector.getByTestId("hermes-fixture-path-proof")).toContainText("Proven");
   await page.screenshot({ path: path.join(evidenceDir, "gateway-conflicting-evidence.png"), fullPage: true });
 });
 

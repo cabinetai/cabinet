@@ -1,18 +1,27 @@
 import { HERMES_CAPABILITY_EVIDENCE_CATALOG } from "./capability-evidence-catalog";
 import { HERMES_CAPABILITY_REGISTRY } from "./capability-registry";
 import { buildHermesControlCenterProjection } from "./control-center-projection";
-import type { HermesCapabilityObservation, HermesControlCenterProjectionInput, HermesInstalledRuntime } from "./control-center-types";
+import {
+  HERMES_EVIDENCE_CATALOG_ID,
+  HERMES_RAW_PROJECTION_SCHEMA_VERSION,
+  type HermesCapabilityObservation,
+  type HermesControlCenterProjectionInput,
+  type HermesInstalledRuntime,
+  type HermesProofScope,
+  type HermesRawProjectionEnvelope,
+} from "./control-center-types";
 
-export const HERMES_ACCEPTANCE_FIXTURE_ID = "hermes-phase-2a1-integrity-v1";
+export const HERMES_ACCEPTANCE_FIXTURE_ID = "hermes-phase-2a2-proof-integrity-v1";
 export const HERMES_ACCEPTANCE_FIXTURE_CAPTURED_AT = "2026-07-19T22:15:00.000Z";
 
 const unknownObservation = (capabilityId: string): HermesCapabilityObservation => ({
   capabilityId,
-  source: "Phase 2A.1 acceptance observation",
+  source: "Phase 2A.2 acceptance observation",
   interface: "capability-specific source not exercised by this fixture",
   observedAt: HERMES_ACCEPTANCE_FIXTURE_CAPTURED_AT,
-  freshness: "fresh",
+  assertedFreshness: "fresh",
   proofKind: "exact_fixture",
+  proofScope: "exact_fixture_path",
   outcome: "unknown",
   summary: "The acceptance fixture does not assert current operational health for this source.",
   installedBackendVersion: "0.18.2",
@@ -25,14 +34,16 @@ const override = (
   interfaceIdentity: string,
   outcome: HermesCapabilityObservation["outcome"],
   summary: string,
-  facts?: HermesCapabilityObservation["facts"]
+  facts?: HermesCapabilityObservation["facts"],
+  proofScope: HermesProofScope = "exact_fixture_path"
 ): HermesCapabilityObservation => ({
   capabilityId,
   source,
   interface: interfaceIdentity,
   observedAt: HERMES_ACCEPTANCE_FIXTURE_CAPTURED_AT,
-  freshness: "fresh",
+  assertedFreshness: "fresh",
   proofKind: "exact_fixture",
+  proofScope,
   outcome,
   summary,
   installedBackendVersion: "0.18.2",
@@ -68,7 +79,7 @@ const overrides = new Map<string, HermesCapabilityObservation[]>([
   ["executor", [override("executor", "Hermes toolsets", "/api/tools/toolsets", "success", "The executor toolset is configured.", { count: 1 })]],
   ["browser-opencli", [override("browser-opencli", "OpenCLI doctor", "opencli doctor", "success", "OpenCLI daemon, extension, and one browser profile are connected.", { daemon: "running", extension: "connected", connectedProfiles: 1 })]],
   ["voice", [override("voice", "Hermes audio interface detection", "/api/audio/transcribe and /api/audio/speak", "unknown", "Audio interfaces were not probed. Browser microphone permission was not requested.", { serverInterface: "unprobed", browserPermission: "not_requested" })]],
-  ["notifications", [override("notifications", "Cabinet-local Hermes event preferences", "Cabinet preference store", "success", "Cabinet-local notification preferences are mapped to Hermes events.", { scope: "cabinet_local" })]],
+  ["notifications", [override("notifications", "Cabinet-local Hermes event preferences", "Cabinet preference store", "success", "Cabinet-local notification preferences are mapped to Hermes events.", { scope: "cabinet_local" }, "cabinet_local_surface")]],
   ["about-updates", [override("about-updates", "Installed Hermes metadata", "application metadata and source audit", "success", "Installed metadata was detected independently of runtime health.")]],
   ["computer-use", [override("computer-use", "Hermes computer-use status", "/api/tools/computer-use/status", "unavailable", "Computer Use status is unavailable in this fixture.")]],
   ["raw-logs", [override("raw-logs", "Hermes log diagnostic", "/api/logs", "unknown", "Raw logs remain available only through the diagnostic escape path.")]],
@@ -84,7 +95,7 @@ const installedRuntime: HermesInstalledRuntime = {
     desktopCommit: null,
     backendVersion: "0.18.2",
     backendCommit: "594308d4bbe9",
-    cabinetCommit: "278ddb899b71",
+    cabinetCommit: "a5310e66cd12",
     upstreamAudit: {
       auditedAt: "2026-07-19T21:06:53Z",
       auditedCommit: "0d2ad3993eb91c486854bc71e2721b747ab1d0f4",
@@ -131,6 +142,19 @@ const installedRuntime: HermesInstalledRuntime = {
 
 export function buildHermesAcceptanceFixtureProjection() {
   return buildHermesControlCenterProjection(buildHermesAcceptanceFixtureInput());
+}
+
+export function buildHermesAcceptanceFixtureEnvelope(): HermesRawProjectionEnvelope {
+  const { provenance, ...runtime } = installedRuntime;
+  return {
+    schemaVersion: HERMES_RAW_PROJECTION_SCHEMA_VERSION,
+    capturedAt: HERMES_ACCEPTANCE_FIXTURE_CAPTURED_AT,
+    now: HERMES_ACCEPTANCE_FIXTURE_CAPTURED_AT,
+    provenance,
+    installedRuntime: runtime,
+    observations: HERMES_ACCEPTANCE_FIXTURE_OBSERVATIONS,
+    evidenceCatalogId: HERMES_EVIDENCE_CATALOG_ID,
+  };
 }
 
 export function buildHermesAcceptanceFixtureInput(): HermesControlCenterProjectionInput {

@@ -1,17 +1,18 @@
 {
+  "schemaVersion": "hermes-control-center-snapshot.v1",
   "checkedAt": "2026-07-19T22:15:00.000Z",
   "provenance": {
     "kind": "acceptance_fixture",
     "label": "Acceptance fixture — not live runtime",
     "capturedAt": "2026-07-19T22:15:00.000Z",
-    "fixtureId": "hermes-phase-2a1-integrity-v1"
+    "fixtureId": "hermes-phase-2a2-proof-integrity-v1"
   },
   "installed": {
     "desktopVersion": "0.17.0",
     "desktopCommit": null,
     "backendVersion": "0.18.2",
     "backendCommit": "594308d4bbe9",
-    "cabinetCommit": "278ddb899b71",
+    "cabinetCommit": "a5310e66cd12",
     "adapter": "desktop-0.18",
     "upstreamAudit": {
       "auditedAt": "2026-07-19T21:06:53Z",
@@ -68,9 +69,9 @@
       "percentage": 100
     },
     "liveVisibility": {
-      "covered": 18,
+      "covered": 0,
       "total": 48,
-      "percentage": 38
+      "percentage": 0
     },
     "governedManagement": {
       "covered": 2,
@@ -78,9 +79,9 @@
       "percentage": 4
     },
     "liveProven": {
-      "covered": 24,
+      "covered": 2,
       "total": 48,
-      "percentage": 50
+      "percentage": 4
     },
     "byAudience": {
       "operator": {
@@ -90,9 +91,9 @@
           "percentage": 100
         },
         "liveVisibility": {
-          "covered": 10,
+          "covered": 0,
           "total": 14,
-          "percentage": 71
+          "percentage": 0
         },
         "governedManagement": {
           "covered": 1,
@@ -100,9 +101,9 @@
           "percentage": 7
         },
         "liveProven": {
-          "covered": 13,
+          "covered": 2,
           "total": 14,
-          "percentage": 93
+          "percentage": 14
         }
       },
       "management": {
@@ -112,9 +113,9 @@
           "percentage": 100
         },
         "liveVisibility": {
-          "covered": 8,
+          "covered": 0,
           "total": 22,
-          "percentage": 36
+          "percentage": 0
         },
         "governedManagement": {
           "covered": 1,
@@ -122,9 +123,9 @@
           "percentage": 5
         },
         "liveProven": {
-          "covered": 11,
+          "covered": 0,
           "total": 22,
-          "percentage": 50
+          "percentage": 0
         }
       },
       "developer": {
@@ -182,16 +183,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -201,6 +204,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -232,25 +239,31 @@
           "source": "Hermes detailed health bridge",
           "interface": "/health/detailed",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "The exact fixture health bridge responded.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "connectionState": "online"
-          }
+          },
+          "stale": false,
+          "summary": "The exact fixture health bridge responded."
         }
       ],
       "status": "connected",
       "statusDetail": "The exact fixture health bridge responded.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -282,25 +295,31 @@
           "source": "Hermes skills",
           "interface": "/api/skills",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "Twelve profile-scoped skills were projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 12
-          }
+          },
+          "stale": false,
+          "summary": "Twelve profile-scoped skills were projected."
         }
       ],
       "status": "available",
       "statusDetail": "Twelve profile-scoped skills were projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -332,29 +351,36 @@
           "source": "Hermes messaging platforms",
           "interface": "/api/messaging/platforms",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "failure",
-          "summary": "Telegram: Fatal polling conflict. Another poller is active.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "configuredPlatforms": 1,
             "failedPlatforms": 1
-          }
+          },
+          "stale": false,
+          "summary": "Telegram: Fatal polling conflict. Another poller is active."
         },
         {
           "source": "Installed Desktop messaging route audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Historical route support only. Current platform health requires a fresh platform observation.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Historical route support only. Current platform health requires a fresh platform observation."
         }
       ],
       "status": "degraded",
@@ -363,7 +389,11 @@
         "discoverability": true,
         "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -395,37 +425,48 @@
           "source": "Hermes files",
           "interface": "/api/files",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One safe artifact record was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One safe artifact record was projected."
         },
         {
           "source": "Installed Desktop artifacts route audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Historical route support only. Current artifact visibility requires a fresh files projection.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Historical route support only. Current artifact visibility requires a fresh files projection."
         }
       ],
       "status": "connected",
       "statusDetail": "One safe artifact record was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -457,25 +498,31 @@
           "source": "Hermes cron jobs",
           "interface": "/api/cron/jobs",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "connected_empty",
-          "summary": "The cron endpoint responded successfully with no canonical jobs.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 0
-          }
+          },
+          "stale": false,
+          "summary": "The cron endpoint responded successfully with no canonical jobs."
         }
       ],
       "status": "connected",
       "statusDetail": "The cron endpoint responded successfully with no canonical jobs.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -507,25 +554,31 @@
           "source": "Hermes profiles",
           "interface": "/api/profiles",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One profile was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One profile was projected."
         }
       ],
       "status": "connected",
       "statusDetail": "One profile was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -557,37 +610,48 @@
           "source": "Hermes active agents",
           "interface": "/api/plugins/kanban/workers/active",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One active Hermes worker was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One active Hermes worker was projected."
         },
         {
           "source": "Installed Desktop agents route audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Installed Desktop source exposes agent and subagent status surfaces.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Installed Desktop source exposes agent and subagent status surfaces."
         }
       ],
       "status": "connected",
       "statusDetail": "One active Hermes worker was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -619,39 +683,50 @@
           "source": "Hermes memory graph",
           "interface": "/api/learning/graph",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "connected_empty",
-          "summary": "The operator-os graph endpoint responded with no nodes.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "nodes": 0,
             "edges": 0,
             "profile": "operator-os"
-          }
+          },
+          "stale": false,
+          "summary": "The operator-os graph endpoint responded with no nodes."
         },
         {
           "source": "Installed Desktop Starmap route audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Memory graph support was found in the historical source audit; node counts are observation-specific.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Memory graph support was found in the historical source audit; node counts are observation-specific."
         }
       ],
       "status": "connected",
       "statusDetail": "The operator-os graph endpoint responded with no nodes.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -680,16 +755,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -699,6 +776,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -730,37 +811,48 @@
           "source": "Hermes model options",
           "interface": "/api/model/options",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One authenticated provider summary was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One authenticated provider summary was projected."
         },
         {
           "source": "Installed Desktop provider settings audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Provider settings were found in the historical source audit.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Provider settings were found in the historical source audit."
         }
       ],
       "status": "connected",
       "statusDetail": "One authenticated provider summary was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -792,37 +884,48 @@
           "source": "Hermes model options",
           "interface": "/api/model/options",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One redacted provider account summary was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One redacted provider account summary was projected."
         },
         {
           "source": "Installed Desktop account settings audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Provider account surfaces were found without retaining credential material.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Provider account surfaces were found without retaining credential material."
         }
       ],
       "status": "connected",
       "statusDetail": "One redacted provider account summary was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -854,37 +957,48 @@
           "source": "Hermes current model",
           "interface": "/api/model/info",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "The inherited current model was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "The inherited current model was projected."
         },
         {
           "source": "Installed Desktop model settings audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Model selection surfaces were found in the historical source audit.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Model selection surfaces were found in the historical source audit."
         }
       ],
       "status": "connected",
       "statusDetail": "The inherited current model was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -913,16 +1027,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -932,6 +1048,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -961,57 +1081,72 @@
       "evidence": [
         {
           "source": "Hermes gateway reconciliation",
-          "interface": "health bridge plus management status",
+          "interface": "Hermes health bridge + Hermes management status",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "conflict",
-          "summary": "Hermes health bridge observed running at 2026-07-19T22:15:00.000Z; Hermes management status observed stopped at 2026-07-19T22:15:00.000Z.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "runningSource": "Hermes health bridge",
+            "stoppedSource": "Hermes management status"
+          },
+          "stale": false,
+          "summary": "Hermes health bridge observed running at 2026-07-19T22:15:00.000Z; Hermes management status observed stopped at 2026-07-19T22:15:00.000Z."
         },
         {
           "source": "Hermes health bridge",
           "interface": "/health/detailed gateway_state",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "Health bridge gateway state is running.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "state": "running"
-          }
+          },
+          "stale": false,
+          "summary": "Health bridge gateway state is running."
         },
         {
           "source": "Hermes management status",
           "interface": "/api/status gateway state",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "Management gateway state is stopped.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "state": "stopped"
-          }
+          },
+          "stale": false,
+          "summary": "Management gateway state is stopped."
         },
         {
           "source": "Installed Desktop gateway settings audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Gateway management support exists historically; current state requires fresh independent observations.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Gateway management support exists historically; current state requires fresh independent observations."
         }
       ],
       "status": "degraded",
@@ -1020,7 +1155,11 @@
         "discoverability": true,
         "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1052,25 +1191,31 @@
           "source": "Hermes MCP servers",
           "interface": "/api/mcp/servers",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "connected_empty",
-          "summary": "The MCP endpoint responded successfully with no configured servers.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 0
-          }
+          },
+          "stale": false,
+          "summary": "The MCP endpoint responded successfully with no configured servers."
         }
       ],
       "status": "connected",
       "statusDetail": "The MCP endpoint responded successfully with no configured servers.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1102,25 +1247,31 @@
           "source": "Hermes dashboard plugins",
           "interface": "/api/dashboard/plugins",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One enabled plugin was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One enabled plugin was projected."
         }
       ],
       "status": "connected",
       "statusDetail": "One enabled plugin was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1152,28 +1303,35 @@
           "source": "Cabinet-local Hermes event preferences",
           "interface": "Cabinet preference store",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "cabinet_local_surface",
           "outcome": "success",
-          "summary": "Cabinet-local notification preferences are mapped to Hermes events.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "scope": "cabinet_local"
-          }
+          },
+          "stale": false,
+          "summary": "Cabinet-local notification preferences are mapped to Hermes events."
         },
         {
           "source": "Cabinet notification preference component contract",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Cabinet-local preferences are mapped to Hermes events. This does not prove Hermes Desktop notification settings or current Hermes runtime health.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Cabinet-local preferences are mapped to Hermes events. This does not prove Hermes Desktop notification settings or current Hermes runtime health."
         }
       ],
       "status": "available",
@@ -1182,7 +1340,11 @@
         "discoverability": true,
         "liveVisibility": false,
         "governedManagement": true,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1214,37 +1376,48 @@
           "source": "Hermes sessions",
           "interface": "/api/sessions",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "One session was projected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "One session was projected."
         },
         {
           "source": "Installed Desktop session route audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Archived session support was found in the historical source audit.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Archived session support was found in the historical source audit."
         }
       ],
       "status": "connected",
       "statusDetail": "One session was projected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1273,16 +1446,18 @@
       "operationalDetail": "Not detected in the installed Desktop build",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "unsupported",
@@ -1292,6 +1467,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1323,22 +1502,28 @@
           "source": "Installed Hermes metadata",
           "interface": "application metadata and source audit",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "Installed metadata was detected independently of runtime health.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "Installed metadata was detected independently of runtime health."
         }
       ],
       "status": "connected",
       "statusDetail": "Installed metadata was detected independently of runtime health.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1370,40 +1555,49 @@
           "source": "Hermes current model",
           "interface": "/api/model/info",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "The current model endpoint responded.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "The current model endpoint responded."
         },
         {
           "source": "Hermes config schema",
           "interface": "/api/config/schema",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unavailable",
-          "summary": "The model configuration schema was unavailable in this fixture.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The model configuration schema was unavailable in this fixture."
         },
         {
           "source": "Installed Desktop model settings audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Model settings were found in the historical source audit.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Model settings were found in the historical source audit."
         }
       ],
       "status": "degraded",
@@ -1412,7 +1606,11 @@
         "discoverability": true,
         "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1441,16 +1639,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1460,6 +1660,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1488,16 +1692,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1507,6 +1713,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1535,16 +1745,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1554,6 +1766,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1582,16 +1798,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1601,6 +1819,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1632,38 +1854,49 @@
           "source": "Hermes memory",
           "interface": "/api/memory",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "Supermemory is active for profile operator-os.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "provider": "supermemory",
             "profile": "operator-os"
-          }
+          },
+          "stale": false,
+          "summary": "Supermemory is active for profile operator-os."
         },
         {
           "source": "Installed Desktop memory route audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Memory management interfaces were found in the historical source audit.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Memory management interfaces were found in the historical source audit."
         }
       ],
       "status": "connected",
       "statusDetail": "Supermemory is active for profile operator-os.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -1695,29 +1928,36 @@
           "source": "Hermes audio interface detection",
           "interface": "/api/audio/transcribe and /api/audio/speak",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "Audio interfaces were not probed. Browser microphone permission was not requested.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "serverInterface": "unprobed",
             "browserPermission": "not_requested"
-          }
+          },
+          "stale": false,
+          "summary": "Audio interfaces were not probed. Browser microphone permission was not requested."
         },
         {
           "source": "Installed audio interface source audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Audio interfaces exist in the audited source. They were not probed in the current runtime.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Audio interfaces exist in the audited source. They were not probed in the current runtime."
         }
       ],
       "status": "available",
@@ -1726,7 +1966,11 @@
         "discoverability": true,
         "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1755,16 +1999,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1774,6 +2020,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1802,16 +2052,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1821,6 +2073,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1849,16 +2105,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1868,6 +2126,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1896,16 +2158,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1915,6 +2179,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1943,16 +2211,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -1962,6 +2232,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -1990,16 +2264,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2009,6 +2285,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2037,16 +2317,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2056,6 +2338,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2087,37 +2373,48 @@
           "source": "Hermes sessions",
           "interface": "/api/sessions",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "Session pin state was projected as unknown.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "Session pin state was projected as unknown."
         },
         {
           "source": "Installed Desktop session action audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Session pinning was visible in the historical Desktop source audit.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Session pinning was visible in the historical Desktop source audit."
         }
       ],
       "status": "connected",
       "statusDetail": "Session pin state was projected as unknown.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -2146,16 +2443,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2165,6 +2464,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2193,16 +2496,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2212,6 +2517,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2240,16 +2549,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2259,6 +2570,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2287,28 +2602,52 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        },
+        {
+          "source": "Cabinet Hermes M3-M7 source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "The approval contract exists in the audited source. Source existence does not prove a live operation."
         },
         {
           "source": "Cabinet Hermes M3-M7 acceptance suite",
-          "interface": "Hermes Desktop source audit",
-          "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "interface": "Hermes gateway and run decision contract",
+          "observedAt": "2026-07-19T02:23:07Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "historical_live_acceptance",
           "outcome": "success",
-          "summary": "The approval boundary and duplicate-submission behavior passed the historical conversion acceptance suite.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "PROGRESS.md#2026-07-19-m7-technical-conversion-acceptance"
+          },
+          "stale": true,
+          "summary": "A governed approval decision completed with confirmation and duplicate-submission protection."
         }
       ],
       "status": "available",
@@ -2318,6 +2657,10 @@
         "liveVisibility": false,
         "governedManagement": true,
         "liveProven": true
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2349,39 +2692,67 @@
           "source": "OpenCLI doctor",
           "interface": "opencli doctor",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "OpenCLI daemon, extension, and one browser profile are connected.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "daemon": "running",
             "extension": "connected",
             "connectedProfiles": 1
-          }
+          },
+          "stale": false,
+          "summary": "OpenCLI daemon, extension, and one browser profile are connected."
         },
         {
-          "source": "OpenCLI read-only acceptance audit",
+          "source": "OpenCLI interface source audit",
           "interface": "Hermes Desktop source audit",
           "observedAt": "2026-07-19T21:06:53Z",
-          "freshness": "stale",
-          "stale": true,
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
           "proofKind": "historical_audit",
+          "proofScope": "source_audit",
           "outcome": "success",
-          "summary": "Historical local acceptance proved title, DOM read, and screenshot support without external writes.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93"
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "OpenCLI interface support was found in the audited integration source."
+        },
+        {
+          "source": "OpenCLI read-only acceptance",
+          "interface": "opencli local page title, DOM read, and screenshot",
+          "observedAt": "2026-07-19T20:18:51Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "historical_live_acceptance",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "docs/plans/hermes-desktop-capability-parity.md#phase-4-opencli-browser-module"
+          },
+          "stale": true,
+          "summary": "A local read-only acceptance opened a test page, read its title and DOM, and captured a screenshot without an external write."
         }
       ],
       "status": "connected",
       "statusDetail": "OpenCLI daemon, extension, and one browser profile are connected.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
         "liveProven": true
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -2413,25 +2784,31 @@
           "source": "Hermes toolsets",
           "interface": "/api/tools/toolsets",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "success",
-          "summary": "The executor toolset is configured.",
           "installedBackendVersion": "0.18.2",
           "installedBackendCommit": "594308d4bbe9",
           "facts": {
             "count": 1
-          }
+          },
+          "stale": false,
+          "summary": "The executor toolset is configured."
         }
       ],
       "status": "connected",
       "statusDetail": "The executor toolset is configured.",
       "credit": {
         "discoverability": true,
-        "liveVisibility": true,
+        "liveVisibility": false,
         "governedManagement": false,
-        "liveProven": true
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -2463,13 +2840,15 @@
           "source": "Hermes log diagnostic",
           "interface": "/api/logs",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "Raw logs remain available only through the diagnostic escape path.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "Raw logs remain available only through the diagnostic escape path."
         }
       ],
       "status": "available",
@@ -2479,6 +2858,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2507,16 +2890,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2526,6 +2911,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2557,13 +2946,15 @@
           "source": "Hermes computer-use status",
           "interface": "/api/tools/computer-use/status",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unavailable",
-          "summary": "Computer Use status is unavailable in this fixture.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "Computer Use status is unavailable in this fixture."
         }
       ],
       "status": "degraded",
@@ -2573,6 +2964,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
       }
     },
     {
@@ -2601,16 +2996,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2620,6 +3017,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2648,16 +3049,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2667,6 +3070,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     },
     {
@@ -2695,16 +3102,18 @@
       "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
       "evidence": [
         {
-          "source": "Phase 2A.1 acceptance observation",
+          "source": "Phase 2A.2 acceptance observation",
           "interface": "capability-specific source not exercised by this fixture",
           "observedAt": "2026-07-19T22:15:00.000Z",
-          "freshness": "fresh",
-          "stale": false,
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
           "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
           "outcome": "unknown",
-          "summary": "The acceptance fixture does not assert current operational health for this source.",
           "installedBackendVersion": "0.18.2",
-          "installedBackendCommit": "594308d4bbe9"
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
         }
       ],
       "status": "available",
@@ -2714,6 +3123,10 @@
         "liveVisibility": false,
         "governedManagement": false,
         "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
       }
     }
   ],

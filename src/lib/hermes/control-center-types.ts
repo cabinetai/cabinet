@@ -31,6 +31,14 @@ export const HERMES_OPERATIONAL_HEALTH_STATES = [
 
 export type HermesOperationalHealth = (typeof HERMES_OPERATIONAL_HEALTH_STATES)[number];
 export type HermesProofKind = "live" | "exact_fixture" | "historical_audit";
+export const HERMES_PROOF_SCOPES = [
+  "live_runtime_operation",
+  "historical_live_acceptance",
+  "source_audit",
+  "exact_fixture_path",
+  "cabinet_local_surface",
+] as const;
+export type HermesProofScope = (typeof HERMES_PROOF_SCOPES)[number];
 export type HermesEvidenceOutcome =
   | "success"
   | "connected_empty"
@@ -47,8 +55,9 @@ export type HermesCapabilityObservation = {
   source: string;
   interface: string;
   observedAt: string | null;
-  freshness: HermesObservationFreshness;
+  assertedFreshness?: HermesObservationFreshness;
   proofKind: HermesProofKind;
+  proofScope: HermesProofScope;
   outcome: HermesEvidenceOutcome;
   summary: string;
   installedBackendVersion: string | null;
@@ -56,9 +65,10 @@ export type HermesCapabilityObservation = {
   facts?: Record<string, HermesObservationFact>;
 };
 
-export type HermesCapabilityEvidence = Omit<HermesCapabilityObservation, "capabilityId" | "freshness"> & {
+export type HermesCapabilityEvidence = Omit<HermesCapabilityObservation, "capabilityId" | "assertedFreshness"> & {
   stale: boolean;
-  freshness: HermesObservationFreshness;
+  assertedFreshness: HermesObservationFreshness;
+  effectiveFreshness: HermesObservationFreshness;
 };
 
 export type HermesGovernanceProof = {
@@ -72,13 +82,16 @@ export type HermesGovernanceProof = {
 };
 
 export type HermesHistoricalProof = {
+  capabilityId: string;
+  proofScope: Extract<HermesProofScope, "historical_live_acceptance" | "source_audit">;
   source: string;
   interface: string;
   observedAt: string;
-  outcome: Extract<HermesEvidenceOutcome, "success" | "connected_empty" | "failure" | "conflict">;
+  outcome: HermesEvidenceOutcome;
   summary: string;
-  installedBackendVersion: string;
+  installedBackendVersion: string | null;
   installedBackendCommit: string | null;
+  evidenceReference: string;
 };
 
 export type HermesCapabilityEvidenceCatalogEntry = {
@@ -120,6 +133,10 @@ export type HermesCapabilityProjection = HermesCapabilityDefinition & {
     liveVisibility: boolean;
     governedManagement: boolean;
     liveProven: boolean;
+  };
+  pathProof: {
+    proven: boolean;
+    label: string | null;
   };
 };
 
@@ -165,7 +182,22 @@ export type HermesControlCenterProjectionInput = {
   now: string;
 };
 
+export const HERMES_RAW_PROJECTION_SCHEMA_VERSION = "hermes-control-center-projection-input.v1" as const;
+export const HERMES_SNAPSHOT_SCHEMA_VERSION = "hermes-control-center-snapshot.v1" as const;
+export const HERMES_EVIDENCE_CATALOG_ID = "cabinet-hermes-evidence-v1" as const;
+
+export type HermesRawProjectionEnvelope = {
+  schemaVersion: typeof HERMES_RAW_PROJECTION_SCHEMA_VERSION;
+  capturedAt: string;
+  now: string;
+  provenance: HermesProjectionProvenance;
+  installedRuntime: Omit<HermesInstalledRuntime, "provenance">;
+  observations: readonly HermesCapabilityObservation[];
+  evidenceCatalogId: typeof HERMES_EVIDENCE_CATALOG_ID;
+};
+
 export type HermesControlCenterSnapshot = {
+  schemaVersion: typeof HERMES_SNAPSHOT_SCHEMA_VERSION;
   checkedAt: string;
   provenance: HermesProjectionProvenance;
   installed: {

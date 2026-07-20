@@ -140,7 +140,7 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
     ["Discoverable", capability.credit.discoverability],
     ["Current live visibility", capability.credit.liveVisibility],
     ["Governed control", capability.credit.governedManagement],
-    ["Live proven", capability.credit.liveProven],
+    ["Live-Proven", capability.credit.liveProven],
   ] as const;
   return (
     <div className="flex min-h-0 flex-1 flex-col" data-testid="hermes-capability-inspector">
@@ -174,6 +174,12 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
                 </div>
               ))}
             </div>
+            {capability.pathProof.proven ? (
+              <div className="flex items-center justify-between gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-2 text-xs" data-testid="hermes-fixture-path-proof">
+                <span className="text-muted-foreground">Exact fixture path</span>
+                <Badge variant="outline">Proven</Badge>
+              </div>
+            ) : null}
           </section>
           <Separator />
           <section className="flex flex-col gap-2">
@@ -205,12 +211,13 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
               <div key={`${evidence.source}-${index}`} className="rounded-lg border border-border p-3 text-xs">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Badge variant="outline">{evidence.proofKind.replaceAll("_", " ")}</Badge>
+                  <Badge variant="outline">{evidence.proofScope.replaceAll("_", " ")}</Badge>
                   <Badge variant={evidence.outcome === "failure" || evidence.outcome === "conflict" ? "destructive" : "secondary"}>{evidence.outcome}</Badge>
-                  {evidence.stale ? <Badge variant="outline">Stale</Badge> : null}
+                  {evidence.effectiveFreshness !== "fresh" ? <Badge variant="outline">{evidence.effectiveFreshness === "stale" ? "Stale" : "Freshness unknown"}</Badge> : null}
                 </div>
                 <p className="mt-2 font-medium">{evidence.source}</p>
                 <p className="mt-1 leading-5 text-muted-foreground">{evidence.summary}</p>
-                <p className="mt-1 text-muted-foreground">Observed {evidence.observedAt ?? "time unknown"} · Backend {evidence.installedBackendVersion ?? "unknown"}</p>
+                <p className="mt-1 text-muted-foreground">Observed {evidence.observedAt ?? "time unknown"} · Freshness {evidence.effectiveFreshness} (source asserted {evidence.assertedFreshness}) · Backend {evidence.installedBackendVersion ?? "unknown"}</p>
               </div>
             )) : <p className="text-sm text-muted-foreground">No current runtime evidence is available for this discoverable capability.</p>}
             <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion ?? "Unknown"} ({snapshot.installed.desktopCommit ?? "commit unknown"}) · Backend {snapshot.installed.backendVersion ?? "Unknown"} ({snapshot.installed.backendCommit ?? "commit unknown"})</p>
