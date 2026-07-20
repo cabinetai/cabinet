@@ -1,0 +1,4162 @@
+{
+  "schemaVersion": "hermes-control-center-snapshot.v1",
+  "checkedAt": "2026-07-19T22:15:00.000Z",
+  "provenance": {
+    "kind": "acceptance_fixture",
+    "label": "Acceptance fixture — not live runtime",
+    "capturedAt": "2026-07-19T22:15:00.000Z",
+    "fixtureId": "hermes-phase-3a-runtime-execution-v1"
+  },
+  "evidenceProvenance": {
+    "implementationRevision": "0f676be275fd6a6d2075d86202d0bf9ff4f5def8",
+    "fixtureId": "hermes-phase-3a-runtime-execution-v1",
+    "fixtureCapturedAt": "2026-07-19T22:15:00.000Z",
+    "artifactGeneratedAt": "2026-07-20T02:30:00.000Z"
+  },
+  "installed": {
+    "desktopVersion": "0.17.0",
+    "desktopCommit": null,
+    "backendVersion": "0.18.2",
+    "backendCommit": "594308d4bbe9",
+    "cabinetCommit": null,
+    "adapter": "desktop-0.18",
+    "upstreamAudit": {
+      "auditedAt": "2026-07-19T21:06:53Z",
+      "auditedCommit": "0d2ad3993eb9",
+      "installedBackendVersion": "0.18.2",
+      "commitsBehind": 328,
+      "stale": true
+    }
+  },
+  "health": {
+    "runtime": "conflicting_evidence",
+    "gateway": "conflicting evidence",
+    "profile": "operator-os",
+    "openCli": "healthy"
+  },
+  "exceptions": [
+    {
+      "capabilityId": "command-center",
+      "title": "Command Center",
+      "health": "conflicting_evidence",
+      "summary": "Hermes reported 10 bounded execution records. Two newest valid lifecycle observations disagree for one run."
+    },
+    {
+      "capabilityId": "messaging",
+      "title": "Messaging",
+      "health": "degraded",
+      "summary": "Telegram: Fatal polling conflict. Another poller is active."
+    },
+    {
+      "capabilityId": "artifacts",
+      "title": "Artifacts",
+      "health": "degraded",
+      "summary": "Hermes reported 2 safe artifact metadata records. The installed artifact response does not report run association."
+    },
+    {
+      "capabilityId": "gateway",
+      "title": "Gateway",
+      "health": "conflicting_evidence",
+      "summary": "Hermes health bridge observed running at 2026-07-19T22:15:00.000Z; Hermes management status observed stopped at 2026-07-19T22:15:00.000Z."
+    },
+    {
+      "capabilityId": "model-settings",
+      "title": "Model settings",
+      "health": "degraded",
+      "summary": "The current model endpoint responded. The model configuration schema was unavailable in this fixture."
+    },
+    {
+      "capabilityId": "source-review",
+      "title": "Source-control review",
+      "health": "degraded",
+      "summary": "Hermes Git status returned bounded repository state. The installed review-list source returned a bounded unavailable response."
+    },
+    {
+      "capabilityId": "computer-use",
+      "title": "Computer Use",
+      "health": "unavailable",
+      "summary": "Computer Use status is unavailable in this fixture."
+    },
+    {
+      "capabilityId": "usage-insights",
+      "title": "Usage insights",
+      "health": "degraded",
+      "summary": "Hermes reported aggregate token and cost usage. Per-run cost is not guaranteed by the installed Run status contract."
+    }
+  ],
+  "summary": {
+    "available": 22,
+    "connected": 17,
+    "degraded": 8,
+    "disabled": 0,
+    "unsupported": 1,
+    "needs_setup": 0
+  },
+  "parity": {
+    "discoverability": {
+      "covered": 48,
+      "total": 48,
+      "percentage": 100
+    },
+    "liveVisibility": {
+      "covered": 0,
+      "total": 48,
+      "percentage": 0
+    },
+    "governedManagement": {
+      "covered": 2,
+      "total": 48,
+      "percentage": 4
+    },
+    "liveProven": {
+      "covered": 2,
+      "total": 48,
+      "percentage": 4
+    },
+    "byAudience": {
+      "operator": {
+        "discoverability": {
+          "covered": 14,
+          "total": 14,
+          "percentage": 100
+        },
+        "liveVisibility": {
+          "covered": 0,
+          "total": 14,
+          "percentage": 0
+        },
+        "governedManagement": {
+          "covered": 1,
+          "total": 14,
+          "percentage": 7
+        },
+        "liveProven": {
+          "covered": 2,
+          "total": 14,
+          "percentage": 14
+        }
+      },
+      "management": {
+        "discoverability": {
+          "covered": 22,
+          "total": 22,
+          "percentage": 100
+        },
+        "liveVisibility": {
+          "covered": 0,
+          "total": 22,
+          "percentage": 0
+        },
+        "governedManagement": {
+          "covered": 1,
+          "total": 22,
+          "percentage": 5
+        },
+        "liveProven": {
+          "covered": 0,
+          "total": 22,
+          "percentage": 0
+        }
+      },
+      "developer": {
+        "discoverability": {
+          "covered": 12,
+          "total": 12,
+          "percentage": 100
+        },
+        "liveVisibility": {
+          "covered": 0,
+          "total": 12,
+          "percentage": 0
+        },
+        "governedManagement": {
+          "covered": 0,
+          "total": 12,
+          "percentage": 0
+        },
+        "liveProven": {
+          "covered": 0,
+          "total": 12,
+          "percentage": 0
+        }
+      }
+    }
+  },
+  "capabilities": [
+    {
+      "id": "chat",
+      "name": "Chat and sessions",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "/ and apps/desktop/src/app/chat",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway WebSocket sessions and /api/sessions",
+      "cabinetSurface": "Agents conversations",
+      "cabinetHref": "/agents",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Keep Hermes transcript and execution history canonical.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [
+        "conversation",
+        "chat",
+        "history"
+      ],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "command-center",
+      "name": "Command Center",
+      "group": "Overview",
+      "audience": "operator",
+      "desktopSource": "/command-center",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/status, /api/system/stats, /api/ops/*",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Add confirmed maintenance actions after owner review.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "conflicting_evidence",
+      "operationalDetail": "Hermes reported 10 bounded execution records. Two newest valid lifecycle observations disagree for one run.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes runtime execution",
+          "interface": "/api/sessions + /v1/runs/{run_id}",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "runtimeExecution": {
+              "observedAt": "2026-07-19T22:15:00.000Z",
+              "runs": [
+                {
+                  "id": "Run run-active",
+                  "agent": null,
+                  "state": "active",
+                  "currentStep": "Gather evidence",
+                  "currentTool": "browser.read",
+                  "startedAt": "2026-07-19T22:00:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:15:00.000Z",
+                  "waitingReason": null,
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 1,
+                  "artifactCount": 1,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-approval",
+                  "agent": null,
+                  "state": "waiting",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:50:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:14:00.000Z",
+                  "waitingReason": "approval",
+                  "retryCount": null,
+                  "parentRunId": "Run run-active",
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-failed",
+                  "agent": null,
+                  "state": "failed",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:20:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:13:00.000Z",
+                  "waitingReason": null,
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": "Run failed. A bounded failure summary is available.",
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-conflict",
+                  "agent": null,
+                  "state": "conflicting",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:00:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:12:00.000Z",
+                  "waitingReason": null,
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": "Sources reported conflicting lifecycle states at the newest valid observation time.",
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run larification",
+                  "agent": null,
+                  "state": "waiting",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:45:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:11:00.000Z",
+                  "waitingReason": "clarification",
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-auth",
+                  "agent": null,
+                  "state": "waiting",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:40:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:10:00.000Z",
+                  "waitingReason": "authentication",
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-blocked",
+                  "agent": null,
+                  "state": "blocked",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:35:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:09:00.000Z",
+                  "waitingReason": "file",
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-queued",
+                  "agent": null,
+                  "state": "queued",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T22:14:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:08:00.000Z",
+                  "waitingReason": null,
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run run-retrying",
+                  "agent": null,
+                  "state": "retrying",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:30:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:07:00.000Z",
+                  "waitingReason": null,
+                  "retryCount": 2,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 0,
+                  "inputTokens": null,
+                  "outputTokens": null,
+                  "totalTokens": null,
+                  "costUsd": null,
+                  "durationMs": null,
+                  "summary": null,
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                },
+                {
+                  "id": "Run un-completed",
+                  "agent": null,
+                  "state": "completed",
+                  "currentStep": null,
+                  "currentTool": null,
+                  "startedAt": "2026-07-19T21:00:00.000Z",
+                  "lastTransitionAt": "2026-07-19T22:06:00.000Z",
+                  "waitingReason": null,
+                  "retryCount": null,
+                  "parentRunId": null,
+                  "childRunCount": 0,
+                  "artifactCount": 2,
+                  "inputTokens": 1200,
+                  "outputTokens": 300,
+                  "totalTokens": 1500,
+                  "costUsd": 0.14,
+                  "durationMs": 600000,
+                  "summary": "Run completed with a result.",
+                  "source": "Hermes Run status",
+                  "interface": "/v1/runs/{run_id}"
+                }
+              ],
+              "agents": {
+                "state": "success",
+                "count": 1,
+                "summary": "Hermes reported 1 active agents."
+              },
+              "runSource": {
+                "state": "success",
+                "summary": "Hermes reported 10 bounded execution records."
+              },
+              "queue": {
+                "state": "connected_empty",
+                "total": 0,
+                "counts": {
+                  "ready": 0,
+                  "running": 0,
+                  "blocked": 0
+                },
+                "summary": "Hermes queue responded with no tasks."
+              },
+              "approvals": {
+                "state": "success",
+                "count": 4,
+                "summary": "Hermes reported 4 runs waiting for human input."
+              },
+              "artifacts": {
+                "state": "success",
+                "total": 2,
+                "items": [
+                  {
+                    "name": "runtime-report.md",
+                    "kind": "text/markdown",
+                    "size": 2048,
+                    "observedAt": "2026-07-19T22:26:40.000Z"
+                  },
+                  {
+                    "name": "screenshot.png",
+                    "kind": "image/png",
+                    "size": 4096,
+                    "observedAt": "2026-07-19T22:28:20.000Z"
+                  }
+                ],
+                "summary": "Hermes reported 2 safe artifact metadata records."
+              },
+              "usage": {
+                "state": "success",
+                "inputTokens": 4200,
+                "outputTokens": 900,
+                "estimatedCostUsd": 0.48,
+                "actualCostUsd": 0.45,
+                "sessions": 9,
+                "summary": "Hermes reported aggregate token and cost usage."
+              }
+            }
+          },
+          "stale": false,
+          "summary": "Hermes reported 10 bounded execution records."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes lifecycle reconciliation",
+          "interface": "/v1/runs/{run_id} + /events",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "conflict",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "run": "Run run-conflict",
+            "states": [
+              "active",
+              "failed"
+            ]
+          },
+          "stale": false,
+          "summary": "Two newest valid lifecycle observations disagree for one run."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes reported 10 bounded execution records. Two newest valid lifecycle observations disagree for one run.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "skills",
+      "name": "Skills",
+      "group": "Tools",
+      "audience": "operator",
+      "desktopSource": "/skills",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/skills and /api/skills/hub/*",
+      "cabinetSurface": "Cabinet Skills and Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "No duplicate catalog. Continue projecting Hermes skill provenance and enablement.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Twelve profile-scoped skills were projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes skills",
+          "interface": "/api/skills",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 12
+          },
+          "stale": false,
+          "summary": "Twelve profile-scoped skills were projected."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Twelve profile-scoped skills were projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "messaging",
+      "name": "Messaging",
+      "group": "Messaging",
+      "audience": "operator",
+      "desktopSource": "/messaging",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/messaging/platforms and Gateway",
+      "cabinetSurface": "Hermes Messaging",
+      "cabinetHref": "/hermes?section=messaging",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add confirmed platform repair and test actions without exposing credentials.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Telegram: Fatal polling conflict. Another poller is active.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes messaging platforms",
+          "interface": "/api/messaging/platforms",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "failure",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "configuredPlatforms": 1,
+            "failedPlatforms": 1
+          },
+          "stale": false,
+          "summary": "Telegram: Fatal polling conflict. Another poller is active."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop messaging route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Historical route support only. Current platform health requires a fresh platform observation."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Telegram: Fatal polling conflict. Another poller is active.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "artifacts",
+      "name": "Artifacts",
+      "group": "Artifacts",
+      "audience": "operator",
+      "desktopSource": "/artifacts",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/sessions/{id}/messages, /api/files, runtime tool events",
+      "cabinetSurface": "Hermes Artifacts",
+      "cabinetHref": "/hermes?section=artifacts",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Add safe preview, reveal, and download controls while preserving session and run association.",
+      "testEvidence": "Exact artifact projection contract plus installed Hermes /api/files response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes reported 2 safe artifact metadata records. The installed artifact response does not report run association.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes artifact metadata",
+          "interface": "/api/files",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "total": 2,
+            "items": [
+              {
+                "name": "runtime-report.md",
+                "kind": "text/markdown",
+                "size": 2048,
+                "observedAt": "2026-07-19T22:26:40.000Z"
+              },
+              {
+                "name": "screenshot.png",
+                "kind": "image/png",
+                "size": 4096,
+                "observedAt": "2026-07-19T22:28:20.000Z"
+              }
+            ]
+          },
+          "stale": false,
+          "summary": "Hermes reported 2 safe artifact metadata records."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes run-artifact association",
+          "interface": "installed response fields",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "associationAvailable": false
+          },
+          "stale": false,
+          "summary": "The installed artifact response does not report run association."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop artifacts route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Historical route support only. Current artifact visibility requires a fresh files projection."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes reported 2 safe artifact metadata records. The installed artifact response does not report run association.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "cron",
+      "name": "Cron and background jobs",
+      "group": "Automations",
+      "audience": "operator",
+      "desktopSource": "/cron",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/cron/jobs and /api/cron/jobs/{id}/runs",
+      "cabinetSurface": "Hermes Automations",
+      "cabinetHref": "/hermes?section=automations",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add a reviewed management surface; existing mutations remain confirmation and idempotency gated.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes queue responded with no tasks.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Kanban queue",
+          "interface": "/api/plugins/kanban/board",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "connected_empty",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "total": 0,
+            "counts": {
+              "ready": 0,
+              "running": 0,
+              "blocked": 0
+            }
+          },
+          "stale": false,
+          "summary": "Hermes queue responded with no tasks."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Hermes queue responded with no tasks.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "profiles",
+      "name": "Profiles",
+      "group": "Agents",
+      "audience": "management",
+      "desktopSource": "/profiles",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/profiles and /api/profiles/{name}/soul",
+      "cabinetSurface": "Hermes Agents",
+      "cabinetHref": "/hermes?section=agents",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reviewed profile management and keep profile and runtime agent identities visually distinct.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "One profile was projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes profiles",
+          "interface": "/api/profiles",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "One profile was projected."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "One profile was projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "agents-subagents",
+      "name": "Agents and subagents",
+      "group": "Agents",
+      "audience": "operator",
+      "desktopSource": "/agents",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway events, run state, kanban worker API when plugin is enabled",
+      "cabinetSurface": "Hermes Agents",
+      "cabinetHref": "/hermes?section=agents",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Normalize current tool, parent session, result, error, and supported stop controls.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes reported 1 active agents.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes active workers",
+          "interface": "/api/plugins/kanban/workers/active",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "Hermes reported 1 active agents."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes worker detail",
+          "interface": "/api/plugins/kanban/runs/{run_id}",
+          "observedAt": "2026-07-19T18:00:00.000Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "failure",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "count": 0
+          },
+          "stale": true,
+          "summary": "A bounded worker-detail source failed."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop agents route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Installed Desktop source exposes agent and subagent status surfaces."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Hermes reported 1 active agents.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "starmap",
+      "name": "Starmap and memory graph",
+      "group": "Memory",
+      "audience": "operator",
+      "desktopSource": "/starmap",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/learning/graph and /api/learning/node",
+      "cabinetSurface": "Hermes Memory",
+      "cabinetHref": "/hermes?section=memory",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Render only reported nodes and recall relationships. No fabricated edges.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "The operator-os graph endpoint responded with no nodes.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes memory graph",
+          "interface": "/api/learning/graph",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "connected_empty",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "nodes": 0,
+            "edges": 0,
+            "profile": "operator-os"
+          },
+          "stale": false,
+          "summary": "The operator-os graph endpoint responded with no nodes."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop Starmap route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Memory graph support was found in the historical source audit; node counts are observation-specific."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "The operator-os graph endpoint responded with no nodes.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "settings",
+      "name": "Settings",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config/schema, /api/config and scoped management APIs",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Expose safe typed fields gradually; raw config remains Developer-only.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "providers",
+      "name": "Providers",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "/settings?tab=providers",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/auth/providers, /api/providers/oauth, /api/providers/validate",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "secret",
+      "mode": "Operator",
+      "missingWork": "Add safe OAuth/setup flows; never serialize tokens.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "One authenticated provider summary was projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes model options",
+          "interface": "/api/model/options",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "One authenticated provider summary was projected."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop provider settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Provider settings were found in the historical source audit."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "One authenticated provider summary was projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "provider-accounts",
+      "name": "Provider accounts",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "/settings?tab=providers&pview=accounts",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/providers/oauth and [redacted credential path]",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "secret",
+      "mode": "Operator",
+      "missingWork": "Expose account labels and health only.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "One redacted provider account summary was projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes model options",
+          "interface": "/api/model/options",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "One redacted provider account summary was projected."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop account settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Provider account surfaces were found without retaining credential material."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "One redacted provider account summary was projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "models",
+      "name": "Models",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:model",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/model/info, /api/model/options, /api/model/set",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add confirmed default and profile override controls.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "The inherited current model was projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes current model",
+          "interface": "/api/model/info",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "The inherited current model was projected."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop model settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Model selection surfaces were found in the historical source audit."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "The inherited current model was projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "api-keys-tools",
+      "name": "API keys and tools",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/settings?tab=keys",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/env, /api/tools/toolsets",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "secret",
+      "mode": "Operator",
+      "missingWork": "Show configured/not configured only. Values stay server-side.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "gateway",
+      "name": "Gateway",
+      "group": "Runtime",
+      "audience": "management",
+      "desktopSource": "/settings?tab=gateway",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/gateway/start|stop|restart and detailed health",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes?capability=gateway",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add confirmed restart/reconnect with failure-log excerpt.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "conflicting_evidence",
+      "operationalDetail": "Hermes health bridge observed running at 2026-07-19T22:15:00.000Z; Hermes management status observed stopped at 2026-07-19T22:15:00.000Z.",
+      "evidence": [
+        {
+          "origin": "derived_reconciliation",
+          "source": "Hermes gateway reconciliation",
+          "interface": "Hermes health bridge + Hermes management status",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "unknown",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "conflict",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "runningSource": "Hermes health bridge",
+            "stoppedSource": "Hermes management status"
+          },
+          "stale": false,
+          "summary": "Hermes health bridge observed running at 2026-07-19T22:15:00.000Z; Hermes management status observed stopped at 2026-07-19T22:15:00.000Z."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes health bridge",
+          "interface": "/health/detailed gateway_state",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "state": "running"
+          },
+          "stale": false,
+          "summary": "Health bridge gateway state is running."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes management status",
+          "interface": "/api/status gateway state",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "state": "stopped"
+          },
+          "stale": false,
+          "summary": "Management gateway state is stopped."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop gateway settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Gateway management support exists historically; current state requires fresh independent observations."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes health bridge observed running at 2026-07-19T22:15:00.000Z; Hermes management status observed stopped at 2026-07-19T22:15:00.000Z.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "mcp",
+      "name": "MCP",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/skills?tab=mcp",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/mcp/servers and /api/mcp/catalog",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add a reviewed management surface; mutations remain confirmation gated.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "The MCP endpoint responded successfully with no configured servers.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes MCP servers",
+          "interface": "/api/mcp/servers",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "connected_empty",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 0
+          },
+          "stale": false,
+          "summary": "The MCP endpoint responded successfully with no configured servers."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "The MCP endpoint responded successfully with no configured servers.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "plugins",
+      "name": "Plugins",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/settings?tab=plugins",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/dashboard/plugins and /api/dashboard/agent-plugins/*",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add explicit install/update/disable confirmations.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "One enabled plugin was projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes dashboard plugins",
+          "interface": "/api/dashboard/plugins",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "One enabled plugin was projected."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "One enabled plugin was projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "notifications",
+      "name": "Notifications",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=notifications",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Cabinet notification event settings plus browser permission state",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Browser/OS delivery remains subject to browser permission; Cabinet does not claim to edit Hermes Desktop local preferences.",
+      "testEvidence": "Cabinet notification settings and in-app test notification",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Cabinet-local notification preferences are mapped to Hermes events.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Cabinet-local Hermes event preferences",
+          "interface": "Cabinet preference store",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "cabinet_local_surface",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "scope": "cabinet_local"
+          },
+          "stale": false,
+          "summary": "Cabinet-local notification preferences are mapped to Hermes events."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Cabinet notification preference component contract",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Cabinet-local preferences are mapped to Hermes events. This does not prove Hermes Desktop notification settings or current Hermes runtime health."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Cabinet-local notification preferences are mapped to Hermes events.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": true,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "archived-chats",
+      "name": "Archived chats",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "/settings?tab=sessions",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/sessions, search, export, delete",
+      "cabinetSurface": "Hermes Sessions",
+      "cabinetHref": "/hermes?section=sessions",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add restore/export and separately confirmed delete.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "One session was projected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes sessions",
+          "interface": "/api/sessions",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "One session was projected."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop session route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Archived session support was found in the historical source audit."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "One session was projected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "billing",
+      "name": "Billing",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "Upstream /settings billing module",
+      "installedVersionSupport": "Not detected in the installed Desktop build",
+      "installedSupported": false,
+      "interface": "Upstream-only portal billing client",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "unsupported",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Upgrade installed Desktop/backend only after separate approval and re-audit.",
+      "testEvidence": "Present in explicit upstream audit and absent from the installed Desktop interface",
+      "keywords": [],
+      "installedSupport": {
+        "supported": false,
+        "detail": "Not detected in the installed Desktop build"
+      },
+      "surfaceState": "unsupported",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Not detected in the installed Desktop build",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "unsupported",
+      "statusDetail": "Not detected in the installed Desktop build",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "about-updates",
+      "name": "About and updates",
+      "group": "Runtime",
+      "audience": "management",
+      "desktopSource": "/settings?tab=about",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/hermes/update/check and app metadata",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes?capability=about-updates",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Upgrade requires explicit owner approval and restart handoff.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Installed metadata was detected independently of runtime health.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Installed Hermes metadata",
+          "interface": "application metadata and source audit",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "Installed metadata was detected independently of runtime health."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Installed metadata was detected independently of runtime health.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "model-settings",
+      "name": "Model settings",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:model",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/model/* and config schema",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reasoned, confirmed mutations.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "The current model endpoint responded. The model configuration schema was unavailable in this fixture.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes current model",
+          "interface": "/api/model/info",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "The current model endpoint responded."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes config schema",
+          "interface": "/api/config/schema",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The model configuration schema was unavailable in this fixture."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop model settings audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Model settings were found in the historical source audit."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "The current model endpoint responded. The model configuration schema was unavailable in this fixture.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "chat-settings",
+      "name": "Chat settings",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:chat",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config/schema and /api/config",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Project safe fields into typed controls.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "appearance",
+      "name": "Appearance",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:appearance",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local theme and font preferences",
+      "cabinetSurface": "Cabinet appearance",
+      "cabinetHref": "/settings/appearance",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Desktop-only themes remain diagnostic because Cabinet has its own theme system.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "workspace",
+      "name": "Workspace",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:workspace",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config and /api/fs/default-cwd",
+      "cabinetSurface": "Cabinet rooms and linked repos",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Keep Hermes working directory visible without duplicating Cabinet workspace state.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "safety",
+      "name": "Safety",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:safety",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Approvals config, hooks, security audit",
+      "cabinetSurface": "Existing Hermes approval boundaries",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Do not weaken Jeremy-only approval gates.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "memory-context",
+      "name": "Memory and context",
+      "group": "Memory",
+      "audience": "management",
+      "desktopSource": "/settings?tab=config:memory",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/memory and /api/memory/providers/*",
+      "cabinetSurface": "Hermes Memory",
+      "cabinetHref": "/hermes?section=memory",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add safe inspect/search; delete/archive only when supported and confirmed.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Supermemory is active for profile operator-os.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes memory",
+          "interface": "/api/memory",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "provider": "supermemory",
+            "profile": "operator-os"
+          },
+          "stale": false,
+          "summary": "Supermemory is active for profile operator-os."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop memory route audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Memory management interfaces were found in the historical source audit."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Supermemory is active for profile operator-os.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "voice",
+      "name": "Voice",
+      "group": "Settings",
+      "audience": "operator",
+      "desktopSource": "Chat composer and /settings voice fields",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/audio/transcribe, /api/audio/speak, browser permission status",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Owner must grant microphone permission before recording acceptance; voice input never executes consequential work automatically.",
+      "testEvidence": "Exact audio interface contract and non-prompting browser permission probe",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "Audio interfaces were not probed. Browser microphone permission was not requested.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes audio interface detection",
+          "interface": "/api/audio/transcribe and /api/audio/speak",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "serverInterface": "unprobed",
+            "browserPermission": "not_requested"
+          },
+          "stale": false,
+          "summary": "Audio interfaces were not probed. Browser microphone permission was not requested."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed audio interface source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Audio interfaces exist in the audited source. They were not probed in the current runtime."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Audio interfaces were not probed. Browser microphone permission was not requested.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "advanced-config",
+      "name": "Advanced configuration",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "/settings?tab=config:*",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/config/raw and /api/config/schema",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "secret",
+      "mode": "Developer",
+      "missingWork": "Provide redacted read-only projection before any raw editor.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "files",
+      "name": "Files",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Right sidebar Files",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/fs/* and /api/files/*",
+      "cabinetSurface": "Cabinet data tree and viewers",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Hermes remote files need association and safe reveal/download.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes reported 2 safe artifact metadata records.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes artifact metadata",
+          "interface": "/api/files",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "total": 2,
+            "items": [
+              {
+                "name": "runtime-report.md",
+                "kind": "text/markdown",
+                "size": 2048,
+                "observedAt": "2026-07-19T22:26:40.000Z"
+              },
+              {
+                "name": "screenshot.png",
+                "kind": "image/png",
+                "size": 4096,
+                "observedAt": "2026-07-19T22:28:20.000Z"
+              }
+            ]
+          },
+          "stale": false,
+          "summary": "Hermes reported 2 safe artifact metadata records."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Hermes reported 2 safe artifact metadata records.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "terminal",
+      "name": "Terminal",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Right sidebar Terminal",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Hermes PTY plus Cabinet daemon PTY",
+      "cabinetSurface": "Cabinet Terminal",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "No silent fallback between Hermes and Cabinet execution.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "source-review",
+      "name": "Source-control review",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Right sidebar Review",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/git/review/*",
+      "cabinetSurface": "Cabinet git history and diffs",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Ship/push actions remain outside read-only Control Center.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes Git status returned bounded repository state. The installed review-list source returned a bounded unavailable response.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Git status",
+          "interface": "/api/git/status",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "repository": "hermes-cabinet",
+            "branch": "feat/hermes-developer-repository-visibility",
+            "detached": false,
+            "clean": false,
+            "staged": 2,
+            "unstaged": 3,
+            "untracked": 1,
+            "conflicts": 0,
+            "ahead": 1,
+            "behind": 0
+          },
+          "stale": false,
+          "summary": "Hermes Git status returned bounded repository state."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes review list",
+          "interface": "/api/git/review/list?scope=uncommitted",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "reviewAvailable": false,
+            "reviewCount": null
+          },
+          "stale": false,
+          "summary": "The installed review-list source returned a bounded unavailable response."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes Git status returned bounded repository state. The installed review-list source returned a bounded unavailable response.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "projects",
+      "name": "Projects",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Chat sidebar Projects",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Hermes project config and session cwd",
+      "cabinetSurface": "Cabinet rooms and linked repos",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Show Hermes project identity alongside Cabinet scope.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes reported an active session and repository association. Hermes reported active project context with no associated repository.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes session project association",
+          "interface": "/api/sessions?limit=100",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "project": "Hermes Cabinet",
+            "profile": "operator-os",
+            "sessionAssociation": "session-alpha",
+            "workingDirectoryReported": true,
+            "repositoryAssociated": true,
+            "repository": "hermes-cabinet"
+          },
+          "stale": false,
+          "summary": "Hermes reported an active session and repository association."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes session project association — empty repository scenario",
+          "interface": "/api/sessions?limit=100",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "connected_empty",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "project": "Research notes",
+            "profile": "operator-os",
+            "workingDirectoryReported": true,
+            "repositoryAssociated": false,
+            "repository": null
+          },
+          "stale": false,
+          "summary": "Hermes reported active project context with no associated repository."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Hermes reported an active session and repository association. Hermes reported active project context with no associated repository.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "worktrees",
+      "name": "Worktrees",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Project and session controls",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/git/worktrees",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Developer",
+      "missingWork": "Add confirmed add/remove only after read-only inventory proves safe paths.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes reported 2 worktrees with multiple records marked current.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Git worktrees",
+          "interface": "/api/git/worktrees",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "total": 2,
+            "current": null,
+            "ambiguousCurrent": true,
+            "items": [
+              {
+                "identity": "detached-review",
+                "current": true,
+                "main": false,
+                "branch": null,
+                "detached": true,
+                "locked": false
+              },
+              {
+                "identity": "hermes-cabinet",
+                "current": true,
+                "main": true,
+                "branch": "feat/hermes-developer-repository-visibility",
+                "detached": false,
+                "locked": false
+              }
+            ]
+          },
+          "stale": false,
+          "summary": "Hermes reported 2 worktrees with multiple records marked current."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes Git worktrees — stale observation",
+          "interface": "/api/git/worktrees",
+          "observedAt": "2026-07-19T18:00:00.000Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "failure",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "total": 0
+          },
+          "stale": true,
+          "summary": "A prior bounded worktree request failed and is stale."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Hermes reported 2 worktrees with multiple records marked current.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "session-tabs",
+      "name": "Session tabs",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Pane shell and session switcher",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop pane store and Hermes session routes",
+      "cabinetSurface": "Cabinet task tabs and rail",
+      "cabinetHref": "/tasks",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "Do not duplicate desktop pane layout state.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "session-pinning",
+      "name": "Session pinning",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "Session sidebar actions",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Session metadata and Desktop ordering",
+      "cabinetSurface": "Hermes Sessions",
+      "cabinetHref": "/hermes?section=sessions",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Stable remote pin mutation is not exposed by installed management API.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Session pin state was projected as unknown.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes sessions",
+          "interface": "/api/sessions",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "Session pin state was projected as unknown."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Installed Desktop session action audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "Session pinning was visible in the historical Desktop source audit."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Session pin state was projected as unknown.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "command-palette",
+      "name": "Command palette",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Desktop command palette",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local contribution registry",
+      "cabinetSurface": "Cabinet command search",
+      "cabinetHref": "/",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "Hermes actions are discoverable through Control Center search.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "keyboard-shortcuts",
+      "name": "Keyboard shortcuts",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Desktop keybind panel",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local keybind store",
+      "cabinetSurface": "Cabinet keyboard shortcuts",
+      "cabinetHref": "/help",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "List Hermes-only keybindings diagnostically when safe source is available.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "layout-controls",
+      "name": "Layout controls",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Pane shell layouts",
+      "installedVersionSupport": "Desktop-local",
+      "installedSupported": true,
+      "interface": "Desktop local pane store",
+      "cabinetSurface": "Cabinet layout controls",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "mapped",
+      "readWriteRisk": "low",
+      "mode": "Developer",
+      "missingWork": "No cross-application layout synchronization.",
+      "testEvidence": "Installed Hermes Desktop route and source audit",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Desktop-local"
+      },
+      "surfaceState": "mapped",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "approvals",
+      "name": "Approvals and pending input",
+      "group": "Sessions",
+      "audience": "operator",
+      "desktopSource": "Chat tool approvals",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway decision events and run approval endpoint",
+      "cabinetSurface": "Cabinet Hermes conversations",
+      "cabinetHref": "/agents",
+      "parityState": "first_class",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Existing confirmation, owner identity, and idempotency behavior is unchanged.",
+      "testEvidence": "Cabinet Hermes gateway and run contract tests",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "first_class",
+      "operationalHealth": "healthy",
+      "operationalDetail": "Hermes reported 4 runs waiting for human input.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes known-run pending input",
+          "interface": "/v1/runs/{run_id} + /events",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "count": 4,
+            "rule": "Hermes prepares; Jeremy commits."
+          },
+          "stale": false,
+          "summary": "Hermes reported 4 runs waiting for human input."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Cabinet Hermes M3-M7 source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "The approval contract exists in the audited source. Source existence does not prove a live operation."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "Cabinet Hermes M3-M7 acceptance suite",
+          "interface": "Hermes gateway and run decision contract",
+          "observedAt": "2026-07-19T02:23:07Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "historical_live_acceptance",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "PROGRESS.md#2026-07-19-m7-technical-conversion-acceptance"
+          },
+          "stale": true,
+          "summary": "A governed approval decision completed with confirmation and duplicate-submission protection."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "Hermes reported 4 runs waiting for human input.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": true,
+        "liveProven": true
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "browser-opencli",
+      "name": "Browser and OpenCLI",
+      "group": "Tools",
+      "audience": "operator",
+      "desktopSource": "Hermes Terminal toolset",
+      "installedVersionSupport": "External OpenCLI installation detected at runtime",
+      "installedSupported": true,
+      "interface": "opencli doctor and browser bridge CLI",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?capability=browser-opencli",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reviewed repair/reconnect only when the installed CLI reports a safe supported action.",
+      "testEvidence": "OpenCLI doctor plus local read-only acceptance",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "External OpenCLI installation detected at runtime"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "OpenCLI daemon, extension, and one browser profile are connected.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "OpenCLI doctor",
+          "interface": "opencli doctor",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "daemon": "running",
+            "extension": "connected",
+            "connectedProfiles": 1
+          },
+          "stale": false,
+          "summary": "OpenCLI daemon, extension, and one browser profile are connected."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "OpenCLI interface source audit",
+          "interface": "Hermes Desktop source audit",
+          "observedAt": "2026-07-19T21:06:53Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "source_audit",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "src/lib/hermes/upstream-audit.json"
+          },
+          "stale": true,
+          "summary": "OpenCLI interface support was found in the audited integration source."
+        },
+        {
+          "origin": "approved_evidence_catalog",
+          "source": "OpenCLI read-only acceptance",
+          "interface": "opencli local page title, DOM read, and screenshot",
+          "observedAt": "2026-07-19T20:18:51Z",
+          "assertedFreshness": "stale",
+          "effectiveFreshness": "stale",
+          "proofKind": "historical_audit",
+          "proofScope": "historical_live_acceptance",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "evidenceReference": "docs/plans/hermes-desktop-capability-parity.md#phase-4-opencli-browser-module"
+          },
+          "stale": true,
+          "summary": "A local read-only acceptance opened a test page, read its title and DOM, and captured a screenshot without an external write."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "OpenCLI daemon, extension, and one browser profile are connected.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": true
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "executor",
+      "name": "Executor",
+      "group": "Tools",
+      "audience": "operator",
+      "desktopSource": "Hermes terminal/code execution",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Toolsets, runtime tool events, terminal backend",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Show backend and active action without creating a second executor.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "healthy",
+      "operationalDetail": "The executor toolset is configured.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes toolsets",
+          "interface": "/api/tools/toolsets",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "facts": {
+            "count": 1
+          },
+          "stale": false,
+          "summary": "The executor toolset is configured."
+        }
+      ],
+      "status": "connected",
+      "statusDetail": "The executor toolset is configured.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "raw-logs",
+      "name": "Raw logs",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Command Center maintenance",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/logs",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "secret",
+      "mode": "Developer",
+      "missingWork": "Redact secrets and bound log output before browser exposure.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "Raw logs remain available only through the diagnostic escape path.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes log diagnostic",
+          "interface": "/api/logs",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "Raw logs remain available only through the diagnostic escape path."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "gateway-diagnostics",
+      "name": "Low-level gateway diagnostics",
+      "group": "Developer",
+      "audience": "developer",
+      "desktopSource": "Gateway settings and logs",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "Gateway health, logs, drain, restart",
+      "cabinetSurface": "Hermes Developer",
+      "cabinetHref": "/hermes?mode=developer",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "secret",
+      "mode": "Developer",
+      "missingWork": "Display URL identity without query tokens or authorization material.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "computer-use",
+      "name": "Computer Use",
+      "group": "Tools",
+      "audience": "management",
+      "desktopSource": "/settings computer-use panel",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/tools/computer-use/status",
+      "cabinetSurface": "Hermes Tools",
+      "cabinetHref": "/hermes?section=tools",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Permission grants remain explicit OS-scoped actions.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unavailable",
+      "operationalDetail": "Computer Use status is unavailable in this fixture.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes computer-use status",
+          "interface": "/api/tools/computer-use/status",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "Computer Use status is unavailable in this fixture."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Computer Use status is unavailable in this fixture.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    },
+    {
+      "id": "backups",
+      "name": "Backup and restore",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "Command Center maintenance",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/ops/backup and /api/ops/import",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "diagnostic_only",
+      "readWriteRisk": "consequential",
+      "mode": "Operator",
+      "missingWork": "Add reviewed download/import workflow with confirmation.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "diagnostic_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "Diagnostic only. Full Cabinet management is intentionally unavailable.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "security-audit",
+      "name": "Security audit",
+      "group": "Settings",
+      "audience": "management",
+      "desktopSource": "Command Center maintenance",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/ops/security-audit",
+      "cabinetSurface": "Hermes Settings",
+      "cabinetHref": "/hermes?section=settings",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "low",
+      "mode": "Operator",
+      "missingWork": "Show bounded audit results without package credentials.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "unknown",
+      "operationalDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Phase 2A.2 acceptance observation",
+          "interface": "capability-specific source not exercised by this fixture",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unknown",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe9",
+          "stale": false,
+          "summary": "The acceptance fixture does not assert current operational health for this source."
+        }
+      ],
+      "status": "available",
+      "statusDetail": "The acceptance fixture does not assert current operational health for this source.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": false,
+        "label": null
+      }
+    },
+    {
+      "id": "usage-insights",
+      "name": "Usage insights",
+      "group": "Providers and models",
+      "audience": "management",
+      "desktopSource": "Command Center analytics",
+      "installedVersionSupport": "Supported",
+      "installedSupported": true,
+      "interface": "/api/analytics/usage and /api/analytics/models",
+      "cabinetSurface": "Hermes Overview",
+      "cabinetHref": "/hermes",
+      "parityState": "visible_read_only",
+      "readWriteRisk": "read_only",
+      "mode": "Operator",
+      "missingWork": "Add bounded cost/rate-limit summaries when reported.",
+      "testEvidence": "Installed Hermes management contract and live response",
+      "keywords": [],
+      "installedSupport": {
+        "supported": true,
+        "detail": "Supported"
+      },
+      "surfaceState": "visible_read_only",
+      "operationalHealth": "degraded",
+      "operationalDetail": "Hermes reported aggregate token and cost usage. Per-run cost is not guaranteed by the installed Run status contract.",
+      "evidence": [
+        {
+          "origin": "raw_observation",
+          "source": "Hermes usage analytics",
+          "interface": "/api/analytics/usage",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "success",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "inputTokens": 4200,
+            "outputTokens": 900,
+            "estimatedCostUsd": 0.48,
+            "actualCostUsd": 0.45,
+            "sessions": 9
+          },
+          "stale": false,
+          "summary": "Hermes reported aggregate token and cost usage."
+        },
+        {
+          "origin": "raw_observation",
+          "source": "Hermes per-run cost",
+          "interface": "/v1/runs/{run_id}",
+          "observedAt": "2026-07-19T22:15:00.000Z",
+          "assertedFreshness": "fresh",
+          "effectiveFreshness": "fresh",
+          "proofKind": "exact_fixture",
+          "proofScope": "exact_fixture_path",
+          "outcome": "unavailable",
+          "installedBackendVersion": "0.18.2",
+          "installedBackendCommit": "594308d4bbe95548c9fe418bb10c449099426f93",
+          "facts": {
+            "perRunCostAvailable": false
+          },
+          "stale": false,
+          "summary": "Per-run cost is not guaranteed by the installed Run status contract."
+        }
+      ],
+      "status": "degraded",
+      "statusDetail": "Hermes reported aggregate token and cost usage. Per-run cost is not guaranteed by the installed Run status contract.",
+      "credit": {
+        "discoverability": true,
+        "liveVisibility": false,
+        "governedManagement": false,
+        "liveProven": false
+      },
+      "pathProof": {
+        "proven": true,
+        "label": "Exact fixture path proven"
+      }
+    }
+  ],
+  "live": {
+    "profiles": 1,
+    "skills": 12,
+    "jobs": 0,
+    "mcpServers": 0,
+    "plugins": 1,
+    "openCliProfiles": 1,
+    "openCliVersion": "1.8.5",
+    "openCliBinaryLocation": "/opt/homebrew/bin/opencli",
+    "openCliCapabilities": {
+      "screenshot": true,
+      "domRead": true,
+      "formInteraction": true,
+      "download": true
+    },
+    "memoryProvider": "supermemory",
+    "memoryNamespace": "operator-os:supermemory",
+    "diagnostics": [
+      {
+        "area": "fixture sanitization",
+        "status": "degraded",
+        "message": "[redacted credential] authorization]"
+      }
+    ],
+    "operator": {
+      "runtime": {
+        "gatewayMode": "local",
+        "gatewayState": "stopped",
+        "gatewayRunning": false,
+        "gatewayBusy": false,
+        "lastConnection": "2026-07-19T22:15:00.000Z",
+        "observedAt": "2026-07-19T22:15:00.000Z",
+        "activeAgentCount": 1,
+        "activeSessionCount": 1
+      },
+      "agents": {
+        "available": true,
+        "active": [
+          {
+            "id": "worker-1",
+            "parentSessionId": "session-1",
+            "runId": "run-1",
+            "task": "Review projection integrity",
+            "profile": "operator-os",
+            "state": "running",
+            "currentAction": "Reading capability observations",
+            "startedAt": "2026-07-19T22:15:00.000Z",
+            "result": "[redacted credential]",
+            "error": "[redacted credential]",
+            "canInterrupt": true
+          }
+        ],
+        "recent": []
+      },
+      "messaging": [
+        {
+          "id": "telegram",
+          "name": "Telegram",
+          "configured": true,
+          "enabled": true,
+          "connectionState": "failed",
+          "accountOrChannel": "Operations",
+          "incomingTriggers": true,
+          "outboundDelivery": "permitted",
+          "lastSuccessfulEvent": null,
+          "lastError": "Fatal polling conflict. Another poller is active."
+        }
+      ],
+      "sessions": [
+        {
+          "id": "session-1",
+          "title": "Projection integrity review",
+          "profile": "operator-os",
+          "source": "desktop",
+          "status": "active",
+          "createdAt": "2026-07-19T22:15:00.000Z",
+          "updatedAt": "2026-07-19T22:15:00.000Z",
+          "archived": false,
+          "pinned": null,
+          "model": "glm-5.2",
+          "preview": "Reviewing typed capability observations"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": "artifact-1",
+          "name": "fixture-projection.json",
+          "kind": "report",
+          "path": "[redacted credential path]",
+          "mimeType": "application/json",
+          "size": 2048,
+          "createdAt": "2026-07-19T22:15:00.000Z",
+          "sessionId": "session-1",
+          "runId": "run-1",
+          "capability": "artifacts",
+          "agent": "worker-1"
+        }
+      ],
+      "memoryGraph": {
+        "nodes": [],
+        "edges": [],
+        "stats": {
+          "nodes": 0,
+          "edges": 0
+        }
+      },
+      "providers": [
+        {
+          "id": "ollama-cloud",
+          "name": "Ollama Cloud",
+          "authenticated": true,
+          "current": true,
+          "models": [
+            "glm-5.2"
+          ],
+          "totalModels": 1,
+          "warning": "[redacted credential]"
+        }
+      ],
+      "model": {
+        "provider": "ollama-cloud",
+        "model": "glm-5.2",
+        "contextLength": null,
+        "supportsTools": true,
+        "supportsVision": null,
+        "supportsReasoning": null
+      },
+      "voice": {
+        "transcriptionAvailable": null,
+        "speechAvailable": null,
+        "transcriptionInterface": "/api/audio/transcribe",
+        "speechInterface": "/api/audio/speak"
+      }
+    }
+  },
+  "developerRepository": {
+    "project": {
+      "label": "Hermes Cabinet",
+      "profile": "operator-os",
+      "repositoryAssociated": true,
+      "repository": "hermes-cabinet",
+      "observedAt": "2026-07-19T22:15:00.000Z"
+    },
+    "worktree": {
+      "label": null,
+      "branch": "feat/hermes-developer-repository-visibility",
+      "detached": false,
+      "clean": false,
+      "ambiguousCurrent": true,
+      "observedAt": "2026-07-19T22:15:00.000Z"
+    }
+  },
+  "runtimeExecution": {
+    "observedAt": "2026-07-19T22:15:00.000Z",
+    "runs": [
+      {
+        "id": "Run run-active",
+        "agent": null,
+        "state": "active",
+        "currentStep": "Gather evidence",
+        "currentTool": "browser.read",
+        "startedAt": "2026-07-19T22:00:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:15:00.000Z",
+        "waitingReason": null,
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 1,
+        "artifactCount": 1,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-approval",
+        "agent": null,
+        "state": "waiting",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:50:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:14:00.000Z",
+        "waitingReason": "approval",
+        "retryCount": null,
+        "parentRunId": "Run run-active",
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-failed",
+        "agent": null,
+        "state": "failed",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:20:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:13:00.000Z",
+        "waitingReason": null,
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": "Run failed. A bounded failure summary is available.",
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-conflict",
+        "agent": null,
+        "state": "conflicting",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:00:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:12:00.000Z",
+        "waitingReason": null,
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": "Sources reported conflicting lifecycle states at the newest valid observation time.",
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run larification",
+        "agent": null,
+        "state": "waiting",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:45:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:11:00.000Z",
+        "waitingReason": "clarification",
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-auth",
+        "agent": null,
+        "state": "waiting",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:40:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:10:00.000Z",
+        "waitingReason": "authentication",
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-blocked",
+        "agent": null,
+        "state": "blocked",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:35:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:09:00.000Z",
+        "waitingReason": "file",
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-queued",
+        "agent": null,
+        "state": "queued",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T22:14:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:08:00.000Z",
+        "waitingReason": null,
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run run-retrying",
+        "agent": null,
+        "state": "retrying",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:30:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:07:00.000Z",
+        "waitingReason": null,
+        "retryCount": 2,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 0,
+        "inputTokens": null,
+        "outputTokens": null,
+        "totalTokens": null,
+        "costUsd": null,
+        "durationMs": null,
+        "summary": null,
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      },
+      {
+        "id": "Run un-completed",
+        "agent": null,
+        "state": "completed",
+        "currentStep": null,
+        "currentTool": null,
+        "startedAt": "2026-07-19T21:00:00.000Z",
+        "lastTransitionAt": "2026-07-19T22:06:00.000Z",
+        "waitingReason": null,
+        "retryCount": null,
+        "parentRunId": null,
+        "childRunCount": 0,
+        "artifactCount": 2,
+        "inputTokens": 1200,
+        "outputTokens": 300,
+        "totalTokens": 1500,
+        "costUsd": 0.14,
+        "durationMs": 600000,
+        "summary": "Run completed with a result.",
+        "source": "Hermes Run status",
+        "interface": "/v1/runs/{run_id}"
+      }
+    ],
+    "agents": {
+      "state": "success",
+      "count": 1,
+      "summary": "Hermes reported 1 active agents."
+    },
+    "runSource": {
+      "state": "success",
+      "summary": "Hermes reported 10 bounded execution records."
+    },
+    "queue": {
+      "state": "connected_empty",
+      "total": 0,
+      "counts": {
+        "ready": 0,
+        "running": 0,
+        "blocked": 0
+      },
+      "summary": "Hermes queue responded with no tasks."
+    },
+    "approvals": {
+      "state": "success",
+      "count": 4,
+      "summary": "Hermes reported 4 runs waiting for human input."
+    },
+    "artifacts": {
+      "state": "success",
+      "total": 2,
+      "items": [
+        {
+          "name": "runtime-report.md",
+          "kind": "text/markdown",
+          "size": 2048,
+          "observedAt": "2026-07-19T22:26:40.000Z"
+        },
+        {
+          "name": "screenshot.png",
+          "kind": "image/png",
+          "size": 4096,
+          "observedAt": "2026-07-19T22:28:20.000Z"
+        }
+      ],
+      "summary": "Hermes reported 2 safe artifact metadata records."
+    },
+    "usage": {
+      "state": "success",
+      "inputTokens": 4200,
+      "outputTokens": 900,
+      "estimatedCostUsd": 0.48,
+      "actualCostUsd": 0.45,
+      "sessions": 9,
+      "summary": "Hermes reported aggregate token and cost usage."
+    }
+  }
+}

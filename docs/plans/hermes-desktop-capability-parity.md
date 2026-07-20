@@ -147,9 +147,9 @@ Gateway reconciliation groups evidence by source and interface, retains the late
 <!-- GENERATED:HERMES_TRUTH_STATE:START -->
 ## Generated per-capability truth-state evidence
 
-Generated at 2026-07-20T02:15:00.000Z. Acceptance fixture — not live runtime. Fixture ID: `hermes-phase-2b-repository-visibility-v1`. Captured: 2026-07-19T22:15:00.000Z.
+Generated at 2026-07-20T02:30:00.000Z. Acceptance fixture — not live runtime. Fixture ID: `hermes-phase-3a-runtime-execution-v1`. Captured: 2026-07-19T22:15:00.000Z.
 
-Implementation revision: `4bbfab176239254a004a3409ea3b6ead4b5fbf69`. Artifact generated at: 2026-07-20T02:15:00.000Z.
+Implementation revision: `0f676be275fd6a6d2075d86202d0bf9ff4f5def8`. Artifact generated at: 2026-07-20T02:30:00.000Z.
 
 Installed Desktop source commit: **unknown**. The commit `311a5b0a552be78f5c58807e2be1db02e3badcb0` is historical Desktop source-audit evidence only.
 
@@ -160,13 +160,13 @@ Overall credits: Discoverability 48/48 (100%); Current Live Visibility 0/48 (0%)
 | Capability | Installed | Cabinet surface | Operational health | Kind / scope / outcome | Source | Interface | Observed at | Asserted / effective freshness | Fixture path | Credits |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Chat and sessions | supported | `mapped` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Command Center | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes detailed health bridge | /health/detailed | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
+| Command Center | supported | `visible_read_only` | `conflicting_evidence` | exact_fixture / exact_fixture_path / success | Hermes runtime execution | /api/sessions + /v1/runs/{run_id} | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Skills | supported | `mapped` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes skills | /api/skills | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Messaging | supported | `visible_read_only` | `degraded` | exact_fixture / exact_fixture_path / failure | Hermes messaging platforms | /api/messaging/platforms | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
-| Artifacts | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes files | /api/files | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
-| Cron and background jobs | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / connected_empty | Hermes cron jobs | /api/cron/jobs | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
+| Artifacts | supported | `visible_read_only` | `degraded` | exact_fixture / exact_fixture_path / success | Hermes artifact metadata | /api/files | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
+| Cron and background jobs | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / connected_empty | Hermes Kanban queue | /api/plugins/kanban/board | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Profiles | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes profiles | /api/profiles | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
-| Agents and subagents | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes active agents | /api/plugins/kanban/workers/active | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
+| Agents and subagents | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes active workers | /api/plugins/kanban/workers/active | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Starmap and memory graph | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / connected_empty | Hermes memory graph | /api/learning/graph | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Settings | supported | `visible_read_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Providers | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes model options | /api/model/options | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
@@ -188,7 +188,7 @@ Overall credits: Discoverability 48/48 (100%); Current Live Visibility 0/48 (0%)
 | Memory and context | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes memory | /api/memory | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Voice | supported | `visible_read_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Hermes audio interface detection | /api/audio/transcribe and /api/audio/speak | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Advanced configuration | supported | `diagnostic_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Files | supported | `mapped` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Files | supported | `mapped` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes artifact metadata | /api/files | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Terminal | supported | `mapped` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Source-control review | supported | `mapped` | `degraded` | exact_fixture / exact_fixture_path / success | Hermes Git status | /api/git/status | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Projects | supported | `mapped` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes session project association | /api/sessions?limit=100 | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
@@ -198,7 +198,7 @@ Overall credits: Discoverability 48/48 (100%); Current Live Visibility 0/48 (0%)
 | Command palette | supported | `mapped` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Keyboard shortcuts | supported | `mapped` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Layout controls | supported | `mapped` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Approvals and pending input | supported | `first_class` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:yes P:yes |
+| Approvals and pending input | supported | `first_class` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes known-run pending input | /v1/runs/{run_id} + /events | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:yes P:yes |
 | Browser and OpenCLI | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | OpenCLI doctor | opencli doctor | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:yes |
 | Executor | supported | `visible_read_only` | `healthy` | exact_fixture / exact_fixture_path / success | Hermes toolsets | /api/tools/toolsets | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Raw logs | supported | `diagnostic_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Hermes log diagnostic | /api/logs | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
@@ -206,7 +206,7 @@ Overall credits: Discoverability 48/48 (100%); Current Live Visibility 0/48 (0%)
 | Computer Use | supported | `visible_read_only` | `unavailable` | exact_fixture / exact_fixture_path / unavailable | Hermes computer-use status | /api/tools/computer-use/status | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 | Backup and restore | supported | `diagnostic_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
 | Security audit | supported | `visible_read_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
-| Usage insights | supported | `visible_read_only` | `unknown` | exact_fixture / exact_fixture_path / unknown | Phase 2A.2 acceptance observation | capability-specific source not exercised by this fixture | 2026-07-19T22:15:00.000Z | fresh / fresh | no | D:yes L:no M:no P:no |
+| Usage insights | supported | `visible_read_only` | `degraded` | exact_fixture / exact_fixture_path / success | Hermes usage analytics | /api/analytics/usage | 2026-07-19T22:15:00.000Z | fresh / fresh | yes | D:yes L:no M:no P:no |
 
 Memory graph observation: profile `operator-os`, 0 nodes and 0 edges, observed 2026-07-19T22:15:00.000Z. This claim applies only to that profile and observation.
 <!-- GENERATED:HERMES_TRUTH_STATE:END -->
