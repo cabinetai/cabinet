@@ -360,6 +360,19 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
   const runtime = capabilities.find((item) => item.id === "command-center");
   const installation = input.installedRuntime.installation;
   const byAudience = (audience: HermesCapabilityDefinition["audience"]) => hermesParityMetrics(capabilities.filter((item) => item.audience === audience));
+  const freshEvidence = (id: string) => capabilities.find((item) => item.id === id)?.evidence.find((item) =>
+    item.origin === "raw_observation" && item.effectiveFreshness === "fresh" &&
+    (item.proofScope === "live_runtime_operation" || item.proofScope === "exact_fixture_path")
+  );
+  const projectEvidence = freshEvidence("projects");
+  const worktreeEvidence = freshEvidence("worktrees");
+  const reviewEvidence = freshEvidence("source-review");
+  const scalar = (facts: HermesCapabilityEvidence["facts"] | undefined, key: string) => {
+    const value = facts?.[key];
+    return typeof value === "string" || typeof value === "number" || typeof value === "boolean" || value === null ? value : null;
+  };
+  const currentWorktree = worktreeEvidence?.facts?.current;
+  const currentWorktreeRecord = currentWorktree && typeof currentWorktree === "object" && !Array.isArray(currentWorktree) ? currentWorktree : null;
   const snapshot: HermesControlCenterSnapshot = {
     schemaVersion: HERMES_SNAPSHOT_SCHEMA_VERSION,
     checkedAt: input.now,
@@ -398,6 +411,23 @@ export function buildHermesControlCenterProjection(input: HermesControlCenterPro
     },
     capabilities,
     live: input.installedRuntime.live,
+    developerRepository: {
+      project: {
+        label: scalar(projectEvidence?.facts, "project") as string | null,
+        profile: scalar(projectEvidence?.facts, "profile") as string | null,
+        repositoryAssociated: scalar(projectEvidence?.facts, "repositoryAssociated") as boolean | null,
+        repository: (scalar(reviewEvidence?.facts, "repository") ?? scalar(projectEvidence?.facts, "repository")) as string | null,
+        observedAt: projectEvidence?.observedAt ?? null,
+      },
+      worktree: {
+        label: (currentWorktreeRecord && typeof currentWorktreeRecord.identity === "string" ? currentWorktreeRecord.identity : null),
+        branch: (scalar(reviewEvidence?.facts, "branch") ?? (currentWorktreeRecord && typeof currentWorktreeRecord.branch === "string" ? currentWorktreeRecord.branch : null)) as string | null,
+        detached: (scalar(reviewEvidence?.facts, "detached") ?? (currentWorktreeRecord && typeof currentWorktreeRecord.detached === "boolean" ? currentWorktreeRecord.detached : null)) as boolean | null,
+        clean: scalar(reviewEvidence?.facts, "clean") as boolean | null,
+        ambiguousCurrent: scalar(worktreeEvidence?.facts, "ambiguousCurrent") === true,
+        observedAt: reviewEvidence?.observedAt ?? worktreeEvidence?.observedAt ?? null,
+      },
+    },
   };
   return sanitizeHermesBrowserModel(snapshot);
 }

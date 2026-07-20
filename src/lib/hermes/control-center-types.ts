@@ -49,7 +49,7 @@ export type HermesEvidenceOutcome =
   | "conflict"
   | "unknown";
 export type HermesObservationFreshness = "fresh" | "stale" | "unknown";
-export type HermesObservationFact = string | number | boolean | null;
+export type HermesObservationFact = string | number | boolean | null | HermesObservationFact[] | { [key: string]: HermesObservationFact };
 
 export type HermesCapabilityObservation = {
   capabilityId: string;
@@ -239,4 +239,8 @@ export type HermesControlCenterSnapshot = {
   parity: HermesParityMetrics & { byAudience: Record<HermesCapabilityAudience, HermesParityMetrics> };
   capabilities: HermesCapabilityProjection[];
   live: HermesInstalledRuntime["live"];
+  developerRepository: {
+    project: { label: string | null; profile: string | null; repositoryAssociated: boolean | null; repository: string | null; observedAt: string | null };
+    worktree: { label: string | null; branch: string | null; detached: boolean | null; clean: boolean | null; ambiguousCurrent: boolean; observedAt: string | null };
+  };
 };

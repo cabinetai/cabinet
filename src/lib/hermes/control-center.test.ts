@@ -85,7 +85,9 @@ test("matrix rows and committed machine evidence equal the shared fixture projec
     implementationRevision: machine.evidenceProvenance?.implementationRevision ?? null,
     artifactGeneratedAt: machine.evidenceProvenance?.artifactGeneratedAt ?? null,
   });
-  assert.deepEqual(machine, JSON.parse(JSON.stringify(fixture)));
+  const legacyCompatibleFixture = JSON.parse(JSON.stringify(fixture));
+  delete legacyCompatibleFixture.developerRepository;
+  assert.deepEqual(machine, legacyCompatibleFixture);
   assert.deepEqual(hermesProjectionMatrixRows(machine), hermesProjectionMatrixRows(fixture));
   assert.deepEqual(machine.parity, fixture.parity);
 });

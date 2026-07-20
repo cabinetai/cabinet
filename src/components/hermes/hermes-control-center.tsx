@@ -126,6 +126,62 @@ function CapabilityRow({ capability, active, onSelect }: { capability: HermesCap
   );
 }
 
+function observationAge(value: string | null): string {
+  if (!value) return "Observation unavailable";
+  const elapsed = Date.now() - Date.parse(value);
+  if (!Number.isFinite(elapsed) || elapsed < 0) return "Observation time unknown";
+  const minutes = Math.floor(elapsed / 60_000);
+  if (minutes < 1) return "Observed just now";
+  if (minutes < 60) return `Observed ${minutes}m ago`;
+  return `Observed ${Math.floor(minutes / 60)}h ago`;
+}
+
+function DeveloperRepositoryContext({ snapshot }: { snapshot: HermesControlCenterSnapshot }) {
+  const project = snapshot.developerRepository.project;
+  const worktree = snapshot.developerRepository.worktree;
+  const branch = worktree.detached === true ? "Detached HEAD" : worktree.branch ?? "Unknown branch";
+  const cleanliness = worktree.clean === true ? "Clean" : worktree.clean === false ? "Changes present" : "Cleanliness unknown";
+  return (
+    <section className="mb-4 rounded-xl border border-border bg-card p-3 shadow-sm" data-testid="hermes-developer-repository-context">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 className="text-sm font-semibold">Repository context</h2>
+          <p className="text-xs text-muted-foreground">Read-only orientation from source-specific Hermes observations</p>
+        </div>
+        <span className="text-xs text-muted-foreground">{observationAge(worktree.observedAt ?? project.observedAt)}</span>
+      </div>
+      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs md:grid-cols-5">
+        <div><dt className="text-muted-foreground">Project</dt><dd className="truncate font-medium">{project.label ?? "Not reported"}</dd></div>
+        <div><dt className="text-muted-foreground">Repository</dt><dd className="truncate font-medium">{project.repositoryAssociated === false && !project.repository ? "Not associated by session" : project.repository ?? "Unknown"}</dd></div>
+        <div><dt className="text-muted-foreground">Worktree</dt><dd className="truncate font-medium">{worktree.ambiguousCurrent ? "Multiple marked current" : worktree.label ?? "Unknown"}</dd></div>
+        <div><dt className="text-muted-foreground">Branch</dt><dd className="truncate font-medium">{branch}</dd></div>
+        <div><dt className="text-muted-foreground">Working tree</dt><dd className="truncate font-medium">{cleanliness}</dd></div>
+      </dl>
+    </section>
+  );
+}
+
+function RepositoryEvidenceFacts({ capability }: { capability: HermesCapabilityProjection }) {
+  if (!["projects", "worktrees", "source-review"].includes(capability.id)) return null;
+  return (
+    <section className="flex flex-col gap-2" data-testid="hermes-repository-facts">
+      <h3 className="text-sm font-semibold">Bounded repository facts</h3>
+      {capability.evidence.map((evidence, index) => (
+        <div key={`${evidence.source}-facts-${index}`} className="rounded-lg border border-border bg-muted/20 p-3 text-xs">
+          <p className="font-medium">{evidence.source}</p>
+          {evidence.facts ? (
+            <dl className="mt-2 grid grid-cols-2 gap-2">
+              {Object.entries(evidence.facts).filter(([, value]) => !Array.isArray(value) && (value === null || typeof value !== "object")).slice(0, 10).map(([key, value]) => (
+                <div key={key}><dt className="text-muted-foreground">{key.replace(/([A-Z])/g, " $1")}</dt><dd className="break-words font-medium">{value === null ? "Not reported" : typeof value === "boolean" ? value ? "Yes" : "No" : String(value)}</dd></div>
+              ))}
+            </dl>
+          ) : <p className="mt-1 text-muted-foreground">No structured facts reported.</p>}
+        </div>
+      ))}
+    </section>
+  );
+}
+
 function CapabilityInspector({ capability, snapshot }: { capability: HermesCapabilityProjection; snapshot: HermesControlCenterSnapshot }) {
   const detailRows = [
     { id: "surface-state", label: "Surface state", value: capability.surfaceState },
@@ -205,6 +261,7 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
               <p className="text-xs text-muted-foreground">The acceptance check opens a local page, reads its title and DOM evidence, and captures a screenshot without an external write.</p>
             </section>
           ) : null}
+          <RepositoryEvidenceFacts capability={capability} />
           <section className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold">Evidence</h3>
             {capability.evidence.length ? capability.evidence.map((evidence, index) => (
@@ -222,10 +279,12 @@ function CapabilityInspector({ capability, snapshot }: { capability: HermesCapab
             )) : <p className="text-sm text-muted-foreground">No current runtime evidence is available for this discoverable capability.</p>}
             <p className="text-xs text-muted-foreground">Desktop {snapshot.installed.desktopVersion ?? "Unknown"} ({snapshot.installed.desktopCommit ?? "commit unknown"}) · Backend {snapshot.installed.backendVersion ?? "Unknown"} ({snapshot.installed.backendCommit ?? "commit unknown"})</p>
           </section>
-          <Button variant="outline" size="sm" onClick={() => { window.location.href = capability.cabinetHref; }}>
-            Open Cabinet surface
-            <ChevronRight data-icon="inline-end" />
-          </Button>
+          {capability.surfaceState === "mapped" ? (
+            <Button variant="outline" size="sm" onClick={() => { window.location.href = capability.id === "source-review" ? "/" : capability.cabinetHref; }}>
+              Open {capability.cabinetSurface}
+              <ChevronRight data-icon="inline-end" />
+            </Button>
+          ) : null}
         </div>
       </ScrollArea>
     </div>
@@ -403,6 +462,7 @@ export function HermesControlCenter() {
                     <HermesLiveModules section={section as "agents" | "messaging" | "artifacts" | "memory" | "sessions" | "settings" | "tools"} snapshot={snapshot} query={query} onRefresh={refresh} refreshing={refreshing} />
                   </div>
                 ) : null}
+                {mode === "developer" ? <DeveloperRepositoryContext snapshot={snapshot} /> : null}
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-sm font-semibold">{mode === "developer" ? "Developer capabilities" : SECTIONS.find((item) => item.id === section)?.label}</h2>

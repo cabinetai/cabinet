@@ -6,6 +6,13 @@ import type {
 } from "./types";
 import type { HermesServerConfig } from "./server-config";
 import { readOpenCliDiagnostics } from "./opencli-diagnostics";
+import {
+  normalizeProjectObservation,
+  normalizeReviewObservation,
+  normalizeWorktreeObservation,
+  unavailableDeveloperRepositorySnapshot,
+  type HermesDeveloperRepositorySnapshot,
+} from "./developer-repository";
 
 type Fetch = typeof fetch;
 
@@ -171,6 +178,8 @@ export class HermesManagementClient {
         read("model options", "/api/model/options", { providers: [] }),
         read("artifacts", "/api/files", { entries: [] }),
       ]);
+
+    const developerRepository = await this.readDeveloperRepository(sessionsRaw, diagnostics);
 
     const profiles = array(record(profilesRaw).profiles).map((item) => {
       const source = record(item);
@@ -376,6 +385,7 @@ export class HermesManagementClient {
       checkedAt: new Date().toISOString(),
       profile: this.config.profile,
       compatibility: { version: health.version, adapter: "desktop-0.18" },
+      developerRepository,
       profiles,
       agentManifest: {
         profile: this.config.profile,
@@ -434,6 +444,52 @@ export class HermesManagementClient {
       },
       diagnostics,
     };
+  }
+
+  private async readDeveloperRepository(
+    sessionsRaw: unknown,
+    diagnostics: HermesManagementSnapshot["diagnostics"]
+  ): Promise<HermesDeveloperRepositorySnapshot> {
+    const observedAt = new Date().toISOString();
+    const project = normalizeProjectObservation(sessionsRaw, this.config.profile, observedAt);
+    const sessions = array(record(sessionsRaw).sessions).map(record);
+    const selected = sessions.find((item) => item.is_active === true) ?? sessions[0];
+    const cwd = selected?.cwd;
+    if (typeof cwd !== "string" || !cwd.trim()) {
+      return {
+        project,
+        worktrees: { state: "unknown", observedAt, total: 0, current: null, ambiguousCurrent: false, items: [], summary: "Hermes did not report a session working directory, so worktrees were not queried." },
+        review: { state: "unknown", observedAt, repository: null, branch: null, detached: null, clean: null, staged: null, unstaged: null, untracked: null, conflicts: null, ahead: null, behind: null, reviewAvailable: null, reviewCount: null, summary: "Hermes did not report a session working directory, so Git review was not queried." },
+      };
+    }
+    const safeRead = async (area: string, path: string): Promise<{ ok: true; value: unknown } | { ok: false; summary: string }> => {
+      try {
+        return { ok: true, value: await this.managementRequest(path) };
+      } catch (error) {
+        const summary = boundedHermesFailureSummary(error instanceof Error ? error.message : error) ?? `${area} is unavailable.`;
+        diagnostics.push({ area, status: "degraded", message: summary });
+        return { ok: false, summary };
+      }
+    };
+    const encodedPath = encodeURIComponent(cwd);
+    const [worktreesRaw, statusRaw, reviewRaw] = await Promise.all([
+      safeRead("developer worktrees", `/api/git/worktrees?path=${encodedPath}`),
+      safeRead("developer git status", `/api/git/status?path=${encodedPath}`),
+      safeRead("developer source review", `/api/git/review/list?scope=uncommitted&path=${encodedPath}`),
+    ]);
+    const unavailable = unavailableDeveloperRepositorySnapshot(this.config.profile, observedAt, "Hermes developer repository source is unavailable.");
+    const worktrees = worktreesRaw.ok
+      ? normalizeWorktreeObservation(worktreesRaw.value, cwd, observedAt)
+      : { ...unavailable.worktrees, summary: worktreesRaw.summary };
+    const review = statusRaw.ok
+      ? normalizeReviewObservation(statusRaw.value, reviewRaw.ok ? reviewRaw.value : {}, cwd, observedAt)
+      : { ...unavailable.review, summary: statusRaw.summary };
+    if (statusRaw.ok && !reviewRaw.ok) {
+      review.state = "failure";
+      review.reviewAvailable = false;
+      review.summary = `${review.summary} Review list failed: ${reviewRaw.summary}`;
+    }
+    return { project, worktrees, review };
   }
 
   async perform(action: string, payload: Record<string, unknown>): Promise<unknown> {

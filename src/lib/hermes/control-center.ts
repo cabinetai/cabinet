@@ -89,6 +89,7 @@ function collectHermesObservations(
         : input.successSummary ?? `${input.source} responded successfully${typeof input.count === "number" ? ` with ${input.count} records` : ""}.`;
     for (const id of input.ids) add(id, input.source, input.interface, outcome, summary, { facts: typeof input.count === "number" ? { count: input.count } : undefined });
   };
+  const developerOutcome = (state: typeof management.developerRepository.project.state): HermesEvidenceOutcome => state;
 
   add(
     "command-center",
@@ -111,6 +112,42 @@ function collectHermesObservations(
   endpoint({ ids: ["mcp"], area: "mcp", source: "Hermes MCP servers", interface: "/api/mcp/servers", count: management.mcpServers.length });
   endpoint({ ids: ["plugins"], area: "plugins", source: "Hermes dashboard plugins", interface: "/api/dashboard/plugins", count: management.plugins.length });
   endpoint({ ids: ["executor", "api-keys-tools"], area: "toolsets", source: "Hermes toolsets", interface: "/api/tools/toolsets", count: management.toolsets.length });
+
+  const project = management.developerRepository.project;
+  add("projects", "Hermes session project association", "/api/sessions?limit=100", developerOutcome(project.state), project.summary, {
+    observedAt: project.observedAt,
+    facts: {
+      project: project.project,
+      profile: project.profile,
+      sessionAssociation: project.sessionAssociation,
+      workingDirectoryReported: project.workingDirectoryReported,
+      repositoryAssociated: project.repositoryAssociated,
+      repository: project.repository,
+    },
+  });
+  const worktrees = management.developerRepository.worktrees;
+  add("worktrees", "Hermes Git worktrees", "/api/git/worktrees", developerOutcome(worktrees.state), worktrees.summary, {
+    observedAt: worktrees.observedAt,
+    facts: { total: worktrees.total, current: worktrees.current, ambiguousCurrent: worktrees.ambiguousCurrent, items: worktrees.items },
+  });
+  const review = management.developerRepository.review;
+  add("source-review", "Hermes Git status and review", "/api/git/status + /api/git/review/list", developerOutcome(review.state), review.summary, {
+    observedAt: review.observedAt,
+    facts: {
+      repository: review.repository,
+      branch: review.branch,
+      detached: review.detached,
+      clean: review.clean,
+      staged: review.staged,
+      unstaged: review.unstaged,
+      untracked: review.untracked,
+      conflicts: review.conflicts,
+      ahead: review.ahead,
+      behind: review.behind,
+      reviewAvailable: review.reviewAvailable,
+      reviewCount: review.reviewCount,
+    },
+  });
 
   const messagingFailure = failed.get("messaging");
   const configuredPlatforms = management.operator.messaging.filter((item) => item.configured);
