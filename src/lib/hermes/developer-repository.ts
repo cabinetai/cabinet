@@ -110,7 +110,7 @@ export function normalizeProjectObservation(raw: unknown, profile: string, obser
   const repository = safeRepositoryIdentity(selected.git_repo_root ?? selected.repository);
   const project = safeDeveloperLabel(selected.project_name) ?? cwd;
   return {
-    state: "success",
+    state: repository ? "success" : "connected_empty",
     observedAt,
     profile: safeDeveloperLabel(selected.profile_name ?? selected.profile ?? profile, "Unknown profile")!,
     project,
@@ -118,7 +118,7 @@ export function normalizeProjectObservation(raw: unknown, profile: string, obser
     workingDirectoryReported: Boolean(cwd),
     repositoryAssociated: Boolean(repository),
     repository,
-    summary: repository ? "Hermes reported an active session and repository association." : "Hermes reported an active session; repository association was not reported by the session source.",
+    summary: repository ? "Hermes reported an active session and repository association." : "Hermes reported active project context with no associated repository.",
   };
 }
 

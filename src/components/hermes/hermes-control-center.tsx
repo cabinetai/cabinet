@@ -126,9 +126,9 @@ function CapabilityRow({ capability, active, onSelect }: { capability: HermesCap
   );
 }
 
-function observationAge(value: string | null): string {
+function observationAge(value: string | null, reference = Date.now()): string {
   if (!value) return "Observation unavailable";
-  const elapsed = Date.now() - Date.parse(value);
+  const elapsed = reference - Date.parse(value);
   if (!Number.isFinite(elapsed) || elapsed < 0) return "Observation time unknown";
   const minutes = Math.floor(elapsed / 60_000);
   if (minutes < 1) return "Observed just now";
@@ -148,7 +148,7 @@ function DeveloperRepositoryContext({ snapshot }: { snapshot: HermesControlCente
           <h2 className="text-sm font-semibold">Repository context</h2>
           <p className="text-xs text-muted-foreground">Read-only orientation from source-specific Hermes observations</p>
         </div>
-        <span className="text-xs text-muted-foreground">{observationAge(worktree.observedAt ?? project.observedAt)}</span>
+        <span className="text-xs text-muted-foreground">{observationAge(worktree.observedAt ?? project.observedAt, Date.parse(snapshot.checkedAt))}</span>
       </div>
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs md:grid-cols-5">
         <div><dt className="text-muted-foreground">Project</dt><dd className="truncate font-medium">{project.label ?? "Not reported"}</dd></div>

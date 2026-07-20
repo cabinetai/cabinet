@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
 import { buildHermesRepositoryFixtureProjection } from "./control-center-repository-fixture";
+import { hermesProjectionMatrixRows } from "./control-center-projection";
 import { normalizeProjectObservation, normalizeReviewObservation, normalizeWorktreeObservation, safePathIdentity, safeRepositoryIdentity } from "./developer-repository";
 
 const observedAt = "2026-07-19T20:00:00.000Z";
@@ -18,7 +21,7 @@ test("represents a project with no repository as connected-empty association con
     assert.equal(empty.state, "connected_empty");
     assert.equal(empty.repositoryAssociated, false);
     const active = normalizeProjectObservation({ sessions: [{ id: "s1", profile: "operator-os", cwd: "/Users/private/project", is_active: true }] }, "operator-os", observedAt);
-    assert.equal(active.state, "success");
+    assert.equal(active.state, "connected_empty");
     assert.equal(active.workingDirectoryReported, true);
     assert.equal(active.repositoryAssociated, false);
 });
@@ -54,4 +57,15 @@ test("keeps exact-fixture paths from earning live credits and emits no sensitive
     }
     assert.equal(fixture.capabilities.length, 48);
     assert.equal(new Set(fixture.capabilities.map((item) => item.id)).size, 48);
+});
+
+test("Phase 2B machine evidence equals the shared production fixture projection", () => {
+  const machine = JSON.parse(readFileSync(path.resolve("docs/evidence/hermes-developer-repository/acceptance-fixture-projection.json"), "utf8"));
+  const fixture = buildHermesRepositoryFixtureProjection({
+    implementationRevision: machine.evidenceProvenance.implementationRevision,
+    artifactGeneratedAt: machine.evidenceProvenance.artifactGeneratedAt,
+  });
+  assert.deepEqual(machine, JSON.parse(JSON.stringify(fixture)));
+  assert.deepEqual(hermesProjectionMatrixRows(machine), hermesProjectionMatrixRows(fixture));
+  assert.deepEqual(machine.parity, fixture.parity);
 });
