@@ -86,15 +86,13 @@ test.beforeAll(async () => {
 test.afterAll(async () => { await cabinet?.close(); });
 test.afterEach(async ({ page }) => { expect(browserErrors.get(page) ?? []).toEqual([]); });
 
-test("desktop shows bounded Agent catalogs without implying Executor or API-key health", async ({ page }) => {
+test("desktop keeps Agent catalog evidence in Developer diagnostics without implying health", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const mutationCalls = await prepare(page);
-  await page.getByRole("button", { name: "Tools", exact: true }).click();
-  await expect(page.getByText("Agent skills and toolsets")).toBeVisible();
-  await expect(page.getByText("2", { exact: true })).toHaveCount(2);
-  await expect(page.getByText("Enabled state not reported", { exact: false }).first()).toBeVisible();
-  await expect(page.getByText("Enabled · needs config")).toBeVisible();
-  await expect(page.getByText("Catalog presence does not prove Executor health or canonical API-key configuration.")).toBeVisible();
+  await page.getByRole("tab", { name: "Developer" }).click();
+  await expect(page.getByTestId("hermes-capability-skills")).toContainText("Degraded");
+  await expect(page.getByTestId("hermes-capability-executor")).toContainText("Degraded");
+  await expect(page.getByTestId("hermes-capability-list").locator('button[data-testid^="hermes-capability-"]')).toHaveCount(48);
   await expect(page.getByText(/credential-secret/i)).toHaveCount(0);
   expect(mutationCalls()).toBe(0);
 });
@@ -102,6 +100,7 @@ test("desktop shows bounded Agent catalogs without implying Executor or API-key 
 test("skill and Executor inspectors preserve partial proof without current-live credit", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const mutationCalls = await prepare(page);
+  await page.getByRole("tab", { name: "Developer" }).click();
   for (const capabilityId of ["skills", "executor"]) {
     await page.getByTestId(`hermes-capability-${capabilityId}`).click();
     const inspector = page.locator('[data-testid="hermes-capability-inspector"]:visible');
@@ -112,12 +111,12 @@ test("skill and Executor inspectors preserve partial proof without current-live 
   expect(mutationCalls()).toBe(0);
 });
 
-test("390x844 reduced-motion Tools view and capability sheet have zero overflow", async ({ page }) => {
+test("390x844 reduced-motion Developer diagnostics and capability sheet have zero overflow", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 844 });
   const mutationCalls = await prepare(page);
-  await page.getByRole("button", { name: "Tools", exact: true }).click();
-  await expect(page.getByText("Agent skills and toolsets")).toBeVisible();
+  await page.getByRole("tab", { name: "Developer" }).click();
+  await expect(page.getByTestId("hermes-capability-list")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   await page.getByTestId("hermes-capability-skills").click();
   await expect(page.locator('[data-testid="hermes-capability-inspector"]:visible')).toContainText("Current live visibility");

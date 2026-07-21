@@ -204,7 +204,7 @@ The server selects one of two explicit modes through `CABINET_RUNTIME_MODE`:
 | `cabinet` (default) | Uses Cabinet's local provider adapters. Tasks, jobs, and heartbeats run through persisted Cabinet conversations; the composer can select provider, model, effort, structured execution, or terminal execution. |
 | `hermes` | Makes Hermes the visible agent runtime. Persona reads and writes are projected to the `hermes` provider and `hermes_runtime` adapter, legacy provider/runtime controls are hidden, and conversations execute through the server-only Hermes Agent API, Management API, and Gateway bridge. |
 
-Hermes mode also adds the Today cockpit, Hermes Control Center, session/run inspection, capability parity views, repository visibility, read-only Agent catalogs, and a narrowly governed run-termination intervention. Consequential interventions remain disabled unless `CABINET_HERMES_INTERVENTIONS_ENABLED=true`, and still require fresh authority, typed confirmation, and idempotency safeguards.
+Hermes mode also adds the Today cockpit, an action-oriented Hermes Control Center, governed Skills install/update/enable/disable/remove, session/run inspection, Developer capability diagnostics, repository visibility, read-only Agent catalogs, and a narrowly governed run-termination intervention. Every Skills change requires a fresh canonical read, a server-issued typed confirmation, exact target binding, an idempotency receipt, and Hermes readback verification. Run termination remains disabled unless `CABINET_HERMES_INTERVENTIONS_ENABLED=true`; Skills management is not coupled to that flag.
 
 The web terminal remains a first-class interactive surface in Cabinet mode. It is not a silent fallback for a failed Hermes run.
 
@@ -259,6 +259,7 @@ cp .env.example .env.local
 | `CABINET_HERMES_GATEWAY_URL` / `CABINET_HERMES_GATEWAY_TOKEN` | _(required for live Hermes execution)_ | Loopback Gateway and server-only WebSocket token. |
 | `CABINET_HERMES_PROFILE` | _(required in Hermes mode)_ | Hermes profile name; the product baseline uses `operator-os`. |
 | `CABINET_HERMES_TIMEOUT_MS` | `3000` | Upstream timeout, constrained to 250–30000 ms. |
+| `CABINET_HERMES_CLI_PATH` | `hermes` | Optional fixed server-only Hermes executable used for durable Skills install, targeted update, and removal. Browser input cannot change it. |
 | `CABINET_HERMES_INTERVENTIONS_ENABLED` | `false` | Enables only the implemented governed intervention path; it does not bypass confirmation or authority checks. |
 
 ### Authentication

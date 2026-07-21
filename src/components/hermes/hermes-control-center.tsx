@@ -19,6 +19,7 @@ import {
   Server,
   Settings2,
   SlidersHorizontal,
+  SquareAsterisk,
   TriangleAlert,
   Users,
   Wrench,
@@ -36,6 +37,7 @@ import { useIsMobile } from "@/hooks/use-is-mobile";
 import { cn } from "@/lib/utils";
 import { HermesLiveModules } from "@/components/hermes/hermes-live-modules";
 import { RuntimeInterventionPanel } from "@/components/hermes/runtime-intervention-panel";
+import { HermesSkillsManagement } from "@/components/hermes/skills-management";
 import type {
   HermesCapabilityProjection,
   HermesCapabilityStatus,
@@ -45,19 +47,17 @@ import type {
 import { runtimeExecutionEmptyMessage, type HermesExecutionRun, type HermesExecutionState } from "@/lib/hermes/runtime-execution";
 
 type Mode = "operator" | "developer";
-type Section = "overview" | "agents" | "messaging" | "artifacts" | "memory" | "automations" | "tools" | "sessions" | "settings" | "developer";
+type Section = "overview" | "needs" | "skills" | "settings" | "sessions" | "memory" | "sources" | "developer";
 
 const SECTIONS: Array<{ id: Section; label: string; icon: typeof Gauge; groups: string[] }> = [
-  { id: "overview", label: "Overview", icon: Gauge, groups: [] },
-  { id: "agents", label: "Agents", icon: Users, groups: ["Agents"] },
-  { id: "messaging", label: "Messaging", icon: MessageCircle, groups: ["Messaging"] },
-  { id: "artifacts", label: "Artifacts", icon: Box, groups: ["Artifacts"] },
-  { id: "memory", label: "Memory", icon: Brain, groups: ["Memory"] },
-  { id: "automations", label: "Automations", icon: Clock3, groups: ["Automations"] },
-  { id: "tools", label: "Tools", icon: Wrench, groups: ["Tools"] },
-  { id: "sessions", label: "Sessions", icon: Archive, groups: ["Sessions"] },
+  { id: "overview", label: "Runtime status", icon: Gauge, groups: [] },
+  { id: "needs", label: "Needs Jeremy", icon: TriangleAlert, groups: [] },
+  { id: "skills", label: "Skills", icon: SquareAsterisk, groups: [] },
   { id: "settings", label: "Settings", icon: Settings2, groups: ["Settings", "Providers and models", "Runtime"] },
-  { id: "developer", label: "Developer", icon: Code2, groups: ["Developer"] },
+  { id: "sessions", label: "Sessions / runs", icon: Archive, groups: ["Sessions"] },
+  { id: "memory", label: "Memory", icon: Brain, groups: ["Memory"] },
+  { id: "sources", label: "Sources", icon: Server, groups: [] },
+  { id: "developer", label: "Capability diagnostics", icon: Code2, groups: [] },
 ];
 
 const STATUS_LABELS: Record<HermesCapabilityStatus, string> = {
@@ -519,8 +519,7 @@ export function HermesControlCenter() {
     const needle = query.trim().toLowerCase();
     const activeSection = SECTIONS.find((item) => item.id === section);
     return snapshot.capabilities.filter((item) => {
-      if (mode === "operator" && item.mode === "Developer") return false;
-      if (mode === "developer" && item.mode !== "Developer") return false;
+      if (mode === "operator") return false;
       if (activeSection && activeSection.groups.length && !activeSection.groups.includes(item.group)) return false;
       if (!needle) return true;
       return [item.name, item.group, item.statusDetail, item.interface, item.cabinetSurface, ...item.keywords].join(" ").toLowerCase().includes(needle);
@@ -543,9 +542,9 @@ export function HermesControlCenter() {
         <div className="flex min-w-0 items-center gap-3">
           <div className="min-w-40 flex-1">
             <h1 className="font-heading text-2xl font-semibold tracking-tight">Hermes</h1>
-            <p className="text-xs text-muted-foreground">Capability visibility and control</p>
+            <p className="text-xs text-muted-foreground">Governed Hermes management</p>
           </div>
-          <div className="relative hidden w-full max-w-md md:block">
+          <div className={cn("relative hidden w-full max-w-md md:block", mode === "operator" ? "md:hidden" : null)}>
             <Search className="pointer-events-none absolute start-2.5 top-2 size-4 text-muted-foreground" aria-hidden="true" />
             <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search capabilities, tools, models..." aria-label="Search Hermes capabilities" className="ps-9" />
           </div>
@@ -559,7 +558,7 @@ export function HermesControlCenter() {
             <RefreshCw className={cn(refreshing ? "animate-spin" : null)} />
           </Button>
         </div>
-        <div className="relative md:hidden">
+        <div className={cn("relative md:hidden", mode === "operator" ? "hidden" : null)}>
           <Search className="pointer-events-none absolute start-2.5 top-2 size-4 text-muted-foreground" aria-hidden="true" />
           <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Hermes" aria-label="Search Hermes capabilities" className="ps-9" />
         </div>
@@ -570,11 +569,7 @@ export function HermesControlCenter() {
             <span className="whitespace-nowrap">Gateway {snapshot.health.gateway}</span>
             <span className="whitespace-nowrap">Configured profile {snapshot.health.configuredProfile}</span>
             <span className="whitespace-nowrap">Observed active profile {snapshot.health.observedActiveProfile ?? "Unknown. Management source unavailable."}</span>
-            <span className="whitespace-nowrap text-warning">
-              {snapshot.installed.upstreamAudit.stale
-                ? "Upstream audit is stale"
-                : `Audited upstream: ${snapshot.installed.upstreamAudit.commitsBehind} commits ahead`}
-            </span>
+            {mode === "developer" ? <span className="whitespace-nowrap text-warning">{snapshot.installed.upstreamAudit.stale ? "Upstream audit is stale" : `Audited upstream: ${snapshot.installed.upstreamAudit.commitsBehind} commits ahead`}</span> : null}
           </div>
         ) : null}
       </header>
@@ -607,28 +602,18 @@ export function HermesControlCenter() {
           </nav>
 
           <main className="flex min-h-0 min-w-0 flex-col bg-muted/20" data-testid={`hermes-section-${section}`}>
-            {section === "overview" && !query ? (
-              <div className="grid grid-cols-3 border-b border-border bg-background lg:grid-cols-6" data-testid="hermes-status-summary">
-                {(Object.keys(STATUS_LABELS) as HermesCapabilityStatus[]).map((status) => (
-                  <div key={status} className="flex min-w-0 flex-col gap-0.5 border-e border-border px-3 py-2 last:border-e-0">
-                    <span className="text-lg font-semibold tabular-nums">{snapshot.summary[status]}</span>
-                    <span className="truncate text-[11px] text-muted-foreground">{STATUS_LABELS[status]}</span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
             <ScrollArea className="min-h-0 flex-1">
               <div className="mx-auto w-full max-w-4xl p-3 md:p-4">
                 {section === "overview" && !query ? (
-                  <RuntimeExecutionOverview snapshot={snapshot} onSelectRun={(id) => { setSelectedRunId(id); setSelectedId(null); }} onSelectCapability={(id) => { setSelectedId(id); setSelectedRunId(null); }} />
+                  <RuntimeExecutionOverview snapshot={snapshot} onSelectRun={(id) => { setSelectedRunId(id); setSelectedId(null); }} onSelectCapability={() => { setSection("sources"); setSelectedId(null); setSelectedRunId(null); }} />
                 ) : null}
-                {section === "overview" && !query && operationalExceptions.length ? (
+                {section === "needs" ? (
                   <section className="mb-4 space-y-2" data-testid="hermes-operational-exceptions">
                     <div>
-                      <h2 className="text-sm font-semibold">Operational exceptions</h2>
-                      <p className="text-xs text-muted-foreground">Independent failures and conflicts are elevated. Shared unavailable sources are grouped.</p>
+                      <h2 className="text-base font-semibold">Needs Jeremy</h2>
+                      <p className="text-xs text-muted-foreground">Decisions and setup that need owner attention. Shared source problems appear once.</p>
                     </div>
-                    {operationalExceptions.map((exception) => (
+                    {operationalExceptions.length ? operationalExceptions.map((exception) => (
                       <button key={`${exception.kind}-${exception.capabilityId ?? exception.sourceGroup}`} type="button" className="block w-full text-left" disabled={!exception.capabilityId} onClick={() => { if (exception.capabilityId) setSelectedId(exception.capabilityId); setSelectedRunId(null); }}>
                         <Alert
                           variant={exception.severity === "critical" ? "destructive" : "default"}
@@ -644,36 +629,43 @@ export function HermesControlCenter() {
                           <AlertDescription className="line-clamp-2">{exception.summary}</AlertDescription>
                         </Alert>
                       </button>
-                    ))}
+                    )) : <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground">Nothing currently needs owner attention.</div>}
                   </section>
                 ) : null}
-                {(["agents", "messaging", "artifacts", "memory", "sessions", "settings", "tools"] as Section[]).includes(section) ? (
+                {section === "skills" ? <HermesSkillsManagement /> : null}
+                {(["memory", "sessions", "settings"] as Section[]).includes(section) ? (
                   <div className="mb-4">
-                    <HermesLiveModules section={section as "agents" | "messaging" | "artifacts" | "memory" | "sessions" | "settings" | "tools"} snapshot={snapshot} query={query} onRefresh={refresh} refreshing={refreshing} />
+                    <HermesLiveModules section={section as "memory" | "sessions" | "settings"} snapshot={snapshot} query="" onRefresh={refresh} refreshing={refreshing} />
                   </div>
                 ) : null}
-                {mode === "developer" ? <DeveloperRepositoryContext snapshot={snapshot} /> : null}
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <h2 className="text-sm font-semibold">{mode === "developer" ? "Developer capabilities" : SECTIONS.find((item) => item.id === section)?.label}</h2>
-                    <p className="text-xs text-muted-foreground">{capabilities.length} capabilities visible</p>
-                  </div>
-                  <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex" data-testid="hermes-parity-metrics">
-                    <span>Discoverable {snapshot.parity.discoverability.percentage}%</span>
-                    <span>Live {snapshot.parity.liveVisibility.percentage}%</span>
-                    <span>Managed {snapshot.parity.governedManagement.percentage}%</span>
-                    <span>Proven {snapshot.parity.liveProven.percentage}%</span>
-                  </div>
-                </div>
-                <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm" data-testid="hermes-capability-list">
-                  {capabilities.length ? capabilities.map((item) => <CapabilityRow key={item.id} capability={item} active={selectedId === item.id} onSelect={() => { setSelectedId(item.id); setSelectedRunId(null); }} />) : <div className="p-8 text-center text-sm text-muted-foreground">No capabilities match this view.</div>}
-                </div>
+                {section === "sources" ? (
+                  <section className="space-y-3" data-testid="hermes-source-summary">
+                    <div><h2 className="text-base font-semibold">Sources</h2><p className="text-xs text-muted-foreground">Canonical Hermes source health, grouped by shared boundary.</p></div>
+                    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+                      {snapshot.exceptions.filter((item) => item.kind === "source_group").length ? snapshot.exceptions.filter((item) => item.kind === "source_group").map((item) => (
+                        <div key={item.sourceGroup} className="border-b border-border p-4 last:border-b-0"><div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold">{item.title}</p><Badge variant={item.severity === "critical" ? "destructive" : "outline"}>{HEALTH_LABELS[item.health]}</Badge></div><p className="mt-1 text-xs text-muted-foreground">{item.summary}</p>{item.dependentCount ? <p className="mt-2 text-xs text-muted-foreground">Affects {item.dependentCount} management surfaces</p> : null}</div>
+                      )) : <div className="p-5 text-sm text-muted-foreground">No shared source failures are currently reported.</div>}
+                    </div>
+                  </section>
+                ) : null}
+                {mode === "developer" ? (
+                  <>
+                    <DeveloperRepositoryContext snapshot={snapshot} />
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div><h2 className="text-sm font-semibold">Capability diagnostics</h2><p className="text-xs text-muted-foreground">{capabilities.length} of 48 capabilities visible</p></div>
+                      <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex" data-testid="hermes-parity-metrics"><span>Discoverable {snapshot.parity.discoverability.percentage}%</span><span>Live {snapshot.parity.liveVisibility.percentage}%</span><span>Managed {snapshot.parity.governedManagement.percentage}%</span><span>Proven {snapshot.parity.liveProven.percentage}%</span></div>
+                    </div>
+                    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm" data-testid="hermes-capability-list">
+                      {capabilities.length ? capabilities.map((item) => <CapabilityRow key={item.id} capability={item} active={selectedId === item.id} onSelect={() => { setSelectedId(item.id); setSelectedRunId(null); }} />) : <div className="p-8 text-center text-sm text-muted-foreground">No capabilities match this view.</div>}
+                    </div>
+                  </>
+                ) : null}
               </div>
             </ScrollArea>
           </main>
 
           <aside className="hidden min-h-0 border-s border-border bg-background xl:flex">
-            {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} onRefresh={refresh} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : (
+            {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} onRefresh={refresh} /> : mode === "developer" && selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-muted-foreground">
                 <Activity className="size-6" aria-hidden="true" /><p className="text-sm">Select a capability to inspect support, parity, risk, and evidence.</p>
               </div>
@@ -681,12 +673,12 @@ export function HermesControlCenter() {
           </aside>
 
           <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-background/95 pb-[max(env(safe-area-inset-bottom),0px)] backdrop-blur md:hidden" aria-label="Hermes mobile">
-            {(["overview", "agents", "tools", "sessions"] as Section[]).map((itemId) => {
+            {(["overview", "needs", "skills", "sessions"] as Section[]).map((itemId) => {
               const item = SECTIONS.find((entry) => entry.id === itemId)!;
               const Icon = item.icon;
               return <button key={item.id} type="button" onClick={() => { setSection(item.id); setSelectedId(null); setSelectedRunId(null); }} className={cn("flex min-h-14 flex-col items-center justify-center gap-1 text-[10px]", section === item.id ? "text-primary" : "text-muted-foreground")}><Icon className="size-4" aria-hidden="true" /><span>{item.label}</span></button>;
             })}
-            <Button variant="ghost" className={cn("h-auto min-h-14 rounded-none flex-col gap-1 text-[10px]", ["messaging", "artifacts", "memory", "automations", "settings", "developer"].includes(section) ? "text-primary" : "text-muted-foreground")} aria-label="More Hermes sections" onClick={() => setMobileMoreOpen(true)}>
+            <Button variant="ghost" className={cn("h-auto min-h-14 rounded-none flex-col gap-1 text-[10px]", ["memory", "settings", "sources", "developer"].includes(section) ? "text-primary" : "text-muted-foreground")} aria-label="More Hermes sections" onClick={() => setMobileMoreOpen(true)}>
               <Ellipsis className="size-4" aria-hidden="true" /><span>More</span>
             </Button>
           </nav>
@@ -707,7 +699,7 @@ export function HermesControlCenter() {
                   ) : null}
                 </SheetHeader>
                 <div className="grid gap-1 p-3">
-                  {(mode === "developer" ? ["developer"] : ["messaging", "artifacts", "memory", "automations", "settings"]).map((itemId) => {
+                  {(mode === "developer" ? ["developer"] : ["memory", "settings", "sources"]).map((itemId) => {
                     const item = SECTIONS.find((entry) => entry.id === itemId)!;
                     const Icon = item.icon;
                     return <Button key={item.id} variant="ghost" className="h-11 justify-start" onClick={() => { setSection(item.id); setSelectedId(null); setSelectedRunId(null); setMobileMoreOpen(false); }}><Icon data-icon="inline-start" />{item.label}</Button>;
@@ -717,11 +709,11 @@ export function HermesControlCenter() {
             </Sheet>
           ) : null}
 
-          {isMobile && (selected || selectedRun) ? (
+          {isMobile && ((mode === "developer" && selected) || selectedRun) ? (
             <Sheet open onOpenChange={(open) => { if (!open) { setSelectedId(null); setSelectedRunId(null); } }}>
               <SheetContent side="right" className="w-[92vw] max-w-none p-0">
                 <SheetHeader className="sr-only"><SheetTitle>{selectedRun?.id ?? selected?.name}</SheetTitle><SheetDescription>Hermes runtime details</SheetDescription></SheetHeader>
-                {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} onRefresh={refresh} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : null}
+                {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} onRefresh={refresh} /> : mode === "developer" && selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : null}
               </SheetContent>
             </Sheet>
           ) : null}

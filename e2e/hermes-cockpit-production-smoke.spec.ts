@@ -138,6 +138,7 @@ test("real production route keeps Today usable without Hermes Management", async
   await page.goto(`${cabinet.appUrl}/hermes`);
   await expect(page.getByTestId("hermes-control-center")).toBeVisible();
   await expect(page.getByText("Cabinet agent daemon is unavailable")).toHaveCount(0);
+  await page.getByRole("button", { name: "Needs Jeremy", exact: true }).click();
   await expect(page.getByTestId("hermes-operational-exceptions")).toContainText("Management unavailable");
   await expect(page.getByTestId("hermes-operational-exceptions").locator("[role=alert]").first()).not.toHaveClass(/border-destructive/);
   await page.getByPlaceholder(/Search capabilities/i).fill("Memory and context");

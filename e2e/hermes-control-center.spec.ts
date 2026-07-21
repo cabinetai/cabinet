@@ -46,21 +46,27 @@ test.beforeAll(async () => {
 test.afterAll(async () => { await cabinet?.close(); });
 test.afterEach(async ({ page }) => { expect(browserErrors.get(page) ?? []).toEqual([]); });
 
-test("full 48-capability Overview derives totals and exceptions from the shared fixture", async ({ page }) => {
+test("Operator stays action-oriented while Developer retains the full 48-capability diagnostics", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await prepare(page);
   expect(fixture.capabilities).toHaveLength(48);
   expect(Object.values(fixture.summary).reduce((sum, count) => sum + count, 0)).toBe(48);
+  await expect(page.getByTestId("hermes-capability-list")).toHaveCount(0);
+  await expect(page.getByTestId("hermes-parity-metrics")).toHaveCount(0);
+  await page.getByRole("button", { name: "Needs Jeremy", exact: true }).click();
   await expect(page.getByTestId("hermes-operational-exceptions")).toContainText("Telegram");
   await expect(page.getByTestId("hermes-operational-exceptions")).toContainText("Conflicting evidence");
+  await page.getByRole("tab", { name: "Developer" }).click();
   await expect(page.getByTestId("hermes-parity-metrics")).toContainText(`Discoverable ${fixture.parity.discoverability.percentage}%`);
+  await expect(page.getByTestId("hermes-capability-list").locator('button[data-testid^="hermes-capability-"]')).toHaveCount(48);
   await page.screenshot({ path: path.join(evidenceDir, "overview-operational-exceptions.png"), fullPage: true });
 });
 
 test("Messaging failure inspector shows exact fixture failure without current visibility credit", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await prepare(page);
-  await page.getByTestId("hermes-operational-exceptions").getByRole("button").filter({ hasText: "Messaging" }).click();
+  await page.getByRole("tab", { name: "Developer" }).click();
+  await page.getByTestId("hermes-capability-messaging").click();
   const inspector = page.getByTestId("hermes-capability-inspector");
   await expect(inspector).toContainText("Fatal polling conflict");
   await expect(inspector).toContainText("exact fixture");
@@ -77,7 +83,8 @@ test("Messaging failure inspector shows exact fixture failure without current vi
 test("Gateway conflict inspector preserves both source facts without current visibility credit", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await prepare(page);
-  await page.getByTestId("hermes-operational-exceptions").getByRole("button").filter({ hasText: "Gateway" }).click();
+  await page.getByRole("tab", { name: "Developer" }).click();
+  await page.getByTestId("hermes-capability-gateway").click();
   const inspector = page.getByTestId("hermes-capability-inspector");
   await expect(inspector).toContainText("Hermes health bridge observed running");
   await expect(inspector).toContainText("Hermes management status observed stopped");
@@ -106,10 +113,10 @@ test("390x844 reduced-motion More sheet stays reachable without horizontal overf
   await expect(picker).toBeVisible();
   await expect(picker.getByTestId("hermes-mobile-fixture-provenance")).toContainText(`Fixture ID: ${HERMES_ACCEPTANCE_FIXTURE_ID}`);
   await expect(picker.getByTestId("hermes-mobile-fixture-provenance")).toContainText(`Implementation: ${implementationRevision}`);
-  await expect(picker.getByRole("button", { name: "Messaging" })).toBeVisible();
+  await expect(picker.getByRole("button", { name: "Sources" })).toBeVisible();
   await page.screenshot({ path: path.join(evidenceDir, "mobile-more-picker.png"), fullPage: true });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
-  await picker.getByRole("button", { name: "Messaging" }).click();
-  await expect(page.getByTestId("hermes-live-messaging-platforms")).toContainText("Fatal polling conflict");
+  await picker.getByRole("button", { name: "Sources" }).click();
+  await expect(page.getByTestId("hermes-source-summary")).toBeVisible();
 });
