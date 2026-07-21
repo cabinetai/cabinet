@@ -139,6 +139,54 @@ export interface ConversationNotification {
 
 const notificationQueue: ConversationNotification[] = [];
 
+/**
+ * Owns background work started by the conversation store. Finalization keeps
+ * history capture off the request's critical path, but shutdown must still be
+ * able to stop accepting new work and await everything already in flight.
+ */
+export class ConversationStoreLifecycle {
+  private accepting = true;
+  private readonly pending = new Set<Promise<void>>();
+  private readonly failures: unknown[] = [];
+  private closePromise: Promise<void> | null = null;
+
+  schedule(work: () => Promise<void>): boolean {
+    if (!this.accepting) return false;
+
+    const task = Promise.resolve().then(work);
+    this.pending.add(task);
+    void task.then(
+      () => this.pending.delete(task),
+      (error) => {
+        this.pending.delete(task);
+        this.failures.push(error);
+      }
+    );
+    return true;
+  }
+
+  close(): Promise<void> {
+    if (this.closePromise) return this.closePromise;
+    this.accepting = false;
+    this.closePromise = this.drain();
+    return this.closePromise;
+  }
+
+  private async drain(): Promise<void> {
+    while (this.pending.size > 0) {
+      await Promise.allSettled([...this.pending]);
+    }
+    if (this.failures.length > 0) {
+      throw new AggregateError(
+        [...this.failures],
+        "Conversation store background work failed during shutdown"
+      );
+    }
+  }
+}
+
+const conversationStoreLifecycle = new ConversationStoreLifecycle();
+
 // In-memory running counts — bootstrapped once from disk, then delta-updated
 // from notifications so the SSE tick never opens meta.json files.
 const _runningCounts = new Map<string, number>();
@@ -1379,6 +1427,18 @@ export async function writeConversationMeta(meta: ConversationMeta): Promise<voi
 const TRANSCRIPT_EVENT_THROTTLE_MS = 500;
 const transcriptEventThrottle = new Map<string, number>();
 
+/**
+ * Close the store's owned asynchronous work before its backing directory is
+ * removed. Idempotent: repeated callers await the same completed shutdown.
+ */
+export async function closeConversationStore(): Promise<void> {
+  await conversationStoreLifecycle.close();
+  transcriptEventThrottle.clear();
+  notificationQueue.length = 0;
+  _runningCounts.clear();
+  _runningCountsBootstrapped = false;
+}
+
 export async function appendConversationTranscript(
   id: string,
   chunk: string,
@@ -1601,14 +1661,18 @@ export async function finalizeConversation(
 
   // File-history capture (LOGGING_AND_FILE_HISTORY_PRD §4.3): at run end,
   // observe what actually changed in the cabinet, commit it as the agent,
-  // and journal per-file events. Fire-and-forget — history capture must
-  // never fail or delay a finalize.
+  // and journal per-file events. Keep it off the finalize critical path, but
+  // track it so closeConversationStore() can deterministically drain it before
+  // the backing directory is removed.
   if (input.status === "completed" || input.status === "failed") {
-    void import("@/lib/history/agent-commit")
-      .then(({ commitAgentRun }) => commitAgentRun(meta))
-      .catch((err) => {
+    conversationStoreLifecycle.schedule(async () => {
+      try {
+        const { commitAgentRun } = await import("@/lib/history/agent-commit");
+        await commitAgentRun(meta);
+      } catch (err) {
         console.error(`[history] run capture failed for ${id}:`, err);
-      });
+      }
+    });
   }
 
   // Broadcast a task.updated so every subscribed surface (task page, tasks

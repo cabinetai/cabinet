@@ -17,7 +17,74 @@ before(async () => {
 });
 
 after(async () => {
+  await store?.closeConversationStore();
   if (tempRoot) await fs.rm(tempRoot, { recursive: true, force: true });
+});
+
+test("conversation-store lifecycle drains pending work before close completes", async () => {
+  const lifecycle = new store.ConversationStoreLifecycle();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  let completed = false;
+
+  assert.equal(lifecycle.schedule(async () => {
+    await gate;
+    completed = true;
+  }), true);
+
+  const closing = lifecycle.close();
+  await Promise.resolve();
+  assert.equal(completed, false, "close must remain pending while owned work is active");
+  release();
+  await closing;
+  assert.equal(completed, true);
+});
+
+test("conversation-store lifecycle rejects new work after close and closes repeatedly", async () => {
+  const lifecycle = new store.ConversationStoreLifecycle();
+  await lifecycle.close();
+  let ran = false;
+  assert.equal(lifecycle.schedule(async () => { ran = true; }), false);
+  await lifecycle.close();
+  assert.equal(ran, false, "no background write may start after close");
+});
+
+test("conversation-store lifecycle keeps cleanup failures visible", async () => {
+  const lifecycle = new store.ConversationStoreLifecycle();
+  assert.equal(lifecycle.schedule(async () => {
+    throw new Error("expected cleanup failure");
+  }), true);
+  await assert.rejects(
+    lifecycle.close(),
+    /Conversation store background work failed during shutdown/
+  );
+});
+
+test("conversation-store lifecycle instances do not share pending work", async () => {
+  const first = new store.ConversationStoreLifecycle();
+  const second = new store.ConversationStoreLifecycle();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  assert.equal(first.schedule(() => gate), true);
+  await second.close();
+  assert.equal(second.schedule(async () => {}), false);
+  assert.equal(first.schedule(async () => {}), true);
+  release();
+  await first.close();
+});
+
+test("timer-backed background work is settled before temporary cleanup", async () => {
+  const lifecycle = new store.ConversationStoreLifecycle();
+  const ownedRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-lifecycle-test-"));
+  const marker = path.join(ownedRoot, "complete");
+  assert.equal(lifecycle.schedule(async () => {
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    await fs.writeFile(marker, "done", "utf8");
+  }), true);
+  await lifecycle.close();
+  assert.equal(await fs.readFile(marker, "utf8"), "done");
+  await fs.rm(ownedRoot, { recursive: true, force: true });
+  await assert.rejects(fs.access(ownedRoot), { code: "ENOENT" });
 });
 
 async function makeSingleShotConversation(title: string, prompt: string, agentOutput: string) {
