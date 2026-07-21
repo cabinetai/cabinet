@@ -116,9 +116,13 @@ test("Agent-only snapshot does not treat local OpenCLI diagnostics as a configur
     CABINET_HERMES_PROFILE: "operator-os",
   });
   const client = new HermesManagementClient(partial, async (input) => {
-    if (String(input).endsWith("/health/detailed")) {
+    const url = String(input);
+    if (url.endsWith("/health/detailed")) {
       return response({ status: "ok", version: "0.18.2" });
     }
+    if (url.endsWith("/v1/capabilities")) return response({ object: "capabilities" });
+    if (url.includes("/api/sessions?")) return response({ object: "list", data: [], has_more: false });
+    if (url.endsWith("/v1/models")) return response({ object: "list", data: [{ id: "advertised-only", owned_by: "catalog-owner" }] });
     throw new Error("unconfigured sources must not be fetched");
   });
 
@@ -128,6 +132,9 @@ test("Agent-only snapshot does not treat local OpenCLI diagnostics as a configur
   assert.equal(snapshot.openCli.available, false);
   assert.equal(snapshot.openCli.daemon, "unknown");
   assert.match(snapshot.openCli.message, /not probed/i);
+  assert.equal(snapshot.operator.model.currentModel, null);
+  assert.equal(snapshot.operator.model.currentProvider, null);
+  assert.equal(snapshot.operator.model.advertisedModels[0]?.displayId, "advertised-only");
   assert.deepEqual(snapshot.diagnostics, [{ area: "management source", status: "degraded", message: "Hermes Management is not configured for this review." }]);
 });
 
@@ -318,7 +325,8 @@ test("operator projection returns exact live records while stripping credential 
   assert.equal(result.operator.sessions[0]?.profile, "operator-os");
   assert.equal(result.operator.artifacts[0]?.kind, "report");
   assert.equal(result.operator.memoryGraph.edges[0]?.relationship, "supports");
-  assert.equal(result.operator.model.model, "model-a");
+  assert.equal(result.operator.model.currentModel, "model-a");
+  assert.equal(result.operator.model.currentProvider, "provider-a");
   assert.equal(result.operator.providers[0]?.authenticated, true);
   assert.equal(JSON.stringify(result).includes(secret), false);
   assert.equal(JSON.stringify(result).includes("TELEGRAM_BOT_TOKEN"), false);

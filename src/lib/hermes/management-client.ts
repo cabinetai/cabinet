@@ -14,6 +14,7 @@ import {
   type HermesDeveloperRepositorySnapshot,
 } from "./developer-repository";
 import { normalizeRuntimeExecution } from "./runtime-execution";
+import { collectAgentApiReadOnly } from "./agent-api-readonly";
 
 type Fetch = typeof fetch;
 
@@ -255,6 +256,17 @@ export class HermesManagementClient {
       }
     };
     const statusPromise = this.managementStatus();
+    const agentApiPromise = collectAgentApiReadOnly({
+      apiBaseUrl: this.config.apiBaseUrl,
+      apiKey: this.config.apiKey,
+      managementBaseUrl: this.config.managementBaseUrl,
+      managementToken: this.config.managementToken,
+      gatewayBaseUrl: "",
+      gatewayToken: null,
+      profile: this.config.profileConfigured ? this.config.profile : null,
+      timeoutMs: this.config.timeoutMs,
+      sourceStates: this.config.sourceStates,
+    }, this.fetchImpl);
     const [health, profilesRaw, manifestRaw, skillsRaw, jobsRaw, memoryRaw, mcpRaw, toolsetsRaw, pluginsRaw, openCli, runtimeStatus, workersRaw, boardRaw, messagingRaw, sessionsRaw, graphRaw, modelRaw, modelOptionsRaw, filesRaw, usageRaw] =
       await Promise.all([
         healthOverride ?? this.health(),
@@ -290,6 +302,7 @@ export class HermesManagementClient {
         read("artifacts", "/api/files", { entries: [], unavailable: true }),
         read("usage analytics", `/api/analytics/usage?days=30&profile=${encodeURIComponent(this.config.profile)}`, { totals: {}, unavailable: true }),
       ]);
+    const agentApi = await agentApiPromise;
     const runtimeRaw = runtimeStatus.data ?? {};
     if (!managementReady) {
       diagnostics.push({ area: "management source", status: "degraded", message: "Hermes Management is not configured for this review." });
@@ -429,7 +442,7 @@ export class HermesManagementClient {
         lastError,
       };
     });
-    const sessions = array(record(sessionsRaw).sessions).map((item) => {
+    const managementSessions = array(record(sessionsRaw).sessions).map((item) => {
       const source = record(item);
       const archived = source.archived === true;
       return {
@@ -446,6 +459,31 @@ export class HermesManagementClient {
         preview: value(source.preview),
       };
     });
+    const sessions = managementReady ? managementSessions : agentApi.sessions.items.map((item) => ({
+      id: item.displayId,
+      title: item.displayId,
+      profile: null,
+      source: item.source,
+      status: item.lifecycle,
+      createdAt: item.startedAt,
+      updatedAt: item.lastActiveAt ?? item.endedAt,
+      archived: false,
+      pinned: null,
+      model: item.model,
+      preview: null,
+      parentDisplayId: item.parentDisplayId,
+      parentRelationship: item.parentRelationship,
+      observedChildCount: item.observedChildCount,
+      lineageCoverage: item.lineageCoverage,
+      duplicateObservationCount: item.duplicateObservationCount,
+      identityAmbiguous: item.identityAmbiguous,
+      messageCount: item.messageCount,
+      toolCallCount: item.toolCallCount,
+      inputTokens: item.inputTokens,
+      outputTokens: item.outputTokens,
+      estimatedCostUsd: item.estimatedCostUsd,
+      actualCostUsd: item.actualCostUsd,
+    }));
     const artifactKind = (name: string, mime: string | null): "file" | "screenshot" | "diff" | "report" | "document" | "log" => {
       const normalized = `${name} ${mime ?? ""}`.toLowerCase();
       if (/screenshot|image\/(png|jpeg|webp)/.test(normalized)) return "screenshot";
@@ -512,6 +550,7 @@ export class HermesManagementClient {
     return {
       checkedAt: new Date().toISOString(),
       profile: this.config.profile,
+      agentApi,
       compatibility: {
         version: health.version,
         adapter: managementReady ? "installed-management-contract" : "source-specific",
@@ -560,8 +599,11 @@ export class HermesManagementClient {
         },
         providers: modelProviders,
         model: {
-          provider: value(currentModel.provider),
-          model: value(currentModel.model),
+          currentProvider: managementReady ? value(currentModel.provider) : null,
+          currentModel: managementReady ? value(currentModel.model) : null,
+          advertisedModels: agentApi.models.items,
+          observedAt: managementReady ? new Date().toISOString() : agentApi.models.observedAt,
+          source: managementReady ? "/api/model/info" : "/v1/models advertised catalog",
           contextLength: finite(currentModel.effective_context_length),
           supportsTools: booleanOrNull(capabilities.supports_tools),
           supportsVision: booleanOrNull(capabilities.supports_vision),

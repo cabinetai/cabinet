@@ -1,0 +1,32 @@
+{
+  "classification": "Live runtime",
+  "capturedAt": "2026-07-21T01:05:23.763Z",
+  "implementationRevision": "fa801ebd95d1fa951d9308a161be2d06d73dd9aa",
+  "installedHermesAgent": {
+    "version": "0.19.0",
+    "checkout": "d7b36070ef80"
+  },
+  "configuredProfile": "operator-os",
+  "observedActiveProfile": null,
+  "sources": {
+    "agent_api": "configured_and_reached",
+    "management": "unavailable",
+    "gateway": "unavailable"
+  },
+  "safeAgentApiIdentity": "http://127.0.0.1:8642",
+  "reviewInstance": "http://127.0.0.1:4011",
+  "interventionsEnabled": false,
+  "mutationCalls": 0,
+  "sessionCollection": {
+    "requestedLimit": 100,
+    "requestedOffset": 0,
+    "responseLimit": 100,
+    "responseOffset": 0,
+    "returnedCount": 100,
+    "loadedCount": 100,
+    "displayedCount": 50,
+    "hasMore": true,
+    "coverage": "partial_page",
+    "identityScope": "page_local"
+  }
+}

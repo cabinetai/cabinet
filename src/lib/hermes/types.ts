@@ -104,6 +104,7 @@ export type HermesManagementSnapshot = {
   checkedAt: string;
   profile: string;
   compatibility: { version: string | null; adapter: string };
+  agentApi: import("./agent-api-readonly").HermesAgentApiReadOnlySnapshot;
   developerRepository: import("./developer-repository").HermesDeveloperRepositorySnapshot;
   runtimeExecution: import("./runtime-execution").HermesRuntimeExecutionSnapshot;
   profiles: Array<{
@@ -236,6 +237,18 @@ export type HermesManagementSnapshot = {
       pinned: boolean | null;
       model: string | null;
       preview: string | null;
+      parentDisplayId?: string | null;
+      parentRelationship?: "none" | "observed" | "outside_loaded_page";
+      observedChildCount?: number;
+      lineageCoverage?: "loaded_page_only";
+      duplicateObservationCount?: number;
+      identityAmbiguous?: boolean;
+      messageCount?: number | null;
+      toolCallCount?: number | null;
+      inputTokens?: number | null;
+      outputTokens?: number | null;
+      estimatedCostUsd?: number | null;
+      actualCostUsd?: number | null;
     }>;
     artifacts: Array<{
       id: string;
@@ -265,8 +278,11 @@ export type HermesManagementSnapshot = {
       warning: string | null;
     }>;
     model: {
-      provider: string | null;
-      model: string | null;
+      currentProvider: string | null;
+      currentModel: string | null;
+      advertisedModels: Array<{ displayId: string; ownedBy: string | null }>;
+      observedAt: string | null;
+      source: string;
       contextLength: number | null;
       supportsTools: boolean | null;
       supportsVision: boolean | null;

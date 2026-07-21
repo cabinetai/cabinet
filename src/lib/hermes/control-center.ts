@@ -125,11 +125,71 @@ function collectHermesObservations(
   endpoint({ ids: ["profiles"], area: "profiles", source: "Hermes profiles", interface: "/api/profiles", count: management.profiles.length, emptyOutcome: "not_configured" });
   endpoint({ ids: ["skills"], area: "skills", source: "Hermes skills", interface: "/api/skills", count: management.skills.length });
   endpoint({ ids: ["cron"], area: "cron", source: "Hermes cron jobs", interface: "/api/cron/jobs", count: management.jobs.length });
-  endpoint({ ids: ["chat", "archived-chats", "session-pinning"], area: "sessions", source: "Hermes sessions", interface: "/api/sessions", count: management.operator.sessions.length });
+  const agentOutcome = (state: typeof management.agentApi.sessions.state): HermesEvidenceOutcome =>
+    state === "authentication_failure" ? "failure" : state;
+  const agentSessions = management.agentApi.sessions;
+  if (managementReady) {
+    endpoint({ ids: ["chat", "archived-chats", "session-pinning"], area: "sessions", source: "Hermes sessions", interface: "/api/sessions", count: management.operator.sessions.length });
+  } else if (["success", "connected_empty"].includes(agentSessions.state)) {
+    add("chat", "Hermes Agent API sessions", agentSessions.interface, agentOutcome(agentSessions.state), agentSessions.summary, {
+      observedAt: agentSessions.observedAt,
+      facts: {
+        count: agentSessions.items.length,
+        hasMore: agentSessions.hasMore,
+        sessions: agentSessions.items,
+        sourceGroup: "agent_api",
+        partialClaim: true,
+        limitation: "Session metadata and lineage only; transcript content was not requested.",
+      },
+      installedBackendVersion: health.version,
+      installedBackendCommit: null,
+    });
+    for (const id of ["archived-chats", "session-pinning"]) add(
+      id,
+      "Hermes Agent API sessions",
+      agentSessions.interface,
+      "unknown",
+      "The installed Agent session response does not report archive or pin state.",
+      { observedAt: agentSessions.observedAt, facts: { sourceGroup: "agent_api", partialClaim: true }, installedBackendVersion: health.version, installedBackendCommit: null },
+    );
+  } else {
+    for (const id of ["chat", "archived-chats", "session-pinning"]) add(
+      id,
+      "Hermes Agent API sessions",
+      agentSessions.interface,
+      agentOutcome(agentSessions.state),
+      agentSessions.summary,
+      { observedAt: agentSessions.observedAt, facts: { sourceGroup: "agent_api" }, installedBackendVersion: health.version, installedBackendCommit: null },
+    );
+  }
   endpoint({ ids: ["memory-context"], area: "memory", source: "Hermes memory", interface: "/api/memory", count: management.memory.providers.length, successSummary: `Hermes memory reported provider ${management.memory.activeProvider}.` });
   endpoint({ ids: ["starmap"], area: "memory graph", source: "Hermes memory graph", interface: "/api/learning/graph", count: management.operator.memoryGraph.stats.nodes });
   endpoint({ ids: ["providers", "provider-accounts"], area: "model options", source: "Hermes model options", interface: "/api/model/options", count: management.operator.providers.length, emptyOutcome: "not_configured" });
-  endpoint({ ids: ["models", "model-settings"], area: "current model", source: "Hermes current model", interface: "/api/model/info", count: management.operator.model.model ? 1 : 0, emptyOutcome: "not_configured" });
+  const agentModels = management.agentApi.models;
+  if (managementReady) {
+    endpoint({ ids: ["models", "model-settings"], area: "current model", source: "Hermes current model", interface: "/api/model/info", count: management.operator.model.currentModel ? 1 : 0, emptyOutcome: "not_configured" });
+  } else {
+    add("models", "Hermes Agent API advertised models", agentModels.interface, agentOutcome(agentModels.state), agentModels.summary, {
+      observedAt: agentModels.observedAt,
+      facts: {
+        count: agentModels.items.length,
+        advertisedModels: agentModels.items,
+        currentModel: null,
+        currentProvider: null,
+        sourceGroup: "agent_api",
+        partialClaim: true,
+        limitation: "GET /v1/models is an advertised catalog; it does not report the canonical current/default model, provider authentication, profile overrides, or billing state.",
+      },
+      installedBackendVersion: health.version,
+      installedBackendCommit: null,
+    });
+    add("model-settings", "Hermes Agent API advertised models", agentModels.interface, agentOutcome(agentModels.state), "The Agent API advertises available models but does not expose the canonical model-settings contract.", {
+      observedAt: agentModels.observedAt,
+      facts: { count: agentModels.items.length, sourceGroup: "agent_api", partialClaim: true },
+      installedBackendVersion: health.version,
+      installedBackendCommit: null,
+    });
+  }
   endpoint({ ids: ["mcp"], area: "mcp", source: "Hermes MCP servers", interface: "/api/mcp/servers", count: management.mcpServers.length });
   endpoint({ ids: ["plugins"], area: "plugins", source: "Hermes dashboard plugins", interface: "/api/dashboard/plugins", count: management.plugins.length });
   endpoint({ ids: ["executor", "api-keys-tools"], area: "toolsets", source: "Hermes toolsets", interface: "/api/tools/toolsets", count: management.toolsets.length });
@@ -366,6 +426,7 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
       memoryProvider: management.memory.activeProvider,
       memoryNamespace: management.memory.namespace,
       diagnostics: management.diagnostics,
+      sessionCollection: management.agentApi.sessions,
       operator: management.operator,
     },
   };
