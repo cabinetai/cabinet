@@ -1,8 +1,10 @@
 # Tasks / Conversations Continuity + Multi-Provider Runtime — PRD
 
-**Status:** Living doc. Last revised 2026-04-18.
+**Status:** Historical Cabinet-mode contract baseline. Current source map and Hermes-mode behavior are documented in `docs/CLAUDE.md`.
 **Owners:** Cabinet core team.
-**Companion docs:** [`PROVIDER-CLI.md`](./PROVIDER-CLI.md) (runtime detail), [`CALENDAR_RUN_LINKAGE.md`](./CALENDAR_RUN_LINKAGE.md) (scheduler linkage), [`CLAUDE.md`](./CLAUDE.md) (project rules), [`SIDEBAR.md`](./SIDEBAR.md), [`EDITOR.md`](./EDITOR.md), [`PROGRESS.md`](./PROGRESS.md).
+**Companion docs:** [`PROVIDER-CLI.md`](./PROVIDER-CLI.md) (runtime detail), [`CALENDAR_RUN_LINKAGE.md`](./CALENDAR_RUN_LINKAGE.md) (scheduler linkage), [`CLAUDE.md`](./CLAUDE.md) (project rules), [`SIDEBAR.md`](./SIDEBAR.md), [`EDITOR.md`](./EDITOR.md), [`PROGRESS.md`](../PROGRESS.md).
+
+The core file-backed conversation principles still inform Cabinet mode, but the 11-surface matrix and many component paths below capture the April 2026 design and are not a current route inventory. Hermes mode forces `hermes` / `hermes_runtime` and hides Cabinet provider selection.
 
 ---
 
@@ -40,7 +42,7 @@ These are hard rules. Future work lives within them, not around them.
 6. **Provider-agnostic execution.** All CLI integrations implement `AgentExecutionAdapter` (`src/lib/agents/adapters/types.ts`). Adding a provider is a plugin, not a rewrite.
 7. **Cwd discipline.** The adapter process always runs with `cwd = data/{cabinetPath}`, never `DATA_DIR`. `@mentions` like `@Harry Potter Poems` resolve to the right cabinet.
 8. **Cabinet block trailer is mandatory.** Every agent turn output must end with a `SUMMARY:` / `CONTEXT:` / `ARTIFACT:` block inside a ```cabinet``` fence. `<ask_user>…</ask_user>` is the explicit convention for awaiting-input states.
-9. **Markdown on disk is source of truth.** No database. Restart, re-index, or rebuild — nothing is lost.
+9. **Conversation files on disk are source of truth.** SQLite may hold local runtime/index records, but it is not the canonical conversation store. Restart, re-index, or rebuild without losing the durable conversation record.
 10. **No per-surface forks.** If a surface needs behavior the shared primitive doesn't have, extend the primitive. Do not fork.
 11. **UX-relevant events are published from the Next.js process.** The daemon runs in its own Node process with its own event bus; SSE subscribers live in Next.js and never see daemon-side events. Every live UX signal (turn streaming, task completion, tree-changed) must be emitted by — or polled for by — Next.js code. See §14.5.
 
@@ -51,7 +53,7 @@ These are hard rules. Future work lives within them, not around them.
 - Not merging with `task-inbox.ts` (that's an unrelated agent-to-agent handoff system under `data/{cabinet}/.agents/{agentSlug}/tasks/`).
 - Not adding voice, mobile, or swarm fan-out in this revision.
 - Not building per-surface prompt composers. One shared composer primitive only.
-- Not adding a database or migration layer. Disk is the store.
+- Not moving the canonical conversation store into SQLite. Disk remains the durable conversation store.
 
 ### 1.3 Success criteria
 
@@ -1243,7 +1245,7 @@ Future, implied (not in this revision):
 - [`CALENDAR_RUN_LINKAGE.md`](./CALENDAR_RUN_LINKAGE.md) — scheduler ↔ conversation linkage, UI affordances.
 - [`CLAUDE.md`](./CLAUDE.md) — project-wide rules, tech stack, conventions.
 - [`SIDEBAR.md`](./SIDEBAR.md), [`EDITOR.md`](./EDITOR.md) — adjacent UI specs.
-- [`PROGRESS.md`](./PROGRESS.md) — dated changelog.
+- [`PROGRESS.md`](../PROGRESS.md) — dated changelog.
 - [`TASKS.md`](./TASKS.md) — delivery tracker (phase-level progress).
 
 ---

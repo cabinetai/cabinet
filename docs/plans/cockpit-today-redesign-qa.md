@@ -62,4 +62,4 @@ Hermes remains authoritative. Approval, confirmation, idempotency, read-only ver
 - Live 1440 by 900: no horizontal overflow, no framework overlay, all required desktop modules visible in the first viewport
 - Live 390 by 844: no horizontal overflow, single-column Today, one cockpit bottom navigation, two queued decisions, compact freshness/Radar orientation, and full-height detail sheet
 
-Owner approval is still required. PR #1 remains draft and unmerged.
+Owner approval of the cockpit experience is still required. GitHub PR #1 was subsequently approved and merged as `e2b0ba4c`.

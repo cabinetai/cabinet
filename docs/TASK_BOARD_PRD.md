@@ -1,8 +1,8 @@
 # Task Board PRD — Attention-first Kanban of AI Conversations
 
-**Status:** Draft v1 · 2026-04-19
+**Status:** Implemented design baseline · current board lives in `src/components/tasks/board/`
 **Owner:** hilash
-**Supersedes:** current `tasks-board.tsx` generic kanban + `board.yaml` columns
+**Superseded:** the former generic `tasks-board.tsx` and `board.yaml` columns. Proposed file names below are retained as design history.
 
 ---
 
@@ -217,5 +217,5 @@ Each phase ships on `main`, gated by the flag; no feature branch kept open acros
 - Getting Started doc → `data/getting-started/index.md` §Agents & Tasks at a Glance (legend, inbox semantics, color discipline rule).
 - Existing PRD → `AGENT_PAGE_PRD.md` §5.3b (Inbox wait-don't-execute decision).
 - Sidebar dot implementation → `src/components/sidebar/recent-tasks.tsx` (reuse `tintFromHex`, `getAgentColor`, just-finished 1h rule).
-- Current board (to be replaced) → `src/components/tasks/tasks-board.tsx`.
+- Current implementation → `src/components/tasks/board/tasks-board.tsx` and its sibling board modules.
 - Task detail reference → `src/components/tasks/task-detail-panel.tsx`.

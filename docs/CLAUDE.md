@@ -2,7 +2,7 @@
 
 ## What is this project?
 
-Cabinet is an AI-first self-hosted knowledge base and startup OS. All content lives as markdown files on disk. The web UI provides WYSIWYG editing, a collapsible tree sidebar, drag-and-drop page organization, structured AI runs for tasks/jobs/heartbeats, and interactive `WebTerminal` surfaces for direct CLI sessions.
+Cabinet is an AI-first self-hosted knowledge base and startup OS. Durable knowledge lives as markdown files and assets on disk; local SQLite stores structured runtime, chat, activity, job-run, and index state. The web UI provides WYSIWYG editing, a collapsible tree sidebar, drag-and-drop page organization, structured AI runs, Hermes-first operator surfaces, and interactive `WebTerminal` sessions.
 
 **Core philosophy:** Humans define intent. Agents do the work. The knowledge base is the shared memory between both.
 
@@ -12,10 +12,11 @@ Cabinet is an AI-first self-hosted knowledge base and startup OS. All content li
 - **UI:** Tailwind CSS + shadcn/ui (base-ui based, NOT Radix — no `asChild` prop)
 - **Editor:** Tiptap (ProseMirror-based) with markdown roundtrip via HTML intermediate
 - **State:** Zustand (tree-store, editor-store, ai-panel-store, task-store, app-store)
+- **Local structured state:** better-sqlite3 at `<data-dir>/.cabinet.db`
 - **Fonts:** Inter (sans) + JetBrains Mono (code)
 - **Icons:** Lucide (no emoji in system chrome)
 - **Markdown:** gray-matter (frontmatter), unified/remark (MD→HTML), turndown (HTML→MD)
-- **AI providers:** Claude Code, Codex CLI, Cursor CLI, OpenCode, Copilot CLI, Grok CLI, Pi, and a generic CLI adapter — all driven through the shared adapter runtime in `src/lib/agents/`.
+- **AI runtimes:** Cabinet mode uses Claude Code, Codex CLI, Cursor CLI, OpenCode, Copilot CLI, Grok CLI, Pi, and a generic CLI adapter through `src/lib/agents/`. Hermes mode uses the `hermes_runtime` adapter and server-only clients in `src/lib/hermes/`.
 
 ## Architecture
 
@@ -30,50 +31,51 @@ src/
   app/api/agents/providers/  → Provider, model, adapter metadata
   app/api/agents/tasks/      → Task board data
   app/api/agents/scheduler/  → Scheduler control/status
-  app/api/agents/skills/     → Skill library: list/CRUD, import (github/skills.sh/local), bundle-into-cabinet, trust, scan, catalog
+  app/api/agents/skills/     → Skill library: list/CRUD, import (github/skills.sh/local), bundle-into-cabinet, audits, scan, catalog
+  app/api/hermes/            → Health, cockpit, sessions/runs, management, capabilities, and governed interventions
   app/api/git/               → Git log, diff, commit endpoints
   stores/                    → Zustand (tree, editor, ai-panel, task, app)
   components/sidebar/        → Tree navigation, drag-and-drop, context menu
   components/editor/         → Tiptap WYSIWYG + toolbar, website/PDF/CSV/office viewers
   components/editor/office/  → Read-only viewers for .docx, .xlsx, .pptx
-  components/ai-panel/       → Right-side AI chat panel
   components/tasks/          → Task board + task detail panel
   components/agents/         → Agents workspace + live/result conversation views
-  components/jobs/           → Jobs manager UI
+  components/hermes/         → Today cockpit, Control Center, live modules, runtime interventions
   components/terminal/       → xterm.js web terminal
   components/composer/       → Shared composer + task runtime picker (supports @page, @agent, @skill mentions)
   components/skills/         → Skill library, detail page, add dialog, picker, "Skills offered" transcript footer
   components/search/         → Cmd+K search dialog
   components/layout/         → App shell, header
-  lib/storage/               → Filesystem ops (path-utils, page-io, tree-builder, task-io)
+  lib/storage/               → Filesystem ops (path-utils, page-io, tree-builder, references)
   lib/markdown/              → MD↔HTML conversion
   lib/git/                   → Git service (auto-commit, history, diff)
   lib/agents/                → Adapter runtime, conversation runner, personas, providers
-  lib/agents/skills/         → Multi-origin skill loader, trust gating, sync (mount/symlink), discovery scan, lock file
+  lib/agents/skills/         → Five-origin loader, trust classification, sync (mount/symlink), discovery scan, lock file
+  lib/hermes/                → Hermes clients, contracts, projections, readiness, evidence, and safety boundaries
   lib/jobs/                  → Job scheduler (node-cron)
 server/
   cabinet-daemon.ts          → Unified daemon: structured adapter runs, PTY sessions, scheduler, event bus
   pty/                       → PTY session module: ansi, claude-lifecycle, manager, types
-data/                        → Content directory (KB pages, tasks, jobs)
+data/                        → Managed data directory (KB files plus local runtime/index state)
 ```
 
 ## Key Rules
 
-1. **No database** — everything is files on disk under `/data`
+1. **Markdown is the durable knowledge source; SQLite is local operational state** — pages, personas, jobs, conversations, and artifacts remain inspectable on disk. `<data-dir>/.cabinet.db` stores structured runtime/chat/activity/job-run data and indexes; never describe the project as database-free.
 2. **Pages** are directories with `index.md` + assets, or standalone `.md` files. PDFs and CSVs are also first-class content types.
 3. **Frontmatter** (YAML) stores metadata: title, created, modified, tags, icon, order
 4. **Path traversal prevention** — all resolved paths must start with DATA_DIR
 5. **shadcn/ui uses base-ui** (not Radix) — DialogTrigger, ContextMenuTrigger etc. do NOT have `asChild`
 6. **Dark mode default** — theme toggle available, use `next-themes` with `attribute="class"`
 7. **Auto-save** — debounced 500ms after last keystroke in editor-store
-8. **AI runs use a mixed runtime model** — tasks/jobs/heartbeats default to structured adapters; terminal mode (PTY sessions) is a first-class alternative that runs inside the same daemon process via `server/pty/`. `WebTerminal` is the interactive surface for both.
-9. **Terminal is a first-class runtime** — not deprecated, not an escape hatch. Terminal mode is user-selectable per task (Native / Terminal toggle in the composer) and is the direction for future terminal-native workflows (Cabinet-managed tmux-like sessions).
+8. **Runtime mode is server-selected** — `CABINET_RUNTIME_MODE` defaults to `cabinet`. Cabinet mode uses structured adapters plus user-selectable terminal mode. Hermes mode enforces `hermes` / `hermes_runtime`, hides legacy runtime controls, and sends execution through Hermes; it must fail visibly rather than silently fall back.
+9. **Terminal is first-class in Cabinet mode** — it runs through `server/pty/` and `WebTerminal`. Hermes mode does not use Cabinet terminal execution as a fallback.
 10. **Version restore** — users can restore any page to a previous git commit via the Version History panel
 11. **Embedded apps** — dirs with `index.html` + no `index.md` render as iframes. Add `.app` marker for full-screen mode (sidebar + AI panel auto-collapse)
-12. **Linked repos** — `.repo.yaml` in a data dir links it to a Git repo (local path + remote URL). Agents use this to read/search source code in context. See `data/CLAUDE.md` for full spec.
+12. **Linked repos** — `.repo.yaml` in a data dir links it to a Git repo (local path + remote URL). `src/app/api/system/link-repo/route.ts` writes the link and `src/lib/storage/tree-builder.ts` exposes it in the tree; room boundaries are documented in `docs/ROOMS_WORKSPACES_PRD.md`.
 13. **Office documents** — `.docx`, `.xlsx`/`.xlsm`, `.pptx` render inline via dynamically-imported client viewers (docx-preview, SheetJS, pptx-preview). Read-only; "Download" + "Reveal" actions in the viewer header. Legacy binary formats (`.doc`, `.xls`, `.ppt`) keep the Fallback viewer.
 14. **Google Workspace pages** — a markdown page with a `google:` frontmatter key (`url`, optional `kind` / `embedUrl`) is rendered by `GoogleDocViewer` instead of the Tiptap editor. The iframe needs "Anyone with the link" or "Publish to Web" on Google's side. OAuth-based sync is not yet implemented.
-15. **Skills** — Anthropic-format skill bundles (`SKILL.md` + frontmatter + optional `references/`/`scripts/`/`assets/`). Resolved across four origins with precedence: cabinet-scoped (`data/<cabinet>/.agents/skills/`) > cabinet-root (`<repo>/.agents/skills/`) > linked-repo > system (`~/.claude/skills/`, `~/.agents/skills/`) > legacy-home (`~/.cabinet/skills/`). Personas reference skills by key in `skills:` (persistent attachment) and `recommendedSkills:` (template defaults shown as preselected toggles in the new-agent flow). Trust gating evaluates each skill at mount time using auto-detected trust level × verified-publisher × author `trust-policy:` frontmatter; operator decisions persist in `.cabinet/skills-trust.json`. Compose `@skill-name` to attach a skill run-only without persisting to the persona. Plan: `docs/SKILLS_PLAN.md`.
+15. **Skills** — Anthropic-format skill bundles (`SKILL.md` + frontmatter + optional `references/`/`scripts/`/`assets/`). Resolved across five origins with precedence: cabinet-scoped (`data/<cabinet>/.agents/skills/`) > cabinet-root (`<repo>/.agents/skills/`) > linked-repo > system (`~/.claude/skills/`, `~/.agents/skills/`, and discovered Claude plugin marketplaces) > legacy-home (`~/.cabinet/skills/`). Personas reference skills by key in `skills:` (persistent attachment) and `recommendedSkills:` (template defaults shown as preselected toggles in the new-agent flow). The loader derives a descriptive trust level from bundle contents and the UI warns on executable bundles; attaching a skill is currently the trust decision, so there is no runtime trust-policy gate or `.cabinet/skills-trust.json` decision store. Compose `@skill-name` to attach a skill run-only without persisting to the persona. See `docs/SKILLS_PLAN.md` for the as-built contract and remaining gap.
 16. **Registry templates come from the cabinets manifest** — the home carousel and the *Cabinets / AI teams, off the shelf* page (`registry-browser.tsx`) read from `https://raw.githubusercontent.com/cabinetai/cabinets/HEAD/manifest.json`, which is auto-built by the `build-manifest.yml` GitHub Action in the [`cabinets`](https://github.com/cabinetai/cabinets) registry on every push. The fetch is cached in-process for 10 minutes (`src/lib/registry/registry-manifest.ts`) and falls back to a small bundled list if offline. Cover images are fetched directly from `…/HEAD/<slug>/cover.jpg`. **Do not** hand-edit registry-manifest.ts to add new cabinets — add them to the registry repo and CI rebuilds the manifest.
 17. **No em-dashes in user-facing copy.** Do not use `—` (em-dash, `&mdash;`, U+2014) in UI strings, onboarding/marketing copy, in-app docs, or anything a user reads. Use a period, comma, parentheses, or rewrite. Em-dashes in code comments, commit messages, and internal docs (like this file) are fine. This rule exists because em-dashes read as "AI-written" and we want copy that sounds human.
 18. **Connect Knowledge (cloud & local sources)** — per-room knowledge sources live in `<room>/.agents/.config/knowledge-sources.json` (`src/lib/knowledge-sources/store.ts`), NOT a global table. Two surfaces: a per-room cloud **browser** section (`surface: "browser"`, served read-only through the `gdrive:`-prefixed serve/reveal routes) and **inline mounts** (`surface: "inline"`) — a symlink at `treePath` pointing at the provider's desktop-sync folder, recorded with `provider` + `policy`. The tree-builder marks inline mount nodes (`knowledgeProvider`/`knowledgePolicy`) by cross-referencing `getInlineSourceMap()` and propagates policy to descendants. **Read-only is enforced server-side:** `assertWritablePath()` returns 403 for any write *strictly under* a read-only inline mount — add this guard to any NEW file-mutation route (pages/assets/upload already have it). Providers come from `detectProvider()` in `src/lib/google-drive/detect-desktop.ts` (Google Drive, iCloud, OneDrive/SharePoint, Dropbox) reading the local desktop-sync mount, no OAuth. Native `.gdoc/.gsheet` shortcuts are parsed by `src/lib/google-drive/native-docs.ts` (used by the tree-builder + `readPage`) so they render via `GoogleDocViewer` (rule 14). Notion/Confluence are MCP connectors (Integrations Hub), not file sources. Registry: `src/lib/knowledge-sources/providers.ts`. Plan: `docs/CONNECT_KNOWLEDGE_PRD.md`.
@@ -85,12 +87,12 @@ When Cabinet starts an AI edit or task run:
 
 1. **The request becomes a conversation** with `providerId`, `adapterType`, and optional adapter config such as model or effort.
 2. **Detached runs** go through `/api/agents/conversations` → `conversation-runner` → `cabinet-daemon`.
-3. **Structured adapters are the default** for detached Claude/Codex runs; terminal mode (PTY, named `*_legacy` in the adapter registry for historical reasons) is a first-class alternative surfaced by the composer's Native / Terminal toggle.
-4. **Terminal-mode tasks render with `WebTerminal`** — xterm.js bound to the daemon's PTY WebSocket — instead of the structured TurnBlock transcript.
+3. **Cabinet mode:** structured adapters are the default; terminal mode (PTY, named `*_legacy` historically) is selectable through the Native / Terminal composer toggle.
+4. **Hermes mode:** persona/runtime writes are forced to `hermes` / `hermes_runtime`, provider controls are hidden, and the Hermes bridge owns execution. Terminal fallback is forbidden.
 5. **Models should edit targeted files directly when useful** and reflect durable value in KB files, not only transcript text.
 6. **If content gets corrupted** — users can restore from Version History (clock icon → select commit → Restore)
 
-The AI panel supports `@` mentions — users type `@PageName` to attach pages as context, `@AgentName` to dispatch to another agent, or `@skill-name` to attach a skill for this run only (does NOT persist to the persona's `skills:` list). Mentioned pages' content is fetched and appended to the prompt; mentioned skills are merged with the persona's skills and trust-gated before mounting via `prepareSkillMount`.
+The AI panel supports `@` mentions — users type `@PageName` to attach pages as context, `@AgentName` to dispatch to another agent, or `@skill-name` to attach a skill for this run only (does NOT persist to the persona's `skills:` list). Mentioned pages' content is fetched and appended to the prompt; mentioned skills are merged with the persona's skills and mounted via `prepareSkillMount` after origin resolution. The current mount path classifies trust for display but does not enforce a separate approval gate.
 
 
 ## Commands

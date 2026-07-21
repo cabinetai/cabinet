@@ -1,5 +1,7 @@
 # Cabinet Agent System — MVP Design
 
+**Status:** Historical MVP design with selected as-built sections maintained. For the current repository architecture and runtime-mode rules, use `docs/CLAUDE.md`; for skills, use `docs/SKILLS_PLAN.md`; for Hermes, use the root Hermes implementation plan and `docs/plans/hermes-desktop-capability-parity.md`.
+
 ## Vision
 
 Cabinet is a Startup OS where you onboard an AI team that works for you. You answer 5 questions, a CEO agent appears, and it suggests teammates. Each agent has skills, recurring jobs, and a place in the knowledge base where their work shows up. You watch them work like watching a real team — through sessions and the KB itself.
@@ -302,8 +304,7 @@ description: >                        # ROUTING logic, not marketing copy
   Use when the agent needs to search the web for current information.
   Don't use for queries answerable from the KB or attached files.
 allowed-tools: Bash(curl *)           # optional, comma-separated
-trust-policy: prompt-once             # optional, Cabinet-specific:
-                                      # auto-allow | prompt-once | always-prompt | refuse
+trust-policy: prompt-once             # optional author metadata; currently not enforced
 ---
 
 # Web Search
@@ -315,10 +316,10 @@ Detailed instructions the agent reads when this skill is expanded…
 1. **Cabinet (scoped)** — `data/<cabinet>/.agents/skills/<key>/`
 2. **Cabinet (root)** — `<repo>/.agents/skills/<key>/`
 3. **Linked repo** — `<linked>/.agents/skills/<key>/` (read-only, via `.repo.yaml`)
-4. **System** — `~/.claude/skills/<key>/` and `~/.agents/skills/<key>/` (host-managed; Claude Code already loads these)
+4. **System** — `~/.claude/skills/<key>/`, `~/.agents/skills/<key>/`, and supported Claude plugin-marketplace layouts
 5. **Legacy** — `~/.cabinet/skills/<key>/` (back-compat single-origin location)
 
-**Trust gating** runs at mount time: bundle's auto-detected `trustLevel` (`markdown_only` | `assets` | `scripts_executables`) × verified-publisher signal × author `trust-policy` frontmatter. Operator approve/revoke decisions persist in `.cabinet/skills-trust.json`.
+**Trust classification** runs while loading the bundle. Cabinet derives `markdown_only`, `assets`, or `scripts_executables` from the file inventory and warns in the UI when scripts/executables are present. Attaching a skill is currently the operator's trust decision; `prepareSkillMount` does not enforce `trust-policy`, verified-publisher, or a separate approval store.
 
 **Persona attachment** — agent persona frontmatter:
 ```yaml
@@ -331,7 +332,7 @@ recommendedSkills:      # template defaults, auto-promoted to skills on agent cr
 
 **Composer `@`-mention** — typing `@skill-name` attaches the skill to the run **only**, not the persona. Use the agent detail Skills section for persistent attachment.
 
-See `docs/SKILLS_PLAN.md` for the full design and `docs/CLAUDE.md` Rule 15 for runtime semantics.
+See `docs/SKILLS_PLAN.md` for the as-built contract and `docs/CLAUDE.md` Rule 15 for runtime semantics.
 
 ---
 
@@ -444,7 +445,7 @@ src/components/
 ## 8. Implementation Phases
 
 ### Phase 1: Foundation (Agent Restructure) ✅
-1. Create agent library templates in `/data/.agents/.library/`
+1. Create agent library templates in `src/lib/agents/library/<slug>/persona.md`
 2. Build new agent list view (card grid)
 3. Build agent detail view with vertical sidebar (Definition, Skills, Jobs, Sessions)
 4. Move jobs under agents (agent owns jobs)

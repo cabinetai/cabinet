@@ -10,7 +10,7 @@ order: 0
 ---
 # Getting Started with Cabinet
 
-Cabinet is an AI-first knowledge base. Everything lives as files on disk — no database, no cloud lock-in. You write pages in markdown, organize them in a tree, and let AI agents help you edit and maintain the whole thing.
+Cabinet is an AI-first knowledge base. Your durable knowledge lives as portable markdown files and assets on disk, while Cabinet keeps local runtime and index state in `.cabinet.db`. You write pages in markdown, organize them in a tree, and let AI agents help you edit and maintain the whole thing.
 
 ## Editor — Notion-grade writing
 

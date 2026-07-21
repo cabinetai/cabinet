@@ -1,6 +1,6 @@
 # Hermes Desktop Capability Parity and Visibility
 
-Status: **Phase 1 accepted; functional parity workstream open for live-data review**
+Status: **Phases 1 through 4C implemented and merged; this remains a living parity and live-evidence register**
 
 This audit compares runtime-detected installed Hermes metadata, live installed Hermes Agent management/runtime surfaces, a dated upstream `NousResearch/hermes-agent` audit, Cabinet `feat/hermes-functional-parity`, and Cabinet-native equivalents. Installed Hermes determines what can work now. Upstream-only functionality is never counted as current installed support.
 

@@ -160,5 +160,5 @@ Both default to off so a routine backup never accidentally captures secrets or p
 
 ## See also
 
-- [Apps and repos](apps-and-repos/index.md) — how Cabinet integrates with external tools
-- [Delegating between agents](delegating-between-agents/index.md) — how agents pass work to each other
+- [Apps and repos](../apps-and-repos/index.md) — how Cabinet integrates with external tools
+- [Delegating between agents](../delegating-between-agents/index.md) — how agents pass work to each other

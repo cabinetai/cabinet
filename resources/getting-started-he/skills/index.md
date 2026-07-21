@@ -161,5 +161,5 @@ allowed-tools: bash, read, write
 
 ## ראו גם
 
-- [Apps and repos](apps-and-repos/index.md) — איך Cabinet משתלב עם כלים חיצוניים
-- [Delegating between agents](delegating-between-agents/index.md) — איך סוכנים מעבירים עבודה זה לזה
+- [Apps and repos](../apps-and-repos/index.md) — איך Cabinet משתלב עם כלים חיצוניים
+- [Delegating between agents](../delegating-between-agents/index.md) — איך סוכנים מעבירים עבודה זה לזה

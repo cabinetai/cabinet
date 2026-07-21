@@ -1,8 +1,10 @@
 # PRD: Editor Agent Visibility and Cabinet Scope
 
-**Status:** Revised after implementation review  
+**Status:** Historical implementation review; current agent/editor source paths have since moved
 **Author:** hilash  
 **Date:** 2026-04-13
+
+The scope rules in this document remain design context, but its AI Panel and `agents-workspace.tsx` pointers describe the April implementation. Current agent UI lives under `src/components/agents/`, led by `agent-detail-v2.tsx` and `agents-workspace-v2.tsx`; current runtime rules live in `docs/CLAUDE.md`.
 
 ---
 

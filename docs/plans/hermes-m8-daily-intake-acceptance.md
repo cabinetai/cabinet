@@ -43,4 +43,4 @@ M8 cannot close until Jeremy records both decisions:
 1. IG-442: whether the representative shadow output is trustworthy enough for normal use and which policy corrections, if any, are required.
 2. IG-443: whether the cockpit materially reduces tool switching and feels useful after normal use, including whether any card grouping or action should change.
 
-GitHub PR #1 remains draft and unmerged. M8 acceptance does not authorize merging it.
+M8's remaining owner-review gates are independent of repository state. GitHub PR #1 was subsequently approved and merged as `e2b0ba4c`.

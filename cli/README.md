@@ -45,7 +45,7 @@ npx cabinetai --help               # Show all commands
 
 ## How It Works
 
-The Cabinet web app auto-downloads to `~/.cabinet/app/` on first run. Your cabinet is just a directory with a `.cabinet` manifest, your agents, jobs, and content — no database, no cloud dependency.
+The Cabinet web app auto-downloads to `~/.cabinet/app/` on first run. Your cabinet remains a portable local directory with a `.cabinet` manifest, agents, jobs, markdown/assets, managed state, and a local `.cabinet.db` for runtime/index data. No hosted database is required.
 
 ```
 my-startup/

@@ -1,8 +1,10 @@
 # Task Conversations — Build Log
 
+**Status:** Historical build log. Deleted-file lists and old route/component names are intentionally preserved as change evidence; use `docs/CLAUDE.md` and the live `src/components/tasks/board/` tree for the current implementation.
+
 > **2026-04-17 status: v2 integration shipped. All 7 phases complete.**
 >
-> Source of truth for intent: `data/TASK_CONVERSATIONS_PRD.md` (revised).
+> Historical source of intent: `docs/TASKS_CONVERSATIONS_PRD.md`.
 
 ---
 

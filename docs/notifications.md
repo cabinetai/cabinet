@@ -2,12 +2,13 @@
 
 ## Overview
 
-Cabinet has an in-app toast notification system that alerts users when agent conversations (tasks) complete or fail. Notifications appear as slide-in toasts in the bottom-right corner and are clickable to navigate directly to the conversation.
+Cabinet has an in-app toast notification system that alerts users when agent conversations (tasks) start, complete, or fail. Notifications appear as slide-in toasts in the bottom-right corner and are clickable to navigate directly to the conversation.
 
 ## Current Implementation
 
 ### What triggers a notification
 
+- **Conversation starts** (status → `running`) — sky toast with play icon
 - **Conversation completes** (status → `completed`) — green toast with checkmark
 - **Conversation fails** (status → `failed`) — red toast with X icon
 
@@ -15,7 +16,7 @@ Cabinet has an in-app toast notification system that alerts users when agent con
 
 Each toast displays:
 - Agent emoji
-- Status badge (Completed / Failed)
+- Status badge (Started / Completed / Failed)
 - Conversation title
 - Agent name
 
@@ -34,16 +35,16 @@ Each toast displays:
 ### Architecture
 
 ```
-finalizeConversation()          # conversation-store.ts
+conversation start/finalize     # conversation-store.ts
   ↓ pushes to in-memory queue
 SSE tick (every 3s)             # /api/agents/events
-  ↓ drains queue, broadcasts "conversation_completed" event
+  ↓ drains queue, broadcasts started/completed events
 app-shell.tsx SSE listener
-  ↓ dispatches CustomEvent "cabinet:conversation-completed"
+  ↓ dispatches matching cabinet:* CustomEvent
 NotificationToasts component    # notification-toasts.tsx
-  ↓ renders toast, handles click
-agents-workspace.tsx listener
-  ↓ opens the specific conversation on "cabinet:open-conversation"
+  ↓ deduplicates and renders the toast
+useAppStore().setSection
+  ↓ opens the specific task in its cabinet scope
 ```
 
 ### Key files
@@ -51,10 +52,9 @@ agents-workspace.tsx listener
 | File | Role |
 |------|------|
 | `src/lib/agents/conversation-store.ts` | Notification queue + `drainConversationNotifications()` |
-| `src/app/api/agents/events/route.ts` | SSE broadcasts `conversation_completed` events |
+| `src/app/api/agents/events/route.ts` | SSE broadcasts `conversation_started` and `conversation_completed` events |
 | `src/components/layout/app-shell.tsx` | Listens to SSE, dispatches DOM CustomEvent |
-| `src/components/layout/notification-toasts.tsx` | Toast UI component |
-| `src/components/agents/agents-workspace.tsx` | Handles `cabinet:open-conversation` to navigate |
+| `src/components/layout/notification-toasts.tsx` | Deduplicates toasts, renders the UI, and navigates through `useAppStore().setSection` |
 
 ## Future Notification Types (Planned)
 

@@ -2,7 +2,7 @@
 
 Status: cutover approved by Jeremy Hamilton on 2026-07-18
 
-Cabinet is now Jeremy's primary Hermes UI. This approval closes M7 and authorizes M8 work. It does not authorize merging GitHub PR #1, which remains open and draft until Jeremy gives separate merge approval.
+Cabinet is now Jeremy's primary Hermes UI. This approval closed M7 and authorized M8 work. At the time of this handoff it did not authorize merging GitHub PR #1; that PR was subsequently approved and merged as `e2b0ba4c`.
 
 ## Branch, build, and launch
 
@@ -56,4 +56,4 @@ Go to **Settings → Advanced Hermes → Management diagnostics → Hermes Deskt
 
 ## Cutover boundary
 
-Hermes remains authoritative for sessions, runs, profiles, skills, cron, plugins, tools, memory, approvals, secrets, sudo, and execution telemetry. Cabinet owns presentation, human-authored knowledge, comments, artifacts, diagnostics, and rebuildable projections. PR #1 remains draft and unmerged.
+Hermes remains authoritative for sessions, runs, profiles, skills, cron, plugins, tools, memory, approvals, secrets, sudo, and execution telemetry. Cabinet owns presentation, human-authored knowledge, comments, artifacts, diagnostics, and rebuildable projections. The implementation from PR #1 is now on `main`.

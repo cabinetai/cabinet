@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  The AI-first startup OS where everything lives as markdown files on disk. No database. No vendor lock-in. Self-hosted. Your data never leaves your machine.
+  The AI-first startup OS where durable knowledge lives as markdown files on disk. Runtime indexes and operational records stay local in SQLite. Self-hosted, inspectable, and portable.
 </p>
 
 <p align="center">
@@ -44,6 +44,11 @@
 
 ---
 
+> [!NOTE]
+> This repository is the Hermes-first Cabinet fork. It preserves Cabinet's standard local-provider mode for compatibility and adds an opt-in Hermes product mode. See [AI Runtime Today](#ai-runtime-today), the [project rules](docs/CLAUDE.md), and the [Hermes capability parity register](docs/plans/hermes-desktop-capability-parity.md) for the implemented boundary.
+
+---
+
 ## From zero to AI team in 2 minutes
 
 ```bash
@@ -68,7 +73,7 @@ npx cabinetai create my-startup    # just create, don't start
 npx cabinetai run                  # start Cabinet in the current dir
 ```
 
-On first run, Cabinet downloads the prebuilt app bundle to `~/.cabinet/app/v{version}/`. Your cabinet directory is just a folder of markdown files — put it anywhere.
+On first run, Cabinet downloads the prebuilt app bundle to `~/.cabinet/app/v{version}/`. Your cabinet directory contains portable markdown content plus Cabinet-managed manifests, agent/job configuration, runtime state, and a rebuildable local SQLite store.
 
 ### Update
 
@@ -134,12 +139,12 @@ Cabinet is built around a few principles that we think matter deeply for the fut
 | **Scheduled Jobs** | Cron-based agent automation. Reddit scout every 6 hours. Weekly reports on Monday. |
 | **Embedded HTML Apps** | Drop an `index.html` in any folder — it renders as an iframe. Full-screen mode. |
 | **Web Terminal** | Interactive local AI CLI terminal in the browser. Kept for direct sessions, debugging, and future terminal-native features such as tmux-style Cabinet workflows. |
-| **File-Based Everything** | No database. Markdown on disk. Your data is always yours, always portable. |
+| **File-Based Knowledge** | Markdown and assets remain the durable knowledge source. SQLite stores local runtime/index data in `.cabinet.db`. |
 | **Git-Backed History** | Every save auto-commits. Full diff viewer. Restore any page to any point in time. |
 | **Missions & Tasks** | Break goals into missions. Track progress with Kanban boards. |
 | **Internal Chat** | Built-in team channels. Agents and humans communicate. |
 | **Full-Text Search** | Cmd+K instant search across all pages. Fuzzy matching. |
-| **PDF & CSV Viewers** | First-class support for PDFs and spreadsheets. |
+| **Document Viewers** | First-class support for PDF, CSV, Word, Excel, PowerPoint, websites, and Google Workspace links. |
 | **Dark/Light Mode** | Theme toggle. Dark mode by default. |
 
 ---
@@ -159,7 +164,7 @@ This is the biggest difference between Cabinet and tools like Obsidian or Notion
 | Embedded HTML apps | Yes | No | No |
 | Web terminal | Yes | No | No |
 | Self-hosted, files on disk | Yes | Yes | No |
-| No database / no lock-in | Yes | Yes | No |
+| Portable local knowledge files | Yes | Yes | No |
 | Git-backed version history | Yes | Via plugin | No |
 | WYSIWYG + Markdown | Yes | Yes | Yes |
 
@@ -167,7 +172,7 @@ This is the biggest difference between Cabinet and tools like Obsidian or Notion
 
 ## Hire your AI team in 5 questions
 
-Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs, recommended skills, and a workspace in the knowledge base.
+Cabinet currently ships with 43 pre-built agent templates. Each has a role, recommended operating instructions, and optional skills, metrics, or recurring work.
 
 | Department | Agents |
 |---|---|
@@ -192,12 +197,16 @@ Cabinet ships with 20 pre-built agent templates. Each has a role, recurring jobs
 
 ## AI Runtime Today
 
-Cabinet no longer treats the browser terminal as the only way to run AI work.
+The server selects one of two explicit modes through `CABINET_RUNTIME_MODE`:
 
-- **Tasks, jobs, and heartbeats** now run through a provider adapter layer with persisted conversations and transcript-driven live views.
-- **Per-run overrides** can choose provider, model, and reasoning effort, while personas and jobs can still inherit defaults.
-- **Current defaults** are structured local adapters: `claude_local` for Claude Code and `codex_local` for Codex CLI.
-- **The web terminal is staying** as a first-class interactive surface for direct CLI sessions and future terminal-native features such as Cabinet-managed tmux-like workspaces.
+| Mode | Behavior |
+|---|---|
+| `cabinet` (default) | Uses Cabinet's local provider adapters. Tasks, jobs, and heartbeats run through persisted Cabinet conversations; the composer can select provider, model, effort, structured execution, or terminal execution. |
+| `hermes` | Makes Hermes the visible agent runtime. Persona reads and writes are projected to the `hermes` provider and `hermes_runtime` adapter, legacy provider/runtime controls are hidden, and conversations execute through the server-only Hermes Agent API, Management API, and Gateway bridge. |
+
+Hermes mode also adds the Today cockpit, Hermes Control Center, session/run inspection, capability parity views, repository visibility, read-only Agent catalogs, and a narrowly governed run-termination intervention. Consequential interventions remain disabled unless `CABINET_HERMES_INTERVENTIONS_ENABLED=true`, and still require fresh authority, typed confirmation, and idempotency safeguards.
+
+The web terminal remains a first-class interactive surface in Cabinet mode. It is not a silent fallback for a failed Hermes run.
 
 ---
 
@@ -206,28 +215,28 @@ Cabinet no longer treats the browser terminal as the only way to run AI work.
 ```
 cabinet/
   src/
-    app/api/         -> Next.js API routes
-    components/      -> React components (sidebar, editor, agents, jobs, terminal)
+    app/api/         -> Next.js API routes, including /api/hermes/* bridges
+    components/      -> React components (sidebar, editor, agents, tasks, Hermes, terminal)
     stores/          -> Zustand state management
-    lib/             -> Storage, markdown, git, agents, jobs
+    lib/             -> Storage, markdown, git, agents, jobs, Hermes clients/projections
   server/
     cabinet-daemon.ts -> WebSocket + job scheduler + structured adapters + agent executor
     pty/              -> PTY session module (spawn, Claude lifecycle, ansi)
-  data/
-    .agents/.library/ -> 20 pre-built agent templates
-    getting-started/  -> Default KB page
+  src/lib/agents/library/ -> 43 pre-built agent templates
+  data/                   -> Markdown/assets plus local state and .cabinet.db
 ```
 
-**Tech stack:** Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Tiptap, Zustand, xterm.js, node-cron
+**Tech stack:** Next.js 16, TypeScript, Tailwind CSS, shadcn/ui on Base UI, Tiptap, Zustand, xterm.js, node-cron, and better-sqlite3
 
 ---
 
 ## Requirements
 
 - **Node.js** 22+ (LTS). The repo ships an `.nvmrc` — run `nvm use` to auto-switch. Node 20 still works but produces an `EBADENGINE` warning from a transitive `chevrotain@12` pulled in by mermaid.
-- At least one supported CLI provider:
+- In default Cabinet mode, at least one supported CLI provider:
   - **Claude Code CLI** (`npm install -g @anthropic-ai/claude-code`)
   - **Codex CLI** (`npm install -g @openai/codex` or `brew install --cask codex`)
+- In Hermes mode, reachable loopback Hermes Agent API, Management API, and Gateway endpoints with server-only credentials
 - **Source mode:** macOS, Linux, or Windows
 - **Electron desktop packaging:** macOS and Windows
 
@@ -244,6 +253,13 @@ cp .env.example .env.local
 | `CABINET_LOGIN_PBKDF2_ITERS` | `600000` | PBKDF2 iteration count for the auth token. Lower only for constrained hardware. |
 | `CABINET_LOGIN_MAX_ATTEMPTS` / `_WINDOW_MS` / `_LOCKOUT_MS` / `CABINET_LOGIN_GLOBAL_MAX` | `10` / `900000` / `900000` / `60` | Login rate-limit tuning (per-client + global failed-attempt buckets). |
 | `DOMAIN` | `localhost` | Domain for the app. |
+| `CABINET_RUNTIME_MODE` | `cabinet` | Select `cabinet` or `hermes`. Invalid values fail configuration parsing. |
+| `CABINET_HERMES_API_URL` / `CABINET_HERMES_API_KEY` | _(required in Hermes mode)_ | Loopback Hermes Agent API and server-only API key. |
+| `CABINET_HERMES_MANAGEMENT_URL` / `CABINET_HERMES_MANAGEMENT_TOKEN` | _(required for management-backed Hermes features)_ | Loopback Management API and server-only token. `HERMES_DASHBOARD_SESSION_TOKEN` is accepted as a token fallback. |
+| `CABINET_HERMES_GATEWAY_URL` / `CABINET_HERMES_GATEWAY_TOKEN` | _(required for live Hermes execution)_ | Loopback Gateway and server-only WebSocket token. |
+| `CABINET_HERMES_PROFILE` | _(required in Hermes mode)_ | Hermes profile name; the product baseline uses `operator-os`. |
+| `CABINET_HERMES_TIMEOUT_MS` | `3000` | Upstream timeout, constrained to 250–30000 ms. |
+| `CABINET_HERMES_INTERVENTIONS_ENABLED` | `false` | Enables only the implemented governed intervention path; it does not bypass confirmation or authority checks. |
 
 ### Authentication
 
@@ -271,7 +287,7 @@ npx cabinetai run    # Zero-install runtime, downloads the prebuilt app bundle
 
 ## Ready to build your AI team?
 
-Cabinet is free, open source, and self-hosted. Your data never leaves your machine.
+Cabinet is free, open source, and self-hosted. You control its local files, runtime configuration, and any external systems you connect.
 
 ```bash
 npx create-cabinet my-startup

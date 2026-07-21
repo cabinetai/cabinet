@@ -4,7 +4,7 @@
 
 `cabinetai` is the runtime CLI for Cabinet. It manages the app installation, creates cabinets, and starts the server — all from a single `npx` command.
 
-**Architecture:** The Cabinet web app installs to `~/.cabinet/app/v{version}/` — a prebuilt standalone bundle auto-downloaded on first use (or a source install on platforms with no bundle yet). Cabinets are lightweight data directories anywhere on disk — just a `.cabinet` manifest + `.agents/` + `.jobs/` + content files. No database.
+**Architecture:** The Cabinet web app installs to `~/.cabinet/app/v{version}/` — a prebuilt standalone bundle auto-downloaded on first use (or a source install on platforms with no bundle yet). Cabinets are portable data directories containing a `.cabinet` manifest, `.agents/`, `.jobs/`, markdown/assets, Cabinet-managed state, and a local `.cabinet.db` for structured runtime/index data. Markdown and assets remain the durable knowledge source.
 
 ## Quick Start
 

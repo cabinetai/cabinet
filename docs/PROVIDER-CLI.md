@@ -1,5 +1,7 @@
 # Provider CLI Runtime
 
+**Scope:** Cabinet runtime mode. When `CABINET_RUNTIME_MODE=hermes`, normal provider/model controls are hidden and execution uses the `hermes_runtime` adapter described in `README.md` and `docs/CLAUDE.md`.
+
 Date: 2026-04-18
 
 Consolidated reference for Cabinet's multi-CLI provider system. Describes the adapter runtime, the eight built-in providers, shared utilities, plugin loader, session codec, in-UI verification, runtime picker, migration history, and outstanding work.

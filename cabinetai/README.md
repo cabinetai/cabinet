@@ -37,7 +37,7 @@ That's it — no global install needed. `run` bootstraps the directory, download
   ...                    Your content
 ```
 
-The app lives in `~/.cabinet/` and is shared across all your cabinets. Each cabinet is a lightweight directory you can put anywhere — just a `.cabinet` manifest file, your agents, jobs, and content. No database.
+The app lives in `~/.cabinet/` and is shared across all your cabinets. Each cabinet is a portable directory you can put anywhere, containing a `.cabinet` manifest, agents, jobs, markdown/assets, managed state, and a local `.cabinet.db` for runtime/index data.
 
 ## Commands
 

@@ -2,7 +2,9 @@
 
 > Backfill of legacy board features that were dropped during the attention-first rewrite. Addresses the audit of `tasks-board.tsx` (commit `8cb95b2^`) against the current v2 board. Scope is limited to regressions that hurt daily operation; polish nice-to-haves land in a follow-up.
 
-Status: **Active** · Owner: hilash · Created 2026-04-20
+Status: **Implemented** · Owner: hilash · Created 2026-04-20 · source map verified 2026-07-20
+
+The restoration shipped and the final code was consolidated under `src/components/tasks/board/`. Row actions, bulk actions, task creation, schedule dialogs, and recent-task ordering are present there or in `src/components/sidebar/recent-tasks.tsx`. The `board-v2/` paths below are the original proposed layout, not current paths.
 
 ## 1. Problem
 

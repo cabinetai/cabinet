@@ -2,6 +2,8 @@
 
 Date: 2026-04-12
 
+**Status:** Historical session summary. It preserves the files and UI state that existed on this date; it is not a current source map. Use `docs/CLAUDE.md` and the live `src/components/` tree for the current implementation.
+
 This file summarizes the main product, UX, and engineering changes completed during this cabinet UI work session.
 
 ## 1. Add Agent Flow

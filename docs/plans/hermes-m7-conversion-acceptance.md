@@ -2,7 +2,7 @@
 
 Status: cutover approved by Jeremy Hamilton on 2026-07-18; M7 complete
 
-This document is the evidence package for IG-448, IG-449, IG-419, and Jeremy's decision in IG-450. Jeremy recorded **Approve cutover** on 2026-07-18. Cabinet is now approved as his primary Hermes interface. That decision does not authorize merging GitHub PR #1.
+This document is the evidence package for IG-448, IG-449, IG-419, and Jeremy's decision in IG-450. Jeremy recorded **Approve cutover** on 2026-07-18. Cabinet is now approved as his primary Hermes interface. The cutover decision did not itself authorize a merge; PR #1 was subsequently approved and merged as `e2b0ba4c`.
 
 ## Technical verdict
 

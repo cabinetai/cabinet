@@ -1,15 +1,15 @@
 # Agent Page — PRD
 
-> **Status.** Living doc. Last revised 2026-04-19.
+> **Status.** Implemented design baseline. Current source map verified 2026-07-20.
 > **Owner.** Cabinet core team.
 > **Supersedes.** `AGENT_PAGE_SPEC.md` (the descriptive spec of v1 is archived; this PRD defines v2 and beyond).
-> **Companion docs.** [`TASKS_CONVERSATIONS_PRD.md`](./TASKS_CONVERSATIONS_PRD.md) (conversation contracts), [`CLAUDE.md`](./CLAUDE.md) (project rules), [`PROGRESS.md`](./PROGRESS.md).
+> **Companion docs.** [`TASKS_CONVERSATIONS_PRD.md`](./TASKS_CONVERSATIONS_PRD.md) (conversation contracts), [`CLAUDE.md`](./CLAUDE.md) (project rules), [`PROGRESS.md`](../PROGRESS.md).
 
 ---
 
 ## 0. How to read this
 
-This PRD is prescriptive. Every section tagged **🎯 Contract** is a hard rule. Every section tagged **⚠️ Open** is a pending decision with the options listed. Implementation lives in `src/components/agents/agent-detail.tsx` (canonical file once v2 ships) and `src/app/agent-preview/[slug]/page.tsx` (standalone / embed surface).
+This PRD records the v2 product contract. Every section tagged **🎯 Contract** is a hard rule and every section tagged **⚠️ Open** is a pending design decision. The current implementation lives in `src/components/agents/agent-detail-v2.tsx`, with the standalone preview at `src/app/agent-preview/[slug]/page.tsx`. When this document's old component-shape detail conflicts with the current source, the source and `docs/CLAUDE.md` win.
 
 ---
 
@@ -100,7 +100,7 @@ Order is deliberate. **Inbox** (when non-empty) appears between **Composer** and
 
 ## 5. Component spec 🎯 Contract
 
-All components live in `src/components/agents/agent-detail.tsx`. File MUST remain under 2500 lines; when it grows larger, split into sibling files by component group.
+The main coordinator is `src/components/agents/agent-detail-v2.tsx`. Add new component groups as focused sibling files rather than restoring the deleted v1 `agent-detail.tsx` path.
 
 ### 5.1 Top bar
 
