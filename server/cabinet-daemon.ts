@@ -325,6 +325,7 @@ const enrichedPath = getRuntimePath();
 
 interface StructuredSession extends BaseSession {
   kind: "structured";
+  persistConversation: boolean;
   timeoutHandle?: NodeJS.Timeout;
   pid?: number;
   processGroupId?: number | null;
@@ -363,6 +364,8 @@ interface StructuredSession extends BaseSession {
   adapterErrorRetryAfterSec?: number | null;
   /** Buffered stderr, used by classifyError on completion. */
   stderrBuffer?: string;
+  adapterEvents?: import("../src/lib/agents/adapters/types").AdapterRuntimeEvent[];
+  interrupt?: () => Promise<void>;
 }
 
 type ActiveSession = PtySession | StructuredSession;
@@ -566,7 +569,9 @@ async function finalizeSessionConversation(session: ActiveSession): Promise<void
   }
 }
 
-function sessionStatus(session: ActiveSession): "running" | "completed" | "failed" {
+function sessionStatus(
+  session: ActiveSession
+): "running" | "completed" | "failed" | "cancelled" {
   if (session.resolvedStatus) {
     return session.resolvedStatus;
   }
@@ -818,6 +823,7 @@ function createStructuredSession(input: {
    * native shape (e.g. Cursor sessionId + cwd, Codex threadId).
    */
   adapterSessionParams?: Record<string, unknown> | null;
+  persistConversation?: boolean;
 }): StructuredSession {
   const adapter = agentAdapterRegistry.get(input.adapterType);
   if (!adapter) {
@@ -840,15 +846,20 @@ function createStructuredSession(input: {
     kind: "structured",
     providerId: adapter.providerId || input.providerId || "unknown",
     adapterType: input.adapterType,
+    persistConversation: input.persistConversation !== false,
     ws: null,
     createdAt: new Date(),
     output: [],
     exited: false,
     exitCode: null,
     stop: (signal = "SIGTERM") => {
-      try {
-        signalStructuredProcess(session.pid, session.processGroupId, signal);
-      } catch {}
+      if (session.interrupt) {
+        void session.interrupt().catch(() => undefined);
+      } else {
+        try {
+          signalStructuredProcess(session.pid, session.processGroupId, signal);
+        } catch {}
+      }
     },
   };
   sessions.set(input.sessionId, session);
@@ -884,6 +895,12 @@ function createStructuredSession(input: {
           }
           emitSessionOutput(session, chunk, input.onData);
         },
+        onEvent: async (event) => {
+          (session.adapterEvents ??= []).push(event);
+        },
+        registerInterrupt: (interrupt) => {
+          session.interrupt = interrupt;
+        },
         onSpawn: async (meta) => {
           session.pid = meta.pid;
           session.processGroupId = meta.processGroupId;
@@ -893,11 +910,15 @@ function createStructuredSession(input: {
 
       session.exited = true;
       session.exitCode = result.exitCode;
-      session.resolvedStatus =
-        result.exitCode === 0 && !result.timedOut ? "completed" : "failed";
+      session.resolvedStatus = result.interrupted
+        ? "cancelled"
+        : result.exitCode === 0 && !result.timedOut
+          ? "completed"
+          : "failed";
       session.adapterSessionId = result.sessionId ?? null;
       session.adapterSessionParams = result.sessionParams ?? null;
       session.adapterUsage = result.usage ?? null;
+      session.adapterEvents = result.events ?? session.adapterEvents ?? [];
 
       // Classify failures so the UI can surface an actionable hint.
       // Prefer stderrBuffer, but fall back to the adapter-reported
@@ -942,13 +963,16 @@ function createStructuredSession(input: {
         adapterErrorKind: session.adapterErrorKind ?? null,
         adapterErrorHint: session.adapterErrorHint ?? null,
         adapterErrorRetryAfterSec: session.adapterErrorRetryAfterSec ?? null,
+        adapterEvents: session.adapterEvents ?? [],
       });
-      await finalizeSessionConversation(session).catch((err) => {
-        console.warn(
-          `[cabinet-daemon] finalizeSessionConversation failed for ${input.sessionId}:`,
-          err
-        );
-      });
+      if (session.persistConversation) {
+        await finalizeSessionConversation(session).catch((err) => {
+          console.warn(
+            `[cabinet-daemon] finalizeSessionConversation failed for ${input.sessionId}:`,
+            err
+          );
+        });
+      }
 
       // Persist the adapter's resume handle + codec blob to the conversation
       // directory so future continues can resume. This only works when the
@@ -1019,13 +1043,16 @@ function createStructuredSession(input: {
         adapterErrorKind: session.adapterErrorKind ?? null,
         adapterErrorHint: session.adapterErrorHint ?? null,
         adapterErrorRetryAfterSec: session.adapterErrorRetryAfterSec ?? null,
+        adapterEvents: session.adapterEvents ?? [],
       });
-      await finalizeSessionConversation(session).catch((err) => {
-        console.warn(
-          `[cabinet-daemon] finalizeSessionConversation failed for ${input.sessionId}:`,
-          err
-        );
-      });
+      if (session.persistConversation) {
+        await finalizeSessionConversation(session).catch((err) => {
+          console.warn(
+            `[cabinet-daemon] finalizeSessionConversation failed for ${input.sessionId}:`,
+            err
+          );
+        });
+      }
 
       if (session.ws && session.ws.readyState === WebSocket.OPEN) {
         sessions.delete(input.sessionId);
@@ -1065,6 +1092,7 @@ function createSession(input: {
   launchMode?: "session" | "one-shot";
   adapterSessionId?: string | null;
   adapterSessionParams?: Record<string, unknown> | null;
+  persistConversation?: boolean;
   /**
    * Meta trigger (manual/job/heartbeat/agent). Manual PTY sessions opt
    * out of the 1.2s claude idle auto-exit and instead stay alive as
@@ -1097,6 +1125,7 @@ function createSession(input: {
       onData: input.onData,
       adapterSessionId: input.adapterSessionId ?? null,
       adapterSessionParams: input.adapterSessionParams ?? null,
+      persistConversation: input.persistConversation,
     });
   }
 
@@ -1562,6 +1591,8 @@ const server = http.createServer(async (req, res) => {
             active.kind === "structured"
               ? active.adapterErrorRetryAfterSec ?? null
               : null,
+          adapterEvents:
+            active.kind === "structured" ? active.adapterEvents ?? [] : [],
         })
       );
       return;
@@ -1576,6 +1607,7 @@ const server = http.createServer(async (req, res) => {
           sessionId,
           status: completed.status,
           output: completed.output,
+          adapterEvents: completed.adapterEvents ?? [],
         })
       );
       return;
@@ -1661,6 +1693,7 @@ const server = http.createServer(async (req, res) => {
           timeoutSeconds,
           adapterSessionId,
           adapterSessionParams,
+          persistConversation,
         } = JSON.parse(body) as {
           id: string;
           providerId?: string;
@@ -1671,6 +1704,7 @@ const server = http.createServer(async (req, res) => {
           timeoutSeconds?: number;
           adapterSessionId?: string | null;
           adapterSessionParams?: Record<string, unknown> | null;
+          persistConversation?: boolean;
         };
         const sessionId = id || `session-${Date.now()}`;
 
@@ -1715,6 +1749,7 @@ const server = http.createServer(async (req, res) => {
             launchMode,
             adapterSessionId: adapterSessionId ?? null,
             adapterSessionParams: adapterSessionParams ?? null,
+            persistConversation,
             trigger,
           });
         } catch (err: unknown) {

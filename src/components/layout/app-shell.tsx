@@ -58,7 +58,6 @@ import {
   DataDirPrompt,
   isDataDirConfirmed,
 } from "@/components/onboarding/data-dir-prompt";
-import { FeedbackPopup } from "@/components/onboarding/feedback-popup";
 import { DiagnosticsBoot } from "@/components/feedback/diagnostics-boot";
 import { StartWorkDialog, type StartWorkMode } from "@/components/composer/start-work-dialog";
 import { ROOT_CABINET_PATH } from "@/lib/cabinets/paths";
@@ -120,6 +119,14 @@ const IntegrationsHubPage = dynamic(
     import("@/components/integrations/hub/integrations-hub-page").then(
       (m) => m.IntegrationsHubPage
     ),
+  { ssr: false }
+);
+const DailyBusinessCockpit = dynamic(
+  () => import("@/components/hermes/daily-business-cockpit").then((m) => m.DailyBusinessCockpit),
+  { ssr: false }
+);
+const HermesControlCenter = dynamic(
+  () => import("@/components/hermes/hermes-control-center").then((m) => m.HermesControlCenter),
   { ssr: false }
 );
 const OnboardingWizard = dynamic(
@@ -421,6 +428,12 @@ export function AppShell() {
     switch (section.type) {
       case "home":
         title = base;
+        break;
+      case "cockpit":
+        title = `Daily Business Intake – ${base}`;
+        break;
+      case "hermes":
+        title = `Hermes | ${base}`;
         break;
       case "page":
         title = pageDisplayTitle ? `${pageDisplayTitle} – ${base}` : base;
@@ -819,6 +832,13 @@ export function AppShell() {
     prevIsApp.current = !!isApp;
   }, [isApp, setSidebarCollapsed, setAiPanelCollapsed]);
 
+  // Today owns the four-item mobile navigation required for cockpit work.
+  // Collapse Cabinet's drawer on entry so it cannot cover the mission or
+  // compete with that focused navigation surface.
+  useEffect(() => {
+    if (isMobile && (section.type === "cockpit" || section.type === "hermes")) setSidebarCollapsed(true);
+  }, [isMobile, section.type, setSidebarCollapsed]);
+
   const handleExitApp = () => {
     setSidebarCollapsed(preAppSidebarCollapsed.current);
     setAiPanelCollapsed(preAppAiPanelCollapsed.current);
@@ -828,6 +848,8 @@ export function AppShell() {
   const renderContent = () => {
     // System sections (non-page views)
     if (section.type === "home") return <HomeScreen />;
+    if (section.type === "cockpit") return <DailyBusinessCockpit />;
+    if (section.type === "hermes") return <HermesControlCenter />;
     if (section.type === "registry") return <RegistryBrowser />;
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "integrations") return <IntegrationsHubPage />;
@@ -1097,6 +1119,8 @@ export function AppShell() {
     isSelfSheetedViewer ||
     section.type === "tasks" ||
     section.type === "agents" ||
+    section.type === "cockpit" ||
+    section.type === "hermes" ||
     // The room/cabinet dashboard puts its header on the desk and wraps its body
     // in a ContentSheet, like agents/tasks — but only in edit mode; browse mode
     // hands off to BrowserView, which still wants the app-shell sheet.
@@ -1182,7 +1206,7 @@ export function AppShell() {
           </div>
         )}
       </div>
-      {!focusMode && <MobileBottomNav />}
+      {!focusMode && section.type !== "cockpit" && section.type !== "hermes" ? <MobileBottomNav /> : null}
       {terminalOpen && terminalPosition === "right" && <TerminalTabs />}
       {!isMobile && (
         <div className={focusMode ? "hidden" : "contents"}>
@@ -1223,7 +1247,6 @@ export function AppShell() {
       <NotificationToasts />
       <SystemToasts />
       <ProviderSetupDialog />
-      <FeedbackPopup />
       <DiagnosticsBoot />
       <TourModal
         open={tour.open}
@@ -1275,4 +1298,3 @@ export function AppShell() {
     </TaskRailProvider>
   );
 }
-

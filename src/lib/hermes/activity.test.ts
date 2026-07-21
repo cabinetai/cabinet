@@ -1,0 +1,177 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { hermesDisplayStatus, normalizeHermesActivity } from "./activity";
+
+test("normalizes tools and stable governed requests without sensitive response values", () => {
+  const snapshot = normalizeHermesActivity([
+    {
+      seq: 1,
+      type: "runtime.event",
+      runtimeType: "tool.start",
+      runId: "run-1",
+      payload: { tool_id: "tool-1", name: "read_file", context: "README.md" },
+    },
+    {
+      seq: 2,
+      type: "runtime.event",
+      runtimeType: "tool.complete",
+      runId: "run-1",
+      payload: { tool_id: "tool-1", name: "read_file", summary: "Read 20 lines" },
+    },
+    {
+      seq: 3,
+      type: "runtime.event",
+      runtimeType: "secret.request",
+      runId: "run-1",
+      sessionId: "session-1",
+      requestId: "secret-1",
+      payload: { request_id: "secret-1", env_var: "SERVICE_KEY", prompt: "Enter key" },
+    },
+    {
+      seq: 4,
+      type: "runtime.decision",
+      kind: "secret",
+      requestId: "secret-1",
+      requestEventSeq: 3,
+      sessionId: "session-1",
+      status: "resolved",
+      decision: "provided",
+    },
+  ]);
+
+  assert.deepEqual(snapshot.tools[0], {
+    id: "tool-1",
+    name: "read_file",
+    status: "completed",
+    runId: "run-1",
+    eventSeq: 2,
+    context: "README.md",
+    preview: null,
+    summary: "Read 20 lines",
+    error: null,
+    durationSeconds: null,
+    inlineDiff: null,
+    artifacts: [],
+    screenshots: [],
+    links: [],
+    retryable: false,
+  });
+  assert.equal(snapshot.decisions[0].status, "resolved");
+  assert.equal(snapshot.decisions[0].decision, "provided");
+  assert.equal(JSON.stringify(snapshot).includes("SERVICE_KEY"), true);
+  assert.equal(JSON.stringify(snapshot).includes("secret-value"), false);
+});
+
+test("only marks failed read-only tools as directly retryable", () => {
+  const snapshot = normalizeHermesActivity([
+    {
+      seq: 0,
+      type: "runtime.event",
+      runtimeType: "tool.generating",
+      payload: { name: "search_files" },
+    },
+    {
+      seq: 1,
+      type: "runtime.event",
+      runtimeType: "tool.complete",
+      payload: {
+        tool_id: "read-1",
+        name: "search_files",
+        args: { pattern: "package.json" },
+        result: { error: "temporary failure" },
+      },
+    },
+    {
+      seq: 2,
+      type: "runtime.event",
+      runtimeType: "tool.complete",
+      payload: { tool_id: "write-1", name: "send_email", error: "temporary failure" },
+    },
+    {
+      seq: 3,
+      type: "runtime.event",
+      runtimeType: "tool.complete",
+      payload: {
+        tool_id: "unsafe-prefix-1",
+        name: "read_and_delete",
+        result: { error: "temporary failure" },
+      },
+    },
+  ]);
+  assert.equal(snapshot.tools.length, 3);
+  assert.equal(snapshot.tools[0].retryable, true);
+  assert.match(snapshot.tools[0].preview || "", /package\.json/);
+  assert.match(snapshot.tools[0].summary || "", /temporary failure/);
+  assert.equal(snapshot.tools[1].retryable, false);
+  assert.equal(snapshot.tools[2].retryable, false);
+});
+
+test("preserves structured diffs and evidence references for the activity UI", () => {
+  const snapshot = normalizeHermesActivity([
+    {
+      seq: 8,
+      type: "runtime.event",
+      runtimeType: "tool.complete",
+      runId: "run-evidence",
+      payload: {
+        tool_id: "edit-1",
+        name: "apply_patch",
+        duration_s: 0.25,
+        inline_diff: "-before\n+after",
+        artifacts: ["/api/assets/report.pdf"],
+        screenshots: ["https://example.test/evidence.png"],
+        links: ["https://example.test/result"],
+        result: { summary: "Updated one file" },
+      },
+    },
+  ]);
+
+  assert.deepEqual(snapshot.tools[0].artifacts, ["/api/assets/report.pdf"]);
+  assert.deepEqual(snapshot.tools[0].screenshots, ["https://example.test/evidence.png"]);
+  assert.deepEqual(snapshot.tools[0].links, ["https://example.test/result"]);
+  assert.equal(snapshot.tools[0].inlineDiff, "-before\n+after");
+  assert.equal(snapshot.tools[0].durationSeconds, 0.25);
+  assert.equal(snapshot.tools[0].summary, "Updated one file");
+});
+
+test("derives the verified 120 second sudo expiry when Hermes omits expires_at", () => {
+  const snapshot = normalizeHermesActivity([
+    {
+      seq: 10,
+      ts: "2026-07-18T20:00:00.000Z",
+      type: "runtime.event",
+      runtimeType: "sudo.request",
+      runId: "run-sudo",
+      sessionId: "session-sudo",
+      payload: { request_id: "sudo-1" },
+    },
+  ]);
+
+  assert.equal(snapshot.decisions[0].expiresAt, "2026-07-18T20:02:00.000Z");
+});
+
+test("maps pending governed requests onto explicit run status labels", () => {
+  const base = {
+    id: "request",
+    requestId: "request",
+    runId: "run",
+    sessionId: "session",
+    eventSeq: 1,
+    status: "pending" as const,
+    question: null,
+    choices: [],
+    command: null,
+    description: null,
+    envVar: null,
+    prompt: null,
+    risk: "test",
+    expiresAt: null,
+    decision: null,
+  };
+  assert.equal(hermesDisplayStatus("running", [{ ...base, kind: "approval" }]), "awaiting approval");
+  assert.equal(hermesDisplayStatus("running", [{ ...base, kind: "clarification" }]), "awaiting input");
+  assert.equal(hermesDisplayStatus("running", [{ ...base, kind: "secret" }]), "awaiting secret");
+  assert.equal(hermesDisplayStatus("completed", []), "completed");
+  assert.equal(hermesDisplayStatus("streaming", []), "running");
+  assert.equal(hermesDisplayStatus("interrupted", []), "cancelled");
+});

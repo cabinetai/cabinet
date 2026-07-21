@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import {
   Calendar as CalendarIcon,
   Clock3,
@@ -30,6 +32,7 @@ import { ScheduleView } from "@/components/cabinets/schedule-view";
 import { ContentSheet } from "@/components/layout/content-sheet";
 import { FolderTabs } from "@/components/layout/folder-tabs";
 import { TaskRailToggle } from "@/components/tasks/rail/task-rail-toggle";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 
 export type AgentsTabKey = "agents" | "routines" | "heartbeats" | "schedule" | "channels";
 
@@ -48,16 +51,24 @@ export function TabsLayout({
   tab: AgentsTabKey;
   onTabChange: (next: AgentsTabKey) => void;
 }) {
+  const hermesMode = useHermesMode();
+  const visibleTab =
+    hermesMode && !["agents", "channels"].includes(tab) ? "agents" : tab;
+
+  useEffect(() => {
+    if (visibleTab !== tab) onTabChange(visibleTab);
+  }, [onTabChange, tab, visibleTab]);
+
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <TopBar tab={tab} onTabChange={onTabChange} />
+      <TopBar tab={visibleTab} onTabChange={onTabChange} />
       <ContentSheet>
-      {tab === "schedule" ? (
+      {visibleTab === "schedule" ? (
         // Full-bleed: the calendar fills the sheet below the tab bar.
         <div className="min-h-0 flex-1">
           <ScheduleMount />
         </div>
-      ) : tab === "channels" ? (
+      ) : visibleTab === "channels" ? (
         // Full-bleed: the team channels viewer fills the sheet below the tab bar.
         // ponytail: onOpenFile omitted → in-message file links are inert (add a
         // nav handler if users want to click through to KB pages).
@@ -66,9 +77,9 @@ export function TabsLayout({
         </div>
       ) : (
         <div className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-4 sm:px-6">
-          {tab === "agents" && <AgentsTab />}
-          {tab === "routines" && <RoutinesTab />}
-          {tab === "heartbeats" && <HeartbeatsTab />}
+          {visibleTab === "agents" && <AgentsTab />}
+          {visibleTab === "routines" && <RoutinesTab />}
+          {visibleTab === "heartbeats" && <HeartbeatsTab />}
         </div>
       )}
       </ContentSheet>
@@ -140,6 +151,7 @@ function TopBar({
   tab: AgentsTabKey;
   onTabChange: (next: AgentsTabKey) => void;
 }) {
+  const hermesMode = useHermesMode();
   const { loading, visibilityMode, setVisibilityMode } =
     useAgentsContext();
   return (
@@ -156,7 +168,7 @@ function TopBar({
         )}
         <DepthDropdown mode={visibilityMode} onChange={setVisibilityMode} />
         <Divider className="hidden md:block" />
-        <MasterToggle />
+        {!hermesMode && <MasterToggle />}
         <NewButton tab={tab} />
         <TaskRailToggle />
       </div>
@@ -292,6 +304,7 @@ function TabStrip({
   tab: AgentsTabKey;
   onTabChange: (next: AgentsTabKey) => void;
 }) {
+  const hermesMode = useHermesMode();
   const { agents, jobs } = useAgentsContext();
   const counts: Record<AgentsTabKey, number | undefined> = {
     agents: agents.length,
@@ -305,7 +318,9 @@ function TabStrip({
       ariaLabel="Team views"
       active={tab}
       onSelect={(id) => onTabChange(id as AgentsTabKey)}
-      tabs={TABS.map((t) => {
+      tabs={TABS.filter(
+        (item) => !hermesMode || item.key === "agents" || item.key === "channels"
+      ).map((t) => {
         const Icon = t.icon;
         return {
           id: t.key,

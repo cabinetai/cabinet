@@ -16,6 +16,7 @@ import { supportsTerminalResume } from "./adapters/legacy-ids";
 import {
   appendAgentTurn,
   appendConversationTranscript,
+  appendRuntimeEvent,
   appendUserTurn,
   createConversation,
   enqueueConversationNotification,
@@ -24,6 +25,7 @@ import {
   isCabinetBlockMissing,
   moveStagingAttachments,
   readConversationMeta,
+  readEventLog,
   readConversationTurns,
   readSession,
   updateAgentTurn,
@@ -50,7 +52,7 @@ import { emit as emitTelemetry } from "@/lib/telemetry";
 export interface ConversationCompletion {
   meta: ConversationMeta;
   output: string;
-  status: "completed" | "failed";
+  status: "completed" | "failed" | "cancelled";
 }
 
 interface StartConversationInput {
@@ -739,6 +741,8 @@ export async function waitForConversationCompletion(
   const FAST_POLL_INTERVAL_MS = 100;
   const STEADY_POLL_INTERVAL_MS = 700;
   let lastOutputLength = 0;
+  let deliveredRuntimeEvents = 0;
+  let lastRuntimeSequence = 0;
   let firstPoll = true;
 
   while (Date.now() < deadline) {
@@ -754,6 +758,14 @@ export async function waitForConversationCompletion(
 
     try {
       const data = await getDaemonSessionOutput(conversationId);
+
+      if (Array.isArray(data.adapterEvents)) {
+        for (const event of data.adapterEvents.slice(deliveredRuntimeEvents)) {
+          lastRuntimeSequence =
+            (await appendRuntimeEvent(conversationId, event)) ?? lastRuntimeSequence;
+        }
+        deliveredRuntimeEvents = data.adapterEvents.length;
+      }
 
       // Live-streaming — broadcast a task.updated whenever the daemon's
       // transcript grew since the last poll. This is the only mechanism the
@@ -773,7 +785,12 @@ export async function waitForConversationCompletion(
         continue;
       }
 
-      const normalizedStatus = data.status === "completed" ? "completed" : "failed";
+      const normalizedStatus =
+        data.status === "completed"
+          ? "completed"
+          : data.status === "cancelled"
+            ? "cancelled"
+            : "failed";
       const currentMeta = await readConversationMeta(conversationId);
       const cp = currentMeta?.cabinetPath;
       let finalMeta =
@@ -801,6 +818,40 @@ export async function waitForConversationCompletion(
               cp
             )
           : currentMeta;
+
+      if (finalMeta?.adapterType === "hermes_runtime" && data.adapterSessionId) {
+        const eventSequence = lastRuntimeSequence;
+        finalMeta = {
+          ...finalMeta,
+          hermes: {
+            profile:
+              typeof data.adapterSessionParams?.profile === "string"
+                ? data.adapterSessionParams.profile
+                : process.env.CABINET_HERMES_PROFILE || "",
+            sessionId: data.adapterSessionId,
+            parentSessionId: finalMeta.hermes?.parentSessionId,
+            liveSessionId:
+              typeof data.adapterSessionParams?.liveSessionId === "string"
+                ? data.adapterSessionParams.liveSessionId
+                : undefined,
+            runId: conversationId,
+            eventSequence,
+            status:
+              normalizedStatus === "completed"
+                ? "completed"
+                : normalizedStatus === "cancelled" || data.adapterEvents?.some(
+                      (event) =>
+                        event.type === "message.complete" &&
+                        event.payload?.status === "interrupted"
+                    )
+                  ? "interrupted"
+                  : "failed",
+            artifactPaths: finalMeta.artifactPaths,
+            updatedAt: new Date().toISOString(),
+          },
+        };
+        await writeConversationMeta(finalMeta);
+      }
 
       if (
         finalMeta &&
@@ -1796,11 +1847,14 @@ export async function continueConversationRun(
       | null;
     adapterErrorHint?: string | null;
     adapterErrorRetryAfterSec?: number | null;
+    runId?: string;
+    runtimeEventCount?: number;
   }> => {
     const runId = `${conversationId}::t${pendingTurnNumber}::${randomUUID()}`;
     try {
       await createDaemonSession({
         id: runId,
+        persistConversation: false,
         prompt: effectivePrompt,
         providerId: adapter.providerId ?? meta.providerId,
         adapterType: adapter.type,
@@ -1835,10 +1889,15 @@ export async function continueConversationRun(
             cp
           ).catch(() => null);
         },
+        onEvent: (event) => {
+          void appendRuntimeEvent(conversationId, event, cp).catch(() => null);
+        },
       });
       const status = result.status === "completed" ? "completed" : "failed";
       return {
         status,
+        runId,
+        runtimeEventCount: result.adapterEvents?.length ?? 0,
         output: result.output,
         errorMessage: status === "failed" ? result.output || "Adapter failed." : undefined,
         adapterSessionId: result.adapterSessionId,
@@ -1999,6 +2058,15 @@ export async function continueConversationRun(
     // Record resume/replay outcome + persist the per-turn runtime snapshot.
     const metaNow = await readConversationMeta(conversationId, cp);
     if (metaNow) {
+      const persistedEvents =
+        adapter.type === "hermes_runtime"
+          ? await readEventLog(conversationId, { cabinetPath: cp })
+          : [];
+      const persistedEventSequence = persistedEvents.reduce(
+        (max, event) =>
+          typeof event.seq === "number" ? Math.max(max, event.seq) : max,
+        metaNow.hermes?.eventSequence ?? 0
+      );
       const next: ConversationMeta = {
         ...metaNow,
         adapterType: adapter.type,
@@ -2009,6 +2077,31 @@ export async function continueConversationRun(
           result: resumeOutcome,
           reason: resumeReason,
         },
+        ...(adapter.type === "hermes_runtime" && result.adapterSessionId
+          ? {
+              hermes: {
+                profile:
+                  typeof result.adapterSessionParams?.profile === "string"
+                    ? result.adapterSessionParams.profile
+                    : metaNow.hermes?.profile || process.env.CABINET_HERMES_PROFILE || "",
+                sessionId: result.adapterSessionId,
+                parentSessionId: metaNow.hermes?.parentSessionId,
+                liveSessionId:
+                  typeof result.adapterSessionParams?.liveSessionId === "string"
+                    ? result.adapterSessionParams.liveSessionId
+                    : undefined,
+                runId: result.runId,
+                parentRunId:
+                  metaNow.hermes?.runId && metaNow.hermes.runId !== result.runId
+                    ? metaNow.hermes.runId
+                    : metaNow.hermes?.parentRunId,
+                eventSequence: persistedEventSequence,
+                status: failed ? "failed" : "completed",
+                artifactPaths: finalized?.artifactPaths ?? metaNow.artifactPaths,
+                updatedAt: new Date().toISOString(),
+              },
+            }
+          : {}),
       };
       await writeConversationMeta(next);
     }

@@ -6,6 +6,25 @@ export const PROJECT_ROOT = process.cwd();
 const DEFAULT_RELEASE_MANIFEST_URL =
   "https://github.com/cabinetai/cabinet/releases/latest/download/cabinet-release.json";
 
+export const CABINET_RUNTIME_MODES = ["cabinet", "hermes"] as const;
+export type CabinetRuntimeMode = (typeof CABINET_RUNTIME_MODES)[number];
+
+export function parseCabinetRuntimeMode(
+  value: string | undefined
+): CabinetRuntimeMode {
+  const normalized = value?.trim().toLowerCase();
+  if (!normalized) return "cabinet";
+  if (normalized === "cabinet" || normalized === "hermes") return normalized;
+
+  throw new Error(
+    `Invalid CABINET_RUNTIME_MODE ${JSON.stringify(value)}; expected "cabinet" or "hermes".`
+  );
+}
+
+export function getCabinetRuntimeMode(): CabinetRuntimeMode {
+  return parseCabinetRuntimeMode(process.env.CABINET_RUNTIME_MODE);
+}
+
 function parsePort(value: string | undefined, fallback: number): number {
   if (!value) return fallback;
   const parsed = Number.parseInt(value, 10);

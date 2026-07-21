@@ -2,8 +2,9 @@ import type { WebSocket } from "ws";
 import type * as pty from "node-pty";
 import type { ClaudeStreamAccumulator } from "../../src/lib/agents/adapters/claude-stream";
 import type { TaskTrigger } from "../../src/types/tasks";
+import type { AdapterRuntimeEvent } from "../../src/lib/agents/adapters/types";
 
-export type SessionResolutionStatus = "completed" | "failed";
+export type SessionResolutionStatus = "completed" | "failed" | "cancelled";
 
 /**
  * Fields shared by every active session (PTY and structured). Kept here so
@@ -68,9 +69,10 @@ export interface PtySession extends BaseSession {
 export interface CompletedOutputEntry {
   output: string;
   completedAt: number;
-  status?: "running" | "completed" | "failed";
+  status?: "running" | "completed" | "failed" | "cancelled";
   exitCode?: number | null;
   adapterErrorKind?: string | null;
   adapterErrorHint?: string | null;
   adapterErrorRetryAfterSec?: number | null;
+  adapterEvents?: AdapterRuntimeEvent[];
 }

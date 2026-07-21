@@ -41,17 +41,6 @@ export const CLIENT_DATA_LOCATIONS: DataLocation[] = [
     onboarding: true,
   },
   {
-    id: "ls-feedback-prompted",
-    label: "Feedback popup state",
-    pathOrKey: "cabinet.feedback.",
-    prefix: true,
-    contains:
-      "Counters and flags used to schedule the feedback popup (e.g. app launch count, prompted-at flags).",
-    leavesDevice: false,
-    scope: "localStorage",
-    onboarding: true,
-  },
-  {
     id: "ls-data-dir-confirmed",
     label: "Data folder confirmation",
     pathOrKey: "cabinet.dataDirConfirmed",

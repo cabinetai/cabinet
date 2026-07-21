@@ -271,6 +271,60 @@ test("writeSession + readSession round-trip", async () => {
   assert.equal(back?.alive, true);
 });
 
+test("readEventLog resumes strictly after the last stable event sequence", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "Replay sequence",
+    trigger: "manual",
+    prompt: "User request:\nreplay",
+  });
+  const first = await store.appendEventLog(meta.id, { type: "runtime.event", marker: "first" });
+  const second = await store.appendEventLog(meta.id, { type: "runtime.event", marker: "second" });
+  const third = await store.appendEventLog(meta.id, { type: "runtime.event", marker: "third" });
+  assert.ok(first && second && third);
+
+  const replay = await store.readEventLog(meta.id, { fromSeq: first });
+  assert.deepEqual(replay.map((event) => event.seq), [second, third]);
+  assert.deepEqual(replay.map((event) => event.marker), ["second", "third"]);
+  assert.equal(new Set(replay.map((event) => event.seq)).size, replay.length);
+});
+
+test("late Hermes runtime events cannot regress a completed conversation to streaming", async () => {
+  const meta = await store.createConversation({
+    agentSlug: "general",
+    title: "Hermes terminal status",
+    trigger: "manual",
+    prompt: "User request:\nresume",
+    providerId: "hermes",
+    adapterType: "hermes_runtime",
+  });
+  await store.writeConversationMeta({
+    ...meta,
+    status: "completed",
+    hermes: {
+      profile: "operator-os",
+      sessionId: "stored-session",
+      runId: "run-1",
+      eventSequence: 4,
+      status: "completed",
+      artifactPaths: [],
+      updatedAt: new Date().toISOString(),
+    },
+  });
+
+  await store.appendRuntimeEvent(meta.id, {
+    type: "message.delta",
+    sessionId: "stored-session",
+    liveSessionId: "live-session",
+    runId: "run-1",
+    payload: { text: "late" },
+    occurredAt: new Date().toISOString(),
+  });
+
+  const reread = await store.readConversationMeta(meta.id);
+  assert.equal(reread?.hermes?.status, "completed");
+});
+
 test("summaryEditedAt within 5 minutes prevents auto-update", async () => {
   const meta = await makeSingleShotConversation(
     "User summary",

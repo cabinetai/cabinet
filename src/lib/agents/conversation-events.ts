@@ -9,7 +9,8 @@ export interface ConversationEvent {
     | "turn.updated"
     | "task.updated"
     | "task.deleted"
-    | "task.error";
+    | "task.error"
+    | "runtime.event";
   taskId: string; // conversation id
   cabinetPath?: string;
   ts: string;

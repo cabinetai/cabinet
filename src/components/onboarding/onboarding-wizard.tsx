@@ -56,6 +56,7 @@ import {
   detectSystemLocale,
   hasExplicitLocale,
 } from "@/i18n/detect-system-locale";
+import { useCabinetRuntimeMode } from "@/hooks/use-cabinet-runtime-mode";
 
 type OnboardingVerifyStatus =
   | "pass"
@@ -1659,6 +1660,113 @@ const STEP_NAMES: Record<number, string> = {
 };
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
+  const { hermesMode } = useCabinetRuntimeMode();
+  return hermesMode ? (
+    <HermesOnboarding onComplete={onComplete} />
+  ) : (
+    <CabinetOnboardingWizard onComplete={onComplete} />
+  );
+}
+
+function HermesOnboarding({ onComplete }: { onComplete: () => void }) {
+  const { status, loading } = useCabinetRuntimeMode();
+  const { locale } = useLocale();
+  const [name, setName] = useState("");
+  const [workspaceName, setWorkspaceName] = useState("Operator Cabinet");
+  const [launching, setLaunching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const launch = async () => {
+    setLaunching(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/onboarding/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          homeName: name.trim() ? `${name.trim()}'s Cabinet` : "Operator Cabinet",
+          roomType: "blank",
+          answers: {
+            name: name.trim(),
+            workspaceName: workspaceName.trim() || "Operator Cabinet",
+            description: "Hermes-first operating workspace",
+            teamSize: "",
+            priority: "",
+          },
+          selectedAgents: [],
+          locale,
+        }),
+      });
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error || "Hermes onboarding failed.");
+      }
+      acknowledgeDisclaimer();
+      onComplete();
+    } catch (launchError) {
+      setError(launchError instanceof Error ? launchError.message : "Hermes onboarding failed.");
+      setLaunching(false);
+    }
+  };
+
+  const healthy = status?.status === "online" || status?.status === "healthy";
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
+      <div className="w-full max-w-xl space-y-6 rounded-2xl border border-border bg-card p-7 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+            <Zap className="size-5" />
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-500">Hermes-first Cabinet</p>
+            <h1 className="text-xl font-semibold tracking-tight">Meet your Operator</h1>
+          </div>
+        </div>
+
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Cabinet is the interface. Hermes is the runtime and source of truth.
+          Your Operator uses the <span className="font-medium text-foreground">{status?.profile || "operator-os"}</span> profile
+          for every conversation, tool call, approval, secret, sudo request, and session.
+        </p>
+
+        <div className="rounded-lg border border-border bg-background p-3 text-xs">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-muted-foreground">Hermes connection</span>
+            <span className={healthy ? "font-medium text-emerald-500" : "font-medium text-amber-500"}>
+              {loading ? "Checking" : status?.status || "Unavailable"}
+            </span>
+          </div>
+          {status?.message ? <p className="mt-2 text-[11px] text-muted-foreground">{status.message}</p> : null}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="space-y-1.5 text-xs font-medium">
+            Your name
+            <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Jeremy" className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm outline-none focus:border-ring" />
+          </label>
+          <label className="space-y-1.5 text-xs font-medium">
+            Workspace name
+            <input value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm outline-none focus:border-ring" />
+          </label>
+        </div>
+
+        <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2.5 text-[11px] leading-relaxed text-muted-foreground">
+          Provider, model, skill, memory, and scheduler setup is intentionally absent.
+          Hermes already owns those capabilities. Cabinet will not become your primary
+          Hermes interface until Milestone 7 passes and you approve the cutover.
+        </div>
+
+        {error ? <p className="text-xs text-destructive">{error}</p> : null}
+        <button type="button" onClick={() => void launch()} disabled={launching} className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60">
+          {launching ? <Loader2 className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
+          {launching ? "Preparing Operator Cabinet" : "Enter Operator Cabinet"}
+        </button>
+      </div>
+    </main>
+  );
+}
+
+function CabinetOnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const { t, locale, dir, setLocale } = useLocale();
   const welcomeParagraph = t("onboarding:welcome.paragraph");
   const [step, setStep] = useState(0);

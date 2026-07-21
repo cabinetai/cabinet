@@ -186,7 +186,7 @@ Now execute your heartbeat. Check your focus areas, process inbox, review goals,
 async function processHeartbeatOutput(
   slug: string,
   output: string,
-  status: "completed" | "failed",
+  status: "completed" | "failed" | "cancelled",
   persona: AgentPersona,
   inbox: Array<{ from: string; timestamp: string; message: string }>,
   startTime: number,
@@ -328,7 +328,14 @@ async function processHeartbeatOutput(
 
   const duration = Date.now() - startTime;
   const timestamp = new Date().toISOString();
-  await recordHeartbeat({ agentSlug: slug, timestamp, duration, status, summary: output.slice(0, 500), cabinetPath });
+  await recordHeartbeat({
+    agentSlug: slug,
+    timestamp,
+    duration,
+    status: status === "cancelled" ? "failed" : status,
+    summary: output.slice(0, 500),
+    cabinetPath,
+  });
 
   // Auto-generate workspace index
   try {

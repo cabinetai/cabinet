@@ -17,17 +17,19 @@ export function AgentRow({
   routines,
   onToggleActive,
   onOpen,
+  hermesMode = false,
 }: {
   agent: CabinetAgentSummary;
   routines: CabinetJobSummary[];
   onToggleActive: () => void | Promise<void>;
   onOpen: () => void;
+  hermesMode?: boolean;
 }) {
   const [toggling, setToggling] = useState(false);
   const heartbeatOn = agent.active && agent.heartbeatEnabled !== false;
   const heartbeatLabel = agent.heartbeat ? cronToHuman(agent.heartbeat) : "off";
   const routinesOff = routines.filter((r) => !r.enabled).length;
-  const hasFooter =
+  const hasFooter = !hermesMode &&
     !agent.active ||
     !!agent.department ||
     !!agent.heartbeat ||
@@ -80,7 +82,7 @@ export function AgentRow({
         >
           {agent.name}
         </button>
-        <div
+        {!hermesMode && <div
           className="flex shrink-0 items-center gap-2"
           onClick={stop}
           onKeyDown={stop}
@@ -94,7 +96,7 @@ export function AgentRow({
             disabled={toggling}
             aria-label={agent.active ? `Stop ${agent.name}` : `Start ${agent.name}`}
           />
-        </div>
+        </div>}
       </div>
 
       {/* Role — supporting text, two-line clamp */}

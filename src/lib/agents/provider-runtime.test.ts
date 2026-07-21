@@ -209,7 +209,9 @@ test("runOneShotProviderPrompt closes stdin for CLI providers", async (t) => {
     providerId: provider.id,
     prompt: "OK",
     cwd: process.cwd(),
-    timeoutMs: 1_000,
+    // The full suite runs test files concurrently. Process startup can exceed
+    // one second under that load even though this script exits immediately.
+    timeoutMs: 5_000,
   });
 
   assert.equal(output, "OK");

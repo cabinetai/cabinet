@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 import { startConversation, waitForStatus } from "../test/support/cabinet-api";
 import { claudeReply } from "../test/support/fake-agent-cli";
@@ -97,5 +99,13 @@ test("the adapter invokes the CLI with Claude's print-mode contract", async () =
   // cwd is inside the KB. Load-bearing, not incidental: the agent writes files
   // with its own tools, so cwd IS the blast radius. A regression that launched it
   // in the repo root would hand an agent Cabinet's own source to edit.
-  expect(invocation.cwd.startsWith(cabinet.dataDir)).toBe(true);
+  // macOS reports the same temporary directory through both /var and
+  // /private/var. Compare canonical paths so the assertion tests containment,
+  // not the host's symlink spelling.
+  const canonicalDataDir = await fs.realpath(cabinet.dataDir);
+  const canonicalCwd = await fs.realpath(invocation.cwd);
+  expect(
+    canonicalCwd === canonicalDataDir ||
+      canonicalCwd.startsWith(`${canonicalDataDir}${path.sep}`)
+  ).toBe(true);
 });

@@ -2,6 +2,7 @@ import {
   defaultAdapterTypeForProvider,
   LEGACY_ADAPTER_BY_PROVIDER_ID,
 } from "@/lib/agents/adapters";
+import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
 
 /**
  * Shape of the per-request runtime override posted by the various composers
@@ -44,6 +45,8 @@ export interface NormalizedRuntime {
  * `adapterType`, `adapterConfig`.
  *
  * Rules:
+ *   0. Hermes mode: force the Hermes provider and adapter and discard every
+ *      request-level execution override, including terminal mode.
  *   1. providerId: request wins, else fallback.
  *   2. adapterType: request wins. If only providerId was given, derive the
  *      provider's default adapter. Otherwise fallback.
@@ -80,6 +83,15 @@ export function normalizeRuntimeOverride(
       ? requested.effort.trim()
       : undefined;
   const isTerminal = requested.runtimeMode === "terminal";
+
+  if (getCabinetRuntimeMode() === "hermes") {
+    return {
+      providerId: "hermes",
+      adapterType: "hermes_runtime",
+      adapterConfig: undefined,
+      isTerminal: false,
+    };
+  }
 
   const providerId = requestedProviderId ?? fallback.providerId;
 

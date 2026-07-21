@@ -21,6 +21,17 @@ export interface AdapterInvocationMeta {
   prompt?: string;
 }
 
+export interface AdapterRuntimeEvent {
+  type: string;
+  sessionId?: string | null;
+  /** Ephemeral gateway connection identity. Durable history remains sessionId. */
+  liveSessionId?: string | null;
+  runId: string;
+  requestId?: string | null;
+  payload?: Record<string, unknown>;
+  occurredAt: string;
+}
+
 export interface AdapterExecutionContext {
   runId: string;
   adapterType: string;
@@ -31,6 +42,10 @@ export interface AdapterExecutionContext {
   sessionId?: string | null;
   sessionParams?: Record<string, unknown> | null;
   onLog: (stream: "stdout" | "stderr", chunk: string) => Promise<void>;
+  /** Deliver provider-native structured events without flattening them into logs. */
+  onEvent?: (event: AdapterRuntimeEvent) => Promise<void>;
+  /** Register cooperative cancellation for adapters that do not spawn a child process. */
+  registerInterrupt?: (interrupt: () => Promise<void>) => void;
   onMeta?: (meta: AdapterInvocationMeta) => Promise<void>;
   onSpawn?: (meta: {
     pid: number;
@@ -55,6 +70,8 @@ export interface AdapterExecutionResult {
   summary?: string | null;
   output?: string | null;
   clearSession?: boolean;
+  events?: AdapterRuntimeEvent[];
+  interrupted?: boolean;
 }
 
 export type AdapterEnvironmentCheckLevel = "info" | "warn" | "error";

@@ -22,6 +22,11 @@ import {
   resolveAdapterTypeForProvider,
 } from "@/lib/agents/adapter-options";
 import { useLocale } from "@/i18n/use-locale";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
+import {
+  HERMES_ADAPTER_TYPE,
+  HERMES_PROVIDER_ID,
+} from "@/lib/hermes/product-mode";
 
 interface GoalInput {
   metric: string;
@@ -47,6 +52,7 @@ const DEPARTMENTS = ["marketing", "sales", "engineering", "research", "operation
 
 export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }: CreateAgentDialogProps) {
   const { t } = useLocale();
+  const hermesMode = useHermesMode();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [emoji, setEmoji] = useState("🤖");
@@ -67,6 +73,11 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
 
   useEffect(() => {
     if (!open) return;
+    if (hermesMode) {
+      setProvider(HERMES_PROVIDER_ID);
+      setAdapterType(HERMES_ADAPTER_TYPE);
+      return;
+    }
 
     fetch("/api/agents/providers")
       .then((r) => r.json())
@@ -87,7 +98,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
         );
       })
       .catch(() => {});
-  }, [open]);
+  }, [hermesMode, open]);
 
   const slug = name
     .toLowerCase()
@@ -117,8 +128,8 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
         department,
         type,
         heartbeat,
-        provider,
-        adapterType,
+        provider: hermesMode ? HERMES_PROVIDER_ID : provider,
+        adapterType: hermesMode ? HERMES_ADAPTER_TYPE : adapterType,
         budget: 200,
         active: false,
         workdir: "/data",
@@ -167,7 +178,9 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
         <DialogHeader>
           <DialogTitle>{t("agents:dialog.createAgent")}</DialogTitle>
           <DialogDescription>
-            Define a new agent with its identity, schedule, and goals.
+            {hermesMode
+              ? "Create a working role for the Operator. Every role uses the operator-os Hermes profile."
+              : "Define a new agent with its identity, schedule, and goals."}
           </DialogDescription>
         </DialogHeader>
 
@@ -280,7 +293,7 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
               </div>
             </div>
 
-            <div className="space-y-1">
+            {!hermesMode && <div className="space-y-1">
               <label className="text-[12px] font-medium">{t("agents:dialog.provider")}</label>
               <select
                 value={provider}
@@ -306,8 +319,8 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
                   </option>
                 ))}
               </select>
-            </div>
-            {adapterOptions.length > 0 ? (
+            </div>}
+            {!hermesMode && adapterOptions.length > 0 ? (
               <div className="space-y-1">
                 <label className="text-[12px] font-medium">{t("agents:dialog.runtime")}</label>
                 <select
@@ -330,6 +343,11 @@ export function CreateAgentDialog({ open, onOpenChange, onCreated, cabinetPath }
                   ))}
                 </select>
               </div>
+            ) : null}
+            {hermesMode ? (
+              <p className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 text-[11px] text-muted-foreground">
+                Hermes owns model selection and execution. This role cannot be assigned a separate provider or runtime.
+              </p>
             ) : null}
           </div>
 

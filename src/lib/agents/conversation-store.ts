@@ -37,6 +37,7 @@ import {
 } from "./action-validator";
 import { listPersonas, readPersona, type AgentPersona } from "./persona-manager";
 import type { PendingAction } from "../../types/actions";
+import type { AdapterRuntimeEvent } from "./adapters/types";
 import {
   buildConversationNotificationIdentity,
   dedupeConversationNotifications,
@@ -2311,6 +2312,178 @@ export async function appendEventLog(
   return seq;
 }
 
+export async function appendRuntimeEvent(
+  id: string,
+  event: AdapterRuntimeEvent,
+  cabinetPath?: string
+): Promise<number | null> {
+  const sensitiveKey = /authorization|api[_-]?key|password|secret|token|credential|sudo|value/i;
+  const redactString = (input: string): string =>
+    input
+      .replace(/\bBearer\s+[A-Za-z0-9._~-]+/gi, "Bearer [REDACTED]")
+      .replace(/\b(?:sk|ghp|github_pat|xox[baprs])-?[A-Za-z0-9_-]{12,}\b/g, "[REDACTED TOKEN]")
+      .replace(/\bAKIA[A-Z0-9]{16}\b/g, "[REDACTED AWS KEY]")
+      .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[REDACTED JWT]")
+      .replace(/\b[A-Z0-9_]*(?:SECRET|TOKEN|PASSWORD|API_KEY)[A-Z0-9_]*\s*[=:]\s*\S+/gi, "[REDACTED SECRET]");
+  const redact = (value: unknown, key = ""): unknown => {
+    if (sensitiveKey.test(key)) return "[REDACTED]";
+    if (Array.isArray(value)) return value.map((item) => redact(item));
+    if (value && typeof value === "object") {
+      return Object.fromEntries(
+        Object.entries(value as Record<string, unknown>).map(([childKey, child]) => [
+          childKey,
+          redact(child, childKey),
+        ])
+      );
+    }
+    return typeof value === "string" ? redactString(value) : value;
+  };
+  const safePayload = redact(event.payload ?? {}) as Record<string, unknown>;
+  if (
+    typeof safePayload.text === "string" &&
+    /^(message|reasoning|thinking)\./.test(event.type)
+  ) {
+    safePayload.text = `[REDACTED ${safePayload.text.length}-character output]`;
+  }
+  const seq = await appendEventLog(
+    id,
+    {
+      type: "runtime.event",
+      runtimeType: event.type,
+      runId: event.runId,
+      sessionId: event.sessionId ?? null,
+      liveSessionId: event.liveSessionId ?? null,
+      requestId: event.requestId ?? null,
+      payload: safePayload,
+      occurredAt: event.occurredAt,
+    },
+    cabinetPath
+  );
+  publishConversationEvent({
+    type: "runtime.event",
+    taskId: id,
+    cabinetPath,
+    seq: seq ?? undefined,
+    payload: {
+      runtimeType: event.type,
+      runId: event.runId,
+      sessionId: event.sessionId ?? null,
+      liveSessionId: event.liveSessionId ?? null,
+      requestId: event.requestId ?? null,
+      payload: safePayload,
+      occurredAt: event.occurredAt,
+    },
+  });
+
+  const meta = await readConversationMeta(id, cabinetPath);
+  if (meta && seq != null) {
+    const cp = meta.cabinetPath || cabinetPath;
+    if (meta.adapterType === "hermes_runtime" && event.sessionId) {
+      const priorRunId = meta.hermes?.runId;
+      const payloadStatus =
+        typeof event.payload?.status === "string" ? event.payload.status : "";
+      const terminalEventStatus =
+        event.type === "message.complete"
+          ? payloadStatus === "interrupted"
+            ? "interrupted"
+            : payloadStatus === "error"
+              ? "failed"
+              : "completed"
+          : event.type === "error"
+            ? "failed"
+            : null;
+      // Runtime event persistence is intentionally asynchronous relative to
+      // adapter completion. A late message.delta must never overwrite the
+      // terminal status written by the runner after a restart or reconnect.
+      const hermesStatus =
+        terminalEventStatus ??
+        (meta.status !== "running" &&
+        (meta.hermes?.status === "completed" ||
+          meta.hermes?.status === "failed" ||
+          meta.hermes?.status === "interrupted")
+          ? meta.hermes.status
+          : "streaming");
+      const nextMeta: ConversationMeta = {
+        ...meta,
+        hermes: {
+          profile: meta.hermes?.profile || process.env.CABINET_HERMES_PROFILE || "",
+          sessionId: event.sessionId,
+          parentSessionId: meta.hermes?.parentSessionId,
+          liveSessionId: event.liveSessionId || meta.hermes?.liveSessionId || undefined,
+          runId: event.runId,
+          parentRunId:
+            priorRunId && priorRunId !== event.runId
+              ? priorRunId
+              : meta.hermes?.parentRunId,
+          eventSequence: seq,
+          status: hermesStatus,
+          artifactPaths: meta.artifactPaths,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+      await writeConversationMeta(nextMeta);
+    }
+    const telemetry = {
+      session_id: event.sessionId ?? meta.hermes?.sessionId ?? null,
+      run_id: event.runId,
+      parent_run_id: meta.hermes?.runId ?? null,
+      profile: meta.hermes?.profile ?? process.env.CABINET_HERMES_PROFILE ?? null,
+      agent_id: meta.agentSlug,
+      capability_id: meta.adapterType ?? "hermes_runtime",
+      event_sequence: seq,
+      event_type: event.type,
+      step_id:
+        typeof safePayload.tool_id === "string"
+          ? safePayload.tool_id
+          : typeof safePayload.task_id === "string"
+            ? safePayload.task_id
+            : null,
+      tool_id: typeof safePayload.name === "string" ? safePayload.name : null,
+      occurred_at: event.occurredAt,
+      status:
+        typeof safePayload.status === "string"
+          ? safePayload.status
+          : event.type.endsWith(".complete")
+            ? "completed"
+            : "active",
+      duration_ms:
+        typeof safePayload.duration_s === "number"
+          ? Math.round(safePayload.duration_s * 1000)
+          : null,
+      provider: typeof safePayload.provider === "string" ? safePayload.provider : null,
+      model: typeof safePayload.model === "string" ? safePayload.model : null,
+      input_summary: event.type === "message.start" ? "[Hermes turn started]" : null,
+      output_summary:
+        typeof event.payload?.text === "string"
+          ? `[REDACTED ${event.payload.text.length}-character output]`
+          : null,
+      approval_state:
+        typeof safePayload.decision === "string" ? safePayload.decision : null,
+      error_category: event.type === "error" ? "hermes_runtime" : null,
+      retry_count: 0,
+      artifact_references: meta.artifactPaths,
+      screenshot_references: [],
+      input_tokens:
+        typeof (safePayload.usage as Record<string, unknown> | undefined)?.input_tokens ===
+        "number"
+          ? (safePayload.usage as Record<string, unknown>).input_tokens
+          : null,
+      output_tokens:
+        typeof (safePayload.usage as Record<string, unknown> | undefined)?.output_tokens ===
+        "number"
+          ? (safePayload.usage as Record<string, unknown>).output_tokens
+          : null,
+      estimated_cost: null,
+    };
+    await fs.appendFile(
+      path.join(conversationDir(id, cp), "telemetry.jsonl"),
+      `${JSON.stringify(telemetry)}\n`,
+      "utf-8"
+    );
+  }
+  return seq;
+}
+
 /**
  * Read the events.log for a conversation, optionally filtered to events with
  * `seq > fromSeq` (for SSE reconnect replay). Returns [] if the log is
@@ -2349,6 +2522,46 @@ export async function readEventLog(
   } catch {
     return [];
   }
+}
+
+export async function claimHermesDecision(
+  id: string,
+  identity: string,
+  record: Record<string, unknown>,
+  cabinetPath?: string
+): Promise<boolean> {
+  const meta = await readConversationMeta(id, cabinetPath);
+  if (!meta) return false;
+  const cp = meta.cabinetPath || cabinetPath;
+  const dir = path.join(conversationDir(id, cp), ".hermes-decisions");
+  await ensureDirectory(dir);
+  const digest = createHash("sha256").update(identity).digest("hex");
+  const marker = path.join(dir, `${digest}.json`);
+  try {
+    const handle = await fs.open(marker, "wx", 0o600);
+    try {
+      await handle.writeFile(`${JSON.stringify(record)}\n`, "utf-8");
+    } finally {
+      await handle.close();
+    }
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") return false;
+    throw error;
+  }
+}
+
+export async function releaseHermesDecision(
+  id: string,
+  identity: string,
+  cabinetPath?: string
+): Promise<void> {
+  const meta = await readConversationMeta(id, cabinetPath);
+  if (!meta) return;
+  const cp = meta.cabinetPath || cabinetPath;
+  const digest = createHash("sha256").update(identity).digest("hex");
+  const marker = path.join(conversationDir(id, cp), ".hermes-decisions", `${digest}.json`);
+  await fs.unlink(marker).catch(() => undefined);
 }
 
 function aggregateTokens(turns: ConversationTurn[]): ConversationTokens {

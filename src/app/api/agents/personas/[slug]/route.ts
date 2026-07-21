@@ -17,6 +17,11 @@ import { getTemplateRecommendedSkills } from "@/lib/agents/library-manager";
 import { startManualHeartbeat } from "@/lib/agents/heartbeat";
 import { updateGoal, getGoalHistory } from "@/lib/agents/goal-manager";
 import { reloadDaemonSchedules } from "@/lib/agents/daemon-client";
+import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
+import {
+  enforceHermesPersonaWrite,
+  projectHermesPersona,
+} from "@/lib/hermes/product-mode";
 
 type RouteParams = { params: Promise<{ slug: string }> };
 
@@ -79,7 +84,16 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   const history = await getHeartbeatHistory(slug, undefined, cabinetPath);
   const goalHistory = await getGoalHistory(slug);
 
-  return NextResponse.json({ persona, memory, inbox, history, goalHistory });
+  return NextResponse.json({
+    persona:
+      getCabinetRuntimeMode() === "hermes"
+        ? projectHermesPersona(persona)
+        : persona,
+    memory,
+    inbox,
+    history,
+    goalHistory,
+  });
 }
 
 export async function PUT(req: NextRequest, { params }: RouteParams) {
@@ -122,7 +136,13 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   }
 
   // Default: update persona
-  await writePersona(slug, body, cabinetPath);
+  await writePersona(
+    slug,
+    getCabinetRuntimeMode() === "hermes"
+      ? enforceHermesPersonaWrite(body)
+      : body,
+    cabinetPath
+  );
   await reloadDaemonSchedules().catch(() => {});
   return NextResponse.json({ ok: true });
 }

@@ -1,4 +1,5 @@
 import type { DispatchedAction, PendingAction } from "./actions";
+import type { HermesConversationReference } from "@/lib/hermes/types";
 
 export type ConversationTrigger = "manual" | "job" | "heartbeat" | "agent" | "telegram" | "channel";
 export type ConversationSource = "manual" | "editor";
@@ -170,6 +171,9 @@ export interface ConversationMeta {
   pendingActions?: PendingAction[];
   /** Actions that have been dispatched or rejected by the human. */
   dispatchedActions?: DispatchedAction[];
+
+  /** Rebuildable projection pointer. Hermes owns the durable conversation. */
+  hermes?: HermesConversationReference;
 }
 
 export interface ConversationDetail {

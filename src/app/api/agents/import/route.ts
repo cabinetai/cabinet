@@ -5,6 +5,8 @@ import matter from "gray-matter";
 import { DATA_DIR } from "@/lib/storage/path-utils";
 import { writePersona } from "@/lib/agents/persona-manager";
 import { getDefaultProviderId } from "@/lib/agents/provider-runtime";
+import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
+import { enforceHermesPersonaWrite } from "@/lib/hermes/product-mode";
 
 async function ensureDir(dir: string) {
   try { await fs.mkdir(dir, { recursive: true }); } catch { /* exists */ }
@@ -27,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     const fm = bundle.agent.frontmatter;
     fm.active = false;
-    await writePersona(slug, {
+    const personaData = {
       name: fm.name || slug,
       role: fm.role || "",
       provider: fm.provider || getDefaultProviderId(),
@@ -45,7 +47,13 @@ export async function POST(req: NextRequest) {
       workspace: fm.workspace || "workspace",
       slug,
       body: bundle.agent.body || "",
-    });
+    };
+    await writePersona(
+      slug,
+      getCabinetRuntimeMode() === "hermes"
+        ? enforceHermesPersonaWrite(personaData)
+        : personaData
+    );
 
     const workspaceDir = path.join(DATA_DIR, ".agents", slug, "workspace");
     await ensureDir(workspaceDir);

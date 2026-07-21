@@ -103,6 +103,8 @@ import {
   type Locale,
 } from "@/i18n";
 import { submitLanguageRequest } from "@/lib/telemetry/language-request-client";
+import { useCabinetRuntimeMode } from "@/hooks/use-cabinet-runtime-mode";
+import { AdvancedHermesSettings } from "@/components/settings/advanced-hermes-settings";
 
 interface McpServer {
   name: string;
@@ -335,6 +337,7 @@ const REQUESTED_LOCALES_KEY = "cabinet-requested-locales";
 
 export function SettingsPage() {
   const { t } = useLocale();
+  const { hermesMode, loading: runtimeModeLoading } = useCabinetRuntimeMode();
   const {
     showHiddenFiles,
     setShowHiddenFiles,
@@ -398,6 +401,13 @@ export function SettingsPage() {
   })();
   const [tab, setTabState] = useState<Tab>(initialTab);
   const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!runtimeModeLoading && hermesMode && tab === "skills") {
+      setTabState("providers");
+      useAppStore.getState().setSection({ type: "settings", slug: "providers" });
+    }
+  }, [hermesMode, runtimeModeLoading, tab]);
 
   // Sync tab changes to hash
   const setTab = useCallback((t: Tab) => {
@@ -765,14 +775,14 @@ export function SettingsPage() {
     {
       label: t("settings:page.groupWorkspace"),
       items: [
-        { id: "providers", label: t("settings:tabs.providers"), icon: <Cpu className="h-3.5 w-3.5" /> },
-        {
+        { id: "providers", label: hermesMode ? "Advanced Hermes" : t("settings:tabs.providers"), icon: <Cpu className="h-3.5 w-3.5" /> },
+        ...(!hermesMode ? [{
           id: "integrations" as Tab,
           label: t("settings:tabs.integrations"),
           icon: <Blocks className="h-3.5 w-3.5" />,
           onSelect: () => useAppStore.getState().setSection({ type: "integrations" }),
         },
-        { id: "skills", label: t("settings:tabs.skills"), icon: <Asterisk className="h-3.5 w-3.5" /> },
+        { id: "skills" as Tab, label: t("settings:tabs.skills"), icon: <Asterisk className="h-3.5 w-3.5" /> }] : []),
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
       ],
     },
@@ -1340,7 +1350,9 @@ export function SettingsPage() {
           )}
 
           {/* Providers Tab */}
-          {tab === "providers" && (
+          {tab === "providers" && (hermesMode ? (
+            <AdvancedHermesSettings />
+          ) : (
             <>
               {/* Cloud: one-click Connect-Claude (setup-token) — inert on desktop/self-host. */}
               <ConnectClaudeCard />
@@ -1689,10 +1701,10 @@ export function SettingsPage() {
               </div>
 
             </>
-          )}
+          ))}
 
           {/* Skills Tab */}
-          {tab === "skills" && <SkillsSettings />}
+          {tab === "skills" && !hermesMode && <SkillsSettings />}
 
           {/* Notifications Tab */}
           {tab === "notifications" && (

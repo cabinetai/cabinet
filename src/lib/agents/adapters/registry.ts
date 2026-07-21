@@ -18,6 +18,7 @@ import { cursorLocalAdapter } from "./cursor-local";
 import { providerStatusToEnvironmentTest } from "./environment";
 import { geminiLocalAdapter } from "./gemini-local";
 import { grokLocalAdapter } from "./grok-local";
+import { hermesRuntimeAdapter } from "./hermes-runtime";
 import { openCodeLocalAdapter } from "./opencode-local";
 import { piLocalAdapter } from "./pi-local";
 
@@ -190,6 +191,7 @@ agentAdapterRegistry.register(openCodeLocalAdapter);
 agentAdapterRegistry.register(piLocalAdapter);
 agentAdapterRegistry.register(grokLocalAdapter);
 agentAdapterRegistry.register(copilotLocalAdapter);
+agentAdapterRegistry.register(hermesRuntimeAdapter);
 agentAdapterRegistry.register(legacyClaudeCodeAdapter);
 agentAdapterRegistry.register(legacyCodexCliAdapter);
 agentAdapterRegistry.register(legacyGeminiCliAdapter);

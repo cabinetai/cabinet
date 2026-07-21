@@ -41,6 +41,7 @@ export function conversationMetaToTaskMeta(meta: ConversationMeta): TaskMeta {
     providerId: meta.providerId,
     adapterType: meta.adapterType,
     adapterConfig: meta.adapterConfig,
+    hermes: meta.hermes,
     runtime: meta.runtime,
     tokens: meta.tokens,
     createdAt: meta.startedAt,

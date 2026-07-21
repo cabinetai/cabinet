@@ -23,6 +23,7 @@ test("legacy adapter registry exposes the current compatibility adapters", () =>
     "gemini_local",
     "grok_cli_legacy",
     "grok_local",
+    "hermes_runtime",
     "opencode_legacy",
     "opencode_local",
     "pi_legacy",

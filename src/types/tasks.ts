@@ -119,6 +119,8 @@ export interface TaskMeta {
   providerId?: string;
   adapterType?: string;
   adapterConfig?: Record<string, unknown>;
+  /** Rebuildable Hermes projection pointer for canonical runtime status. */
+  hermes?: import("./conversations").ConversationMeta["hermes"];
   runtime?: TaskRuntimeMeta;
   tokens?: TaskTokens;
   createdAt: string;

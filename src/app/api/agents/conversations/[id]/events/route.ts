@@ -48,6 +48,25 @@ export async function GET(
         }
       };
 
+      // Subscribe before reading the durable log. Events can arrive while the
+      // file is being read; buffering closes the replay/live race without
+      // presenting the same sequence twice.
+      let replaying = true;
+      const buffered: ConversationEvent[] = [];
+      const delivered = new Set<number>();
+      const deliver = (event: ConversationEvent) => {
+        if (replaying) {
+          buffered.push(event);
+          return;
+        }
+        if (typeof event.seq === "number") {
+          if (delivered.has(event.seq)) return;
+          delivered.add(event.seq);
+        }
+        send(event);
+      };
+      const unsubscribe = conversationEvents.subscribe(id, deliver);
+
       // 1. Initial ping.
       send({ type: "ping", ts: new Date().toISOString() });
 
@@ -69,22 +88,26 @@ export async function GET(
               [key: string]: unknown;
             };
             if (!type) continue;
-            send({
+            const event = {
               type,
               taskId: id,
               cabinetPath,
               ts: typeof ts === "string" ? ts : new Date().toISOString(),
               seq,
               payload: rest as Record<string, unknown>,
-            });
+            } satisfies ConversationEvent;
+            if (typeof seq === "number") delivered.add(seq);
+            send(event);
           }
         } catch {
           // best-effort; live subscribe still attached below
         }
       }
 
-      // 3. Subscribe to live bus.
-      const unsubscribe = conversationEvents.subscribe(id, (event) => send(event));
+      // 3. Flush live events that arrived during replay in sequence order.
+      replaying = false;
+      buffered.sort((a, b) => (a.seq ?? Number.MAX_SAFE_INTEGER) - (b.seq ?? Number.MAX_SAFE_INTEGER));
+      for (const event of buffered) deliver(event);
       const heartbeat = setInterval(
         () => send({ type: "ping", ts: new Date().toISOString() }),
         15_000
