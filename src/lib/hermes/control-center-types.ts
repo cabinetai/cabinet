@@ -188,6 +188,7 @@ export type HermesInstalledRuntime = {
     memoryProvider: string;
     memoryNamespace: string;
     diagnostics: HermesManagementSnapshot["diagnostics"];
+    sessionCollection: HermesManagementSnapshot["agentApi"]["sessions"];
     operator: HermesManagementSnapshot["operator"];
   };
 };

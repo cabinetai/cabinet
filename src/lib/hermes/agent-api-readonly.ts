@@ -10,7 +10,11 @@ export type HermesAgentApiSourceState =
 export type HermesAgentApiSession = {
   displayId: string;
   parentDisplayId: string | null;
-  childCount: number;
+  parentRelationship: "none" | "observed" | "outside_loaded_page";
+  observedChildCount: number;
+  lineageCoverage: "loaded_page_only";
+  duplicateObservationCount: number;
+  identityAmbiguous: boolean;
   source: string;
   model: string | null;
   lifecycle: "ended" | "unended";
@@ -40,6 +44,19 @@ export type HermesAgentApiReadOnlySnapshot = {
     summary: string;
     interface: "/api/sessions?limit=100&offset=0&include_children=true";
     hasMore: boolean | null;
+    requestedLimit: 100;
+    requestedOffset: 0;
+    responseLimit: number | null;
+    responseOffset: number | null;
+    returnedCount: number;
+    loadedCount: number;
+    displayedCount: number;
+    coverage: "complete" | "partial_page" | "unknown";
+    truncated: boolean;
+    duplicateCount: number;
+    ambiguityCount: number;
+    identityScope: "page_local";
+    identitySummary: "Page item labels identify only the current loaded page and may change when its ordering changes.";
     items: HermesAgentApiSession[];
   };
   models: {
@@ -76,6 +93,7 @@ export type HermesKnownRunRead = {
 };
 
 const MAX_SESSIONS = 100;
+const MAX_DISPLAYED_SESSIONS = 50;
 const MAX_MODELS = 100;
 
 function record(input: unknown): Record<string, unknown> {
@@ -122,7 +140,27 @@ function unavailableSnapshot(now: string, state: HermesAgentApiSourceState, summ
   return {
     checkedAt: now,
     contract: { state, observedAt: now, summary, interface: "/v1/capabilities" },
-    sessions: { state, observedAt: now, summary, interface: "/api/sessions?limit=100&offset=0&include_children=true", hasMore: null, items: [] },
+    sessions: {
+      state,
+      observedAt: now,
+      summary,
+      interface: "/api/sessions?limit=100&offset=0&include_children=true",
+      hasMore: null,
+      requestedLimit: MAX_SESSIONS,
+      requestedOffset: 0,
+      responseLimit: null,
+      responseOffset: null,
+      returnedCount: 0,
+      loadedCount: 0,
+      displayedCount: 0,
+      coverage: "unknown",
+      truncated: false,
+      duplicateCount: 0,
+      ambiguityCount: 0,
+      identityScope: "page_local",
+      identitySummary: "Page item labels identify only the current loaded page and may change when its ordering changes.",
+      items: [],
+    },
     models: { state, observedAt: now, summary, interface: "/v1/models", items: [] },
   };
 }
@@ -170,10 +208,51 @@ export async function collectAgentApiReadOnly(
     request("/v1/models"),
   ]);
 
-  const sessionRecords = array(record(sessionsRaw.value).data).slice(0, MAX_SESSIONS).map(record);
-  const identities = sessionRecords.map((item) => rawIdentity(item.id));
+  const sessionEnvelope = record(sessionsRaw.value);
+  const rawSessionRecords = array(sessionEnvelope.data);
+  const boundedSessionRecords = rawSessionRecords.slice(0, MAX_SESSIONS).map(record);
+  const observationTime = (item: Record<string, unknown>): number => {
+    const value = timestamp(item.last_active) ?? timestamp(item.ended_at) ?? timestamp(item.started_at);
+    return value ? new Date(value).getTime() : Number.NEGATIVE_INFINITY;
+  };
+  const safeTieKey = (item: Record<string, unknown>): string => JSON.stringify({
+    source: bounded(item.source, "Unknown source", 48),
+    model: typeof item.model === "string" ? bounded(item.model, "Unknown model", 96) : null,
+    lifecycle: timestamp(item.ended_at) ? "ended" : "unended",
+    startedAt: timestamp(item.started_at),
+    endedAt: timestamp(item.ended_at),
+    lastActiveAt: timestamp(item.last_active),
+    messageCount: integer(item.message_count),
+    toolCallCount: integer(item.tool_call_count),
+    inputTokens: integer(item.input_tokens),
+    outputTokens: integer(item.output_tokens),
+  });
+  const grouped = new Map<string, Array<{ item: Record<string, unknown>; firstIndex: number }>>();
+  const anonymous: Array<{ item: Record<string, unknown>; firstIndex: number; duplicateObservationCount: number; identityAmbiguous: boolean }> = [];
+  boundedSessionRecords.forEach((item, firstIndex) => {
+    const id = rawIdentity(item.id);
+    if (!id) anonymous.push({ item, firstIndex, duplicateObservationCount: 1, identityAmbiguous: false });
+    else grouped.set(id, [...(grouped.get(id) ?? []), { item, firstIndex }]);
+  });
+  let duplicateCount = 0;
+  let ambiguityCount = 0;
+  const selected = [...grouped.entries()].map(([id, observations]) => {
+    duplicateCount += Math.max(0, observations.length - 1);
+    const ordered = observations.toSorted((left, right) => {
+      const byTime = observationTime(right.item) - observationTime(left.item);
+      return byTime || safeTieKey(left.item).localeCompare(safeTieKey(right.item));
+    });
+    const newestTime = observationTime(ordered[0].item);
+    const newestKeys = new Set(ordered.filter((entry) => observationTime(entry.item) === newestTime).map((entry) => safeTieKey(entry.item)));
+    const identityAmbiguous = newestKeys.size > 1;
+    if (identityAmbiguous) ambiguityCount += 1;
+    return { id, item: ordered[0].item, firstIndex: Math.min(...observations.map((entry) => entry.firstIndex)), duplicateObservationCount: observations.length, identityAmbiguous };
+  });
+  const sessionEntries = [...selected, ...anonymous.map((entry) => ({ ...entry, id: null }))].toSorted((left, right) => left.firstIndex - right.firstIndex);
+  const sessionRecords = sessionEntries.map((entry) => entry.item);
+  const identities = sessionEntries.map((entry) => entry.id);
   const displayByIdentity = new Map<string, string>();
-  identities.forEach((id, index) => { if (id && !displayByIdentity.has(id)) displayByIdentity.set(id, `Session ${index + 1}`); });
+  identities.forEach((id, index) => { if (id && !displayByIdentity.has(id)) displayByIdentity.set(id, `Page item ${index + 1}`); });
   const childCounts = new Map<string, number>();
   for (const item of sessionRecords) {
     const parent = rawIdentity(item.parent_session_id);
@@ -183,10 +262,15 @@ export async function collectAgentApiReadOnly(
     const id = identities[index];
     const parent = rawIdentity(item.parent_session_id);
     const endedAt = timestamp(item.ended_at);
+    const entry = sessionEntries[index];
     return {
-      displayId: id ? displayByIdentity.get(id) ?? `Session ${index + 1}` : `Session ${index + 1}`,
-      parentDisplayId: parent ? displayByIdentity.get(parent) ?? "Earlier session" : null,
-      childCount: id ? childCounts.get(id) ?? 0 : 0,
+      displayId: id ? displayByIdentity.get(id) ?? `Page item ${index + 1}` : `Page item ${index + 1}`,
+      parentDisplayId: parent ? displayByIdentity.get(parent) ?? null : null,
+      parentRelationship: parent ? (displayByIdentity.has(parent) ? "observed" : "outside_loaded_page") : "none",
+      observedChildCount: id ? childCounts.get(id) ?? 0 : 0,
+      lineageCoverage: "loaded_page_only",
+      duplicateObservationCount: entry.duplicateObservationCount,
+      identityAmbiguous: entry.identityAmbiguous,
       source: bounded(item.source, "Unknown source", 48),
       model: typeof item.model === "string" ? bounded(item.model, "Unknown model", 96) : null,
       lifecycle: endedAt ? "ended" : "unended",
@@ -209,6 +293,14 @@ export async function collectAgentApiReadOnly(
     ownedBy: typeof item.owned_by === "string" ? bounded(item.owned_by, "Hermes", 64) : null,
   }));
 
+  const hasMore = typeof sessionEnvelope.has_more === "boolean" ? sessionEnvelope.has_more : null;
+  const responseLimit = integer(sessionEnvelope.limit);
+  const responseOffset = integer(sessionEnvelope.offset);
+  const coverage = hasMore === true && sessions.length > 0 ? "partial_page" : hasMore === false ? "complete" : "unknown";
+  const sessionState = sessionsRaw.state === "success"
+    ? (sessions.length ? "success" : hasMore === true ? "failure" : "connected_empty")
+    : sessionsRaw.state;
+
   return {
     checkedAt: now,
     contract: {
@@ -218,11 +310,28 @@ export async function collectAgentApiReadOnly(
       interface: "/v1/capabilities",
     },
     sessions: {
-      state: sessionsRaw.state === "success" ? (sessions.length ? "success" : "connected_empty") : sessionsRaw.state,
+      state: sessionState,
       observedAt: sessionsRaw.observedAt,
-      summary: sessionsRaw.state === "success" ? `Hermes Agent reported ${sessions.length} bounded session records.` : sessionsRaw.summary,
+      summary: sessionsRaw.state === "success"
+        ? hasMore === true && sessions.length === 0
+          ? "Hermes Agent returned malformed session pagination: no valid records with more records asserted."
+          : `${sessions.length} records loaded${hasMore === true ? "; more records are available" : ""}.`
+        : sessionsRaw.summary,
       interface: "/api/sessions?limit=100&offset=0&include_children=true",
-      hasMore: typeof record(sessionsRaw.value).has_more === "boolean" ? record(sessionsRaw.value).has_more as boolean : null,
+      hasMore,
+      requestedLimit: MAX_SESSIONS,
+      requestedOffset: 0,
+      responseLimit,
+      responseOffset,
+      returnedCount: rawSessionRecords.length,
+      loadedCount: sessions.length,
+      displayedCount: Math.min(sessions.length, MAX_DISPLAYED_SESSIONS),
+      coverage,
+      truncated: rawSessionRecords.length > MAX_SESSIONS,
+      duplicateCount,
+      ambiguityCount,
+      identityScope: "page_local",
+      identitySummary: "Page item labels identify only the current loaded page and may change when its ordering changes.",
       items: sessions,
     },
     models: {

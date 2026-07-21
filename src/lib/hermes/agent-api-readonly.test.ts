@@ -26,6 +26,7 @@ test("Agent API read-only collector uses Bearer auth, blocks redirects, and call
   });
 
   assert.equal(result.sessions.state, "connected_empty");
+  assert.equal(result.sessions.coverage, "complete");
   assert.equal(result.models.state, "connected_empty");
   assert.equal(requests.length, 3);
   assert.ok(requests.every((item) => item.method === "GET" && item.redirect === "error" && item.auth === `Bearer ${secret}`));
@@ -50,9 +51,9 @@ test("session projection preserves bounded lineage and usage while removing raw 
       { id: canaries.child, parent_session_id: canaries.id, source: "api", model: "model-a", started_at: "2026-07-20T10:05:00Z", ended_at: "2026-07-20T10:09:00Z", actual_cost_usd: 0.02 },
     ], has_more: false });
   });
-  assert.deepEqual(result.sessions.items.map((item) => [item.displayId, item.parentDisplayId, item.childCount, item.lifecycle]), [
-    ["Session 1", null, 1, "unended"],
-    ["Session 2", "Session 1", 0, "ended"],
+  assert.deepEqual(result.sessions.items.map((item) => [item.displayId, item.parentDisplayId, item.observedChildCount, item.lifecycle]), [
+    ["Page item 1", null, 1, "unended"],
+    ["Page item 2", "Page item 1", 0, "ended"],
   ]);
   assert.equal(result.sessions.items[0]?.messageCount, 3);
   assert.equal(result.sessions.items[1]?.actualCostUsd, 0.02);
@@ -68,10 +69,69 @@ test("missing parent becomes a nonsecret earlier-session label and oversized/con
     if (url.endsWith("/v1/models")) return response({ data: [{ id: `\u001b[31m${"x".repeat(300)}`, owned_by: "Hermes\nowner" }] });
     return response({ data: [{ id: "child", parent_session_id: "absent-parent-secret", source: `\u001b[31m${"s".repeat(200)}` }] });
   });
-  assert.equal(result.sessions.items[0]?.parentDisplayId, "Earlier session");
+  assert.equal(result.sessions.items[0]?.parentDisplayId, null);
+  assert.equal(result.sessions.items[0]?.parentRelationship, "outside_loaded_page");
   assert.ok((result.sessions.items[0]?.source.length ?? 0) <= 48);
   assert.ok((result.models.items[0]?.displayId.length ?? 0) <= 96);
   assert.doesNotMatch(JSON.stringify(result), /\u001b|absent-parent-secret/);
+});
+
+test("session coverage preserves pagination truth and bounds malformed or oversized pages", async () => {
+  const collect = (body: unknown) => collectAgentApiReadOnly(config, async (input) => {
+    const url = String(input);
+    if (url.endsWith("/v1/capabilities")) return response({});
+    if (url.endsWith("/v1/models")) return response({ data: [] });
+    return response(body);
+  });
+  const partial = await collect({ data: Array.from({ length: 100 }, (_, index) => ({ id: `20260720_120000_${index.toString(16).padStart(6, "0")}` })), has_more: true, limit: 100, offset: 0 });
+  assert.equal(partial.sessions.coverage, "partial_page");
+  assert.equal(partial.sessions.loadedCount, 100);
+  assert.equal(partial.sessions.displayedCount, 50);
+  assert.match(partial.sessions.summary, /100 records loaded; more records are available/);
+  const malformed = await collect({ data: [], has_more: true });
+  assert.equal(malformed.sessions.state, "failure");
+  assert.equal(malformed.sessions.coverage, "unknown");
+  const oversized = await collect({ data: Array.from({ length: 120 }, (_, index) => ({ id: `id-${index}` })), has_more: false });
+  assert.equal(oversized.sessions.returnedCount, 120);
+  assert.equal(oversized.sessions.loadedCount, 100);
+  assert.equal(oversized.sessions.truncated, true);
+});
+
+test("page-local labels remain honest while deduplication is deterministic and lineage stays page-qualified", async () => {
+  const build = async (data: unknown[]) => collectAgentApiReadOnly(config, async (input) => {
+    const url = String(input);
+    if (url.endsWith("/v1/capabilities")) return response({});
+    if (url.endsWith("/v1/models")) return response({ data: [] });
+    return response({ data, has_more: true });
+  });
+  const older = { id: "20260720_120000_abcdef", source: "older", last_active: "2026-07-20T12:00:00Z" };
+  const newer = { id: "20260720_120000_abcdef", source: "newer", last_active: "2026-07-20T12:01:00Z" };
+  const child = { id: "20260720_120001_123456", parent_session_id: older.id, last_active: "2026-07-20T12:02:00Z" };
+  const first = await build([older, child, newer]);
+  const reordered = await build([newer, child, older]);
+  assert.equal(first.sessions.items.length, 2);
+  assert.equal(first.sessions.items[0]?.source, "newer");
+  assert.equal(reordered.sessions.items[0]?.source, "newer");
+  assert.equal(first.sessions.duplicateCount, 1);
+  assert.equal(first.sessions.items[1]?.parentRelationship, "observed");
+  assert.equal(first.sessions.items[0]?.observedChildCount, 1);
+  assert.equal(first.sessions.identityScope, "page_local");
+  assert.match(first.sessions.identitySummary, /may change/);
+  assert.doesNotMatch(JSON.stringify(first), /20260720_120000_abcdef|20260720_120001_123456/);
+  const leadingInsert = await build([{ id: "new-leading", last_active: "2026-07-20T12:03:00Z" }, older, child]);
+  assert.equal(leadingInsert.sessions.items[0]?.displayId, "Page item 1");
+  assert.equal(leadingInsert.sessions.items[1]?.displayId, "Page item 2");
+});
+
+test("equal-time duplicate conflicts are visible without letting array order select the winner", async () => {
+  const left = { id: "duplicate", source: "alpha", last_active: "2026-07-20T12:00:00Z" };
+  const right = { id: "duplicate", source: "zeta", last_active: "2026-07-20T12:00:00Z" };
+  const collect = (data: unknown[]) => collectAgentApiReadOnly(config, async (input) => String(input).endsWith("/v1/capabilities") ? response({}) : String(input).endsWith("/v1/models") ? response({ data: [] }) : response({ data, has_more: false }));
+  const a = await collect([left, right]);
+  const b = await collect([right, left]);
+  assert.equal(a.sessions.items[0]?.source, b.sessions.items[0]?.source);
+  assert.equal(a.sessions.items[0]?.identityAmbiguous, true);
+  assert.equal(a.sessions.ambiguityCount, 1);
 });
 
 test("source failures stay independent and never borrow overall Agent health", async () => {

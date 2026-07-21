@@ -167,11 +167,19 @@ function collectHermesObservations(
   endpoint({ ids: ["providers", "provider-accounts"], area: "model options", source: "Hermes model options", interface: "/api/model/options", count: management.operator.providers.length, emptyOutcome: "not_configured" });
   const agentModels = management.agentApi.models;
   if (managementReady) {
-    endpoint({ ids: ["models", "model-settings"], area: "current model", source: "Hermes current model", interface: "/api/model/info", count: management.operator.model.model ? 1 : 0, emptyOutcome: "not_configured" });
+    endpoint({ ids: ["models", "model-settings"], area: "current model", source: "Hermes current model", interface: "/api/model/info", count: management.operator.model.currentModel ? 1 : 0, emptyOutcome: "not_configured" });
   } else {
     add("models", "Hermes Agent API advertised models", agentModels.interface, agentOutcome(agentModels.state), agentModels.summary, {
       observedAt: agentModels.observedAt,
-      facts: { count: agentModels.items.length, models: agentModels.items, sourceGroup: "agent_api" },
+      facts: {
+        count: agentModels.items.length,
+        advertisedModels: agentModels.items,
+        currentModel: null,
+        currentProvider: null,
+        sourceGroup: "agent_api",
+        partialClaim: true,
+        limitation: "GET /v1/models is an advertised catalog; it does not report the canonical current/default model, provider authentication, profile overrides, or billing state.",
+      },
       installedBackendVersion: health.version,
       installedBackendCommit: null,
     });
@@ -418,6 +426,7 @@ export async function getHermesControlCenterSnapshot(): Promise<HermesControlCen
       memoryProvider: management.memory.activeProvider,
       memoryNamespace: management.memory.namespace,
       diagnostics: management.diagnostics,
+      sessionCollection: management.agentApi.sessions,
       operator: management.operator,
     },
   };

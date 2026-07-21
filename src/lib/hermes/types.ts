@@ -238,7 +238,11 @@ export type HermesManagementSnapshot = {
       model: string | null;
       preview: string | null;
       parentDisplayId?: string | null;
-      childCount?: number;
+      parentRelationship?: "none" | "observed" | "outside_loaded_page";
+      observedChildCount?: number;
+      lineageCoverage?: "loaded_page_only";
+      duplicateObservationCount?: number;
+      identityAmbiguous?: boolean;
       messageCount?: number | null;
       toolCallCount?: number | null;
       inputTokens?: number | null;
@@ -274,8 +278,11 @@ export type HermesManagementSnapshot = {
       warning: string | null;
     }>;
     model: {
-      provider: string | null;
-      model: string | null;
+      currentProvider: string | null;
+      currentModel: string | null;
+      advertisedModels: Array<{ displayId: string; ownedBy: string | null }>;
+      observedAt: string | null;
+      source: string;
       contextLength: number | null;
       supportsTools: boolean | null;
       supportsVision: boolean | null;

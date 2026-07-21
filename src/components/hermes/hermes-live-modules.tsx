@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Activity,
   Bell,
@@ -16,7 +17,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
@@ -165,22 +166,30 @@ function MemoryModule({ data }: { data: OperatorData }) {
   );
 }
 
-function SessionsModule({ data, query }: { data: OperatorData; query: string }) {
+function SessionsModule({ data, snapshot, query }: { data: OperatorData; snapshot: HermesControlCenterSnapshot; query: string }) {
   const needle = query.trim().toLowerCase();
   const sessions = data.sessions.filter((item) => !needle || `${item.title} ${item.profile ?? ""} ${item.status}`.toLowerCase().includes(needle)).slice(0, 50);
+  const collection = snapshot.live.sessionCollection;
   return (
-    <ModuleShell title="Sessions and lineage" detail={`${data.sessions.length} bounded Hermes session records. Content and raw identities stay server-side.`} icon={Clock3}>
+    <ModuleShell title="Sessions and lineage" detail={`${collection.loadedCount} records loaded${collection.hasMore ? "; more records are available" : ""}. Showing ${sessions.length} of ${collection.loadedCount} loaded records.`} icon={Clock3}>
+      <div className="flex flex-col gap-2 border-b border-border px-4 py-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p>{collection.identitySummary}</p>
+          <p>Lineage covers the loaded page only · Profile not reported by this Agent API source · Observed {relativeTime(collection.observedAt)}</p>
+        </div>
+        <Link className={buttonVariants({ variant: "outline", size: "sm" })} href="/agents">Open Cabinet sessions</Link>
+      </div>
       {sessions.length === 0 ? <EmptyState>No sessions match this view.</EmptyState> : (
         <div className="divide-y divide-border">
           {sessions.map((session) => (
-            <div key={session.id} className="grid gap-2 px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-              <div className="min-w-0">
+            <div key={session.id} className="min-w-0 px-4 py-3">
+              <div className="flex min-w-0 items-center gap-2">
                 <p className="truncate text-sm font-medium">{session.title}</p>
-                <p className="truncate text-xs text-muted-foreground">{session.profile ? `Observed profile ${session.profile}` : "Profile not reported by this source"} · {session.status} · Updated {relativeTime(session.updatedAt)}</p>
-                {session.parentDisplayId || session.childCount ? <p className="mt-1 text-xs text-muted-foreground">{session.parentDisplayId ? `Parent ${session.parentDisplayId}` : "Root session"} · {session.childCount ?? 0} children</p> : null}
-                {session.messageCount !== undefined ? <p className="mt-1 text-xs text-muted-foreground">{session.messageCount ?? "Unknown"} messages · {session.toolCallCount ?? "Unknown"} tool calls · {(session.inputTokens ?? 0).toLocaleString()} input / {(session.outputTokens ?? 0).toLocaleString()} output tokens</p> : null}
+                {session.identityAmbiguous ? <Badge variant="outline">Ambiguous duplicate</Badge> : null}
               </div>
-              <Button variant="outline" size="sm" onClick={() => { window.location.href = "/agents"; }}>Open sessions</Button>
+              <p className="truncate text-xs text-muted-foreground">{session.source} · {session.status} · Updated {relativeTime(session.updatedAt)}</p>
+              {session.parentRelationship !== "none" || session.observedChildCount ? <p className="mt-1 text-xs text-muted-foreground">{session.parentRelationship === "observed" ? `Parent ${session.parentDisplayId}` : session.parentRelationship === "outside_loaded_page" ? "Parent outside loaded page" : "No parent observed"} · {session.observedChildCount ?? 0} observed children in loaded page</p> : null}
+              {session.messageCount !== undefined ? <p className="mt-1 text-xs text-muted-foreground">{session.messageCount ?? "Unknown"} messages · {session.toolCallCount ?? "Unknown"} tool calls · {(session.inputTokens ?? 0).toLocaleString()} input / {(session.outputTokens ?? 0).toLocaleString()} output tokens</p> : null}
             </div>
           ))}
         </div>
@@ -257,8 +266,9 @@ function SettingsModule({ data, snapshot }: { data: OperatorData; snapshot: Herm
   return (
     <div className="flex flex-col gap-3">
       <ModuleShell title="Providers, models, and gateway" detail="Authentication health is projected without keys, tokens, or secret-bearing URLs." icon={Server}>
-        <div className="grid gap-3 border-b border-border p-4 sm:grid-cols-3">
-          <div><p className="text-xs text-muted-foreground">Current model</p><p className="mt-1 truncate text-sm font-medium">{data.model.provider ?? "Unknown"} / {data.model.model ?? "Unknown"}</p></div>
+        <div className="grid gap-3 border-b border-border p-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div><p className="text-xs text-muted-foreground">Current model</p><p className="mt-1 text-sm font-medium">{data.model.currentModel ? `${data.model.currentProvider ?? "Unknown provider"} / ${data.model.currentModel}` : "Unknown — canonical model information is unavailable"}</p></div>
+          <div><p className="text-xs text-muted-foreground">Agent-advertised models</p><p className="mt-1 text-sm font-medium">{data.model.advertisedModels.length} model{data.model.advertisedModels.length === 1 ? "" : "s"} advertised by GET /v1/models</p></div>
           <div><p className="text-xs text-muted-foreground">Gateway</p><p className="mt-1 text-sm font-medium">{gateway?.operationalHealth === "conflicting_evidence" ? "Conflicting evidence" : `${data.runtime.gatewayMode} · ${data.runtime.gatewayState}`}</p></div>
           <div><p className="text-xs text-muted-foreground">Last connection</p><p className="mt-1 text-sm font-medium">{relativeTime(data.runtime.lastConnection)}</p></div>
         </div>
@@ -305,7 +315,7 @@ export function HermesLiveModules({ section, snapshot, query, onRefresh, refresh
   if (section === "messaging") return <MessagingModule data={data} query={query} />;
   if (section === "artifacts") return <ArtifactsModule data={data} query={query} />;
   if (section === "memory") return <MemoryModule data={data} />;
-  if (section === "sessions") return <SessionsModule data={data} query={query} />;
+  if (section === "sessions") return <SessionsModule data={data} snapshot={snapshot} query={query} />;
   if (section === "settings") return <SettingsModule data={data} snapshot={snapshot} />;
   if (section === "tools") return <ToolsModule snapshot={snapshot} onRefresh={onRefresh} refreshing={refreshing} />;
   return null;
