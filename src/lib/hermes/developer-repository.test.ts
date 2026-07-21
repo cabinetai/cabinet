@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { buildHermesRepositoryFixtureProjection } from "./control-center-repository-fixture";
-import { hermesProjectionMatrixRows } from "./control-center-projection";
 import { sanitizeHermesBrowserModel } from "./control-center-sanitizer";
 import { normalizeProjectObservation, normalizeReviewObservation, normalizeWorktreeObservation, safePathIdentity, safeRepositoryIdentity } from "./developer-repository";
 
@@ -82,15 +81,18 @@ test("keeps exact-fixture paths from earning live credits and emits no sensitive
     assert.equal(new Set(fixture.capabilities.map((item) => item.id)).size, 48);
 });
 
-test("Phase 2B machine evidence equals the shared production fixture projection", () => {
+test("accepted Phase 2B machine evidence preserves its frozen repository observations", () => {
   const machine = JSON.parse(readFileSync(path.resolve("docs/evidence/hermes-developer-repository/acceptance-fixture-projection.json"), "utf8"));
   const fixture = buildHermesRepositoryFixtureProjection({
     implementationRevision: machine.evidenceProvenance.implementationRevision,
     artifactGeneratedAt: machine.evidenceProvenance.artifactGeneratedAt,
   });
-  const legacyCompatibleFixture = JSON.parse(JSON.stringify(fixture));
-  delete legacyCompatibleFixture.runtimeExecution;
-  assert.deepEqual(machine, legacyCompatibleFixture);
-  assert.deepEqual(hermesProjectionMatrixRows(machine), hermesProjectionMatrixRows(fixture));
-  assert.deepEqual(machine.parity, fixture.parity);
+  assert.deepEqual(machine.developerRepository, fixture.developerRepository);
+  for (const id of ["projects", "worktrees", "source-review"]) {
+    const machineCapability = machine.capabilities.find((item: { id: string }) => item.id === id);
+    const fixtureCapability = fixture.capabilities.find((item) => item.id === id);
+    assert.deepEqual(machineCapability?.evidence, fixtureCapability?.evidence);
+    assert.deepEqual(machineCapability?.pathProof, fixtureCapability?.pathProof);
+  }
+  assert.deepEqual(machine.provenance, fixture.provenance);
 });

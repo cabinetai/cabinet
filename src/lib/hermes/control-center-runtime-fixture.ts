@@ -6,10 +6,10 @@ import { normalizeRuntimeExecution } from './runtime-execution';
 export const HERMES_RUNTIME_EXECUTION_FIXTURE_ID = 'hermes-phase-3a-runtime-execution-v1';
 export const HERMES_RUNTIME_EXECUTION_CAPTURED_AT = '2026-07-19T22:15:00.000Z';
 
-type Options = { implementationRevision?: string | null; artifactGeneratedAt?: string | null };
+type Options = { implementationRevision?: string | null; artifactGeneratedAt?: string | null; governedInterventions?: boolean };
 const RUNTIME_IDS = new Set(['command-center', 'agents-subagents', 'cron', 'approvals', 'artifacts', 'files', 'usage-insights']);
 
-function runtimeSnapshot() {
+function runtimeSnapshot(governedInterventions = false) {
   const at = HERMES_RUNTIME_EXECUTION_CAPTURED_AT;
   const knownRuns = [
     { run_id: 'run-active', status: 'running', created_at: '2026-07-19T22:00:00.000Z', updated_at: at, current_step: 'Gather evidence', current_tool: 'browser.read', artifact_count: 1, source: 'Hermes Run status' },
@@ -34,12 +34,13 @@ function runtimeSnapshot() {
     ] },
     usage: { totals: { total_input: 4200, total_output: 900, total_estimated_cost: 0.48, total_actual_cost: 0.45, total_sessions: 9 } },
     knownRuns,
+    includeWorkerRuns: governedInterventions,
   }, at);
 }
 
-function observations(): HermesCapabilityObservation[] {
+function observations(governedInterventions = false): HermesCapabilityObservation[] {
   const base = buildHermesRepositoryFixtureInput().observations.filter((item) => !RUNTIME_IDS.has(item.capabilityId));
-  const execution = runtimeSnapshot();
+  const execution = runtimeSnapshot(governedInterventions);
   const proof = {
     observedAt: HERMES_RUNTIME_EXECUTION_CAPTURED_AT,
     assertedFreshness: 'fresh' as const,
@@ -72,7 +73,7 @@ export function buildHermesRuntimeExecutionFixtureInput(options: Options = {}): 
   return {
     ...base,
     installedRuntime: { ...base.installedRuntime, provenance: { kind: 'acceptance_fixture', label: 'Acceptance fixture — not live runtime', capturedAt: HERMES_RUNTIME_EXECUTION_CAPTURED_AT, fixtureId: HERMES_RUNTIME_EXECUTION_FIXTURE_ID } },
-    observations: observations(),
+    observations: observations(options.governedInterventions),
     evidenceProvenance: { implementationRevision: options.implementationRevision ?? null, fixtureId: HERMES_RUNTIME_EXECUTION_FIXTURE_ID, fixtureCapturedAt: HERMES_RUNTIME_EXECUTION_CAPTURED_AT, artifactGeneratedAt: options.artifactGeneratedAt ?? null },
     now: HERMES_RUNTIME_EXECUTION_CAPTURED_AT,
   };

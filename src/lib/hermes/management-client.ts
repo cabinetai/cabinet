@@ -17,6 +17,23 @@ import { normalizeRuntimeExecution } from "./runtime-execution";
 
 type Fetch = typeof fetch;
 
+export class HermesManagementRequestError extends Error {
+  constructor(readonly status: number | null, message: string) {
+    super(message);
+    this.name = "HermesManagementRequestError";
+  }
+}
+
+export type HermesKanbanRunState = {
+  runId: string;
+  taskId: string;
+  status: string;
+  startedAt: string | null;
+  endedAt: string | null;
+  outcome: string | null;
+  claimIdentity: string | null;
+};
+
 function text(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
@@ -457,6 +474,41 @@ export class HermesManagementClient {
     };
   }
 
+  async readKanbanRun(runId: string): Promise<HermesKanbanRunState> {
+    if (!/^\d+$/.test(runId)) throw new HermesManagementRequestError(null, "A numeric Hermes run identity is required.");
+    const raw = record(await this.managementRequest(`/api/plugins/kanban/runs/${encodeURIComponent(runId)}`));
+    const run = record(raw.run);
+    const returnedRunId = identifier(run.id ?? run.run_id);
+    const taskId = identifier(run.task_id);
+    const status = value(run.status);
+    if (!returnedRunId || !taskId || !status || returnedRunId !== runId) {
+      throw new HermesManagementRequestError(409, "Hermes returned a mismatched or incomplete run resource.");
+    }
+    return {
+      runId: returnedRunId,
+      taskId,
+      status,
+      startedAt: timestamp(run.started_at),
+      endedAt: timestamp(run.ended_at),
+      outcome: value(run.outcome),
+      claimIdentity: value(run.claim_lock),
+    };
+  }
+
+  async terminateKanbanRun(runId: string, reason: string): Promise<{ runId: string; taskId: string }> {
+    if (!/^\d+$/.test(runId)) throw new HermesManagementRequestError(null, "A numeric Hermes run identity is required.");
+    const raw = record(await this.managementRequest(`/api/plugins/kanban/runs/${encodeURIComponent(runId)}/terminate`, {
+      method: "POST",
+      body: { reason },
+    }));
+    const returnedRunId = identifier(raw.run_id);
+    const taskId = identifier(raw.task_id);
+    if (raw.ok !== true || returnedRunId !== runId || !taskId) {
+      throw new HermesManagementRequestError(502, "Hermes returned an incomplete termination result.");
+    }
+    return { runId: returnedRunId, taskId };
+  }
+
   private async readDeveloperRepository(
     sessionsRaw: unknown,
     diagnostics: HermesManagementSnapshot["diagnostics"]
@@ -553,11 +605,11 @@ export class HermesManagementClient {
       if (!response.ok) {
         let detail = `Hermes management request failed with HTTP ${response.status}.`;
         try { detail = value(record(await response.json()).detail) ?? detail; } catch {}
-        throw new Error(detail);
+        throw new HermesManagementRequestError(response.status, boundedHermesFailureSummary(detail) ?? `Hermes management request failed with HTTP ${response.status}.`);
       }
       return await response.json();
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") throw new Error("Hermes management request timed out.");
+      if (error instanceof Error && error.name === "AbortError") throw new HermesManagementRequestError(504, "Hermes management request timed out.");
       throw error;
     } finally { clearTimeout(timeoutId); }
   }
@@ -568,6 +620,10 @@ function record(value: unknown): Record<string, unknown> {
 }
 function array(value: unknown): unknown[] { return Array.isArray(value) ? value : []; }
 function value(input: unknown): string | null { return typeof input === "string" && input.trim() ? input.trim() : null; }
+function identifier(input: unknown): string | null {
+  if (typeof input === "number" && Number.isSafeInteger(input) && input >= 0) return String(input);
+  return value(input);
+}
 function integer(input: unknown): number { return typeof input === "number" && Number.isFinite(input) ? Math.max(0, Math.round(input)) : 0; }
 function finite(input: unknown): number | null { return typeof input === "number" && Number.isFinite(input) ? input : null; }
 function booleanOrNull(input: unknown): boolean | null { return typeof input === "boolean" ? input : null; }

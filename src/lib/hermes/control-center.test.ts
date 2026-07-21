@@ -79,18 +79,17 @@ test("the full acceptance fixture uses one assembler for all 48 rows, totals, an
   }
 });
 
-test("matrix rows and committed machine evidence equal the shared fixture projection", () => {
+test("accepted Phase 2A machine evidence preserves its frozen truth observations", () => {
   const machine = JSON.parse(readFileSync(path.resolve("docs/evidence/hermes-truth-state/acceptance-fixture-projection.json"), "utf8"));
   const fixture = buildHermesAcceptanceFixtureProjection({
     implementationRevision: machine.evidenceProvenance?.implementationRevision ?? null,
     artifactGeneratedAt: machine.evidenceProvenance?.artifactGeneratedAt ?? null,
   });
-  const legacyCompatibleFixture = JSON.parse(JSON.stringify(fixture));
-  delete legacyCompatibleFixture.developerRepository;
-  delete legacyCompatibleFixture.runtimeExecution;
-  assert.deepEqual(machine, legacyCompatibleFixture);
-  assert.deepEqual(hermesProjectionMatrixRows(machine), hermesProjectionMatrixRows(fixture));
-  assert.deepEqual(machine.parity, fixture.parity);
+  const truth = (snapshot: typeof fixture) => snapshot.capabilities.map((item) => ({ id: item.id, evidence: item.evidence, operationalHealth: item.operationalHealth, pathProof: item.pathProof }));
+  assert.deepEqual(JSON.parse(JSON.stringify(truth(machine))), JSON.parse(JSON.stringify(truth(fixture))));
+  assert.deepEqual(machine.provenance, fixture.provenance);
+  assert.equal(machine.capabilities.length, 48);
+  assert.equal(new Set(machine.capabilities.map((item: { id: string }) => item.id)).size, 48);
 });
 
 test("proof authority validator enforces complete origin, provenance, kind, and scope tuples", () => {

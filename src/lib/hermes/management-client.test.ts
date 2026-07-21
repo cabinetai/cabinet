@@ -70,6 +70,34 @@ test("management health distinguishes authentication, profile, and connection fa
   assert.equal(offline.status, "offline");
 });
 
+test("Kanban run intervention client uses exact installed contracts and keeps claim identity server-side", async () => {
+  const requests: Array<{ url: string; method: string; body: unknown; token: string | null }> = [];
+  const fetchImpl: typeof fetch = async (input, init) => {
+    const url = String(input);
+    requests.push({
+      url,
+      method: init?.method ?? "GET",
+      body: init?.body ? JSON.parse(String(init.body)) : null,
+      token: new Headers(init?.headers).get("x-hermes-session-token"),
+    });
+    if (url.endsWith("/terminate")) return response({ ok: true, run_id: 17, task_id: 23, token: secret });
+    return response({ run: { id: 17, task_id: 23, status: "running", claim_lock: secret, started_at: "2026-07-20T03:20:00Z", ended_at: null } });
+  };
+  const client = new HermesManagementClient(config, fetchImpl);
+  const run = await client.readKanbanRun("17");
+  const result = await client.terminateKanbanRun("17", "Stop the duplicate worker safely");
+  assert.equal(run.runId, "17");
+  assert.equal(run.claimIdentity, secret);
+  assert.deepEqual(result, { runId: "17", taskId: "23" });
+  assert.deepEqual(requests.map((item) => [item.method, item.url]), [
+    ["GET", "http://hermes.test:56314/api/plugins/kanban/runs/17"],
+    ["POST", "http://hermes.test:56314/api/plugins/kanban/runs/17/terminate"],
+  ]);
+  assert.deepEqual(requests[1]?.body, { reason: "Stop the duplicate worker safely" });
+  assert.ok(requests.every((item) => item.token === config.managementToken));
+  assert.equal(JSON.stringify(result).includes(secret), false);
+});
+
 test("management snapshot normalizes canonical surfaces and never returns its session token", async () => {
   const fetchImpl: typeof fetch = async (input) => {
     const url = String(input);

@@ -35,6 +35,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { cn } from "@/lib/utils";
 import { HermesLiveModules } from "@/components/hermes/hermes-live-modules";
+import { RuntimeInterventionPanel } from "@/components/hermes/runtime-intervention-panel";
 import type {
   HermesCapabilityProjection,
   HermesCapabilityStatus,
@@ -216,7 +217,7 @@ function RuntimeExecutionOverview({ snapshot, onSelectRun, onSelectCapability }:
   );
 }
 
-function RunInspector({ run, snapshot }: { run: HermesExecutionRun; snapshot: HermesControlCenterSnapshot }) {
+function RunInspector({ run, snapshot, onRefresh }: { run: HermesExecutionRun; snapshot: HermesControlCenterSnapshot; onRefresh: () => Promise<void> }) {
   const rows = [
     ["State", EXECUTION_LABELS[run.state]],
     ["Started", run.startedAt ?? "Not reported"],
@@ -246,6 +247,7 @@ function RunInspector({ run, snapshot }: { run: HermesExecutionRun; snapshot: He
             {rows.map(([label, value]) => <div key={label} className="grid grid-cols-[7rem_minmax(0,1fr)] gap-3 text-sm"><dt className="text-muted-foreground">{label}</dt><dd className="break-words font-medium">{value}</dd></div>)}
           </dl>
           {run.summary ? <><Separator /><section><h3 className="text-sm font-semibold">Bounded outcome</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{run.summary}</p></section></> : null}
+          {run.intervention ? <><Separator /><RuntimeInterventionPanel run={run} snapshot={snapshot} onRefresh={onRefresh} /></> : null}
           <Separator />
           <section className="space-y-2 text-xs">
             <h3 className="text-sm font-semibold">Evidence</h3>
@@ -616,7 +618,7 @@ export function HermesControlCenter() {
           </main>
 
           <aside className="hidden min-h-0 border-s border-border bg-background xl:flex">
-            {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : (
+            {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} onRefresh={refresh} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-muted-foreground">
                 <Activity className="size-6" aria-hidden="true" /><p className="text-sm">Select a capability to inspect support, parity, risk, and evidence.</p>
               </div>
@@ -664,7 +666,7 @@ export function HermesControlCenter() {
             <Sheet open onOpenChange={(open) => { if (!open) { setSelectedId(null); setSelectedRunId(null); } }}>
               <SheetContent side="right" className="w-[92vw] max-w-none p-0">
                 <SheetHeader className="sr-only"><SheetTitle>{selectedRun?.id ?? selected?.name}</SheetTitle><SheetDescription>Hermes runtime details</SheetDescription></SheetHeader>
-                {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : null}
+                {selectedRun ? <RunInspector run={selectedRun} snapshot={snapshot} onRefresh={refresh} /> : selected ? <CapabilityInspector capability={selected} snapshot={snapshot} /> : null}
               </SheetContent>
             </Sheet>
           ) : null}

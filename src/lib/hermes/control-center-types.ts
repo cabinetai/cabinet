@@ -153,7 +153,7 @@ export type HermesParityMetrics = {
 
 export type HermesProjectionProvenance =
   | { kind: "live_runtime"; label: "Live runtime projection"; capturedAt: string; fixtureId: null }
-  | { kind: "acceptance_fixture"; label: "Acceptance fixture — not live runtime"; capturedAt: string; fixtureId: string };
+  | { kind: "acceptance_fixture"; label: "Acceptance fixture — not live runtime" | "Acceptance fixture — no live mutation performed"; capturedAt: string; fixtureId: string };
 
 export type HermesInstalledRuntime = {
   installation: HermesInstallationDetection;

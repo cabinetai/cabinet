@@ -26,6 +26,10 @@ export type HermesExecutionRun = {
   summary: string | null;
   source: string;
   interface: string;
+  intervention?: {
+    category: 'terminate_kanban_run';
+    targetRunId: string;
+  };
 };
 
 export type HermesRuntimeExecutionSnapshot = {
@@ -46,6 +50,7 @@ type RuntimeInputs = {
   files: unknown;
   usage: unknown;
   knownRuns?: unknown;
+  includeWorkerRuns?: boolean;
 };
 
 const ANSI = /\u001b\[[0-?]*[ -/]*[@-~]/g;
@@ -209,6 +214,51 @@ function normalizeSessionRows(raw: unknown): HermesExecutionRun[] {
   });
 }
 
+export function normalizeActiveWorkerRows(raw: unknown, observedAt: string): HermesExecutionRun[] {
+  if (unavailable(raw) || failed(raw)) return [];
+  const reference = Date.parse(observedAt);
+  const byRun = new Map<string, HermesExecutionRun>();
+  for (const item of array(record(raw).workers)) {
+    const row = record(item);
+    const rawRunId = typeof row.run_id === 'number' && Number.isInteger(row.run_id)
+      ? String(row.run_id)
+      : typeof row.run_id === 'string' && /^\d+$/.test(row.run_id.trim())
+        ? row.run_id.trim()
+        : null;
+    if (!rawRunId) continue;
+    const lastTransitionAt = timestamp(row.last_heartbeat_at ?? row.checked_at ?? row.updated_at ?? observedAt);
+    if (!lastTransitionAt || !Number.isFinite(reference) || Date.parse(lastTransitionAt) > reference + FUTURE_SKEW_MS) continue;
+    const startedAt = timestamp(row.started_at);
+    const id = `Run ${rawRunId}`;
+    const candidate: HermesExecutionRun = {
+      id,
+      agent: safeIdentity('Profile', row.profile ?? row.profile_name),
+      state: 'active',
+      currentStep: safeRuntimeText(row.step_key, 80),
+      currentTool: safeRuntimeText(row.current_tool, 80),
+      startedAt,
+      lastTransitionAt,
+      waitingReason: null,
+      retryCount: null,
+      parentRunId: null,
+      childRunCount: 0,
+      artifactCount: 0,
+      inputTokens: null,
+      outputTokens: null,
+      totalTokens: null,
+      costUsd: null,
+      durationMs: startedAt ? Math.max(0, reference - Date.parse(startedAt)) : null,
+      summary: null,
+      source: 'Hermes active workers',
+      interface: '/api/plugins/kanban/workers/active',
+      intervention: { category: 'terminate_kanban_run', targetRunId: rawRunId },
+    };
+    const existing = byRun.get(id);
+    if (!existing || (candidate.lastTransitionAt ?? '') > (existing.lastTransitionAt ?? '')) byRun.set(id, candidate);
+  }
+  return [...byRun.values()].sort((left, right) => (right.lastTransitionAt ?? '').localeCompare(left.lastTransitionAt ?? '') || left.id.localeCompare(right.id));
+}
+
 function addRelationships(runs: HermesExecutionRun[]): HermesExecutionRun[] {
   const children = new Map<string, number>();
   for (const run of runs) if (run.parentRunId) children.set(run.parentRunId, (children.get(run.parentRunId) ?? 0) + 1);
@@ -251,7 +301,10 @@ function usageSnapshot(raw: unknown): HermesRuntimeExecutionSnapshot['usage'] {
 export function normalizeRuntimeExecution(inputs: RuntimeInputs, observedAt: string): HermesRuntimeExecutionSnapshot {
   const directRuns = normalizeKnownRunRows(inputs.knownRuns ?? { unavailable: true }, observedAt);
   const sessions = normalizeSessionRows(inputs.sessions);
-  const runs = addRelationships([...directRuns, ...sessions].sort((left, right) => (right.lastTransitionAt ?? '').localeCompare(left.lastTransitionAt ?? '') || left.id.localeCompare(right.id)));
+  const workers = inputs.includeWorkerRuns === false ? [] : normalizeActiveWorkerRows(inputs.workers, observedAt);
+  const combined = new Map<string, HermesExecutionRun>();
+  for (const run of [...directRuns, ...sessions, ...workers]) combined.set(run.id, run);
+  const runs = addRelationships([...combined.values()].sort((left, right) => (right.lastTransitionAt ?? '').localeCompare(left.lastTransitionAt ?? '') || left.id.localeCompare(right.id)));
   const workerCount = array(record(inputs.workers).workers).length;
   const waitingCount = runs.filter((run) => run.waitingReason !== null).length;
   const knownUnavailable = inputs.knownRuns === undefined || unavailable(inputs.knownRuns);

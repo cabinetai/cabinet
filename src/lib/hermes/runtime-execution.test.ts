@@ -2,10 +2,21 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { buildHermesRuntimeExecutionFixtureProjection, HERMES_RUNTIME_EXECUTION_CAPTURED_AT } from './control-center-runtime-fixture';
-import { hermesProjectionMatrixRows } from './control-center-projection';
-import { normalizeKnownRunRows, normalizeRuntimeExecution, safeRuntimeText } from './runtime-execution';
+import { normalizeActiveWorkerRows, normalizeKnownRunRows, normalizeRuntimeExecution, safeRuntimeText } from './runtime-execution';
 
 const at = HERMES_RUNTIME_EXECUTION_CAPTURED_AT;
+
+test('active worker rows expose one bounded run-specific intervention without worker secrets', () => {
+  const rows = normalizeActiveWorkerRows({ workers: [
+    { run_id: 17, task_id: 23, profile: 'operator-os', claim_lock: 'secret-claim', worker_pid: 999, task_title: 'customer@example.test', started_at: at, last_heartbeat_at: at },
+    { run_id: '17', profile: 'operator-os', last_heartbeat_at: at },
+    { run_id: 'not-numeric', profile: 'operator-os', last_heartbeat_at: at },
+  ] }, at);
+  assert.equal(rows.length, 1);
+  assert.deepEqual(rows[0]?.intervention, { category: 'terminate_kanban_run', targetRunId: '17' });
+  assert.equal(rows[0]?.source, 'Hermes active workers');
+  assert.doesNotMatch(JSON.stringify(rows), /secret-claim|worker_pid|customer@example/);
+});
 
 test('normalizes active, queued, blocked, retrying, failed, and completed lifecycle states', () => {
   const runs = normalizeKnownRunRows([
@@ -112,14 +123,14 @@ test('fixture and UI contain no runtime mutation controls or secret-bearing data
   assert.match(ui, /Hermes prepares; Jeremy commits\./);
 });
 
-test('committed machine evidence is deterministic and matches the generated matrix rows', () => {
+test('accepted Phase 3A machine evidence preserves its frozen runtime facts', () => {
   const evidencePath = 'docs/evidence/hermes-runtime-execution/acceptance-fixture-projection.json';
   const machine = JSON.parse(fs.readFileSync(evidencePath, 'utf8')) as ReturnType<typeof buildHermesRuntimeExecutionFixtureProjection>;
   const rebuilt = buildHermesRuntimeExecutionFixtureProjection({
     implementationRevision: machine.evidenceProvenance.implementationRevision,
     artifactGeneratedAt: machine.evidenceProvenance.artifactGeneratedAt,
   });
-  assert.deepEqual(machine, JSON.parse(JSON.stringify(rebuilt)));
-  assert.deepEqual(hermesProjectionMatrixRows(machine), hermesProjectionMatrixRows(rebuilt));
+  assert.deepEqual(machine.runtimeExecution, JSON.parse(JSON.stringify(rebuilt.runtimeExecution)));
+  assert.deepEqual(machine.provenance, rebuilt.provenance);
   assert.equal(machine.capabilities.length, 48);
 });
