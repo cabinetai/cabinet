@@ -20,7 +20,7 @@ import type {
 type Fetch = typeof fetch;
 
 const AUDITED_HERMES_VERSION = "0.19.0";
-const AUDITED_HERMES_SOURCE_REVISION = "9172a354f058aa0feaa6ea9c3b7def799e53bada";
+const AUDITED_HERMES_SOURCE_REVISION = "714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5";
 const HERMES_IDENTITY_SCHEMA = "hermes.cli.identity";
 const HERMES_IDENTITY_SCHEMA_VERSION = 1;
 const HERMES_PUBLIC_SKILLS_SKIP_VALUE = "official-public-skills-v1";

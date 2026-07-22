@@ -30,7 +30,7 @@ const config: HermesReadOnlyServerConfig = {
 const authority: HermesCliAuthority = {
   opaqueIdentity: "a".repeat(64),
   version: "0.19.0",
-  sourceRevision: "9172a354f058aa0feaa6ea9c3b7def799e53bada",
+  sourceRevision: "714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5",
   schemaVersion: 1,
   installationId: "b".repeat(64),
 };
@@ -345,7 +345,7 @@ async function fakeHermesExecutable(body: string): Promise<{ root: string; execu
     release_date: "2026.7.20",
     schema: "hermes.cli.identity",
     schema_version: 1,
-    source_revision: "9172a354f058aa0feaa6ea9c3b7def799e53bada",
+    source_revision: "714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5",
     version: "0.19.0",
   };
   const identity = { ...identityCore, installation_id: createHash("sha256").update(JSON.stringify(identityCore)).digest("hex") };
@@ -382,7 +382,7 @@ test("fixed CLI blocks malformed identity and a changed Hermes source revision",
   const changed = await fakeHermesExecutable("echo ok");
   try {
     const source = await readFile(changed.executable, "utf8");
-    await writeFile(changed.executable, source.replaceAll("9172a354f058aa0feaa6ea9c3b7def799e53bada", "0c33db0564597ac8e392e710555b0bddec5cdd1f"), { mode: 0o755 });
+    await writeFile(changed.executable, source.replaceAll("714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5", "0c33db0564597ac8e392e710555b0bddec5cdd1f"), { mode: 0o755 });
     await assert.rejects(() => new FixedHermesSkillsCli(changed.executable, 1_000, 50).inspect(), /not the audited Hermes Agent/i);
   } finally {
     await rm(changed.root, { recursive: true, force: true });

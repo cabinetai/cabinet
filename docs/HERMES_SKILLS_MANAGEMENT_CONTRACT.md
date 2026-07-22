@@ -71,7 +71,7 @@ commit authority check:
 - runs only the resolved executable with `shell: false` and fixed argument
   arrays;
 - requires `hermes.cli.identity` schema version 1, Hermes Agent 0.19.0,
-  companion source revision `9172a354f058aa0feaa6ea9c3b7def799e53bada`,
+  live-base companion source revision `714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5`,
   a valid self-hashed installation identity, and an installation root and
   entrypoint that resolve back to the configured executable;
 - rejects a missing, non-executable, unexpected, replaced, or changed target;
@@ -109,6 +109,12 @@ prerequisite. Ordinary profile configuration, dotenv, managed scope, skill
 scanning, and governed policy still run. Only external secret-source
 application is skipped. Candidates that do not satisfy the proof run with
 normal Hermes secret loading or remain unavailable.
+
+The approved installation target is the live-base companion commit
+`714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5`, whose parent is the installed
+Hermes source revision `d7b36070ef807841699ad32c5b6af547fee3ff64`.
+Commit `9172a354f058aa0feaa6ea9c3b7def799e53bada` is retained only as the
+original semantic reference and is not an approved live installation target.
 
 ## Identity and provenance
 
