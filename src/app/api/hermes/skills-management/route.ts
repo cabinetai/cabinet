@@ -3,11 +3,11 @@ import { authenticatedCabinetActorIdentity, requireApiAuth } from "@/lib/auth/re
 import { requireSameOrigin } from "@/lib/auth/same-origin";
 import { getCabinetRuntimeMode } from "@/lib/runtime/runtime-config";
 import { sanitizeHermesText } from "@/lib/hermes/control-center-sanitizer";
-import { HermesSkillsAgentAdapter } from "@/lib/hermes/skills-adapter";
+import { HermesSkillsCliAdapter } from "@/lib/hermes/skills-adapter";
 import { HermesSkillsManagementError, HermesSkillsManagementService } from "@/lib/hermes/governed-skills-management";
 import { FakeHermesSkillsAdapter } from "@/lib/hermes/skills-management-fixture";
 import type { HermesSkillAction } from "@/lib/hermes/skills-management-types";
-import { readHermesReadOnlyServerConfig } from "@/lib/hermes/server-config";
+import { readHermesSkillsServerConfig } from "@/lib/hermes/server-config";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +20,7 @@ type ServiceGlobal = typeof globalThis & {
 
 function liveService(): HermesSkillsManagementService {
   const target = globalThis as ServiceGlobal;
-  return target[serviceKey] ??= new HermesSkillsManagementService(new HermesSkillsAgentAdapter(readHermesReadOnlyServerConfig()));
+  return target[serviceKey] ??= new HermesSkillsManagementService(new HermesSkillsCliAdapter(readHermesSkillsServerConfig()));
 }
 
 function fixtureService(): HermesSkillsManagementService {

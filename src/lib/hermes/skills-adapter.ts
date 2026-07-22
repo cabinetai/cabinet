@@ -5,7 +5,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { sanitizeHermesText } from "./control-center-sanitizer";
-import type { HermesReadOnlyServerConfig } from "./server-config";
+import type { HermesSkillsServerConfig } from "./server-config";
 import type {
   HermesManagedSkill,
   HermesCanonicalSkillsState,
@@ -17,16 +17,14 @@ import type {
   HermesSkillsSnapshot,
 } from "./skills-management-types";
 
-type Fetch = typeof fetch;
-
 const AUDITED_HERMES_VERSION = "0.19.0";
-export const AUDITED_HERMES_SOURCE_REVISION = "84b3ed8aace50ca5afb285d299b8a66816085368";
+export const AUDITED_HERMES_SOURCE_REVISION = "78a803a013547794a295d674982f1fe0515f5713";
 const HERMES_IDENTITY_SCHEMA = "hermes.cli.identity";
 const HERMES_IDENTITY_SCHEMA_VERSION = 1;
 const HERMES_SKILLS_SCHEMA_VERSION = 2;
 const OFFICIAL_PUBLIC_AUTHORITY = "official_public";
 const HERMES_PUBLIC_SKILLS_SKIP_VALUE = "official-public-skills-v1";
-const SAFE_NAME = /^[a-z][a-z0-9_-]{0,95}$/;
+const SAFE_NAME = /^[a-z0-9][a-z0-9._-]{0,95}$/;
 const SAFE_IDENTIFIER = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*){0,6}$/;
 const MAX_OUTPUT_BYTES = 128 * 1024;
 const MAX_EXECUTABLE_BYTES = 16 * 1024 * 1024;
@@ -305,6 +303,7 @@ export class FixedHermesSkillsCli implements HermesSkillsCli {
     return {
       resolved,
       staticIdentity: hash(JSON.stringify({
+        configured,
         resolved,
         device: executableStat.dev.toString(),
         inode: executableStat.ino.toString(),
@@ -320,6 +319,7 @@ export class FixedHermesSkillsCli implements HermesSkillsCli {
     const versionResult = await runBoundedProcess(staticAuthority.resolved, ["version", "--json"], {
       timeoutMs: Math.min(Math.max(this.defaultTimeoutMs, 1_000), 3_000),
       terminationGraceMs: this.terminationGraceMs,
+      skipExternalSecretSources: true,
     });
     if (versionResult.timedOut || versionResult.exitCode !== 0) {
       throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI did not report its audited identity.");
@@ -404,10 +404,9 @@ export class FixedHermesSkillsCli implements HermesSkillsCli {
   }
 }
 
-export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
+export class HermesSkillsCliAdapter implements HermesSkillsAdapter {
   constructor(
-    private readonly config: HermesReadOnlyServerConfig,
-    private readonly fetchImpl: Fetch = fetch,
+    private readonly config: HermesSkillsServerConfig,
     private readonly cli: HermesSkillsCli = new FixedHermesSkillsCli(),
     private readonly policies: HermesSkillsReadPolicies = HERMES_SKILLS_READ_POLICIES,
   ) {}
@@ -430,87 +429,6 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
     if (kind === "unavailable") return "transport_unavailable";
     if (kind === "contract_mismatch") return "contract_mismatch";
     return "malformed_response";
-  }
-
-  private async readApi<T>(
-    pathname: string,
-    sourceClass: "Hermes Skills catalog discovery",
-    policy: HermesSkillsReadPolicy,
-    validate: (value: unknown) => T,
-  ): Promise<{ value: T; evidence: HermesSkillsReadEvidence }> {
-    if (!this.config.apiBaseUrl || !this.config.apiKey || this.config.sourceStates.agent_api !== "ready_to_probe") {
-      throw new HermesSkillsAdapterError("unavailable", `${sourceClass} is not configured.`);
-    }
-    const started = Date.now();
-    let lastKind: HermesSkillsAdapterError["kind"] = "unavailable";
-    for (let attempt = 1; attempt <= policy.maxAttempts; attempt += 1) {
-      const elapsed = Date.now() - started;
-      const remaining = policy.totalDeadlineMs - elapsed;
-      if (remaining <= 0) {
-        lastKind = "timeout";
-        break;
-      }
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), Math.min(policy.perAttemptTimeoutMs, remaining));
-      try {
-        const response = await this.fetchImpl(`${this.config.apiBaseUrl}${pathname}`, {
-          headers: { Authorization: `Bearer ${this.config.apiKey}`, Accept: "application/json" },
-          cache: "no-store",
-          redirect: "error",
-          signal: controller.signal,
-        });
-        if (response.status === 401 || response.status === 403) {
-          const evidence: HermesSkillsReadEvidence = { attemptCount: attempt as 1 | 2, finalClassification: "authentication_rejected", totalElapsedMs: Date.now() - started };
-          throw new HermesSkillsAdapterError("authentication", `${sourceClass} was rejected by Hermes authentication.`, false, false, evidence);
-        }
-        if (response.status === 408 || response.status === 502 || response.status === 503 || response.status === 504) {
-          throw new HermesSkillsAdapterError("unavailable", `${sourceClass} is temporarily unavailable.`, false, true);
-        }
-        if (!response.ok) {
-          const evidence: HermesSkillsReadEvidence = { attemptCount: attempt as 1 | 2, finalClassification: "malformed_response", totalElapsedMs: Date.now() - started };
-          throw new HermesSkillsAdapterError("invalid_response", `${sourceClass} returned an unexpected response.`, false, true, evidence);
-        }
-        let raw: unknown;
-        try {
-          raw = await response.json();
-        } catch {
-          const evidence: HermesSkillsReadEvidence = { attemptCount: attempt as 1 | 2, finalClassification: "malformed_response", totalElapsedMs: Date.now() - started };
-          throw new HermesSkillsAdapterError("invalid_response", `${sourceClass} returned malformed JSON.`, false, true, evidence);
-        }
-        let value: T;
-        try {
-          value = validate(raw);
-        } catch (error) {
-          if (error instanceof HermesSkillsAdapterError) {
-            const evidence: HermesSkillsReadEvidence = { attemptCount: attempt as 1 | 2, finalClassification: this.classification(error.kind), totalElapsedMs: Date.now() - started };
-            throw new HermesSkillsAdapterError(error.kind, error.message, false, true, error.readEvidence ?? evidence);
-          }
-          const evidence: HermesSkillsReadEvidence = { attemptCount: attempt as 1 | 2, finalClassification: "malformed_response", totalElapsedMs: Date.now() - started };
-          throw new HermesSkillsAdapterError("invalid_response", `${sourceClass} returned a malformed contract.`, false, true, evidence);
-        }
-        return {
-          value,
-          evidence: { attemptCount: attempt as 1 | 2, finalClassification: "success", totalElapsedMs: Date.now() - started },
-        };
-      } catch (error) {
-        if (error instanceof HermesSkillsAdapterError) {
-          if (error.kind !== "timeout" && error.kind !== "unavailable") throw error;
-          lastKind = error.kind;
-        } else {
-          const timedOut = error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
-          lastKind = timedOut ? "timeout" : "unavailable";
-        }
-        const retryable = (lastKind === "timeout" || lastKind === "unavailable") && attempt < policy.maxAttempts && Date.now() - started < policy.totalDeadlineMs;
-        if (!retryable) {
-          const evidence: HermesSkillsReadEvidence = { attemptCount: attempt as 1 | 2, finalClassification: this.classification(lastKind), totalElapsedMs: Date.now() - started };
-          throw new HermesSkillsAdapterError(lastKind, lastKind === "timeout" ? `${sourceClass} timed out.` : `${sourceClass} is unavailable.`, false, false, evidence);
-        }
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-    const evidence: HermesSkillsReadEvidence = { attemptCount: policy.maxAttempts, finalClassification: this.classification(lastKind), totalElapsedMs: Date.now() - started };
-    throw new HermesSkillsAdapterError(lastKind, `${sourceClass} timed out.`, false, false, evidence);
   }
 
   private exactKeys(value: Record<string, unknown>, keys: readonly string[], contract: string): void {
@@ -702,21 +620,35 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
     const cliConfigured = await this.cliManagementAvailable();
     let catalogRaw: unknown[];
     try {
-      catalogRaw = (await this.readApi("/v1/skills?catalog=official", "Hermes Skills catalog discovery", this.policies.catalog, (raw) => {
+      catalogRaw = (await this.readCliMachine(profile, ["catalog", "--json"], this.policies.catalog, (raw) => {
         const envelope = record(raw);
-        this.exactKeys(envelope, ["contract", "data", "object", "schema_version"], "Hermes official Skills catalog");
-        if (envelope.contract !== "hermes.skills.catalog" || envelope.schema_version !== HERMES_SKILLS_SCHEMA_VERSION || envelope.object !== "list" || !Array.isArray(envelope.data)) throw new HermesSkillsAdapterError("invalid_response", "Hermes official Skills catalog returned a malformed contract.");
-        return envelope.data;
+        this.exactKeys(envelope, ["contract", "entries", "entry_count", "profile", "schema_version"], "Hermes official Skills catalog");
+        if (
+          envelope.contract !== "hermes.skills.catalog"
+          || envelope.schema_version !== HERMES_SKILLS_SCHEMA_VERSION
+          || envelope.profile !== profile
+          || !Array.isArray(envelope.entries)
+          || !Number.isSafeInteger(envelope.entry_count)
+          || envelope.entry_count !== envelope.entries.length
+          || envelope.entry_count > 256
+        ) throw new HermesSkillsAdapterError("invalid_response", "Hermes official Skills catalog returned a malformed contract.");
+        return envelope.entries;
       })).value;
-    } catch {
+    } catch (error) {
+      const catalogState: HermesSkillsSnapshot["sourceState"] = error instanceof HermesSkillsAdapterError
+        ? error.kind === "timeout" ? "timeout"
+          : error.kind === "unavailable" ? "unavailable"
+            : error.kind === "contract_mismatch" || error.kind === "invalid_response" ? "malformed"
+              : "failure"
+        : "failure";
       return {
         fixture: false,
         fixtureLabel: null,
         profile,
         observedAt: canonical.observedAt,
-        sourceState: canonical.sourceState,
+        sourceState: catalogState,
         summary: `${canonical.summary} Catalog discovery is unavailable; canonical installed state remains available.`,
-        interface: "Hermes Agent 0.19.0 authenticated API + canonical Hermes CLI JSON",
+        interface: "Approved Hermes CLI catalog + canonical Skills JSON",
         operations: this.operations(cliConfigured),
         installed: canonical.installed.map((skill) => ({
           ...skill,
@@ -731,7 +663,7 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
     const installedHubIdentifiers = new Set(installed.flatMap((skill) => skill.hubIdentifier ? [skill.hubIdentifier] : []));
     const catalogItems = catalogRaw.map((raw): HermesManagedSkill => {
         const item = record(raw);
-        this.exactKeys(item, ["authority_class", "category", "identifier", "local_fulfillment", "name", "native_trust", "official", "public", "source"], "Hermes official Skills catalog entry");
+        this.exactKeys(item, ["authority_class", "category", "identifier", "local_fulfillment", "name", "native_trust", "official", "public", "source", "supported_actions"], "Hermes official Skills catalog entry");
         const name = safeName(item.name);
         const identifier = safeIdentifier(item.identifier);
         const category = safeName(item.category);
@@ -745,6 +677,7 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
           || item.official !== true
           || item.public !== true
           || item.local_fulfillment !== true
+          || JSON.stringify(item.supported_actions) !== JSON.stringify(["install"])
           || !category
         ) throw new HermesSkillsAdapterError("contract_mismatch", "Hermes official Skills catalog entry was malformed.");
         const skill: HermesManagedSkill = {
@@ -787,7 +720,7 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
         observedAt,
         sourceState: total ? "success" : "connected_empty",
         summary: total ? `Hermes reported ${installed.length} installed skill(s) and ${available.length} catalog result(s).` : "Hermes responded with an empty skills catalog.",
-        interface: "Hermes Agent 0.19.0 authenticated API + canonical Hermes CLI JSON",
+        interface: "Approved Hermes CLI catalog + canonical Skills JSON",
         operations: this.operations(cliConfigured),
         installed,
         available,
@@ -871,7 +804,7 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
     const args = ["-p", operation.profile, "skills"];
     if (operation.action === "install") {
       const identifier = safeIdentifier(operation.targetIdentity);
-      if (!identifier?.startsWith("official/")) throw new HermesSkillsAdapterError("dispatch_failed", "The official Hermes catalog identity is invalid.");
+      if (!identifier?.startsWith("official/") || !operation.skipExternalSecretSources) throw new HermesSkillsAdapterError("dispatch_failed", "The official Hermes catalog identity is invalid.");
       args.push("install", identifier, "--yes");
     } else if (operation.action === "remove") {
       const identifier = safeIdentifier(operation.targetIdentity.split(":hub:")[1] ?? "");

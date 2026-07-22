@@ -1,6 +1,6 @@
 # Hermes Skills management contract
 
-Audited 2026-07-21 against Hermes Agent 0.19.0. Hermes remains the canonical
+Audited 2026-07-22 against Hermes Agent 0.19.0. Hermes remains the canonical
 registry and executor. Cabinet holds only bounded in-process previews and
 receipts and never claims success without fresh canonical CLI JSON readback.
 
@@ -8,7 +8,7 @@ receipts and never claims success without fresh canonical CLI JSON readback.
 
 | Purpose | Exact interface | Authority |
 | --- | --- | --- |
-| Official catalog | Authenticated `GET /v1/skills?catalog=official` | Discoverability only |
+| Official catalog | `<approved-cli> -p <profile> skills catalog --json` | Discoverability only |
 | Canonical installed state | `<approved-cli> -p <profile> skills list --json` | Canonical |
 | Exact candidate metadata | `<approved-cli> -p <profile> skills inspect <official-identifier> --json` | Candidate authorization |
 | Exact candidate scan | `<approved-cli> -p <profile> skills audit <official-identifier> --json` | Candidate authorization |
@@ -18,11 +18,12 @@ receipts and never claims success without fresh canonical CLI JSON readback.
 | Update | `skills check` only | Audit-only |
 | Enable or disable | Interactive `skills config` only | Unsupported; no Cabinet action |
 
-Desktop Management `/api/skills`, `/api/skills/toggle`, and Desktop Hub
-search, sources, preview, and scan routes are not dependencies. Agent
-`/v1/skills` is never accepted as installed-state proof. Production prepare,
-commit precondition, post-dispatch verification, and reconciliation use only
-the fixed CLI machine contract.
+Desktop Management `/api/skills`, `/api/skills/toggle`, Desktop Hub routes,
+Agent `/v1/skills`, and Agent API credentials are not dependencies. Production
+discovery, prepare, commit precondition, post-dispatch verification,
+reconciliation, and rollback authorization use only the fixed CLI machine
+contracts. Agent `/v1/skills` remains an unrelated read-only Control Center
+capability catalog.
 
 Every accepted Skills payload is schema v2. It keeps Hub `source`, native
 `native_trust`, and Cabinet's derived `authority_class` as separate facts; an
@@ -46,12 +47,13 @@ There is no last-record-wins normalization.
 
 The only approved companion is:
 
-- commit: `84b3ed8aace50ca5afb285d299b8a66816085368`
+- commit: `78a803a013547794a295d674982f1fe0515f5713`
 - parent/live installed base: `714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5`
-- patch: `docs/evidence/hermes-skills-management/0001-feat-skills-add-governed-machine-contracts-v2.patch`
-- patch SHA-256: `e180c1fc84c6de8e26d3de3a13218741068d796049e5c5331fe23f32244f9d1b`
+- patch: `docs/evidence/hermes-skills-management/0001-feat-skills-add-CLI-native-governed-contracts.patch`
+- patch SHA-256: `196924cc3a9aa2c797cd9f1440f92770d709167bb1c7ca4bd1eb5bd4dd660e24`
 
-Earlier companions `9172a354f058aa0feaa6ea9c3b7def799e53bada` and
+Earlier companions `84b3ed8aace50ca5afb285d299b8a66816085368`,
+`9172a354f058aa0feaa6ea9c3b7def799e53bada`, and
 `97f82f73fc15e534fef6377148c99c22be6b652c` are semantic references only and
 are not trusted. The live-base commit
 `714ed4ec6cbe3e57b7bb6379c5e97f7b801469a5` is the parent, not the approved
@@ -62,10 +64,10 @@ management contract.
 Cabinet passes
 `HERMES_SKIP_EXTERNAL_SECRET_SOURCES=official-public-skills-v1` only for the
 audited public Skills command shapes. The companion extends that allowlist only
-for `skills list --json`, `skills inspect official/... --json`, and
-`skills audit official/... --json`, exact official install with `--yes`, and
-exact official uninstall with `--yes`. Private identifiers and all unrelated
-commands remain rejected.
+for `version --json`, `skills catalog --json`, `skills list --json`, `skills
+inspect official/... --json`, and `skills audit official/... --json`, exact
+official install with `--yes`, and exact official uninstall with `--yes`.
+Private identifiers and all unrelated commands remain rejected.
 
 Exact inspect and audit resolve only the local official optional-skill source;
 they do not initialize a remote catalog. Cabinet enables the skip only when the
@@ -78,7 +80,7 @@ command prerequisite. Platform classification alone is non-sensitive.
 executable and binds resolved path, file bytes, device, inode, size,
 nanosecond mtime, and machine identity into an opaque authority. It requires
 Hermes Agent 0.19.0 and exact source revision
-`84b3ed8aace50ca5afb285d299b8a66816085368`. Every subprocess uses
+`78a803a013547794a295d674982f1fe0515f5713`. Every subprocess uses
 `shell: false`, a fixed argument array, bounded output and deadlines, and a
 minimal environment without Cabinet/provider credentials. No `PATH` fallback,
 direct Skills file write, human-output parser, or raw CLI output crosses the
@@ -134,12 +136,13 @@ operational action.
 
 ## Verification status
 
-The replacement changed surface passes 434/434 tests plus Ruff. Fresh-process
-contract loops pass identity 100/100, canonical state 100/100, catalog 50/50,
-inspect 50/50, and audit 50/50. Twenty-five unique disposable homes each
-completed an exact official install and `uninstall <official-identifier>
---yes` round trip under a deny-network sandbox, with zero 1Password invocation
-and an empty canonical lock/install tree afterward.
+The replacement changed surface passes 423/423 tests plus Ruff. Deny-network
+fresh-process contract loops pass catalog 100/100, canonical state 100/100,
+inspect 50/50, and audit 50/50 with zero stderr. Twenty-five unique disposable
+homes each completed exact inspect, audit, install, canonical readback,
+`uninstall <official-identifier> --yes`, and empty-state readback under the same
+deny-network sandbox. All 25/25 round trips ended with consistent empty lock and
+install trees, zero timeout, and zero external-secret startup.
 
 The identical dev-only full-suite boundary was run against the exact parent and
 replacement. The parent completed 2,122 files with 41,252 tests passing and 33
@@ -152,9 +155,32 @@ file ceiling: all ACP tests passed, and the run completed all 2,123 files with
 43,622 tests passing and 30 unrelated macOS/platform failures across 14 files.
 The full suite is therefore not claimed as passing.
 
-Cabinet passes 645/645 unit tests, 20/20 focused Skills adapter/governance
-tests, TypeScript, full ESLint with zero errors and 110 pre-existing warnings,
-the production build, `git diff --check`, and 6/6 isolated rendered workflows.
-The rendered checks cover Operator confirmation/result and official-only
-Remove projection, all 48 Developer diagnostics, 390x844 reduced motion, zero
-horizontal overflow, and zero browser/framework errors.
+The production adapter completed one real CLI-only `operator-os` catalog and
+canonical snapshot while the default Agent API was unavailable. An external
+test-only dry-stop wrapper then completed 25/25 real catalog reads, 25/25
+governed prepares, 25/25 commit-precondition stops immediately before
+execution, 25/25 verification simulations, and 25/25 read-only reconciliation
+simulations. The target remained absent and unambiguous. Those accepted
+workloads recorded zero Agent API requests, zero Desktop Management requests,
+zero gateway dependencies, zero mutation dispatches, zero automatic retries,
+and zero external-secret invocation. The dry stop is not reachable from the
+production browser or API.
+
+Cabinet passes 647/647 unit tests and 62/62 focused Skills, governance,
+intervention, authority, schema, ambiguity, and non-egress tests. TypeScript,
+full ESLint with zero errors and 110 pre-existing warnings, the production
+build, and the source diff check excluding the byte-preserved raw email patch
+pass. The raw patch independently passes `git apply --check` against the exact
+live base and retains its recorded SHA-256. The 3/3 isolated production-browser
+workflows cover Operator typed confirmation and verified fixture result, all
+48 Developer diagnostics, 1440x900 desktop, 390x844 reduced motion, zero
+horizontal overflow, and zero browser/framework errors. Browser mutations are
+fixture-only. A separate final read-only shell verification accidentally ran
+one canonical list command without the isolation variable, causing one bounded
+1Password startup; it emitted no secret values and performed no mutation. This
+invocation is excluded from, and disclosed separately from, the accepted
+zero-external-secret proof workloads.
+
+The Agent API and multi-profile gateway topology remains a separate Hermes
+runtime issue. This work did not edit or restart launchd, launch a service from
+the side-by-side checkout, run a canary, or mutate the live Skills state.

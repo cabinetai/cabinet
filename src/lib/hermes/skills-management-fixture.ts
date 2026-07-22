@@ -45,7 +45,7 @@ export function buildHermesSkillsAcceptanceSnapshot(): HermesSkillsSnapshot {
     observedAt: "2026-07-21T20:00:00.000Z",
     sourceState: "success",
     summary: "Fixture covers governed Hermes Skills management without a live mutation.",
-    interface: "Hermes Agent 0.19.0 authenticated API + canonical Hermes CLI JSON",
+    interface: "Approved Hermes CLI catalog + canonical Skills JSON",
     operations: {
       install: { supported: true, interface: "fixture Hermes adapter", note: "No live dispatch." },
       enable: { supported: false, interface: "Unsupported", note: "No fixed native noninteractive mutation." },

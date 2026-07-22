@@ -38,7 +38,7 @@ export type HermesSkillsSnapshot = {
   observedAt: string;
   sourceState: HermesSkillsSourceState;
   summary: string;
-  interface: "Hermes Agent 0.19.0 authenticated API + canonical Hermes CLI JSON";
+  interface: "Approved Hermes CLI catalog + canonical Skills JSON";
   operations: Record<HermesSkillAction, { supported: boolean; interface: string; note: string }>;
   installed: HermesManagedSkill[];
   available: HermesManagedSkill[];
