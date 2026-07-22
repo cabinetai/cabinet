@@ -106,7 +106,7 @@ export function AdvancedHermesSettings() {
       {managementError ? <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300">{managementError}</div> : null}
       {snapshot ? <>
         <ProfilesPanel snapshot={snapshot} busy={busy} act={act} />
-        <SkillsPanel snapshot={snapshot} busy={busy} act={act} />
+        <SkillsPanel snapshot={snapshot} />
         <JobsPanel snapshot={snapshot} busy={busy} act={act} />
         <MemoryPanel snapshot={snapshot} />
         <ToolingPanel snapshot={snapshot} busy={busy} act={act} />
@@ -133,13 +133,10 @@ function ProfilesPanel({ snapshot, busy, act }: PanelProps) {
   </Section>;
 }
 
-function SkillsPanel({ snapshot, busy, act }: PanelProps) {
-  const [name, setName] = useState(""); const [content, setContent] = useState(""); const [hubIdentifier, setHubIdentifier] = useState("");
-  return <Section title="Skills" description="Hermes-owned skills are listed, installed, enabled, created, and edited through the active profile.">
-    <Rows>{snapshot.skills.map((skill) => <Row key={skill.name} title={skill.name} detail={`${skill.category} · ${skill.provenance} · ${skill.usage ?? 0} observed uses`} badge={skill.enabled ? "Enabled" : "Disabled"} action={<Button size="sm" variant="ghost" disabled={busy !== null} onClick={() => void act("skill.toggle", { name: skill.name, enabled: !skill.enabled }, `${skill.enabled ? "Disable" : "Enable"} Hermes skill ${skill.name}`)}>{skill.enabled ? "Disable" : "Enable"}</Button>} />)}</Rows>
-    <div className="mt-3 flex gap-2"><Input value={hubIdentifier} onChange={(event) => setHubIdentifier(event.target.value)} placeholder="Hermes skill hub identifier, for example official/gifs/gif-search" /><Button size="sm" variant="outline" disabled={!hubIdentifier.trim() || busy !== null} onClick={() => void act("skill.install", { identifier: hubIdentifier }, `Install Hermes skill ${hubIdentifier} from the skill hub for ${snapshot.profile}`)}>Install from hub</Button></div>
-    <div className="mt-3 grid gap-2 sm:grid-cols-[180px_1fr]"><Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Skill name" /><textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder="Complete SKILL.md content" className="min-h-24 rounded-md border border-input bg-transparent px-3 py-2 text-xs outline-none focus:border-ring" /></div>
-    <div className="mt-2 flex gap-2"><Button size="sm" variant="outline" disabled={!name.trim() || !content.trim() || busy !== null} onClick={() => void act("skill.create", { name, content }, `Create Hermes skill ${name}`)}>Create skill</Button><Button size="sm" variant="outline" disabled={!name.trim() || !content.trim() || busy !== null} onClick={() => void act("skill.update", { name, content }, `Replace the Hermes skill content for ${name}`)}>Update skill</Button></div>
+function SkillsPanel({ snapshot }: { snapshot: HermesManagementSnapshot }) {
+  return <Section title="Skills" description="Read-only Desktop projection. Consequential Skills changes are available only through Operator → Skills governance.">
+    <Rows>{snapshot.skills.map((skill) => <Row key={skill.name} title={skill.name} detail={`${skill.category} · ${skill.provenance} · ${skill.usage ?? 0} observed uses`} badge={skill.enabled ? "Enabled" : "Disabled"} />)}</Rows>
+    <p className="mt-3 text-xs text-muted-foreground">Enable and disable are unsupported because Hermes exposes no fixed native noninteractive mutation. Install and Remove require the governed CLI workflow.</p>
   </Section>;
 }
 

@@ -332,7 +332,7 @@ test("operator projection returns exact live records while stripping credential 
   assert.equal(JSON.stringify(result).includes("TELEGRAM_BOT_TOKEN"), false);
 });
 
-test("management writes scope hub installs and job skill attachments to the active profile", async () => {
+test("Desktop management rejects Skills mutations while job attachments remain profile-scoped", async () => {
   const requests: Array<{ url: string; method: string; body: unknown }> = [];
   const fetchImpl: typeof fetch = async (input, init) => {
     requests.push({
@@ -344,7 +344,7 @@ test("management writes scope hub installs and job skill attachments to the acti
   };
   const client = new HermesManagementClient(config, fetchImpl);
 
-  await client.perform("skill.install", { identifier: "official/gifs/gif-search" });
+  await assert.rejects(() => client.perform("skill.install", { identifier: "official/gifs/gif-search" }), /governed native CLI route/i);
   await client.perform("job.create", {
     name: "Daily intake",
     prompt: "Review intake",
@@ -352,10 +352,8 @@ test("management writes scope hub installs and job skill attachments to the acti
     skills: ["research", "summarize"],
   });
 
-  assert.equal(requests[0]?.url, "http://hermes.test:56314/api/skills/hub/install");
-  assert.deepEqual(requests[0]?.body, { identifier: "official/gifs/gif-search", profile: "operator-os" });
-  assert.equal(requests[1]?.url, "http://hermes.test:56314/api/cron/jobs?profile=operator-os");
-  assert.deepEqual(requests[1]?.body, {
+  assert.equal(requests[0]?.url, "http://hermes.test:56314/api/cron/jobs?profile=operator-os");
+  assert.deepEqual(requests[0]?.body, {
     name: "Daily intake",
     prompt: "Review intake",
     schedule: "every day at 9am",

@@ -29,6 +29,10 @@ export type HermesRunServerConfig = Pick<
   "apiBaseUrl" | "apiKey" | "profile" | "timeoutMs"
 >;
 
+export type HermesSkillsServerConfig = {
+  profile: string | null;
+};
+
 /** Consequential Hermes runtime interventions are opt-in and server-only. */
 export function hermesInterventionsEnabled(
   env: Readonly<Record<string, string | undefined>> = process.env,
@@ -152,6 +156,13 @@ export function readHermesReadOnlyServerConfig(
       gateway: state("gateway"),
     },
   };
+}
+
+/** Governed Skills use only the approved CLI and need no HTTP credentials. */
+export function readHermesSkillsServerConfig(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): HermesSkillsServerConfig {
+  return { profile: optional(env.CABINET_HERMES_PROFILE) };
 }
 
 /**

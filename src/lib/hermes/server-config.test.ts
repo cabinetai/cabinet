@@ -6,6 +6,7 @@ import {
   readHermesReadOnlyServerConfig,
   readHermesRunServerConfig,
   readHermesServerConfig,
+  readHermesSkillsServerConfig,
 } from "./server-config";
 
 test("Hermes intervention enablement is server-only and defaults false", () => {
@@ -131,4 +132,13 @@ test("Hermes run configuration depends only on the Agent API and profile", () =>
       && error.message === "Hermes Agent API run service is not configured."
       && !error.message.includes("CABINET_HERMES"),
   );
+});
+
+test("Hermes Skills configuration depends only on the canonical profile", () => {
+  assert.deepEqual(readHermesSkillsServerConfig({
+    CABINET_HERMES_PROFILE: " operator-os ",
+    CABINET_HERMES_API_KEY: "must-not-be-required",
+    CABINET_HERMES_MANAGEMENT_TOKEN: "must-not-be-required",
+  }), { profile: "operator-os" });
+  assert.deepEqual(readHermesSkillsServerConfig({}), { profile: null });
 });

@@ -712,10 +712,7 @@ export class HermesManagementClient {
 
   async perform(action: string, payload: Record<string, unknown>): Promise<unknown> {
     const profile = this.config.profile;
-    if (action === "skill.toggle") return this.managementRequest("/api/skills/toggle", { method: "PUT", body: { name: requiredValue(payload.name, "skill name"), enabled: payload.enabled === true, profile } });
-    if (action === "skill.install") return this.managementRequest("/api/skills/hub/install", { method: "POST", body: { identifier: requiredValue(payload.identifier, "skill hub identifier"), profile } });
-    if (action === "skill.create") return this.managementRequest("/api/skills", { method: "POST", body: { name: requiredValue(payload.name, "skill name"), content: requiredValue(payload.content, "skill content"), category: value(payload.category), profile } });
-    if (action === "skill.update") return this.managementRequest("/api/skills/content", { method: "PUT", body: { name: requiredValue(payload.name, "skill name"), content: requiredValue(payload.content, "skill content"), profile } });
+    if (action.startsWith("skill.")) throw new HermesManagementRequestError(409, "Hermes Skills mutations require the governed native CLI route.");
     if (action === "job.pause" || action === "job.resume" || action === "job.trigger") {
       const id = encodeURIComponent(requiredValue(payload.id, "job id"));
       return this.managementRequest(`/api/cron/jobs/${id}/${action.split(".")[1]}?profile=${encodeURIComponent(profile)}`, { method: "POST" });

@@ -1,0 +1,1426 @@
+From 78a803a013547794a295d674982f1fe0515f5713 Mon Sep 17 00:00:00 2001
+From: Jeremy Hamilton <jeremy@ignitabull.com>
+Date: Wed, 22 Jul 2026 11:42:56 -0700
+Subject: [PATCH] feat(skills): add CLI-native governed contracts
+
+---
+ gateway/platforms/api_server.py               |  42 ++
+ hermes_cli/secret_source_startup.py           |  72 ++-
+ hermes_cli/skills_hub.py                      | 510 +++++++++++++++++-
+ hermes_cli/subcommands/skills.py              |  29 +-
+ tests/gateway/test_api_server.py              |  41 ++
+ tests/hermes_cli/test_early_identity.py       |   9 +-
+ .../hermes_cli/test_secret_source_startup.py  |  50 +-
+ .../test_skills_machine_contract.py           | 326 +++++++++++
+ tests/tools/test_skills_hub.py                |  46 ++
+ tools/skills_hub.py                           |   2 +-
+ 10 files changed, 1057 insertions(+), 70 deletions(-)
+ create mode 100644 tests/hermes_cli/test_skills_machine_contract.py
+
+diff --git a/gateway/platforms/api_server.py b/gateway/platforms/api_server.py
+index 973ba5507..4e870108f 100644
+--- a/gateway/platforms/api_server.py
++++ b/gateway/platforms/api_server.py
+@@ -2088,6 +2088,48 @@ class APIServerAdapter(BasePlatformAdapter):
+         if auth_err:
+             return auth_err
+ 
++        catalog = request.query.get("catalog")
++        if catalog is not None:
++            if catalog != "official" or len(request.query) != 1:
++                return web.json_response(
++                    _openai_error("Unsupported skills catalog query", err_type="invalid_request_error"),
++                    status=400,
++                )
++            try:
++                from tools.skills_hub import OptionalSkillSource
++
++                candidates = OptionalSkillSource().search("", limit=500)
++                data = [{
++                    "authority_class": "official_public",
++                    "category": meta.identifier.split("/")[1],
++                    "identifier": meta.identifier,
++                    "local_fulfillment": True,
++                    "name": meta.name,
++                    "native_trust": meta.trust_level,
++                    "official": True,
++                    "public": True,
++                    "source": "official",
++                } for meta in candidates]
++                data.sort(key=lambda item: (item["category"], item["name"], item["identifier"]))
++                if any(
++                    item["native_trust"] != "builtin"
++                    or not item["identifier"].startswith("official/")
++                    for item in data
++                ):
++                    raise ValueError("official catalog authority mismatch")
++            except Exception:
++                logger.exception("GET /v1/skills?catalog=official failed")
++                return web.json_response(
++                    _openai_error("Failed to enumerate official skills", err_type="server_error"),
++                    status=500,
++                )
++            return web.json_response({
++                "contract": "hermes.skills.catalog",
++                "data": data,
++                "object": "list",
++                "schema_version": 2,
++            })
++
+         try:
+             from tools.skills_tool import _find_all_skills, _sort_skills
+             skills = _sort_skills(_find_all_skills(skip_disabled=False))
+diff --git a/hermes_cli/secret_source_startup.py b/hermes_cli/secret_source_startup.py
+index db8b2323d..733d97baa 100644
+--- a/hermes_cli/secret_source_startup.py
++++ b/hermes_cli/secret_source_startup.py
+@@ -41,39 +41,40 @@ def _is_official_identifier(value: str) -> bool:
+ 
+ 
+ def _valid_list_args(args: list[str]) -> bool:
+-    index = 0
+-    while index < len(args):
+-        value = args[index]
+-        if value == "--enabled-only":
+-            index += 1
+-        elif value == "--source" and index + 1 < len(args):
+-            if args[index + 1] not in {"all", "hub", "builtin", "local"}:
+-                return False
+-            index += 2
+-        else:
+-            return False
+-    return True
++    return args == ["--json"] or (
++        len(args) == 3
++        and args[0] == "--json"
++        and args[1] == "--identifier"
++        and _is_official_identifier(args[2])
++    )
++
++
++def _valid_catalog_args(args: list[str]) -> bool:
++    return args == ["--json"]
+ 
+ 
+ def _valid_audit_args(args: list[str]) -> bool:
+-    positional = [value for value in args if value != "--deep"]
+-    if len(positional) > 1 or any(value.startswith("-") for value in positional):
+-        return False
+-    if positional and "/" in positional[0]:
+-        return _is_official_identifier(positional[0])
+-    return True
++    return (
++        len(args) == 2
++        and _is_official_identifier(args[0])
++        and args[1] == "--json"
++    )
+ 
+ 
+ def _valid_install_args(args: list[str]) -> bool:
+-    if not args or not _is_official_identifier(args[0]):
+-        return False
+-    return all(value in {"--yes", "-y"} for value in args[1:])
++    return (
++        len(args) == 2
++        and _is_official_identifier(args[0])
++        and args[1] == "--yes"
++    )
+ 
+ 
+ def _valid_uninstall_args(args: list[str]) -> bool:
+-    if not args or args[0].startswith("-") or "/" in args[0]:
+-        return False
+-    return all(value in {"--yes", "-y"} for value in args[1:])
++    return (
++        len(args) == 2
++        and _is_official_identifier(args[0])
++        and args[1] == "--yes"
++    )
+ 
+ 
+ def validate_requested_skip(argv: Sequence[str]) -> bool:
+@@ -83,6 +84,7 @@ def validate_requested_skip(argv: Sequence[str]) -> bool:
+     secret loading, so a caller cannot believe it received the bounded public
+     Skills contract when it did not.
+     """
++    os.environ.pop(_VALIDATED_ENV_NAME, None)
+     requested = os.environ.get(SKIP_ENV_NAME)
+     if requested is None:
+         return False
+@@ -94,12 +96,18 @@ def validate_requested_skip(argv: Sequence[str]) -> bool:
+     valid = False
+     if args and len(args) >= 2 and args[0] == "skills":
+         action, rest = args[1], args[2:]
+-        if action == "list":
++        if action == "catalog":
++            valid = _valid_catalog_args(rest)
++        elif action == "list":
+             valid = _valid_list_args(rest)
+         elif action == "audit":
+             valid = _valid_audit_args(rest)
+         elif action == "inspect":
+-            valid = len(rest) == 1 and _is_official_identifier(rest[0])
++            valid = (
++                len(rest) == 2
++                and _is_official_identifier(rest[0])
++                and rest[1] == "--json"
++            )
+         elif action == "install":
+             valid = _valid_install_args(rest)
+         elif action == "uninstall":
+@@ -116,15 +124,3 @@ def external_secret_sources_skipped() -> bool:
+         os.environ.get(SKIP_ENV_NAME) == SKIP_ENV_VALUE
+         and os.environ.get(_VALIDATED_ENV_NAME) == SKIP_ENV_VALUE
+     )
+-
+-
+-def require_official_installed_entry(entry: object) -> None:
+-    """Reject skip-mode uninstall unless canonical lock provenance is official."""
+-    if not external_secret_sources_skipped():
+-        return
+-    if not isinstance(entry, dict):
+-        raise RuntimeError("public Skills startup mode requires an installed official skill")
+-    identifier = entry.get("identifier")
+-    if entry.get("source") != "official" or not isinstance(identifier, str) \
+-            or not _is_official_identifier(identifier):
+-        raise RuntimeError("public Skills startup mode rejects non-official skill removal")
+diff --git a/hermes_cli/skills_hub.py b/hermes_cli/skills_hub.py
+index e5ea1b41a..a36cfe904 100644
+--- a/hermes_cli/skills_hub.py
++++ b/hermes_cli/skills_hub.py
+@@ -27,6 +27,93 @@ from agent.skill_utils import is_excluded_skill_path
+ 
+ _console = Console()
+ 
++_MACHINE_CONTRACT_VERSION = 2
++_OFFICIAL_AUTHORITY_CLASS = "official_public"
++_MAX_OFFICIAL_CATALOG_ENTRIES = 256
++_SAFE_CATALOG_SEGMENT = re.compile(r"^[a-z0-9][a-z0-9._-]{0,95}$")
++
++
++def _machine_json(payload: dict) -> None:
++    """Write exactly one stable JSON object without Rich rendering."""
++    print(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
++
++
++def _machine_fail(contract: str, code: str, **details: object) -> None:
++    payload = {
++        "contract": contract,
++        "error": code,
++        "schema_version": _MACHINE_CONTRACT_VERSION,
++    }
++    payload.update(details)
++    _machine_json(payload)
++    raise SystemExit(1)
++
++
++def _active_profile_name() -> str:
++    from hermes_cli.profiles import get_active_profile_name
++
++    return get_active_profile_name()
++
++
++def _authority_fields(source: str, native_trust: str,
++                      identifier: Optional[str]) -> dict:
++    official_public = (
++        source == "official"
++        and native_trust == "builtin"
++        and isinstance(identifier, str)
++        and identifier.startswith("official/")
++    )
++    return {
++        "authority_class": (
++            _OFFICIAL_AUTHORITY_CLASS if official_public else "unapproved"
++        ),
++        "local_fulfillment": True,
++        "native_trust": native_trust,
++        "official": official_public,
++        "public": official_public,
++        "source": source,
++    }
++
++
++def _candidate_prerequisite_classes(bundle) -> list[str]:
++    """Classify prerequisites without returning SKILL.md content or values."""
++    from agent.skill_utils import parse_frontmatter
++
++    raw = bundle.files.get("SKILL.md", b"")
++    if isinstance(raw, bytes):
++        raw = raw.decode("utf-8", errors="strict")
++    frontmatter, _body = parse_frontmatter(raw)
++    classes: set[str] = set()
++    if frontmatter.get("platforms"):
++        classes.add("platform")
++    requirements = frontmatter.get("requirements")
++    if isinstance(requirements, dict):
++        aliases = {
++            "bins": "command", "commands": "command", "env": "environment",
++            "environment": "environment", "credentials": "credential",
++            "account": "account", "network": "network",
++        }
++        for key, value in requirements.items():
++            if value and str(key) in aliases:
++                classes.add(aliases[str(key)])
++    return sorted(classes)
++
++
++def _resolve_official_candidate(identifier: str):
++    from tools.skills_hub import OptionalSkillSource
++
++    source = OptionalSkillSource()
++    meta = source.inspect(identifier)
++    bundle = source.fetch(identifier)
++    if (
++        meta is None or bundle is None
++        or meta.identifier != identifier or bundle.identifier != identifier
++        or meta.source != "official" or bundle.source != "official"
++        or meta.trust_level != "builtin" or bundle.trust_level != "builtin"
++    ):
++        _machine_fail("hermes.skills.candidate", "official_candidate_not_found")
++    return meta, bundle
++
+ 
+ def _display_source(r) -> str:
+     """Human-facing source label for a result row.
+@@ -46,6 +133,69 @@ def _display_source(r) -> str:
+ # Shared do_* functions
+ # ---------------------------------------------------------------------------
+ 
++def do_catalog(console: Optional[Console] = None,
++               as_json: bool = False) -> None:
++    """List the bounded, local, official optional-Skills catalog.
++
++    The machine contract intentionally omits descriptions, content, paths,
++    URLs, commands, manifests, prerequisites, and arbitrary Hub metadata.
++    ``OptionalSkillSource`` is checkout-local and performs no network access.
++    """
++    from tools.skills_hub import OptionalSkillSource
++
++    c = console or _console
++    if not as_json:
++        c.print("Use `hermes skills catalog --json` for the bounded catalog contract.")
++        return
++
++    results = OptionalSkillSource().search(
++        "", limit=_MAX_OFFICIAL_CATALOG_ENTRIES + 1
++    )
++    if len(results) > _MAX_OFFICIAL_CATALOG_ENTRIES:
++        _machine_fail("hermes.skills.catalog", "catalog_limit_exceeded")
++
++    entries: list[dict] = []
++    seen_identifiers: set[str] = set()
++    seen_names: set[str] = set()
++    for result in results:
++        identifier = result.identifier
++        parts = identifier.split("/") if isinstance(identifier, str) else []
++        name = result.name if isinstance(result.name, str) else ""
++        if (
++            len(parts) < 3
++            or parts[0] != "official"
++            or any(not _SAFE_CATALOG_SEGMENT.fullmatch(part) for part in parts[1:])
++            or not _SAFE_CATALOG_SEGMENT.fullmatch(name)
++            or result.source != "official"
++            or result.trust_level != "builtin"
++            or identifier in seen_identifiers
++            or name in seen_names
++        ):
++            _machine_fail("hermes.skills.catalog", "catalog_ambiguity")
++        seen_identifiers.add(identifier)
++        seen_names.add(name)
++        entries.append({
++            "authority_class": _OFFICIAL_AUTHORITY_CLASS,
++            "category": parts[1],
++            "identifier": identifier,
++            "local_fulfillment": True,
++            "name": name,
++            "native_trust": "builtin",
++            "official": True,
++            "public": True,
++            "source": "official",
++            "supported_actions": ["install"],
++        })
++
++    entries.sort(key=lambda entry: entry["identifier"])
++    _machine_json({
++        "contract": "hermes.skills.catalog",
++        "entries": entries,
++        "entry_count": len(entries),
++        "profile": _active_profile_name(),
++        "schema_version": _MACHINE_CONTRACT_VERSION,
++    })
++
+ def _resolve_short_name(name: str, sources, console: Console) -> str:
+     """
+     Resolve a short skill name (e.g. 'pptx') to a full identifier by searching
+@@ -735,7 +885,7 @@ def do_install(identifier: str, category: str = "", force: bool = False,
+                          bundle.trust_level, "invalid_path", str(exc))
+         return
+     from tools.skills_hub import SKILLS_DIR
+-    c.print(f"[bold green]Installed:[/] {install_dir.relative_to(SKILLS_DIR)}")
++    c.print(f"[bold green]Installed:[/] {install_dir.relative_to(SKILLS_DIR.resolve())}")
+     c.print(f"[dim]Files: {', '.join(bundle.files.keys())}[/]\n")
+ 
+     # Blueprint detection: if the installed skill declares a
+@@ -791,10 +941,24 @@ def do_install(identifier: str, category: str = "", force: bool = False,
+         c.print("[dim]Use /reset to start a new session now, or --now to activate immediately (invalidates prompt cache).[/]\n")
+ 
+ 
+-def do_inspect(identifier: str, console: Optional[Console] = None) -> None:
++def do_inspect(identifier: str, console: Optional[Console] = None,
++               as_json: bool = False) -> None:
+     """Preview a skill's SKILL.md content without installing."""
+     from tools.skills_hub import GitHubAuth, create_source_router
+ 
++    if as_json:
++        meta, bundle = _resolve_official_candidate(identifier)
++        _machine_json({
++            "contract": "hermes.skills.candidate",
++            "identifier": meta.identifier,
++            "name": meta.name,
++            "prerequisite_classes": _candidate_prerequisite_classes(bundle),
++            "profile": _active_profile_name(),
++            "schema_version": _MACHINE_CONTRACT_VERSION,
++            **_authority_fields(meta.source, meta.trust_level, meta.identifier),
++        })
++        return
++
+     c = console or _console
+     auth = GitHubAuth()
+     sources = create_source_router(auth)
+@@ -935,9 +1099,253 @@ def inspect_skill(identifier: str) -> Optional[dict]:
+     return out
+ 
+ 
++def _canonical_installed_contract(identifier_filter: Optional[str] = None) -> dict:
++    """Build ambiguity-safe installed state from profile files and Hub lock."""
++    from agent.skill_utils import (
++        get_disabled_skill_names, get_external_skills_dirs, iter_skill_index_files,
++        parse_frontmatter,
++    )
++    from hermes_constants import get_hermes_home
++    from tools.skills_hub import (
++        HubLockFile, _normalize_lock_install_path, _validate_skill_name,
++    )
++    from tools.skills_sync import _read_manifest
++
++    if identifier_filter is not None and (
++        not isinstance(identifier_filter, str)
++        or not identifier_filter.startswith("official/")
++    ):
++        _machine_fail(
++            "hermes.skills.installed-state", "exact_official_identifier_required"
++        )
++
++    active_skills_root = get_hermes_home() / "skills"
++    ambiguities: list[str] = []
++
++    lock_path = HubLockFile().path
++    lock_entries: list[dict] = []
++    if lock_path.exists():
++        duplicate_keys: list[str] = []
++
++        def reject_duplicate_keys(pairs):
++            value = {}
++            for key, item in pairs:
++                if key in value:
++                    duplicate_keys.append(str(key))
++                else:
++                    value[key] = item
++            return value
++
++        try:
++            lock_data = json.loads(
++                lock_path.read_text(encoding="utf-8"),
++                object_pairs_hook=reject_duplicate_keys,
++            )
++        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
++            _machine_fail(
++                "hermes.skills.installed-state", "invalid_lock_contract"
++            )
++        if duplicate_keys:
++            ambiguities.extend(
++                f"duplicate_lock_key:{key}" for key in duplicate_keys
++            )
++        installed_data = (
++            lock_data.get("installed") if isinstance(lock_data, dict) else None
++        )
++        if (
++            not isinstance(lock_data, dict)
++            or lock_data.get("version") != 1
++            or not isinstance(installed_data, dict)
++        ):
++            _machine_fail(
++                "hermes.skills.installed-state", "invalid_lock_contract"
++            )
++        for raw_name, raw_entry in installed_data.items():
++            if not isinstance(raw_name, str) or not isinstance(raw_entry, dict):
++                _machine_fail(
++                    "hermes.skills.installed-state", "invalid_lock_contract"
++                )
++            try:
++                name = _validate_skill_name(raw_name)
++                install_path = _normalize_lock_install_path(
++                    raw_entry.get("install_path", ""), name
++                )
++            except ValueError:
++                ambiguities.append(f"path_mismatch:{raw_name}")
++                continue
++            identifier = raw_entry.get("identifier")
++            source = raw_entry.get("source")
++            native_trust = raw_entry.get("trust_level")
++            if not all(
++                isinstance(value, str) and value
++                for value in (identifier, source, native_trust)
++            ):
++                _machine_fail(
++                    "hermes.skills.installed-state", "invalid_lock_contract"
++                )
++            lock_entries.append({
++                **raw_entry,
++                "identifier": identifier,
++                "install_path": install_path,
++                "name": name,
++                "source": source,
++                "trust_level": native_trust,
++            })
++
++    for field in ("identifier", "install_path"):
++        values: dict[str, list[str]] = {}
++        for entry in lock_entries:
++            values.setdefault(str(entry[field]), []).append(str(entry["name"]))
++        for value, names in values.items():
++            if len(names) > 1:
++                ambiguities.append(
++                    f"duplicate_{field}:{value}:{','.join(sorted(names))}"
++                )
++
++    discovered: list[dict] = []
++    canonical_paths: dict[str, int] = {}
++    roots = [active_skills_root, *get_external_skills_dirs()]
++    for root in roots:
++        if not root.exists():
++            continue
++        for skill_md in iter_skill_index_files(root, "SKILL.md"):
++            canonical_path = str(skill_md.resolve())
++            canonical_paths[canonical_path] = canonical_paths.get(canonical_path, 0) + 1
++            try:
++                frontmatter, _body = parse_frontmatter(skill_md.read_text(encoding="utf-8"))
++            except (OSError, UnicodeDecodeError, ValueError):
++                ambiguities.append(f"unreadable_skill:{canonical_path}")
++                continue
++            name = str(frontmatter.get("name") or skill_md.parent.name)
++            try:
++                _validate_skill_name(name)
++            except ValueError:
++                ambiguities.append(f"invalid_skill_name:{canonical_path}")
++                continue
++            try:
++                installed_rel = skill_md.parent.resolve().relative_to(
++                    active_skills_root.resolve()
++                ).as_posix()
++            except ValueError:
++                installed_rel = None
++            discovered.append({
++                "canonical_path": canonical_path,
++                "install_path": installed_rel,
++                "name": name,
++            })
++
++    for canonical_path, count in canonical_paths.items():
++        if count > 1:
++            ambiguities.append(f"duplicate_install_path:{canonical_path}")
++
++    names: dict[str, list[str]] = {}
++    for skill in discovered:
++        names.setdefault(skill["name"], []).append(skill["canonical_path"])
++    for name, paths in names.items():
++        if len(paths) > 1:
++            ambiguities.append(
++                f"duplicate_name:{name}:{','.join(sorted(paths))}"
++            )
++
++    lock_by_path: dict[str, dict] = {}
++    for entry in lock_entries:
++        install_path = str(entry["install_path"])
++        matching = [
++            skill for skill in discovered
++            if skill["install_path"] == install_path
++        ]
++        resolved = active_skills_root.joinpath(*install_path.split("/"))
++        if any(
++            candidate.is_symlink()
++            for candidate in [active_skills_root, resolved, *resolved.parents]
++            if candidate == active_skills_root
++            or active_skills_root in candidate.parents
++        ):
++            ambiguities.append(f"path_mismatch:{entry['name']}")
++            continue
++        if len(matching) != 1 or not resolved.joinpath("SKILL.md").is_file():
++            ambiguities.append(f"stale_lock_only:{entry['name']}")
++            continue
++        if matching[0]["name"] != entry["name"]:
++            ambiguities.append(f"path_mismatch:{entry['name']}")
++            continue
++        if install_path in lock_by_path:
++            ambiguities.append(f"multiple_lock_records:{install_path}")
++            continue
++        lock_by_path[install_path] = entry
++
++    if ambiguities:
++        bounded = sorted(set(ambiguities))[:32]
++        _machine_fail(
++            "hermes.skills.installed-state",
++            "canonical_ambiguity",
++            ambiguities=bounded,
++            ambiguity_count=len(set(ambiguities)),
++            profile=_active_profile_name(),
++        )
++
++    builtin_names = set(_read_manifest())
++    disabled = get_disabled_skill_names()
++    matches: list[dict] = []
++    for skill in discovered:
++        entry = (
++            lock_by_path.get(skill["install_path"])
++            if skill["install_path"] is not None else None
++        )
++        is_builtin = entry is None and skill["name"] in builtin_names
++        identifier = str(entry["identifier"]) if entry else None
++        source = str(entry["source"]) if entry else (
++            "builtin" if is_builtin else "local"
++        )
++        native_trust = str(entry["trust_level"]) if entry else (
++            "builtin" if is_builtin else "local"
++        )
++        match = {
++            "enabled": skill["name"] not in disabled,
++            "identifier": identifier,
++            "install_path": skill["install_path"],
++            "installed": True,
++            "name": skill["name"],
++            "origin": "hub" if entry else ("builtin" if is_builtin else "local"),
++            **_authority_fields(source, native_trust, identifier),
++        }
++        matches.append(match)
++
++    matches.sort(key=lambda item: (
++        str(item.get("name")), str(item.get("identifier")),
++        str(item.get("install_path")), str(item.get("origin")),
++    ))
++    target_name = (
++        identifier_filter.rsplit("/", 1)[-1] if identifier_filter else None
++    )
++    if identifier_filter is not None:
++        matches = [
++            item for item in matches
++            if item["identifier"] == identifier_filter
++            or item["name"] == target_name
++        ]
++    exact_present = [
++        item for item in matches
++        if item["installed"] is True
++        and item["origin"] == "hub"
++        and (identifier_filter is None or item["identifier"] == identifier_filter)
++    ]
++    return {
++        "ambiguity_count": 0,
++        "contract": "hermes.skills.installed-state",
++        "exact_match_count": len(exact_present),
++        "matches": matches,
++        "profile": _active_profile_name(),
++        "schema_version": _MACHINE_CONTRACT_VERSION,
++        "same_name_collision_count": 0,
++    }
++
++
+ def do_list(source_filter: str = "all",
+             enabled_only: bool = False,
+-            console: Optional[Console] = None) -> None:
++            console: Optional[Console] = None,
++            as_json: bool = False,
++            identifier_filter: Optional[str] = None) -> None:
+     """List installed skills, distinguishing hub, builtin, and local skills.
+ 
+     Args:
+@@ -955,6 +1363,13 @@ def do_list(source_filter: str = "all",
+     from agent.skill_utils import get_disabled_skill_names
+ 
+     c = console or _console
++    if as_json:
++        if source_filter != "all" or enabled_only:
++            _machine_fail("hermes.skills.installed-state", "incompatible_json_filter")
++        _machine_json(_canonical_installed_contract(identifier_filter))
++        return
++    if identifier_filter is not None:
++        raise ValueError("--identifier requires --json")
+     ensure_hub_dirs()
+     lock = HubLockFile()
+     hub_installed = {e["name"]: e for e in lock.list_installed()}
+@@ -1078,7 +1493,7 @@ def do_update(name: Optional[str] = None, console: Optional[Console] = None) ->
+ 
+ 
+ def do_audit(name: Optional[str] = None, console: Optional[Console] = None,
+-             deep: bool = False) -> None:
++             deep: bool = False, as_json: bool = False) -> None:
+     """Re-run security scan on installed hub skills.
+ 
+     When ``deep=True``, also runs an opt-in AST-level diagnostic on Python
+@@ -1090,12 +1505,43 @@ def do_audit(name: Optional[str] = None, console: Optional[Console] = None,
+ 
+     c = console or _console
+ 
++    if as_json:
++        if not name or "/" not in name or deep:
++            _machine_fail("hermes.skills.audit", "exact_identifier_required")
++        meta, bundle = _resolve_official_candidate(name)
++        import tempfile
++        from tools.skills_guard import scan_skill
++        from tools.skills_hub import _validate_bundle_rel_path, _validate_skill_name
++
++        with tempfile.TemporaryDirectory(prefix="hermes-skill-audit-") as tmp:
++            quarantine_path = Path(tmp) / _validate_skill_name(bundle.name)
++            quarantine_path.mkdir()
++            for rel_path, content in bundle.files.items():
++                safe_rel_path = _validate_bundle_rel_path(rel_path)
++                target = quarantine_path.joinpath(*safe_rel_path.split("/"))
++                target.parent.mkdir(parents=True, exist_ok=True)
++                if isinstance(content, bytes):
++                    target.write_bytes(content)
++                else:
++                    target.write_text(content, encoding="utf-8")
++            result = scan_skill(quarantine_path, source="official")
++        _machine_json({
++            "contract": "hermes.skills.audit",
++            "finding_count": len(result.findings),
++            "identifier": meta.identifier,
++            "name": meta.name,
++            "prerequisite_classes": _candidate_prerequisite_classes(bundle),
++            "profile": _active_profile_name(),
++            "schema_version": _MACHINE_CONTRACT_VERSION,
++            "verdict": result.verdict,
++            **_authority_fields(meta.source, meta.trust_level, meta.identifier),
++        })
++        return
++
+     # A full Hub identifier is an explicit read-only candidate audit. Resolve
+     # and scan the bundle through the same quarantine boundary as install,
+     # without changing installed or lock state.
+     if name and "/" in name:
+-        import shutil
+-
+         from hermes_cli.secret_source_startup import external_secret_sources_skipped
+         from tools.skills_hub import GitHubAuth, create_source_router, quarantine_bundle
+ 
+@@ -1160,11 +1606,46 @@ def do_uninstall(name: str, console: Optional[Console] = None,
+                  invalidate_cache: bool = True) -> None:
+     """Remove a hub-installed skill with confirmation."""
+     from tools.skills_hub import HubLockFile, uninstall_skill
+-    from hermes_cli.secret_source_startup import require_official_installed_entry
++    from hermes_cli.secret_source_startup import external_secret_sources_skipped
+ 
+     c = console or _console
+ 
+-    require_official_installed_entry(HubLockFile().get_installed(name))
++    if external_secret_sources_skipped():
++        identifier = name
++        state = _canonical_installed_contract(identifier)
++        exact = [
++            match for match in state["matches"]
++            if match["installed"] is True
++            and match["origin"] == "hub"
++            and match["identifier"] == identifier
++        ]
++        if len(exact) != 1 or state["exact_match_count"] != 1:
++            raise RuntimeError(
++                "public Skills startup mode requires one exact installed official skill"
++            )
++        match = exact[0]
++        if not (
++            match["source"] == "official"
++            and match["native_trust"] == "builtin"
++            and match["authority_class"] == _OFFICIAL_AUTHORITY_CLASS
++            and match["official"] is True
++            and match["public"] is True
++            and match["local_fulfillment"] is True
++        ):
++            raise RuntimeError(
++                "public Skills startup mode rejects non-official skill removal"
++            )
++        name = match["name"]
++        lock_entry = HubLockFile().get_installed(name)
++        if (
++            not isinstance(lock_entry, dict)
++            or lock_entry.get("identifier") != identifier
++            or lock_entry.get("source") != "official"
++            or lock_entry.get("trust_level") != "builtin"
++        ):
++            raise RuntimeError(
++                "public Skills startup mode rejects changed removal provenance"
++            )
+ 
+     # skip_confirm bypasses the prompt (needed in TUI mode where input() hangs)
+     if not skip_confirm:
+@@ -1753,7 +2234,9 @@ def skills_command(args) -> None:
+     """Router for `hermes skills <subcommand>` — called from hermes_cli/main.py."""
+     action = getattr(args, "skills_action", None)
+ 
+-    if action == "browse":
++    if action == "catalog":
++        do_catalog(as_json=getattr(args, "json", False))
++    elif action == "browse":
+         do_browse(page=args.page, page_size=args.size, source=args.source)
+     elif action == "search":
+         do_search(args.query, source=args.source, limit=args.limit,
+@@ -1763,11 +2246,13 @@ def skills_command(args) -> None:
+                    skip_confirm=getattr(args, "yes", False),
+                    name_override=getattr(args, "name", "") or "")
+     elif action == "inspect":
+-        do_inspect(args.identifier)
++        do_inspect(args.identifier, as_json=getattr(args, "json", False))
+     elif action == "list":
+         do_list(
+             source_filter=args.source,
+             enabled_only=getattr(args, "enabled_only", False),
++            as_json=getattr(args, "json", False),
++            identifier_filter=getattr(args, "identifier", None),
+         )
+     elif action == "check":
+         do_check(name=getattr(args, "name", None))
+@@ -1775,9 +2260,10 @@ def skills_command(args) -> None:
+         do_update(name=getattr(args, "name", None))
+     elif action == "audit":
+         do_audit(name=getattr(args, "name", None),
+-                 deep=getattr(args, "deep", False))
++                 deep=getattr(args, "deep", False),
++                 as_json=getattr(args, "json", False))
+     elif action == "uninstall":
+-        do_uninstall(args.name)
++        do_uninstall(args.name, skip_confirm=getattr(args, "yes", False))
+     elif action == "reset":
+         do_reset(args.name, restore=getattr(args, "restore", False),
+                  skip_confirm=getattr(args, "yes", False))
+diff --git a/hermes_cli/subcommands/skills.py b/hermes_cli/subcommands/skills.py
+index e5f4410fe..6f6a5f7f7 100644
+--- a/hermes_cli/subcommands/skills.py
++++ b/hermes_cli/subcommands/skills.py
+@@ -18,6 +18,15 @@ def build_skills_parser(subparsers, *, cmd_skills: Callable) -> None:
+     )
+     skills_subparsers = skills_parser.add_subparsers(dest="skills_action")
+ 
++    skills_catalog = skills_subparsers.add_parser(
++        "catalog", help="List official optional skills"
++    )
++    skills_catalog.add_argument(
++        "--json",
++        action="store_true",
++        help="Output the bounded official catalog contract as JSON",
++    )
++
+     skills_browse = skills_subparsers.add_parser(
+         "browse", help="Browse all available skills (paginated)"
+     )
+@@ -112,6 +121,9 @@ def build_skills_parser(subparsers, *, cmd_skills: Callable) -> None:
+         "inspect", help="Preview a skill without installing"
+     )
+     skills_inspect.add_argument("identifier", help="Skill identifier")
++    skills_inspect.add_argument(
++        "--json", action="store_true", help="Output the bounded candidate contract as JSON"
++    )
+ 
+     skills_list = skills_subparsers.add_parser("list", help="List installed skills")
+     skills_list.add_argument(
+@@ -123,6 +135,13 @@ def build_skills_parser(subparsers, *, cmd_skills: Callable) -> None:
+         help="Hide disabled skills. Use with -p <profile> to see exactly "
+         "which skills will load for that profile.",
+     )
++    skills_list.add_argument(
++        "--identifier",
++        help="Limit JSON output to one exact Hub identifier",
++    )
++    skills_list.add_argument(
++        "--json", action="store_true", help="Output canonical installed state as JSON"
++    )
+ 
+     skills_check = skills_subparsers.add_parser(
+         "check", help="Check installed hub skills for updates"
+@@ -151,11 +170,19 @@ def build_skills_parser(subparsers, *, cmd_skills: Callable) -> None:
+         action="store_true",
+         help="Run AST-level analysis on Python files (opt-in diagnostic)",
+     )
++    skills_audit.add_argument(
++        "--json", action="store_true", help="Output the bounded scan contract as JSON"
++    )
+ 
+     skills_uninstall = skills_subparsers.add_parser(
+         "uninstall", help="Remove a hub-installed skill"
+     )
+-    skills_uninstall.add_argument("name", help="Skill name to remove")
++    skills_uninstall.add_argument(
++        "name", help="Skill name, or exact official identifier for governed removal"
++    )
++    skills_uninstall.add_argument(
++        "--yes", "-y", action="store_true", help="Skip confirmation prompt"
++    )
+ 
+     skills_reset = skills_subparsers.add_parser(
+         "reset",
+diff --git a/tests/gateway/test_api_server.py b/tests/gateway/test_api_server.py
+index 567346980..f619a9181 100644
+--- a/tests/gateway/test_api_server.py
++++ b/tests/gateway/test_api_server.py
+@@ -1025,6 +1025,47 @@ class TestCapabilitiesEndpoint:
+ 
+ 
+ class TestSkillsEndpoint:
++    @pytest.mark.asyncio
++    async def test_skills_official_catalog_is_bounded_and_content_free(self, adapter):
++        fake_meta = [type("Meta", (), {
++            "identifier": "official/communication/one-three-one-rule",
++            "name": "one-three-one-rule",
++            "trust_level": "builtin",
++        })()]
++        with patch("tools.skills_hub.OptionalSkillSource.search", return_value=fake_meta):
++            app = _create_app(adapter)
++            async with TestClient(TestServer(app)) as cli:
++                observations = []
++                for _ in range(50):
++                    resp = await cli.get("/v1/skills?catalog=official")
++                    assert resp.status == 200
++                    observations.append(await resp.json())
++                data = observations[0]
++                assert observations == [data] * 50
++                assert data == {
++                    "contract": "hermes.skills.catalog",
++                    "object": "list",
++                    "schema_version": 2,
++                    "data": [{
++                    "authority_class": "official_public",
++                    "category": "communication",
++                    "identifier": "official/communication/one-three-one-rule",
++                    "local_fulfillment": True,
++                    "name": "one-three-one-rule",
++                    "native_trust": "builtin",
++                    "official": True,
++                    "public": True,
++                    "source": "official",
++                }]}
++                assert "description" not in data["data"][0]
++
++    @pytest.mark.asyncio
++    async def test_skills_catalog_rejects_non_official_or_extra_queries(self, adapter):
++        app = _create_app(adapter)
++        async with TestClient(TestServer(app)) as cli:
++            assert (await cli.get("/v1/skills?catalog=github")).status == 400
++            assert (await cli.get("/v1/skills?catalog=official&limit=2")).status == 400
++
+     @pytest.mark.asyncio
+     async def test_skills_returns_list_envelope(self, adapter):
+         fake_skills = [
+diff --git a/tests/hermes_cli/test_early_identity.py b/tests/hermes_cli/test_early_identity.py
+index 34301d5c3..7b0d17878 100644
+--- a/tests/hermes_cli/test_early_identity.py
++++ b/tests/hermes_cli/test_early_identity.py
+@@ -48,9 +48,12 @@ def test_identity_is_deterministic_bounded_and_self_fingerprinting(tmp_path):
+     root = _project(tmp_path)
+     entrypoint = _executable(tmp_path, "hermes-bin")
+     python = _executable(tmp_path, "python")
+-    first = build_identity(root, argv0=str(entrypoint), python_executable=str(python))
+-    second = build_identity(root, argv0=str(entrypoint), python_executable=str(python))
+-    assert first == second
++    identities = [
++        build_identity(root, argv0=str(entrypoint), python_executable=str(python))
++        for _ in range(100)
++    ]
++    first = identities[0]
++    assert identities == [first] * 100
+     assert first["schema"] == IDENTITY_SCHEMA
+     assert first["schema_version"] == 1
+     assert first["source_revision"] is None
+diff --git a/tests/hermes_cli/test_secret_source_startup.py b/tests/hermes_cli/test_secret_source_startup.py
+index 1f5981525..328d3be47 100644
+--- a/tests/hermes_cli/test_secret_source_startup.py
++++ b/tests/hermes_cli/test_secret_source_startup.py
+@@ -9,7 +9,6 @@ from hermes_cli.secret_source_startup import (
+     SKIP_ENV_NAME,
+     SKIP_ENV_VALUE,
+     external_secret_sources_skipped,
+-    require_official_installed_entry,
+     validate_requested_skip,
+ )
+ 
+@@ -39,11 +38,13 @@ def test_skip_mode_rejected_outside_public_skills_allowlist(monkeypatch, argv):
+ @pytest.mark.parametrize(
+     "argv",
+     [
+-        ["-p", "operator-os", "skills", "list", "--source", "hub"],
+-        ["-p", "operator-os", "skills", "audit", "one-three-one-rule"],
+-        ["skills", "inspect", "official/communication/one-three-one-rule"],
++        ["-p", "operator-os", "skills", "catalog", "--json"],
++        ["-p", "operator-os", "skills", "list", "--json", "--identifier", "official/communication/one-three-one-rule"],
++        ["-p", "operator-os", "skills", "list", "--json"],
++        ["-p", "operator-os", "skills", "audit", "official/communication/one-three-one-rule", "--json"],
++        ["skills", "inspect", "official/communication/one-three-one-rule", "--json"],
+         ["skills", "install", "official/communication/one-three-one-rule", "--yes"],
+-        ["skills", "uninstall", "one-three-one-rule", "--yes"],
++        ["skills", "uninstall", "official/communication/one-three-one-rule", "--yes"],
+     ],
+ )
+ def test_skip_mode_accepts_only_allowlisted_shapes(monkeypatch, argv):
+@@ -52,16 +53,35 @@ def test_skip_mode_accepts_only_allowlisted_shapes(monkeypatch, argv):
+     assert external_secret_sources_skipped()
+ 
+ 
+-def test_skip_uninstall_requires_canonical_official_provenance(monkeypatch):
++@pytest.mark.parametrize(
++    "argv",
++    [
++        ["skills", "catalog"],
++        ["skills", "catalog", "--json", "--json"],
++        ["skills", "list", "--identifier", "github/private/skill", "--json"],
++        ["skills", "list", "--identifier", "official/communication/one-three-one-rule"],
++        ["skills", "list"],
++        ["skills", "list", "--source", "hub"],
++        ["skills", "inspect", "official/communication/one-three-one-rule"],
++        ["skills", "audit", "official/communication/one-three-one-rule"],
++        ["skills", "inspect", "github/private/skill", "--json"],
++        ["skills", "audit", "github/private/skill", "--json"],
++        ["skills", "audit", "one-three-one-rule", "--json"],
++        ["skills", "audit", "official/communication/one-three-one-rule", "--json", "--deep"],
++        ["skills", "inspect", "official/communication/one-three-one-rule", "--json", "--deep"],
++        ["skills", "uninstall", "one-three-one-rule", "--yes"],
++        ["skills", "uninstall", "github/private/skill", "--yes"],
++        ["skills", "uninstall", "official/communication/one-three-one-rule"],
++        ["skills", "install", "official/communication/one-three-one-rule", "-y"],
++        ["skills", "install", "official/communication/one-three-one-rule", "--yes", "--yes"],
++        ["skills", "uninstall", "official/communication/one-three-one-rule", "-y"],
++    ],
++)
++def test_skip_machine_contract_rejects_non_official_or_extra_shapes(monkeypatch, argv):
+     monkeypatch.setenv(SKIP_ENV_NAME, SKIP_ENV_VALUE)
+-    validate_requested_skip(["skills", "uninstall", "one-three-one-rule", "--yes"])
+-    require_official_installed_entry(
+-        {"source": "official", "identifier": "official/communication/one-three-one-rule"}
+-    )
+-    with pytest.raises(RuntimeError, match="non-official"):
+-        require_official_installed_entry(
+-            {"source": "github", "identifier": "github/private/one-three-one-rule"}
+-        )
++    with pytest.raises(SystemExit) as exc:
++        validate_requested_skip(argv)
++    assert exc.value.code == 2
+ 
+ 
+ def test_validated_skip_isolation_and_normal_loading(monkeypatch, tmp_path):
+@@ -84,6 +104,6 @@ def test_validated_skip_isolation_and_normal_loading(monkeypatch, tmp_path):
+     calls.clear()
+     env_loader._APPLIED_HOMES.clear()
+     monkeypatch.setenv(SKIP_ENV_NAME, SKIP_ENV_VALUE)
+-    validate_requested_skip(["skills", "list"])
++    validate_requested_skip(["skills", "list", "--json"])
+     env_loader._apply_external_secret_sources(tmp_path)
+     assert calls == []
+diff --git a/tests/hermes_cli/test_skills_machine_contract.py b/tests/hermes_cli/test_skills_machine_contract.py
+new file mode 100644
+index 000000000..b7a84dae4
+--- /dev/null
++++ b/tests/hermes_cli/test_skills_machine_contract.py
+@@ -0,0 +1,326 @@
++from __future__ import annotations
++
++import json
++from pathlib import Path
++
++import pytest
++
++from hermes_cli.secret_source_startup import (
++    SKIP_ENV_NAME, SKIP_ENV_VALUE, validate_requested_skip,
++)
++from hermes_cli.skills_hub import (
++    do_audit, do_catalog, do_inspect, do_list, do_uninstall,
++)
++from tools.skills_hub import HubLockFile
++
++
++IDENTIFIER = "official/communication/one-three-one-rule"
++
++
++@pytest.fixture()
++def profile_home(tmp_path, monkeypatch):
++    root = tmp_path / ".hermes"
++    home = root / "profiles" / "operator-os"
++    home.mkdir(parents=True)
++    monkeypatch.setenv("HOME", str(tmp_path))
++    monkeypatch.setenv("HERMES_HOME", str(home))
++    return home
++
++
++def _payload(capsys):
++    output = capsys.readouterr().out
++    assert output.count("\n") == 1
++    return json.loads(output)
++
++
++def test_official_catalog_is_bounded_deterministic_and_content_minimized(
++    profile_home, capsys
++):
++    outputs = []
++    for _ in range(100):
++        do_catalog(as_json=True)
++        outputs.append(capsys.readouterr().out)
++    assert outputs == [outputs[0]] * 100
++    payload = json.loads(outputs[0])
++    assert payload["contract"] == "hermes.skills.catalog"
++    assert payload["schema_version"] == 2
++    assert payload["profile"] == "operator-os"
++    assert payload["entry_count"] == len(payload["entries"])
++    assert 0 < payload["entry_count"] <= 256
++    assert payload["entries"] == sorted(
++        payload["entries"], key=lambda entry: entry["identifier"]
++    )
++    target = next(
++        entry for entry in payload["entries"] if entry["identifier"] == IDENTIFIER
++    )
++    assert target == {
++        "authority_class": "official_public",
++        "category": "communication",
++        "identifier": IDENTIFIER,
++        "local_fulfillment": True,
++        "name": "one-three-one-rule",
++        "native_trust": "builtin",
++        "official": True,
++        "public": True,
++        "source": "official",
++        "supported_actions": ["install"],
++    }
++    serialized = json.dumps(payload).lower()
++    for forbidden in (
++        "description", "instructions", "prompt", "manifest", "readme",
++        '"path"', '"url"', '"command"', '"environment"', '"credential"',
++        '"content"',
++    ):
++        assert forbidden not in serialized
++
++
++def test_candidate_inspect_is_bounded_deterministic_and_content_free(profile_home, capsys):
++    outputs = []
++    for _ in range(50):
++        do_inspect(IDENTIFIER, as_json=True)
++        outputs.append(capsys.readouterr().out)
++    first = outputs[0]
++    assert outputs == [first] * 50
++    payload = json.loads(first)
++    assert payload == {
++        "contract": "hermes.skills.candidate",
++        "authority_class": "official_public",
++        "identifier": IDENTIFIER,
++        "local_fulfillment": True,
++        "name": "one-three-one-rule",
++        "native_trust": "builtin",
++        "official": True,
++        "prerequisite_classes": ["platform"],
++        "profile": "operator-os",
++        "public": True,
++        "schema_version": 2,
++        "source": "official",
++    }
++    assert "description" not in payload
++    assert "content" not in payload
++
++
++def test_candidate_audit_is_read_only_safe_and_zero_findings(profile_home, capsys):
++    before = sorted(str(path.relative_to(profile_home)) for path in profile_home.rglob("*"))
++    payloads = []
++    for _ in range(50):
++        do_audit(IDENTIFIER, as_json=True)
++        payloads.append(_payload(capsys))
++    payload = payloads[0]
++    assert payloads == [payload] * 50
++    after = sorted(str(path.relative_to(profile_home)) for path in profile_home.rglob("*"))
++    assert before == after
++    assert payload["contract"] == "hermes.skills.audit"
++    assert payload["identifier"] == IDENTIFIER
++    assert payload["profile"] == "operator-os"
++    assert payload["verdict"] == "safe"
++    assert payload["finding_count"] == 0
++
++
++def test_canonical_absence_is_exact_and_does_not_create_hub_state(profile_home, capsys):
++    payloads = []
++    for _ in range(100):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++        payloads.append(_payload(capsys))
++    payload = payloads[0]
++    assert payloads == [payload] * 100
++    assert payload == {
++        "ambiguity_count": 0,
++        "contract": "hermes.skills.installed-state",
++        "exact_match_count": 0,
++        "matches": [],
++        "profile": "operator-os",
++        "same_name_collision_count": 0,
++        "schema_version": 2,
++    }
++    assert not (profile_home / "skills" / ".hub").exists()
++
++
++def test_canonical_exact_official_install_and_collision(profile_home, tmp_path, monkeypatch, capsys):
++    skill_dir = profile_home / "skills" / "communication" / "one-three-one-rule"
++    skill_dir.mkdir(parents=True)
++    (skill_dir / "SKILL.md").write_text("---\nname: one-three-one-rule\n---\n", encoding="utf-8")
++    lock_path = profile_home / "skills" / ".hub" / "lock.json"
++    lock = HubLockFile(lock_path)
++    lock.record_install(
++        name="one-three-one-rule", source="official", identifier=IDENTIFIER,
++        trust_level="builtin", scan_verdict="safe", skill_hash="abc",
++        install_path="communication/one-three-one-rule", files=["SKILL.md"],
++    )
++
++    do_list(as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert payload["exact_match_count"] == 1
++    assert payload["same_name_collision_count"] == 0
++    assert payload["matches"][0]["source"] == "official"
++    assert payload["matches"][0]["native_trust"] == "builtin"
++    assert payload["matches"][0]["authority_class"] == "official_public"
++    assert payload["matches"][0]["official"] is True
++    assert payload["matches"][0]["enabled"] is True
++
++    external = tmp_path / "external"
++    collision = external / "duplicate"
++    collision.mkdir(parents=True)
++    (collision / "SKILL.md").write_text("---\nname: one-three-one-rule\n---\n", encoding="utf-8")
++    import agent.skill_utils as skill_utils
++    monkeypatch.setattr(skill_utils, "get_external_skills_dirs", lambda: [external])
++    with pytest.raises(SystemExit):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++    collided = _payload(capsys)
++    assert collided["error"] == "canonical_ambiguity"
++    assert any(value.startswith("duplicate_name:one-three-one-rule:") for value in collided["ambiguities"])
++
++
++def test_canonical_rejects_duplicate_lock_keys(profile_home, capsys):
++    lock_path = profile_home / "skills" / ".hub" / "lock.json"
++    lock_path.parent.mkdir(parents=True)
++    entry = json.dumps({
++        "source": "official",
++        "identifier": IDENTIFIER,
++        "trust_level": "builtin",
++        "install_path": "communication/one-three-one-rule",
++    })
++    lock_path.write_text(
++        '{"version":1,"installed":{"one-three-one-rule":'
++        + entry + ',"one-three-one-rule":' + entry + '}}',
++        encoding="utf-8",
++    )
++    with pytest.raises(SystemExit):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert payload["error"] == "canonical_ambiguity"
++    assert "duplicate_lock_key:one-three-one-rule" in payload["ambiguities"]
++
++
++def test_canonical_rejects_identifier_alias_and_stale_lock(profile_home, capsys):
++    for name, path in (
++        ("one-three-one-rule", "communication/one-three-one-rule"),
++        ("alias-rule", "communication/alias-rule"),
++    ):
++        skill_dir = profile_home / "skills" / path
++        skill_dir.mkdir(parents=True)
++        (skill_dir / "SKILL.md").write_text(
++            f"---\nname: {name}\n---\n", encoding="utf-8"
++        )
++        HubLockFile(profile_home / "skills" / ".hub" / "lock.json").record_install(
++            name=name, source="official", identifier=IDENTIFIER,
++            trust_level="builtin", scan_verdict="safe", skill_hash="abc",
++            install_path=path, files=["SKILL.md"],
++        )
++    with pytest.raises(SystemExit):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert payload["error"] == "canonical_ambiguity"
++    assert any(value.startswith("duplicate_identifier:") for value in payload["ambiguities"])
++
++    lock = json.loads((profile_home / "skills" / ".hub" / "lock.json").read_text())
++    lock["installed"].pop("alias-rule")
++    lock["installed"]["stale-rule"] = {
++        **lock["installed"]["one-three-one-rule"],
++        "identifier": "official/communication/stale-rule",
++        "install_path": "communication/stale-rule",
++    }
++    (profile_home / "skills" / ".hub" / "lock.json").write_text(
++        json.dumps(lock), encoding="utf-8"
++    )
++    with pytest.raises(SystemExit):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert "stale_lock_only:stale-rule" in payload["ambiguities"]
++
++
++def test_canonical_rejects_lock_path_name_mismatch(profile_home, capsys):
++    skill_dir = profile_home / "skills" / "communication" / "one-three-one-rule"
++    skill_dir.mkdir(parents=True)
++    (skill_dir / "SKILL.md").write_text(
++        "---\nname: different-name\n---\n", encoding="utf-8"
++    )
++    HubLockFile(profile_home / "skills" / ".hub" / "lock.json").record_install(
++        name="one-three-one-rule", source="official", identifier=IDENTIFIER,
++        trust_level="builtin", scan_verdict="safe", skill_hash="abc",
++        install_path="communication/one-three-one-rule", files=["SKILL.md"],
++    )
++    with pytest.raises(SystemExit):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert "path_mismatch:one-three-one-rule" in payload["ambiguities"]
++
++
++def test_canonical_rejects_symlinked_install_path(profile_home, tmp_path, capsys):
++    outside = tmp_path / "outside-skill"
++    outside.mkdir()
++    (outside / "SKILL.md").write_text(
++        "---\nname: one-three-one-rule\n---\n", encoding="utf-8"
++    )
++    skill_dir = profile_home / "skills" / "communication" / "one-three-one-rule"
++    skill_dir.parent.mkdir(parents=True)
++    skill_dir.symlink_to(outside, target_is_directory=True)
++    HubLockFile(profile_home / "skills" / ".hub" / "lock.json").record_install(
++        name="one-three-one-rule", source="official", identifier=IDENTIFIER,
++        trust_level="builtin", scan_verdict="safe", skill_hash="abc",
++        install_path="communication/one-three-one-rule", files=["SKILL.md"],
++    )
++    with pytest.raises(SystemExit):
++        do_list(as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert "path_mismatch:one-three-one-rule" in payload["ambiguities"]
++
++
++def test_governed_uninstall_requires_exact_official_public_authority(
++    profile_home, monkeypatch, capsys
++):
++    skill_dir = profile_home / "skills" / "communication" / "one-three-one-rule"
++    skill_dir.mkdir(parents=True)
++    (skill_dir / "SKILL.md").write_text(
++        "---\nname: one-three-one-rule\n---\n", encoding="utf-8"
++    )
++    lock = HubLockFile(profile_home / "skills" / ".hub" / "lock.json")
++    lock.record_install(
++        name="one-three-one-rule", source="official", identifier=IDENTIFIER,
++        trust_level="builtin", scan_verdict="safe", skill_hash="abc",
++        install_path="communication/one-three-one-rule", files=["SKILL.md"],
++    )
++    monkeypatch.setenv(SKIP_ENV_NAME, SKIP_ENV_VALUE)
++    validate_requested_skip(["skills", "uninstall", IDENTIFIER, "--yes"])
++    do_uninstall(IDENTIFIER, skip_confirm=True)
++    assert not skill_dir.exists()
++    assert lock.get_installed("one-three-one-rule") is None
++    assert "Uninstalled" in capsys.readouterr().out
++
++
++@pytest.mark.parametrize(
++    ("source", "native_trust"),
++    [("github", "community"), ("official", "trusted")],
++)
++def test_governed_uninstall_rejects_unapproved_provenance(
++    profile_home, monkeypatch, source, native_trust
++):
++    skill_dir = profile_home / "skills" / "communication" / "one-three-one-rule"
++    skill_dir.mkdir(parents=True)
++    (skill_dir / "SKILL.md").write_text(
++        "---\nname: one-three-one-rule\n---\n", encoding="utf-8"
++    )
++    lock = HubLockFile(profile_home / "skills" / ".hub" / "lock.json")
++    lock.record_install(
++        name="one-three-one-rule", source=source, identifier=IDENTIFIER,
++        trust_level=native_trust, scan_verdict="safe", skill_hash="abc",
++        install_path="communication/one-three-one-rule", files=["SKILL.md"],
++    )
++    monkeypatch.setenv(SKIP_ENV_NAME, SKIP_ENV_VALUE)
++    validate_requested_skip(["skills", "uninstall", IDENTIFIER, "--yes"])
++    with pytest.raises(RuntimeError, match="non-official"):
++        do_uninstall(IDENTIFIER, skip_confirm=True)
++    assert skill_dir.exists()
++    assert lock.get_installed("one-three-one-rule") is not None
++
++
++def test_machine_modes_fail_closed_on_human_filters(profile_home, capsys):
++    with pytest.raises(SystemExit):
++        do_list(source_filter="hub", as_json=True, identifier_filter=IDENTIFIER)
++    payload = _payload(capsys)
++    assert payload["error"] == "incompatible_json_filter"
++
++    with pytest.raises(SystemExit):
++        do_audit("one-three-one-rule", as_json=True)
++    payload = _payload(capsys)
++    assert payload["error"] == "exact_identifier_required"
+diff --git a/tests/tools/test_skills_hub.py b/tests/tools/test_skills_hub.py
+index b1310e853..9f4530a69 100644
+--- a/tests/tools/test_skills_hub.py
++++ b/tests/tools/test_skills_hub.py
+@@ -2395,6 +2395,52 @@ class TestInstallPathSafety:
+         assert not (skills_dir / "bad-skill" / "leak.txt").exists()
+         assert secret.read_text() == "data exfiltration payload\n"
+ 
++    def test_install_from_quarantine_records_lock_through_aliased_home(self, tmp_path):
++        """Resolved install paths must remain relative to a symlinked home.
++
++        macOS exposes /tmp through /private/tmp, which previously moved the
++        skill and then failed before recording its lock provenance.
++        """
++        import tools.skills_hub as hub
++        from tools.skills_guard import ScanResult
++
++        real_root = tmp_path / "real"
++        real_root.mkdir()
++        alias_root = tmp_path / "alias"
++        try:
++            alias_root.symlink_to(real_root, target_is_directory=True)
++        except (OSError, NotImplementedError):
++            pytest.skip("symlink creation unsupported on this platform")
++        skills_dir = alias_root / "skills"
++        quarantine_root = skills_dir / ".hub" / "quarantine"
++        q_dir = quarantine_root / "pending"
++        q_dir.mkdir(parents=True)
++        content = "---\nname: governed-skill\n---\n"
++        (q_dir / "SKILL.md").write_text(content)
++        bundle = hub.SkillBundle(
++            name="governed-skill",
++            files={"SKILL.md": content},
++            source="official",
++            identifier="official/test/governed-skill",
++            trust_level="builtin",
++        )
++        scan_result = ScanResult(
++            skill_name="governed-skill",
++            source="official",
++            trust_level="builtin",
++            verdict="safe",
++        )
++
++        with patch.object(hub, "SKILLS_DIR", skills_dir), \
++             patch.object(hub, "QUARANTINE_DIR", quarantine_root):
++            installed = hub.install_from_quarantine(
++                q_dir, "governed-skill", "test", bundle, scan_result,
++            )
++            lock = hub.HubLockFile(skills_dir / ".hub" / "lock.json")
++
++        assert installed == real_root / "skills" / "test" / "governed-skill"
++        assert lock.get_installed("governed-skill")["install_path"] == "test/governed-skill"
++
+ 
+ # ---------------------------------------------------------------------------
+ # parallel_search_sources — overall_timeout must be honoured even when a
+diff --git a/tools/skills_hub.py b/tools/skills_hub.py
+index 2db549188..8b176bd79 100644
+--- a/tools/skills_hub.py
++++ b/tools/skills_hub.py
+@@ -3643,7 +3643,7 @@ def install_from_quarantine(
+         trust_level=bundle.trust_level,
+         scan_verdict=scan_result.verdict,
+         skill_hash=content_hash(install_dir),
+-        install_path=str(install_dir.relative_to(_skills_dir())),
++        install_path=str(install_dir.relative_to(_skills_dir().resolve())),
+         files=list(bundle.files.keys()),
+         metadata=bundle.metadata,
+         scan_provenance=scan_provenance or getattr(scan_result, "scan_provenance", None),
+-- 
+2.50.1 (Apple Git-155)
+
