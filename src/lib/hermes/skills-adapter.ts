@@ -20,6 +20,10 @@ import type {
 type Fetch = typeof fetch;
 
 const AUDITED_HERMES_VERSION = "0.19.0";
+const AUDITED_HERMES_SOURCE_REVISION = "9172a354f058aa0feaa6ea9c3b7def799e53bada";
+const HERMES_IDENTITY_SCHEMA = "hermes.cli.identity";
+const HERMES_IDENTITY_SCHEMA_VERSION = 1;
+const HERMES_PUBLIC_SKILLS_SKIP_VALUE = "official-public-skills-v1";
 const SAFE_NAME = /^[a-z][a-z0-9_-]{0,95}$/;
 const SAFE_IDENTIFIER = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*){0,6}$/;
 const MAX_OUTPUT_BYTES = 128 * 1024;
@@ -31,6 +35,9 @@ const HARD_SETTLEMENT_SLACK_MS = 1_000;
 export type HermesCliAuthority = {
   opaqueIdentity: string;
   version: typeof AUDITED_HERMES_VERSION;
+  sourceRevision: typeof AUDITED_HERMES_SOURCE_REVISION;
+  schemaVersion: typeof HERMES_IDENTITY_SCHEMA_VERSION;
+  installationId: string;
 };
 
 export type CliResult = {
@@ -43,7 +50,7 @@ export type CliResult = {
 export type HermesSkillsCli = {
   configured(): boolean;
   inspect(): Promise<HermesCliAuthority>;
-  run(args: readonly string[], options?: { input?: string; timeoutMs?: number; expectedAuthority?: string }): Promise<CliResult>;
+  run(args: readonly string[], options?: { input?: string; timeoutMs?: number; expectedAuthority?: string; skipExternalSecretSources?: boolean }): Promise<CliResult>;
 };
 
 export type HermesSkillsAdapter = {
@@ -148,8 +155,8 @@ function supportedActions(
   return actions;
 }
 
-export function hermesCliChildEnvironment(): NodeJS.ProcessEnv {
-  return {
+export function hermesCliChildEnvironment(skipExternalSecretSources = false): NodeJS.ProcessEnv {
+  const environment: NodeJS.ProcessEnv = {
     NODE_ENV: "production",
     HOME: homedir(),
     PATH: "/usr/bin:/bin:/usr/sbin:/sbin",
@@ -159,12 +166,14 @@ export function hermesCliChildEnvironment(): NodeJS.ProcessEnv {
     NO_COLOR: "1",
     TERM: "dumb",
   };
+  if (skipExternalSecretSources) environment.HERMES_SKIP_EXTERNAL_SECRET_SOURCES = HERMES_PUBLIC_SKILLS_SKIP_VALUE;
+  return environment;
 }
 
 function runBoundedProcess(
   executable: string,
   args: readonly string[],
-  options: { input?: string; timeoutMs: number; terminationGraceMs: number },
+  options: { input?: string; timeoutMs: number; terminationGraceMs: number; skipExternalSecretSources?: boolean },
 ): Promise<CliResult> {
   return new Promise((resolve, reject) => {
     let child;
@@ -172,7 +181,7 @@ function runBoundedProcess(
       child = spawn(executable, [...args], {
         shell: false,
         windowsHide: true,
-        env: hermesCliChildEnvironment(),
+        env: hermesCliChildEnvironment(options.skipExternalSecretSources),
         stdio: ["pipe", "pipe", "pipe"],
       });
     } catch (error) {
@@ -255,6 +264,7 @@ function runBoundedProcess(
 
 export class FixedHermesSkillsCli implements HermesSkillsCli {
   private readonly executablePath: string | null;
+  private readonly approvedStaticIdentities = new Map<string, string>();
 
   constructor(
     executable = process.env.CABINET_HERMES_CLI_PATH?.trim() || null,
@@ -268,7 +278,7 @@ export class FixedHermesSkillsCli implements HermesSkillsCli {
     return Boolean(this.executablePath);
   }
 
-  async inspect(): Promise<HermesCliAuthority> {
+  private async inspectStatic(): Promise<{ resolved: string; staticIdentity: string }> {
     const configured = this.executablePath;
     if (!configured) throw new HermesSkillsAdapterError("unavailable", "An approved Hermes CLI executable is not configured.");
     if (!path.isAbsolute(configured)) throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI executable must be an absolute path.");
@@ -286,53 +296,104 @@ export class FixedHermesSkillsCli implements HermesSkillsCli {
       throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI executable is missing, non-executable, or unexpected.");
     }
 
-    const versionResult = await runBoundedProcess(resolved, ["--version"], {
-      timeoutMs: Math.min(this.defaultTimeoutMs, 15_000),
-      terminationGraceMs: this.terminationGraceMs,
-    });
-    if (versionResult.timedOut || versionResult.exitCode !== 0) {
-      throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI did not report its audited identity.");
-    }
-    const lines = stripAnsi(versionResult.output).split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-    const versionLine = lines.find((line) => line.startsWith("Hermes Agent v"));
-    const installLine = lines.find((line) => line.startsWith("Install directory: "));
-    if (!versionLine || !/^Hermes Agent v0\.19\.0 \(\d{4}\.\d{1,2}\.\d{1,2}\) · upstream [0-9a-f]{8,40}$/.test(versionLine) || !installLine) {
-      throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI is not the audited Hermes Agent 0.19.0 executable.");
-    }
-    const installDirectory = installLine.slice("Install directory: ".length).trim();
-    if (!path.isAbsolute(installDirectory)) throw new HermesSkillsAdapterError("contract_mismatch", "The Hermes CLI reported an unexpected installation identity.");
-    let expectedExecutable: string;
-    try {
-      expectedExecutable = await realpath(path.join(installDirectory, "venv", "bin", "hermes"));
-    } catch {
-      throw new HermesSkillsAdapterError("contract_mismatch", "The Hermes CLI reported an unexpected installation identity.");
-    }
-    if (expectedExecutable !== resolved) throw new HermesSkillsAdapterError("contract_mismatch", "The Hermes CLI target does not match its audited installation identity.");
-
     return {
-      version: AUDITED_HERMES_VERSION,
-      opaqueIdentity: hash(JSON.stringify({
+      resolved,
+      staticIdentity: hash(JSON.stringify({
         resolved,
         device: executableStat.dev.toString(),
         inode: executableStat.ino.toString(),
         size: executableStat.size.toString(),
         modifiedNanoseconds: executableStat.mtimeNs.toString(),
         sha256: hash(executableBytes),
-        versionLine,
       })),
     };
   }
 
-  async run(args: readonly string[], options: { input?: string; timeoutMs?: number; expectedAuthority?: string } = {}): Promise<CliResult> {
-    const authority = await this.inspect();
-    if (!options.expectedAuthority || authority.opaqueIdentity !== options.expectedAuthority) {
+  async inspect(): Promise<HermesCliAuthority> {
+    const staticAuthority = await this.inspectStatic();
+    const versionResult = await runBoundedProcess(staticAuthority.resolved, ["version", "--json"], {
+      timeoutMs: Math.min(Math.max(this.defaultTimeoutMs, 1_000), 3_000),
+      terminationGraceMs: this.terminationGraceMs,
+    });
+    if (versionResult.timedOut || versionResult.exitCode !== 0) {
+      throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI did not report its audited identity.");
+    }
+    let machine: Record<string, unknown>;
+    try {
+      machine = record(JSON.parse(stripAnsi(versionResult.output)));
+    } catch {
+      throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI returned malformed machine identity.");
+    }
+    const installationRoot = typeof machine.installation_root === "string" ? machine.installation_root : "";
+    const entrypoint = typeof machine.entrypoint === "string" ? machine.entrypoint : "";
+    const pythonExecutable = typeof machine.python_executable === "string" ? machine.python_executable : "";
+    const installationId = typeof machine.installation_id === "string" ? machine.installation_id : "";
+    if (
+      machine.schema !== HERMES_IDENTITY_SCHEMA
+      || machine.schema_version !== HERMES_IDENTITY_SCHEMA_VERSION
+      || machine.product !== "Hermes Agent"
+      || machine.version !== AUDITED_HERMES_VERSION
+      || typeof machine.release_date !== "string"
+      || !/^\d{4}\.\d{1,2}\.\d{1,2}$/.test(machine.release_date)
+      || machine.source_revision !== AUDITED_HERMES_SOURCE_REVISION
+      || machine.install_method !== "git"
+      || !path.isAbsolute(installationRoot)
+      || !path.isAbsolute(entrypoint)
+      || !path.isAbsolute(pythonExecutable)
+      || !/^[a-f0-9]{64}$/.test(installationId)
+    ) {
+      throw new HermesSkillsAdapterError("contract_mismatch", "The approved Hermes CLI is not the audited Hermes Agent 0.19.0 executable.");
+    }
+    const sortedIdentityCore = JSON.stringify({
+      entrypoint,
+      install_method: machine.install_method,
+      installation_root: installationRoot,
+      product: machine.product,
+      python_executable: pythonExecutable,
+      release_date: machine.release_date,
+      schema: machine.schema,
+      schema_version: machine.schema_version,
+      source_revision: machine.source_revision,
+      version: machine.version,
+    });
+    if (hash(sortedIdentityCore) !== installationId) throw new HermesSkillsAdapterError("contract_mismatch", "The Hermes CLI reported an invalid installation identity.");
+    let reportedEntrypoint: string;
+    try {
+      reportedEntrypoint = await realpath(entrypoint);
+    } catch {
+      throw new HermesSkillsAdapterError("contract_mismatch", "The Hermes CLI reported an unexpected installation identity.");
+    }
+    const relativeEntrypoint = path.relative(installationRoot, staticAuthority.resolved);
+    if (reportedEntrypoint !== staticAuthority.resolved || relativeEntrypoint === ".." || relativeEntrypoint.startsWith(`..${path.sep}`)) {
+      throw new HermesSkillsAdapterError("contract_mismatch", "The Hermes CLI target does not match its audited installation identity.");
+    }
+
+    const authority: HermesCliAuthority = {
+      version: AUDITED_HERMES_VERSION,
+      sourceRevision: AUDITED_HERMES_SOURCE_REVISION,
+      schemaVersion: HERMES_IDENTITY_SCHEMA_VERSION,
+      installationId,
+      opaqueIdentity: hash(JSON.stringify({
+        staticIdentity: staticAuthority.staticIdentity,
+        machineIdentity: machine,
+      })),
+    };
+    this.approvedStaticIdentities.clear();
+    this.approvedStaticIdentities.set(authority.opaqueIdentity, staticAuthority.staticIdentity);
+    return authority;
+  }
+
+  async run(args: readonly string[], options: { input?: string; timeoutMs?: number; expectedAuthority?: string; skipExternalSecretSources?: boolean } = {}): Promise<CliResult> {
+    const expectedStatic = options.expectedAuthority ? this.approvedStaticIdentities.get(options.expectedAuthority) : null;
+    const staticAuthority = await this.inspectStatic();
+    if (!expectedStatic || staticAuthority.staticIdentity !== expectedStatic) {
       throw new HermesSkillsAdapterError("contract_mismatch", "The audited Hermes CLI identity changed before dispatch.");
     }
-    const executable = await realpath(this.executablePath as string);
-    return runBoundedProcess(executable, args, {
+    return runBoundedProcess(staticAuthority.resolved, args, {
       input: options.input,
       timeoutMs: options.timeoutMs ?? this.defaultTimeoutMs,
       terminationGraceMs: this.terminationGraceMs,
+      skipExternalSecretSources: options.skipExternalSecretSources,
     });
   }
 }
@@ -547,12 +608,22 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
 
   private operations(cliConfigured: boolean): HermesSkillsSnapshot["operations"] {
     return {
-      install: { supported: cliConfigured, interface: cliConfigured ? "audited absolute Hermes CLI: skills install <identifier> --yes" : "Unavailable", note: cliConfigured ? "Requires exact Agent, candidate, and CLI authority before dispatch." : "Configure CABINET_HERMES_CLI_PATH server-side to authorize this operation." },
+      install: { supported: cliConfigured, interface: cliConfigured ? "audited absolute Hermes CLI: skills install <identifier> --yes" : "Unavailable", note: cliConfigured ? "Requires exact Agent, candidate, and CLI authority before dispatch." : "The installed Hermes CLI management contract is not approved." },
       enable: { supported: true, interface: "PUT /api/skills/toggle", note: "Profile-scoped Hermes activation state." },
       disable: { supported: true, interface: "PUT /api/skills/toggle", note: "Profile-scoped Hermes activation state." },
       update: { supported: false, interface: "Audit only", note: "Hermes Agent 0.19.0 does not provide exact structured target-specific update readback." },
-      remove: { supported: cliConfigured, interface: cliConfigured ? "audited absolute Hermes CLI: skills uninstall <name>" : "Unavailable", note: cliConfigured ? "Requires exact hub identity and exact 0.19.0 executable identity." : "Configure CABINET_HERMES_CLI_PATH server-side to authorize this operation." },
+      remove: { supported: cliConfigured, interface: cliConfigured ? "audited absolute Hermes CLI: skills uninstall <name>" : "Unavailable", note: cliConfigured ? "Requires exact hub identity and exact 0.19.0 executable identity." : "The installed Hermes CLI management contract is not approved." },
     };
+  }
+
+  private async cliManagementAvailable(): Promise<boolean> {
+    if (!this.cli.configured()) return false;
+    try {
+      await this.cli.inspect();
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async discoverCatalog(query = ""): Promise<HermesSkillsSnapshot> {
@@ -560,7 +631,7 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
     const canonical = await this.readCanonicalInstalledState(profile);
     const normalizedQuery = safeLabel(query, 80) ?? "";
     const profileParam = encodeURIComponent(profile);
-    const cliConfigured = this.cli.configured();
+    const cliConfigured = await this.cliManagementAvailable();
     let catalogRaw: unknown;
     try {
       const path = normalizedQuery
@@ -580,7 +651,10 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
         summary: `${canonical.summary} Catalog discovery is unavailable; canonical installed state remains available.`,
         interface: "Hermes Agent 0.19.0 authenticated API",
         operations: this.operations(cliConfigured),
-        installed: canonical.installed,
+        installed: canonical.installed.map((skill) => ({
+          ...skill,
+          supportedActions: supportedActions(skill, cliConfigured),
+        })),
         available: [],
         duplicateIdentities: canonical.duplicateIdentities,
       };
@@ -735,9 +809,16 @@ export class HermesSkillsAgentAdapter implements HermesSkillsAdapter {
     } else {
       throw new HermesSkillsAdapterError("dispatch_failed", "This Hermes skill operation is unsupported.");
     }
+    const exactHubIdentifier = operation.action === "install"
+      ? operation.targetIdentity
+      : operation.targetIdentity.split(":hub:")[1] ?? "";
+    if (operation.skipExternalSecretSources && !exactHubIdentifier.startsWith("official/")) {
+      throw new HermesSkillsAdapterError("contract_mismatch", "External secret-source isolation is unavailable for this skill source.");
+    }
     const result = await this.cli.run(args, {
       input: operation.action === "remove" ? "yes\n" : undefined,
       expectedAuthority: authority.cliAuthorityIdentity,
+      skipExternalSecretSources: operation.skipExternalSecretSources,
     });
     if (result.timedOut || result.forcedTermination) throw new HermesSkillsAdapterError("timeout", "Hermes did not report a final operation result before timeout.", true, false);
     if (result.exitCode !== 0) throw new HermesSkillsAdapterError("invalid_response", "Hermes reported a non-successful operation result.", true, true);

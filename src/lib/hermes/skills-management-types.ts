@@ -95,6 +95,7 @@ export type HermesSkillOperation = {
   targetName: string;
   profile: string;
   reason: string;
+  skipExternalSecretSources: boolean;
 };
 
 export type HermesSkillsManagementPreview = {

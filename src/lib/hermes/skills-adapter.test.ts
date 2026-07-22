@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { chmod, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -26,7 +27,13 @@ const config: HermesReadOnlyServerConfig = {
   sourceStates: { agent_api: "ready_to_probe", management: "unavailable", gateway: "unavailable" },
 };
 
-const authority: HermesCliAuthority = { opaqueIdentity: "a".repeat(64), version: "0.19.0" };
+const authority: HermesCliAuthority = {
+  opaqueIdentity: "a".repeat(64),
+  version: "0.19.0",
+  sourceRevision: "9172a354f058aa0feaa6ea9c3b7def799e53bada",
+  schemaVersion: 1,
+  installationId: "b".repeat(64),
+};
 
 function response(value: unknown, status = 200): Response {
   return new Response(JSON.stringify(value), { status, headers: { "Content-Type": "application/json" } });
@@ -121,6 +128,37 @@ test("without an explicit CLI path only API-backed enable and disable are operat
   assert.equal(snapshot.operations.update.supported, false);
   assert.equal(snapshot.operations.enable.supported, true);
   assert.deepEqual(snapshot.available[0].supportedActions, []);
+  assert.deepEqual(snapshot.installed[0].supportedActions, ["disable"]);
+});
+
+test("configured but unapproved CLI contract keeps install and removal unavailable", async () => {
+  const fetchImpl = contractFetch(async (url) => {
+    if (url.includes("/api/skills?")) return response([]);
+    if (url.includes("/api/skills/hub/sources")) return response({ installed: {}, featured: [] });
+    throw new Error(`Unexpected URL ${url}`);
+  });
+  const adapter = new HermesSkillsAgentAdapter(config, fetchImpl, cli({
+    inspect: async () => { throw new HermesSkillsAdapterError("contract_mismatch", "unapproved"); },
+  }));
+  const snapshot = await adapter.discoverCatalog();
+  assert.equal(snapshot.operations.install.supported, false);
+  assert.equal(snapshot.operations.remove.supported, false);
+  assert.match(snapshot.operations.install.note, /not approved/i);
+});
+
+test("catalog failure does not expose removal through an unapproved CLI contract", async () => {
+  const fetchImpl = contractFetch((url, init) => {
+    if (url.includes("/api/skills?")) {
+      return response([{ name: "safe-skill", enabled: true, provenance: "hub", source: "official" }]);
+    }
+    if (url.includes("/api/skills/hub/sources")) return waitForAbort(init);
+    throw new Error(`Unexpected URL ${url}`);
+  });
+  const adapter = new HermesSkillsAgentAdapter(config, fetchImpl, cli({
+    inspect: async () => { throw new HermesSkillsAdapterError("contract_mismatch", "unapproved"); },
+  }), fastPolicies);
+  const snapshot = await adapter.discoverCatalog();
+  assert.equal(snapshot.operations.remove.supported, false);
   assert.deepEqual(snapshot.installed[0].supportedActions, ["disable"]);
 });
 
@@ -230,13 +268,13 @@ test("exact candidate inspection binds preview and scan to one full identifier w
 });
 
 test("uses only fixed Hermes argument arrays for install and exact removal; Update remains audit-only", async () => {
-  const calls: Array<{ args: readonly string[]; input?: string; expectedAuthority?: string }> = [];
+  const calls: Array<{ args: readonly string[]; input?: string; expectedAuthority?: string; skipExternalSecretSources?: boolean }> = [];
   let cliInspections = 0;
   let contractChecks = 0;
   const fakeCli = cli({
     inspect: async () => { cliInspections += 1; return authority; },
     run: async (args, options) => {
-      calls.push({ args, input: options?.input, expectedAuthority: options?.expectedAuthority });
+      calls.push({ args, input: options?.input, expectedAuthority: options?.expectedAuthority, skipExternalSecretSources: options?.skipExternalSecretSources });
       return { exitCode: 0, timedOut: false, forcedTermination: false, output: "token=must-not-egress" };
     },
   });
@@ -248,13 +286,13 @@ test("uses only fixed Hermes argument arrays for install and exact removal; Upda
     return response({ ok: true });
   }, fakeCli);
   const installAuthority = await adapter.inspectExecutionAuthority("install", "operator-os");
-  await adapter.execute({ action: "install", targetIdentity: "official/productivity/installable", targetName: "installable", profile: "operator-os", reason: "test reason" }, installAuthority);
+  await adapter.execute({ action: "install", targetIdentity: "official/productivity/installable", targetName: "installable", profile: "operator-os", reason: "test reason", skipExternalSecretSources: true }, installAuthority);
   const removeAuthority = await adapter.inspectExecutionAuthority("remove", "operator-os");
-  await adapter.execute({ action: "remove", targetIdentity: "operator-os:hub:official/productivity/safe-skill", targetName: "safe-skill", profile: "operator-os", reason: "test reason" }, removeAuthority);
+  await adapter.execute({ action: "remove", targetIdentity: "operator-os:hub:official/productivity/safe-skill", targetName: "safe-skill", profile: "operator-os", reason: "test reason", skipExternalSecretSources: true }, removeAuthority);
   await assert.rejects(() => adapter.inspectExecutionAuthority("update", "operator-os"), /audit-only/i);
   assert.deepEqual(calls, [
-    { args: ["-p", "operator-os", "skills", "install", "official/productivity/installable", "--yes"], input: undefined, expectedAuthority: authority.opaqueIdentity },
-    { args: ["-p", "operator-os", "skills", "uninstall", "safe-skill"], input: "yes\n", expectedAuthority: authority.opaqueIdentity },
+    { args: ["-p", "operator-os", "skills", "install", "official/productivity/installable", "--yes"], input: undefined, expectedAuthority: authority.opaqueIdentity, skipExternalSecretSources: true },
+    { args: ["-p", "operator-os", "skills", "uninstall", "safe-skill"], input: "yes\n", expectedAuthority: authority.opaqueIdentity, skipExternalSecretSources: true },
   ]);
   assert.equal(contractChecks, 2, "each prepared authority check reads the Agent contract once");
   assert.equal(cliInspections, 2, "each prepared authority check inspects the CLI once");
@@ -264,7 +302,7 @@ test("enable and disable use the exact authenticated Agent API toggle contract",
   const requests: Array<{ url: string; init?: RequestInit }> = [];
   const adapter = new HermesSkillsAgentAdapter(config, contractFetch(async (url, init) => { requests.push({ url, init }); return response({ ok: true }); }), cli({ run: async () => { throw new Error("CLI must not run"); } }));
   const executionAuthority = await adapter.inspectExecutionAuthority("disable", "operator-os");
-  await adapter.execute({ action: "disable", targetIdentity: "operator-os:hub:official/productivity/safe-skill", targetName: "safe-skill", profile: "operator-os", reason: "test reason" }, executionAuthority);
+  await adapter.execute({ action: "disable", targetIdentity: "operator-os:hub:official/productivity/safe-skill", targetName: "safe-skill", profile: "operator-os", reason: "test reason", skipExternalSecretSources: false }, executionAuthority);
   const toggle = requests.find((request) => request.url.includes("/api/skills/toggle"));
   assert.equal(toggle?.url, "http://127.0.0.1:61921/api/skills/toggle?profile=operator-os");
   assert.equal(toggle?.init?.method, "PUT");
@@ -275,8 +313,17 @@ test("CLI output and process failures never cross the adapter boundary", async (
   const adapter = new HermesSkillsAgentAdapter(config, contractFetch(async () => response({})), cli({ run: async () => ({ exitCode: 9, timedOut: false, forcedTermination: false, output: "Authorization: Bearer secret-value /Users/private/.env" }) }));
   const executionAuthority = await adapter.inspectExecutionAuthority("remove", "operator-os");
   await assert.rejects(
-    () => adapter.execute({ action: "remove", targetIdentity: "operator-os:hub:official/productivity/safe-skill", targetName: "safe-skill", profile: "operator-os", reason: "test reason" }, executionAuthority),
+    () => adapter.execute({ action: "remove", targetIdentity: "operator-os:hub:official/productivity/safe-skill", targetName: "safe-skill", profile: "operator-os", reason: "test reason", skipExternalSecretSources: true }, executionAuthority),
     (error: unknown) => error instanceof Error && !error.message.includes("secret-value") && !error.message.includes("/Users/private"),
+  );
+});
+
+test("private candidate execution cannot request external secret-source isolation", async () => {
+  const adapter = new HermesSkillsAgentAdapter(config, contractFetch(async () => response({})), cli({ run: async () => { throw new Error("CLI must not run"); } }));
+  const executionAuthority = await adapter.inspectExecutionAuthority("install", "operator-os");
+  await assert.rejects(
+    () => adapter.execute({ action: "install", targetIdentity: "github/private/skill", targetName: "skill", profile: "operator-os", reason: "test reason", skipExternalSecretSources: true }, executionAuthority),
+    /isolation is unavailable/i,
   );
 });
 
@@ -287,7 +334,22 @@ async function fakeHermesExecutable(body: string): Promise<{ root: string; execu
   await mkdir(bin, { recursive: true });
   const executable = path.join(bin, "hermes");
   const pidFile = path.join(root, "child.pid");
-  const source = `#!/bin/sh\nif [ "$1" = "--version" ]; then\n  echo "Hermes Agent v0.19.0 (2026.7.20) · upstream 0c33db05"\n  echo "Install directory: ${install}"\n  exit 0\nfi\n${body}\n`;
+  const resolvedInstall = await realpath(install);
+  const resolvedExecutable = path.join(resolvedInstall, "venv", "bin", "hermes");
+  const identityCore = {
+    entrypoint: resolvedExecutable,
+    install_method: "git",
+    installation_root: resolvedInstall,
+    product: "Hermes Agent",
+    python_executable: "/usr/bin/python3",
+    release_date: "2026.7.20",
+    schema: "hermes.cli.identity",
+    schema_version: 1,
+    source_revision: "9172a354f058aa0feaa6ea9c3b7def799e53bada",
+    version: "0.19.0",
+  };
+  const identity = { ...identityCore, installation_id: createHash("sha256").update(JSON.stringify(identityCore)).digest("hex") };
+  const source = `#!/bin/sh\nif [ "$1" = "version" ] && [ "$2" = "--json" ]; then\n  printf '%s\\n' '${JSON.stringify(identity)}'\n  exit 0\nfi\n${body}\n`;
   await writeFile(executable, source, { mode: 0o755 });
   await chmod(executable, 0o755);
   return { root, executable, pidFile };
@@ -304,6 +366,26 @@ test("fixed CLI requires an absolute executable and detects a changed target", a
     await assert.rejects(() => fixed.run(["skills", "list"], { expectedAuthority: inspected.opaqueIdentity }), /identity changed/i);
   } finally {
     await rm(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test("fixed CLI blocks malformed identity and a changed Hermes source revision", async () => {
+  const malformed = await fakeHermesExecutable("echo ok");
+  try {
+    const source = await readFile(malformed.executable, "utf8");
+    await writeFile(malformed.executable, source.replace(/\{\"entrypoint\"[^']+/, "{"), { mode: 0o755 });
+    await assert.rejects(() => new FixedHermesSkillsCli(malformed.executable, 1_000, 50).inspect(), /malformed machine identity/i);
+  } finally {
+    await rm(malformed.root, { recursive: true, force: true });
+  }
+
+  const changed = await fakeHermesExecutable("echo ok");
+  try {
+    const source = await readFile(changed.executable, "utf8");
+    await writeFile(changed.executable, source.replaceAll("9172a354f058aa0feaa6ea9c3b7def799e53bada", "0c33db0564597ac8e392e710555b0bddec5cdd1f"), { mode: 0o755 });
+    await assert.rejects(() => new FixedHermesSkillsCli(changed.executable, 1_000, 50).inspect(), /not the audited Hermes Agent/i);
+  } finally {
+    await rm(changed.root, { recursive: true, force: true });
   }
 });
 
@@ -343,8 +425,8 @@ test("hard process timeout escalates from SIGTERM to SIGKILL and reaps an ignori
   try {
     const source = await readFile(fixture.executable, "utf8");
     await writeFile(fixture.executable, source.replace("exit 1", () => `echo $$ > "${fixture.pidFile}"\ntrap '' TERM\nwhile :; do :; done`), { mode: 0o755 });
-    const inspected = await new FixedHermesSkillsCli(fixture.executable, 1_000, 80).inspect();
     const fixed = new FixedHermesSkillsCli(fixture.executable, 250, 80);
+    const inspected = await fixed.inspect();
     const startedAt = Date.now();
     const result = await fixed.run(["skills", "list"], { expectedAuthority: inspected.opaqueIdentity });
     assert.equal(result.timedOut, true);

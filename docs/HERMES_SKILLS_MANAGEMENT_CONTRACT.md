@@ -14,6 +14,7 @@ requires canonical Hermes readback before claiming success.
 | List hub sources | `GET /api/skills/hub/sources?profile=<profile>` | Operational |
 | Search catalog | `GET /api/skills/hub/search?q=<query>&source=all&limit=50&profile=<profile>` | Operational |
 | Inspect exact candidate | `GET /api/skills/hub/preview?identifier=<identifier>&profile=<profile>` plus exact `GET /api/skills/hub/scan` | Required for an exact hub target; content and findings never egress |
+| Machine identity | `<approved-cli> version --json`, schema `hermes.cli.identity` v1 | Required for CLI-backed operations |
 | Install | `<approved-cli> -p <profile> skills install <identifier> --yes` | Operational only with approved CLI authority |
 | Enable or disable | `PUT /api/skills/toggle?profile=<profile>` with `{name, enabled, profile}` | Operational |
 | Remove | `<approved-cli> -p <profile> skills uninstall <name>` with fixed `yes\n` input | Operational only for an exact installed hub identity and approved CLI authority |
@@ -66,12 +67,13 @@ commit authority check:
 - resolves symlinks and requires a regular executable file no larger than the
   bounded executable limit;
 - hashes the executable bytes and binds device, inode, size, nanosecond mtime,
-  resolved path, and version line into an opaque authority identity;
+  resolved path, and machine identity into an opaque authority identity;
 - runs only the resolved executable with `shell: false` and fixed argument
   arrays;
-- requires the exact `Hermes Agent v0.19.0 (...) · upstream <commit>` version
-  shape and requires the reported install directory to resolve back to that
-  executable;
+- requires `hermes.cli.identity` schema version 1, Hermes Agent 0.19.0,
+  companion source revision `9172a354f058aa0feaa6ea9c3b7def799e53bada`,
+  a valid self-hashed installation identity, and an installation root and
+  entrypoint that resolve back to the configured executable;
 - rejects a missing, non-executable, unexpected, replaced, or changed target;
 - passes a minimal fixed environment with only production mode, home, a fixed
   system path, locale, noninteractive, no-color, and terminal settings;
@@ -79,11 +81,34 @@ commit authority check:
   the operation deadline, escalates to `SIGKILL` after the grace period, and
   settles after the child closes and is reaped.
 
+The machine identity command runs before Hermes profile, dotenv, plugin,
+logging, update-check, network, and external secret-source startup. Immediately
+before mutation dispatch, Cabinet repeats only the static file identity check,
+then invokes the exact executable once for the fixed Skills operation.
+
 The API authority is separately bound to exact Agent API version 0.19.0 and the
 configured profile. Prepare records an opaque action authority; commit
 reauthorizes and rejects any change before dispatch. The fixed CLI runner makes
 one final executable-identity comparison immediately before spawning and does
 not repeat the Agent contract check.
+
+## Public Skills secret-source isolation
+
+The companion Hermes patch accepts the exact server-controlled value
+`HERMES_SKIP_EXTERNAL_SECRET_SOURCES=official-public-skills-v1` only for these
+command shapes: local installed-state `skills list`, local `skills audit`,
+official `skills inspect`, official `skills install`, and an uninstall whose
+canonical hub lock entry proves official provenance. Chat, gateway, model,
+provider, authentication, search, private sources, and every other command are
+rejected when that value is present.
+
+Cabinet sets the value only after the exact candidate is official, has builtin
+or official trust, has safe scan and allow policy with zero findings, and has
+no declared credential, account, network, environment, or external-command
+prerequisite. Ordinary profile configuration, dotenv, managed scope, skill
+scanning, and governed policy still run. Only external secret-source
+application is skipped. Candidates that do not satisfy the proof run with
+normal Hermes secret loading or remain unavailable.
 
 ## Identity and provenance
 

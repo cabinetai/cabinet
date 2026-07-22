@@ -131,6 +131,19 @@ function candidateTarget(candidate: HermesExactSkillCandidate, profile: string):
   };
 }
 
+function candidateAllowsSecretSourceSkip(candidate: HermesExactSkillCandidate | null): boolean {
+  return Boolean(
+    candidate
+    && candidate.identifier.startsWith("official/")
+    && candidate.source === "official"
+    && (candidate.trust === "builtin" || candidate.trust === "official")
+    && candidate.prerequisiteClassification === "none_declared"
+    && candidate.installPolicy === "allow"
+    && candidate.scanVerdict === "safe"
+    && candidate.findingCount === 0,
+  );
+}
+
 function canonicalTarget(state: HermesCanonicalSkillsState, identity: string, candidate: HermesExactSkillCandidate | null): HermesManagedSkill | null {
   if (!candidate) return state.installed.find((skill) => skill.identity === identity) ?? null;
   const matches = state.installed.filter((skill) => skill.profile === state.profile && skill.name === candidate.name && skill.provenance === "hub");
@@ -404,6 +417,7 @@ export class HermesSkillsManagementService {
       targetName: stored.public.targetName,
       profile: stored.public.profile,
       reason: stored.public.reason,
+      skipExternalSecretSources: candidateAllowsSecretSourceSkip(candidate),
     };
     let responseReceived = false;
     try {
