@@ -5,6 +5,23 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const LOOPBACK = "127.0.0.1";
+const SHUTDOWN_GRACE_MS = 10_000;
+
+function requireFile(filePath, message) {
+  try {
+    if (!fs.statSync(filePath).isFile()) throw new Error();
+  } catch {
+    throw new Error(message);
+  }
+}
+
+function requireDirectory(directoryPath, message) {
+  try {
+    if (!fs.statSync(directoryPath).isDirectory()) throw new Error();
+  } catch {
+    throw new Error(message);
+  }
+}
 
 export function validateSupervisedEnvironment(env, runtimeRoot) {
   const required = [
@@ -39,10 +56,19 @@ export function validateSupervisedEnvironment(env, runtimeRoot) {
     throw new Error("Supervised Cabinet PORT must be an integer from 1024 to 65535");
   }
   const server = path.join(runtimeRoot, ".next", "standalone", "server.js");
-  if (!fs.statSync(server).isFile()) throw new Error("Cabinet production build is missing");
-  if (!fs.statSync(env.CABINET_DATA_DIR).isDirectory()) throw new Error("Cabinet data directory is unavailable");
-  fs.accessSync(env.CABINET_HERMES_EXECUTION_CLI_PATH, fs.constants.X_OK);
-  const envInfo = fs.lstatSync(env.CABINET_ENV_FILE);
+  requireFile(server, "Cabinet production build is missing");
+  requireDirectory(env.CABINET_DATA_DIR, "Cabinet data directory is unavailable");
+  try {
+    fs.accessSync(env.CABINET_HERMES_EXECUTION_CLI_PATH, fs.constants.X_OK);
+  } catch {
+    throw new Error("Hermes execution CLI is unavailable");
+  }
+  let envInfo;
+  try {
+    envInfo = fs.lstatSync(env.CABINET_ENV_FILE);
+  } catch {
+    throw new Error("Cabinet environment file is unavailable");
+  }
   if (!envInfo.isFile() || envInfo.isSymbolicLink()) throw new Error("Cabinet environment file must be a regular file");
   if (typeof process.getuid === "function" && envInfo.uid !== process.getuid()) throw new Error("Cabinet environment file must be user-owned");
   if ((envInfo.mode & 0o077) !== 0) throw new Error("Cabinet environment file must be owner-only");
@@ -68,19 +94,60 @@ async function main() {
     shell: false,
     stdio: "inherit",
   });
-  const forward = (signal) => {
-    if (child.exitCode === null) child.kill(signal);
+
+  let finished = false;
+  let shutdownTimer;
+  const signalHandlers = new Map();
+  const removeSignalHandlers = () => {
+    for (const [signal, handler] of signalHandlers) {
+      process.removeListener(signal, handler);
+    }
   };
-  process.once("SIGTERM", () => forward("SIGTERM"));
-  process.once("SIGINT", () => forward("SIGINT"));
-  child.once("error", () => { process.exitCode = 1; });
+  const finish = (code, signal) => {
+    if (finished) return;
+    finished = true;
+    if (shutdownTimer) clearTimeout(shutdownTimer);
+    removeSignalHandlers();
+    if (signal) {
+      try {
+        process.kill(process.pid, signal);
+        return;
+      } catch {
+        process.exit(1);
+      }
+    }
+    process.exit(code ?? 1);
+  };
+  const forward = (signal) => {
+    if (finished || child.exitCode !== null || child.signalCode !== null) return;
+    child.kill(signal);
+    if (!shutdownTimer) {
+      shutdownTimer = setTimeout(() => {
+        if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL");
+      }, SHUTDOWN_GRACE_MS);
+    }
+  };
+  for (const signal of ["SIGTERM", "SIGINT"]) {
+    const handler = () => forward(signal);
+    signalHandlers.set(signal, handler);
+    process.once(signal, handler);
+  }
+  child.once("error", () => finish(1, null));
   child.once("exit", (code, signal) => {
-    if (signal) process.kill(process.pid, signal);
-    else process.exitCode = code ?? 1;
+    finish(code, signal);
   });
 }
 
-if (fileURLToPath(import.meta.url) === path.resolve(process.argv[1] || "")) {
+function isMainModule() {
+  if (!process.argv[1]) return false;
+  try {
+    return fs.realpathSync(fileURLToPath(import.meta.url)) === fs.realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : "Cabinet supervised startup failed");
     process.exitCode = 1;
