@@ -15,14 +15,18 @@ import {
   writeAcceptanceArtifacts,
 } from "./recorder";
 import { discoverRouteManifest } from "./route-discovery";
-import { TRANSPORT_TOKEN, selectTransport } from "./transport";
+import {
+  TRANSPORT_TOKEN,
+  selectTransport,
+  type AcceptanceConversation,
+} from "./transport";
 
 test.describe.configure({ mode: "serial" });
 test.setTimeout(600_000);
 
 const CHECK_TIMEOUT_MS = 45_000;
 const INTERACTION_TIMEOUT_MS = 15_000;
-const appPort = Number(process.env.CABINET_ACCEPTANCE_PORT ?? 4304);
+const appPort = Number(process.env.CABINET_ACCEPTANCE_PORT ?? 4325);
 const repoRoot = process.cwd();
 const acceptanceBaseRef = process.env.CABINET_ACCEPTANCE_BASE_REVISION ?? "origin/main";
 const acceptanceBaseRevision = execFileSync("git", ["rev-parse", acceptanceBaseRef], {
@@ -49,6 +53,7 @@ const projection = buildHermesAcceptanceFixtureProjection({
 let cabinet: IsolatedCabinet;
 let routes: RouteChecklistEntry[] = [];
 let controlledRestartInProgress = false;
+let providerGateConversation: AcceptanceConversation | null = null;
 
 function addCheck(
   id: string,
@@ -342,7 +347,65 @@ test.afterAll(async () => {
   await cabinet?.close();
 });
 
+test("two-turn provider gate", async () => {
+  providerGateConversation = await observed(
+    transport.sendsLiveModelMessages
+      ? "live-two-turn-contract"
+      : "fixture-two-turn-contract",
+    "conversation",
+    async () => {
+      const result = await transport.runTwoTurnContract(
+        cabinet,
+        (evidence) => recorder.recordConversationPersistence(evidence),
+      );
+      expect(result.firstResponse).toBe(TRANSPORT_TOKEN);
+      expect(result.secondResponse).toBe(TRANSPORT_TOKEN);
+      expect(result.sameSession).toBe(true);
+      expect(result.userTurns).toBe(2);
+      expect(result.completedAssistantTurns).toBe(2);
+      if (transport.sendsLiveModelMessages) expect(result.cabinetRestart).toBe(true);
+      return result;
+    },
+    (result) =>
+      `${transport.id} returned the exact token twice with two user and two completed assistant turns` +
+      `${result.cabinetRestart ? " across a Cabinet restart" : ""}.`,
+    (error) => `Two-turn provider gate failed: ${String(error)}`,
+    {
+      id: "live-two-turn-contract-failed",
+      reproduction: [
+        "Dispatch the bounded initial acceptance message once.",
+        "Continue the persisted native session once.",
+        "Verify the same session after the isolated Cabinet restart.",
+      ],
+      ownerHint: "ACP provider/model resolution",
+    },
+    300_000,
+  );
+  if (!transport.sendsLiveModelMessages) {
+    addCheck(
+      "live-two-turn-contract",
+      "conversation",
+      "blocked",
+      "No live transport was selected; zero live model messages were sent.",
+    );
+  }
+});
+
 test("authoritative isolated production acceptance", async ({ page }) => {
+  if (!providerGateConversation) {
+    for (const route of routes) {
+      route.exercised = false;
+      route.status = "not_run";
+      route.note = "NOT_RUN because the two-turn provider gate did not pass.";
+    }
+    notRun(
+      "full-route-harness",
+      "routes",
+      "NOT_RUN because the two-turn provider gate did not pass; no additional conversation or model call was made.",
+    );
+    return;
+  }
+
   await installPageObservation(page);
   await page.setViewportSize({ width: 1440, height: 900 });
 
@@ -767,47 +830,7 @@ test("authoritative isolated production acceptance", async ({ page }) => {
   );
   await screenshot(page, "developer-diagnostics", "/hermes?mode=developer", "48 diagnostic rows");
 
-  const conversation = await observed(
-    transport.sendsLiveModelMessages
-      ? "live-two-turn-contract"
-      : "fixture-two-turn-contract",
-    "conversation",
-    async () => {
-      const result = await transport.runTwoTurnContract(
-        cabinet,
-        (evidence) => recorder.recordConversationPersistence(evidence),
-      );
-      expect(result.firstResponse).toBe(TRANSPORT_TOKEN);
-      expect(result.secondResponse).toBe(TRANSPORT_TOKEN);
-      expect(result.sameSession).toBe(true);
-      expect(result.userTurns).toBe(2);
-      expect(result.completedAssistantTurns).toBe(2);
-      if (transport.sendsLiveModelMessages) expect(result.cabinetRestart).toBe(true);
-      return result;
-    },
-    (result) =>
-      `${transport.id} returned the exact token twice with two user and two completed assistant turns` +
-      `${result.cabinetRestart ? " across a Cabinet restart" : ""}.`,
-    (error) => `Two-turn transport contract failed: ${String(error)}`,
-    {
-      id: "live-two-turn-contract-failed",
-      reproduction: [
-        "Dispatch the bounded initial acceptance message once.",
-        "Continue the persisted native session once.",
-        "Verify the same session after the isolated Cabinet restart.",
-      ],
-      ownerHint: "ACP production parity",
-    },
-    300_000,
-  );
-  if (!transport.sendsLiveModelMessages) {
-    addCheck(
-      "live-two-turn-contract",
-      "conversation",
-      "blocked",
-      "No live transport was selected; zero live model messages were sent.",
-    );
-  }
+  const conversation = providerGateConversation;
 
   if (conversation && transport.sendsLiveModelMessages) {
     await observed(

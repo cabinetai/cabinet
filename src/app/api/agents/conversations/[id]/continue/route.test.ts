@@ -60,7 +60,7 @@ test("concurrent Hermes continue requests claim one durable prompt and never exp
         endpoint_class: "local",
         ready: true,
         blocked_reason: null,
-        accounting: {
+        attempts: {
           model_requests_attempted: 0,
           provider_retries: 0,
           fallback_attempts: 0,

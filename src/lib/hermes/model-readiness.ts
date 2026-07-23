@@ -20,7 +20,7 @@ export type HermesModelReadiness = {
   endpoint_class: "local" | "provider" | "proxy" | "unknown";
   ready: boolean;
   blocked_reason: string | null;
-  accounting: {
+  attempts: {
     model_requests_attempted: number;
     provider_retries: number;
     fallback_attempts: number;
@@ -69,12 +69,12 @@ export function parseHermesModelReadiness(
   expectedProfile: string,
 ): HermesModelReadiness {
   const raw = record(value);
-  const accounting = record(raw?.accounting);
+  const attempts = record(raw?.attempts);
   if (
     !raw ||
     raw.contract !== READINESS_CONTRACT ||
     raw.schema_version !== READINESS_SCHEMA_VERSION ||
-    !accounting
+    !attempts
   ) {
     throw blocked("Hermes returned an unsupported model-readiness contract.");
   }
@@ -88,12 +88,12 @@ export function parseHermesModelReadiness(
   const blockedReason = raw.blocked_reason === null
     ? null
     : boundedString(raw.blocked_reason, 240);
-  const modelRequests = counter(accounting.model_requests_attempted);
-  const providerRetries = counter(accounting.provider_retries);
-  const fallbackAttempts = counter(accounting.fallback_attempts);
-  const lastStatus = accounting.last_provider_http_status === null
+  const modelRequests = counter(attempts.model_requests_attempted);
+  const providerRetries = counter(attempts.provider_retries);
+  const fallbackAttempts = counter(attempts.fallback_attempts);
+  const lastStatus = attempts.last_provider_http_status === null
     ? null
-    : counter(accounting.last_provider_http_status);
+    : counter(attempts.last_provider_http_status);
 
   if (
     profile !== expectedProfile ||
@@ -141,7 +141,7 @@ export function parseHermesModelReadiness(
     endpoint_class: endpointClass as HermesModelReadiness["endpoint_class"],
     ready: raw.ready,
     blocked_reason: blockedReason,
-    accounting: {
+    attempts: {
       model_requests_attempted: modelRequests,
       provider_retries: providerRetries,
       fallback_attempts: fallbackAttempts,
@@ -150,10 +150,10 @@ export function parseHermesModelReadiness(
   };
 
   if (
-    parsed.accounting.model_requests_attempted !== 0 ||
-    parsed.accounting.provider_retries !== 0 ||
-    parsed.accounting.fallback_attempts !== 0 ||
-    parsed.accounting.last_provider_http_status !== null
+    parsed.attempts.model_requests_attempted !== 0 ||
+    parsed.attempts.provider_retries !== 0 ||
+    parsed.attempts.fallback_attempts !== 0 ||
+    parsed.attempts.last_provider_http_status !== null
   ) {
     throw blocked("Hermes model readiness unexpectedly attempted provider work.");
   }

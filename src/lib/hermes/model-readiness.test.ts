@@ -22,7 +22,7 @@ const validReadiness = {
   endpoint_class: "provider",
   ready: true,
   blocked_reason: null,
-  accounting: {
+  attempts: {
     model_requests_attempted: 0,
     provider_retries: 0,
     fallback_attempts: 0,
@@ -79,7 +79,7 @@ for (const [name, mutation] of [
   ["unknown endpoint class", { endpoint_class: "unknown" }],
   ["contradictory blocked reason", { blocked_reason: "blocked but marked ready" }],
   ["provider work during readiness", {
-    accounting: { ...validReadiness.accounting, model_requests_attempted: 1 },
+    attempts: { ...validReadiness.attempts, model_requests_attempted: 1 },
   }],
 ] as const) {
   test(`readiness fails closed on ${name}`, () => {

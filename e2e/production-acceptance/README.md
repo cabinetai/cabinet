@@ -12,8 +12,8 @@ The runner:
   base (current `origin/main` by default);
 - builds the production app when `.next/BUILD_ID` is absent;
 - uses isolated temporary `HOME` and `CABINET_DATA_DIR` roots;
-- binds only to `127.0.0.1:4304` by default; final integration explicitly
-  selects isolated port `4305`;
+- binds only to `127.0.0.1:4325` by default, inside the reserved final-wave
+  range `4321`-`4325`;
 - defaults to the registered `fixture-non-model` transport;
 - requires `CABINET_ACCEPTANCE_SKILLS_MODE=fixture|production` (the runner
   selects `fixture` explicitly unless overridden);
@@ -24,10 +24,11 @@ The runner:
 
 The fixture transport only proves runner orchestration. It cannot make the
 verdict `ACCEPTED`. `CABINET_ACCEPTANCE_TRANSPORT=deliberate-failure` proves
-that a conversation failure blocks only dependent stages. The final
+that a failed provider gate leaves the full route harness `NOT_RUN`. The final
 integration selects `CABINET_ACCEPTANCE_TRANSPORT=acp`; that transport drives
-Cabinet's real conversation routes and records the actual number of initial
-and continuation requests.
+exactly one initial and one continuation request before any route checks. The
+route harness reuses that persisted conversation and never sends another
+model turn.
 
 The harness assigns browser issues to the active stage. A typed HTTP-200
 unavailable health projection remains visible in the report without becoming

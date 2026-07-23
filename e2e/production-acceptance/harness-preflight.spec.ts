@@ -90,13 +90,12 @@ test("Cockpit identity remains deterministic when multiple alerts exist", async 
   ).toHaveCount(1);
 });
 
-test("deliberate conversation failure does not prevent independent route checks", async ({ page }) => {
+test("deliberate provider-gate failure sends no follow-up route or model request", async ({ page }) => {
   const transport = new DeliberateFailureTransport();
   await expect(transport.runTwoTurnContract()).rejects.toThrow(
     "deliberate conversation failure",
   );
-  await page.goto(`${cabinet.appUrl}/tasks`);
-  await expect(page.getByRole("heading", { name: "Tasks" })).toBeVisible();
+  expect(page.url()).toBe("about:blank");
 });
 
 test("typed unavailable projections are attached but excluded from relevant errors", async () => {

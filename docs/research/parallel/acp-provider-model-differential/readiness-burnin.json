@@ -1,0 +1,25 @@
+{
+  "contract": "cabinet.acp.readiness-burnin",
+  "schemaVersion": 1,
+  "iterations": 100,
+  "passed": 100,
+  "failed": 0,
+  "boundedStderrInvocations": 100,
+  "identity": {
+    "profile": "operator-os",
+    "provider": "ollama-cloud",
+    "model": "glm-5.2",
+    "modelSource": "profile",
+    "credentialState": "present",
+    "endpointClass": "provider",
+    "ready": true
+  },
+  "safety": {
+    "promptDispatches": 0,
+    "modelRequestsAttempted": 0,
+    "providerRetries": 0,
+    "fallbackAttempts": 0,
+    "providerCompletions": 0,
+    "secretEgress": 0
+  }
+}

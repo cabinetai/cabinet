@@ -28,12 +28,3 @@ export function dependencyStatus(
     summary: `Blocked by ${blocked.map((check) => `${check.id}:${check.status}`).join(", ")}.`,
   };
 }
-
-export function independentStagesAfterFailure(
-  stages: readonly AcceptanceStage[],
-  failedStageId: string,
-): string[] {
-  return stages
-    .filter((stage) => !stage.dependsOn?.includes(failedStageId))
-    .map((stage) => stage.id);
-}

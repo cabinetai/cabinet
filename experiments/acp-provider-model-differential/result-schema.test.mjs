@@ -9,6 +9,9 @@ const resultPath = path.resolve(
 const readinessPath = path.resolve(
   "docs/research/parallel/acp-provider-model-differential/readiness-result.json",
 );
+const burnInPath = path.resolve(
+  "docs/research/parallel/acp-provider-model-differential/readiness-burnin.json",
+);
 
 test("committed differential is bounded, content-free, and machine-readable", () => {
   const result = JSON.parse(fs.readFileSync(resultPath, "utf8"));
@@ -47,4 +50,30 @@ test("readiness differential proves the config-root divergence without dispatch"
   assert.equal(result.failingIntegrated.provider, "ollama-cloud");
   assert.equal(result.failingIntegrated.model, "");
   assert.equal(result.failingIntegrated.configSource, "missing");
+});
+
+test("committed 100/100 readiness burn-in is safe and path-free", () => {
+  const result = JSON.parse(fs.readFileSync(burnInPath, "utf8"));
+  assert.equal(result.contract, "cabinet.acp.readiness-burnin");
+  assert.equal(result.iterations, 100);
+  assert.equal(result.passed, 100);
+  assert.equal(result.failed, 0);
+  assert.deepEqual(result.identity, {
+    profile: "operator-os",
+    provider: "ollama-cloud",
+    model: "glm-5.2",
+    modelSource: "profile",
+    credentialState: "present",
+    endpointClass: "provider",
+    ready: true,
+  });
+  assert.deepEqual(result.safety, {
+    promptDispatches: 0,
+    modelRequestsAttempted: 0,
+    providerRetries: 0,
+    fallbackAttempts: 0,
+    providerCompletions: 0,
+    secretEgress: 0,
+  });
+  assert.doesNotMatch(JSON.stringify(result), /\/Users\/|\/private\/|\/tmp\/|authorization|bearer/i);
 });

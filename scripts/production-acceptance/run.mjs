@@ -58,9 +58,9 @@ if (allowIntegrationDiff) {
     cwd: repoRoot,
     encoding: "utf8",
   });
-  if (branch.status !== 0 || branch.stdout.trim() !== "fix/acp-production-parity") {
+  if (branch.status !== 0 || branch.stdout.trim() !== "fix/acp-provider-model-final") {
     process.stderr.write(
-      "Refusing integration acceptance outside fix/acp-production-parity.\n",
+      "Refusing integration acceptance outside fix/acp-provider-model-final.\n",
     );
     process.exit(2);
   }
@@ -87,7 +87,7 @@ const playwrightStatus = run(
     CABINET_ACCEPTANCE_SKILLS_MODE:
       process.env.CABINET_ACCEPTANCE_SKILLS_MODE ?? "fixture",
     CABINET_ACCEPTANCE_PORT:
-      process.env.CABINET_ACCEPTANCE_PORT ?? "4304",
+      process.env.CABINET_ACCEPTANCE_PORT ?? "4325",
     CABINET_ACCEPTANCE_BROWSER_PATH:
       process.env.CABINET_ACCEPTANCE_BROWSER_PATH ?? "in-app Browser preflight plus Playwright authoritative runner",
     CABINET_ACCEPTANCE_ISOLATED: "1",

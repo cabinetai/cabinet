@@ -5,6 +5,10 @@ import os from "node:os";
 import path from "node:path";
 import { agentAdapterRegistry } from "./adapters/registry";
 import type { AgentExecutionAdapter } from "./adapters/types";
+import {
+  clearAcceptanceRuntimeObservation,
+  readAcceptanceRuntimeObservation,
+} from "./acceptance-observability";
 
 let tempRoot: string;
 type Store = typeof import("./conversation-store");
@@ -488,4 +492,103 @@ test("Hermes session expiration fails once without an automatic replay model req
   assert.equal(executions, 1);
   assert.equal((await store.readConversationMeta(meta.id))?.status, "failed");
   agentAdapterRegistry.unregisterExternal("hermes_runtime");
+});
+
+test("Hermes continuation publishes cumulative content-free readiness and provider counters", async () => {
+  const previous = {
+    observability: process.env.CABINET_ACCEPTANCE_OBSERVABILITY,
+    isolated: process.env.CABINET_ACCEPTANCE_ISOLATED,
+    runtime: process.env.CABINET_RUNTIME_MODE,
+  };
+  process.env.CABINET_ACCEPTANCE_OBSERVABILITY = "1";
+  process.env.CABINET_ACCEPTANCE_ISOLATED = "1";
+  process.env.CABINET_RUNTIME_MODE = "hermes";
+  agentAdapterRegistry.registerExternal({
+    type: "hermes_runtime",
+    name: "Hermes observability fixture",
+    executionEngine: "structured_cli",
+    providerId: "hermes",
+    supportsSessionResume: true,
+    async preflight() {
+      return {
+        ready: true,
+        provider: "ollama-cloud",
+        model: "glm-5.2",
+      };
+    },
+    async execute(ctx) {
+      await ctx.onSpawn?.({
+        pid: 1,
+        processGroupId: null,
+        startedAt: new Date().toISOString(),
+      });
+      return {
+        exitCode: 0,
+        signal: null,
+        timedOut: false,
+        output: "Observed.\n```cabinet\nSUMMARY: observed\n```",
+        sessionId: "observed-native-session",
+        sessionParams: {
+          providerAttempts: {
+            modelRequestsAttempted: 1,
+            providerRetries: 0,
+            fallbackAttempts: 0,
+            lastProviderHttpStatus: 200,
+          },
+        },
+      };
+    },
+  });
+
+  const meta = await seedConversation("hermes_runtime");
+  try {
+    await store.appendConversationTranscript(
+      meta.id,
+      "Initial.\n```cabinet\nSUMMARY: initial\n```",
+    );
+    await store.finalizeConversation(meta.id, {
+      status: "completed",
+      exitCode: 0,
+      output: "Initial.\n```cabinet\nSUMMARY: initial\n```",
+    });
+    await store.writeSession(meta.id, {
+      kind: "hermes_runtime",
+      resumeId: "observed-native-session",
+      alive: true,
+    });
+
+    await runner.continueConversationRun(meta.id, {
+      userMessage: "follow-up",
+    });
+
+    assert.deepEqual(readAcceptanceRuntimeObservation(meta.id), {
+      readinessState: "ready",
+      provider: "ollama-cloud",
+      model: "glm-5.2",
+      modelRequestsAttempted: 1,
+      providerRetries: 0,
+      fallbackAttempts: 0,
+      lastProviderHttpStatus: "2xx",
+      lastFailureClass: "none",
+      acpChildState: "running",
+    });
+  } finally {
+    clearAcceptanceRuntimeObservation(meta.id);
+    agentAdapterRegistry.unregisterExternal("hermes_runtime");
+    if (previous.observability === undefined) {
+      delete process.env.CABINET_ACCEPTANCE_OBSERVABILITY;
+    } else {
+      process.env.CABINET_ACCEPTANCE_OBSERVABILITY = previous.observability;
+    }
+    if (previous.isolated === undefined) {
+      delete process.env.CABINET_ACCEPTANCE_ISOLATED;
+    } else {
+      process.env.CABINET_ACCEPTANCE_ISOLATED = previous.isolated;
+    }
+    if (previous.runtime === undefined) {
+      delete process.env.CABINET_RUNTIME_MODE;
+    } else {
+      process.env.CABINET_RUNTIME_MODE = previous.runtime;
+    }
+  }
 });

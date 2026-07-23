@@ -57,7 +57,7 @@ process.stdout.write(JSON.stringify({
   endpoint_class: "provider",
   ready: false,
   blocked_reason: "No effective Hermes model is configured for operator-os.",
-  accounting: {
+  attempts: {
     model_requests_attempted: 0,
     provider_retries: 0,
     fallback_attempts: 0,

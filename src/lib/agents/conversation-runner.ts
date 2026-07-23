@@ -9,7 +9,10 @@ import {
   resolveExecutionProviderId,
 } from "./adapters";
 import { agentAdapterRegistry } from "./adapters/registry";
-import type { AdapterExecutionContext } from "./adapters/types";
+import type {
+  AdapterExecutionContext,
+  AdapterExecutionResult,
+} from "./adapters/types";
 import { buildSkillIndex, resolveDesiredSkills } from "./skills/loader";
 import { prepareSkillMount } from "./skills/sync";
 import { supportsTerminalResume } from "./adapters/legacy-ids";
@@ -49,6 +52,12 @@ import { renderPersonaBody } from "./persona-templating";
 import { getDefaultProviderId } from "./provider-runtime";
 import { looksLikeAwaitingInput } from "./task-heuristics";
 import { emit as emitTelemetry } from "@/lib/telemetry";
+import {
+  readAcceptanceRuntimeObservation,
+  recordAcceptanceRuntimeObservation,
+  type AcceptanceFailureClass,
+  type AcceptanceProviderHttpStatus,
+} from "./acceptance-observability";
 
 export interface ConversationCompletion {
   meta: ConversationMeta;
@@ -251,6 +260,83 @@ export async function buildCabinetEpilogueInstructions(options: {
   }
 
   return base.join("\n");
+}
+
+function recordHermesReadinessObservation(
+  conversationId: string,
+  executionPreflight: Record<string, unknown> | undefined,
+): void {
+  if (!executionPreflight) return;
+  recordAcceptanceRuntimeObservation(conversationId, {
+    readinessState: executionPreflight.ready === true ? "ready" : "blocked",
+    provider:
+      typeof executionPreflight.provider === "string"
+        ? executionPreflight.provider
+        : null,
+    model:
+      typeof executionPreflight.model === "string"
+        ? executionPreflight.model
+        : null,
+    acpChildState: "not_started",
+    lastFailureClass: executionPreflight.ready === true ? "none" : "readiness",
+  });
+}
+
+function providerHttpClass(status: number | null): AcceptanceProviderHttpStatus {
+  if (status === null) return "none";
+  if (status >= 200 && status <= 299) return "2xx";
+  if (status >= 400 && status <= 499) return "4xx";
+  if (status >= 500 && status <= 599) return "5xx";
+  return "none";
+}
+
+function failureClass(
+  errorKind: string | null | undefined,
+  status: number | null,
+): AcceptanceFailureClass {
+  if (!errorKind && status === null) return "none";
+  if (status === 401 || status === 403) return "provider_authentication";
+  if (status === 404) return "provider_not_found";
+  if (status === 429) return "provider_rate_limit";
+  if (status !== null && status >= 500) return "provider_failure";
+  if (errorKind === "model_unavailable") return "readiness";
+  if (errorKind === "timeout") return "timeout";
+  if (errorKind === "transport") return "transport";
+  return errorKind ? "unknown" : "none";
+}
+
+function recordHermesExecutionObservation(
+  conversationId: string,
+  result: AdapterExecutionResult,
+  errorKind?: string | null,
+): void {
+  const attempts = result.sessionParams?.providerAttempts;
+  if (!attempts || typeof attempts !== "object" || Array.isArray(attempts)) {
+    recordAcceptanceRuntimeObservation(conversationId, {
+      lastFailureClass: failureClass(errorKind, null),
+    });
+    return;
+  }
+  const raw = attempts as Record<string, unknown>;
+  const count = (value: unknown): number =>
+    Number.isSafeInteger(value) && Number(value) >= 0 ? Number(value) : 0;
+  const status =
+    Number.isSafeInteger(raw.lastProviderHttpStatus) &&
+      Number(raw.lastProviderHttpStatus) >= 100 &&
+      Number(raw.lastProviderHttpStatus) <= 599
+      ? Number(raw.lastProviderHttpStatus)
+      : null;
+  const current = readAcceptanceRuntimeObservation(conversationId);
+  recordAcceptanceRuntimeObservation(conversationId, {
+    modelRequestsAttempted:
+      (current?.modelRequestsAttempted ?? 0) + count(raw.modelRequestsAttempted),
+    providerRetries:
+      (current?.providerRetries ?? 0) + count(raw.providerRetries),
+    fallbackAttempts:
+      (current?.fallbackAttempts ?? 0) + count(raw.fallbackAttempts),
+    lastProviderHttpStatus: providerHttpClass(status),
+    lastFailureClass: failureClass(errorKind, status),
+  });
 }
 
 function resolvePersonaCanDispatch(persona: AgentPersona | null | undefined): boolean {
@@ -621,6 +707,9 @@ export async function startConversationRun(
     jobName: input.jobName,
     scheduledAt: input.scheduledAt,
   });
+  if (resolvedAdapterType === "hermes_runtime") {
+    recordHermesReadinessObservation(meta.id, executionPreflight);
+  }
 
   // Composer attachments: kickoff turns upload to a staging dir keyed by
   // `stagingClientUuid`. Move them into the real conversation dir now that
@@ -729,6 +818,11 @@ export async function startConversationRun(
           timeoutMs: (input.timeoutSeconds ?? 900) * 1_000,
           sessionId: null,
           sessionParams: null,
+          onSpawn: async () => {
+            recordAcceptanceRuntimeObservation(meta.id, {
+              acpChildState: "running",
+            });
+          },
           onLog: async (stream, chunk) => {
             if (stream !== "stdout" || !chunk) return;
             chunks.push(chunk);
@@ -746,6 +840,7 @@ export async function startConversationRun(
         const classified = failed && adapter.classifyError
           ? adapter.classifyError(result.errorMessage || "", result.exitCode ?? null)
           : null;
+        recordHermesExecutionObservation(meta.id, result, classified?.kind);
 
         if (!failed && (result.sessionId || result.sessionParams)) {
           const codecBlob = adapter.sessionCodec && result.sessionParams
@@ -1390,6 +1485,13 @@ async function runContinueInProcess(input: {
       sessionId: effectiveSessionId,
       sessionParams: effectiveSessionParams,
       executionPreflight,
+      onSpawn: async () => {
+        if (adapter.type === "hermes_runtime") {
+          recordAcceptanceRuntimeObservation(conversationId, {
+            acpChildState: "running",
+          });
+        }
+      },
       onLog: async (stream, chunk) => {
         if (stream === "stderr") {
           stderrChunks.push(chunk);
@@ -1463,6 +1565,9 @@ async function runContinueInProcess(input: {
       } catch {
         classified = { kind: "unknown" };
       }
+    }
+    if (adapter.type === "hermes_runtime") {
+      recordHermesExecutionObservation(conversationId, result, classified?.kind);
     }
 
     const tokens = result.usage
@@ -1969,6 +2074,9 @@ export async function continueConversationRun(
   );
   if (adapter.type === "hermes_runtime" && !executionPreflight) {
     throw new Error("Hermes model readiness is unavailable.");
+  }
+  if (adapter.type === "hermes_runtime") {
+    recordHermesReadinessObservation(conversationId, executionPreflight);
   }
 
   // Readiness is now proven. Record the user turn unless the HTTP acceptance
