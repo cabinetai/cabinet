@@ -90,9 +90,13 @@ export class AcceptanceRecorder {
   }
 
   request(method: string, pathname: string): void {
+    const boundedPath = pathname.replace(
+      /^\/api\/agents\/conversations\/[^/]+\/continue$/,
+      "/api/agents/conversations/:id/continue",
+    );
     this.network.total += 1;
     this.network.byMethod[method] = (this.network.byMethod[method] ?? 0) + 1;
-    this.network.byPath[pathname] = (this.network.byPath[pathname] ?? 0) + 1;
+    this.network.byPath[boundedPath] = (this.network.byPath[boundedPath] ?? 0) + 1;
     if (pathname.includes("/api/daemon/session/") && pathname.endsWith("/output")) {
       this.network.legacyDaemonOutputRequests += 1;
     }
@@ -213,17 +217,22 @@ export async function writeAcceptanceArtifacts(
   const observedModels = [
     ...new Set(providerSnapshots.map((snapshot) => snapshot.model).filter(Boolean)),
   ];
-  const providerRequests = Math.max(
+  const completedPromptSnapshots =
+    result.conversationPersistence?.checkpoints
+      .filter((checkpoint) => checkpoint.checkpoint === "B" || checkpoint.checkpoint === "F")
+      .map((checkpoint) => checkpoint.observability)
+      .filter((snapshot) => snapshot !== null) ?? [];
+  const providerRequests = completedPromptSnapshots.reduce(
+    (total, snapshot) => total + snapshot.modelRequestsAttempted,
     0,
-    ...providerSnapshots.map((snapshot) => snapshot.modelRequestsAttempted),
   );
-  const providerRetries = Math.max(
+  const providerRetries = completedPromptSnapshots.reduce(
+    (total, snapshot) => total + snapshot.providerRetries,
     0,
-    ...providerSnapshots.map((snapshot) => snapshot.providerRetries),
   );
-  const fallbackAttempts = Math.max(
+  const fallbackAttempts = completedPromptSnapshots.reduce(
+    (total, snapshot) => total + snapshot.fallbackAttempts,
     0,
-    ...providerSnapshots.map((snapshot) => snapshot.fallbackAttempts),
   );
   const report = `# Production acceptance harness
 

@@ -1,42 +1,15 @@
 {
   "stream": "acceptance-harness",
   "status": "blocked",
-  "branch": "test/acceptance-harness-final-resilience",
+  "branch": "fix/acp-provider-model-final",
   "commit": null,
   "merge_candidate": true,
   "tests": {
-    "route-manifest": "passed",
-    "desktop-navigation": "passed",
-    "drawers-data-team": "passed",
-    "new-composer": "passed",
-    "search-terminal-unavailable": "passed",
-    "tasks-route": "passed",
-    "primary-application-routes": "passed",
-    "org-chart": "passed",
-    "org-chart-trigger-present": "passed",
-    "org-chart-trigger-enabled": "passed",
-    "org-chart-trigger-click": "passed",
-    "org-chart-dialog": "passed",
-    "org-chart-bounds-and-close": "passed",
-    "operator-mode": "passed",
-    "governed-skills": "passed",
-    "hermes-operator-sections": "passed",
-    "developer-diagnostics-48": "passed",
-    "fixture-two-turn-contract": "failed",
-    "live-two-turn-contract": "blocked",
-    "conversation-direct-reload-persistence": "blocked",
-    "restart-route-persistence": "passed",
-    "launchd-child-restart": "passed",
-    "history-navigation": "passed",
-    "mobile-reduced-motion-overflow": "passed",
-    "legacy-daemon-output-accounting": "passed",
-    "complete-route-inventory": "failed",
-    "console-health": "passed",
-    "mutation-accounting": "passed"
+    "live-two-turn-contract": "failed",
+    "full-route-harness": "not_run"
   },
   "blockers": [
-    "Two-turn transport contract failed: Error: deliberate conversation failure",
-    "2 discovered or required route(s) were not accepted."
+    "Two-turn provider gate failed: Error: initial response was not the exact acceptance token"
   ],
   "recommendation": "Resolve only the exact acceptance blockers and rerun.",
   "production_touched": false

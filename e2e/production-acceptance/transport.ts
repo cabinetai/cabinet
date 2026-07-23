@@ -14,6 +14,15 @@ export const FOLLOW_UP_PROMPT =
   "Reply with the exact acceptance token from your previous response.";
 export const TRANSPORT_TOKEN = "CABINET_ACCEPTANCE_OK";
 
+export function assertExactAcceptanceToken(
+  value: string,
+  turn: "initial" | "follow-up",
+): void {
+  if (value !== TRANSPORT_TOKEN) {
+    throw new Error(`${turn} response was not the exact acceptance token`);
+  }
+}
+
 export type CabinetTransportTarget = {
   appUrl: string;
   restart(): Promise<void>;
@@ -67,6 +76,7 @@ export interface AcceptanceTransport {
   runTwoTurnContract(
     cabinet: CabinetTransportTarget,
     onEvidence?: (evidence: ConversationPersistenceEvidence) => void,
+    onRequest?: (method: string, pathname: string) => void,
   ): Promise<AcceptanceConversation>;
 }
 
@@ -201,6 +211,7 @@ export class LiveCabinetAcpTransport implements AcceptanceTransport {
   async runTwoTurnContract(
     cabinet: CabinetTransportTarget,
     onEvidence?: (evidence: ConversationPersistenceEvidence) => void,
+    onRequest?: (method: string, pathname: string) => void,
   ): Promise<AcceptanceConversation> {
     const checkpoints: ConversationCheckpointEvidence[] = [
       buildConversationCheckpoint("A", "before_initial_submission", null, null),
@@ -210,6 +221,7 @@ export class LiveCabinetAcpTransport implements AcceptanceTransport {
     let secondRestartCompleted = false;
     let lastObserved: ConversationDetail | null = null;
     try {
+      onRequest?.("POST", "/api/agents/conversations");
       const createdResponse = await fetch(`${cabinet.appUrl}/api/agents/conversations`, {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -260,8 +272,11 @@ export class LiveCabinetAcpTransport implements AcceptanceTransport {
         buildConversationCheckpoint("D", "first_restart_reloaded", afterRestart, null),
       );
 
+      const continuePath =
+        `/api/agents/conversations/${encodeURIComponent(conversationId)}/continue`;
+      onRequest?.("POST", continuePath);
       const continuedResponse = await fetch(
-        `${cabinet.appUrl}/api/agents/conversations/${encodeURIComponent(conversationId)}/continue`,
+        `${cabinet.appUrl}${continuePath}`,
         {
           method: "POST",
           headers: { "content-type": "application/json" },

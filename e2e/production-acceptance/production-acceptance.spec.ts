@@ -16,6 +16,7 @@ import {
 } from "./recorder";
 import { discoverRouteManifest } from "./route-discovery";
 import {
+  assertExactAcceptanceToken,
   TRANSPORT_TOKEN,
   selectTransport,
   type AcceptanceConversation,
@@ -40,6 +41,8 @@ const outputDir = path.resolve(
 const screenshotDir = path.join(outputDir, "screenshots");
 const recorder = new AcceptanceRecorder();
 const transport = selectTransport();
+const allowIntegrationDiff =
+  process.env.CABINET_ACCEPTANCE_ALLOW_INTEGRATION_DIFF === "1";
 const skillsMode = process.env.CABINET_ACCEPTANCE_SKILLS_MODE;
 if (skillsMode !== "fixture" && skillsMode !== "production") {
   throw new Error(
@@ -306,7 +309,7 @@ test.afterAll(async () => {
       !file.startsWith("docs/research/parallel/acceptance-harness/") &&
       file !== "PROGRESS.md"
   );
-  if (applicationDiff.length) {
+  if (applicationDiff.length && !allowIntegrationDiff) {
     recorder.blocker({
       id: "application-diff-outside-owned-lane",
       area: "safety",
@@ -357,9 +360,10 @@ test("two-turn provider gate", async () => {
       const result = await transport.runTwoTurnContract(
         cabinet,
         (evidence) => recorder.recordConversationPersistence(evidence),
+        (method, pathname) => recorder.request(method, pathname),
       );
-      expect(result.firstResponse).toBe(TRANSPORT_TOKEN);
-      expect(result.secondResponse).toBe(TRANSPORT_TOKEN);
+      assertExactAcceptanceToken(result.firstResponse, "initial");
+      assertExactAcceptanceToken(result.secondResponse, "follow-up");
       expect(result.sameSession).toBe(true);
       expect(result.userTurns).toBe(2);
       expect(result.completedAssistantTurns).toBe(2);

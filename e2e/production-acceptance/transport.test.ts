@@ -3,9 +3,23 @@ import test from "node:test";
 
 import type { ConversationPersistenceEvidence } from "./contracts";
 import {
+  assertExactAcceptanceToken,
   buildConversationCheckpoint,
   LiveCabinetAcpTransport,
 } from "./transport";
+
+test("exact-token failures never retain assistant content", () => {
+  const privateResponse = "CABINET_ACCEPTANCE_OK plus private model output";
+  assert.throws(
+    () => assertExactAcceptanceToken(privateResponse, "initial"),
+    (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.equal(error.message, "initial response was not the exact acceptance token");
+      assert.doesNotMatch(error.message, /private model output/);
+      return true;
+    },
+  );
+});
 
 test("content-free checkpoint records exact cardinality and duplicate identities", () => {
   const checkpoint = buildConversationCheckpoint(
@@ -75,6 +89,7 @@ test("failed cardinality still exports the complete diagnostic ledger", async ()
   let postCount = 0;
   let restarts = 0;
   let evidence: ConversationPersistenceEvidence | null = null;
+  const requests: Array<{ method: string; pathname: string }> = [];
   globalThis.fetch = async (_input, init) => {
     if (init?.method === "POST") {
       postCount += 1;
@@ -98,6 +113,7 @@ test("failed cardinality still exports the complete diagnostic ledger", async ()
         (value) => {
           evidence = value;
         },
+        (method, pathname) => requests.push({ method, pathname }),
       ),
       /exactly two user and two assistant turns/,
     );
@@ -109,5 +125,12 @@ test("failed cardinality still exports the complete diagnostic ledger", async ()
   assert.equal(evidence?.checkpoints.length, 8);
   assert.equal(evidence?.checkpoints.at(-1)?.checkpoint, "H");
   assert.equal(evidence?.exactFinalCardinality, false);
+  assert.deepEqual(requests, [
+    { method: "POST", pathname: "/api/agents/conversations" },
+    {
+      method: "POST",
+      pathname: "/api/agents/conversations/conversation-private/continue",
+    },
+  ]);
   assert.doesNotMatch(JSON.stringify(evidence), /hidden|private/);
 });
