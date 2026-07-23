@@ -134,16 +134,23 @@ export function TreeView() {
   // tab-specific quick actions) can stay in sync.
   type DrawerId = "agents" | "tasks" | "data";
 
-  // When the route changes under us (hash nav, shortcut, etc.), auto-open the
-  // matching drawer so the sidebar and main are always in sync.
+  // Route-backed views own the selected drawer. This keeps direct links,
+  // reloads, and back/forward replay from inheriting a stale persisted Tasks
+  // selection. Non-drawer views (settings, help, etc.) keep the user's last
+  // manual choice.
   useEffect(() => {
-    if (section.type === "agent" || section.type === "agents") {
-      setActiveDrawer("agents");
-    } else if (section.type === "task" || section.type === "tasks") {
-      setActiveDrawer("tasks");
+    const routeDrawer: DrawerId | null =
+      section.type === "agent" || section.type === "agents"
+        ? "agents"
+        : section.type === "task" || section.type === "tasks"
+          ? "tasks"
+          : section.type === "page" || section.type === "cabinet"
+            ? "data"
+            : null;
+    if (routeDrawer && routeDrawer !== activeDrawer) {
+      setActiveDrawer(routeDrawer);
     }
-    // Other section types keep the user's last manual choice.
-  }, [section.type, setActiveDrawer]);
+  }, [activeDrawer, section.type, setActiveDrawer]);
 
   const agentsExpanded = activeDrawer === "agents";
   const tasksExpanded = activeDrawer === "tasks";
@@ -686,7 +693,7 @@ export function TreeView() {
                           drawer.onOpen();
                         }}
                         className={cn(
-                          "relative flex w-full flex-col items-center gap-0.5 rounded-md px-1.5 pt-2 pb-1.5 transition-all duration-150",
+                          "relative flex w-full flex-col items-center gap-0.5 rounded-md px-1.5 pt-2 pb-1.5 transition-all duration-150 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                           active
                             ? "-translate-y-px bg-background text-foreground shadow-[0_1px_0_rgba(0,0,0,0.06),0_6px_14px_-10px_rgba(0,0,0,0.35)] ring-1 ring-border/70"
                             : "text-muted-foreground hover:bg-background/60 hover:text-foreground"

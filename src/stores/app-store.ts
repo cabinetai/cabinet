@@ -532,6 +532,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ sidebarCollapsed: collapsed });
   },
   setSidebarDrawer: (drawer) => {
+    if (get().sidebarDrawer === drawer) return;
     try {
       window.localStorage.setItem(SIDEBAR_DRAWER_STORAGE_KEY, drawer);
     } catch {

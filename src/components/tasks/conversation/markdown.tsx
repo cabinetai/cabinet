@@ -45,10 +45,10 @@ export function Markdown({
       profile="rich"
       dir="auto"
       className={cn(
-        "rtl-aware",
+        "rtl-aware min-w-0 max-w-full [overflow-wrap:anywhere]",
         "prose prose-sm max-w-none dark:prose-invert",
         "prose-p:my-2 prose-p:leading-[1.65]",
-        "prose-pre:my-3 prose-pre:rounded-lg prose-pre:bg-muted/60 prose-pre:text-[12.5px] prose-pre:text-foreground",
+        "prose-pre:my-3 prose-pre:max-w-full prose-pre:overflow-x-auto prose-pre:rounded-lg prose-pre:bg-muted/60 prose-pre:text-[12.5px] prose-pre:text-foreground",
         "prose-code:text-[0.9em] prose-code:bg-muted/60 prose-code:rounded prose-code:px-1 prose-code:py-px prose-code:font-mono prose-code:text-primary prose-code:before:content-none prose-code:after:content-none",
         // ponytail: color inline code + code-block-code via existing --primary token (theme-aware); full syntax highlighting would need shiki/rehype-highlight — add if plain accent isn't enough
         "prose-pre:prose-code:bg-transparent prose-pre:prose-code:p-0 prose-pre:prose-code:text-foreground",

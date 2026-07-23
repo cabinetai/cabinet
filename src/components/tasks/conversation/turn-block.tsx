@@ -251,9 +251,12 @@ export function TurnBlock({
     <div
       data-testid="turn"
       data-turn-role={isUser ? "user" : "agent"}
-      className={cn("group/turn py-5 pl-6 pr-3", !isUser && "bg-muted/20")}
+      className={cn(
+        "group/turn min-w-0 max-w-full overflow-hidden py-5 pe-3 ps-6 max-md:px-3 max-md:py-4",
+        !isUser && "bg-muted/20"
+      )}
     >
-      <div className="mb-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
+      <div className="mb-1.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
         {avatarNode}
         <span className="font-medium text-foreground/80">{isUser ? userLabel : agentLabel}</span>
         <span>·</span>

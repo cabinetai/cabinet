@@ -46,8 +46,8 @@
   <key>ProcessType</key>
   <string>Interactive</string>
   <key>StandardOutPath</key>
-  <string>__LOG_DIR__/cabinet.stdout.log</string>
+  <string>/dev/null</string>
   <key>StandardErrorPath</key>
-  <string>__LOG_DIR__/cabinet.stderr.log</string>
+  <string>/dev/null</string>
 </dict>
 </plist>

@@ -286,7 +286,7 @@ export function TaskComposerPanel({
   return (
     <div
       className={cn(
-        "bg-background px-4 pt-3",
+        "min-w-0 max-w-full bg-background px-4 pt-3 max-md:px-3",
         // Drawer: keep the footnote hint close to the bottom edge.
         compact ? "pb-1.5" : "pb-3",
         awaitingInput && "bg-amber-500/[0.04]",
@@ -393,7 +393,7 @@ export function TaskComposerPanel({
         }
       />
 
-      <p className="mt-1.5 px-1 text-[10px] text-muted-foreground">
+      <p className="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap px-1 text-[10px] text-muted-foreground">
         ⌘↵ to send · @ to mention · this turn&rsquo;s runtime:{" "}
         {effectiveRuntime.model || effectiveRuntime.providerId || "default"}
       </p>

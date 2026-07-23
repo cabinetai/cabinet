@@ -59,6 +59,7 @@ import { Input } from "@/components/ui/input";
 import { FolderTabs } from "@/components/layout/folder-tabs";
 import { TurnBlock, type TurnBlockAgent } from "./turn-block";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useHermesMode } from "@/hooks/use-cabinet-runtime-mode";
 import { ConversationApprovalPanel } from "@/components/agents/conversation-approval-panel";
 import { HermesActivityPanel } from "@/components/agents/hermes-activity-panel";
 import { ArtifactsList } from "./artifacts-list";
@@ -460,6 +461,7 @@ export function TaskConversationPage({
   chromeActions,
 }: TaskConversationPageProps) {
   const { t } = useLocale();
+  const hermesMode = useHermesMode();
   const isDemo = taskId === "demo";
   const isCompact = variant === "compact";
   const [task, setTask] = useState<Task | null>(isDemo ? MOCK_TASK : null);
@@ -835,16 +837,16 @@ export function TaskConversationPage({
     const tick = () => {
       void (async () => {
         try {
-          const [fresh, daemonRes] = await Promise.all([
-            fetchTask(taskId, cabinetPath || undefined),
-            fetch(`/api/daemon/session/${encodeURIComponent(taskId)}/output`).then(
-              (r) => r.ok ? r.json() : null
-            ) as Promise<{
-              status?: string;
-              adapterErrorHint?: string | null;
-              adapterErrorKind?: string | null;
-            } | null>,
-          ]);
+          const fresh = await fetchTask(taskId, cabinetPath || undefined);
+          const daemonRes = hermesMode
+            ? null
+            : await fetch(
+                `/api/daemon/session/${encodeURIComponent(taskId)}/output`
+              ).then((r) => (r.ok ? r.json() : null)) as {
+                status?: string;
+                adapterErrorHint?: string | null;
+                adapterErrorKind?: string | null;
+              } | null;
           let next = fresh;
           // When meta.json is stale but the daemon already knows the session
           // ended, reflect the terminal status immediately in the drawer.
@@ -896,7 +898,7 @@ export function TaskConversationPage({
       if (slowInterval) window.clearInterval(slowInterval);
       window.clearTimeout(slowSwitch);
     };
-  }, [isDemo, taskId, cabinetPath, task?.meta.status]);
+  }, [isDemo, taskId, cabinetPath, task?.meta.status, hermesMode]);
 
   // Cleanup demo settle timer
   useEffect(() => {
@@ -1786,7 +1788,7 @@ export function TaskConversationPage({
   // (Close/Enlarge/Mute) are owned by the drawer host, not here, so they stay
   // reachable even in the terminal/loading early-return states.
   const headerActions = (
-    <div className="flex shrink-0 items-center gap-1">
+    <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1">
       {aliveActions}
       {!isCompact ? (
         <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-[11px]">
@@ -1818,7 +1820,10 @@ export function TaskConversationPage({
   );
 
   return (
-    <div className="flex h-full flex-col bg-background text-foreground">
+    <div
+      data-testid="conversation-layout"
+      className="flex h-dvh max-h-full min-h-0 w-full max-w-full min-w-0 flex-col overflow-hidden bg-background text-foreground"
+    >
       {/* Header — owned here and rendered in every variant so Stop / Done /
           Status / Compact / menu stay identical everywhere. Compact embeds
           (the drawer) get a denser, collapse-on-scroll layout; the full page
@@ -1867,11 +1872,10 @@ export function TaskConversationPage({
         </header>
       ) : (
         <header
-          className="flex items-center gap-3 px-6 py-3 transition-[padding] duration-200"
-          style={{ paddingInlineStart: `calc(1.5rem + var(--sidebar-toggle-offset, 0px))` }}
+          className="flex min-w-0 items-center gap-3 px-6 py-3 ps-[calc(1.5rem+var(--sidebar-toggle-offset,0px))] transition-[padding] duration-200 max-md:flex-col max-md:items-stretch max-md:gap-1.5 max-md:px-3 max-md:py-2"
         >
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               {isTerminalMode && (
                 <span
                   title={t("tasks:conversation.ptyMode")}
@@ -1907,7 +1911,7 @@ export function TaskConversationPage({
                 <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
               ) : null}
             </div>
-            <div className="mt-0.5 flex items-center gap-3 text-[11px] text-muted-foreground">
+            <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
               <span>{runtimeLabel}</span>
               <span>·</span>
               <TokenBar used={task.meta.tokens?.total ?? 0} window={contextWindow} />
@@ -1937,8 +1941,8 @@ export function TaskConversationPage({
       {/* Summary — revealed by clicking the title; hidden by default and in
           brand-new chats. Text is selectable so it can be copied. */}
       {showSummarySection ? (
-        <div className="bg-muted/20 px-6 py-3">
-          <div className="flex items-start gap-2">
+        <div className="min-w-0 bg-muted/20 px-6 py-3 max-md:px-3">
+          <div className="flex min-w-0 items-start gap-2">
             <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
               Summary
             </span>
@@ -2002,7 +2006,7 @@ export function TaskConversationPage({
       {/* Tabs + content */}
       <div className="flex flex-1 min-h-0 flex-col gap-0">
         {!isNewChat ? (
-          <div className={cn("shrink-0", isCompact ? "px-3" : "px-6")}>
+          <div className={cn("min-w-0 shrink-0", isCompact ? "px-3" : "px-6 max-md:px-3")}>
             <FolderTabs
               ariaLabel="Conversation views"
               active={chatTab}
@@ -2090,9 +2094,13 @@ export function TaskConversationPage({
             </div>
           ) : (
           <>
-          <div ref={chatScrollRef} className="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
+          <div
+            ref={chatScrollRef}
+            data-testid="conversation-transcript"
+            className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain scrollbar-thin"
+          >
             {tokenPct >= 80 && task.meta.status !== "done" && !readOnly ? (
-              <div className="mx-auto mx-6 my-4 max-w-3xl">
+              <div className="mx-3 my-4 max-w-3xl md:mx-auto">
                 <div
                   className={cn(
                     "flex items-center gap-3 rounded-lg border px-4 py-3 text-[13px]",
@@ -2125,7 +2133,7 @@ export function TaskConversationPage({
                 </div>
               </div>
             ) : null}
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto w-full max-w-3xl min-w-0">
               {task.turns.map((turn) => (
                 <TurnBlock
                   key={turn.id}
@@ -2176,8 +2184,14 @@ export function TaskConversationPage({
             ) : null}
           </div>
           {!readOnly ? (
-            <div className={cn("shrink-0 bg-background", isCompact && "pb-1")}>
-              <div className="mx-auto w-full max-w-3xl">
+            <div
+              data-testid="conversation-composer"
+              className={cn(
+                "min-w-0 shrink-0 bg-background pb-[max(env(safe-area-inset-bottom),0px)]",
+                isCompact && "pb-[max(env(safe-area-inset-bottom),0.25rem)]"
+              )}
+            >
+              <div className="mx-auto w-full max-w-3xl min-w-0">
                 <TaskComposerPanel
                   awaitingInput={task.meta.status === "awaiting-input"}
                   compact={isCompact}
