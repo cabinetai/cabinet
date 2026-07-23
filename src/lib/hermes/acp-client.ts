@@ -25,7 +25,7 @@ export type HermesAcpTurnResult = {
   toolEventCount: number;
 };
 
-function safeEnvironment(noTools: boolean): NodeJS.ProcessEnv {
+function safeEnvironment(noTools: true): NodeJS.ProcessEnv {
   const allowed = ["HOME", "LOGNAME", "PATH", "SHELL", "TMPDIR", "USER", "LANG", "LC_ALL"];
   const env: NodeJS.ProcessEnv = {
     NODE_ENV: process.env.NODE_ENV || "production",
@@ -67,6 +67,9 @@ export async function runHermesAcpTurn(input: {
   onDelta?: (text: string) => Promise<void> | void;
   onSpawn?: (child: ChildProcessWithoutNullStreams) => void;
 }): Promise<HermesAcpTurnResult> {
+  if (input.config.noTools !== true) {
+    throw new HermesAcpError("configuration", boundedError("configuration"));
+  }
   await validateHermesAcpExecutable(input.config);
 
   const child = spawn(

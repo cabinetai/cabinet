@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   getCabinetEnvSnapshot,
+  isProcessOwnedCabinetEnvKey,
   isValidKey,
   removeCabinetEnv,
   upsertCabinetEnv,
@@ -39,6 +40,12 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
   if (typeof value !== "string") {
     return NextResponse.json({ error: "Value must be a string" }, { status: 400 });
   }
+  if (isProcessOwnedCabinetEnvKey(key)) {
+    return NextResponse.json(
+      { error: "This setting is process-owned and cannot be changed at runtime." },
+      { status: 403 },
+    );
+  }
   if (value.length === 0) {
     return NextResponse.json(
       { error: "Value can't be empty. Use DELETE to remove a key." },
@@ -61,6 +68,12 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   const key = url.searchParams.get("key");
   if (!key || !isValidKey(key)) {
     return NextResponse.json({ error: "Invalid or missing key" }, { status: 400 });
+  }
+  if (isProcessOwnedCabinetEnvKey(key)) {
+    return NextResponse.json(
+      { error: "This setting is process-owned and cannot be changed at runtime." },
+      { status: 403 },
+    );
   }
   try {
     removeCabinetEnv(key);

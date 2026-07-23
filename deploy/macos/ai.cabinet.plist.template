@@ -21,6 +21,8 @@
     <string>hermes</string>
     <key>CABINET_HERMES_EXECUTION_CLI_PATH</key>
     <string>__HERMES_EXECUTION_CLI_PATH__</string>
+    <key>CABINET_HERMES_EXECUTION_NO_TOOLS</key>
+    <string>true</string>
     <key>CABINET_HERMES_PROFILE</key>
     <string>__HERMES_PROFILE__</string>
     <key>CABINET_HERMES_INTERVENTIONS_ENABLED</key>

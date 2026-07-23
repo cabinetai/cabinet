@@ -55,7 +55,12 @@ async function executeHermes(ctx: AdapterExecutionContext): Promise<AdapterExecu
       timedOut: false,
       output: result.output,
       sessionId,
-      sessionParams: { profile: config.profile, sessionId, protocol: "acp-stdio-v1", noTools: true },
+      sessionParams: {
+        profile: config.profile,
+        sessionId,
+        protocol: "acp-stdio-v1",
+        noTools: config.noTools,
+      },
       sessionDisplayId: sessionId,
       provider: "hermes",
       billingType: "unknown",
@@ -83,14 +88,19 @@ export const hermesRuntimeAdapter: AgentExecutionAdapter = {
   supportsDetachedRuns: true,
   sessionCodec: {
     deserialize(raw) {
-      return raw && typeof raw === "object" ? (raw as Record<string, unknown>) : null;
+      if (!raw || typeof raw !== "object") return null;
+      const params = raw as Record<string, unknown>;
+      return params.protocol === "acp-stdio-v1" && params.noTools === true
+        ? params
+        : null;
     },
     serialize(params) {
+      if (params.noTools !== true) return null;
       return {
         profile: params.profile,
         sessionId: params.sessionId,
         protocol: "acp-stdio-v1",
-        noTools: true,
+        noTools: params.noTools,
       };
     },
     getDisplayId(params) {

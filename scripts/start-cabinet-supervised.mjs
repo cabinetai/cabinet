@@ -26,6 +26,11 @@ export function validateSupervisedEnvironment(env, runtimeRoot) {
   if (env.CABINET_HERMES_INTERVENTIONS_ENABLED?.trim().toLowerCase() === "true") {
     throw new Error("Supervised Cabinet requires Hermes interventions disabled");
   }
+  if (env.CABINET_HERMES_EXECUTION_NO_TOOLS !== "true") {
+    throw new Error(
+      "Supervised Cabinet requires CABINET_HERMES_EXECUTION_NO_TOOLS=true",
+    );
+  }
   if (!path.isAbsolute(env.CABINET_DATA_DIR) || !path.isAbsolute(env.CABINET_HERMES_EXECUTION_CLI_PATH) || !path.isAbsolute(env.CABINET_ENV_FILE)) {
     throw new Error("Supervised Cabinet paths must be absolute");
   }
@@ -48,6 +53,7 @@ export function supervisedChildEnvironment(env) {
   return {
     ...env,
     CABINET_RUNTIME_MODE: "hermes",
+    CABINET_HERMES_EXECUTION_NO_TOOLS: "true",
     CABINET_HERMES_INTERVENTIONS_ENABLED: "false",
     HOSTNAME: LOOPBACK,
   };

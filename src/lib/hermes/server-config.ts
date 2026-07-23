@@ -38,7 +38,7 @@ export type HermesExecutionServerConfig = {
   cliPath: string;
   profile: string;
   timeoutMs: number;
-  noTools: boolean;
+  noTools: true;
 };
 
 /** Consequential Hermes runtime interventions are opt-in and server-only. */
@@ -83,13 +83,10 @@ function optional(value: string | undefined): string | null {
   return normalized || null;
 }
 
-function strictBoolean(name: string, value: string | undefined): boolean {
-  if (!value?.trim()) return false;
-  const normalized = value.trim().toLowerCase();
-  if (normalized === "true") return true;
-  if (normalized === "false") return false;
+function requiredLiteralTrue(name: string, value: string | undefined): true {
+  if (value === "true") return true;
   throw new HermesConfigurationError(
-    `Invalid server configuration: ${name} must be true or false`,
+    `Invalid server configuration: ${name} must be exactly true`,
   );
 }
 
@@ -206,7 +203,7 @@ export function readHermesExecutionServerConfig(
     cliPath,
     profile,
     timeoutMs: timeout(env.CABINET_HERMES_TIMEOUT_MS),
-    noTools: strictBoolean(
+    noTools: requiredLiteralTrue(
       "CABINET_HERMES_EXECUTION_NO_TOOLS",
       env.CABINET_HERMES_EXECUTION_NO_TOOLS,
     ),

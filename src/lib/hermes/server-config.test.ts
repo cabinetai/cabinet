@@ -148,29 +148,25 @@ test("Hermes execution configuration is an absolute CLI and bounded profile cont
   assert.deepEqual(readHermesExecutionServerConfig({
     CABINET_HERMES_EXECUTION_CLI_PATH: "/opt/hermes/bin/hermes",
     CABINET_HERMES_PROFILE: "operator-os",
+    CABINET_HERMES_EXECUTION_NO_TOOLS: "true",
   }), {
     cliPath: "/opt/hermes/bin/hermes",
     profile: "operator-os",
     timeoutMs: 3_000,
-    noTools: false,
+    noTools: true,
   });
-  assert.equal(readHermesExecutionServerConfig({
-    CABINET_HERMES_EXECUTION_CLI_PATH: "/opt/hermes/bin/hermes",
-    CABINET_HERMES_PROFILE: "operator-os",
-    CABINET_HERMES_EXECUTION_NO_TOOLS: " true ",
-  }).noTools, true);
-  assert.throws(
-    () => readHermesExecutionServerConfig({
+  for (const value of [undefined, "false", "1", " true ", "TRUE", "unexpected"]) {
+    assert.throws(() => readHermesExecutionServerConfig({
       CABINET_HERMES_EXECUTION_CLI_PATH: "/opt/hermes/bin/hermes",
       CABINET_HERMES_PROFILE: "operator-os",
-      CABINET_HERMES_EXECUTION_NO_TOOLS: "1",
-    }),
-    /must be true or false/,
-  );
+      CABINET_HERMES_EXECUTION_NO_TOOLS: value,
+    }), /must be exactly true/);
+  }
   assert.throws(
     () => readHermesExecutionServerConfig({
       CABINET_HERMES_EXECUTION_CLI_PATH: "hermes",
       CABINET_HERMES_PROFILE: "operator-os",
+      CABINET_HERMES_EXECUTION_NO_TOOLS: "true",
     }),
     /must be absolute/,
   );
@@ -178,6 +174,7 @@ test("Hermes execution configuration is an absolute CLI and bounded profile cont
     () => readHermesExecutionServerConfig({
       CABINET_HERMES_EXECUTION_CLI_PATH: "/opt/hermes/bin/hermes",
       CABINET_HERMES_PROFILE: "operator os; unsafe",
+      CABINET_HERMES_EXECUTION_NO_TOOLS: "true",
     }),
     /valid profile name/,
   );
