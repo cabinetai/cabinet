@@ -1,7 +1,8 @@
 "use client";
 
 import { AlertTriangle, CircleDot, Loader2, XCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { nextHermesHealthPollDelay } from "@/components/layout/hermes-health-polling";
 import { hermesHealthDisplay, type HermesHealthDisplay } from "@/lib/hermes/health-status";
 import type { HermesHealthSnapshot } from "@/lib/hermes/types";
 
@@ -14,16 +15,18 @@ export function useHermesConnectionStatus(enabled = true): {
   const [snapshot, setSnapshot] = useState<HermesHealthSnapshot | null>(null);
   const [lastConfirmed, setLastConfirmed] = useState<HermesHealthSnapshot | null>(null);
   const [connecting, setConnecting] = useState(true);
+  const inFlight = useRef<Promise<HermesHealthSnapshot> | null>(null);
 
-  const refresh = useCallback(async () => {
-    if (!enabled) return;
+  const refreshSnapshot = useCallback(async (): Promise<HermesHealthSnapshot> => {
     try {
       const response = await fetch("/api/hermes/health", { cache: "no-store" });
+      if (!response.ok) throw new Error("health projection failed");
       const data = (await response.json()) as HermesHealthSnapshot;
       setSnapshot(data);
       if (data.status === "online") setLastConfirmed(data);
+      return data;
     } catch {
-      setSnapshot({
+      const unavailable: HermesHealthSnapshot = {
         enabled: true,
         status: "probe_unavailable",
         version: null,
@@ -32,19 +35,46 @@ export function useHermesConnectionStatus(enabled = true): {
         gatewayState: null,
         checkedAt: new Date().toISOString(),
         observationSource: "GET /api/hermes/health",
-        message: "Cabinet could not reach the Hermes status route.",
-      });
+        message: "Cabinet could not obtain a Hermes health projection.",
+      };
+      setSnapshot(unavailable);
+      return unavailable;
     } finally {
       setConnecting(false);
     }
-  }, [enabled]);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    if (!enabled) return;
+    if (!inFlight.current) {
+      inFlight.current = refreshSnapshot().finally(() => {
+        inFlight.current = null;
+      });
+    }
+    await inFlight.current;
+  }, [enabled, refreshSnapshot]);
 
   useEffect(() => {
     if (!enabled) return;
-    void refresh();
-    const id = window.setInterval(() => void refresh(), 10_000);
-    return () => window.clearInterval(id);
-  }, [enabled, refresh]);
+    let cancelled = false;
+    let timer: number | null = null;
+    let consecutiveUnconfirmed = 0;
+    const poll = async () => {
+      const result = await refreshSnapshot();
+      if (cancelled) return;
+      consecutiveUnconfirmed =
+        result.status === "online" ? 0 : consecutiveUnconfirmed + 1;
+      timer = window.setTimeout(
+        () => void poll(),
+        nextHermesHealthPollDelay(result.status, consecutiveUnconfirmed),
+      );
+    };
+    void poll();
+    return () => {
+      cancelled = true;
+      if (timer !== null) window.clearTimeout(timer);
+    };
+  }, [enabled, refreshSnapshot]);
 
   const display = hermesHealthDisplay(connecting ? null : snapshot, lastConfirmed);
   return { snapshot, display, connecting, refresh };

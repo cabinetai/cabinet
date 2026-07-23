@@ -24,27 +24,28 @@ function disabled(): HermesHealthSnapshot {
   };
 }
 
-export async function GET(request: NextRequest) {
-  const unauthorized = await requireApiAuth(request);
-  if (unauthorized) return unauthorized;
-
-  if (getCabinetRuntimeMode() !== "hermes") {
-    return NextResponse.json(disabled(), { headers: NO_STORE });
-  }
-
+export async function projectHermesHealth(
+  readConfig: typeof readHermesReadOnlyServerConfig = readHermesReadOnlyServerConfig,
+  createClient: (
+    config: ReturnType<typeof readHermesReadOnlyServerConfig>,
+  ) => Pick<HermesManagementClient, "health"> = (config) =>
+    new HermesManagementClient(config),
+) {
   try {
-    const result = await new HermesManagementClient(
-      readHermesReadOnlyServerConfig()
-    ).health();
-    return NextResponse.json(result, {
-      status: result.status === "misconfigured" ? 503 : 200,
-      headers: NO_STORE,
-    });
+    const result = await createClient(readConfig()).health();
+    return NextResponse.json(result, { status: 200, headers: NO_STORE });
   } catch (error) {
-    const message =
-      error instanceof HermesConfigurationError
-        ? error.message
-        : "Hermes server configuration could not be loaded.";
+    if (!(error instanceof HermesConfigurationError)) {
+      return NextResponse.json(
+        {
+          error: {
+            code: "health_projection_failed",
+            message: "Cabinet could not generate the Hermes health projection.",
+          },
+        },
+        { status: 500, headers: NO_STORE },
+      );
+    }
     const result: HermesHealthSnapshot = {
       enabled: true,
       status: "misconfigured",
@@ -54,8 +55,19 @@ export async function GET(request: NextRequest) {
       gatewayState: null,
       checkedAt: new Date().toISOString(),
       observationSource: "Cabinet server configuration",
-      message,
+      message: error.message,
     };
-    return NextResponse.json(result, { status: 503, headers: NO_STORE });
+    return NextResponse.json(result, { status: 200, headers: NO_STORE });
   }
+}
+
+export async function GET(request: NextRequest) {
+  const unauthorized = await requireApiAuth(request);
+  if (unauthorized) return unauthorized;
+
+  if (getCabinetRuntimeMode() !== "hermes") {
+    return NextResponse.json(disabled(), { headers: NO_STORE });
+  }
+
+  return projectHermesHealth();
 }

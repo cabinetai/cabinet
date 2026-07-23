@@ -2,7 +2,7 @@ import test, { afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { NextRequest } from "next/server";
 import { expectedToken, KB_AUTH_COOKIE } from "@/lib/auth/kb-auth";
-import { GET } from "./route";
+import { GET, projectHermesHealth } from "./route";
 
 const originalFetch = globalThis.fetch;
 const managedEnv = [
@@ -100,7 +100,35 @@ test("Hermes health bridge returns only the normalized server-side snapshot", as
   assert.ok(!JSON.stringify(body).toLowerCase().includes("authorization"));
 });
 
-test("Hermes health bridge reports clear missing configuration without values", async () => {
+test("Hermes health bridge projects expected unavailable, timeout, and authentication states over HTTP 200", async () => {
+  delete process.env.KB_PASSWORD;
+  configureHermes();
+  const cases = [
+    [503, "probe_unavailable"],
+    [401, "authentication_failure"],
+  ] as const;
+  for (const [upstreamStatus, expectedStatus] of cases) {
+    globalThis.fetch = async () =>
+      new Response(JSON.stringify({}), { status: upstreamStatus });
+    const result = await GET(request());
+    const body = await result.json();
+    assert.equal(result.status, 200);
+    assert.equal(body.status, expectedStatus);
+    assert.equal(body.observationSource, "GET /health/detailed");
+    assert.ok(Number.isFinite(Date.parse(body.checkedAt)));
+  }
+
+  globalThis.fetch = async () => {
+    throw new DOMException("bounded fixture timeout", "AbortError");
+  };
+  const timedOut = await GET(request());
+  const timeoutBody = await timedOut.json();
+  assert.equal(timedOut.status, 200);
+  assert.equal(timeoutBody.status, "probe_timeout");
+  assert.doesNotMatch(timeoutBody.message, /offline/i);
+});
+
+test("Hermes health bridge projects missing configuration over HTTP 200 without values", async () => {
   delete process.env.KB_PASSWORD;
   process.env.CABINET_RUNTIME_MODE = "hermes";
   delete process.env.CABINET_HERMES_API_KEY;
@@ -108,13 +136,13 @@ test("Hermes health bridge reports clear missing configuration without values", 
 
   const result = await GET(request());
   const body = await result.json();
-  assert.equal(result.status, 503);
+  assert.equal(result.status, 200);
   assert.equal(body.status, "misconfigured");
   assert.match(body.message, /CABINET_HERMES_API_URL/);
   assert.ok(!JSON.stringify(body).includes("route-secret"));
 });
 
-test("Hermes health bridge rejects a public upstream before any credential-bearing request", async () => {
+test("Hermes health bridge projects rejected public configuration over HTTP 200 before any credential-bearing request", async () => {
   delete process.env.KB_PASSWORD;
   configureHermes();
   process.env.CABINET_HERMES_API_URL = "https://public.example:8642";
@@ -125,8 +153,21 @@ test("Hermes health bridge rejects a public upstream before any credential-beari
   };
   const result = await GET(request());
   const body = await result.json();
-  assert.equal(result.status, 503);
+  assert.equal(result.status, 200);
   assert.equal(body.status, "misconfigured");
   assert.equal(requests, 0);
   assert.doesNotMatch(JSON.stringify(body), /public\.example|route-secret/);
+});
+
+test("Hermes health bridge reserves HTTP 500 for Cabinet projection failures", async () => {
+  const result = await projectHermesHealth(() => {
+    throw new Error("fixture internal failure");
+  });
+  assert.equal(result.status, 500);
+  assert.deepEqual(await result.json(), {
+    error: {
+      code: "health_projection_failed",
+      message: "Cabinet could not generate the Hermes health projection.",
+    },
+  });
 });
