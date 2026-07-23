@@ -1,4 +1,5 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { Readable, Writable } from "node:stream";
 import * as acp from "@agentclientprotocol/sdk";
@@ -9,9 +10,11 @@ const SHUTDOWN_GRACE_MS = 2_000;
 const IDLE_PROCESS_TTL_MS = 15 * 60 * 1_000;
 
 type TurnState = {
+  epochId: string;
   sessionId: string;
   output: string;
   seen: Set<string>;
+  messageIds: Set<string>;
   toolEventCount: number;
   fatal: HermesAcpError | null;
   onDelta?: (text: string) => Promise<void> | void;
@@ -82,6 +85,10 @@ class PersistentHermesAcpClient {
   private protocolParseErrors = 0;
   private idleTimer: ReturnType<typeof setTimeout> | null = null;
   private loadedSessionId: string | null = null;
+  private loadingSessionId: string | null = null;
+  private loadIdentityMismatch = false;
+  private notificationTail: Promise<void> = Promise.resolve();
+  private completedMessageIds = new Map<string, Set<string>>();
 
   constructor(
     readonly config: HermesExecutionServerConfig,
@@ -93,7 +100,11 @@ class PersistentHermesAcpClient {
   }
 
   get active(): boolean {
-    return !!this.child && !!this.connection && !this.connection.signal.aborted;
+    return !!this.child &&
+      this.child.exitCode === null &&
+      this.child.signalCode === null &&
+      !!this.connection &&
+      !this.connection.signal.aborted;
   }
 
   matches(config: HermesExecutionServerConfig, cwd: string): boolean {
@@ -105,6 +116,9 @@ class PersistentHermesAcpClient {
     if (this.active && this.child) {
       onSpawn?.(this.child);
       return;
+    }
+    if (this.child || this.connection) {
+      await this.stop();
     }
 
     await validateHermesAcpExecutable(this.config);
@@ -147,21 +161,38 @@ class PersistentHermesAcpClient {
       .onRequest(acp.methods.client.terminal.release, forbiddenClientMethod)
       .onRequest(acp.methods.client.terminal.waitForExit, forbiddenClientMethod)
       .onRequest(acp.methods.client.terminal.kill, forbiddenClientMethod)
-      .onNotification(acp.methods.client.session.update, async ({ params }) => {
-        const turn = this.activeTurn;
-        if (!turn || params.sessionId !== turn.sessionId) return;
-        const update = params.update;
-        if (update.sessionUpdate === "tool_call" || update.sessionUpdate === "tool_call_update") {
-          turn.toolEventCount += 1;
-          turn.fatal = new HermesAcpError("tool_event", boundedError("tool_event"));
-          return;
-        }
-        if (update.sessionUpdate !== "agent_message_chunk" || update.content.type !== "text") return;
-        const signature = JSON.stringify(update);
-        if (turn.seen.has(signature)) return;
-        turn.seen.add(signature);
-        turn.output += update.content.text;
-        await turn.onDelta?.(update.content.text);
+      .onNotification(acp.methods.client.session.update, ({ params }) => {
+        this.notificationTail = this.notificationTail.then(async () => {
+          if (this.loadingSessionId) {
+            if (params.sessionId !== this.loadingSessionId) {
+              this.loadIdentityMismatch = true;
+            }
+            return;
+          }
+
+          const turn = this.activeTurn;
+          if (!turn || params.sessionId !== turn.sessionId) return;
+          const update = params.update;
+          if (update.sessionUpdate === "tool_call" || update.sessionUpdate === "tool_call_update") {
+            turn.toolEventCount += 1;
+            turn.fatal = new HermesAcpError("tool_event", boundedError("tool_event"));
+            return;
+          }
+          if (update.sessionUpdate !== "agent_message_chunk" || update.content.type !== "text") return;
+          if (
+            update.messageId &&
+            this.completedMessageIds.get(turn.sessionId)?.has(update.messageId)
+          ) {
+            return;
+          }
+          const signature = JSON.stringify(update);
+          if (turn.seen.has(signature)) return;
+          turn.seen.add(signature);
+          if (update.messageId) turn.messageIds.add(update.messageId);
+          turn.output += update.content.text;
+          await turn.onDelta?.(update.content.text);
+        });
+        return this.notificationTail;
       });
 
     const input = Writable.toWeb(child.stdin) as WritableStream<Uint8Array>;
@@ -211,14 +242,27 @@ class PersistentHermesAcpClient {
   async prepareSession(sessionId?: string | null): Promise<string> {
     if (sessionId) {
       if (this.loadedSessionId !== sessionId) {
+        this.loadingSessionId = sessionId;
+        this.loadIdentityMismatch = false;
         try {
-          await this.request(acp.methods.agent.session.load, {
+          const loaded = await this.request(acp.methods.agent.session.load, {
             cwd: this.cwd,
             mcpServers: [],
             sessionId,
           });
+          await this.drainNotifications();
+          const returnedSessionId = this.loadedIdentity(loaded);
+          if (
+            this.loadIdentityMismatch ||
+            (returnedSessionId !== null && returnedSessionId !== sessionId)
+          ) {
+            throw new HermesAcpError("protocol", boundedError("protocol"));
+          }
         } catch (error) {
+          if (error instanceof HermesAcpError && error.kind === "protocol") throw error;
           throw new HermesAcpError("session_expired", boundedError("session_expired"), error);
+        } finally {
+          this.loadingSessionId = null;
         }
         this.loadedSessionId = sessionId;
       }
@@ -242,9 +286,11 @@ class PersistentHermesAcpClient {
       throw new HermesAcpError("transport", "The Hermes session is already running.");
     }
     const state: TurnState = {
+      epochId: randomUUID(),
       sessionId,
       output: "",
       seen: new Set(),
+      messageIds: new Set(),
       toolEventCount: 0,
       fatal: null,
       onDelta,
@@ -255,13 +301,18 @@ class PersistentHermesAcpClient {
         this.request(acp.methods.agent.session.prompt, {
           sessionId,
           prompt: [{ type: "text", text: prompt }],
+          _meta: {
+            cabinet: {
+              promptEpoch: state.epochId,
+            },
+          },
         }),
         timeoutMs,
         async () => {
           await this.context?.notify(acp.methods.agent.session.cancel, { sessionId });
         },
       );
-      await new Promise<void>((resolve) => setTimeout(resolve, 25));
+      await this.drainNotifications();
       if (state.fatal) throw state.fatal;
       if (!state.output.trim()) {
         throw new HermesAcpError("protocol", "Hermes completed without an assistant response.");
@@ -275,6 +326,11 @@ class PersistentHermesAcpClient {
     } catch (error) {
       throw this.normalizeError(error);
     } finally {
+      if (state.messageIds.size > 0) {
+        const completed = this.completedMessageIds.get(sessionId) ?? new Set<string>();
+        for (const messageId of state.messageIds) completed.add(messageId);
+        this.completedMessageIds.set(sessionId, completed);
+      }
       this.activeTurn = null;
       this.scheduleIdleStop();
     }
@@ -362,6 +418,30 @@ class PersistentHermesAcpClient {
       return new HermesAcpError("protocol", boundedError("protocol"), error);
     }
     return new HermesAcpError("transport", boundedError("transport"), error);
+  }
+
+  private async drainNotifications(): Promise<void> {
+    // The SDK dispatches notification handlers asynchronously even though
+    // NDJSON frames are parsed in wire order. Yield one event-loop turn so
+    // every notification preceding the completed request can join the tail,
+    // then await the handlers themselves. This is an ordering barrier, not a
+    // timing assumption.
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    await this.notificationTail;
+  }
+
+  /**
+   * Hermes exposes its stable ACP identity through an optional namespaced
+   * extension. ACP v1's load response has no standard session-id field, so a
+   * missing extension is not an error; a present contradictory identity is.
+   */
+  private loadedIdentity(response: acp.LoadSessionResponse): string | null {
+    const hermes = response._meta?.hermes;
+    if (!hermes || typeof hermes !== "object" || Array.isArray(hermes)) return null;
+    const provenance = (hermes as Record<string, unknown>).sessionProvenance;
+    if (!provenance || typeof provenance !== "object" || Array.isArray(provenance)) return null;
+    const value = (provenance as Record<string, unknown>).acpSessionId;
+    return typeof value === "string" && value ? value : null;
   }
 
   private protocolFrameGuard(): TransformStream<Uint8Array, Uint8Array> {
