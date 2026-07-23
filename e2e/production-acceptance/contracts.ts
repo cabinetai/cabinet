@@ -64,6 +64,54 @@ export interface ConversationTurnDiagnostic {
   lifecycleState: "pending" | "completed" | "failed";
 }
 
+export interface AcceptanceConversationObservation {
+  contract: "cabinet.acceptance.conversation-observability";
+  schemaVersion: 1;
+  conversationIdentity: string | null;
+  nativeSessionIdentity: string | null;
+  conversationStatus: "idle" | "running" | "completed" | "failed" | "cancelled";
+  turnIdentities: Array<string | null>;
+  requestIdentities: Array<string | null>;
+  durableStoreCounts: {
+    user: number;
+    assistant: number;
+    running: number;
+    failed: number;
+    completed: number;
+    completedAssistant: number;
+    total: number;
+  };
+  inMemoryCounts: {
+    user: number;
+    assistant: number;
+    running: number;
+    failed: number;
+    completed: number;
+    completedAssistant: number;
+    total: number;
+  };
+  inMemoryCountSource: "post_flush_projection";
+  pendingRequiredWrites: number;
+  acpChildState: "not_started" | "running" | "exited" | "unknown";
+  readinessState: "ready" | "blocked" | "unknown";
+  provider: string | null;
+  model: string | null;
+  modelRequestsAttempted: number;
+  providerRetries: number;
+  fallbackAttempts: number;
+  lastProviderHttpStatus: "none" | "2xx" | "4xx" | "5xx" | "network";
+  lastFailureClass:
+    | "none"
+    | "readiness"
+    | "provider_not_found"
+    | "provider_authentication"
+    | "provider_rate_limit"
+    | "provider_failure"
+    | "transport"
+    | "timeout"
+    | "unknown";
+}
+
 export interface ConversationCheckpointEvidence {
   checkpoint: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
   recordedAt: string;
@@ -86,6 +134,7 @@ export interface ConversationCheckpointEvidence {
     total: number;
   } | null;
   pendingRequiredWrites: number | null;
+  observability: AcceptanceConversationObservation | null;
 }
 
 export interface ConversationPersistenceEvidence {

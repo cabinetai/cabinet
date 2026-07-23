@@ -41,6 +41,13 @@ measurements the application exposes. The ledger is exported from a `finally`
 path before cardinality failures can escape, and includes a second Cabinet
 restart/reload.
 
+When the isolated runner enables `CABINET_ACCEPTANCE_OBSERVABILITY=1` together
+with `CABINET_ACCEPTANCE_ISOLATED=1`, each checkpoint also captures the
+default-off, read-only acceptance detail contract. It contains only hashed
+identities, counts, bounded provider/model classifications, safe attempt
+counters, and failure classes. Normal Cabinet processes return 404 for that
+route.
+
 When `origin/main` advances during a parallel run, pin the authorized immutable
 stream-start revision explicitly:
 

@@ -210,6 +210,15 @@ export async function flushConversation(id: string): Promise<void> {
   }
 }
 
+/**
+ * Read-only acceptance diagnostic for the required per-conversation write
+ * barrier. This intentionally exposes only the queue cardinality, never the
+ * queued operation or its data.
+ */
+export function getPendingRequiredConversationWrites(id: string): number {
+  return conversationWriteChains.has(id) ? 1 : 0;
+}
+
 // In-memory running counts — bootstrapped once from disk, then delta-updated
 // from notifications so the SSE tick never opens meta.json files.
 const _runningCounts = new Map<string, number>();

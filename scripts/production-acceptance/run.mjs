@@ -90,6 +90,8 @@ const playwrightStatus = run(
       process.env.CABINET_ACCEPTANCE_PORT ?? "4304",
     CABINET_ACCEPTANCE_BROWSER_PATH:
       process.env.CABINET_ACCEPTANCE_BROWSER_PATH ?? "in-app Browser preflight plus Playwright authoritative runner",
+    CABINET_ACCEPTANCE_ISOLATED: "1",
+    CABINET_ACCEPTANCE_OBSERVABILITY: "1",
   },
   true
 );

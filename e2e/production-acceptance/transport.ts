@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
 import type {
+  AcceptanceConversationObservation,
   ConversationCheckpointEvidence,
   ConversationPersistenceEvidence,
   ConversationTurnDiagnostic,
@@ -47,6 +48,7 @@ type ConversationDetail = {
       total: number;
     };
   };
+  acceptanceObservability?: AcceptanceConversationObservation | null;
 };
 
 export interface AcceptanceConversation {
@@ -78,17 +80,39 @@ async function detail(cabinet: CabinetTransportTarget, id: string): Promise<Conv
   const response = await fetch(
     `${cabinet.appUrl}/api/agents/conversations/${encodeURIComponent(id)}?withTurns=1`,
   );
-  return await payload(response, "conversation detail") as unknown as ConversationDetail;
+  const detailValue = await payload(
+    response,
+    "conversation detail",
+  ) as unknown as ConversationDetail;
+  if (process.env.CABINET_ACCEPTANCE_OBSERVABILITY !== "1") {
+    return detailValue;
+  }
+  const observationResponse = await fetch(
+    `${cabinet.appUrl}/api/agents/conversations/${encodeURIComponent(id)}/acceptance-observability`,
+  );
+  const observation = await payload(
+    observationResponse,
+    "acceptance observability",
+  ) as unknown as AcceptanceConversationObservation;
+  if (
+    observation.contract !== "cabinet.acceptance.conversation-observability" ||
+    observation.schemaVersion !== 1
+  ) {
+    throw new Error("acceptance observability returned an unknown contract");
+  }
+  return { ...detailValue, acceptanceObservability: observation };
 }
 
 async function waitForCompletion(
   cabinet: CabinetTransportTarget,
   id: string,
+  onSnapshot?: (detailValue: ConversationDetail) => void,
   timeoutMs = 240_000,
 ): Promise<ConversationDetail> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() <= deadline) {
     const current = await detail(cabinet, id);
+    onSnapshot?.(current);
     if (current.meta.status === "completed") return current;
     if (current.meta.status === "failed") {
       throw new Error(
@@ -166,6 +190,7 @@ export function buildConversationCheckpoint(
       : null,
     inMemoryCounts: detailValue?.persistence?.inMemoryCounts ?? null,
     pendingRequiredWrites: detailValue?.persistence?.pendingRequiredWrites ?? null,
+    observability: detailValue?.acceptanceObservability ?? null,
   };
 }
 
@@ -183,6 +208,7 @@ export class LiveCabinetAcpTransport implements AcceptanceTransport {
     let first: ConversationDetail | null = null;
     let finalDetail: ConversationDetail | null = null;
     let secondRestartCompleted = false;
+    let lastObserved: ConversationDetail | null = null;
     try {
       const createdResponse = await fetch(`${cabinet.appUrl}/api/agents/conversations`, {
         method: "POST",
@@ -199,7 +225,27 @@ export class LiveCabinetAcpTransport implements AcceptanceTransport {
       if (!conversation?.id) throw new Error("initial conversation returned no identity");
       const conversationId = conversation.id;
 
-      first = await waitForCompletion(cabinet, conversationId);
+      try {
+        first = await waitForCompletion(
+          cabinet,
+          conversationId,
+          (snapshot) => {
+            lastObserved = snapshot;
+          },
+        );
+      } catch (error) {
+        if (lastObserved) {
+          checkpoints.push(
+            buildConversationCheckpoint(
+              "B",
+              "initial_failure_observed",
+              lastObserved,
+              "initial",
+            ),
+          );
+        }
+        throw error;
+      }
       checkpoints.push(
         buildConversationCheckpoint("B", "initial_completed_emitted", first, "initial"),
       );
@@ -228,7 +274,29 @@ export class LiveCabinetAcpTransport implements AcceptanceTransport {
         buildConversationCheckpoint("E", "follow_up_accepted", acceptedFollowUp, "follow-up"),
       );
 
-      const second = await waitForCompletion(cabinet, conversationId);
+      lastObserved = acceptedFollowUp;
+      let second: ConversationDetail;
+      try {
+        second = await waitForCompletion(
+          cabinet,
+          conversationId,
+          (snapshot) => {
+            lastObserved = snapshot;
+          },
+        );
+      } catch (error) {
+        if (lastObserved) {
+          checkpoints.push(
+            buildConversationCheckpoint(
+              "F",
+              "follow_up_failure_observed",
+              lastObserved,
+              "follow-up",
+            ),
+          );
+        }
+        throw error;
+      }
       checkpoints.push(
         buildConversationCheckpoint("F", "follow_up_completed_emitted", second, "follow-up"),
       );

@@ -203,6 +203,28 @@ export async function writeAcceptanceArtifacts(
   const blockers = result.blockers.length
     ? result.blockers.map((blocker) => `- \`${blocker.id}\`: ${blocker.summary}`).join("\n")
     : "- None.";
+  const providerSnapshots =
+    result.conversationPersistence?.checkpoints
+      .map((checkpoint) => checkpoint.observability)
+      .filter((snapshot) => snapshot !== null) ?? [];
+  const observedProviders = [
+    ...new Set(providerSnapshots.map((snapshot) => snapshot.provider).filter(Boolean)),
+  ];
+  const observedModels = [
+    ...new Set(providerSnapshots.map((snapshot) => snapshot.model).filter(Boolean)),
+  ];
+  const providerRequests = Math.max(
+    0,
+    ...providerSnapshots.map((snapshot) => snapshot.modelRequestsAttempted),
+  );
+  const providerRetries = Math.max(
+    0,
+    ...providerSnapshots.map((snapshot) => snapshot.providerRetries),
+  );
+  const fallbackAttempts = Math.max(
+    0,
+    ...providerSnapshots.map((snapshot) => snapshot.fallbackAttempts),
+  );
   const report = `# Production acceptance harness
 
 Verdict: **${result.verdict}**
@@ -227,6 +249,11 @@ ${blockers}
 - Search requests: ${result.network.searchRequests}
 - PTY create/write requests: ${result.network.ptyCreateOrWriteRequests}
 - Model message requests: ${result.network.modelMessageRequests}
+- Provider identities observed: ${observedProviders.join(", ") || "not observed"}
+- Effective model identities observed: ${observedModels.join(", ") || "not observed"}
+- Provider requests attempted: ${providerRequests}
+- Provider retries: ${providerRetries}
+- Fallback attempts: ${fallbackAttempts}
 - Consequential Hermes mutations: ${result.network.consequentialHermesMutations}
 - Relevant browser issues: ${selectRelevantBrowserIssues(result.browserIssues).length}
 - Developer diagnostics observed: ${result.checks.find((check) => check.id === "developer-diagnostics-48")?.evidence?.count ?? "not observed"}

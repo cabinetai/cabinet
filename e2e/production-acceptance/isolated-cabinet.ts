@@ -165,6 +165,8 @@ Isolated acceptance fixture. No model execution is authorized.
     CABINET_HERMES_EXECUTION_NO_TOOLS: "true",
     CABINET_HERMES_PROFILE: "operator-os",
     CABINET_HERMES_INTERVENTIONS_ENABLED: "false",
+    CABINET_ACCEPTANCE_ISOLATED: "1",
+    CABINET_ACCEPTANCE_OBSERVABILITY: "1",
     CABINET_DAEMON_PORT: String(appPort + 10),
     KB_PASSWORD: "",
     NODE_ENV: "production",
