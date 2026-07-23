@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type {
   AcceptanceBlocker,
+  BrowserIssue,
   AcceptanceCheck,
   AcceptanceResult,
   NetworkSummary,
@@ -10,10 +11,42 @@ import type {
   ScreenshotEntry,
 } from "./contracts";
 
+export function selectRelevantBrowserIssues(issues: BrowserIssue[]): BrowserIssue[] {
+  const expectedByStage = new Map<string, number>();
+  for (const issue of issues) {
+    if (issue.expectedUnavailableProjection) {
+      expectedByStage.set(issue.stage, (expectedByStage.get(issue.stage) ?? 0) + 1);
+    }
+  }
+  return issues.filter((issue) => {
+    if (issue.severity !== "error" || issue.expectedUnavailableProjection) return false;
+    if (
+      issue.source === "console" &&
+      issue.stage === "restart-route-persistence" &&
+      (
+        issue.summary.includes("ERR_CONNECTION_REFUSED") ||
+        issue.summary.includes("ERR_INCOMPLETE_CHUNKED_ENCODING")
+      )
+    ) {
+      return false;
+    }
+    if (
+      issue.source === "console" &&
+      issue.summary.startsWith("Failed to load resource:") &&
+      (expectedByStage.get(issue.stage) ?? 0) > 0
+    ) {
+      expectedByStage.set(issue.stage, (expectedByStage.get(issue.stage) ?? 1) - 1);
+      return false;
+    }
+    return true;
+  });
+}
+
 export class AcceptanceRecorder {
   readonly checks: AcceptanceCheck[] = [];
   readonly blockers: AcceptanceBlocker[] = [];
   readonly screenshots: ScreenshotEntry[] = [];
+  readonly browserIssues: BrowserIssue[] = [];
   readonly navigation = { desktop: [] as string[], mobile: [] as string[] };
   readonly network: NetworkSummary = {
     total: 0,
@@ -23,9 +56,12 @@ export class AcceptanceRecorder {
     legacyDaemonOutputRequests: 0,
     searchRequests: 0,
     ptyCreateOrWriteRequests: 0,
+    modelMessageRequests: 0,
+    consequentialHermesMutations: 0,
     mutations: 0,
   };
   readonly scanText: string[] = [];
+  private activeStage = "bootstrap";
 
   check(check: AcceptanceCheck): void {
     this.checks.push(check);
@@ -33,6 +69,18 @@ export class AcceptanceRecorder {
 
   blocker(blocker: AcceptanceBlocker): void {
     if (!this.blockers.some((candidate) => candidate.id === blocker.id)) this.blockers.push(blocker);
+  }
+
+  stage(stage: string): void {
+    this.activeStage = stage;
+  }
+
+  browserIssue(issue: Omit<BrowserIssue, "stage"> & { stage?: string }): void {
+    this.browserIssues.push({ ...issue, stage: issue.stage ?? this.activeStage });
+  }
+
+  relevantBrowserIssues(): BrowserIssue[] {
+    return selectRelevantBrowserIssues(this.browserIssues);
   }
 
   request(method: string, pathname: string): void {
@@ -48,6 +96,21 @@ export class AcceptanceRecorder {
       (pathname.includes("/api/daemon/sessions") || pathname.includes("/api/terminal"))
     ) {
       this.network.ptyCreateOrWriteRequests += 1;
+    }
+    if (
+      method === "POST" &&
+      (
+        pathname === "/api/agents/conversations" ||
+        /^\/api\/agents\/conversations\/[^/]+\/continue$/.test(pathname)
+      )
+    ) {
+      this.network.modelMessageRequests += 1;
+    }
+    if (
+      !["GET", "HEAD", "OPTIONS"].includes(method) &&
+      /^\/api\/hermes\/(?:skills-management|management|runtime-interventions|cockpit\/(?:actions|intake|risks)|runs)(?:\/|$)/.test(pathname)
+    ) {
+      this.network.consequentialHermesMutations += 1;
     }
     if (!["GET", "HEAD", "OPTIONS"].includes(method)) this.network.mutations += 1;
   }
@@ -74,6 +137,27 @@ export function scanIndicators(text: string): AcceptanceResult["scans"] {
   return {
     secretIndicators: secretPatterns.flatMap((pattern) => text.match(pattern) ?? []).map(() => "<redacted-secret-indicator>"),
     localPathIndicators: pathPatterns.flatMap((pattern) => text.match(pattern) ?? []).map(() => "<redacted-local-path-indicator>"),
+  };
+}
+
+export function classifyHttpIssue(input: {
+  path: string;
+  status: number;
+  typedProjection: boolean;
+  projectionState?: string;
+}): Pick<BrowserIssue, "severity" | "summary" | "path" | "expectedUnavailableProjection"> {
+  const expectedUnavailableProjection =
+    input.typedProjection &&
+    input.status < 500 &&
+    ["unavailable", "not_configured", "timeout", "stale", "authentication_failed"]
+      .includes(input.projectionState ?? "");
+  return {
+    path: input.path,
+    severity: expectedUnavailableProjection ? "warning" : "error",
+    expectedUnavailableProjection,
+    summary: expectedUnavailableProjection
+      ? `Typed unavailable projection: ${input.projectionState}.`
+      : `Unexpected HTTP ${input.status}.`,
   };
 }
 
@@ -117,7 +201,7 @@ export async function writeAcceptanceArtifacts(
 
 Verdict: **${result.verdict}**
 
-The runner exercised an isolated exact-main application build on port 4207. It sent zero live model messages and did not touch production or canonical data.
+The runner exercised an isolated application build on port ${result.environment.appPort}. It sent ${result.environment.liveModelMessagesSent} bounded live model message request(s) and did not touch production or canonical data.
 
 ## Checks
 
@@ -136,13 +220,18 @@ ${blockers}
 - Legacy daemon-output requests: ${result.network.legacyDaemonOutputRequests}
 - Search requests: ${result.network.searchRequests}
 - PTY create/write requests: ${result.network.ptyCreateOrWriteRequests}
+- Model message requests: ${result.network.modelMessageRequests}
+- Consequential Hermes mutations: ${result.network.consequentialHermesMutations}
+- Relevant browser issues: ${selectRelevantBrowserIssues(result.browserIssues).length}
 - Developer diagnostics observed: ${result.checks.find((check) => check.id === "developer-diagnostics-48")?.evidence?.count ?? "not observed"}
 - Secret indicators: ${result.scans.secretIndicators.length}
 - Local-path indicators: ${result.scans.localPathIndicators.length}
 
 ## Recommendation
 
-Integrate this harness after the transport, supervision, drawer/mobile, and polling streams land. Keep the live transport disabled until one candidate passes the mandatory live gate, then rerun with that explicitly registered transport.
+${result.verdict === "ACCEPTED"
+  ? "The isolated integration passed the authoritative acceptance contract."
+  : "Resolve only the exact blockers above, then rerun the same bounded acceptance."}
 `;
   await fs.writeFile(path.join(outputDir, "report.md"), report);
   const streamResult = {
@@ -153,8 +242,9 @@ Integrate this harness after the transport, supervision, drawer/mobile, and poll
     merge_candidate: true,
     tests: Object.fromEntries(result.checks.map((check) => [check.id, check.status])),
     blockers: result.blockers.map((blocker) => blocker.summary),
-    recommendation:
-      "Integrate the harness after stabilization, register only a transport that passes the mandatory live gate, and rerun.",
+    recommendation: result.verdict === "ACCEPTED"
+      ? "Keep the integration PR draft and unmerged until final owner approval."
+      : "Resolve only the exact acceptance blockers and rerun.",
     production_touched: false,
   };
   await fs.writeFile(path.join(outputDir, "result.json"), JSON.stringify(streamResult, null, 2) + "\n");

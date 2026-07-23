@@ -1,7 +1,7 @@
 {
   "stream": "acceptance-harness",
   "status": "blocked",
-  "branch": "test/fix-production-acceptance-org-chart",
+  "branch": "test/acceptance-harness-final-resilience",
   "commit": null,
   "merge_candidate": true,
   "tests": {
@@ -11,6 +11,7 @@
     "new-composer": "passed",
     "search-terminal-unavailable": "passed",
     "tasks-route": "passed",
+    "primary-application-routes": "passed",
     "org-chart": "passed",
     "org-chart-trigger-present": "passed",
     "org-chart-trigger-enabled": "passed",
@@ -19,21 +20,24 @@
     "org-chart-bounds-and-close": "passed",
     "operator-mode": "passed",
     "governed-skills": "passed",
+    "hermes-operator-sections": "passed",
     "developer-diagnostics-48": "passed",
-    "fixture-two-turn-contract": "passed",
+    "fixture-two-turn-contract": "failed",
     "live-two-turn-contract": "blocked",
+    "conversation-direct-reload-persistence": "blocked",
     "restart-route-persistence": "passed",
-    "launchd-child-restart": "blocked",
+    "launchd-child-restart": "passed",
     "history-navigation": "passed",
     "mobile-reduced-motion-overflow": "passed",
     "legacy-daemon-output-accounting": "passed",
+    "complete-route-inventory": "failed",
     "console-health": "passed",
     "mutation-accounting": "passed"
   },
   "blockers": [
-    "The exact live two-turn conversation, same-session resume, and live persistence are blocked.",
-    "The supervised wrapper is not proven to recover after the Next child exits."
+    "Two-turn transport contract failed: Error: deliberate conversation failure",
+    "2 discovered or required route(s) were not accepted."
   ],
-  "recommendation": "Integrate the harness after stabilization, register only a transport that passes the mandatory live gate, and rerun.",
+  "recommendation": "Resolve only the exact acceptance blockers and rerun.",
   "production_touched": false
 }

@@ -4,7 +4,7 @@ import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 
-const APP_PORT = 4207 as const;
+const DEFAULT_APP_PORT = 4304;
 
 export interface IsolatedCabinet {
   appUrl: string;
@@ -40,23 +40,45 @@ async function waitForOk(url: string, timeoutMs = 90_000): Promise<void> {
 
 async function stop(child: ChildProcess | null): Promise<void> {
   if (!child || child.exitCode !== null) return;
-  child.kill("SIGTERM");
+  if (process.platform !== "win32" && child.pid) {
+    process.kill(-child.pid, "SIGTERM");
+  } else {
+    child.kill("SIGTERM");
+  }
   await Promise.race([
     new Promise<void>((resolve) => child.once("exit", () => resolve())),
     new Promise<void>((resolve) => setTimeout(resolve, 5_000)),
   ]);
-  if (child.exitCode === null) child.kill("SIGKILL");
+  if (child.exitCode === null) {
+    if (process.platform !== "win32" && child.pid) {
+      process.kill(-child.pid, "SIGKILL");
+    } else {
+      child.kill("SIGKILL");
+    }
+  }
 }
 
 export async function bootIsolatedCabinet(repoRoot: string): Promise<IsolatedCabinet> {
-  await assertPortAvailable(APP_PORT);
+  const appPort = Number(process.env.CABINET_ACCEPTANCE_PORT ?? DEFAULT_APP_PORT);
+  if (!Number.isInteger(appPort) || appPort < 1024 || appPort > 65_535 || appPort === 4000) {
+    throw new Error("CABINET_ACCEPTANCE_PORT must be a non-production TCP port.");
+  }
+  await assertPortAvailable(appPort);
   const stateRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-production-acceptance-"));
   const dataDir = path.join(stateRoot, "data");
   const homeDir = path.join(stateRoot, "home");
+  const cabinetEnvFile = path.join(stateRoot, "cabinet.env");
   await fs.mkdir(path.join(homeDir, ".local/bin"), { recursive: true });
+  await fs.mkdir(path.join(homeDir, ".hermes-cabinet-acp"), { recursive: true });
   await fs.mkdir(path.join(dataDir, "acceptance-cabinet/.agents/editor"), { recursive: true });
   await fs.mkdir(path.join(dataDir, ".agents/.config"), { recursive: true });
   await fs.mkdir(path.join(dataDir, ".home"), { recursive: true });
+  await fs.writeFile(cabinetEnvFile, "", { mode: 0o600 });
+  await fs.writeFile(
+    path.join(homeDir, ".hermes-cabinet-acp/config.yaml"),
+    "model:\n  default: glm-5.2\n  provider: ollama-cloud\n",
+    { mode: 0o600 },
+  );
   await fs.writeFile(
     path.join(dataDir, ".cabinet"),
     "schemaVersion: 1\nid: home\nname: Acceptance Home\nkind: home\nentry: index.md\n"
@@ -128,35 +150,46 @@ Isolated acceptance fixture. No model execution is authorized.
   const logs: string[] = [];
   let app: ChildProcess | null = null;
   const env: NodeJS.ProcessEnv = {
-    ...process.env,
+    PATH: process.env.PATH,
+    TMPDIR: process.env.TMPDIR,
+    LANG: process.env.LANG,
+    USER: process.env.USER,
+    LOGNAME: process.env.LOGNAME,
+    OLLAMA_API_KEY: process.env.OLLAMA_API_KEY,
     HOME: homeDir,
     CABINET_DATA_DIR: dataDir,
+    CABINET_ENV_FILE: cabinetEnvFile,
     CABINET_RUNTIME_MODE: "hermes",
+    CABINET_HERMES_EXECUTION_CLI_PATH:
+      process.env.CABINET_HERMES_EXECUTION_CLI_PATH,
+    CABINET_HERMES_EXECUTION_NO_TOOLS: "true",
     CABINET_HERMES_PROFILE: "operator-os",
-    CABINET_DAEMON_PORT: "4217",
+    CABINET_HERMES_INTERVENTIONS_ENABLED: "false",
+    CABINET_DAEMON_PORT: String(appPort + 10),
     KB_PASSWORD: "",
     NODE_ENV: "production",
-    PORT: String(APP_PORT),
+    PORT: String(appPort),
   };
 
   const start = async () => {
-    app = spawn("npx", ["next", "start", "-p", String(APP_PORT)], {
+    app = spawn("npx", ["next", "start", "-p", String(appPort)], {
       cwd: repoRoot,
       env,
+      detached: process.platform !== "win32",
       stdio: "pipe",
     });
     app.stdout?.on("data", (chunk) => logs.push(String(chunk)));
     app.stderr?.on("data", (chunk) => logs.push(String(chunk)));
-    await waitForOk(`http://127.0.0.1:${APP_PORT}/api/health`);
+    await waitForOk(`http://127.0.0.1:${appPort}/api/health`);
   };
 
   await start();
   return {
-    appUrl: `http://127.0.0.1:${APP_PORT}`,
+    appUrl: `http://127.0.0.1:${appPort}`,
     dataDir,
     restart: async () => {
       await stop(app);
-      await assertPortAvailable(APP_PORT);
+      await assertPortAvailable(appPort);
       await start();
     },
     logs: () => logs.join(""),

@@ -16,6 +16,7 @@ const requiredChecks = [
   ["new-composer", "new"],
   ["search-terminal-unavailable", "availability"],
   ["tasks-route", "tasks"],
+  ["primary-application-routes", "routes"],
   ["org-chart", "organization"],
   ["org-chart-trigger-present", "organization"],
   ["org-chart-trigger-enabled", "organization"],
@@ -24,14 +25,17 @@ const requiredChecks = [
   ["org-chart-bounds-and-close", "organization"],
   ["operator-mode", "Hermes"],
   ["governed-skills", "Skills"],
+  ["hermes-operator-sections", "Hermes"],
   ["developer-diagnostics-48", "Developer"],
   ["fixture-two-turn-contract", "conversation"],
   ["live-two-turn-contract", "conversation"],
+  ["conversation-direct-reload-persistence", "conversation"],
   ["restart-route-persistence", "restart"],
   ["launchd-child-restart", "supervision"],
   ["history-navigation", "navigation"],
   ["mobile-reduced-motion-overflow", "responsive"],
   ["legacy-daemon-output-accounting", "network"],
+  ["complete-route-inventory", "routes"],
   ["console-health", "browser"],
   ["mutation-accounting", "safety"],
 ];
@@ -100,7 +104,8 @@ ${blockers}
 - Legacy daemon-output requests: ${result.network.legacyDaemonOutputRequests}
 - Search requests: ${result.network.searchRequests}
 - PTY create/write requests: ${result.network.ptyCreateOrWriteRequests}
-- Live model messages: 0
+- Live model message requests: ${result.network.modelMessageRequests ?? 0}
+- Consequential Hermes mutations: ${result.network.consequentialHermesMutations ?? 0}
 - Production touched: false
 `;
 fs.writeFileSync(path.join(outputDir, "report.md"), report);

@@ -45,11 +45,25 @@ const changedApplication = spawnSync(
   ],
   { cwd: repoRoot, encoding: "utf8" }
 );
-if (changedApplication.stdout.trim()) {
+const allowIntegrationDiff =
+  process.env.CABINET_ACCEPTANCE_ALLOW_INTEGRATION_DIFF === "1";
+if (changedApplication.stdout.trim() && !allowIntegrationDiff) {
   process.stderr.write(
     `Refusing acceptance: application/shared runtime differs from exact base ${acceptanceBaseRevision}.\n`
   );
   process.exit(2);
+}
+if (allowIntegrationDiff) {
+  const branch = spawnSync("git", ["branch", "--show-current"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+  if (branch.status !== 0 || branch.stdout.trim() !== "fix/acp-production-parity") {
+    process.stderr.write(
+      "Refusing integration acceptance outside fix/acp-production-parity.\n",
+    );
+    process.exit(2);
+  }
 }
 
 if (!fs.existsSync(path.join(repoRoot, ".next/BUILD_ID")) || process.argv.includes("--build")) {
@@ -68,7 +82,10 @@ const playwrightStatus = run(
   {
     CABINET_ACCEPTANCE_OUTPUT_DIR: outputDir,
     CABINET_ACCEPTANCE_BASE_REVISION: acceptanceBaseRevision,
-    CABINET_ACCEPTANCE_TRANSPORT: "fixture",
+    CABINET_ACCEPTANCE_TRANSPORT:
+      process.env.CABINET_ACCEPTANCE_TRANSPORT ?? "fixture",
+    CABINET_ACCEPTANCE_PORT:
+      process.env.CABINET_ACCEPTANCE_PORT ?? "4304",
     CABINET_ACCEPTANCE_BROWSER_PATH:
       process.env.CABINET_ACCEPTANCE_BROWSER_PATH ?? "in-app Browser preflight plus Playwright authoritative runner",
   },

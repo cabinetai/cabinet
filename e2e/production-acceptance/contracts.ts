@@ -43,7 +43,18 @@ export interface NetworkSummary {
   legacyDaemonOutputRequests: number;
   searchRequests: number;
   ptyCreateOrWriteRequests: number;
+  modelMessageRequests: number;
+  consequentialHermesMutations: number;
   mutations: number;
+}
+
+export interface BrowserIssue {
+  stage: string;
+  source: "console" | "pageerror" | "http";
+  severity: "warning" | "error";
+  summary: string;
+  path?: string;
+  expectedUnavailableProjection?: boolean;
 }
 
 export interface AcceptanceResult {
@@ -56,11 +67,11 @@ export interface AcceptanceResult {
   applicationDiffFromBase: string[];
   environment: {
     url: string;
-    appPort: 4207;
+    appPort: number;
     runtimeMode: "hermes";
     data: "isolated";
     productionTouched: false;
-    liveModelMessagesSent: 0;
+    liveModelMessagesSent: number;
     transport: string;
     browserPath: string;
   };
@@ -72,6 +83,7 @@ export interface AcceptanceResult {
   checks: AcceptanceCheck[];
   blockers: AcceptanceBlocker[];
   network: NetworkSummary;
+  browserIssues: BrowserIssue[];
   screenshots: ScreenshotEntry[];
   scans: {
     secretIndicators: string[];

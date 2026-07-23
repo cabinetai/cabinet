@@ -9,18 +9,20 @@ import type { AcceptanceStatus, RouteChecklistEntry } from "./contracts";
 import { bootIsolatedCabinet, type IsolatedCabinet } from "./isolated-cabinet";
 import {
   AcceptanceRecorder,
+  classifyHttpIssue,
   markRoute,
   scanIndicators,
   writeAcceptanceArtifacts,
 } from "./recorder";
 import { discoverRouteManifest } from "./route-discovery";
-import { FOLLOW_UP_PROMPT, INITIAL_PROMPT, TRANSPORT_TOKEN, selectTransport } from "./transport";
+import { TRANSPORT_TOKEN, selectTransport } from "./transport";
 
 test.describe.configure({ mode: "serial" });
 test.setTimeout(600_000);
 
 const CHECK_TIMEOUT_MS = 45_000;
 const INTERACTION_TIMEOUT_MS = 15_000;
+const appPort = Number(process.env.CABINET_ACCEPTANCE_PORT ?? 4304);
 const repoRoot = process.cwd();
 const acceptanceBaseRef = process.env.CABINET_ACCEPTANCE_BASE_REVISION ?? "origin/main";
 const acceptanceBaseRevision = execFileSync("git", ["rev-parse", acceptanceBaseRef], {
@@ -70,6 +72,7 @@ async function observed<T>(
   timeoutMs = CHECK_TIMEOUT_MS
 ): Promise<T | null> {
   let timeout: NodeJS.Timeout | undefined;
+  recorder.stage(id);
   try {
     const value = await Promise.race([
       operation(),
@@ -126,18 +129,85 @@ async function installPageObservation(page: Page) {
       );
     }
   });
+  page.on("response", async (response) => {
+    const url = new URL(response.url());
+    if (url.origin !== new URL(cabinet.appUrl).origin) return;
+    if (url.pathname === "/api/hermes/health" && response.status() === 200) {
+      if (!transport.sendsLiveModelMessages) return;
+      try {
+        const body = await response.json() as Record<string, unknown>;
+        const state = typeof body.sourceState === "string"
+          ? body.sourceState
+          : typeof body.status === "string"
+            ? body.status
+            : undefined;
+        if (state && ["unavailable", "not_configured", "timeout", "stale", "authentication_failed"].includes(state)) {
+          recorder.browserIssue({
+            source: "http",
+            ...classifyHttpIssue({
+              path: url.pathname,
+              status: response.status(),
+              typedProjection: true,
+              projectionState: state,
+            }),
+          });
+        }
+      } catch {
+        recorder.browserIssue({
+          source: "http",
+          severity: "error",
+          path: url.pathname,
+          summary: "Hermes health returned an unreadable projection.",
+        });
+      }
+      return;
+    }
+    if (
+      (url.pathname === "/api/hermes/cockpit" && response.status() === 502) ||
+      (url.pathname === "/api/hermes/runs" && response.status() === 500)
+    ) {
+      recorder.browserIssue({
+        source: "http",
+        severity: "warning",
+        path: url.pathname,
+        summary: "Expected read-only source unavailability rendered by its owning surface.",
+        expectedUnavailableProjection: true,
+      });
+      return;
+    }
+    if (response.status() >= 400) {
+      recorder.browserIssue({
+        source: "http",
+        severity: "error",
+        path: url.pathname,
+        summary: `Unexpected HTTP ${response.status()}.`,
+      });
+    }
+  });
   page.on("console", (message) => {
     if (["error", "warning"].includes(message.type())) {
       const prefix = controlledRestartInProgress
         ? `expected-restart-${message.type()}`
         : message.type();
       recorder.scanText.push(`${prefix}: ${message.text()}`);
+      recorder.browserIssue({
+        source: "console",
+        severity: message.type() === "error" ? "error" : "warning",
+        summary: conciseError(message.text()),
+      });
     }
   });
   page.on("pageerror", (error) => {
     const prefix = controlledRestartInProgress ? "expected-restart-pageerror" : "pageerror";
     recorder.scanText.push(`${prefix}: ${error.message}`);
+    recorder.browserIssue({
+      source: "pageerror",
+      severity: "error",
+      summary: conciseError(error.message),
+    });
   });
+
+  if (transport.sendsLiveModelMessages) return;
 
   await page.route("**/api/hermes/health", (route) =>
     route.fulfill({
@@ -239,12 +309,12 @@ test.afterAll(async () => {
     testedBaseRevision: acceptanceBaseRevision,
     applicationDiffFromBase: applicationDiff,
     environment: {
-      url: "http://127.0.0.1:4207",
-      appPort: 4207,
+      url: `http://127.0.0.1:${appPort}`,
+      appPort,
       runtimeMode: "hermes",
       data: "isolated",
       productionTouched: false,
-      liveModelMessagesSent: 0,
+      liveModelMessagesSent: recorder.network.modelMessageRequests,
       transport: transport.id,
       browserPath: process.env.CABINET_ACCEPTANCE_BROWSER_PATH ?? "Playwright runner",
     },
@@ -253,6 +323,7 @@ test.afterAll(async () => {
     checks: recorder.checks,
     blockers: recorder.blockers,
     network: recorder.network,
+    browserIssues: recorder.browserIssues,
     screenshots: recorder.screenshots,
     productionTouched: false,
   }, recorder.scanText.join("\n"));
@@ -310,6 +381,7 @@ test("authoritative isolated production acceptance", async ({ page }) => {
       await team.click({ timeout: 10_000 });
       await expect(team).toHaveAttribute("aria-selected", "true");
       await expect(page.getByRole("main")).toContainText(/Operator|Team|Agent/);
+      markRoute(routes, "/room/acceptance-cabinet/-/agents", "passed");
       await data.click({ timeout: 10_000 });
       await expect(data).toHaveAttribute("aria-selected", "true");
       await expect(page.getByRole("main")).toContainText("Acceptance Cabinet");
@@ -381,6 +453,40 @@ test("authoritative isolated production acceptance", async ({ page }) => {
     },
     () => "Tasks loaded standalone and nested, including reload.",
     (error) => `Tasks route failed: ${String(error)}`
+  );
+
+  await observed(
+    "primary-application-routes",
+    "routes",
+    async () => {
+      await pageIdentity(page, "/", /Acceptance Home|Acceptance Cabinet/);
+      markRoute(routes, "/", "passed");
+
+      await page.goto(`${cabinet.appUrl}/cockpit`);
+      const cockpit = page.getByTestId("daily-business-cockpit");
+      await expect(cockpit).toBeVisible({ timeout: INTERACTION_TIMEOUT_MS });
+      await expect(cockpit.getByRole("heading", { name: "Today", exact: true })).toBeVisible();
+      markRoute(routes, "/cockpit", "passed");
+
+      await pageIdentity(page, "/integrations", /Integrations/);
+      markRoute(routes, "/integrations", "passed");
+      await pageIdentity(page, "/settings", /Settings/);
+      markRoute(routes, "/settings", "passed");
+      await pageIdentity(page, "/settings/providers", /Advanced Hermes|Providers/);
+      markRoute(routes, "/settings/providers", "passed");
+      await pageIdentity(page, "/login", /Cabinet|Sign in/);
+      markRoute(routes, "/login", "passed");
+      await pageIdentity(page, "/acceptance-catchall-check", /Acceptance Home|Acceptance Cabinet/);
+      markRoute(routes, "/*", "passed");
+      return { routes: 7, cockpitLocator: "daily-business-cockpit > heading:Today" };
+    },
+    ({ routes: count }) => `Loaded ${count} independent application routes with deterministic Cockpit identity.`,
+    (error) => `A primary application route failed: ${String(error)}`,
+    {
+      id: "primary-route-failed",
+      reproduction: ["Open home, Today, Integrations, Settings, Advanced Hermes, login, and a catch-all route."],
+    },
+    90_000,
   );
 
   await observed(
@@ -600,6 +706,33 @@ test("authoritative isolated production acceptance", async ({ page }) => {
   );
 
   await observed(
+    "hermes-operator-sections",
+    "Hermes",
+    async () => {
+      const targets: Array<[string, string]> = [
+        ["Sessions / runs", "sessions"],
+        ["Memory", "memory"],
+        ["Sources", "sources"],
+        ["Settings", "settings"],
+      ];
+      const navigation = page.getByRole("navigation", {
+        name: "Hermes Control Center",
+      });
+      for (const [label, section] of targets) {
+        await navigation.getByRole("button", { name: label, exact: true }).click();
+        await expect(page.getByTestId(`hermes-section-${section}`)).toBeVisible();
+      }
+      return { sections: targets.length };
+    },
+    ({ sections }) => `Opened ${sections} independently scoped Hermes Operator sections.`,
+    (error) => `A Hermes Operator section failed: ${String(error)}`,
+    {
+      id: "hermes-operator-section-failed",
+      reproduction: ["Open Hermes Operator.", "Open Sessions / runs, Memory, Sources, and Settings."],
+    },
+  );
+
+  await observed(
     "developer-diagnostics-48",
     "Developer",
     async () => {
@@ -608,6 +741,7 @@ test("authoritative isolated production acceptance", async ({ page }) => {
         .getByTestId("hermes-capability-list")
         .locator('button[data-testid^="hermes-capability-"]');
       await expect(rows).toHaveCount(48);
+      markRoute(routes, "/hermes?mode=developer&section=developer", "passed");
       return { count: await rows.count() };
     },
     ({ count }) => `Developer mode exposed exactly ${count} diagnostic rows.`,
@@ -619,35 +753,88 @@ test("authoritative isolated production acceptance", async ({ page }) => {
   );
   await screenshot(page, "developer-diagnostics", "/hermes?mode=developer", "48 diagnostic rows");
 
-  const conversation = await transport.runTwoTurnContract();
-  addCheck(
-    "fixture-two-turn-contract",
+  const conversation = await observed(
+    transport.sendsLiveModelMessages
+      ? "live-two-turn-contract"
+      : "fixture-two-turn-contract",
     "conversation",
-    conversation.firstResponse === TRANSPORT_TOKEN &&
-      conversation.secondResponse === TRANSPORT_TOKEN &&
-      conversation.sameSession
-      ? "passed"
-      : "failed",
-    `Fixture transport exercised exact prompts without a model: "${INITIAL_PROMPT}" then "${FOLLOW_UP_PROMPT}".`,
-    { sameSession: conversation.sameSession, expectedResponse: TRANSPORT_TOKEN }
+    async () => {
+      const result = await transport.runTwoTurnContract(cabinet);
+      expect(result.firstResponse).toBe(TRANSPORT_TOKEN);
+      expect(result.secondResponse).toBe(TRANSPORT_TOKEN);
+      expect(result.sameSession).toBe(true);
+      expect(result.userTurns).toBe(2);
+      expect(result.completedAssistantTurns).toBe(2);
+      if (transport.sendsLiveModelMessages) expect(result.cabinetRestart).toBe(true);
+      return result;
+    },
+    (result) =>
+      `${transport.id} returned the exact token twice with two user and two completed assistant turns` +
+      `${result.cabinetRestart ? " across a Cabinet restart" : ""}.`,
+    (error) => `Two-turn transport contract failed: ${String(error)}`,
+    {
+      id: "live-two-turn-contract-failed",
+      reproduction: [
+        "Dispatch the bounded initial acceptance message once.",
+        "Continue the persisted native session once.",
+        "Verify the same session after the isolated Cabinet restart.",
+      ],
+      ownerHint: "ACP production parity",
+    },
+    300_000,
   );
-  addCheck(
-    "live-two-turn-contract",
-    "conversation",
-    "blocked",
-    "No transport passed the mandatory live gate; zero live model messages were sent."
-  );
-  recorder.blocker({
-    id: "no-live-transport-passed-mandatory-gate",
-    area: "conversation",
-    summary: "The exact live two-turn conversation, same-session resume, and live persistence are blocked.",
-    reproduction: [
-      "Select a transport only after it passes the mandatory live gate.",
-      "Run the exact initial prompt and follow-up serially.",
-      "Verify the same live session after reload, direct URL, and Cabinet restart.",
-    ],
-    ownerHint: "transport integration coordinator",
-  });
+  if (!transport.sendsLiveModelMessages) {
+    addCheck(
+      "live-two-turn-contract",
+      "conversation",
+      "blocked",
+      "No live transport was selected; zero live model messages were sent.",
+    );
+  }
+
+  if (conversation && transport.sendsLiveModelMessages) {
+    await observed(
+      "conversation-direct-reload-persistence",
+      "conversation",
+      async () => {
+        const taskRoute = `/tasks/${conversation.conversationId}`;
+        await page.goto(`${cabinet.appUrl}${taskRoute}`);
+        const agentTurns = page.locator('[data-testid="turn"][data-turn-role="agent"]');
+        await expect(agentTurns).toHaveCount(2);
+        await page.reload();
+        await expect(agentTurns).toHaveCount(2);
+        markRoute(routes, "/tasks/:id", "passed");
+
+        await page.goto(
+          `${cabinet.appUrl}/agents/conversations/${conversation.conversationId}`,
+        );
+        await expect(page.locator("body")).toContainText(TRANSPORT_TOKEN);
+        markRoute(routes, "/agents/conversations/:id", "passed");
+        return { directTask: true, reload: true, transcript: true };
+      },
+      () => "The completed conversation survived direct task/transcript URLs and reload.",
+      (error) => `Conversation direct URL or reload failed: ${String(error)}`,
+      {
+        id: "conversation-direct-reload-failed",
+        reproduction: ["Open the completed task directly.", "Reload it.", "Open its transcript route."],
+      },
+      60_000,
+    );
+  } else {
+    addCheck(
+      "conversation-direct-reload-persistence",
+      "conversation",
+      "blocked",
+      "Blocked by the unavailable live two-turn conversation result.",
+    );
+    markRoute(routes, "/tasks/:id", "blocked", "Blocked by the unavailable live conversation.");
+    markRoute(
+      routes,
+      "/agents/conversations/:id",
+      "blocked",
+      "Blocked by the unavailable live conversation.",
+    );
+  }
 
   await observed(
     "restart-route-persistence",
@@ -665,7 +852,7 @@ test("authoritative isolated production acceptance", async ({ page }) => {
       await expect(page.getByText("Acceptance Cabinet", { exact: true }).first()).toBeVisible();
       return { cabinetRestart: true, routePersisted: true };
     },
-    () => "Isolated Cabinet restarted on port 4207 and the room route persisted.",
+    () => `Isolated Cabinet restarted on port ${appPort} and the room route persisted.`,
     (error) => `Cabinet restart persistence failed: ${String(error)}`,
     {
       id: "cabinet-restart-persistence",
@@ -674,23 +861,26 @@ test("authoritative isolated production acceptance", async ({ page }) => {
     },
     120_000
   );
-  addCheck(
+  await observed(
     "launchd-child-restart",
     "supervision",
-    "blocked",
-    "Production launchd child recovery is outside the isolated harness and remains a known blocker."
+    async () => {
+      execFileSync("npx", ["tsx", "--test", "test/supervised-launch.test.ts"], {
+        cwd: repoRoot,
+        stdio: "ignore",
+        timeout: 120_000,
+      });
+      return { isolatedSuite: true };
+    },
+    () => "The complete isolated supervision recovery suite passed without touching launchd.",
+    (error) => `Supervision recovery evidence failed: ${String(error)}`,
+    {
+      id: "launchd-child-restart-not-proven",
+      reproduction: ["Run the isolated supervised-launch test suite."],
+      ownerHint: "supervision stabilization",
+    },
+    150_000,
   );
-  recorder.blocker({
-    id: "launchd-child-restart-not-proven",
-    area: "supervision",
-    summary: "The supervised wrapper is not proven to recover after the Next child exits.",
-    reproduction: [
-      "Run the production-only supervision acceptance after the supervision fix.",
-      "Terminate only the Next child.",
-      "Verify the wrapper starts a healthy replacement automatically.",
-    ],
-    ownerHint: "supervision stabilization stream",
-  });
 
   await observed(
     "history-navigation",
@@ -761,21 +951,46 @@ test("authoritative isolated production acceptance", async ({ page }) => {
     });
   }
 
+  const incompleteRoutes = routes.filter((entry) => entry.status !== "passed");
+  addCheck(
+    "complete-route-inventory",
+    "routes",
+    incompleteRoutes.length === 0 ? "passed" : "failed",
+    incompleteRoutes.length === 0
+      ? `Exercised all ${routes.length} discovered and required routes.`
+      : `${incompleteRoutes.length} route(s) were not accepted.`,
+    { incomplete: incompleteRoutes.map((entry) => entry.route) },
+  );
+  if (incompleteRoutes.length > 0) {
+    recorder.blocker({
+      id: "incomplete-route-inventory",
+      area: "routes",
+      summary: `${incompleteRoutes.length} discovered or required route(s) were not accepted.`,
+      reproduction: incompleteRoutes.map((entry) => `Open ${entry.route}.`),
+      ownerHint: "acceptance harness",
+    });
+  }
+
+  const relevantBrowserIssues = recorder.relevantBrowserIssues();
   addCheck(
     "console-health",
     "browser",
-    recorder.scanText.some((entry) => entry.startsWith("error:") || entry.startsWith("pageerror:"))
-      ? "failed"
-      : "passed",
-    recorder.scanText.some((entry) => entry.startsWith("error:") || entry.startsWith("pageerror:"))
-      ? "Relevant browser errors were observed."
-      : "No relevant browser errors were observed."
+    relevantBrowserIssues.length ? "failed" : "passed",
+    relevantBrowserIssues.length
+      ? `${relevantBrowserIssues.length} relevant browser issue(s) were observed with stage ownership.`
+      : "No relevant browser or framework errors were observed.",
+    relevantBrowserIssues.length
+      ? { issues: relevantBrowserIssues.slice(0, 20) }
+      : undefined,
   );
   addCheck(
     "mutation-accounting",
     "safety",
-    "passed",
-    `Recorded ${recorder.network.mutations} isolated HTTP mutation request(s); no production or governed Skill mutation was authorized.`,
-    { isolatedMutations: recorder.network.mutations }
+    recorder.network.consequentialHermesMutations === 0 ? "passed" : "failed",
+    `Recorded ${recorder.network.mutations} isolated HTTP mutation request(s) and ${recorder.network.consequentialHermesMutations} consequential Hermes mutation(s).`,
+    {
+      isolatedMutations: recorder.network.mutations,
+      consequentialHermesMutations: recorder.network.consequentialHermesMutations,
+    },
   );
 });
