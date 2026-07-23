@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { continueConversationRun } from "@/lib/agents/conversation-runner";
-import { readConversationMeta } from "@/lib/agents/conversation-store";
+import {
+  acceptConversationPrompt,
+  readConversationMeta,
+} from "@/lib/agents/conversation-store";
 import { normalizeRuntimeOverride } from "@/lib/agents/runtime-overrides";
 import { listDaemonSessions } from "@/lib/agents/daemon-client";
 
@@ -127,8 +130,34 @@ export async function POST(
   // continueConversationRun takes model/effort as separate overrides (it
   // merges them into the per-turn adapterConfig). In terminal mode the
   // normalizer strips both — pass undefined so the PTY adapter uses defaults.
+  const accepted = await acceptConversationPrompt(
+    id,
+    {
+      content: userMessage,
+      mentionedPaths,
+      attachmentPaths,
+    },
+    existing.cabinetPath ?? cabinetPath
+  );
+  if (!accepted.accepted) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          accepted.reason === "not_found"
+            ? "Conversation not found"
+            : "The agent is still working on this task. Wait for the current turn to finish (or stop it) before sending another message.",
+        errorKind: accepted.reason === "not_found" ? "unknown" : "busy",
+      },
+      { status: accepted.reason === "not_found" ? 404 : 409 }
+    );
+  }
+
+  const requestId = accepted.requestId;
   void continueConversationRun(id, {
     userMessage,
+    requestId,
+    acceptedUserTurn: true,
     mentionedPaths,
     mentionedSkills,
     attachmentPaths,
@@ -141,5 +170,5 @@ export async function POST(
     console.error(`[conversation-runner] ${id} continue failed`, err);
   });
 
-  return NextResponse.json({ ok: true }, { status: 202 });
+  return NextResponse.json({ ok: true, requestId }, { status: 202 });
 }

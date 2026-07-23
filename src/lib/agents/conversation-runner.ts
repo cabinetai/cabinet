@@ -18,6 +18,7 @@ import {
   appendConversationTranscript,
   appendRuntimeEvent,
   appendUserTurn,
+  commitTurnResult,
   createConversation,
   enqueueConversationNotification,
   extractAgentTurnContent,
@@ -729,14 +730,6 @@ export async function startConversationRun(
         const classified = failed && adapter.classifyError
           ? adapter.classifyError(result.errorMessage || "", result.exitCode ?? null)
           : null;
-        let completedMeta = await finalizeConversation(meta.id, {
-          status: failed ? "failed" : "completed",
-          output: output || result.errorMessage || "Hermes returned no response.",
-          exitCode: failed ? result.exitCode ?? 1 : 0,
-          errorKind: classified?.kind,
-          errorHint: classified?.hint,
-          errorRetryAfterSec: classified?.retryAfterSec,
-        }, meta.cabinetPath);
 
         if (!failed && (result.sessionId || result.sessionParams)) {
           const codecBlob = adapter.sessionCodec && result.sessionParams
@@ -752,9 +745,11 @@ export async function startConversationRun(
               || result.sessionDisplayId
               || undefined,
           }, meta.cabinetPath);
-          if (completedMeta && result.sessionId) {
-            completedMeta = {
-              ...completedMeta,
+          if (result.sessionId) {
+            const runningMeta = await readConversationMeta(meta.id, meta.cabinetPath);
+            if (runningMeta) {
+              await writeConversationMeta({
+                ...runningMeta,
               hermes: {
                 profile: typeof result.sessionParams?.profile === "string"
                   ? result.sessionParams.profile
@@ -763,13 +758,22 @@ export async function startConversationRun(
                 runId: meta.id,
                 eventSequence: 0,
                 status: "completed",
-                artifactPaths: completedMeta.artifactPaths,
+                  artifactPaths: runningMeta.artifactPaths,
                 updatedAt: new Date().toISOString(),
               },
-            };
-            await writeConversationMeta(completedMeta);
+              });
+            }
           }
         }
+
+        const completedMeta = await finalizeConversation(meta.id, {
+          status: failed ? "failed" : "completed",
+          output: output || result.errorMessage || "Hermes returned no response.",
+          exitCode: failed ? result.exitCode ?? 1 : 0,
+          errorKind: classified?.kind,
+          errorHint: classified?.hint,
+          errorRetryAfterSec: classified?.retryAfterSec,
+        }, meta.cabinetPath);
 
         emitTelemetry(failed ? "agent.run.failed" : "agent.run.completed", {
           provider: resolvedProviderId,
@@ -1260,6 +1264,10 @@ export async function startJobConversation(
 
 export interface ContinueConversationInput {
   userMessage: string;
+  /** Server-owned identity shared by every durable write for this prompt. */
+  requestId?: string;
+  /** True only after acceptConversationPrompt durably claimed this request. */
+  acceptedUserTurn?: boolean;
   mentionedPaths?: string[];
   /**
    * Skill keys mentioned in the composer for this turn. Run-only — not
@@ -1289,6 +1297,7 @@ export interface ContinueConversationInput {
 async function runContinueInProcess(input: {
   adapter: import("./adapters/types").AgentExecutionAdapter;
   conversationId: string;
+  requestId: string;
   pendingTurnNumber: number;
   cp: string | undefined;
   cwd: string;
@@ -1304,6 +1313,7 @@ async function runContinueInProcess(input: {
   const {
     adapter,
     conversationId,
+    requestId,
     pendingTurnNumber,
     cp,
     cwd,
@@ -1384,6 +1394,7 @@ async function runContinueInProcess(input: {
     );
 
     if (
+      adapter.type !== "hermes_runtime" &&
       canResume &&
       (result.exitCode !== 0 || !!result.errorMessage) &&
       isSessionExpiredError(result.errorMessage)
@@ -1433,34 +1444,16 @@ async function runContinueInProcess(input: {
       }
     }
 
-    await updateAgentTurn(
-      conversationId,
-      pendingTurnNumber,
-      {
-        content: failed
-          ? `${finalText}\n\n_${result.errorMessage || "Adapter failed."}_`
-          : rawOutput || finalText,
-        pending: false,
-        awaitingInput,
-        tokens: result.usage
-          ? {
-              input: result.usage.inputTokens,
-              output: result.usage.outputTokens,
-              cache: result.usage.cachedInputTokens,
-            }
-          : undefined,
-        sessionId: result.sessionId || undefined,
-        exitCode: failed ? result.exitCode ?? 1 : undefined,
-        error: failed ? result.errorMessage ?? undefined : undefined,
-      },
-      cp
-    );
-
-    // Persist session codec blob + resume id. G8: this is what unlocks
-    // resume for providers whose session state isn't just a single string.
+    const tokens = result.usage
+      ? {
+          input: result.usage.inputTokens,
+          output: result.usage.outputTokens,
+          cache: result.usage.cachedInputTokens,
+        }
+      : undefined;
+    let codecBlob: Record<string, unknown> | null = null;
+    let displayId: string | undefined;
     if (!failed && (result.sessionId || result.sessionParams)) {
-      let codecBlob: Record<string, unknown> | null = null;
-      let displayId: string | undefined;
       try {
         codecBlob =
           adapter.sessionCodec && result.sessionParams
@@ -1472,24 +1465,74 @@ async function runContinueInProcess(input: {
       } catch {
         codecBlob = null;
       }
-      await writeSession(
+    }
+
+    if (!failed && adapter.type === "hermes_runtime") {
+      await commitTurnResult(
         conversationId,
         {
-          kind: adapter.type,
-          resumeId: result.sessionId ?? undefined,
-          alive: !result.clearSession,
-          lastUsedAt: new Date().toISOString(),
-          codecBlob,
-          displayId,
+          requestId,
+          assistant: {
+            content: rawOutput || finalText,
+            awaitingInput,
+            tokens,
+            sessionId: result.sessionId || undefined,
+          },
+          session: {
+            kind: adapter.type,
+            resumeId: result.sessionId ?? sessionResumeId ?? undefined,
+            alive: !result.clearSession,
+            lastUsedAt: new Date().toISOString(),
+            codecBlob,
+            displayId,
+          },
         },
         cp
       );
-    } else if (result.clearSession) {
-      await writeSession(
+    } else {
+      await updateAgentTurn(
         conversationId,
-        { kind: adapter.type, alive: false, lastUsedAt: new Date().toISOString() },
+        pendingTurnNumber,
+        {
+          content: failed
+            ? `${finalText}\n\n_${result.errorMessage || "Adapter failed."}_`
+            : rawOutput || finalText,
+          pending: false,
+          awaitingInput,
+          tokens,
+          sessionId: result.sessionId || undefined,
+          exitCode: failed ? result.exitCode ?? 1 : undefined,
+          error: failed ? result.errorMessage ?? undefined : undefined,
+        },
         cp
       );
+
+      // Persist session codec blob + resume id. G8: this is what unlocks
+      // resume for providers whose session state isn't just a single string.
+      if (!failed && (result.sessionId || result.sessionParams)) {
+        await writeSession(
+          conversationId,
+          {
+            kind: adapter.type,
+            resumeId: result.sessionId ?? undefined,
+            alive: !result.clearSession,
+            lastUsedAt: new Date().toISOString(),
+            codecBlob,
+            displayId,
+          },
+          cp
+        );
+      } else if (result.clearSession) {
+        await writeSession(
+          conversationId,
+          {
+            kind: adapter.type,
+            alive: false,
+            lastUsedAt: new Date().toISOString(),
+          },
+          cp
+        );
+      }
     }
 
     // Write classified error + resume attempt to meta.
@@ -1643,17 +1686,22 @@ export async function continueConversationRun(
   const meta = await readConversationMeta(conversationId, input.cabinetPath);
   if (!meta) return null;
   const cp = meta.cabinetPath || input.cabinetPath;
+  const requestId = input.requestId?.trim() || randomUUID();
 
-  // 1. Record the user turn immediately.
-  await appendUserTurn(
-    conversationId,
-    {
-      content: input.userMessage,
-      mentionedPaths: input.mentionedPaths,
-      attachmentPaths: input.attachmentPaths,
-    },
-    cp
-  );
+  // 1. Record the user turn immediately unless the HTTP acceptance primitive
+  // already committed the exact same request/user identity before dispatch.
+  if (!input.acceptedUserTurn) {
+    await appendUserTurn(
+      conversationId,
+      {
+        content: input.userMessage,
+        mentionedPaths: input.mentionedPaths,
+        attachmentPaths: input.attachmentPaths,
+        requestId,
+      },
+      cp
+    );
+  }
 
   // 2. Resolve adapter, honoring per-turn runtime override (§9 of PRD).
   //    When the user switches runtime mid-conversation, the new adapter takes
@@ -1896,7 +1944,7 @@ export async function continueConversationRun(
   // typing indicator (no placeholder text) until bytes stream in.
   const pending = await appendAgentTurn(
     conversationId,
-    { content: "", pending: true },
+    { content: "", pending: true, requestId },
     cp
   );
   if (!pending) return meta;
@@ -1927,6 +1975,7 @@ export async function continueConversationRun(
     return await runContinueInProcess({
       adapter,
       conversationId,
+      requestId,
       pendingTurnNumber,
       cp,
       cwd,
@@ -2057,6 +2106,7 @@ export async function continueConversationRun(
     // session-expired stderr classified by the daemon would never trip the
     // string check, leaving session.alive=true and re-failing every turn.
     if (
+      adapter.type !== "hermes_runtime" &&
       canResume &&
       result.status === "failed" &&
       (result.adapterErrorKind === "session_expired" ||

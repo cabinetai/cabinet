@@ -430,3 +430,56 @@ test("continueConversationRun with failing adapter marks turn + conversation fai
 
   agentAdapterRegistry.unregisterExternal("mock_continue");
 });
+
+test("Hermes session expiration fails once without an automatic replay model request", async () => {
+  let executions = 0;
+  agentAdapterRegistry.registerExternal({
+    type: "hermes_runtime",
+    name: "Hermes no-retry fixture",
+    executionEngine: "structured_cli",
+    providerId: "hermes",
+    supportsSessionResume: true,
+    async testEnvironment() {
+      return {
+        adapterType: "hermes_runtime",
+        status: "pass",
+        checks: [],
+        testedAt: new Date().toISOString(),
+      };
+    },
+    async execute() {
+      executions += 1;
+      return {
+        exitCode: 1,
+        signal: null,
+        timedOut: false,
+        output: "",
+        errorMessage: "session expired",
+      };
+    },
+  });
+
+  const meta = await seedConversation("hermes_runtime");
+  await store.appendConversationTranscript(
+    meta.id,
+    "Initial.\n```cabinet\nSUMMARY: initial\n```"
+  );
+  await store.finalizeConversation(meta.id, {
+    status: "completed",
+    exitCode: 0,
+    output: "Initial.\n```cabinet\nSUMMARY: initial\n```",
+  });
+  await store.writeSession(meta.id, {
+    kind: "hermes_runtime",
+    resumeId: "expired-native-session",
+    alive: true,
+  });
+
+  await runner.continueConversationRun(meta.id, {
+    userMessage: "follow-up",
+  });
+
+  assert.equal(executions, 1);
+  assert.equal((await store.readConversationMeta(meta.id))?.status, "failed");
+  agentAdapterRegistry.unregisterExternal("hermes_runtime");
+});

@@ -133,6 +133,47 @@ test("readConversationTurns synthesizes turn 1 from prompt + transcript on a sin
   assert.match(turns[1].content, /I created the poem/);
 });
 
+test("prompt acceptance never exposes a new user turn under stale completed metadata", async () => {
+  const meta = await makeSingleShotConversation(
+    "Acceptance ordering",
+    "User request:\ninitial",
+    "Initial.\n```cabinet\nSUMMARY: initial\n```"
+  );
+  let settled = false;
+  const accepting = store
+    .acceptConversationPrompt(meta.id, {
+      content: `follow-up-${"x".repeat(4 * 1024 * 1024)}`,
+    })
+    .finally(() => {
+      settled = true;
+    });
+
+  while (!settled) {
+    const detail = await store.readConversationDetail(meta.id, undefined, {
+      withTurns: true,
+    });
+    const userCount =
+      detail?.turns?.filter((turn) => turn.role === "user").length ?? 0;
+    assert.equal(
+      userCount >= 2 && detail?.meta.status === "completed",
+      false,
+      "a visible follow-up user turn must already have running lifecycle metadata"
+    );
+    await Promise.resolve();
+  }
+
+  const accepted = await accepting;
+  assert.equal(accepted.accepted, true);
+  const detail = await store.readConversationDetail(meta.id, undefined, {
+    withTurns: true,
+  });
+  assert.equal(detail?.meta.status, "running");
+  assert.equal(
+    detail?.turns?.filter((turn) => turn.role === "user").length,
+    2
+  );
+});
+
 test("readConversationTurns fabricates a pending agent turn while running with no output yet", async () => {
   const meta = await store.createConversation({
     agentSlug: "general",
