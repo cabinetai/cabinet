@@ -1,0 +1,34 @@
+{
+  "stream": "acceptance-harness",
+  "status": "blocked",
+  "branch": "test/production-acceptance-harness",
+  "commit": null,
+  "merge_candidate": true,
+  "tests": {
+    "route-manifest": "passed",
+    "desktop-navigation": "passed",
+    "drawers-data-team": "passed",
+    "new-composer": "passed",
+    "search-terminal-unavailable": "passed",
+    "tasks-route": "passed",
+    "org-chart": "blocked",
+    "operator-mode": "not_run",
+    "governed-skills": "not_run",
+    "developer-diagnostics-48": "not_run",
+    "fixture-two-turn-contract": "not_run",
+    "live-two-turn-contract": "not_run",
+    "restart-route-persistence": "not_run",
+    "launchd-child-restart": "not_run",
+    "history-navigation": "not_run",
+    "mobile-reduced-motion-overflow": "not_run",
+    "legacy-daemon-output-accounting": "not_run",
+    "console-health": "not_run"
+  },
+  "blockers": [
+    "The bounded exact-main run stopped at the Org chart locator, leaving later acceptance areas not run.",
+    "The exact live two-turn conversation, same-session resume, and live persistence are blocked.",
+    "The production supervised wrapper is not proven to recover after the Next child exits."
+  ],
+  "recommendation": "Resolve the harness Org chart locator, integrate only a mandatory-gate transport, and rerun after stabilization.",
+  "production_touched": false
+}

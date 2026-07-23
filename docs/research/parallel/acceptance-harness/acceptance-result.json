@@ -1,0 +1,542 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-23T16:17:11.543Z",
+  "verdict": "NOT_ACCEPTED",
+  "scans": {
+    "secretIndicators": [],
+    "localPathIndicators": []
+  },
+  "stream": "acceptance-harness",
+  "branch": "test/production-acceptance-harness",
+  "testedBaseRevision": "3c3193a44a34dbe7b047ddd256e3d1aec31e1097",
+  "applicationDiffFromBase": [],
+  "environment": {
+    "url": "http://127.0.0.1:4207",
+    "appPort": 4207,
+    "runtimeMode": "hermes",
+    "data": "isolated",
+    "productionTouched": false,
+    "liveModelMessagesSent": 0,
+    "transport": "fixture-non-model",
+    "browserPath": "in-app Browser invocation failed: storage access denied after onboarding; Playwright fallback explicitly permitted by acceptance task"
+  },
+  "routes": [
+    {
+      "route": "/",
+      "source": "src/app/page.tsx",
+      "kind": "static",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run"
+    },
+    {
+      "route": "/*",
+      "source": "src/app/[...slug]/page.tsx",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run"
+    },
+    {
+      "route": "/agents/conversations/:id",
+      "source": "src/app/agents/conversations/[id]/page.tsx",
+      "kind": "dynamic",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run"
+    },
+    {
+      "route": "/hermes",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run",
+      "note": "Operator"
+    },
+    {
+      "route": "/hermes?mode=developer&section=developer",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run",
+      "note": "Developer"
+    },
+    {
+      "route": "/login",
+      "source": "src/app/login/page.tsx",
+      "kind": "static",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run"
+    },
+    {
+      "route": "/room/acceptance-cabinet",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "room data"
+    },
+    {
+      "route": "/room/acceptance-cabinet/-/agents",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run",
+      "note": "Team"
+    },
+    {
+      "route": "/room/acceptance-cabinet/-/tasks",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Tasks"
+    },
+    {
+      "route": "/settings/providers",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run",
+      "note": "Advanced Hermes"
+    },
+    {
+      "route": "/tasks",
+      "source": "src/app/tasks/page.tsx",
+      "kind": "static",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    },
+    {
+      "route": "/tasks/:id",
+      "source": "src/app/tasks/[id]/page.tsx",
+      "kind": "dynamic",
+      "discovered": true,
+      "exercised": false,
+      "status": "not_run"
+    }
+  ],
+  "visibleNavigation": {
+    "desktop": [
+      "cabinet",
+      "?",
+      "Daily Business IntakeShadow",
+      "Hermes",
+      "Integrations",
+      "New conversation",
+      "Hermes evidence stale",
+      "Checking…",
+      "File history",
+      "All committed",
+      "Help",
+      "Share"
+    ],
+    "mobile": []
+  },
+  "checks": [
+    {
+      "id": "route-manifest",
+      "area": "routes",
+      "status": "passed",
+      "summary": "Discovered 12 application and SPA routes from exact source.",
+      "evidence": {
+        "count": 12
+      }
+    },
+    {
+      "id": "desktop-navigation",
+      "area": "navigation",
+      "status": "passed",
+      "summary": "Discovered 12 visible desktop button labels.",
+      "evidence": {
+        "count": 12
+      }
+    },
+    {
+      "id": "drawers-data-team",
+      "area": "drawers",
+      "status": "passed",
+      "summary": "Data and Team drawers changed selected state and rendered their target surfaces.",
+      "evidence": {
+        "dataSelected": true,
+        "teamSelected": true
+      }
+    },
+    {
+      "id": "new-composer",
+      "area": "new",
+      "status": "passed",
+      "summary": "New opened one keyboard-usable conversation composer.",
+      "evidence": {
+        "dialogs": 1
+      }
+    },
+    {
+      "id": "search-terminal-unavailable",
+      "area": "availability",
+      "status": "passed",
+      "summary": "Search and Terminal were visibly unavailable with zero Search/PTY requests.",
+      "evidence": {
+        "searchRequests": 0,
+        "ptyRequests": 0
+      }
+    },
+    {
+      "id": "tasks-route",
+      "area": "tasks",
+      "status": "passed",
+      "summary": "Tasks loaded standalone and nested, including reload.",
+      "evidence": {
+        "standalone": true,
+        "nested": true,
+        "reload": true
+      }
+    },
+    {
+      "id": "org-chart",
+      "area": "organization",
+      "status": "blocked",
+      "summary": "Harness timed out locating Org chart on the isolated Team route; product behavior was not established."
+    },
+    {
+      "id": "operator-mode",
+      "area": "Hermes",
+      "status": "not_run",
+      "summary": "Operator mode was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "governed-skills",
+      "area": "Skills",
+      "status": "not_run",
+      "summary": "Governed Skills was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "developer-diagnostics-48",
+      "area": "Developer",
+      "status": "not_run",
+      "summary": "The 48-row diagnostic assertion was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "fixture-two-turn-contract",
+      "area": "conversation",
+      "status": "not_run",
+      "summary": "The non-model runner contract was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "live-two-turn-contract",
+      "area": "conversation",
+      "status": "not_run",
+      "summary": "No transport passed the mandatory live gate; zero live model messages were sent."
+    },
+    {
+      "id": "restart-route-persistence",
+      "area": "restart",
+      "status": "not_run",
+      "summary": "Isolated restart persistence was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "launchd-child-restart",
+      "area": "supervision",
+      "status": "not_run",
+      "summary": "Production launchd child recovery was not exercised from the isolated harness."
+    },
+    {
+      "id": "history-navigation",
+      "area": "navigation",
+      "status": "not_run",
+      "summary": "Back/forward coverage was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "mobile-reduced-motion-overflow",
+      "area": "responsive",
+      "status": "not_run",
+      "summary": "Mobile and reduced-motion coverage was not reached after the bounded Org chart locator timeout."
+    },
+    {
+      "id": "legacy-daemon-output-accounting",
+      "area": "network",
+      "status": "not_run",
+      "summary": "Direct conversation/reload network accounting was not reached."
+    },
+    {
+      "id": "console-health",
+      "area": "browser",
+      "status": "not_run",
+      "summary": "End-to-end console health could not be concluded from the interrupted run."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "acceptance-run-incomplete-org-chart-locator",
+      "area": "harness",
+      "summary": "The bounded exact-main run stopped at the Org chart locator, leaving later acceptance areas not run.",
+      "reproduction": [
+        "Open the isolated Team route.",
+        "Resolve the current Org chart trigger contract.",
+        "Rerun with per-action timeouts."
+      ],
+      "ownerHint": "acceptance harness"
+    },
+    {
+      "id": "no-live-transport-passed-mandatory-gate",
+      "area": "conversation",
+      "summary": "The exact live two-turn conversation, same-session resume, and live persistence are blocked.",
+      "reproduction": [
+        "Register only a transport that passes the mandatory live gate.",
+        "Run the exact initial prompt and follow-up serially.",
+        "Verify the same live session after reload, direct URL, and restart."
+      ],
+      "ownerHint": "transport integration coordinator"
+    },
+    {
+      "id": "launchd-child-restart-not-proven",
+      "area": "supervision",
+      "summary": "The production supervised wrapper is not proven to recover after the Next child exits.",
+      "reproduction": [
+        "Run the production-only supervision acceptance after the supervision fix.",
+        "Terminate only the Next child.",
+        "Verify an automatic healthy replacement."
+      ],
+      "ownerHint": "supervision stabilization stream"
+    }
+  ],
+  "network": {
+    "total": 715,
+    "byMethod": {
+      "GET": 707,
+      "POST": 8
+    },
+    "byPath": {
+      "/room/acceptance-cabinet": 1,
+      "/_next/static/media/002ba41204ab122f-s.p.2obhuif3rd2_o.woff2": 5,
+      "/_next/static/media/3a17eb8ee29221c2-s.p.2e9pgab930yj9.woff2": 5,
+      "/_next/static/media/407e513a9fccfed0-s.p.1c4_tcuvw44-x.woff2": 5,
+      "/_next/static/media/47b947a1671a2d81-s.p.2kr8k44iq3sqq.woff2": 5,
+      "/_next/static/media/4f2de60414593548-s.p.2b6ab36snn8qb.woff2": 5,
+      "/_next/static/media/70bc3e132a0a741e-s.p.3t6q91iet4nsy.woff2": 5,
+      "/_next/static/media/7ebf22b5a21034f8-s.p.3j3877k49yy0l.woff2": 5,
+      "/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2": 5,
+      "/_next/static/media/a46734fb3b3a1401-s.p.3xojfbewspbkb.woff2": 5,
+      "/_next/static/chunks/2mk7j_f-1i1x6.css": 5,
+      "/_next/static/chunks/2-pgiixpnq2ey.css": 5,
+      "/_next/static/chunks/37v5ulr6qjozi.js": 5,
+      "/_next/static/chunks/27ia-orv5oqox.js": 5,
+      "/_next/static/chunks/34oyci46fsc5w.js": 5,
+      "/_next/static/chunks/2nsq1ek51g625.js": 5,
+      "/_next/static/chunks/0g8ku62w0yb2s.js": 5,
+      "/_next/static/chunks/turbopack-1-71iiwawm7v8.js": 5,
+      "/_next/static/chunks/2nygz6_qa4_eh.js": 5,
+      "/_next/static/chunks/1ntn7efqc-iiw.js": 5,
+      "/_next/static/chunks/39584fr7m-887.js": 5,
+      "/_next/static/chunks/0ebku1ynmkiw1.js": 5,
+      "/_next/static/chunks/1hguoey93xu7g.js": 3,
+      "/_next/static/chunks/2aiagnia9ov0k.js": 3,
+      "/_next/static/chunks/0r0e765yjyza4.js": 3,
+      "/_next/static/chunks/13v5mk2a3n77a.js": 3,
+      "/_next/static/chunks/26zhr-vq375l0.js": 3,
+      "/_next/static/chunks/15nppxs5n9k_b.js": 5,
+      "/_next/static/chunks/1ief6uxt6divm.js": 5,
+      "/_next/static/chunks/0hf0eekvnfpq8.js": 5,
+      "/_next/static/chunks/32gfit6-__lf8.js": 3,
+      "/_next/static/chunks/0s480nbrpeg-f.js": 3,
+      "/_next/static/chunks/1lao04f6htbi5.js": 3,
+      "/_next/static/chunks/234li3s4ez88g.js": 5,
+      "/_next/static/chunks/0--zv55iukt1w.js": 5,
+      "/_next/static/chunks/2u1o-h9rtz2ra.js": 3,
+      "/_next/static/chunks/0745nq7rx3h96.js": 3,
+      "/_next/static/chunks/1jdphz00cf7lw.js": 3,
+      "/_next/static/chunks/0otnz87x_6ex2.js": 5,
+      "/_next/static/chunks/0c_c2b4z1yc02.js": 3,
+      "/_next/static/chunks/2auv91yiugulf.js": 3,
+      "/_next/static/chunks/3y7-r3avub-x3.js": 3,
+      "/_next/static/chunks/3ifn04nr3ipwn.js": 3,
+      "/_next/static/chunks/0olkreitc-5nv.js": 3,
+      "/_next/static/chunks/1yrgu-ckz-ab-.js": 3,
+      "/_next/static/chunks/1247k5smur00p.js": 3,
+      "/api/rooms": 5,
+      "/api/hermes/health": 65,
+      "/api/tree": 3,
+      "/api/agents/providers": 3,
+      "/api/user/profile": 4,
+      "/api/agents/config/mcp-catalog": 4,
+      "/api/cloud/status": 33,
+      "/api/agents/providers/status": 1,
+      "/api/cabinets/overview": 146,
+      "/api/registry": 1,
+      "/api/agents/skills": 2,
+      "/api/health": 123,
+      "/api/git/commit": 42,
+      "/api/github/repo": 3,
+      "/api/system/diagnostics": 3,
+      "/api/agents/conversations": 11,
+      "/api/telemetry": 3,
+      "/api/pages/acceptance-cabinet": 4,
+      "/integrations/slack-logo.png": 1,
+      "/integrations/discord-logo.png": 1,
+      "/logos/telegram.svg": 1,
+      "/logos/google-ads.svg": 1,
+      "/logos/facebook.svg": 1,
+      "/logos/notion.svg": 1,
+      "/logos/google-drive.svg": 1,
+      "/_next/static/chunks/3apnr2u2-v40v.js": 1,
+      "/api/agents/conversations/events": 5,
+      "/api/agents/events": 4,
+      "/api/git/pull": 3,
+      "/api/system/update": 3,
+      "/api/agents/config": 3,
+      "/api/rooms/active": 2,
+      "/api/google-drive/tree": 3,
+      "/_next/static/chunks/2_38pk6xwud05.js": 2,
+      "/_next/static/chunks/0hklpkbit2l81.js": 2,
+      "/_next/static/chunks/2kdhmnepw3sq1.js": 2,
+      "/tasks": 2,
+      "/_next/static/chunks/2mu1ttpagha-n.js": 2,
+      "/_next/static/chunks/1qn8bjk716cju.js": 2,
+      "/_next/static/chunks/3469fdu4_qs76.js": 2,
+      "/_next/static/chunks/2dbyd6b98rrkt.js": 2,
+      "/_next/static/chunks/2x-ezcwbxq1q-.js": 2,
+      "/_next/static/chunks/0rerxcvi7n9ds.js": 2,
+      "/_next/static/chunks/27kq-ynttm93w.js": 3,
+      "/_next/static/chunks/14o35rrqc8dch.js": 2,
+      "/_next/static/chunks/0ber_cyiwis_e.js": 2,
+      "/_next/static/chunks/2_hlyl4jd02md.js": 3,
+      "/": 5,
+      "/room/acceptance-cabinet/-/tasks": 1,
+      "/_next/static/chunks/065wz65yrxe3t.js": 1,
+      "/room/acceptance-cabinet/-/agents": 1
+    },
+    "failed": [
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/providers/status",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/rooms",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config/mcp-catalog",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      }
+    ],
+    "legacyDaemonOutputRequests": 0,
+    "searchRequests": 0,
+    "ptyCreateOrWriteRequests": 0,
+    "mutations": 8
+  },
+  "screenshots": [
+    {
+      "id": "desktop-room",
+      "file": "screenshots/desktop-room.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": false,
+      "route": "/room/acceptance-cabinet",
+      "purpose": "Desktop room and navigation"
+    }
+  ],
+  "productionTouched": false
+}

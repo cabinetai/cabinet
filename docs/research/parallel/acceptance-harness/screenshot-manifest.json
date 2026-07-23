@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "screenshots": [
+    {
+      "id": "desktop-room",
+      "file": "screenshots/desktop-room.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": false,
+      "route": "/room/acceptance-cabinet",
+      "purpose": "Desktop room and navigation"
+    }
+  ]
+}
