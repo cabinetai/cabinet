@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# Remove every trace of the packaged Cabinet desktop app on macOS:
-# the .app bundle, user data (notes, agents, sqlite), caches, preferences,
-# saved state, web storage, logs, and the auto-updater's ShipIt cache.
+# Remove the packaged Good Place Cabinet desktop app on macOS:
+# the .app bundle, application state, caches, preferences, web storage, logs,
+# and the auto-updater's ShipIt cache.
 #
-# This is destructive. Cabinet stores your workspace under
-#   ~/Library/Application Support/Cabinet/cabinet-data
-# and this script deletes it. Back up first if you want to keep anything.
+# The separately selected Good Place OS workspace is never removed.
 #
 # Usage:
 #   scripts/cleanup-cabinet-app.sh           # prompts before deleting
@@ -36,8 +34,8 @@ for arg in "$@"; do
   esac
 done
 
-APP_NAME="Cabinet"
-BUNDLE_ID="com.runcabinet.cabinet"
+APP_NAME="Good Place Cabinet"
+BUNDLE_ID="com.souljorje.good-place-cabinet"
 HOME_LIB="$HOME/Library"
 
 TARGETS=(
@@ -79,7 +77,7 @@ if [ ${#mounted_volumes[@]} -gt 0 ]; then
 fi
 
 if [ ${#existing[@]} -eq 0 ] && [ ${#mounted_volumes[@]} -eq 0 ]; then
-  echo "Nothing to do — no Cabinet artifacts found."
+  echo "Nothing to do — no Good Place Cabinet artifacts found."
   exit 0
 fi
 
@@ -90,7 +88,7 @@ fi
 
 if [ "$ASSUME_YES" -ne 1 ]; then
   echo
-  echo "This will permanently delete your Cabinet workspace and all listed paths."
+  echo "This will permanently delete the app state and all listed paths."
   read -r -p "Type 'yes' to continue: " reply
   if [ "$reply" != "yes" ]; then
     echo "Aborted."
@@ -131,5 +129,6 @@ if [ -x "$LS_REG" ]; then
   "$LS_REG" -u "/Applications/${APP_NAME}.app" >/dev/null 2>&1 || true
 fi
 
-echo "Done. Cabinet desktop app and all known data have been removed."
+echo "Done. Good Place Cabinet and its app state have been removed."
+echo "Your selected Good Place OS workspace was not touched."
 echo "Note: the installer DMG in ~/Downloads (if any) was not touched."

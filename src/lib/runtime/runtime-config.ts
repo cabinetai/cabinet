@@ -4,7 +4,7 @@ import path from "path";
 
 export const PROJECT_ROOT = process.cwd();
 const DEFAULT_RELEASE_MANIFEST_URL =
-  "https://github.com/cabinetai/cabinet/releases/latest/download/cabinet-release.json";
+  "https://github.com/souljorje/cabinet/releases/latest/download/cabinet-release.json";
 
 function parsePort(value: string | undefined, fallback: number): number {
   if (!value) return fallback;
@@ -37,12 +37,13 @@ type RuntimePortsState = {
 function defaultElectronDataDir(): string {
   // User-visible defaults: Cabinet stores user-owned content (cabinets, docs,
   // conversations), so we put it where users can find and back it up — not in
-  // hidden app-data dirs. macOS/Windows → ~/Documents/Cabinet, Linux → ~/Cabinet
+  // hidden app-data dirs. macOS/Windows → ~/Documents/Good Place OS,
+  // Linux → ~/Good Place OS
   // (Linux distros vary on whether ~/Documents exists; home-root is safer).
   if (process.platform === "darwin" || process.platform === "win32") {
-    return path.join(os.homedir(), "Documents", "Cabinet");
+    return path.join(os.homedir(), "Documents", "Good Place OS");
   }
-  return path.join(os.homedir(), "Cabinet");
+  return path.join(os.homedir(), "Good Place OS");
 }
 
 export function getCabinetRuntime(): "source" | "electron" {

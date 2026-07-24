@@ -42,11 +42,10 @@ function appBundleUrl(tag, key) {
   return `${repositoryUrl}/releases/download/${tag}/${assetName}`;
 }
 
-// Electron Forge default naming for Cabinet (productName "Cabinet"):
-//   MakerZIP (darwin):     Cabinet-darwin-arm64-${version}.zip
-//   MakerDMG:              Cabinet-${version}-arm64.dmg
-//   MakerZIP (win32):      Cabinet-win32-x64-${version}.zip
-//   MakerSquirrel (win32): "Cabinet-${version} Setup.exe", cabinet-${version}-full.nupkg, RELEASES
+const productName = packageJson.productName || "Cabinet";
+const releaseAssetName = productName.replace(/\s+/g, ".");
+
+// GitHub replaces spaces in uploaded Electron Forge artifact names with dots.
 // The macOS build host is arm64 (electron-release.yml runs on macos-latest).
 
 const manifest = {
@@ -69,15 +68,15 @@ const manifest = {
   electron: {
     macos: {
       arch: "arm64",
-      zipAssetName: `Cabinet-darwin-arm64-${version}.zip`,
-      dmgAssetName: `Cabinet-${version}-arm64.dmg`,
+      zipAssetName: `${releaseAssetName}-darwin-arm64-${version}.zip`,
+      dmgAssetName: `${releaseAssetName}-${version}-arm64.dmg`,
     },
     windows: {
-      zipAssetName: `Cabinet-win32-x64-${version}.zip`,
+      zipAssetName: `${releaseAssetName}-win32-x64-${version}.zip`,
       // GitHub replaces the space in the Squirrel output ("Cabinet-X Setup.exe")
       // with a dot when it stores the release asset, so match the as-uploaded name.
-      setupExeAssetName: `Cabinet-${version}.Setup.exe`,
-      nupkgAssetName: `cabinet-${version}-full.nupkg`,
+      setupExeAssetName: `${releaseAssetName}-${version}.Setup.exe`,
+      nupkgAssetName: `good_place_cabinet-${version}-full.nupkg`,
       releasesAssetName: "RELEASES",
     },
   },
@@ -85,4 +84,3 @@ const manifest = {
 
 await fs.writeFile(outputPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf-8");
 console.log(`Wrote release manifest to ${outputPath}`);
-

@@ -35,7 +35,7 @@ function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
   const version = pkg.version || "0.0.0";
   const gitTag = `v${version}`;
   const repositoryUrl = pkg.repository?.url?.replace(/^git\+/, "").replace(/\.git$/, "") ||
-    "https://github.com/cabinetai/cabinet";
+    "https://github.com/souljorje/cabinet";
 
   return {
     manifestVersion: 1,
@@ -54,8 +54,8 @@ function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
     cabinetaiVersion: version,
     electron: {
       macos: {
-        zipAssetName: `Cabinet-darwin-arm64-${version}.zip`,
-        dmgAssetName: `Cabinet-${version}-arm64.dmg`,
+        zipAssetName: `Good.Place.Cabinet-darwin-arm64-${version}.zip`,
+        dmgAssetName: `Good.Place.Cabinet-${version}-arm64.dmg`,
       },
     },
   };

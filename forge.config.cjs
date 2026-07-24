@@ -9,6 +9,9 @@ const { MakerSquirrel } = require("@electron-forge/maker-squirrel");
 const { AutoUnpackNativesPlugin } = require("@electron-forge/plugin-auto-unpack-natives");
 const { PublisherGithub } = require("@electron-forge/publisher-github");
 
+const APP_NAME = "Good Place Cabinet";
+const APP_BUNDLE_ID = "com.souljorje.good-place-cabinet";
+
 const PACKAGER_IGNORE = [
   /^\/\.git(?:\/|$)/,
   /^\/\.github(?:\/|$)/,
@@ -21,7 +24,7 @@ const PACKAGER_IGNORE = [
   /^\/assets(?:\/|$)/,
   /^\/cli(?:\/|$)/,
   /^\/public(?:\/|$)/,
-  /^\/electron\/(?!main\.cjs$|preload\.cjs$|browser-views\.cjs$|browser-preload\.cjs$).*/,
+  /^\/electron\/(?!main\.cjs$|preload\.cjs$|browser-views\.cjs$|browser-preload\.cjs$|logger\.cjs$|workspace-sync\.cjs$).*/,
   /^\/server(?:\/|$)/,
   /^\/src(?:\/|$)/,
   /^\/data(?:\/|$)/,
@@ -101,7 +104,7 @@ function codesignNativeBinaries(buildPath, electronVersion, platform, arch, done
   // node-pty is extracted outside the .app bundle at runtime (see main.cjs).
   const bundledNode = path.join(
     buildPath,
-    "Cabinet.app",
+    `${APP_NAME}.app`,
     "Contents",
     "Resources",
     "app.asar.unpacked",
@@ -115,7 +118,7 @@ function codesignNativeBinaries(buildPath, electronVersion, platform, arch, done
     execFileSync("codesign", ["--force", "--sign", "-", bundledNode]);
   } catch {}
 
-  const appPath = path.join(buildPath, "Cabinet.app");
+  const appPath = path.join(buildPath, `${APP_NAME}.app`);
   try {
     execFileSync("codesign", ["--force", "--deep", "--sign", "-", appPath]);
   } catch {}
@@ -154,10 +157,10 @@ function pruneMacLocales(buildPath, electronVersion, platform, arch, done) {
 
 module.exports = {
   packagerConfig: {
-    name: "Cabinet",
+    name: APP_NAME,
     icon: packagerIcon,
-    appBundleId: "com.runcabinet.cabinet",
-    appCopyright: "© 2026 Hila Shmuel",
+    appBundleId: APP_BUNDLE_ID,
+    appCopyright: "© 2026 Cabinet contributors and Good Place",
     appCategoryType: "public.app-category.productivity",
     // Required for the macOS TCC prompt when the Apple Notes importer drives
     // Notes.app via AppleScript (paired with the apple-events entitlement).
@@ -197,8 +200,8 @@ module.exports = {
     }),
     new MakerSquirrel(
       {
-        name: "cabinet",
-        authors: "Hila Shmuel",
+        name: "good_place_cabinet",
+        authors: "Good Place",
         // electron-winstaller requires a nuspec <description>; without it the
         // Squirrel maker fails ("Description is required").
         description:
@@ -217,7 +220,7 @@ module.exports = {
   publishers: [
     new PublisherGithub({
       repository: {
-        owner: "cabinetai",
+        owner: "souljorje",
         name: "cabinet",
       },
       prerelease: false,

@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { PROJECT_ROOT } from "./runtime-config";
+import { getManagedDataDir } from "./runtime-config";
 
 /**
  * `.cabinet.env` is a plain `KEY=value`-per-line file at the cabinet root,
@@ -24,7 +24,7 @@ import { PROJECT_ROOT } from "./runtime-config";
 const CABINET_ENV_FILENAME = ".cabinet.env";
 
 export function cabinetEnvPath(): string {
-  return path.join(PROJECT_ROOT, CABINET_ENV_FILENAME);
+  return path.join(getManagedDataDir(), CABINET_ENV_FILENAME);
 }
 
 interface ParsedFile {
@@ -128,7 +128,7 @@ function ensureGitignoreCovers(): void {
   // future edit removes the explicit rule — secrets in the repo would be
   // much worse than a noisy log line. Best-effort; never throws.
   try {
-    const gi = path.join(PROJECT_ROOT, ".gitignore");
+    const gi = path.join(getManagedDataDir(), ".gitignore");
     const text = fs.readFileSync(gi, "utf-8");
     // Match any of: an explicit `.cabinet.env` line, or `.cabinet.env*` glob,
     // or a leading `**/` form. NOT `.env*` — that pattern doesn't match

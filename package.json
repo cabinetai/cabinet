@@ -1,9 +1,14 @@
 {
   "name": "cabinet",
-  "version": "0.5.3",
+  "productName": "Good Place Cabinet",
+  "version": "0.5.3-gp.1",
   "description": "Cabinet is an AI-first, self-hosted knowledge base and startup OS. Your files, your agents, on your machine.",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/souljorje/cabinet.git"
+  },
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "node scripts/dev-next.mjs",

@@ -22,6 +22,8 @@ permissions:
 jobs:
   electron-macos:
     runs-on: macos-latest
+    env:
+      MACOS_SIGNING_CONFIGURED: ${{ secrets.APPLE_CERTIFICATE != '' && secrets.APPLE_ID != '' && '1' || '0' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -37,7 +39,7 @@ jobs:
         run: npm ci
 
       - name: Import Apple Developer certificate
-        if: ${{ inputs.tag != '' }}
+        if: ${{ inputs.tag != '' && env.MACOS_SIGNING_CONFIGURED == '1' }}
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -78,9 +80,9 @@ jobs:
         run: npm run test:electron:macos
 
       - name: Verify release signing and notarization
-        if: ${{ inputs.tag != '' }}
+        if: ${{ inputs.tag != '' && env.MACOS_SIGNING_CONFIGURED == '1' }}
         run: |
-          APP_PATH="$(find out -type d -name Cabinet.app -print -quit)"
+          APP_PATH="$(find out -type d -name 'Good Place Cabinet.app' -print -quit)"
           test -n "$APP_PATH"
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           spctl --assess --type execute --verbose=4 "$APP_PATH"

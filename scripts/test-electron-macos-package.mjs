@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Smoke-test the macOS Electron artifact the way a user receives it:
- * mount the DMG, launch Cabinet.app from the mounted volume, and verify both
+ * mount the DMG, launch Good Place Cabinet.app, and verify both
  * the embedded Next.js server and daemon through their public health routes.
  *
  * Usage:
@@ -20,13 +20,14 @@ if (process.platform !== "darwin") {
 }
 
 const root = process.cwd();
+const appName = "Good Place Cabinet";
 const runnerTemp = process.env.RUNNER_TEMP || os.tmpdir();
 const workDir = fs.mkdtempSync(path.join(runnerTemp, "cabinet-electron-smoke-"));
 const mountDir = path.join(workDir, "dmg");
 const dataDir = path.join(workDir, "cabinet-data");
 const processLogPath = path.join(workDir, "electron-process.log");
 const exportedLogDir = process.env.CABINET_ELECTRON_SMOKE_LOG_DIR?.trim();
-const userDataDir = path.join(os.homedir(), "Library", "Application Support", "Cabinet");
+const userDataDir = path.join(os.homedir(), "Library", "Application Support", appName);
 const configPath = path.join(userDataDir, "cabinet-config.json");
 
 let appProcess;
@@ -53,7 +54,7 @@ function findAppBundle(directory) {
   if (!fs.existsSync(directory)) return null;
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const entryPath = path.join(directory, entry.name);
-    if (entry.isDirectory() && entry.name === "Cabinet.app") return entryPath;
+    if (entry.isDirectory() && entry.name === `${appName}.app`) return entryPath;
     if (entry.isDirectory()) {
       const match = findAppBundle(entryPath);
       if (match) return match;
@@ -174,13 +175,13 @@ try {
   mounted = true;
 
   const appPath = findAppBundle(mountDir);
-  if (!appPath) throw new Error("Mounted DMG does not contain Cabinet.app");
+  if (!appPath) throw new Error(`Mounted DMG does not contain ${appName}.app`);
 
   execFileSync("codesign", ["--verify", "--deep", "--strict", "--verbose=2", appPath], {
     stdio: "inherit",
   });
 
-  const executable = path.join(appPath, "Contents", "MacOS", "Cabinet");
+  const executable = path.join(appPath, "Contents", "MacOS", appName);
   if (!fs.existsSync(executable)) throw new Error(`Missing packaged executable: ${executable}`);
 
   const logFd = fs.openSync(processLogPath, "a");
