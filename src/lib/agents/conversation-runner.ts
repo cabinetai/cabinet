@@ -596,9 +596,8 @@ export async function startConversationRun(
   // `listModels()` are not in the static list but may be added later.
   let contextWindow: number | undefined;
   if (resolvedProviderId && baseAdapterConfig?.model) {
-    const provider = providerRegistry.get(resolvedProviderId);
     const modelId = String(baseAdapterConfig.model);
-    const modelInfo = provider?.models?.find((m) => m.id === modelId);
+    const modelInfo = providerRegistry.getProviderModels(resolvedProviderId).find((m) => m.id === modelId);
     if (modelInfo?.contextWindow) {
       contextWindow = modelInfo.contextWindow;
     }
