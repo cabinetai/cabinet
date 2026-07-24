@@ -11,7 +11,6 @@ import type {
 import { bootIsolatedCabinet, type IsolatedCabinet } from "./isolated-cabinet";
 import {
   AcceptanceRecorder,
-  classifyHttpIssue,
   markRoute,
   scanIndicators,
   writeAcceptanceArtifacts,
@@ -32,6 +31,7 @@ import {
   ControlledRestartTracker,
   type RestartRequest,
 } from "./restart-handling";
+import { sampleHermesHealthProjection } from "./health-observation";
 
 test.describe.configure({ mode: "serial" });
 test.setTimeout(600_000);
@@ -175,38 +175,10 @@ async function installPageObservation(page: Page) {
       }
     }
   });
-  page.on("response", async (response) => {
+  page.on("response", (response) => {
     const url = new URL(response.url());
     if (url.origin !== new URL(cabinet.appUrl).origin) return;
     if (url.pathname === "/api/hermes/health" && response.status() === 200) {
-      if (!transport.sendsLiveModelMessages) return;
-      try {
-        await response.finished();
-        const body = JSON.parse((await response.body()).toString("utf8")) as Record<string, unknown>;
-        const state = typeof body.sourceState === "string"
-          ? body.sourceState
-          : typeof body.status === "string"
-            ? body.status
-            : undefined;
-        if (state && ["unavailable", "not_configured", "timeout", "stale", "authentication_failed"].includes(state)) {
-          recorder.browserIssue({
-            source: "http",
-            ...classifyHttpIssue({
-              path: url.pathname,
-              status: response.status(),
-              typedProjection: true,
-              projectionState: state,
-            }),
-          });
-        }
-      } catch {
-        recorder.browserIssue({
-          source: "http",
-          severity: "error",
-          path: url.pathname,
-          summary: "Hermes health returned an unreadable projection.",
-        });
-      }
       return;
     }
     if (
@@ -1074,6 +1046,26 @@ test("authoritative isolated production acceptance", async ({ page }) => {
       reproduction: incompleteRoutes.map((entry) => `Open ${entry.route}.`),
       ownerHint: "acceptance harness",
     });
+  }
+
+  if (transport.sendsLiveModelMessages) {
+    recorder.stage("console-health");
+    try {
+      const healthIssue = await sampleHermesHealthProjection(page, cabinet.appUrl);
+      if (healthIssue) {
+        recorder.browserIssue({
+          source: "http",
+          ...healthIssue,
+        });
+      }
+    } catch (error) {
+      recorder.browserIssue({
+        source: "http",
+        severity: "error",
+        path: "/api/hermes/health",
+        summary: `Hermes health observation failed: ${conciseError(String(error))}`,
+      });
+    }
   }
 
   const relevantBrowserIssues = recorder.relevantBrowserIssues();

@@ -4,6 +4,10 @@ import { execFileSync } from "node:child_process";
 import { bootIsolatedCabinet, type IsolatedCabinet } from "./isolated-cabinet";
 import { AcceptanceRecorder, classifyHttpIssue, scanIndicators } from "./recorder";
 import { DeliberateFailureTransport } from "./transport";
+import {
+  classifyHermesHealthProjection,
+  sampleHermesHealthProjection,
+} from "./health-observation";
 
 test.describe.configure({ mode: "serial" });
 test.setTimeout(90_000);
@@ -112,6 +116,47 @@ test("typed unavailable projections are attached but excluded from relevant erro
   });
   expect(recorder.browserIssues).toHaveLength(1);
   expect(recorder.relevantBrowserIssues()).toEqual([]);
+});
+
+test("health projection sampling remains readable after browser history navigation", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("cabinet.dataDirConfirmed", "1");
+    window.localStorage.setItem("cabinet.wizard-done", "1");
+    window.localStorage.setItem("cabinet.tour-done", "1");
+  });
+  await page.route("**/api/hermes/health", (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        status: "online",
+        version: "fixture",
+        profile: "operator-os",
+      },
+    }),
+  );
+  await page.goto(`${cabinet.appUrl}/room/acceptance-cabinet`);
+  await page.goto(`${cabinet.appUrl}/cockpit`);
+  await page.goBack();
+  await page.goForward();
+
+  await expect(
+    sampleHermesHealthProjection(page, cabinet.appUrl),
+  ).resolves.toBeNull();
+});
+
+test("explicit health projection sampling remains fail-closed for malformed JSON", async () => {
+  expect(classifyHermesHealthProjection(200, "{")).toEqual({
+    path: "/api/hermes/health",
+    severity: "error",
+    summary: "Hermes health returned an unreadable projection.",
+    expectedUnavailableProjection: false,
+  });
+  expect(classifyHermesHealthProjection(200, "null")).toEqual({
+    path: "/api/hermes/health",
+    severity: "error",
+    summary: "Hermes health returned an unreadable projection.",
+    expectedUnavailableProjection: false,
+  });
 });
 
 test("controlled restart transport errors require explicit phase correlation", async () => {
