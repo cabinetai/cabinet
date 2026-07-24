@@ -13,7 +13,6 @@ import type {
   Turn,
 } from "@/types/tasks";
 import { rememberTaskRuntime } from "./terminal-mode-cache";
-import { providerRegistry } from "./provider-registry";
 
 /**
  * Map ConversationMeta → TaskMeta (UI shape). The UI status is derived:
@@ -31,23 +30,6 @@ export function conversationMetaToTaskMeta(meta: ConversationMeta): TaskMeta {
   // mount the xterm shell without waiting on its own detail fetch. No-op
   // on the server — hydrate() guards the sessionStorage touch.
   rememberTaskRuntime(meta.id, meta.adapterType);
-
-  // Backfill contextWindow from provider model list when missing. Covers
-  // conversations created before this field was populated. The lookup
-  // mirrors startConversationRun's own model→window resolution.
-  let contextWindow = meta.runtime?.contextWindow;
-  if (!contextWindow && meta.providerId && meta.adapterConfig?.model) {
-    const provider = providerRegistry.get(meta.providerId);
-    const modelId = String(meta.adapterConfig.model);
-    const modelInfo = provider?.models?.find((m) => m.id === modelId);
-    if (modelInfo?.contextWindow) {
-      contextWindow = modelInfo.contextWindow;
-    }
-  }
-  const runtime = contextWindow
-    ? { ...meta.runtime, contextWindow }
-    : meta.runtime;
-
   return {
     id: meta.id,
     title: meta.title,
@@ -59,7 +41,7 @@ export function conversationMetaToTaskMeta(meta: ConversationMeta): TaskMeta {
     providerId: meta.providerId,
     adapterType: meta.adapterType,
     adapterConfig: meta.adapterConfig,
-    runtime,
+    runtime: meta.runtime,
     tokens: meta.tokens,
     createdAt: meta.startedAt,
     startedAt: meta.startedAt,
