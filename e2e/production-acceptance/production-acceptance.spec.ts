@@ -31,7 +31,7 @@ test.setTimeout(600_000);
 
 const CHECK_TIMEOUT_MS = 45_000;
 const INTERACTION_TIMEOUT_MS = 15_000;
-const appPort = Number(process.env.CABINET_ACCEPTANCE_PORT ?? 4335);
+const appPort = Number(process.env.CABINET_ACCEPTANCE_PORT ?? 4343);
 const repoRoot = process.cwd();
 const acceptanceBaseRef = process.env.CABINET_ACCEPTANCE_BASE_REVISION ?? "origin/main";
 const acceptanceBaseRevision = execFileSync("git", ["rev-parse", acceptanceBaseRef], {

@@ -12,8 +12,8 @@ The runner:
   base (current `origin/main` by default);
 - builds the production app when `.next/BUILD_ID` is absent;
 - uses isolated temporary `HOME` and `CABINET_DATA_DIR` roots;
-- binds only to `127.0.0.1:4335` by default, inside the reserved final-wave
-  range `4331`-`4335`;
+- binds only to `127.0.0.1:4343` by default, the reserved final-integration
+  port;
 - defaults to the registered `fixture-non-model` transport;
 - requires `CABINET_ACCEPTANCE_SKILLS_MODE=fixture|production` (the runner
   selects `fixture` explicitly unless overridden);

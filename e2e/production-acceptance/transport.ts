@@ -7,7 +7,7 @@ import type {
   ConversationTurnDiagnostic,
 } from "./contracts";
 
-export const ACCEPTANCE_NAME = "CABINET ACP EXACT RESPONSE FINAL — 2026-07-23";
+export const ACCEPTANCE_NAME = "CABINET ACP EXACT RESPONSE FINAL V2 — 2026-07-23";
 export const INITIAL_PROMPT =
   "This is a local Cabinet acceptance test. Do not use tools or contact external systems. Reply with exactly CABINET_ACCEPTANCE_OK.";
 export const FOLLOW_UP_PROMPT =

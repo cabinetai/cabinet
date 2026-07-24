@@ -6,7 +6,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { TRANSPORT_TOKEN } from "./transport";
 
-const DEFAULT_APP_PORT = 4335;
+const DEFAULT_APP_PORT = 4343;
 
 export interface IsolatedCabinet {
   appUrl: string;
