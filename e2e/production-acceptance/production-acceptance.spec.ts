@@ -4,7 +4,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { buildHermesAcceptanceFixtureProjection } from "../../src/lib/hermes/control-center-acceptance-fixture";
-import { buildHermesSkillsAcceptanceSnapshot } from "../../src/lib/hermes/skills-management-fixture";
 import type {
   AcceptanceStatus,
   RouteChecklistEntry,
@@ -281,17 +280,6 @@ async function installPageObservation(page: Page) {
   await page.route("**/api/hermes/control-center", (route) =>
     route.fulfill({ json: projection })
   );
-  if (skillsMode === "fixture") {
-    await page.route("**/api/hermes/skills-management**", (route) => {
-      if (route.request().method() === "GET") {
-        return route.fulfill({ json: buildHermesSkillsAcceptanceSnapshot() });
-      }
-      return route.fulfill({
-        status: 405,
-        json: { error: "Acceptance harness forbids governed Skill mutations." },
-      });
-    });
-  }
 }
 
 async function pageIdentity(page: Page, route: string, meaningful: RegExp) {
@@ -811,7 +799,7 @@ test("authoritative isolated production acceptance", async ({ page }) => {
     "Hermes",
     async () => {
       await page.goto(
-        `${cabinet.appUrl}/hermes${skillsMode === "fixture" ? "?skillsFixture=acceptance" : ""}`,
+        `${cabinet.appUrl}/hermes`,
       );
       await expect(page.getByTestId("hermes-control-center")).toBeVisible();
       await expect(page.getByRole("tab", { name: "Operator" })).toHaveAttribute(

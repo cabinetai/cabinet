@@ -36,8 +36,43 @@ function isAction(value: unknown): value is HermesSkillAction {
   return value === "install" || value === "remove";
 }
 
-function fixtureAllowed(): boolean {
-  return process.env.CABINET_HERMES_ACCEPTANCE_FIXTURES?.trim().toLowerCase() === "true";
+type SkillsRouteMode =
+  | { mode: "production" | "fixture" }
+  | { mode: "unavailable"; code: "invalid_mode" | "fixture_requires_isolation" };
+
+export function resolveHermesSkillsRouteMode(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): SkillsRouteMode {
+  const configured = env.CABINET_ACCEPTANCE_SKILLS_MODE?.trim();
+  if (!configured || configured === "production") return { mode: "production" };
+  if (configured === "fixture") {
+    return env.CABINET_ACCEPTANCE_ISOLATED === "1"
+      ? { mode: "fixture" }
+      : { mode: "unavailable", code: "fixture_requires_isolation" };
+  }
+  return { mode: "unavailable", code: "invalid_mode" };
+}
+
+function modeUnavailable(code: Extract<SkillsRouteMode, { mode: "unavailable" }>["code"]) {
+  return NextResponse.json(
+    {
+      state: "unavailable",
+      code,
+      error: "Hermes Skills mode is unavailable because server configuration is invalid.",
+    },
+    { status: 503, headers: { "Cache-Control": "no-store" } },
+  );
+}
+
+function browserModeSelectionForbidden() {
+  return NextResponse.json(
+    {
+      state: "blocked",
+      code: "browser_mode_selection_forbidden",
+      error: "Hermes Skills mode is selected by the server.",
+    },
+    { status: 400, headers: { "Cache-Control": "no-store" } },
+  );
 }
 
 type RouteDependencies = {
@@ -46,7 +81,7 @@ type RouteDependencies = {
   runtimeMode?: typeof getCabinetRuntimeMode;
   actorIdentity?: typeof authenticatedCabinetActorIdentity;
   service?: HermesSkillsManagementService;
-  fixturesEnabled?: () => boolean;
+  routeMode?: () => SkillsRouteMode;
   fixtureService?: HermesSkillsManagementService;
 };
 
@@ -54,11 +89,27 @@ export async function handleHermesSkillsGet(request: NextRequest, dependencies: 
   const unauthorized = await (dependencies.requireAuth ?? requireApiAuth)(request);
   if (unauthorized) return unauthorized;
   if ((dependencies.runtimeMode ?? getCabinetRuntimeMode)() !== "hermes") return NextResponse.json({ error: "Hermes runtime mode is disabled." }, { status: 404 });
-  const wantsFixture = request.nextUrl.searchParams.get("fixture") === "acceptance";
-  if (wantsFixture && !(dependencies.fixturesEnabled ?? fixtureAllowed)()) return NextResponse.json({ error: "Acceptance fixtures are disabled." }, { status: 404 });
-  const service = wantsFixture ? dependencies.fixtureService ?? fixtureService() : dependencies.service ?? liveService();
-  const snapshot = await service.snapshot(request.nextUrl.searchParams.get("q") ?? "");
-  return NextResponse.json(snapshot, { headers: { "Cache-Control": "no-store" } });
+  if (request.nextUrl.searchParams.has("fixture")) return browserModeSelectionForbidden();
+  const selection = (dependencies.routeMode ?? resolveHermesSkillsRouteMode)();
+  if (selection.mode === "unavailable") return modeUnavailable(selection.code);
+  const service = selection.mode === "fixture"
+    ? dependencies.fixtureService ?? fixtureService()
+    : dependencies.service ?? liveService();
+  try {
+    const snapshot = await service.snapshot(request.nextUrl.searchParams.get("q") ?? "");
+    return NextResponse.json(snapshot, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        state: "unavailable",
+        code: "skills_read_unavailable",
+        error: error instanceof Error
+          ? sanitizeHermesText(error.message, 200)
+          : "Hermes Skills read-only state is unavailable.",
+      },
+      { status: 502, headers: { "Cache-Control": "no-store" } },
+    );
+  }
 }
 
 export async function handleHermesSkillsPost(request: NextRequest, dependencies: RouteDependencies = {}) {
@@ -69,11 +120,22 @@ export async function handleHermesSkillsPost(request: NextRequest, dependencies:
   if ((dependencies.runtimeMode ?? getCabinetRuntimeMode)() !== "hermes") return NextResponse.json({ error: "Hermes runtime mode is disabled." }, { status: 404 });
   try {
     const body = await request.json() as Record<string, unknown>;
-    const useFixture = body.fixture === true;
-    if (useFixture && !(dependencies.fixturesEnabled ?? fixtureAllowed)()) return NextResponse.json({ error: "Acceptance fixtures are disabled." }, { status: 404 });
-    const actorIdentity = useFixture ? "acceptance-fixture" : await (dependencies.actorIdentity ?? authenticatedCabinetActorIdentity)(request);
+    if ("fixture" in body) return browserModeSelectionForbidden();
+    const selection = (dependencies.routeMode ?? resolveHermesSkillsRouteMode)();
+    if (selection.mode === "unavailable") return modeUnavailable(selection.code);
+    if (selection.mode === "fixture") {
+      return NextResponse.json(
+        {
+          state: "blocked",
+          code: "fixture_read_only",
+          error: "The isolated Skills acceptance fixture is read-only.",
+        },
+        { status: 403, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+    const actorIdentity = await (dependencies.actorIdentity ?? authenticatedCabinetActorIdentity)(request);
     if (!actorIdentity) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const service = useFixture ? dependencies.fixtureService ?? fixtureService() : dependencies.service ?? liveService();
+    const service = dependencies.service ?? liveService();
     if (body.stage === "prepare") {
       if (!isAction(body.action)) return NextResponse.json({ error: "A supported Hermes skill action is required." }, { status: 400 });
       const preview = await service.prepare({

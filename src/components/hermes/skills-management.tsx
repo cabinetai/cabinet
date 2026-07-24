@@ -45,7 +45,7 @@ function resultVariant(status: HermesSkillsManagementResult["status"]): "default
   return "outline";
 }
 
-function SkillRow({ skill, onAction }: { skill: HermesManagedSkill; onAction: (skill: HermesManagedSkill, action: HermesSkillAction) => void }) {
+function SkillRow({ skill, onAction, readOnly }: { skill: HermesManagedSkill; onAction: (skill: HermesManagedSkill, action: HermesSkillAction) => void; readOnly: boolean }) {
   return (
     <article className="grid gap-3 border-b border-border px-3 py-3 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center" data-testid={`hermes-skill-${skill.name}`}>
       <div className="min-w-0">
@@ -60,12 +60,13 @@ function SkillRow({ skill, onAction }: { skill: HermesManagedSkill; onAction: (s
         </p>
       </div>
       <div className="flex flex-wrap gap-2 sm:justify-end">
-        {skill.supportedActions.map((action) => (
+        {!readOnly && skill.supportedActions.map((action) => (
           <Button key={action} size="sm" variant={action === "remove" ? "outline" : "default"} onClick={() => onAction(skill, action)}>
             {actionLabel(action)}
           </Button>
         ))}
-        {!skill.supportedActions.length ? <span className="text-xs text-muted-foreground">No managed action in Hermes 0.19.0</span> : null}
+        {readOnly ? <span className="text-xs text-muted-foreground">Read-only acceptance fixture</span> : null}
+        {!readOnly && !skill.supportedActions.length ? <span className="text-xs text-muted-foreground">No managed action in Hermes 0.19.0</span> : null}
       </div>
     </article>
   );
@@ -83,11 +84,6 @@ export function HermesSkillsManagement() {
   const [preview, setPreview] = useState<HermesSkillsManagementPreview | null>(null);
   const [result, setResult] = useState<HermesSkillsManagementResult | null>(null);
   const [busy, setBusy] = useState(false);
-  const [fixture, setFixture] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setFixture(new URLSearchParams(window.location.search).get("skillsFixture") === "acceptance");
-  }, []);
 
   const load = useCallback(async (search: string) => {
     setLoading(true);
@@ -95,7 +91,6 @@ export function HermesSkillsManagement() {
     try {
       const params = new URLSearchParams();
       if (search.trim()) params.set("q", search.trim());
-      if (fixture === true) params.set("fixture", "acceptance");
       const response = await fetch(`/api/hermes/skills-management?${params}`, { cache: "no-store" });
       const body = await response.json() as HermesSkillsSnapshot & { error?: string };
       if (!response.ok) throw new Error(body.error || "Hermes Skills management is unavailable.");
@@ -105,9 +100,9 @@ export function HermesSkillsManagement() {
     } finally {
       setLoading(false);
     }
-  }, [fixture]);
+  }, []);
 
-  useEffect(() => { if (fixture !== null) void load(""); }, [fixture, load]);
+  useEffect(() => { void load(""); }, [load]);
   useEffect(() => {
     if (filter !== "available") return;
     const timer = setTimeout(() => void load(query), 300);
@@ -140,7 +135,7 @@ export function HermesSkillsManagement() {
       const response = await fetch("/api/hermes/skills-management", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stage: "prepare", action: selected.action, targetIdentity: selected.skill.identity, reason, query: filter === "available" ? query : "", fixture: fixture === true }),
+        body: JSON.stringify({ stage: "prepare", action: selected.action, targetIdentity: selected.skill.identity, reason, query: filter === "available" ? query : "" }),
       });
       const body = await response.json() as ApiResponse;
       if (!response.ok || !body.preview) throw new Error(body.error || "Hermes could not prepare this skill change.");
@@ -160,7 +155,7 @@ export function HermesSkillsManagement() {
       const response = await fetch("/api/hermes/skills-management", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stage: "commit", previewId: preview.previewId, targetIdentity: preview.targetIdentity, confirmationPhrase: confirmation, fixture: fixture === true }),
+        body: JSON.stringify({ stage: "commit", previewId: preview.previewId, targetIdentity: preview.targetIdentity, confirmationPhrase: confirmation }),
       });
       const body = await response.json() as ApiResponse;
       if (!response.ok || !body.result) throw new Error(body.error || "Hermes could not complete this skill change.");
@@ -181,7 +176,7 @@ export function HermesSkillsManagement() {
       const response = await fetch("/api/hermes/skills-management", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stage: "recheck", previewId: preview.previewId, targetIdentity: preview.targetIdentity, fixture: fixture === true }),
+        body: JSON.stringify({ stage: "recheck", previewId: preview.previewId, targetIdentity: preview.targetIdentity }),
       });
       const body = await response.json() as ApiResponse;
       if (!response.ok || !body.result) throw new Error(body.error || "Hermes could not reconcile this skill state.");
@@ -200,7 +195,7 @@ export function HermesSkillsManagement() {
         <Alert className="border-warning/40 bg-warning/5" data-testid="hermes-skills-fixture-label">
           <TriangleAlert aria-hidden="true" />
           <AlertTitle>{snapshot.fixtureLabel}</AlertTitle>
-          <AlertDescription>Fixture Agent 0.19.0. Every visible change uses the fake Hermes adapter.</AlertDescription>
+          <AlertDescription>This isolated fixture is read-only. No live Hermes dispatch is available.</AlertDescription>
         </Alert>
       ) : null}
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 shadow-sm sm:flex-row sm:items-end sm:justify-between">
@@ -229,7 +224,7 @@ export function HermesSkillsManagement() {
       </div>
       {error && !selected ? <Alert variant="destructive"><TriangleAlert aria-hidden="true" /><AlertTitle>Skills unavailable</AlertTitle><AlertDescription>{error}</AlertDescription></Alert> : null}
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        {loading && !snapshot ? <p className="p-6 text-sm text-muted-foreground">Reading canonical Hermes skill state...</p> : items.length ? items.map((skill) => <SkillRow key={skill.identity} skill={skill} onAction={(nextSkill, action) => { setSelected({ skill: nextSkill, action }); setReason(""); setPreview(null); setResult(null); setError(null); }} />) : <p className="p-6 text-sm text-muted-foreground">{snapshot?.sourceState === "connected_empty" ? "Hermes is connected and reported no skills in this view." : "No skills match this view."}</p>}
+        {loading && !snapshot ? <p className="p-6 text-sm text-muted-foreground">Reading canonical Hermes skill state...</p> : items.length ? items.map((skill) => <SkillRow key={skill.identity} skill={skill} readOnly={snapshot?.fixture === true} onAction={(nextSkill, action) => { setSelected({ skill: nextSkill, action }); setReason(""); setPreview(null); setResult(null); setError(null); }} />) : <p className="p-6 text-sm text-muted-foreground">{snapshot?.sourceState === "connected_empty" ? "Hermes is connected and reported no skills in this view." : "No skills match this view."}</p>}
       </div>
 
       <Dialog open={Boolean(selected)} onOpenChange={(open) => { if (!open) close(); }}>
