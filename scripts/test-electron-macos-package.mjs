@@ -181,7 +181,12 @@ try {
     stdio: "inherit",
   });
 
-  const executable = path.join(appPath, "Contents", "MacOS", appName);
+  // Run from a writable copy to match an installed application. Launching
+  // directly from the read-only DMG can hide writes into the signed bundle.
+  const installedAppPath = path.join(workDir, `${appName}.app`);
+  execFileSync("ditto", [appPath, installedAppPath]);
+
+  const executable = path.join(installedAppPath, "Contents", "MacOS", appName);
   if (!fs.existsSync(executable)) throw new Error(`Missing packaged executable: ${executable}`);
 
   const logFd = fs.openSync(processLogPath, "a");
@@ -206,6 +211,13 @@ try {
   if (!page.ok || !(await page.text()).includes("<!DOCTYPE html")) {
     throw new Error("Packaged app did not serve its HTML shell");
   }
+
+  await stopApp();
+  execFileSync(
+    "codesign",
+    ["--verify", "--deep", "--strict", "--verbose=2", installedAppPath],
+    { stdio: "inherit" }
+  );
 
   console.log("macOS Electron DMG smoke test passed");
 } catch (error) {

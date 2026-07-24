@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
     },
   },
   output: "standalone",
+  // The desktop app runs the standalone server from a signed application
+  // bundle. Keep its fetch cache in memory so Next.js does not mutate that
+  // bundle after launch and invalidate the code signature.
+  experimental: {
+    isrFlushToDisk: false,
+  },
   // Audit #219 / #220: the floating Next.js dev indicator sat on top of the
   // sidebar "New Page" button and was visible in the product chrome even in
   // dev. Disable it entirely — actual Next.js compile errors still surface
