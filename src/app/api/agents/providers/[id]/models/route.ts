@@ -59,6 +59,9 @@ export async function GET(
   }
 
   cache.set(id, { models, fetchedAt: now, dynamic });
+  // Populate the shared registry cache so conversation contextWindow
+  // lookups (creation + backfill) can find models from dynamic discovery.
+  providerRegistry.setProviderModelsCache(id, models);
 
   return NextResponse.json({
     providerId: id,

@@ -44,6 +44,7 @@ import { readLibraryPersona } from "./library-manager";
 import { listPersonas, readPersona, type AgentPersona } from "./persona-manager";
 import { renderPersonaBody } from "./persona-templating";
 import { getDefaultProviderId } from "./provider-runtime";
+import { providerRegistry } from "./provider-registry";
 import { looksLikeAwaitingInput } from "./task-heuristics";
 import { emit as emitTelemetry } from "@/lib/telemetry";
 
@@ -589,6 +590,19 @@ export async function startConversationRun(
     ? { ...(input.adapterConfig || {}), skills: requestedSkillSlugs }
     : input.adapterConfig;
 
+  // Look up the selected model's context window from the provider's static
+  // model list. This covers fallback models with hardcoded contextWindow
+  // values (DeepSeek, Claude, GPT, etc.). Dynamic models discovered via
+  // `listModels()` are not in the static list but may be added later.
+  let contextWindow: number | undefined;
+  if (resolvedProviderId && baseAdapterConfig?.model) {
+    const modelId = String(baseAdapterConfig.model);
+    const modelInfo = providerRegistry.getProviderModels(resolvedProviderId).find((m) => m.id === modelId);
+    if (modelInfo?.contextWindow) {
+      contextWindow = modelInfo.contextWindow;
+    }
+  }
+
   const meta = await createConversation({
     agentSlug: input.agentSlug,
     cabinetPath: input.cabinetPath,
@@ -598,6 +612,7 @@ export async function startConversationRun(
     providerId: resolvedProviderId,
     adapterType: resolvedAdapterType,
     adapterConfig: baseAdapterConfig,
+    contextWindow,
     mentionedPaths: input.mentionedPaths,
     jobId: input.jobId,
     jobName: input.jobName,
@@ -789,6 +804,7 @@ export async function waitForConversationCompletion(
                       input: data.adapterUsage.inputTokens,
                       output: data.adapterUsage.outputTokens,
                       cache: data.adapterUsage.cachedInputTokens,
+                      reasoning: data.adapterUsage.reasoningTokens,
                       total:
                         data.adapterUsage.inputTokens +
                         data.adapterUsage.outputTokens,
@@ -1280,6 +1296,7 @@ async function runContinueInProcess(input: {
               input: result.usage.inputTokens,
               output: result.usage.outputTokens,
               cache: result.usage.cachedInputTokens,
+              reasoning: result.usage.reasoningTokens,
             }
           : undefined,
         sessionId: result.sessionId || undefined,
@@ -1790,6 +1807,7 @@ export async function continueConversationRun(
       inputTokens: number;
       outputTokens: number;
       cachedInputTokens?: number;
+      reasoningTokens?: number;
     } | null;
     adapterErrorKind?:
       | import("../../types/conversations").ConversationErrorKind
@@ -1931,6 +1949,7 @@ export async function continueConversationRun(
               input: result.adapterUsage.inputTokens,
               output: result.adapterUsage.outputTokens,
               cache: result.adapterUsage.cachedInputTokens,
+              reasoning: result.adapterUsage.reasoningTokens,
               total:
                 result.adapterUsage.inputTokens + result.adapterUsage.outputTokens,
             }
@@ -1956,6 +1975,7 @@ export async function continueConversationRun(
               input: result.adapterUsage.inputTokens,
               output: result.adapterUsage.outputTokens,
               cache: result.adapterUsage.cachedInputTokens,
+              reasoning: result.adapterUsage.reasoningTokens,
             }
           : undefined,
         exitCode: failed ? 1 : undefined,

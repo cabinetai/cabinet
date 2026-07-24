@@ -49,8 +49,8 @@ test("empty / whitespace / nullish output falls back to the offline list", () =>
   for (const input of ["", "   \n  \n", null, undefined]) {
     const models = parseOpenCodeModels(input);
     assert.ok(models.length > 0, "fallback must not be empty");
-    // Fallback is the static openai/anthropic/google/xai set — every id is a
-    // vendor/model and the known anchors are present.
+    // Fallback is the static openai/anthropic/google/xai/deepseek set — every
+    // id is a vendor/model and the known anchors are present.
     assert.ok(models.every((m) => m.id.includes("/")));
     assert.ok(models.some((m) => m.id === "anthropic/claude-opus-4-7"));
   }
@@ -60,4 +60,29 @@ test("output that is only noise (no slash anywhere) falls back, never blank", ()
   const models = parseOpenCodeModels("loading...\nno models configured\n");
   assert.ok(models.length > 0);
   assert.ok(models.some((m) => m.id === "openai/gpt-5.4"));
+});
+
+test("offline fallback list includes DeepSeek models for picker visibility", () => {
+  // When opencode models discovery fails, the fallback list populates the
+  // model picker. DeepSeek users should see real DeepSeek options instead
+  // of misleading OpenAI/Anthropic defaults.
+  const models = parseOpenCodeModels(null);
+  const deepseekIds = models.filter((m) => m.id.startsWith("deepseek/"));
+  assert.ok(deepseekIds.length >= 2, "fallback should include at least 2 DeepSeek models");
+  assert.ok(
+    deepseekIds.some((m) => m.id === "deepseek/deepseek-v4-pro"),
+    "fallback must include deepseek-v4-pro"
+  );
+  assert.ok(
+    deepseekIds.some((m) => m.id === "deepseek/deepseek-v4-flash"),
+    "fallback must include deepseek-v4-flash"
+  );
+  // Every fallback entry must carry variant levels so the picker renders
+  // the effort dropdown.
+  deepseekIds.forEach((m) => {
+    assert.ok(
+      (m.effortLevels || []).some((e) => e.id === "max"),
+      `DeepSeek model ${m.id} should have variant effort levels`
+    );
+  });
 });

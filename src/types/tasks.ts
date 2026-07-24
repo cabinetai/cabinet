@@ -63,6 +63,7 @@ export interface TurnTokens {
   input: number;
   output: number;
   cache?: number;
+  reasoning?: number;
 }
 
 export interface TurnMeta {
@@ -97,6 +98,7 @@ export interface TaskTokens {
   input: number;
   output: number;
   cache?: number;
+  reasoning?: number;
   total: number;
 }
 

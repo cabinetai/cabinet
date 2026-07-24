@@ -189,6 +189,12 @@ interface CreateConversationInput {
   providerId?: string;
   adapterType?: string;
   adapterConfig?: Record<string, unknown>;
+  /**
+   * Known context window for the selected model. Set on `meta.runtime` so
+   * the UI token bar shows the real limit instead of the 200k hardcoded
+   * default. Populated from provider model metadata when available.
+   */
+  contextWindow?: number;
   mentionedPaths?: string[];
   /**
    * Composer attachments sent with the kickoff message. Stored on
@@ -588,6 +594,7 @@ export async function createConversation(
     providerId: input.providerId,
     adapterType: input.adapterType,
     adapterConfig: input.adapterConfig,
+    runtime: input.contextWindow ? { contextWindow: input.contextWindow } : undefined,
     promptPath: virtualPathFromFs(promptPathFs(id, cp)),
     transcriptPath: virtualPathFromFs(transcriptPathFs(id, cp)),
     mentionedPaths: input.mentionedPaths || [],
@@ -1104,6 +1111,7 @@ async function finalizeMetaFromDaemonOutput(
       inputTokens: number;
       outputTokens: number;
       cachedInputTokens?: number;
+      reasoningTokens?: number;
     } | null;
     adapterErrorKind?: ConversationErrorKind | null;
     adapterErrorHint?: string | null;
@@ -1138,6 +1146,7 @@ async function finalizeMetaFromDaemonOutput(
             input: data.adapterUsage.inputTokens,
             output: data.adapterUsage.outputTokens,
             cache: data.adapterUsage.cachedInputTokens,
+            reasoning: data.adapterUsage.reasoningTokens,
             total:
               data.adapterUsage.inputTokens + data.adapterUsage.outputTokens,
           }
@@ -2355,13 +2364,15 @@ function aggregateTokens(turns: ConversationTurn[]): ConversationTokens {
   let input = 0;
   let output = 0;
   let cache = 0;
+  let reasoning = 0;
   for (const turn of turns) {
     if (!turn.tokens) continue;
     input += turn.tokens.input;
     output += turn.tokens.output;
     cache += turn.tokens.cache ?? 0;
+    reasoning += turn.tokens.reasoning ?? 0;
   }
-  return { input, output, cache, total: input + output };
+  return { input, output, cache, reasoning, total: input + output };
 }
 
 async function nextTurnNumber(id: string, cabinetPath?: string): Promise<number> {

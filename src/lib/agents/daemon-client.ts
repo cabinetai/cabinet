@@ -32,6 +32,7 @@ interface DaemonSessionOutput {
     inputTokens: number;
     outputTokens: number;
     cachedInputTokens?: number;
+    reasoningTokens?: number;
   } | null;
   adapterErrorKind?: ConversationErrorKind | null;
   adapterErrorHint?: string | null;
