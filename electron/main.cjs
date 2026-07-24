@@ -10,6 +10,14 @@ const {
   initBrowserViews,
   destroyAllBrowserViews,
 } = require("./browser-views.cjs");
+const { createWorkspaceSyncSupervisor } = require("./workspace-sync.cjs");
+
+const APP_DISPLAY_NAME = "Good Place Cabinet";
+const APP_BUNDLE_ID = "com.souljorje.good-place-cabinet";
+const UPDATE_REPOSITORY = "souljorje/cabinet";
+
+app.setName(APP_DISPLAY_NAME);
+app.setPath("userData", path.join(app.getPath("appData"), APP_DISPLAY_NAME));
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -29,13 +37,13 @@ const legacyDataDir = path.join(userDataDir, "cabinet-data");
 function defaultUserVisibleDataDir() {
   // User-visible default: Cabinet stores user-owned content, so we put it
   // where users can find and back it up — not in hidden app-data dirs.
-  // macOS/Windows → ~/Documents/Cabinet; Linux → ~/Cabinet (Linux distros
+  // macOS/Windows → ~/Documents/Good Place OS; Linux → ~/Good Place OS (Linux distros
   // vary on whether ~/Documents exists; home-root is safer).
   const home = app.getPath("home");
   if (process.platform === "darwin" || process.platform === "win32") {
-    return path.join(home, "Documents", "Cabinet");
+    return path.join(home, "Documents", "Good Place OS");
   }
-  return path.join(home, "Cabinet");
+  return path.join(home, "Good Place OS");
 }
 
 function readPersistedDataDir() {
@@ -143,6 +151,7 @@ try {
 const updateStatusPath = path.join(managedDataDir, ".cabinet-state", "update-status.json");
 let mainWindow = null;
 let backendChildren = [];
+let workspaceSyncSupervisor = null;
 // Base app URL (origin) of the embedded/dev Cabinet app. Captured the first
 // time we create a window so secondary windows (multi-window rooms) can be
 // spawned at `${baseAppUrl}${hash}` without re-bootstrapping the backend.
@@ -165,6 +174,41 @@ function getElectronInstallKind() {
 
 function getBundledNodeBinaryName() {
   return process.platform === "win32" ? "node.exe" : "node";
+}
+
+function workspaceSyncNode() {
+  const bundledNodePath = path.join(
+    process.resourcesPath,
+    "app.asar.unpacked",
+    ".next",
+    "standalone",
+    "bin",
+    getBundledNodeBinaryName()
+  );
+  if (!isDev && fs.existsSync(bundledNodePath)) {
+    return { command: bundledNodePath, env: {} };
+  }
+  return {
+    command: process.execPath,
+    env: { ELECTRON_RUN_AS_NODE: "1" },
+  };
+}
+
+function startWorkspaceSync() {
+  if (workspaceSyncSupervisor) return;
+  const node = workspaceSyncNode();
+  const supervisor = createWorkspaceSyncSupervisor({
+    dataDir: managedDataDir,
+    nodeCommand: node.command,
+    nodeEnv: node.env,
+  });
+  if (supervisor.start()) workspaceSyncSupervisor = supervisor;
+}
+
+function stopWorkspaceSync() {
+  if (!workspaceSyncSupervisor) return;
+  void workspaceSyncSupervisor.stop();
+  workspaceSyncSupervisor = null;
 }
 
 function writeUpdateStatus(status) {
@@ -524,8 +568,23 @@ function configureAutoUpdates() {
   }
 
   try {
+    const stat = fs.statfsSync(app.getPath("exe"));
+    if ((stat.flags & 1) === 1) {
+      writeUpdateStatus({
+        state: "idle",
+        completedAt: new Date().toISOString(),
+        installKind: getElectronInstallKind(),
+        message: `Move ${APP_DISPLAY_NAME} to Applications to enable automatic updates.`,
+      });
+      return;
+    }
+  } catch {
+    // Continue when the filesystem cannot report mount flags.
+  }
+
+  try {
     updateElectronApp({
-      repo: "cabinetai/cabinet",
+      repo: UPDATE_REPOSITORY,
       updateInterval: "4 hours",
       notifyUser: false,
     });
@@ -610,6 +669,7 @@ function configureAutoUpdates() {
 }
 
 function cleanupBackends() {
+  stopWorkspaceSync();
   backendsQuitting = true;
   for (const child of backendChildren) {
     child.kill("SIGTERM");
@@ -620,7 +680,7 @@ function cleanupBackends() {
 /**
  * macOS uninstall — removes the .app bundle, caches, preferences, saved
  * application state, web storage, and logs. Does NOT touch user data at
- * `~/Library/Application Support/Cabinet/cabinet-data` (the cabinet itself).
+ * the separately selected Good Place OS data directory.
  *
  * Spawns a detached shell that waits 2s for the app to quit, then deletes
  * the targets and exits. Quitting from inside the running app can't delete
@@ -631,9 +691,9 @@ function macosUninstallApp() {
     return { ok: false, error: "Uninstall is macOS-only." };
   }
   const HOME = app.getPath("home");
-  const APP_NAME = "Cabinet";
-  const BUNDLE_ID = "com.runcabinet.cabinet";
-  // Targets exclude `~/Library/Application Support/Cabinet/` — that's user data.
+  const APP_NAME = APP_DISPLAY_NAME;
+  const BUNDLE_ID = APP_BUNDLE_ID;
+  // The selected data directory is intentionally excluded.
   const targets = [
     `/Applications/${APP_NAME}.app`,
     `${HOME}/Library/Caches/${APP_NAME}`,
@@ -745,6 +805,7 @@ function attachDevReload(win, hash) {
 async function createWindow() {
   const runtime = await startEmbeddedCabinet();
   baseAppUrl = runtime.appUrl;
+  startWorkspaceSync();
 
   mainWindow = buildBrowserWindow();
   attachDevReload(mainWindow, "");

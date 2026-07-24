@@ -101,6 +101,7 @@ jobs:
             ${{ steps.package.outputs.bundle_name }}.sha256
 
   publish-cabinetai:
+    if: ${{ github.repository == 'cabinetai/cabinet' }}
     runs-on: ubuntu-latest
     needs: publish-app-bundles
     permissions:
@@ -133,6 +134,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-cli:
+    if: ${{ github.repository == 'cabinetai/cabinet' }}
     runs-on: ubuntu-latest
     needs: publish-cabinetai
     permissions:
