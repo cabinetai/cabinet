@@ -97,6 +97,26 @@ test("direct Tasks, reload, and deep link use the production provider contract",
   await expect(page.locator("body")).not.toContainText("useTaskRail must be used within");
 });
 
+test("mount and reload never pull Git without an explicit Sync action", async ({ page }) => {
+  const pullRequests: string[] = [];
+  page.on("request", (request) => {
+    if (
+      request.method() === "POST" &&
+      new URL(request.url()).pathname === "/api/git/pull"
+    ) {
+      pullRequests.push(request.url());
+    }
+  });
+
+  await openCabinet(page);
+  await page.waitForTimeout(250);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Acceptance Cabinet" })).toBeVisible();
+  await page.waitForTimeout(250);
+
+  expect(pullRequests).toEqual([]);
+});
+
 test("Search is precisely unavailable and New opens one keyboard-usable composer", async ({ page }) => {
   const searchRequests: string[] = [];
   page.on("request", (request) => {

@@ -237,7 +237,6 @@ export function StatusBar() {
   const [starsExploding, setStarsExploding] = useState(false);
   const starsAnimRef = useRef<number | null>(null);
   const starsAnimated = useRef(hasFetchedStarsOnce);
-  const didAutoPullRef = useRef(false);
   const appLevel = useHealthStore(selectAppLevel);
   const daemonLevel = useHealthStore(selectDaemonLevel);
   const installKind = useHealthStore((s) => s.installKind);
@@ -388,17 +387,6 @@ export function StatusBar() {
       setTimeout(() => setPullStatus("idle"), 3000);
     }
   }, [pulling, loadTree]);
-
-  // Auto-pull on mount (page load)
-  useEffect(() => {
-    if (didAutoPullRef.current) return;
-    didAutoPullRef.current = true;
-
-    const initialPull = window.setTimeout(() => {
-      void pullAndRefresh();
-    }, 0);
-    return () => window.clearTimeout(initialPull);
-  }, [pullAndRefresh]);
 
   // Poll git status. Audit #058: refresh on tab focus so a banner stuck
   // at "1 uncommitted" updates the moment the user comes back.
