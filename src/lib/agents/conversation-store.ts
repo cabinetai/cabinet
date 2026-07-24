@@ -1104,6 +1104,7 @@ async function finalizeMetaFromDaemonOutput(
       inputTokens: number;
       outputTokens: number;
       cachedInputTokens?: number;
+      reasoningTokens?: number;
     } | null;
     adapterErrorKind?: ConversationErrorKind | null;
     adapterErrorHint?: string | null;
@@ -1138,6 +1139,7 @@ async function finalizeMetaFromDaemonOutput(
             input: data.adapterUsage.inputTokens,
             output: data.adapterUsage.outputTokens,
             cache: data.adapterUsage.cachedInputTokens,
+            reasoning: data.adapterUsage.reasoningTokens,
             total:
               data.adapterUsage.inputTokens + data.adapterUsage.outputTokens,
           }
@@ -2355,13 +2357,15 @@ function aggregateTokens(turns: ConversationTurn[]): ConversationTokens {
   let input = 0;
   let output = 0;
   let cache = 0;
+  let reasoning = 0;
   for (const turn of turns) {
     if (!turn.tokens) continue;
     input += turn.tokens.input;
     output += turn.tokens.output;
     cache += turn.tokens.cache ?? 0;
+    reasoning += turn.tokens.reasoning ?? 0;
   }
-  return { input, output, cache, total: input + output };
+  return { input, output, cache, reasoning, total: input + output };
 }
 
 async function nextTurnNumber(id: string, cabinetPath?: string): Promise<number> {

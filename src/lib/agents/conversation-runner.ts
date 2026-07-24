@@ -789,6 +789,7 @@ export async function waitForConversationCompletion(
                       input: data.adapterUsage.inputTokens,
                       output: data.adapterUsage.outputTokens,
                       cache: data.adapterUsage.cachedInputTokens,
+                      reasoning: data.adapterUsage.reasoningTokens,
                       total:
                         data.adapterUsage.inputTokens +
                         data.adapterUsage.outputTokens,
@@ -1280,6 +1281,7 @@ async function runContinueInProcess(input: {
               input: result.usage.inputTokens,
               output: result.usage.outputTokens,
               cache: result.usage.cachedInputTokens,
+              reasoning: result.usage.reasoningTokens,
             }
           : undefined,
         sessionId: result.sessionId || undefined,
@@ -1790,6 +1792,7 @@ export async function continueConversationRun(
       inputTokens: number;
       outputTokens: number;
       cachedInputTokens?: number;
+      reasoningTokens?: number;
     } | null;
     adapterErrorKind?:
       | import("../../types/conversations").ConversationErrorKind
@@ -1931,6 +1934,7 @@ export async function continueConversationRun(
               input: result.adapterUsage.inputTokens,
               output: result.adapterUsage.outputTokens,
               cache: result.adapterUsage.cachedInputTokens,
+              reasoning: result.adapterUsage.reasoningTokens,
               total:
                 result.adapterUsage.inputTokens + result.adapterUsage.outputTokens,
             }
@@ -1956,6 +1960,7 @@ export async function continueConversationRun(
               input: result.adapterUsage.inputTokens,
               output: result.adapterUsage.outputTokens,
               cache: result.adapterUsage.cachedInputTokens,
+              reasoning: result.adapterUsage.reasoningTokens,
             }
           : undefined,
         exitCode: failed ? 1 : undefined,

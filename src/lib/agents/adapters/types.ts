@@ -2,6 +2,8 @@ export interface AdapterUsageSummary {
   inputTokens: number;
   outputTokens: number;
   cachedInputTokens?: number;
+  reasoningTokens?: number;
+  cacheWriteInputTokens?: number;
 }
 
 export type AdapterBillingType =

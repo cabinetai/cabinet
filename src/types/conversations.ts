@@ -49,6 +49,7 @@ export interface TurnTokens {
   input: number;
   output: number;
   cache?: number;
+  reasoning?: number;
 }
 
 export interface ConversationTurn {
@@ -93,6 +94,7 @@ export interface ConversationTokens {
   input: number;
   output: number;
   cache?: number;
+  reasoning?: number;
   total: number;
 }
 

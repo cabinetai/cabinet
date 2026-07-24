@@ -16,7 +16,9 @@ const OPENCODE_VARIANT_LEVELS = [
 
 // Used only when `opencode models` discovery fails (CLI not installed or
 // not authed). OpenCode reaches the API directly so we can't include
-// ChatGPT-only ids like `gpt-5.5` here. Refreshed 2026-05-03.
+// ChatGPT-only ids like `gpt-5.5` here. Refreshed 2026-07-23.
+// DeepSeek models included so users see realistic options even when
+// discovery is degraded, avoiding misleading non-DeepSeek defaults.
 const OPENCODE_FALLBACK_MODELS = [
   { id: "openai/gpt-5.4", name: "openai/gpt-5.4" },
   { id: "openai/gpt-5.4-mini", name: "openai/gpt-5.4-mini" },
@@ -25,6 +27,8 @@ const OPENCODE_FALLBACK_MODELS = [
   { id: "anthropic/claude-sonnet-4-6", name: "anthropic/claude-sonnet-4-6" },
   { id: "google/gemini-3.1-pro", name: "google/gemini-3.1-pro" },
   { id: "xai/grok-4.3", name: "xai/grok-4.3" },
+  { id: "deepseek/deepseek-v4-pro", name: "deepseek/deepseek-v4-pro" },
+  { id: "deepseek/deepseek-v4-flash", name: "deepseek/deepseek-v4-flash" },
 ] as const;
 
 function withVariants<T extends { id: string; name: string }>(models: readonly T[]) {
