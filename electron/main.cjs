@@ -10,6 +10,7 @@ const {
   initBrowserViews,
   destroyAllBrowserViews,
 } = require("./browser-views.cjs");
+const { shouldSeedDefaultContent } = require("./managed-data.cjs");
 const { createWorkspaceSyncSupervisor } = require("./workspace-sync.cjs");
 
 const APP_DISPLAY_NAME = "Good Place Cabinet";
@@ -429,6 +430,12 @@ function extractNativeModules() {
 function seedDefaultContent() {
   const seedDir = packagedStandalonePath(".seed");
   if (!fs.existsSync(seedDir)) {
+    return;
+  }
+
+  // Selecting an established Cabinet must not add bundled starter content.
+  // New managed directories do not have this manifest yet.
+  if (!shouldSeedDefaultContent(managedDataDir)) {
     return;
   }
 

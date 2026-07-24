@@ -1,7 +1,7 @@
 {
   "name": "cabinet",
   "productName": "Good Place Cabinet",
-  "version": "0.5.3-gp.1",
+  "version": "0.5.3-gp.2",
   "description": "Cabinet is an AI-first, self-hosted knowledge base and startup OS. Your files, your agents, on your machine.",
   "private": true,
   "license": "MIT",
