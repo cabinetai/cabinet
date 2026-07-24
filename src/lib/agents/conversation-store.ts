@@ -189,6 +189,12 @@ interface CreateConversationInput {
   providerId?: string;
   adapterType?: string;
   adapterConfig?: Record<string, unknown>;
+  /**
+   * Known context window for the selected model. Set on `meta.runtime` so
+   * the UI token bar shows the real limit instead of the 200k hardcoded
+   * default. Populated from provider model metadata when available.
+   */
+  contextWindow?: number;
   mentionedPaths?: string[];
   /**
    * Composer attachments sent with the kickoff message. Stored on
@@ -588,6 +594,7 @@ export async function createConversation(
     providerId: input.providerId,
     adapterType: input.adapterType,
     adapterConfig: input.adapterConfig,
+    runtime: input.contextWindow ? { contextWindow: input.contextWindow } : undefined,
     promptPath: virtualPathFromFs(promptPathFs(id, cp)),
     transcriptPath: virtualPathFromFs(transcriptPathFs(id, cp)),
     mentionedPaths: input.mentionedPaths || [],

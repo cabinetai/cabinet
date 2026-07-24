@@ -20,18 +20,29 @@ const OPENCODE_VARIANT_LEVELS = [
 // DeepSeek models included so users see realistic options even when
 // discovery is degraded, avoiding misleading non-DeepSeek defaults.
 const OPENCODE_FALLBACK_MODELS = [
-  { id: "openai/gpt-5.4", name: "openai/gpt-5.4" },
-  { id: "openai/gpt-5.4-mini", name: "openai/gpt-5.4-mini" },
-  { id: "openai/gpt-5.3-codex", name: "openai/gpt-5.3-codex" },
-  { id: "anthropic/claude-opus-4-7", name: "anthropic/claude-opus-4-7" },
-  { id: "anthropic/claude-sonnet-4-6", name: "anthropic/claude-sonnet-4-6" },
-  { id: "google/gemini-3.1-pro", name: "google/gemini-3.1-pro" },
-  { id: "xai/grok-4.3", name: "xai/grok-4.3" },
-  { id: "deepseek/deepseek-v4-pro", name: "deepseek/deepseek-v4-pro" },
-  { id: "deepseek/deepseek-v4-flash", name: "deepseek/deepseek-v4-flash" },
+  { id: "openai/gpt-5.4", name: "openai/gpt-5.4", contextWindow: 1_050_000 },
+  { id: "openai/gpt-5.4-mini", name: "openai/gpt-5.4-mini", contextWindow: 400_000 },
+  { id: "openai/gpt-5.3-codex", name: "openai/gpt-5.3-codex", contextWindow: 1_050_000 },
+  { id: "anthropic/claude-opus-4-7", name: "anthropic/claude-opus-4-7", contextWindow: 1_000_000 },
+  { id: "anthropic/claude-sonnet-4-6", name: "anthropic/claude-sonnet-4-6", contextWindow: 1_000_000 },
+  { id: "google/gemini-3.1-pro", name: "google/gemini-3.1-pro", contextWindow: 1_048_576 },
+  { id: "xai/grok-4.3", name: "xai/grok-4.3", contextWindow: 1_000_000 },
+  { id: "deepseek/deepseek-v4-pro", name: "deepseek/deepseek-v4-pro", contextWindow: 1_002_000 },
+  { id: "deepseek/deepseek-v4-flash", name: "deepseek/deepseek-v4-flash", contextWindow: 1_048_576 },
 ] as const;
 
-function withVariants<T extends { id: string; name: string }>(models: readonly T[]) {
+type FallbackModel = (typeof OPENCODE_FALLBACK_MODELS)[number];
+
+export interface OpenCodeModelInfo {
+  id: string;
+  name: string;
+  contextWindow?: number;
+  effortLevels?: Array<OpenCodeVariantLevel>;
+}
+
+type OpenCodeVariantLevel = (typeof OPENCODE_VARIANT_LEVELS)[number];
+
+function withVariants<T extends { id: string; name: string; contextWindow?: number }>(models: readonly T[]) {
   return models.map((model) => ({
     ...model,
     effortLevels: [...OPENCODE_VARIANT_LEVELS],
@@ -48,6 +59,11 @@ function withVariants<T extends { id: string; name: string }>(models: readonly T
 export function parseOpenCodeModels(stdout: string | null | undefined) {
   const out = (stdout || "").trim();
   if (!out) return withVariants(OPENCODE_FALLBACK_MODELS);
+  // If the output contains JSON (--verbose format), delegate to the
+  // verbose parser which extracts contextWindow from limit.context.
+  if (out.startsWith("{") || out.includes("\n{")) {
+    return parseVerboseOpenCodeModels(out);
+  }
   const parsed = out
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -58,6 +74,92 @@ export function parseOpenCodeModels(stdout: string | null | undefined) {
       effortLevels: [...OPENCODE_VARIANT_LEVELS],
     }));
   return parsed.length > 0 ? parsed : withVariants(OPENCODE_FALLBACK_MODELS);
+}
+
+/**
+ * Parse the `opencode models --verbose` output format. The output has the
+ * model ID as a text line (e.g. `opencode/vendor/model`) followed by a
+ * multi-line JSON object containing `limit.context` for the context window.
+ * Falls back to the offline list when parsing fails.
+ */
+export function parseVerboseOpenCodeModels(stdout: string) {
+  const lines = stdout.split(/\r?\n/);
+  const models: OpenCodeModelInfo[] = [];
+  let currentId: string | null = null;
+  let jsonAccum: string[] = [];
+  let braceDepth = 0;
+  let inJson = false;
+
+  function flushJson() {
+    if (!currentId || jsonAccum.length === 0) return;
+    try {
+      const parsed = JSON.parse(jsonAccum.join("\n"));
+      models.push({
+        id: currentId,
+        name: currentId,
+        contextWindow: parsed.limit?.context,
+        effortLevels: [...OPENCODE_VARIANT_LEVELS],
+      });
+    } catch {
+      // Malformed JSON — still add the model without contextWindow
+      models.push({
+        id: currentId,
+        name: currentId,
+        effortLevels: [...OPENCODE_VARIANT_LEVELS],
+      });
+    }
+    currentId = null;
+    jsonAccum = [];
+  }
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    if (line.includes("/") && !line.startsWith("{")) {
+      // Model ID line — flush any pending JSON first
+      if (inJson) flushJson();
+      inJson = false;
+      currentId = line;
+    } else if (line.startsWith("{") || inJson) {
+      // JSON block
+      if (!inJson) {
+        inJson = true;
+        jsonAccum = [];
+      }
+      jsonAccum.push(line);
+      braceDepth = 0;
+      // Track brace depth to find end of JSON
+      for (const ch of line) {
+        if (ch === "{") braceDepth++;
+        if (ch === "}") braceDepth--;
+      }
+      if (inJson && braceDepth <= 0) {
+        flushJson();
+        inJson = false;
+      }
+    }
+  }
+
+  // Handle trailing JSON
+  if (inJson) flushJson();
+
+  // Fallback: if no models parsed, try the simple line parser or fallback list
+  if (models.length === 0) {
+    const simple = lines
+      .map((l) => l.trim())
+      .filter((l) => l && l.includes("/"));
+    if (simple.length > 0) {
+      return simple.map((id) => ({
+        id,
+        name: id,
+        effortLevels: [...OPENCODE_VARIANT_LEVELS],
+      }));
+    }
+    return withVariants(OPENCODE_FALLBACK_MODELS);
+  }
+
+  return models;
 }
 
 export interface OpenCodeAuthSummary {
@@ -128,6 +230,7 @@ export const openCodeProvider: AgentProvider = {
   models: OPENCODE_FALLBACK_MODELS.map((model) => ({
     id: model.id,
     name: model.name,
+    contextWindow: model.contextWindow,
     effortLevels: [...OPENCODE_VARIANT_LEVELS],
   })),
   effortLevels: [...OPENCODE_VARIANT_LEVELS],
@@ -177,8 +280,10 @@ export const openCodeProvider: AgentProvider = {
     // Steady state this is a local cache read (~/.cache/opencode/models.json);
     // the first run on a fresh machine populates it from models.dev, hence
     // the generous timeout. `parseOpenCodeModels` still guards empty output.
+    // `--verbose` outputs NDJSON with `limit.context` per model, giving us
+    // the real context window instead of the 200k hardcoded fallback.
     const cmd = resolveCliCommand(this);
-    const out = await execCli(cmd, ["models"], { timeout: 15_000 });
+    const out = await execCli(cmd, ["models", "--verbose"], { timeout: 15_000 });
     return parseOpenCodeModels(out);
   },
 

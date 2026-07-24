@@ -44,6 +44,7 @@ import { readLibraryPersona } from "./library-manager";
 import { listPersonas, readPersona, type AgentPersona } from "./persona-manager";
 import { renderPersonaBody } from "./persona-templating";
 import { getDefaultProviderId } from "./provider-runtime";
+import { providerRegistry } from "./provider-registry";
 import { looksLikeAwaitingInput } from "./task-heuristics";
 import { emit as emitTelemetry } from "@/lib/telemetry";
 
@@ -589,6 +590,20 @@ export async function startConversationRun(
     ? { ...(input.adapterConfig || {}), skills: requestedSkillSlugs }
     : input.adapterConfig;
 
+  // Look up the selected model's context window from the provider's static
+  // model list. This covers fallback models with hardcoded contextWindow
+  // values (DeepSeek, Claude, GPT, etc.). Dynamic models discovered via
+  // `listModels()` are not in the static list but may be added later.
+  let contextWindow: number | undefined;
+  if (resolvedProviderId && baseAdapterConfig?.model) {
+    const provider = providerRegistry.get(resolvedProviderId);
+    const modelId = String(baseAdapterConfig.model);
+    const modelInfo = provider?.models?.find((m) => m.id === modelId);
+    if (modelInfo?.contextWindow) {
+      contextWindow = modelInfo.contextWindow;
+    }
+  }
+
   const meta = await createConversation({
     agentSlug: input.agentSlug,
     cabinetPath: input.cabinetPath,
@@ -598,6 +613,7 @@ export async function startConversationRun(
     providerId: resolvedProviderId,
     adapterType: resolvedAdapterType,
     adapterConfig: baseAdapterConfig,
+    contextWindow,
     mentionedPaths: input.mentionedPaths,
     jobId: input.jobId,
     jobName: input.jobName,
