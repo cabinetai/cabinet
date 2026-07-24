@@ -1,0 +1,41 @@
+{
+  "stream": "acceptance-harness",
+  "status": "blocked",
+  "branch": "fix/final-route-acceptance",
+  "commit": null,
+  "merge_candidate": true,
+  "tests": {
+    "live-two-turn-contract": "passed",
+    "route-manifest": "passed",
+    "desktop-navigation": "passed",
+    "drawers-data-team": "passed",
+    "new-composer": "passed",
+    "search-terminal-unavailable": "passed",
+    "tasks-route": "passed",
+    "primary-application-routes": "passed",
+    "org-chart": "passed",
+    "org-chart-trigger-present": "passed",
+    "org-chart-trigger-enabled": "passed",
+    "org-chart-trigger-click": "passed",
+    "org-chart-dialog": "passed",
+    "org-chart-bounds-and-close": "passed",
+    "operator-mode": "passed",
+    "governed-skills": "passed",
+    "hermes-operator-sections": "passed",
+    "developer-diagnostics-48": "passed",
+    "conversation-direct-reload-persistence": "passed",
+    "restart-route-persistence": "failed",
+    "launchd-child-restart": "passed",
+    "history-navigation": "passed",
+    "mobile-reduced-motion-overflow": "passed",
+    "legacy-daemon-output-accounting": "passed",
+    "complete-route-inventory": "passed",
+    "console-health": "failed",
+    "mutation-accounting": "passed"
+  },
+  "blockers": [
+    "Cabinet restart persistence failed: Error: Controlled restart console reset was not correlated to a failed read-only request."
+  ],
+  "recommendation": "Resolve only the exact acceptance blockers and rerun.",
+  "production_touched": false
+}

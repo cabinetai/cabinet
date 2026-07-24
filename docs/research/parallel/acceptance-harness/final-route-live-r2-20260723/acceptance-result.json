@@ -1,0 +1,2481 @@
+{
+  "schemaVersion": 3,
+  "generatedAt": "2026-07-24T05:52:19.638Z",
+  "verdict": "NOT_ACCEPTED",
+  "scans": {
+    "secretIndicators": [],
+    "localPathIndicators": []
+  },
+  "stream": "acceptance-harness",
+  "branch": "fix/final-route-acceptance",
+  "testedBaseRevision": "5e94de3e1c789279459c704d4a7f0fa61c747163",
+  "applicationDiffFromBase": [
+    "docs/research/parallel/acp-provider-model-differential/differential.json",
+    "docs/research/parallel/acp-provider-model-differential/readiness-burnin.json",
+    "docs/research/parallel/acp-provider-model-differential/readiness-result.json",
+    "docs/research/parallel/acp-provider-model-differential/report.md",
+    "docs/research/parallel/acp-response-envelope/report.md",
+    "docs/research/parallel/acp-response-envelope/result.json",
+    "docs/research/parallel/operator-prompt-precedence/0001-fix-agent-honor-explicit-output-constraints.patch",
+    "docs/research/parallel/operator-prompt-precedence/report.md",
+    "docs/research/parallel/operator-prompt-precedence/result.json",
+    "e2e/assistant-message-content-boundary.spec.ts",
+    "e2e/conversation-reload-rendering.spec.ts",
+    "e2e/hermes-health-unavailable-semantics.spec.ts",
+    "e2e/hermes-no-tools-fail-closed.spec.ts",
+    "e2e/hermes-skills-management.spec.ts",
+    "experiments/acp-provider-model-differential/README.md",
+    "experiments/acp-provider-model-differential/differential.mjs",
+    "experiments/acp-provider-model-differential/differential.test.mjs",
+    "experiments/acp-provider-model-differential/readiness-burnin.test.mjs",
+    "experiments/acp-provider-model-differential/readiness_probe.py",
+    "experiments/acp-provider-model-differential/result-schema.test.mjs",
+    "experiments/acp-provider-model-differential/run-readiness-burnin.mjs",
+    "experiments/acp-provider-model-differential/run-readiness-diagnostic.mjs",
+    "experiments/acp-response-envelope/README.md",
+    "experiments/acp-response-envelope/trace.mjs",
+    "experiments/acp-response-envelope/trace.test.mjs",
+    "experiments/operator-prompt-precedence/README.md",
+    "experiments/operator-prompt-precedence/capture_precedence.py",
+    "package-lock.json",
+    "package.json",
+    "scripts/start-cabinet-supervised.mjs",
+    "src/app/agents/conversations/[id]/page.tsx",
+    "src/app/api/agents/conversations/[id]/acceptance-observability/route.ts",
+    "src/app/api/agents/conversations/[id]/continue/route.test.ts",
+    "src/app/api/agents/conversations/[id]/continue/route.ts",
+    "src/app/api/hermes/skills-management/route.test.ts",
+    "src/app/api/hermes/skills-management/route.ts",
+    "src/components/hermes/skills-management.tsx",
+    "src/components/tasks/conversation/turn-block.test.ts",
+    "src/components/tasks/conversation/turn-block.tsx",
+    "src/lib/agents/acceptance-observability-route.test.ts",
+    "src/lib/agents/acceptance-observability.test.ts",
+    "src/lib/agents/acceptance-observability.ts",
+    "src/lib/agents/adapters/hermes-runtime.test.ts",
+    "src/lib/agents/adapters/hermes-runtime.ts",
+    "src/lib/agents/adapters/types.ts",
+    "src/lib/agents/assistant-message-contract.ts",
+    "src/lib/agents/conversation-runner-continue.test.ts",
+    "src/lib/agents/conversation-runner-hermes-readiness.test.ts",
+    "src/lib/agents/conversation-runner.ts",
+    "src/lib/agents/conversation-store-turns.test.ts",
+    "src/lib/agents/conversation-store.ts",
+    "src/lib/agents/conversation-to-task-view.test.ts",
+    "src/lib/agents/conversation-to-task-view.ts",
+    "src/lib/agents/conversation-turns.ts",
+    "src/lib/hermes/acp-client.test.ts",
+    "src/lib/hermes/acp-client.ts",
+    "src/lib/hermes/acp-launch.ts",
+    "src/lib/hermes/model-readiness.test.ts",
+    "src/lib/hermes/model-readiness.ts",
+    "src/lib/hermes/server-config.test.ts",
+    "src/lib/hermes/server-config.ts",
+    "src/types/conversations.ts",
+    "test/supervised-launch.test.ts"
+  ],
+  "environment": {
+    "url": "http://127.0.0.1:4354",
+    "appPort": 4354,
+    "runtimeMode": "hermes",
+    "data": "isolated",
+    "productionTouched": false,
+    "liveModelMessagesSent": 2,
+    "transport": "hermes-acp-official-sdk",
+    "skillsMode": "fixture",
+    "browserPath": "in-app Browser preflight plus Playwright authoritative runner"
+  },
+  "routes": [
+    {
+      "route": "/",
+      "source": "src/app/page.tsx",
+      "kind": "static",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    },
+    {
+      "route": "/*",
+      "source": "src/app/[...slug]/page.tsx",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    },
+    {
+      "route": "/agents/conversations/:id",
+      "source": "src/app/agents/conversations/[id]/page.tsx",
+      "kind": "dynamic",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    },
+    {
+      "route": "/cockpit",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Today"
+    },
+    {
+      "route": "/hermes",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Operator"
+    },
+    {
+      "route": "/hermes?mode=developer&section=developer",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Developer"
+    },
+    {
+      "route": "/integrations",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Integrations"
+    },
+    {
+      "route": "/login",
+      "source": "src/app/login/page.tsx",
+      "kind": "static",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    },
+    {
+      "route": "/room/acceptance-cabinet",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "room data"
+    },
+    {
+      "route": "/room/acceptance-cabinet/-/agents",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Team"
+    },
+    {
+      "route": "/room/acceptance-cabinet/-/tasks",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Tasks"
+    },
+    {
+      "route": "/settings",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Settings"
+    },
+    {
+      "route": "/settings/providers",
+      "source": "SPA navigation contract",
+      "kind": "spa",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed",
+      "note": "Advanced Hermes"
+    },
+    {
+      "route": "/tasks",
+      "source": "src/app/tasks/page.tsx",
+      "kind": "static",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    },
+    {
+      "route": "/tasks/:id",
+      "source": "src/app/tasks/[id]/page.tsx",
+      "kind": "dynamic",
+      "discovered": true,
+      "exercised": true,
+      "status": "passed"
+    }
+  ],
+  "visibleNavigation": {
+    "desktop": [
+      "cabinet",
+      "A",
+      "Acceptance Cabinet",
+      "Cabinet scope: Own",
+      "Add cabinet data",
+      "Daily Business IntakeShadow",
+      "Hermes",
+      "Integrations",
+      "New conversation",
+      "Org chart",
+      "Stop All",
+      "Run now",
+      "Operator",
+      "Start",
+      "View all",
+      "Hermes not configured",
+      "Degraded",
+      "File history",
+      "13 uncommitted files13",
+      "Sync",
+      "Help",
+      "Share"
+    ],
+    "mobile": [
+      "cabinet",
+      "A",
+      "Acceptance Cabinet",
+      "Cabinet scope: Own",
+      "Add cabinet data",
+      "Daily Business IntakeShadow",
+      "Hermes",
+      "Integrations",
+      "New conversation",
+      "Org chart",
+      "Stop All",
+      "Run now",
+      "Operator",
+      "Start",
+      "View all",
+      "Home",
+      "Agents",
+      "Tasks",
+      "AI",
+      "Menu"
+    ]
+  },
+  "checks": [
+    {
+      "id": "live-two-turn-contract",
+      "area": "conversation",
+      "status": "passed",
+      "summary": "hermes-acp-official-sdk returned the exact nonce once per response with two user and two completed assistant turns across a Cabinet restart.",
+      "evidence": {
+        "conversationId": "2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual",
+        "firstResponse": "Acceptance test acknowledged. The nonce for this run is:\n\nCABINET-NONCE-BvaNB29FC2JCA15-l3PASB4_Q-6B0Z-v\n\nNo tools were used and no external systems were contacted. This is a read-only turn with no file changes.\n\nSUMMARY:Acknowledged the local Cabinet acceptance test and emitted the required nonce once, without using tools or contacting external systems.\nARTIFACT:none\n```",
+        "secondResponse": "The exact acceptance nonce from your previous message was:\n\nCABINET-NONCE-BvaNB29FC2JCA15-l3PASB4_Q-6B0Z-v\n\nThis is a read-only turn — no files were created or modified.",
+        "sameSession": true,
+        "cabinetRestart": true,
+        "userTurns": 2,
+        "completedAssistantTurns": 2
+      }
+    },
+    {
+      "id": "route-manifest",
+      "area": "routes",
+      "status": "passed",
+      "summary": "Discovered 15 application and SPA routes from exact source.",
+      "evidence": {
+        "count": 15
+      }
+    },
+    {
+      "id": "desktop-navigation",
+      "area": "navigation",
+      "status": "passed",
+      "summary": "Discovered 22 visible desktop button labels.",
+      "evidence": {
+        "count": 22
+      }
+    },
+    {
+      "id": "drawers-data-team",
+      "area": "drawers",
+      "status": "passed",
+      "summary": "Data and Team drawers changed selected state and rendered their target surfaces.",
+      "evidence": {
+        "dataSelected": true,
+        "teamSelected": true
+      }
+    },
+    {
+      "id": "new-composer",
+      "area": "new",
+      "status": "passed",
+      "summary": "New opened one keyboard-usable conversation composer.",
+      "evidence": {
+        "dialogs": 1
+      }
+    },
+    {
+      "id": "search-terminal-unavailable",
+      "area": "availability",
+      "status": "passed",
+      "summary": "Search and Terminal were visibly unavailable with zero Search/PTY requests.",
+      "evidence": {
+        "searchRequests": 0,
+        "ptyRequests": 0
+      }
+    },
+    {
+      "id": "tasks-route",
+      "area": "tasks",
+      "status": "passed",
+      "summary": "Tasks loaded standalone and nested, including reload.",
+      "evidence": {
+        "standalone": true,
+        "nested": true,
+        "reload": true
+      }
+    },
+    {
+      "id": "primary-application-routes",
+      "area": "routes",
+      "status": "passed",
+      "summary": "Loaded 7 independent application routes with deterministic Cockpit identity.",
+      "evidence": {
+        "routes": 7,
+        "cockpitLocator": "daily-business-cockpit > heading:Today"
+      }
+    },
+    {
+      "id": "org-chart",
+      "area": "organization",
+      "status": "passed",
+      "summary": "Loaded the room overview that owns the Org-chart action.",
+      "evidence": {
+        "route": "/room/acceptance-cabinet"
+      }
+    },
+    {
+      "id": "org-chart-trigger-present",
+      "area": "organization",
+      "status": "passed",
+      "summary": "Found one visible Org-chart button by its accessible role and name.",
+      "evidence": {
+        "count": 1
+      }
+    },
+    {
+      "id": "org-chart-trigger-enabled",
+      "area": "organization",
+      "status": "passed",
+      "summary": "The Org-chart trigger was enabled for the isolated agent fixture.",
+      "evidence": {
+        "enabled": true
+      }
+    },
+    {
+      "id": "org-chart-trigger-click",
+      "area": "organization",
+      "status": "passed",
+      "summary": "The enabled Org-chart trigger accepted a bounded click.",
+      "evidence": {
+        "clicked": true
+      }
+    },
+    {
+      "id": "org-chart-dialog",
+      "area": "organization",
+      "status": "passed",
+      "summary": "The named Org-chart dialog opened after the trigger click.",
+      "evidence": {
+        "visible": true
+      }
+    },
+    {
+      "id": "org-chart-bounds-and-close",
+      "area": "organization",
+      "status": "passed",
+      "summary": "Org chart stayed viewport-bounded, closed by keyboard, and restored trigger focus.",
+      "evidence": {
+        "bounded": true,
+        "keyboardClosed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "id": "operator-mode",
+      "area": "Hermes",
+      "status": "passed",
+      "summary": "Hermes Operator mode rendered against the non-mutating acceptance projection.",
+      "evidence": {
+        "mode": "operator"
+      }
+    },
+    {
+      "id": "governed-skills",
+      "area": "Skills",
+      "status": "passed",
+      "summary": "Governed Skills rendered with explicit fixture provenance and no live mutation.",
+      "evidence": {
+        "mutationRequests": 0
+      }
+    },
+    {
+      "id": "hermes-operator-sections",
+      "area": "Hermes",
+      "status": "passed",
+      "summary": "Opened 4 independently scoped Hermes Operator sections.",
+      "evidence": {
+        "sections": 4
+      }
+    },
+    {
+      "id": "developer-diagnostics-48",
+      "area": "Developer",
+      "status": "passed",
+      "summary": "Developer mode exposed exactly 48 diagnostic rows.",
+      "evidence": {
+        "count": 48
+      }
+    },
+    {
+      "id": "conversation-direct-reload-persistence",
+      "area": "conversation",
+      "status": "passed",
+      "summary": "The completed conversation survived direct task/transcript URLs and reload.",
+      "evidence": {
+        "directTask": true,
+        "reload": true,
+        "transcript": true
+      }
+    },
+    {
+      "id": "restart-route-persistence",
+      "area": "restart",
+      "status": "failed",
+      "summary": "Cabinet restart persistence failed: Error: Controlled restart console reset was not correlated to a failed read-only request."
+    },
+    {
+      "id": "launchd-child-restart",
+      "area": "supervision",
+      "status": "passed",
+      "summary": "The complete isolated supervision recovery suite passed without touching launchd.",
+      "evidence": {
+        "isolatedSuite": true
+      }
+    },
+    {
+      "id": "history-navigation",
+      "area": "navigation",
+      "status": "passed",
+      "summary": "Back/forward navigation preserved route identity.",
+      "evidence": {
+        "back": true,
+        "forward": true
+      }
+    },
+    {
+      "id": "mobile-reduced-motion-overflow",
+      "area": "responsive",
+      "status": "passed",
+      "summary": "390x844 reduced-motion room had 0px horizontal overflow.",
+      "evidence": {
+        "overflow": 0
+      }
+    },
+    {
+      "id": "legacy-daemon-output-accounting",
+      "area": "network",
+      "status": "passed",
+      "summary": "Observed 0 legacy daemon-output request(s).",
+      "evidence": {
+        "count": 0
+      }
+    },
+    {
+      "id": "complete-route-inventory",
+      "area": "routes",
+      "status": "passed",
+      "summary": "Exercised all 15 discovered and required routes.",
+      "evidence": {
+        "incomplete": []
+      }
+    },
+    {
+      "id": "console-health",
+      "area": "browser",
+      "status": "failed",
+      "summary": "1 relevant browser issue(s) were observed with stage ownership.",
+      "evidence": {
+        "issues": [
+          {
+            "source": "request",
+            "severity": "error",
+            "path": "/api/git/pull",
+            "summary": "consequential_request",
+            "expectedControlledRestartTransport": false,
+            "stage": "restart-route-persistence"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mutation-accounting",
+      "area": "safety",
+      "status": "passed",
+      "summary": "Recorded 30 isolated HTTP mutation request(s) and 0 consequential Hermes mutation(s).",
+      "evidence": {
+        "isolatedMutations": 30,
+        "consequentialHermesMutations": 0
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "cabinet-restart-persistence",
+      "area": "restart",
+      "summary": "Cabinet restart persistence failed: Error: Controlled restart console reset was not correlated to a failed read-only request.",
+      "reproduction": [
+        "Open the room.",
+        "Restart isolated Cabinet.",
+        "Reload the same URL."
+      ],
+      "ownerHint": "supervision stabilization stream"
+    }
+  ],
+  "network": {
+    "total": 1996,
+    "byMethod": {
+      "POST": 30,
+      "GET": 1966
+    },
+    "byPath": {
+      "/api/agents/conversations": 48,
+      "/api/agents/conversations/:id/continue": 1,
+      "/tasks/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual": 3,
+      "/_next/static/media/1a49d4e0ae8b373a-s.p.woff2": 24,
+      "/_next/static/media/543de0715397ac5b-s.p.woff2": 24,
+      "/_next/static/media/9cc5b37ab1350db7-s.p.woff2": 24,
+      "/_next/static/media/a2debe7ac595958e-s.p.woff2": 24,
+      "/_next/static/media/bb3ef058b751a6ad-s.p.woff2": 24,
+      "/_next/static/media/dd5486154c3f3016-s.p.woff2": 24,
+      "/_next/static/media/e4af272ccee01ff0-s.p.woff2": 24,
+      "/_next/static/media/e79904415a280b53-s.p.woff2": 24,
+      "/_next/static/media/f003255f6665c4bb-s.p.woff2": 24,
+      "/_next/static/css/869a76b47865c030.css": 24,
+      "/_next/static/css/b4ecf1847aafaed5.css": 24,
+      "/_next/static/chunks/webpack-9b0191046e4d2f62.js": 24,
+      "/_next/static/chunks/59734f22-0f089c524bd970df.js": 24,
+      "/_next/static/chunks/5582-a0e3f9738f807170.js": 24,
+      "/_next/static/chunks/main-app-cdc140c16ef0c83c.js": 24,
+      "/_next/static/chunks/f9260480-877f42f275f6b1fa.js": 24,
+      "/_next/static/chunks/3319-1e84700468a05564.js": 24,
+      "/_next/static/chunks/4862-a8151ad4cbd8e1bd.js": 24,
+      "/_next/static/chunks/5097-50a42a10f1a33d9e.js": 24,
+      "/_next/static/chunks/5376-4bd813b6d4b0da66.js": 24,
+      "/_next/static/chunks/app/layout-b3a0582587f232a7.js": 24,
+      "/_next/static/chunks/2567-0818a6734db02cd1.js": 23,
+      "/_next/static/chunks/514-d4043f3afd6045c1.js": 23,
+      "/_next/static/chunks/3316-f216a12b95367e46.js": 23,
+      "/_next/static/chunks/7328-199f642d602b9022.js": 23,
+      "/_next/static/chunks/2199-5f7df06465b69570.js": 23,
+      "/_next/static/chunks/2908-b5aaf60f8e0ec277.js": 23,
+      "/_next/static/chunks/3839-c1e388d0e5354708.js": 23,
+      "/_next/static/chunks/4469-e5c409196069fb81.js": 23,
+      "/_next/static/chunks/4543-cfb3e13a7ae6ad15.js": 23,
+      "/_next/static/chunks/7333-096905ce137a684d.js": 23,
+      "/_next/static/chunks/8411-c4cba514a488ca97.js": 23,
+      "/_next/static/chunks/9205-8e9837d5a5acffe5.js": 23,
+      "/_next/static/chunks/2184-cbfe67eb9f8a9f5f.js": 23,
+      "/_next/static/chunks/4332-dd55c9d2941de4c1.js": 23,
+      "/_next/static/chunks/2160-bf23aeded360755d.js": 23,
+      "/_next/static/chunks/5380-8bb8da771dd63f4c.js": 23,
+      "/_next/static/chunks/9802-6a9704ea269e133a.js": 23,
+      "/_next/static/chunks/3179-4b4cf40f7252adda.js": 23,
+      "/_next/static/chunks/app/tasks/%5Bid%5D/page-8e6e739e1cd84481.js": 3,
+      "/api/rooms": 24,
+      "/api/hermes/health": 32,
+      "/api/user/profile": 28,
+      "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual": 9,
+      "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/events": 6,
+      "/api/agents/conversations/events": 24,
+      "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/events-log": 6,
+      "/api/tree": 18,
+      "/api/cabinets/overview": 70,
+      "/api/agents/skills": 22,
+      "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/diffs": 3,
+      "/api/agents/personas/editor": 3,
+      "/room/acceptance-cabinet": 7,
+      "/_next/static/chunks/ddf38a3c-b11a1cf375b0bf2c.js": 20,
+      "/_next/static/chunks/b7172f54-7969019ba930f904.js": 20,
+      "/_next/static/chunks/7cea23db-021093f0464dac28.js": 20,
+      "/_next/static/chunks/8352-801a4fc386a41ce8.js": 20,
+      "/_next/static/chunks/8206-99d703a501e83935.js": 20,
+      "/_next/static/chunks/8129-dd070a672c8695b8.js": 20,
+      "/_next/static/chunks/8799-0426232c7da062d9.js": 20,
+      "/_next/static/chunks/7883-0c19cdf811e0712e.js": 20,
+      "/_next/static/chunks/app/%5B...slug%5D/page-038c6ed8a6d55acc.js": 14,
+      "/api/agents/providers": 23,
+      "/api/agents/config/mcp-catalog": 25,
+      "/api/cloud/status": 119,
+      "/api/agents/providers/status": 9,
+      "/api/registry": 9,
+      "/api/health": 17,
+      "/api/git/commit": 14,
+      "/api/github/repo": 14,
+      "/api/system/diagnostics": 15,
+      "/api/telemetry": 10,
+      "/api/pages/acceptance-cabinet": 9,
+      "/integrations/slack-logo.png": 10,
+      "/integrations/discord-logo.png": 10,
+      "/logos/telegram.svg": 10,
+      "/logos/google-ads.svg": 10,
+      "/logos/facebook.svg": 10,
+      "/logos/notion.svg": 10,
+      "/logos/google-drive.svg": 10,
+      "/api/agents/config": 16,
+      "/api/agents/events": 17,
+      "/api/git/pull": 14,
+      "/api/google-drive/tree": 28,
+      "/api/system/update": 14,
+      "/api/rooms/active": 3,
+      "/_next/static/chunks/4306-0ca233ac6d7acc8e.js": 6,
+      "/_next/static/chunks/3371-1498d33959371ee1.js": 6,
+      "/_next/static/chunks/6801.94ccf291ccb760af.js": 1,
+      "/tasks": 4,
+      "/_next/static/chunks/2298-cca96972274c762b.js": 5,
+      "/_next/static/chunks/2981-6dcfffe2bdb9d1d9.js": 4,
+      "/_next/static/chunks/9763-e221ea35d2b902c7.js": 5,
+      "/_next/static/chunks/app/tasks/page-3e66e385d8379fcb.js": 4,
+      "/": 21,
+      "/_next/static/chunks/app/page-311c6345724025f1.js": 6,
+      "/room/acceptance-cabinet/-/tasks": 1,
+      "/_next/static/chunks/6666.59907fa5edf10a80.js": 1,
+      "/cockpit": 1,
+      "/_next/static/chunks/5733.11b58658552b98d6.js": 1,
+      "/_next/static/chunks/533.ae69bae207cb63d9.js": 1,
+      "/api/hermes/cockpit": 2,
+      "/integrations": 1,
+      "/_next/static/chunks/5f43ffbf.a3f8b3d7d45b0734.js": 3,
+      "/_next/static/chunks/8828.7455f2e41ddafa81.js": 1,
+      "/logos/microsoft-teams.svg": 1,
+      "/logos/zoom.webp": 1,
+      "/logos/loom.svg": 1,
+      "/integrations/google-workspace-logo.webp": 1,
+      "/logos/microsoft-365.svg": 1,
+      "/logos/airtable.svg": 1,
+      "/logos/asana.webp": 1,
+      "/logos/clickup.webp": 1,
+      "/logos/calendly.webp": 1,
+      "/logos/google-calendar.svg": 1,
+      "/logos/gmail.svg": 1,
+      "/logos/monday.svg": 1,
+      "/logos/motion.svg": 1,
+      "/logos/clockwise.svg": 1,
+      "/logos/miro.svg": 1,
+      "/logos/apple-notes.svg": 1,
+      "/logos/confluence.svg": 1,
+      "/logos/icloud.svg": 1,
+      "/logos/onedrive.svg": 1,
+      "/logos/sharepoint.svg": 1,
+      "/logos/dropbox.webp": 1,
+      "/logos/box.webp": 1,
+      "/logos/tiktok.svg": 1,
+      "/logos/instagram.svg": 1,
+      "/logos/x.svg": 1,
+      "/logos/github.svg": 1,
+      "/logos/gitlab.webp": 1,
+      "/logos/jira.webp": 1,
+      "/logos/linear.webp": 1,
+      "/logos/figma.svg": 1,
+      "/logos/servicenow.svg": 1,
+      "/logos/datadog.webp": 1,
+      "/logos/sentry.svg": 1,
+      "/logos/pagerduty.svg": 1,
+      "/logos/salesforce.webp": 1,
+      "/logos/hubspot.svg": 1,
+      "/logos/intercom.svg": 1,
+      "/logos/zendesk.svg": 1,
+      "/logos/gong.svg": 1,
+      "/logos/greenhouse.svg": 1,
+      "/logos/linkedin.svg": 1,
+      "/logos/pipedrive.svg": 1,
+      "/logos/stripe.svg": 1,
+      "/logos/brex.svg": 1,
+      "/logos/quickbooks.svg": 1,
+      "/logos/docusign.svg": 1,
+      "/logos/shopify.svg": 1,
+      "/logos/expensify.svg": 1,
+      "/logos/snowflake.webp": 1,
+      "/logos/stackadapt.svg": 1,
+      "/logos/bigquery.svg": 1,
+      "/logos/databricks.webp": 1,
+      "/logos/looker.svg": 1,
+      "/logos/tableau.svg": 1,
+      "/logos/amplitude.webp": 1,
+      "/logos/mixpanel.svg": 1,
+      "/logos/workday.svg": 1,
+      "/logos/bamboohr.svg": 1,
+      "/logos/zapier.svg": 1,
+      "/logos/make.svg": 1,
+      "/settings": 1,
+      "/_next/static/chunks/468.52b447eb719a5487.js": 2,
+      "/api/telemetry/settings": 2,
+      "/api/agents/config/integrations": 2,
+      "/api/system/data-dir": 2,
+      "/agent-avatars/avatar-01.svg": 1,
+      "/agent-avatars/avatar-02.svg": 1,
+      "/agent-avatars/avatar-03.svg": 1,
+      "/agent-avatars/avatar-04.svg": 1,
+      "/agent-avatars/avatar-05.svg": 1,
+      "/agent-avatars/avatar-06.svg": 1,
+      "/agent-avatars/avatar-07.svg": 1,
+      "/agent-avatars/avatar-08.svg": 1,
+      "/agent-avatars/avatar-09.svg": 1,
+      "/agent-avatars/avatar-10.svg": 1,
+      "/agent-avatars/avatar-11.svg": 1,
+      "/agent-avatars/avatar-12.svg": 1,
+      "/settings/providers": 1,
+      "/api/hermes/management": 1,
+      "/api/hermes/capabilities": 1,
+      "/api/hermes/runs": 1,
+      "/login": 1,
+      "/_next/static/chunks/app/login/page-58be9a6bc139b38a.js": 1,
+      "/acceptance-catchall-check": 1,
+      "/hermes": 1,
+      "/_next/static/chunks/1369.ec671924f65a8ba9.js": 1,
+      "/_next/static/chunks/9559.c6be2010d9ecfd41.js": 1,
+      "/api/hermes/control-center": 1,
+      "/api/hermes/skills-management": 1,
+      "/agents": 2,
+      "/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual": 1,
+      "/_next/static/chunks/app/agents/conversations/%5Bid%5D/page-2a1509fb696d8d7c.js": 1
+    },
+    "failed": [
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/providers/status",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config/mcp-catalog",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/git/pull",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config/mcp-catalog",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/git/pull",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/hermes/cockpit",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/workday.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/tableau.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/zapier.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/stackadapt.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/bigquery.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/bamboohr.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/snowflake.webp",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/make.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/looker.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/amplitude.webp",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/mixpanel.svg",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/databricks.webp",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/hermes/runs",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/git/pull",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/personas/editor",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/2026-07-24T05-51-11-558Z-dbe0cc16-editor-manual/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_CONNECTION_RESET"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/git/pull",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/skills",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/integrations/slack-logo.png",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/integrations/discord-logo.png",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/telegram.svg",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/google-ads.svg",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/facebook.svg",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/logos/google-drive.svg",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_INCOMPLETE_CHUNKED_ENCODING"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_INCOMPLETE_CHUNKED_ENCODING"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_CONNECTION_REFUSED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/providers/status",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config/mcp-catalog",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/skills",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/pages/acceptance-cabinet",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/user/profile",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/git/commit",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config/mcp-catalog",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/git/pull",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/google-drive/tree",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/config",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/diagnostics",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cabinets/overview",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/system/update",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/conversations/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "GET",
+        "path": "/api/agents/events",
+        "reason": "net::ERR_ABORTED"
+      },
+      {
+        "method": "POST",
+        "path": "/api/telemetry",
+        "reason": "net::ERR_ABORTED"
+      }
+    ],
+    "legacyDaemonOutputRequests": 0,
+    "searchRequests": 0,
+    "ptyCreateOrWriteRequests": 0,
+    "modelMessageRequests": 2,
+    "consequentialHermesMutations": 0,
+    "mutations": 30
+  },
+  "browserIssues": [
+    {
+      "source": "http",
+      "severity": "warning",
+      "path": "/api/hermes/cockpit",
+      "summary": "Expected read-only source unavailability rendered by its owning surface.",
+      "expectedUnavailableProjection": true,
+      "stage": "primary-application-routes"
+    },
+    {
+      "source": "console",
+      "severity": "error",
+      "summary": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)",
+      "expectedControlledRestartTransport": false,
+      "stage": "primary-application-routes"
+    },
+    {
+      "source": "http",
+      "severity": "warning",
+      "path": "/api/hermes/runs",
+      "summary": "Expected read-only source unavailability rendered by its owning surface.",
+      "expectedUnavailableProjection": true,
+      "stage": "primary-application-routes"
+    },
+    {
+      "source": "console",
+      "severity": "error",
+      "summary": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "expectedControlledRestartTransport": false,
+      "stage": "primary-application-routes"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/conversations",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_RESET",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/cabinets/overview",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/config",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/conversations",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/conversations/events",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/events",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "error",
+      "path": "/api/git/pull",
+      "summary": "consequential_request",
+      "expectedControlledRestartTransport": false,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/skills",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/cabinets/overview",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/integrations/slack-logo.png",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/integrations/discord-logo.png",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/logos/telegram.svg",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/logos/google-ads.svg",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/logos/facebook.svg",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/logos/google-drive.svg",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/events",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/conversations/events",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "request",
+      "severity": "warning",
+      "path": "/api/agents/conversations",
+      "summary": "expected_read_only_listener_loss",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    },
+    {
+      "source": "console",
+      "severity": "warning",
+      "summary": "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+      "expectedControlledRestartTransport": true,
+      "stage": "restart-route-persistence"
+    }
+  ],
+  "conversationPersistence": {
+    "schemaVersion": 1,
+    "transport": "hermes-acp-official-sdk",
+    "checkpoints": [
+      {
+        "checkpoint": "A",
+        "recordedAt": "2026-07-24T05:51:11.116Z",
+        "eventType": "before_initial_submission",
+        "conversationIdentity": null,
+        "nativeSessionIdentity": null,
+        "requestIdentity": null,
+        "turns": [],
+        "durableStoreCounts": null,
+        "inMemoryCounts": null,
+        "pendingRequiredWrites": {
+          "state": "unknown",
+          "value": null,
+          "source": "acceptance_observability",
+          "reason": "authoritative_absent"
+        },
+        "observability": null
+      },
+      {
+        "checkpoint": "B",
+        "recordedAt": "2026-07-24T05:51:20.420Z",
+        "eventType": "initial_completed_emitted",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": "initial",
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 1,
+          "assistant": 1,
+          "completedAssistant": 1,
+          "total": 2,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 1,
+          "assistant": 1,
+          "running": 0,
+          "failed": 0,
+          "completed": 2,
+          "completedAssistant": 1,
+          "total": 2
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 0,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "completed",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f"
+          ],
+          "requestIdentities": [
+            null,
+            null
+          ],
+          "durableStoreCounts": {
+            "user": 1,
+            "assistant": 1,
+            "running": 0,
+            "failed": 0,
+            "completed": 2,
+            "completedAssistant": 1,
+            "total": 2
+          },
+          "inMemoryCounts": {
+            "user": 1,
+            "assistant": 1,
+            "running": 0,
+            "failed": 0,
+            "completed": 2,
+            "completedAssistant": 1,
+            "total": 2
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 0,
+          "acpChildState": "running",
+          "readinessState": "ready",
+          "provider": "ollama-cloud",
+          "model": "glm-5.2",
+          "modelRequestsAttempted": 1,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      },
+      {
+        "checkpoint": "C",
+        "recordedAt": "2026-07-24T05:51:20.434Z",
+        "eventType": "initial_persistence_drained",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": "initial",
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 1,
+          "assistant": 1,
+          "completedAssistant": 1,
+          "total": 2,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 1,
+          "assistant": 1,
+          "running": 0,
+          "failed": 0,
+          "completed": 2,
+          "completedAssistant": 1,
+          "total": 2
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 0,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "completed",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f"
+          ],
+          "requestIdentities": [
+            null,
+            null
+          ],
+          "durableStoreCounts": {
+            "user": 1,
+            "assistant": 1,
+            "running": 0,
+            "failed": 0,
+            "completed": 2,
+            "completedAssistant": 1,
+            "total": 2
+          },
+          "inMemoryCounts": {
+            "user": 1,
+            "assistant": 1,
+            "running": 0,
+            "failed": 0,
+            "completed": 2,
+            "completedAssistant": 1,
+            "total": 2
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 0,
+          "acpChildState": "running",
+          "readinessState": "ready",
+          "provider": "ollama-cloud",
+          "model": "glm-5.2",
+          "modelRequestsAttempted": 1,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      },
+      {
+        "checkpoint": "D",
+        "recordedAt": "2026-07-24T05:51:27.085Z",
+        "eventType": "first_restart_reloaded",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": null,
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 1,
+          "assistant": 1,
+          "completedAssistant": 1,
+          "total": 2,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 1,
+          "assistant": 1,
+          "running": 0,
+          "failed": 0,
+          "completed": 2,
+          "completedAssistant": 1,
+          "total": 2
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 0,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "completed",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f"
+          ],
+          "requestIdentities": [
+            null,
+            null
+          ],
+          "durableStoreCounts": {
+            "user": 1,
+            "assistant": 1,
+            "running": 0,
+            "failed": 0,
+            "completed": 2,
+            "completedAssistant": 1,
+            "total": 2
+          },
+          "inMemoryCounts": {
+            "user": 1,
+            "assistant": 1,
+            "running": 0,
+            "failed": 0,
+            "completed": 2,
+            "completedAssistant": 1,
+            "total": 2
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 0,
+          "acpChildState": "unknown",
+          "readinessState": "unknown",
+          "provider": null,
+          "model": null,
+          "modelRequestsAttempted": 0,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      },
+      {
+        "checkpoint": "E",
+        "recordedAt": "2026-07-24T05:51:27.435Z",
+        "eventType": "follow_up_accepted",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": "follow-up",
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "425c0babc3b6474e",
+            "sequence": 2,
+            "role": "user",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 2,
+          "assistant": 1,
+          "completedAssistant": 1,
+          "total": 3,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 2,
+          "assistant": 2,
+          "running": 1,
+          "failed": 0,
+          "completed": 3,
+          "completedAssistant": 1,
+          "total": 4
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 1,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "running",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f",
+            "425c0babc3b6474e",
+            "baddca0e47e663fd"
+          ],
+          "requestIdentities": [
+            null,
+            null,
+            "b5226e1b01e119e7",
+            "b5226e1b01e119e7"
+          ],
+          "durableStoreCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 1,
+            "failed": 0,
+            "completed": 3,
+            "completedAssistant": 1,
+            "total": 4
+          },
+          "inMemoryCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 1,
+            "failed": 0,
+            "completed": 3,
+            "completedAssistant": 1,
+            "total": 4
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 1,
+          "acpChildState": "not_started",
+          "readinessState": "ready",
+          "provider": "ollama-cloud",
+          "model": "glm-5.2",
+          "modelRequestsAttempted": 0,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      },
+      {
+        "checkpoint": "F",
+        "recordedAt": "2026-07-24T05:51:33.246Z",
+        "eventType": "follow_up_completed_emitted",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": "follow-up",
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "425c0babc3b6474e",
+            "sequence": 2,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "baddca0e47e663fd",
+            "sequence": 2,
+            "role": "agent",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 2,
+          "assistant": 2,
+          "completedAssistant": 2,
+          "total": 4,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 2,
+          "assistant": 2,
+          "running": 0,
+          "failed": 0,
+          "completed": 4,
+          "completedAssistant": 2,
+          "total": 4
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 0,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "completed",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f",
+            "425c0babc3b6474e",
+            "baddca0e47e663fd"
+          ],
+          "requestIdentities": [
+            null,
+            null,
+            "b5226e1b01e119e7",
+            "b5226e1b01e119e7"
+          ],
+          "durableStoreCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 0,
+            "failed": 0,
+            "completed": 4,
+            "completedAssistant": 2,
+            "total": 4
+          },
+          "inMemoryCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 0,
+            "failed": 0,
+            "completed": 4,
+            "completedAssistant": 2,
+            "total": 4
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 0,
+          "acpChildState": "running",
+          "readinessState": "ready",
+          "provider": "ollama-cloud",
+          "model": "glm-5.2",
+          "modelRequestsAttempted": 1,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      },
+      {
+        "checkpoint": "G",
+        "recordedAt": "2026-07-24T05:51:33.261Z",
+        "eventType": "follow_up_persistence_drained",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": "follow-up",
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "425c0babc3b6474e",
+            "sequence": 2,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "baddca0e47e663fd",
+            "sequence": 2,
+            "role": "agent",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 2,
+          "assistant": 2,
+          "completedAssistant": 2,
+          "total": 4,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 2,
+          "assistant": 2,
+          "running": 0,
+          "failed": 0,
+          "completed": 4,
+          "completedAssistant": 2,
+          "total": 4
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 0,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "completed",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f",
+            "425c0babc3b6474e",
+            "baddca0e47e663fd"
+          ],
+          "requestIdentities": [
+            null,
+            null,
+            "b5226e1b01e119e7",
+            "b5226e1b01e119e7"
+          ],
+          "durableStoreCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 0,
+            "failed": 0,
+            "completed": 4,
+            "completedAssistant": 2,
+            "total": 4
+          },
+          "inMemoryCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 0,
+            "failed": 0,
+            "completed": 4,
+            "completedAssistant": 2,
+            "total": 4
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 0,
+          "acpChildState": "running",
+          "readinessState": "ready",
+          "provider": "ollama-cloud",
+          "model": "glm-5.2",
+          "modelRequestsAttempted": 1,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      },
+      {
+        "checkpoint": "H",
+        "recordedAt": "2026-07-24T05:51:39.896Z",
+        "eventType": "second_restart_reloaded",
+        "conversationIdentity": "da2b5fda714a21e1",
+        "nativeSessionIdentity": "3c82525699995318",
+        "requestIdentity": null,
+        "turns": [
+          {
+            "identity": "403c5bd5203799b1",
+            "sequence": 1,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "0fe68f524ca3c14f",
+            "sequence": 1,
+            "role": "agent",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "425c0babc3b6474e",
+            "sequence": 2,
+            "role": "user",
+            "lifecycleState": "completed"
+          },
+          {
+            "identity": "baddca0e47e663fd",
+            "sequence": 2,
+            "role": "agent",
+            "lifecycleState": "completed"
+          }
+        ],
+        "durableStoreCounts": {
+          "user": 2,
+          "assistant": 2,
+          "completedAssistant": 2,
+          "total": 4,
+          "duplicateTurnIdentities": 0
+        },
+        "inMemoryCounts": {
+          "user": 2,
+          "assistant": 2,
+          "running": 0,
+          "failed": 0,
+          "completed": 4,
+          "completedAssistant": 2,
+          "total": 4
+        },
+        "pendingRequiredWrites": {
+          "state": "known",
+          "value": 0,
+          "source": "acceptance_observability",
+          "legacyState": "absent"
+        },
+        "observability": {
+          "contract": "cabinet.acceptance.conversation-observability",
+          "schemaVersion": 1,
+          "conversationIdentity": "da2b5fda714a21e1",
+          "nativeSessionIdentity": "3c82525699995318",
+          "conversationStatus": "completed",
+          "turnIdentities": [
+            "403c5bd5203799b1",
+            "0fe68f524ca3c14f",
+            "425c0babc3b6474e",
+            "baddca0e47e663fd"
+          ],
+          "requestIdentities": [
+            null,
+            null,
+            "b5226e1b01e119e7",
+            "b5226e1b01e119e7"
+          ],
+          "durableStoreCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 0,
+            "failed": 0,
+            "completed": 4,
+            "completedAssistant": 2,
+            "total": 4
+          },
+          "inMemoryCounts": {
+            "user": 2,
+            "assistant": 2,
+            "running": 0,
+            "failed": 0,
+            "completed": 4,
+            "completedAssistant": 2,
+            "total": 4
+          },
+          "inMemoryCountSource": "post_flush_projection",
+          "pendingRequiredWrites": 0,
+          "acpChildState": "unknown",
+          "readinessState": "unknown",
+          "provider": null,
+          "model": null,
+          "modelRequestsAttempted": 0,
+          "providerRetries": 0,
+          "fallbackAttempts": 0,
+          "toolEventCount": 0,
+          "decisionEventCount": 0,
+          "duplicateChunkCount": 0,
+          "mcpServerCount": 0,
+          "lastProviderHttpStatus": "none",
+          "lastFailureClass": "none"
+        }
+      }
+    ],
+    "nativeSessionIdentityStable": true,
+    "exactFinalCardinality": true,
+    "secondRestartCompleted": true,
+    "unavailableMeasurements": [
+      "inMemoryCounts",
+      "pendingRequiredWrites"
+    ]
+  },
+  "messageFidelity": [
+    {
+      "turn": "initial",
+      "exactNoncePresent": true,
+      "nonceOccurrenceCount": 1,
+      "surroundingFormattingPresent": true,
+      "alteredOrPartialNoncePresent": false,
+      "persistedContentMatchesRenderedContent": false,
+      "sessionContextPreserved": true,
+      "selector": "[data-testid=\"turn\"][data-turn-role=\"agent\"] > [data-testid=\"assistant-message-content\"][data-message-author=\"assistant\"][data-message-part=\"content\"]",
+      "elementCount": 2
+    },
+    {
+      "turn": "follow-up",
+      "exactNoncePresent": true,
+      "nonceOccurrenceCount": 1,
+      "surroundingFormattingPresent": true,
+      "alteredOrPartialNoncePresent": false,
+      "persistedContentMatchesRenderedContent": true,
+      "sessionContextPreserved": true,
+      "selector": "[data-testid=\"turn\"][data-turn-role=\"agent\"] > [data-testid=\"assistant-message-content\"][data-message-author=\"assistant\"][data-message-part=\"content\"]",
+      "elementCount": 2
+    }
+  ],
+  "screenshots": [
+    {
+      "id": "desktop-room",
+      "file": "screenshots/desktop-room.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": false,
+      "route": "/room/acceptance-cabinet",
+      "purpose": "Desktop room and navigation"
+    },
+    {
+      "id": "org-chart-desktop",
+      "file": "screenshots/org-chart-desktop.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": false,
+      "route": "/room/acceptance-cabinet",
+      "purpose": "Viewport-bounded isolated Org-chart dialog"
+    },
+    {
+      "id": "developer-diagnostics",
+      "file": "screenshots/developer-diagnostics.png",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "reducedMotion": false,
+      "route": "/hermes?mode=developer",
+      "purpose": "48 diagnostic rows"
+    },
+    {
+      "id": "mobile-room-reduced-motion",
+      "file": "screenshots/mobile-room-reduced-motion.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "reducedMotion": true,
+      "route": "/room/acceptance-cabinet",
+      "purpose": "Mobile reduced-motion overflow"
+    }
+  ],
+  "productionTouched": false
+}
