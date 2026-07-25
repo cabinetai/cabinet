@@ -14,3 +14,4 @@
 [2026-07-25] Tightened starter-content handling: only an empty directory is seeded, established Cabinets remain untouched, and nonempty unrecognized folders trigger a blocking folder chooser instead of receiving Cabinet files.
 [2026-07-25] Added guarded Good Place release preparation and fork-invariant scripts, stopped fork manifests from advertising unpublished upstream npm packages, and documented the two-workflow draft-release checklist through manual publication.
 [2026-07-25] Kept the resolved workspace-sync configuration alive when shutdown reaches its wait limit, allowing an in-flight Git operation to settle without dereferencing cleared state.
+[2026-07-25] Prepared `0.5.3-gp.3`: aligned package and lockfile versions, regenerated every manifest URL against `souljorje/cabinet`, removed upstream npm claims, and added the fork-invariant check to the permanent unit suite.
