@@ -9,6 +9,7 @@ import test from "node:test";
 const require = createRequire(import.meta.url);
 const {
   createWorkspaceSyncSupervisor,
+  readWorkspaceSyncState,
   resolveWorkspaceSync,
 } = require("../electron/workspace-sync.cjs");
 
@@ -20,7 +21,7 @@ function git(cwd: string, ...args: string[]) {
   }).trim();
 }
 
-async function waitFor(check: () => boolean, timeoutMs = 2_000) {
+async function waitFor(check: () => boolean, timeoutMs = 5_000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     if (check()) return;
@@ -29,45 +30,102 @@ async function waitFor(check: () => boolean, timeoutMs = 2_000) {
   assert.fail("timed out waiting for workspace sync");
 }
 
-test("workspace sync stays disabled without the explicit workspace script", () => {
+function createRemoteWorkspace(root: string) {
+  const remote = path.join(root, "remote.git");
+  const seed = path.join(root, "seed");
+  const workspace = path.join(root, "workspace");
+
+  git(root, "init", "--bare", remote);
+  git(root, "clone", remote, seed);
+  git(seed, "config", "user.name", "Test");
+  git(seed, "config", "user.email", "test@example.com");
+  fs.writeFileSync(path.join(seed, ".cabinet"), "name: Test\n");
+  fs.writeFileSync(path.join(seed, "index.md"), "one\n");
+  git(seed, "add", ".");
+  git(seed, "commit", "-m", "seed");
+  git(seed, "branch", "-M", "main");
+  git(seed, "push", "-u", "origin", "main");
+  git(root, "clone", "--branch", "main", remote, workspace);
+  git(workspace, "config", "user.name", "Test");
+  git(workspace, "config", "user.email", "test@example.com");
+
+  return { remote, seed, workspace };
+}
+
+test("workspace sync stays unconfigured outside a Cabinet", () => {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "cabinet-sync-disabled-"));
   try {
-    assert.equal(resolveWorkspaceSync(dataDir), null);
+    assert.deepEqual(resolveWorkspaceSync(dataDir), {
+      enabled: false,
+      reason: "not-cabinet",
+    });
   } finally {
     fs.rmSync(dataDir, { recursive: true, force: true });
   }
 });
 
-test("workspace sync runs immediately and after a Git commit", async () => {
-  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "cabinet-sync-enabled-"));
-  const scriptsDir = path.join(dataDir, "scripts");
-  const callsPath = path.join(dataDir, "calls.log");
-  fs.mkdirSync(scriptsDir);
-  fs.writeFileSync(
-    path.join(scriptsDir, "cabinet-sync.mjs"),
-    `import fs from "node:fs"; fs.appendFileSync(${JSON.stringify(callsPath)}, "sync\\n")\n`,
-  );
-  git(dataDir, "init", "--initial-branch=main");
-  git(dataDir, "config", "user.name", "Test");
-  git(dataDir, "config", "user.email", "test@example.com");
-  fs.writeFileSync(path.join(dataDir, "index.md"), "one\n");
-  git(dataDir, "add", ".");
-  git(dataDir, "commit", "-m", "seed");
+test("workspace sync persists missing Git as needs attention", () => {
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "cabinet-sync-no-git-"));
+  try {
+    fs.writeFileSync(path.join(dataDir, ".cabinet"), "name: Test\n");
+    const supervisor = createWorkspaceSyncSupervisor({
+      dataDir,
+      gitResolver: () => null,
+    });
+    assert.equal(supervisor.start(), false);
+    assert.deepEqual(readWorkspaceSyncState(dataDir), {
+      state: "needs-attention",
+      lastAttemptAt: null,
+      lastSuccessAt: null,
+      branch: null,
+      reason: "git-not-found",
+      error:
+        "Git was not found. Install GitHub Desktop or Git to enable workspace sync.",
+    });
+  } finally {
+    fs.rmSync(dataDir, { recursive: true, force: true });
+  }
+});
 
+test("built-in workspace sync pushes and pulls without a workspace script", async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "cabinet-sync-enabled-"));
+  const { seed, workspace } = createRemoteWorkspace(root);
   const supervisor = createWorkspaceSyncSupervisor({
-    dataDir,
-    nodeCommand: process.execPath,
+    dataDir: workspace,
     intervalMs: 60_000,
   });
 
   try {
     assert.equal(supervisor.start(), true);
-    await waitFor(() => fs.existsSync(callsPath));
-    fs.writeFileSync(path.join(dataDir, "index.md"), "two\n");
-    git(dataDir, "commit", "-am", "change");
-    await waitFor(() => fs.readFileSync(callsPath, "utf8").split("sync\n").length >= 3);
+    await waitFor(
+      () => readWorkspaceSyncState(workspace).state === "synced",
+    );
+
+    fs.writeFileSync(path.join(workspace, "local.md"), "local\n");
+    git(workspace, "add", "local.md");
+    git(workspace, "commit", "-m", "local");
+    await supervisor.sync();
+    git(seed, "pull", "--ff-only");
+    assert.equal(fs.readFileSync(path.join(seed, "local.md"), "utf8"), "local\n");
+
+    fs.writeFileSync(path.join(seed, "remote.md"), "remote\n");
+    git(seed, "add", "remote.md");
+    git(seed, "commit", "-m", "remote");
+    git(seed, "push");
+    await supervisor.sync();
+    assert.equal(
+      fs.readFileSync(path.join(workspace, "remote.md"), "utf8"),
+      "remote\n",
+    );
+
+    const state = readWorkspaceSyncState(workspace);
+    assert.equal(state.state, "synced");
+    assert.equal(state.branch, "main");
+    assert.equal(state.reason, null);
+    assert.ok(state.lastAttemptAt);
+    assert.ok(state.lastSuccessAt);
   } finally {
     await supervisor.stop();
-    fs.rmSync(dataDir, { recursive: true, force: true });
+    fs.rmSync(root, { recursive: true, force: true });
   }
 });

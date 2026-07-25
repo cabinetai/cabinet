@@ -14,13 +14,9 @@ Three processes and a data directory. Understanding the split is most of the bat
 **2. Daemon
 **3. Electron shell 
 
-## PROGRESS.md
+## Change logs
 
-After every change to this project, append an entry to `PROGRESS.md`:
+For generic changes intended for upstream, append to `PROGRESS.md`.
 
-```
-[YYYY-MM-DD] Brief description of what changed.
-```
-
-This is mandatory and is the project's running changelog. Existing entries are detailed (what changed,
-why, what was verified) — match that.
+For Good Place-only distribution, branding, release, or workspace-sync changes,
+append to `FORK_PROGRESS.md`. Do not modify `PROGRESS.md` for fork-only work.

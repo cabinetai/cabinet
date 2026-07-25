@@ -20,7 +20,10 @@ if (process.platform !== "darwin") {
 }
 
 const root = process.cwd();
-const appName = "Good Place Cabinet";
+const distribution = JSON.parse(
+  fs.readFileSync(path.join(root, "distribution.json"), "utf8"),
+);
+const appName = distribution.productName;
 const runnerTemp = process.env.RUNNER_TEMP || os.tmpdir();
 const workDir = fs.mkdtempSync(path.join(runnerTemp, "cabinet-electron-smoke-"));
 const mountDir = path.join(workDir, "dmg");

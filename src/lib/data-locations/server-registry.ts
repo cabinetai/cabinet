@@ -1,7 +1,8 @@
 import path from "path";
 import fs from "fs/promises";
 import { DATA_DIR, CABINET_INTERNAL_DIR } from "@/lib/storage/path-utils";
-import { INSTALL_CONFIG_PATH, PROJECT_ROOT } from "@/lib/runtime/runtime-config";
+import { INSTALL_CONFIG_PATH } from "@/lib/runtime/runtime-config";
+import { cabinetEnvPath } from "@/lib/runtime/cabinet-env";
 import type { DataLocation, DataLocationSnapshot, DataLocationStats } from "./types";
 
 export function getServerDataLocations(): DataLocation[] {
@@ -49,7 +50,7 @@ export function getServerDataLocations(): DataLocation[] {
     {
       id: "api-keys-env",
       label: "API keys",
-      pathOrKey: path.join(PROJECT_ROOT, ".cabinet.env"),
+      pathOrKey: cabinetEnvPath(),
       contains:
         "Provider API keys (OpenAI, Anthropic, etc.) you set in Settings → Integrations → API Keys.",
       leavesDevice: false,

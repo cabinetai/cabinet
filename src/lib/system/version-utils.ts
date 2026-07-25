@@ -1,30 +1,19 @@
-function parseStableSemver(input: string): [number, number, number] | null {
-  const match = input.trim().replace(/^v/, "").match(/^(\d+)\.(\d+)\.(\d+)$/);
-  if (!match) return null;
-  return [
-    Number.parseInt(match[1], 10),
-    Number.parseInt(match[2], 10),
-    Number.parseInt(match[3], 10),
-  ];
-}
+import semver from "semver";
 
 export function compareVersions(left: string, right: string): number {
-  const leftParts = parseStableSemver(left);
-  const rightParts = parseStableSemver(right);
+  const normalizedLeft = left.trim().replace(/^v/, "");
+  const normalizedRight = right.trim().replace(/^v/, "");
 
-  if (!leftParts || !rightParts) {
-    return left.localeCompare(right);
+  if (semver.valid(normalizedLeft) && semver.valid(normalizedRight)) {
+    return semver.compare(normalizedLeft, normalizedRight);
   }
 
-  for (let i = 0; i < 3; i += 1) {
-    if (leftParts[i] !== rightParts[i]) {
-      return leftParts[i] > rightParts[i] ? 1 : -1;
-    }
-  }
-  return 0;
+  return normalizedLeft.localeCompare(normalizedRight, undefined, {
+    numeric: true,
+  });
 }
 
 export function isStableVersion(version: string): boolean {
-  return parseStableSemver(version) !== null;
+  const parsed = semver.parse(version.trim().replace(/^v/, ""));
+  return parsed !== null && parsed.prerelease.length === 0;
 }
-

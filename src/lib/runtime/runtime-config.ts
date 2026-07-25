@@ -1,10 +1,11 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+import distribution from "../../../distribution.json";
 
 export const PROJECT_ROOT = process.cwd();
 const DEFAULT_RELEASE_MANIFEST_URL =
-  "https://github.com/souljorje/cabinet/releases/latest/download/cabinet-release.json";
+  `https://github.com/${distribution.repository}/releases/latest/download/cabinet-release.json`;
 
 function parsePort(value: string | undefined, fallback: number): number {
   if (!value) return fallback;
@@ -41,9 +42,13 @@ function defaultElectronDataDir(): string {
   // Linux → ~/Good Place OS
   // (Linux distros vary on whether ~/Documents exists; home-root is safer).
   if (process.platform === "darwin" || process.platform === "win32") {
-    return path.join(os.homedir(), "Documents", "Good Place OS");
+    return path.join(
+      os.homedir(),
+      "Documents",
+      distribution.defaultDataDirectory,
+    );
   }
-  return path.join(os.homedir(), "Good Place OS");
+  return path.join(os.homedir(), distribution.defaultDataDirectory);
 }
 
 export function getCabinetRuntime(): "source" | "electron" {

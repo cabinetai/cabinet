@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import distribution from "../../../distribution.json";
 import { PROJECT_RELEASE_MANIFEST_PATH } from "@/lib/storage/path-utils";
 import { getReleaseManifestUrl, PROJECT_ROOT } from "@/lib/runtime/runtime-config";
 import type { AppBundleKey, ReleaseAppBundle, ReleaseManifest } from "@/types";
@@ -34,8 +35,10 @@ function buildAppBundle(repositoryUrl: string, gitTag: string, key: AppBundleKey
 function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
   const version = pkg.version || "0.0.0";
   const gitTag = `v${version}`;
-  const repositoryUrl = pkg.repository?.url?.replace(/^git\+/, "").replace(/\.git$/, "") ||
-    "https://github.com/souljorje/cabinet";
+  const repositoryUrl =
+    pkg.repository?.url?.replace(/^git\+/, "").replace(/\.git$/, "") ||
+    `https://github.com/${distribution.repository}`;
+  const releaseAssetName = distribution.productName.replace(/\s+/g, ".");
 
   return {
     manifestVersion: 1,
@@ -48,14 +51,18 @@ function buildFallbackManifest(pkg: PackageManifest): ReleaseManifest {
     appBundles: Object.fromEntries(
       APP_BUNDLE_KEYS.map((key) => [key, buildAppBundle(repositoryUrl, gitTag, key)])
     ) as Record<AppBundleKey, ReleaseAppBundle>,
-    npmPackage: "create-cabinet",
-    createCabinetVersion: version,
-    cabinetaiPackage: "cabinetai",
-    cabinetaiVersion: version,
+    ...(distribution.publishNpmPackages
+      ? {
+          npmPackage: "create-cabinet",
+          createCabinetVersion: version,
+          cabinetaiPackage: "cabinetai",
+          cabinetaiVersion: version,
+        }
+      : {}),
     electron: {
       macos: {
-        zipAssetName: `Good.Place.Cabinet-darwin-arm64-${version}.zip`,
-        dmgAssetName: `Good.Place.Cabinet-${version}-arm64.dmg`,
+        zipAssetName: `${releaseAssetName}-darwin-arm64-${version}.zip`,
+        dmgAssetName: `${releaseAssetName}-${version}-arm64.dmg`,
       },
     },
   };
@@ -100,8 +107,19 @@ function alignManifestWithFallback(
     gitTag,
     repositoryUrl,
     ...buildReleaseUrls(repositoryUrl, gitTag),
-    createCabinetVersion: version,
-    cabinetaiVersion: manifest.cabinetaiPackage ? version : manifest.cabinetaiVersion,
+    npmPackage: distribution.publishNpmPackages
+      ? manifest.npmPackage
+      : undefined,
+    createCabinetVersion: distribution.publishNpmPackages
+      ? version
+      : undefined,
+    cabinetaiPackage: distribution.publishNpmPackages
+      ? manifest.cabinetaiPackage
+      : undefined,
+    cabinetaiVersion:
+      distribution.publishNpmPackages && manifest.cabinetaiPackage
+        ? version
+        : undefined,
   };
 }
 

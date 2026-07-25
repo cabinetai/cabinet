@@ -8,9 +8,11 @@ const { MakerDMG } = require("@electron-forge/maker-dmg");
 const { MakerSquirrel } = require("@electron-forge/maker-squirrel");
 const { AutoUnpackNativesPlugin } = require("@electron-forge/plugin-auto-unpack-natives");
 const { PublisherGithub } = require("@electron-forge/publisher-github");
+const distribution = require("./distribution.json");
 
-const APP_NAME = "Good Place Cabinet";
-const APP_BUNDLE_ID = "com.souljorje.good-place-cabinet";
+const APP_NAME = distribution.productName;
+const APP_BUNDLE_ID = distribution.bundleId;
+const [REPOSITORY_OWNER, REPOSITORY_NAME] = distribution.repository.split("/");
 
 const PACKAGER_IGNORE = [
   /^\/\.git(?:\/|$)/,
@@ -200,7 +202,7 @@ module.exports = {
     }),
     new MakerSquirrel(
       {
-        name: "good_place_cabinet",
+        name: distribution.squirrelName,
         authors: "Good Place",
         // electron-winstaller requires a nuspec <description>; without it the
         // Squirrel maker fails ("Description is required").
@@ -220,8 +222,8 @@ module.exports = {
   publishers: [
     new PublisherGithub({
       repository: {
-        owner: "souljorje",
-        name: "cabinet",
+        owner: REPOSITORY_OWNER,
+        name: REPOSITORY_NAME,
       },
       prerelease: false,
       draft: true,

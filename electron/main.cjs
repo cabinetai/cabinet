@@ -1,21 +1,26 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { execFileSync } = require("child_process");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const net = require("net");
 const { spawn } = require("child_process");
 const { app, BrowserWindow, dialog, autoUpdater, ipcMain } = require("electron");
 const { updateElectronApp } = require("update-electron-app");
+const distribution = require("../distribution.json");
 const {
   initBrowserViews,
   destroyAllBrowserViews,
 } = require("./browser-views.cjs");
-const { shouldSeedDefaultContent } = require("./managed-data.cjs");
+const {
+  classifyManagedDataDirectory,
+  shouldSeedDefaultContent,
+} = require("./managed-data.cjs");
 const { createWorkspaceSyncSupervisor } = require("./workspace-sync.cjs");
 
-const APP_DISPLAY_NAME = "Good Place Cabinet";
-const APP_BUNDLE_ID = "com.souljorje.good-place-cabinet";
-const UPDATE_REPOSITORY = "souljorje/cabinet";
+const APP_DISPLAY_NAME = distribution.productName;
+const APP_BUNDLE_ID = distribution.bundleId;
+const UPDATE_REPOSITORY = distribution.repository;
 
 app.setName(APP_DISPLAY_NAME);
 app.setPath("userData", path.join(app.getPath("appData"), APP_DISPLAY_NAME));
@@ -42,9 +47,9 @@ function defaultUserVisibleDataDir() {
   // vary on whether ~/Documents exists; home-root is safer).
   const home = app.getPath("home");
   if (process.platform === "darwin" || process.platform === "win32") {
-    return path.join(home, "Documents", "Good Place OS");
+    return path.join(home, "Documents", distribution.defaultDataDirectory);
   }
-  return path.join(home, "Good Place OS");
+  return path.join(home, distribution.defaultDataDirectory);
 }
 
 function readPersistedDataDir() {
@@ -139,7 +144,20 @@ function resolveManagedDataDir() {
   return fresh;
 }
 
-const managedDataDir = resolveManagedDataDir();
+let managedDataDir = resolveManagedDataDir();
+
+function workspaceEnvironmentPath() {
+  const workspaceKey = crypto
+    .createHash("sha256")
+    .update(path.resolve(managedDataDir))
+    .digest("hex");
+  return path.join(
+    userDataDir,
+    "workspaces",
+    workspaceKey,
+    ".cabinet.env",
+  );
+}
 
 // Diagnostic logging: console capture + crash markers into
 // <dataDir>/.cabinet-state/logs/electron.log (LOGGING_AND_FILE_HISTORY_PRD §3).
@@ -149,7 +167,6 @@ try {
   console.error("electron: initElectronLogging failed", err);
 }
 
-const updateStatusPath = path.join(managedDataDir, ".cabinet-state", "update-status.json");
 let mainWindow = null;
 let backendChildren = [];
 let workspaceSyncSupervisor = null;
@@ -177,42 +194,27 @@ function getBundledNodeBinaryName() {
   return process.platform === "win32" ? "node.exe" : "node";
 }
 
-function workspaceSyncNode() {
-  const bundledNodePath = path.join(
-    process.resourcesPath,
-    "app.asar.unpacked",
-    ".next",
-    "standalone",
-    "bin",
-    getBundledNodeBinaryName()
-  );
-  if (!isDev && fs.existsSync(bundledNodePath)) {
-    return { command: bundledNodePath, env: {} };
-  }
-  return {
-    command: process.execPath,
-    env: { ELECTRON_RUN_AS_NODE: "1" },
-  };
-}
-
 function startWorkspaceSync() {
   if (workspaceSyncSupervisor) return;
-  const node = workspaceSyncNode();
   const supervisor = createWorkspaceSyncSupervisor({
     dataDir: managedDataDir,
-    nodeCommand: node.command,
-    nodeEnv: node.env,
   });
   if (supervisor.start()) workspaceSyncSupervisor = supervisor;
 }
 
-function stopWorkspaceSync() {
+async function stopWorkspaceSync() {
   if (!workspaceSyncSupervisor) return;
-  void workspaceSyncSupervisor.stop();
+  const supervisor = workspaceSyncSupervisor;
   workspaceSyncSupervisor = null;
+  await supervisor.stop();
 }
 
 function writeUpdateStatus(status) {
+  const updateStatusPath = path.join(
+    managedDataDir,
+    ".cabinet-state",
+    "update-status.json",
+  );
   fs.mkdirSync(path.dirname(updateStatusPath), { recursive: true });
   fs.writeFileSync(updateStatusPath, JSON.stringify(status, null, 2), "utf8");
 }
@@ -456,12 +458,45 @@ function seedDefaultContent() {
   copyRecursive(seedDir, managedDataDir);
 }
 
-function ensureManagedData() {
-  fs.mkdirSync(managedDataDir, { recursive: true });
-  // Seed default content (pages, agent library, playbooks).
-  // Non-destructive: never overwrites existing files, so user edits survive
-  // and new templates from app updates are added automatically.
-  seedDefaultContent();
+async function ensureManagedData() {
+  while (true) {
+    fs.mkdirSync(managedDataDir, { recursive: true });
+    const classification = classifyManagedDataDirectory(managedDataDir);
+    if (classification === "cabinet") return;
+    if (classification === "empty") {
+      seedDefaultContent();
+      return;
+    }
+
+    const prompt = await dialog.showMessageBox({
+      type: "warning",
+      buttons: ["Choose another folder", "Quit"],
+      defaultId: 0,
+      cancelId: 1,
+      title: "Choose a Good Place workspace",
+      message: "This folder is not a Cabinet workspace.",
+      detail:
+        "Choose an empty folder or a workspace containing a regular .cabinet file. Existing files will not be changed.",
+    });
+    if (prompt.response !== 0) {
+      throw new Error("No valid Good Place workspace was selected.");
+    }
+
+    const selection = await dialog.showOpenDialog({
+      title: "Choose a Good Place workspace",
+      defaultPath: managedDataDir,
+      properties: ["openDirectory", "createDirectory"],
+    });
+    if (selection.canceled || !selection.filePaths[0]) continue;
+
+    managedDataDir = selection.filePaths[0];
+    writePersistedDataDir(managedDataDir);
+    try {
+      require("./logger.cjs").initElectronLogging(managedDataDir);
+    } catch {
+      // Logging remains on the original path if it cannot be moved.
+    }
+  }
 }
 
 function readDevAppUrlFromRuntime() {
@@ -523,7 +558,7 @@ async function startEmbeddedCabinet() {
     };
   }
 
-  ensureManagedData();
+  await ensureManagedData();
 
   const externalModulesDir = extractNativeModules();
   const [appPort, daemonPort] = await Promise.all([
@@ -542,6 +577,7 @@ async function startEmbeddedCabinet() {
     CABINET_INSTALL_KIND: getElectronInstallKind(),
     CABINET_DATA_DIR: managedDataDir,
     CABINET_USER_DATA: userDataDir,
+    CABINET_ENV_PATH: workspaceEnvironmentPath(),
     CABINET_APP_PORT: String(appPort),
     CABINET_DAEMON_PORT: String(daemonPort),
     CABINET_APP_ORIGIN: appOrigin,
@@ -675,13 +711,22 @@ function configureAutoUpdates() {
   });
 }
 
+let backendCleanupPromise = null;
+
 function cleanupBackends() {
-  stopWorkspaceSync();
-  backendsQuitting = true;
-  for (const child of backendChildren) {
-    child.kill("SIGTERM");
-  }
-  backendChildren = [];
+  if (backendCleanupPromise) return backendCleanupPromise;
+  const cleanup = (async () => {
+    await stopWorkspaceSync();
+    backendsQuitting = true;
+    for (const child of backendChildren) {
+      child.kill("SIGTERM");
+    }
+    backendChildren = [];
+  })();
+  backendCleanupPromise = cleanup.finally(() => {
+    backendCleanupPromise = null;
+  });
+  return backendCleanupPromise;
 }
 
 /**
@@ -845,15 +890,25 @@ ipcMain.handle("cabinet:open-window", (_event, suffix) => openRoomWindow(suffix)
 
 app.on("window-all-closed", () => {
   destroyAllBrowserViews();
-  cleanupBackends();
+  void cleanupBackends();
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on("before-quit", () => {
+let quitCleanupStarted = false;
+let quitCleanupComplete = false;
+
+app.on("before-quit", (event) => {
+  if (quitCleanupComplete) return;
+  event.preventDefault();
+  if (quitCleanupStarted) return;
+  quitCleanupStarted = true;
   destroyAllBrowserViews();
-  cleanupBackends();
+  void cleanupBackends().finally(() => {
+    quitCleanupComplete = true;
+    app.quit();
+  });
 });
 
 app.on("second-instance", () => {

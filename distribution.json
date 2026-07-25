@@ -1,0 +1,8 @@
+{
+  "productName": "Good Place Cabinet",
+  "bundleId": "com.souljorje.good-place-cabinet",
+  "repository": "souljorje/cabinet",
+  "squirrelName": "good_place_cabinet",
+  "defaultDataDirectory": "Good Place OS",
+  "publishNpmPackages": false
+}

@@ -3,8 +3,8 @@ import path from "path";
 import { getManagedDataDir } from "./runtime-config";
 
 /**
- * `.cabinet.env` is a plain `KEY=value`-per-line file at the cabinet root,
- * editable both from the Settings → Integrations UI and directly on disk.
+ * `.cabinet.env` is a plain `KEY=value`-per-line file, editable both from the
+ * Settings → Integrations UI and directly on disk.
  * Values typed in the UI land here with `chmod 0600`; values pre-existing in
  * the file appear in the UI on load. The spawn helpers in
  * `src/lib/agents/adapters/utils.ts` and `server/pty/manager.ts` merge these
@@ -17,13 +17,16 @@ import { getManagedDataDir } from "./runtime-config";
  *     `.env*` glob does NOT match `.cabinet.env`, since the glob anchors at
  *     the basename's start), file perms 0600, masked in the UI, and never
  *     serialized in plaintext over the local API after first save.
- *   - Single file per project root (matches `.cabinet-install.json`), not
- *     per-cabinet — simpler and matches every existing top-level convention.
+ *   - Electron sets `CABINET_ENV_PATH` to machine-local app data keyed by the
+ *     workspace path, so secrets cannot enter workspace Git history. Source
+ *     mode keeps the data-directory file for compatibility.
  */
 
 const CABINET_ENV_FILENAME = ".cabinet.env";
 
 export function cabinetEnvPath(): string {
+  const configured = process.env.CABINET_ENV_PATH?.trim();
+  if (configured) return path.resolve(configured);
   return path.join(getManagedDataDir(), CABINET_ENV_FILENAME);
 }
 
@@ -123,6 +126,7 @@ function serialize(values: Record<string, string>): string {
 }
 
 function ensureGitignoreCovers(): void {
+  if (process.env.CABINET_ENV_PATH?.trim()) return;
   // .gitignore must explicitly cover `.cabinet.env` (the `.env*` glob does
   // NOT match it; globs anchor at the basename's start). Warn loudly if a
   // future edit removes the explicit rule — secrets in the repo would be
@@ -146,6 +150,7 @@ function ensureGitignoreCovers(): void {
 
 function atomicWrite(file: string, contents: string): void {
   const dir = path.dirname(file);
+  fs.mkdirSync(dir, { recursive: true });
   const tmp = path.join(dir, `.cabinet.env.${process.pid}.${Date.now()}.tmp`);
   fs.writeFileSync(tmp, contents, { encoding: "utf-8", mode: 0o600 });
   fs.renameSync(tmp, file);

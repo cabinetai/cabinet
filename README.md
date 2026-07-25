@@ -1,3 +1,12 @@
+> [!IMPORTANT]
+> This repository is the Good Place distribution of Cabinet.
+>
+> The original project is [cabinetai/cabinet](https://github.com/cabinetai/cabinet).
+> Do not use `npx cabinetai` or `create-cabinet` to install this fork.
+>
+> Good Place users should download the
+> [latest desktop release](https://github.com/souljorje/cabinet/releases/latest).
+
 <p align="center">
   <img src="assets/cabinet-wordmark.svg" alt="cabinet /ˈkab.ɪ.nət/" width="920">
 </p>
@@ -44,60 +53,32 @@
 
 ---
 
-## From zero to AI team in 2 minutes
+## Good Place installation
 
-```bash
-npx create-cabinet@latest
-cd cabinet
-npm run dev:all
-```
+Supported: install the
+[latest Good Place Cabinet desktop release](https://github.com/souljorje/cabinet/releases/latest).
+On macOS, drag the app to **Applications** before opening it.
 
-Open [http://localhost:4000](http://localhost:4000). The onboarding wizard builds your custom AI team in 5 questions.
+Developer path: clone this repository, run `npm install`, then `npm run dev:all`.
 
 ---
 
 ## Install, update, uninstall
 
-Cabinet runs entirely through `npx` — no global install needed. The CLI is the [`cabinetai`](https://www.npmjs.com/package/cabinetai) package; `create-cabinet` is a thin wrapper around it.
+The desktop app checks `souljorje/cabinet` for Good Place releases and keeps
+workspace data outside the application bundle.
 
-### Install / create
+### Supported
 
-```bash
-npx create-cabinet@latest          # create a cabinet and start it
-npx cabinetai create my-startup    # just create, don't start
-npx cabinetai run                  # start Cabinet in the current dir
-```
+- Good Place Cabinet desktop releases.
+- A source checkout of this fork for development.
 
-On first run, Cabinet downloads the prebuilt app bundle to `~/.cabinet/app/v{version}/`. Your cabinet directory is just a folder of markdown files — put it anywhere.
+### Unsupported for this fork
 
-### Update
+- `npx cabinetai`
+- `npx create-cabinet`
 
-```bash
-npx cabinetai update               # check for and install a newer app version
-```
-
-The CLI compares your installed app version against `cabinet-release.json` from the latest GitHub Release.
-
-### Uninstall / remove
-
-```bash
-npx cabinetai uninstall            # remove cached app versions only
-npx cabinetai uninstall --all      # also remove global state + telemetry data
-npx cabinetai uninstall --yes      # skip the confirmation prompt
-npx cabinetai remove               # alias for uninstall
-```
-
-The command prints a summary of what will be deleted and asks for confirmation before doing anything. **Your cabinet directories and their data are never touched — those you'd delete manually.**
-
-`--all` additionally removes the platform-specific telemetry directory:
-
-- macOS: `~/Library/Application Support/cabinet-telemetry/`
-- Windows: `%APPDATA%\cabinet-telemetry\`
-- Linux: `$XDG_CONFIG_HOME/cabinet/` (falls back to `~/.config/cabinet/`)
-
-To wipe Cabinet completely, run `uninstall --all` and then `rm -rf` your cabinet directories yourself.
-
-See [docs/CABINETAI.md](docs/CABINETAI.md) for the full CLI reference.
+Those commands install the upstream Cabinet distribution.
 
 ---
 
@@ -264,18 +245,15 @@ npm run electron:start   # Launch Electron desktop against the local dev servers
 npm run build        # Production build
 npm run start        # Production mode (both servers)
 npm run electron:make:win  # Build a portable Windows zip
-npx cabinetai run    # Zero-install runtime, downloads the prebuilt app bundle
 ```
 
 ---
 
 ## Ready to build your AI team?
 
-Cabinet is free, open source, and self-hosted. Your data never leaves your machine.
-
-```bash
-npx create-cabinet my-startup
-```
+Cabinet is free, open source, and self-hosted. Download the
+[latest Good Place desktop release](https://github.com/souljorje/cabinet/releases/latest)
+to get started.
 
 [Get Started](https://runcabinet.com) | <a href="https://github.com/cabinetai/cabinet/stargazers" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/github/stars/cabinetai/cabinet?label=GitHub%20Stars&logo=github&color=f5b301" alt="GitHub Stars" valign="middle"></a>
 
@@ -298,7 +276,7 @@ export CABINET_TELEMETRY_DISABLED=1   # env var (any shell session)
 
 …or open **Settings → Privacy** and toggle **Send anonymous usage telemetry**
 off. To also wipe the local install ID and queue, run
-`npx cabinetai uninstall --all`.
+the desktop app's uninstall action in Settings.
 
 See [TELEMETRY.md](TELEMETRY.md) for the full event list, payload schema,
 and where data is stored.

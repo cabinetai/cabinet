@@ -3,6 +3,7 @@ import fsSync from "fs";
 import path from "path";
 import { BACKUP_ROOT, DATA_DIR } from "@/lib/storage/path-utils";
 import { PROJECT_ROOT } from "@/lib/runtime/runtime-config";
+import { cabinetEnvPath } from "@/lib/runtime/cabinet-env";
 
 const PROJECT_BACKUP_IGNORES = new Set([
   ".git",
@@ -86,7 +87,7 @@ export async function createDataBackup(
     },
   });
   if (options.includeEnvKeys) {
-    const envFile = path.join(PROJECT_ROOT, ENV_FILE_NAME);
+    const envFile = cabinetEnvPath();
     try {
       await fs.copyFile(envFile, path.join(backupRoot, ENV_FILE_NAME));
     } catch (err) {
@@ -117,7 +118,7 @@ export function createDataBackupSync(
     },
   });
   if (options.includeEnvKeys) {
-    const envFile = path.join(PROJECT_ROOT, ENV_FILE_NAME);
+    const envFile = cabinetEnvPath();
     try {
       fsSync.copyFileSync(envFile, path.join(backupRoot, ENV_FILE_NAME));
     } catch (err) {

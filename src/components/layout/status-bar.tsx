@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal, Heart, History as HistoryIcon } from "lucide-react";
 import { ActivityFeed } from "@/components/history/activity-feed";
+import { WorkspaceSyncStatusIndicator } from "@/components/layout/workspace-sync-status";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -985,6 +986,7 @@ export function StatusBar() {
             <span className="@max-[820px]:hidden">{t("status:git2.sync")}</span>
           </button>
         )}
+        <WorkspaceSyncStatusIndicator />
         <button
           onClick={toggleTerminal}
           aria-label={terminalOpen ? t("status:git2.newTerminalTab") : t("status:git2.openTerminal")}

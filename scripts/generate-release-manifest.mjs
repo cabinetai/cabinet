@@ -13,20 +13,35 @@ function readArg(name, fallback = undefined) {
 const packageJson = JSON.parse(
   await fs.readFile(path.join(process.cwd(), "package.json"), "utf-8")
 );
+const distribution = JSON.parse(
+  await fs.readFile(path.join(process.cwd(), "distribution.json"), "utf-8")
+);
 
 const version = readArg("version", packageJson.version);
 const tag = readArg("tag", `v${version}`);
 const outputPath = readArg("output", path.join(process.cwd(), "cabinet-release.json"));
 const gitCommit = readArg("git-commit", process.env.GITHUB_SHA || undefined);
 const releaseDate = readArg("release-date", new Date().toISOString());
-// Prefer an explicit --repository-url, then the CI repo (GITHUB_REPOSITORY),
-// then the canonical repo. Keeps generated URLs correct after the org move
-// (hilash/cabinet → cabinetai/cabinet) without hardcoding.
-const repositoryUrl = (
+function normalizeRepositoryUrl(value) {
+  return value
+    ?.replace(/^git\+/, "")
+    .replace(/\.git$/, "");
+}
+
+const packageRepositoryUrl = normalizeRepositoryUrl(
+  typeof packageJson.repository === "string"
+    ? packageJson.repository
+    : packageJson.repository?.url
+);
+
+// Prefer an explicit argument, then the active Actions repository, then the
+// checkout's package metadata. The canonical upstream URL is a final fallback.
+const repositoryUrl = normalizeRepositoryUrl(
   readArg("repository-url") ||
   (process.env.GITHUB_REPOSITORY && `https://github.com/${process.env.GITHUB_REPOSITORY}`) ||
+  packageRepositoryUrl ||
   "https://github.com/cabinetai/cabinet"
-).replace(/\.git$/, "");
+);
 
 // Prebuilt app-bundle keys for the zero-install `npx cabinetai run` path.
 // darwin/linux only — Windows still uses the source + npm-install fallback
@@ -42,7 +57,7 @@ function appBundleUrl(tag, key) {
   return `${repositoryUrl}/releases/download/${tag}/${assetName}`;
 }
 
-const productName = packageJson.productName || "Cabinet";
+const productName = distribution.productName;
 const releaseAssetName = productName.replace(/\s+/g, ".");
 
 // GitHub replaces spaces in uploaded Electron Forge artifact names with dots.
@@ -61,10 +76,14 @@ const manifest = {
   appBundles: Object.fromEntries(
     appBundleKeys.map((key) => [key, { assetName: appBundleAssetName(key, tag), url: appBundleUrl(tag, key) }])
   ),
-  npmPackage: "create-cabinet",
-  createCabinetVersion: version,
-  cabinetaiPackage: "cabinetai",
-  cabinetaiVersion: version,
+  ...(distribution.publishNpmPackages
+    ? {
+        npmPackage: "create-cabinet",
+        createCabinetVersion: version,
+        cabinetaiPackage: "cabinetai",
+        cabinetaiVersion: version,
+      }
+    : {}),
   electron: {
     macos: {
       arch: "arm64",
@@ -76,7 +95,7 @@ const manifest = {
       // GitHub replaces the space in the Squirrel output ("Cabinet-X Setup.exe")
       // with a dot when it stores the release asset, so match the as-uploaded name.
       setupExeAssetName: `${releaseAssetName}-${version}.Setup.exe`,
-      nupkgAssetName: `good_place_cabinet-${version}-full.nupkg`,
+      nupkgAssetName: `${distribution.squirrelName}-${version}-full.nupkg`,
       releasesAssetName: "RELEASES",
     },
   },
