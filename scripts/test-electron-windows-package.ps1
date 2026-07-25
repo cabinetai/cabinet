@@ -4,6 +4,12 @@ if (-not $IsWindows -and $PSVersionTable.PSEdition -eq "Core") {
   throw "This smoke test must run on Windows."
 }
 
+$distribution = Get-Content "distribution.json" -Raw | ConvertFrom-Json
+$appDisplayName = $distribution.productName
+$squirrelName = $distribution.squirrelName
+$executableName = "$appDisplayName.exe"
+$processName = [IO.Path]::GetFileNameWithoutExtension($executableName)
+
 function Get-FreePort {
   $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, 0)
   $listener.Start()
@@ -71,9 +77,9 @@ $workDirectory = Join-Path $tempRoot "cabinet-electron-smoke-$([Guid]::NewGuid()
 $dataDirectory = Join-Path $workDirectory "cabinet-data"
 $processLog = Join-Path $workDirectory "electron-process.log"
 $processErrorLog = Join-Path $workDirectory "electron-process-error.log"
-$userDataDirectory = Join-Path $env:APPDATA "Cabinet"
+$userDataDirectory = Join-Path $env:APPDATA $appDisplayName
 $configPath = Join-Path $userDataDirectory "cabinet-config.json"
-$installRoot = Join-Path $env:LOCALAPPDATA "cabinet"
+$installRoot = Join-Path $env:LOCALAPPDATA $squirrelName
 $existingConfig = $null
 $configExisted = Test-Path $configPath
 $appProcess = $null
@@ -98,11 +104,11 @@ try {
   # Launch the versioned executable directly. The root Squirrel stub may spawn
   # the real app and exit immediately, which would look like a smoke-test crash.
   $appExe = Get-ChildItem $installRoot -Directory -Filter "app-*" |
-    ForEach-Object { Get-Item (Join-Path $_.FullName "Cabinet.exe") -ErrorAction SilentlyContinue } |
+    ForEach-Object { Get-Item (Join-Path $_.FullName $executableName) -ErrorAction SilentlyContinue } |
     Sort-Object LastWriteTimeUtc -Descending |
     Select-Object -First 1
   if (-not $appExe) {
-    throw "Cabinet.exe was not installed below $installRoot."
+    throw "$executableName was not installed below $installRoot."
   }
   if ($requireSigning) {
     Assert-ValidSignature $appExe.FullName
@@ -111,7 +117,7 @@ try {
   # A normal interactive Squirrel install may launch the app automatically.
   # --silent should suppress that, but clean up defensively before starting the
   # process whose lifetime and logs this test owns.
-  Get-Process -Name "Cabinet" -ErrorAction SilentlyContinue | ForEach-Object {
+  Get-Process -Name $processName -ErrorAction SilentlyContinue | ForEach-Object {
     if (-not $_.CloseMainWindow()) {
       & taskkill.exe /PID $_.Id /T /F 2>$null | Out-Null
     } elseif (-not $_.WaitForExit(10000)) {
