@@ -20,7 +20,10 @@ import { useTreeStore } from "@/stores/tree-store";
 import { findNodeByPath } from "@/lib/cabinets/tree";
 import { markdownToHtml } from "@/lib/markdown/to-html";
 import { htmlToMarkdown } from "@/lib/markdown/to-markdown";
-import { slugifyPageName } from "@/lib/markdown/wiki-links";
+import {
+  findPageBySlug,
+  resolveInternalLink,
+} from "@/lib/markdown/internal-links";
 import { detectEmbed } from "@/lib/embeds/detect";
 import { openLocalFileUrl } from "@/lib/runtime/open-local-file";
 import { openUrlInAppropriateContext } from "@/lib/runtime/open-url";
@@ -46,41 +49,6 @@ async function uploadFile(pagePath: string, file: File): Promise<string | null> 
 
 const WIDE_MODE_KEY = "kb-editor-wide-mode";
 
-function flattenTree(nodes: TreeNode[]): { path: string; name: string }[] {
-  const result: { path: string; name: string }[] = [];
-  for (const node of nodes) {
-    result.push({ path: node.path, name: node.name });
-    if (node.children) result.push(...flattenTree(node.children));
-  }
-  return result;
-}
-
-function findPageBySlug(slug: string, currentPath: string | null, nodes: TreeNode[]): string | null {
-  const allPages = flattenTree(nodes);
-  // The slug matches the last segment of the path. Native pages are stored with
-  // slug filenames, so an exact match works; imported pages (e.g. Notion) keep
-  // human names ("Day 1-100 Build 👩🏻‍💻"), so also match when the last segment
-  // *slugifies to* the target slug.
-  const lastSeg = (p: string) => p.split("/").pop() ?? p;
-  const parentOf = (p: string) => (p.includes("/") ? p.substring(0, p.lastIndexOf("/")) : "");
-  const matches = allPages.filter(
-    (p) =>
-      p.name === slug ||
-      p.path.endsWith("/" + slug) ||
-      slugifyPageName(lastSeg(p.path)) === slug
-  );
-  if (matches.length === 0) return null;
-  if (matches.length === 1) return matches[0].path;
-
-  // Prefer sibling pages (same parent directory as current page)
-  if (currentPath) {
-    const parentDir = parentOf(currentPath);
-    const sibling = matches.find((m) => parentOf(m.path) === parentDir);
-    if (sibling) return sibling.path;
-  }
-  return matches[0].path;
-}
-
 function navigateToPage(
   targetPath: string,
   selectPage: (path: string) => void,
@@ -96,38 +64,6 @@ function navigateToPage(
   setTimeout(() => {
     document.querySelector("[data-editor-scroll]")?.scrollTo(0, 0);
   }, 0);
-}
-
-function resolveInternalLink(
-  href: string,
-  currentPath: string | null,
-  nodes: TreeNode[]
-): string | null {
-  const allPages = flattenTree(nodes);
-
-  // Clean up the href: strip .md extension, leading ./ or /
-  const linkPath = href
-    .replace(/\.md$/, "")
-    .replace(/^\.\//, "")
-    .replace(/^\//, "");
-
-  // 1. Try as absolute path (exact match in tree)
-  const exactMatch = allPages.find((p) => p.path === linkPath);
-  if (exactMatch) return exactMatch.path;
-
-  // 2. Try relative to current page's directory
-  if (currentPath) {
-    const parentDir = currentPath.includes("/")
-      ? currentPath.substring(0, currentPath.lastIndexOf("/"))
-      : "";
-    const relativePath = parentDir ? parentDir + "/" + linkPath : linkPath;
-    const relMatch = allPages.find((p) => p.path === relativePath);
-    if (relMatch) return relMatch.path;
-  }
-
-  // 3. Try matching by last segment (slug-style lookup)
-  const slug = linkPath.includes("/") ? linkPath.split("/").pop()! : linkPath;
-  return findPageBySlug(slug, currentPath, nodes);
 }
 
 export function KBEditor() {
@@ -327,7 +263,12 @@ export function KBEditor() {
           const activePath = useEditorStore.getState().currentPath;
 
           // Resolve the link target to a KB page path
-          const targetPath = resolveInternalLink(href, activePath, nodes);
+          const activeDirectory = useEditorStore.getState().assetBase;
+          const targetPath = resolveInternalLink(
+            href,
+            activeDirectory ?? activePath,
+            nodes,
+          );
           if (targetPath) {
             navigateToPage(targetPath, selectPage, expandPath);
           }
