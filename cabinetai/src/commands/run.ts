@@ -350,7 +350,8 @@ async function runCabinet(opts: {
       NODE_PATH: [path.join(appDir, ".native"), process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
     };
 
-    const bundledNode = path.join(appDir, "bin", "node");
+    const bundledNodeName = process.platform === "win32" ? "node.exe" : "node";
+    const bundledNode = path.join(appDir, "bin", bundledNodeName);
     const nodeExec = fs.existsSync(bundledNode) ? bundledNode : process.execPath;
 
     log("Starting production app server...");

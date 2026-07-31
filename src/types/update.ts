@@ -15,7 +15,7 @@ export type UpdateState =
   | "restart-required"
   | "failed";
 
-export type AppBundleKey = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64";
+export type AppBundleKey = "darwin-arm64" | "darwin-x64" | "linux-arm64" | "linux-x64" | "win32-x64";
 
 export interface ReleaseAppBundle {
   assetName: string;

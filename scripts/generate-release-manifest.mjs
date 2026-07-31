@@ -29,9 +29,8 @@ const repositoryUrl = (
 ).replace(/\.git$/, "");
 
 // Prebuilt app-bundle keys for the zero-install `npx cabinetai run` path.
-// darwin/linux only — Windows still uses the source + npm-install fallback
-// until a win32 bundle is validated (tracked in a follow-up PR).
-const appBundleKeys = ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64"];
+// A platform with no bundle in a given release falls back to source + npm install.
+const appBundleKeys = ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64", "win32-x64"];
 
 function appBundleAssetName(key, tag) {
   return `cabinet-app-${key}-${tag}.tgz`;
