@@ -1,7 +1,16 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Check, Lock, Asterisk, ShieldCheck, Bell, ChevronDown } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  Check,
+  ChevronDown,
+  Lock,
+  ShieldCheck,
+  Sparkles,
+  Asterisk,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { showSuccess } from "@/lib/ui/toast";
