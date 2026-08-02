@@ -40,6 +40,9 @@ export function RoomThemeSync() {
       applyTheme(def);
       setTheme(def.type);
     }
+    // Per-room root font size: the UI is rem-based, so scaling the root
+    // scales everything. Empty string falls back to the stylesheet default.
+    document.documentElement.style.fontSize = room?.fontSize ?? "";
   }, [cabinetPath, rooms, setTheme]);
 
   return null;

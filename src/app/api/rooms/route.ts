@@ -31,6 +31,7 @@ export async function PATCH(req: NextRequest) {
       icon?: unknown;
       theme?: unknown;
       color?: unknown;
+      fontSize?: unknown;
     };
 
     if (typeof body.path !== "string") {
@@ -56,6 +57,12 @@ export async function PATCH(req: NextRequest) {
           ? null
           : typeof body.color === "string"
             ? body.color
+            : undefined,
+      fontSize:
+        body.fontSize === null
+          ? null
+          : typeof body.fontSize === "string"
+            ? body.fontSize
             : undefined,
     });
 

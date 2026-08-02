@@ -18,6 +18,7 @@ import { ROOT_CABINET_PATH, normalizeCabinetPath } from "@/lib/cabinets/paths";
  *     icon: briefcase     # key into ROOM_ICONS (src/lib/cabinets/room-icons)
  *     color: "#7c3aed"    # accent CSS color (null → auto from path)
  *     theme: paper        # theme name from src/lib/themes (null → global)
+ *     fontSize: 14px      # root font size (CSS length; null → stylesheet default)
  *
  * The manifest is written lazily the first time a user customizes the room
  * (see `updateRoomMeta`). Manifest writes are atomic (temp + rename) so a
@@ -34,6 +35,12 @@ export interface RoomMeta {
   theme: string | null;
   /** Accent color (CSS color string), or null to auto-derive from the path. */
   color: string | null;
+  /**
+   * Root font size for the room (CSS length like "14px" or "0.9rem"), or
+   * null for the stylesheet default. Applied to `document.documentElement`,
+   * so the whole rem-based UI scales with it.
+   */
+  fontSize: string | null;
   /** Carried for client/back-compat. Always false in v3 — no room is "root". */
   isRoot: boolean;
 }
@@ -87,7 +94,20 @@ function roomFromManifest(
   const icon = room && typeof room.icon === "string" ? room.icon : null;
   const theme = room && typeof room.theme === "string" ? room.theme : null;
   const color = room && typeof room.color === "string" ? room.color : null;
-  return { path: cabinetPath, name, icon, theme, color, isRoot: false };
+  const fontSize =
+    room && typeof room.fontSize === "string" && isValidFontSize(room.fontSize)
+      ? room.fontSize
+      : null;
+  return { path: cabinetPath, name, icon, theme, color, fontSize, isRoot: false };
+}
+
+/**
+ * Accept only plain CSS lengths ("14px", "0.9rem", "95%"). The value ends up
+ * on an inline style of `document.documentElement`, so free-form strings are
+ * rejected rather than sanitized.
+ */
+export function isValidFontSize(value: string): boolean {
+  return /^\d+(\.\d+)?(px|pt|rem|em|%)$/.test(value.trim());
 }
 
 /**
@@ -304,6 +324,7 @@ export async function updateRoomMeta(
     icon?: string | null;
     theme?: string | null;
     color?: string | null;
+    fontSize?: string | null;
   }
 ): Promise<RoomMeta> {
   const normalized =
@@ -347,6 +368,11 @@ export async function updateRoomMeta(
   if (patch.color !== undefined) {
     if (patch.color === null) delete room.color;
     else room.color = patch.color;
+  }
+  if (patch.fontSize !== undefined) {
+    if (patch.fontSize === null) delete room.fontSize;
+    else if (isValidFontSize(patch.fontSize)) room.fontSize = patch.fontSize.trim();
+    else throw new Error("invalid: fontSize must be a CSS length like 14px or 0.9rem");
   }
   manifest.room = room;
 

@@ -7,6 +7,8 @@ export interface RoomMetaClient {
   icon: string | null;
   theme: string | null;
   color: string | null;
+  /** Root font size (CSS length) applied by RoomThemeSync, or null. */
+  fontSize: string | null;
   isRoot: boolean;
 }
 
