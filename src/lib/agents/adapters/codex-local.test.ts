@@ -4,6 +4,13 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { codexLocalAdapter } from "./codex-local";
+import {
+  stripToolOutput,
+  TOOL_OUTPUT_CLOSE,
+  TOOL_OUTPUT_OPEN,
+  wrapToolOutput,
+} from "../tool-output-markers";
+import { parseTranscript } from "../transcript-parser";
 
 async function createExecutableScript(source: string): Promise<string> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-codex-local-test-"));
@@ -44,7 +51,12 @@ printf '%s\n' \
 
   assert.ok(result);
   assert.equal(result.exitCode, 0);
-  assert.equal(result.output, "Running pwd now.\n\n$ /bin/zsh -lc pwd\n/Users/jane/cabinet\nOK");
+  assert.equal(
+    result.output,
+    `Running pwd now.\n${wrapToolOutput(
+      "$ /bin/zsh -lc pwd\n/Users/jane/cabinet"
+    )}OK`
+  );
   assert.equal(result.summary, "OK");
   assert.equal(result.provider, "codex-cli");
   assert.equal(result.model, "gpt-5.4");
@@ -56,9 +68,24 @@ printf '%s\n' \
     cachedInputTokens: 10,
   });
   assert.deepEqual(chunks, [
-    { stream: "stdout", chunk: "Running pwd now.\n\n$ /bin/zsh -lc pwd\n/Users/jane/cabinet\nOK\n" },
+    {
+      stream: "stdout",
+      chunk: `Running pwd now.\n${wrapToolOutput(
+        "$ /bin/zsh -lc pwd\n/Users/jane/cabinet"
+      )}OK\n`,
+    },
     { stream: "stderr", chunk: "Meaningful stderr line\n" },
   ]);
+
+  const blocks = parseTranscript(result.output || "");
+  assert.deepEqual(
+    blocks.map((block) => block.type),
+    ["text", "tool", "text"]
+  );
+  const tool = blocks.find((block) => block.type === "tool");
+  assert.ok(tool?.type === "tool");
+  assert.match(tool.content, /^\$ \/bin\/zsh -lc pwd/m);
+  assert.match(tool.content, /\/Users\/jane\/cabinet/);
 });
 
 test("codexLocalAdapter surfaces in-stream {type:error} events as errorMessage and classifies model_unavailable", async () => {
@@ -81,6 +108,7 @@ cat >/dev/null
 cat <<'JSONLOG'
 {"type":"thread.started","thread_id":"thread-err"}
 {"type":"turn.started"}
+{"type":"item.started","item":{"id":"item_cmd","type":"command_execution","command":"/bin/zsh -lc pwd"}}
 {"type":"error","message":${JSON.stringify(innerJson)}}
 {"type":"turn.failed","error":{"message":${JSON.stringify(innerJson)}}}
 JSONLOG
@@ -102,6 +130,13 @@ exit 1
     result.errorMessage,
     "The 'gpt-5.2-codex' model is not supported when using Codex with a ChatGPT account."
   );
+  assert.ok(result.output?.includes(TOOL_OUTPUT_OPEN));
+  assert.ok(result.output?.includes(TOOL_OUTPUT_CLOSE));
+  assert.match(stripToolOutput(result.output || ""), /not supported/);
+  assert.ok(!result.summary?.includes(TOOL_OUTPUT_OPEN));
+  assert.ok(!result.summary?.includes(TOOL_OUTPUT_CLOSE));
+  assert.ok(!result.errorMessage?.includes(TOOL_OUTPUT_OPEN));
+  assert.ok(!result.errorMessage?.includes(TOOL_OUTPUT_CLOSE));
 
   // Classifier should now short-circuit to model_unavailable when the
   // stream-captured message is threaded in (mirrors what the runner does
@@ -150,4 +185,32 @@ printf '%s\n' \
     { stream: "stdout", chunk: "CEO online.\n" },
   ]);
   assert.ok(!JSON.stringify(chunks).includes("short-form-video"));
+});
+
+test("codexLocalAdapter does not derive summary or error text from a dangling command", async () => {
+  const scriptPath = await createExecutableScript(`#!/bin/sh
+cat >/dev/null
+printf '%s\n' \\
+  '{"type":"thread.started","thread_id":"thread-aborted"}' \\
+  '{"type":"item.started","item":{"id":"item_cmd","type":"command_execution","command":"/bin/zsh -lc pwd"}}'
+exit 1
+`);
+
+  const result = await codexLocalAdapter.execute?.({
+    runId: "run-aborted",
+    adapterType: "codex_local",
+    config: { command: scriptPath, model: "gpt-5.4" },
+    prompt: "hi",
+    cwd: process.cwd(),
+    onLog: async () => {},
+  });
+
+  assert.ok(result);
+  assert.equal(result.exitCode, 1);
+  assert.equal(result.summary, null);
+  assert.equal(result.errorMessage, "Codex local execution failed.");
+  assert.ok(result.output?.startsWith(TOOL_OUTPUT_OPEN));
+  assert.ok(result.output?.endsWith(TOOL_OUTPUT_CLOSE));
+  assert.ok(!result.errorMessage?.includes(TOOL_OUTPUT_OPEN));
+  assert.ok(!result.errorMessage?.includes(TOOL_OUTPUT_CLOSE));
 });

@@ -17,6 +17,7 @@ import { readStringConfig, readEffortConfig } from "./_shared/cli-args";
 import type { AdapterSessionCodec, AgentExecutionAdapter } from "./types";
 import type { ConversationErrorClassification } from "@/types/conversations";
 import { getAdapterRuntimePath, runChildProcess } from "./utils";
+import { stripToolOutput } from "../tool-output-markers";
 
 /**
  * Match codex's backend-rejection events for "this model isn't available on
@@ -200,8 +201,11 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
 
     const filteredStderr = filterCodexStderr(result.stderr);
     const output = stdoutAccumulator.display.trim() || null;
+    const plainOutput = stripToolOutput(output || "").trim();
     const summaryLine =
-      firstNonEmptyLine(stdoutAccumulator.lastAgentMessage || output || "")?.slice(0, 300) || null;
+      firstNonEmptyLine(
+        stripToolOutput(stdoutAccumulator.lastAgentMessage || plainOutput)
+      )?.slice(0, 300) || null;
     const streamError = stdoutAccumulator.errorMessage?.trim() || null;
     const synthesizedExitCode =
       streamError && (result.exitCode ?? 0) === 0 && !result.timedOut
@@ -218,7 +222,7 @@ export const codexLocalAdapter: AgentExecutionAdapter = {
           : streamError
             || filteredStderr
             || result.stderr.trim()
-            || output
+            || plainOutput
             || "Codex local execution failed.",
       usage: stdoutAccumulator.usage,
       sessionId: stdoutAccumulator.threadId,

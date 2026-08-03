@@ -1,4 +1,9 @@
 import type { AdapterUsageSummary } from "./types";
+import {
+  TOOL_OUTPUT_CLOSE,
+  TOOL_OUTPUT_OPEN,
+  wrapToolOutput,
+} from "../tool-output-markers";
 
 interface CodexTurnCompletedPayload {
   type?: string;
@@ -58,6 +63,12 @@ function appendDisplay(
   return text;
 }
 
+function closeActiveToolFence(accumulator: CodexStreamAccumulator): string {
+  if (accumulator.startedCommands.size === 0) return "";
+  accumulator.startedCommands.clear();
+  return TOOL_OUTPUT_CLOSE;
+}
+
 function normalizeAgentMessage(text: string): string {
   const trimmed = text.trim();
   if (!trimmed) return "";
@@ -67,7 +78,7 @@ function normalizeAgentMessage(text: string): string {
 function normalizeCommandStart(command: string): string {
   const trimmed = command.trim();
   if (!trimmed) return "";
-  return `\n$ ${trimmed}\n`;
+  return `$ ${trimmed}\n`;
 }
 
 function normalizeCommandOutput(output: string): string {
@@ -154,14 +165,22 @@ function consumeCodexEvent(
       if (!accumulator.errorMessage) {
         accumulator.errorMessage = message;
       }
-      return message ? appendDisplay(accumulator, `${message}\n`) : "";
+      const close = closeActiveToolFence(accumulator);
+      return appendDisplay(
+        accumulator,
+        `${close}${message ? `${message}\n` : ""}`
+      );
     }
     if (payload.type === "turn.failed") {
       const message = extractErrorMessage(payload.error?.message);
       if (!accumulator.errorMessage) {
         accumulator.errorMessage = message;
       }
-      return message ? appendDisplay(accumulator, `${message}\n`) : "";
+      const close = closeActiveToolFence(accumulator);
+      return appendDisplay(
+        accumulator,
+        `${close}${message ? `${message}\n` : ""}`
+      );
     }
 
     if (!payload.item) {
@@ -172,10 +191,13 @@ function consumeCodexEvent(
 
     if (payload.type === "item.started" && payload.item.type === "command_execution") {
       if (!itemId) return "";
+      const command = normalizeCommandStart(payload.item.command || "");
+      if (!command) return "";
+      const opensToolFence = accumulator.startedCommands.size === 0;
       accumulator.startedCommands.add(itemId);
       return appendDisplay(
         accumulator,
-        normalizeCommandStart(payload.item.command || "")
+        `${opensToolFence ? TOOL_OUTPUT_OPEN : ""}${command}`
       );
     }
 
@@ -183,19 +205,36 @@ function consumeCodexEvent(
       const text = normalizeAgentMessage(payload.item.text || "");
       if (!text) return "";
       accumulator.lastAgentMessage = payload.item.text?.trim() || null;
-      return appendDisplay(accumulator, text);
+      const display = accumulator.startedCommands.size > 0
+        ? `${TOOL_OUTPUT_CLOSE}${text}${TOOL_OUTPUT_OPEN}`
+        : text;
+      return appendDisplay(accumulator, display);
     }
 
     if (payload.type === "item.completed" && payload.item.type === "command_execution") {
-      let display = "";
-      if (itemId && !accumulator.startedCommands.has(itemId)) {
-        display += normalizeCommandStart(payload.item.command || "");
-      }
+      const commandStarted = Boolean(
+        itemId && accumulator.startedCommands.has(itemId)
+      );
       if (itemId) {
         accumulator.startedCommands.delete(itemId);
       }
 
-      display += normalizeCommandOutput(payload.item.aggregated_output || "");
+      const output = normalizeCommandOutput(payload.item.aggregated_output || "");
+      let display: string;
+      if (commandStarted) {
+        const closesToolFence = accumulator.startedCommands.size === 0;
+        display = closesToolFence
+          ? `${output.trimEnd()}${TOOL_OUTPUT_CLOSE}`
+          : output;
+      } else {
+        const completedCommand = `${normalizeCommandStart(
+          payload.item.command || ""
+        )}${output}`;
+        if (!completedCommand.trim()) return "";
+        display = accumulator.startedCommands.size > 0
+          ? completedCommand
+          : wrapToolOutput(completedCommand.trimEnd());
+      }
       return appendDisplay(accumulator, display);
     }
   } catch {
@@ -236,13 +275,15 @@ export function consumeCodexJsonStream(
 export function flushCodexJsonStream(
   accumulator: CodexStreamAccumulator
 ): string {
-  if (!accumulator.buffer) {
-    return "";
+  let display = "";
+  if (accumulator.buffer) {
+    const buffered = accumulator.buffer;
+    accumulator.buffer = "";
+    display += consumeCodexEvent(accumulator, buffered);
   }
 
-  const buffered = accumulator.buffer;
-  accumulator.buffer = "";
-  return consumeCodexEvent(accumulator, buffered);
+  display += appendDisplay(accumulator, closeActiveToolFence(accumulator));
+  return display;
 }
 
 const CODEX_STDERR_NOISE_PATTERNS = [
