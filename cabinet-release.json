@@ -1,40 +1,40 @@
 {
   "manifestVersion": 1,
-  "version": "0.5.3-gp.4",
+  "version": "0.5.3-gp.5",
   "channel": "stable",
-  "releaseDate": "2026-08-05T06:48:16.127Z",
-  "gitTag": "v0.5.3-gp.4",
+  "releaseDate": "2026-08-05T14:59:20.603Z",
+  "gitTag": "v0.5.3-gp.5",
   "repositoryUrl": "https://github.com/souljorje/cabinet",
-  "releaseNotesUrl": "https://github.com/souljorje/cabinet/releases/tag/v0.5.3-gp.4",
-  "sourceTarballUrl": "https://github.com/souljorje/cabinet/archive/refs/tags/v0.5.3-gp.4.tar.gz",
+  "releaseNotesUrl": "https://github.com/souljorje/cabinet/releases/tag/v0.5.3-gp.5",
+  "sourceTarballUrl": "https://github.com/souljorje/cabinet/archive/refs/tags/v0.5.3-gp.5.tar.gz",
   "appBundles": {
     "darwin-arm64": {
-      "assetName": "cabinet-app-darwin-arm64-v0.5.3-gp.4.tgz",
-      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.4/cabinet-app-darwin-arm64-v0.5.3-gp.4.tgz"
+      "assetName": "cabinet-app-darwin-arm64-v0.5.3-gp.5.tgz",
+      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.5/cabinet-app-darwin-arm64-v0.5.3-gp.5.tgz"
     },
     "darwin-x64": {
-      "assetName": "cabinet-app-darwin-x64-v0.5.3-gp.4.tgz",
-      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.4/cabinet-app-darwin-x64-v0.5.3-gp.4.tgz"
+      "assetName": "cabinet-app-darwin-x64-v0.5.3-gp.5.tgz",
+      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.5/cabinet-app-darwin-x64-v0.5.3-gp.5.tgz"
     },
     "linux-arm64": {
-      "assetName": "cabinet-app-linux-arm64-v0.5.3-gp.4.tgz",
-      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.4/cabinet-app-linux-arm64-v0.5.3-gp.4.tgz"
+      "assetName": "cabinet-app-linux-arm64-v0.5.3-gp.5.tgz",
+      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.5/cabinet-app-linux-arm64-v0.5.3-gp.5.tgz"
     },
     "linux-x64": {
-      "assetName": "cabinet-app-linux-x64-v0.5.3-gp.4.tgz",
-      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.4/cabinet-app-linux-x64-v0.5.3-gp.4.tgz"
+      "assetName": "cabinet-app-linux-x64-v0.5.3-gp.5.tgz",
+      "url": "https://github.com/souljorje/cabinet/releases/download/v0.5.3-gp.5/cabinet-app-linux-x64-v0.5.3-gp.5.tgz"
     }
   },
   "electron": {
     "macos": {
       "arch": "arm64",
-      "zipAssetName": "Good.Place.Cabinet-darwin-arm64-0.5.3-gp.4.zip",
-      "dmgAssetName": "Good.Place.Cabinet-0.5.3-gp.4-arm64.dmg"
+      "zipAssetName": "Good.Place.Cabinet-darwin-arm64-0.5.3-gp.5.zip",
+      "dmgAssetName": "Good.Place.Cabinet-0.5.3-gp.5-arm64.dmg"
     },
     "windows": {
-      "zipAssetName": "Good.Place.Cabinet-win32-x64-0.5.3-gp.4.zip",
-      "setupExeAssetName": "Good.Place.Cabinet-0.5.3-gp.4.Setup.exe",
-      "nupkgAssetName": "good_place_cabinet-0.5.3-gp.4-full.nupkg",
+      "zipAssetName": "Good.Place.Cabinet-win32-x64-0.5.3-gp.5.zip",
+      "setupExeAssetName": "Good.Place.Cabinet-0.5.3-gp.5.Setup.exe",
+      "nupkgAssetName": "good_place_cabinet-0.5.3-gp.5-full.nupkg",
       "releasesAssetName": "RELEASES"
     }
   }
