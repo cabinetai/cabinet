@@ -129,8 +129,10 @@ function upgradeProviderVideos(html: string): string {
 }
 
 /**
- * Rewrite relative URLs (./file.pdf, ./image.png) to /api/assets/{pagePath}/file
- * and convert PDF links to inline embedded viewers.
+ * Rewrite relative asset URLs (./file.pdf, ./image.png) to
+ * /api/assets/{pagePath}/file and convert PDF links to inline embedded viewers.
+ * Markdown hrefs stay relative so the editor's internal-page router can resolve
+ * them against the current page.
  * Applies to href, src, and data-src attributes (the last is used by embed blocks).
  */
 function resolveRelativeUrls(html: string, pagePath: string): string {
@@ -138,7 +140,10 @@ function resolveRelativeUrls(html: string, pagePath: string): string {
 
   html = html.replace(
     /href="\.\/([^"]+)"/g,
-    (_match, file: string) => `href="/api/assets/${dirPath}/${file}"`
+    (match, file: string) =>
+      file.split(/[?#]/, 1)[0].toLowerCase().endsWith(".md")
+        ? match
+        : `href="/api/assets/${dirPath}/${file}"`
   );
 
   html = html.replace(
