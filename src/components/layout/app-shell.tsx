@@ -488,7 +488,10 @@ export function AppShell() {
     if (selectedPath) {
       const lastSlash = selectedPath.lastIndexOf("/");
       const dir = lastSlash > 0 ? selectedPath.slice(0, lastSlash) : "";
-      setTerminalCwd(dir ? `${cabinetPath}/${dir}` : cabinetPath);
+      // Tree paths are already DATA_DIR-relative and include their cabinet
+      // prefix. Adding cabinetPath again produced a non-existent cwd (for
+      // example `work/work/docs`), causing the shell PTY to exit at startup.
+      setTerminalCwd(dir || (cabinetPath === "." ? "" : cabinetPath));
     } else {
       setTerminalCwd(cabinetPath === "." ? "" : cabinetPath);
     }
@@ -1275,4 +1278,3 @@ export function AppShell() {
     </TaskRailProvider>
   );
 }
-

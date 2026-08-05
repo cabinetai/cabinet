@@ -265,9 +265,16 @@ function FeedbackForm({ trigger, launchCount, onClose }: PopupProps) {
   };
 
   const dismiss = () => {
-    // "Maybe later" does NOT flip the prompted-at flag, but pickTrigger now
-    // matches the session count exactly (2 or 6), so dismissing simply means
-    // this trigger is missed — it won't re-prompt every subsequent launch.
+    // Dismissing is still a response to this prompt. Persist it so remounts,
+    // reloads, and session-count recovery cannot reopen the same check-in.
+    try {
+      window.localStorage.setItem(
+        trigger === 2 ? PROMPTED_AT_2_KEY : PROMPTED_AT_6_KEY,
+        "1"
+      );
+    } catch {
+      // Storage can be unavailable; closing still works for this mount.
+    }
     onClose();
   };
 

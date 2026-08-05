@@ -199,7 +199,9 @@ export function TerminalTabs() {
         adapterType={tab.adapterType}
         cwd={tab.cwd}
         themeSurface="page"
-        onClose={() => removeTerminalTab(tab.id)}
+        // Keep exited/disconnected terminals visible so their output and any
+        // startup error can be read. Tabs close only through the explicit X.
+        onClose={() => {}}
       />
     </div>
   ));
