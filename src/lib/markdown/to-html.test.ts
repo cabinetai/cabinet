@@ -13,6 +13,16 @@ test("relative markdown hrefs remain available to internal navigation", async ()
   assert.doesNotMatch(html, /\/api\/assets\/.*hypotheses\/index\.md/);
 });
 
+test("extensionless relative hrefs remain available for folder and app navigation", async () => {
+  const html = await markdownToHtml(
+    "[Work Dashboard](./dashboard)",
+    "good-place-os/work",
+  );
+
+  assert.match(html, /href="\.\/dashboard"/);
+  assert.doesNotMatch(html, /\/api\/assets\/.*dashboard/);
+});
+
 test("relative asset hrefs and sources still use the asset endpoint", async () => {
   const html = await markdownToHtml(
     "[spec](./spec.pdf) ![diagram](./diagram.png)",

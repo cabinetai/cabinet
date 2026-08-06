@@ -140,10 +140,16 @@ function resolveRelativeUrls(html: string, pagePath: string): string {
 
   html = html.replace(
     /href="\.\/([^"]+)"/g,
-    (match, file: string) =>
-      file.split(/[?#]/, 1)[0].toLowerCase().endsWith(".md")
+    (match, file: string) => {
+      const filePath = file.split(/[?#]/, 1)[0];
+      // Extensionless refs can target folders/pages (including embedded apps),
+      // so leave them for the editor's internal-page router. Only refs that
+      // clearly name a file should be served through the asset endpoint.
+      const isFileRef = /(?:^|\/)[^/]*\.[^/]+$/.test(filePath);
+      return !isFileRef || filePath.toLowerCase().endsWith(".md")
         ? match
-        : `href="/api/assets/${dirPath}/${file}"`
+        : `href="/api/assets/${dirPath}/${file}"`;
+    }
   );
 
   html = html.replace(
