@@ -11,7 +11,7 @@ CABINET_DATA_DIR=/path/to/good-place-os npm run dev:all
 ```
 
 The Good Place OS repository's `npm run cabinet` command uses the sibling
-`good-place-cabinet` checkout by default. The Electron app owns automatic Git
+`good-place-cabinet` checkout by default. Cabinet's Git service owns automatic
 synchronization; the workspace does not provide or execute a sync script.
 
 ## Desktop distribution
@@ -21,9 +21,28 @@ The Electron application is named **Good Place Cabinet**, uses the bundle ID
 `souljorje/cabinet` for updates. It can coexist with upstream Cabinet.
 
 On first launch, select the local clone of `good-place-os` as the data
-directory. The desktop shell syncs a valid Git-backed Cabinet on startup, every
-30 seconds, and after local Git commits. Its status is visible in the bottom
-bar. API keys stay in machine-local application data, not in the workspace.
+directory. API keys stay in machine-local application data, not in the
+workspace.
+
+### Automatic workspace sync
+
+The Cabinet daemon asks the app's Git service to synchronize when the daemon
+starts and every 30 seconds afterward. The schedule continues when the app
+window is hidden or minimized because it does not depend on React or document
+visibility. Quitting Cabinet stops both the app server and daemon, so automatic
+sync also stops.
+
+The status bar only reads the latest sync state, provides the explicit Sync
+action, and registers each open window's active page so daemon-triggered pulls
+cannot replace a page currently open in an editor.
+
+Sync fetches first, then pushes local-only commits, fast-forwards remote-only
+commits, or rebases disjoint changes. It defers incoming changes when the work
+tree is dirty, the active page changed remotely, or local and remote commits
+overlap. The **Settings → Storage → Automatic workspace sync** toggle persists
+`CABINET_SYNC_ENABLED` in the machine-local `.cabinet.env`; changes take effect
+on the daemon's next cycle. Explicit Git pull, commit, and Sync actions remain
+available when automatic sync is disabled.
 
 Create installers with:
 

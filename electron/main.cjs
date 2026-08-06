@@ -16,7 +16,6 @@ const {
   classifyManagedDataDirectory,
   shouldSeedDefaultContent,
 } = require("./managed-data.cjs");
-const { createWorkspaceSyncSupervisor } = require("./workspace-sync.cjs");
 
 const APP_DISPLAY_NAME = distribution.productName;
 const APP_BUNDLE_ID = distribution.bundleId;
@@ -169,7 +168,6 @@ try {
 
 let mainWindow = null;
 let backendChildren = [];
-let workspaceSyncSupervisor = null;
 // Base app URL (origin) of the embedded/dev Cabinet app. Captured the first
 // time we create a window so secondary windows (multi-window rooms) can be
 // spawned at `${baseAppUrl}${hash}` without re-bootstrapping the backend.
@@ -192,21 +190,6 @@ function getElectronInstallKind() {
 
 function getBundledNodeBinaryName() {
   return process.platform === "win32" ? "node.exe" : "node";
-}
-
-function startWorkspaceSync() {
-  if (workspaceSyncSupervisor) return;
-  const supervisor = createWorkspaceSyncSupervisor({
-    dataDir: managedDataDir,
-  });
-  if (supervisor.start()) workspaceSyncSupervisor = supervisor;
-}
-
-async function stopWorkspaceSync() {
-  if (!workspaceSyncSupervisor) return;
-  const supervisor = workspaceSyncSupervisor;
-  workspaceSyncSupervisor = null;
-  await supervisor.stop();
 }
 
 function writeUpdateStatus(status) {
@@ -716,7 +699,6 @@ let backendCleanupPromise = null;
 function cleanupBackends() {
   if (backendCleanupPromise) return backendCleanupPromise;
   const cleanup = (async () => {
-    await stopWorkspaceSync();
     backendsQuitting = true;
     for (const child of backendChildren) {
       child.kill("SIGTERM");
@@ -857,8 +839,6 @@ function attachDevReload(win, hash) {
 async function createWindow() {
   const runtime = await startEmbeddedCabinet();
   baseAppUrl = runtime.appUrl;
-  startWorkspaceSync();
-
   mainWindow = buildBrowserWindow();
   attachDevReload(mainWindow, "");
   await mainWindow.loadURL(runtime.appUrl);

@@ -1682,7 +1682,13 @@
       "envVarHint1": "You can also set the ",
       "envVarHint2": " environment variable, which takes priority over this setting.",
       "failedToSave": "Failed to save.",
-      "failedToSaveDir": "Failed to save data directory."
+      "failedToSaveDir": "Failed to save data directory.",
+      "automaticSync": "Automatic workspace sync",
+      "automaticSyncDescription": "Keep this Cabinet synchronized with its configured Git remote while Cabinet is running.",
+      "automaticSyncToggle": "Sync automatically",
+      "automaticSyncHint": "Runs through the Cabinet daemon every 30 seconds, including while the window is hidden or minimized.",
+      "syncLoadFailed": "Could not load the sync setting.",
+      "syncSaveFailed": "Could not save the sync setting."
     },
     "updates": {
       "checking": "Checking for Cabinet updates…"
@@ -2010,7 +2016,12 @@
       "pulling": "Pulling…",
       "pulled": "Updated from remote",
       "upToDate": "Up to date",
-      "pullFailed": "Pull failed"
+      "pullFailed": "Pull failed",
+      "automaticSyncDisabled": "Automatic sync off",
+      "needsAttention": "Needs attention",
+      "notConfigured": "Not configured",
+      "offline": "Offline",
+      "syncing": "Syncing…"
     },
     "update2": {
       "updateAvailable": "Update {{version}} available",

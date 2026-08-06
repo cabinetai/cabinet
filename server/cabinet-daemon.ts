@@ -19,7 +19,11 @@ ensureBetterSqlite3();
 // Load `.cabinet.env` into process.env on daemon boot. Adapter spawns also
 // re-merge from the file directly (mtime-cached), but loading here keeps the
 // daemon's own behavior consistent with Next.js.
-import { loadCabinetEnv } from "../src/lib/runtime/cabinet-env";
+import {
+  loadCabinetEnv,
+  readCabinetEnvFile,
+} from "../src/lib/runtime/cabinet-env";
+const workspaceSyncEnabledOverride = process.env.CABINET_SYNC_ENABLED?.trim();
 loadCabinetEnv();
 
 // Diagnostic logging: console capture + crash markers into
@@ -1264,6 +1268,66 @@ async function putJson(url: string, body: Record<string, unknown>): Promise<void
   }
 }
 
+let workspaceSyncTimer: NodeJS.Timeout | null = null;
+let workspaceSyncInFlight = false;
+let workspaceSyncUnavailableLogged = false;
+
+function automaticWorkspaceSyncEnabled(): boolean {
+  const saved = readCabinetEnvFile().values.CABINET_SYNC_ENABLED?.trim();
+  return (workspaceSyncEnabledOverride || saved)?.toLowerCase() !== "false";
+}
+
+function workspaceSyncIntervalMs(): number {
+  const configured = Number(process.env.CABINET_SYNC_INTERVAL_MS);
+  return Number.isFinite(configured) && configured >= 1_000
+    ? configured
+    : 30_000;
+}
+
+async function requestAutomaticWorkspaceSync(): Promise<void> {
+  if (workspaceSyncInFlight || !automaticWorkspaceSyncEnabled()) return;
+  workspaceSyncInFlight = true;
+  try {
+    ensureAuthEnvFromDotEnv();
+    const response = await fetch(`${getAppOrigin()}/api/git/sync`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(await authCookieHeader()),
+      },
+      body: JSON.stringify({ automatic: true }),
+    });
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+    workspaceSyncUnavailableLogged = false;
+  } catch (error) {
+    if (!workspaceSyncUnavailableLogged) {
+      workspaceSyncUnavailableLogged = true;
+      console.warn(
+        "[workspace-sync] app endpoint unavailable; automatic sync will retry",
+        error instanceof Error ? error.message : error,
+      );
+    }
+  } finally {
+    workspaceSyncInFlight = false;
+  }
+}
+
+function startWorkspaceSync(): void {
+  if (workspaceSyncTimer) return;
+  void requestAutomaticWorkspaceSync();
+  workspaceSyncTimer = setInterval(
+    () => void requestAutomaticWorkspaceSync(),
+    workspaceSyncIntervalMs(),
+  );
+}
+
+function stopWorkspaceSync(): void {
+  if (workspaceSyncTimer) clearInterval(workspaceSyncTimer);
+  workspaceSyncTimer = null;
+}
+
 function stopScheduledTasks(): void {
   for (const [, task] of scheduledJobs) task.stop();
   for (const [, task] of scheduledHeartbeats) task.stop();
@@ -2143,6 +2207,7 @@ server.listen(PORT, () => {
   emitTelemetry("app.launched", {});
 
   void reloadSchedules();
+  startWorkspaceSync();
   void cleanupStaleRunningConversations();
   // Sweep composer-attachment staging dirs that were abandoned (paste
   // without send). Runs once on boot, then daily.
@@ -2199,6 +2264,7 @@ server.listen(PORT, () => {
 
 function shutdown(): void {
   console.log("\nShutting down...");
+  stopWorkspaceSync();
   emitTelemetry("app.exited", {});
   clearSessionId();
   for (const [, task] of scheduledJobs) {

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo, useId } from "react";
 import { GitBranch, RefreshCw, Check, CloudDownload, Star, X, HelpCircle, AlertTriangle, XCircle, CircleDot, Loader2, Terminal, Heart, History as HistoryIcon } from "lucide-react";
 import { ActivityFeed } from "@/components/history/activity-feed";
-import { WorkspaceSyncStatusIndicator } from "@/components/layout/workspace-sync-status";
 import { useCabinetUpdate } from "@/hooks/use-cabinet-update";
 import { useEditorStore } from "@/stores/editor-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -20,11 +19,23 @@ import { dedupFetch } from "@/lib/api/dedup-fetch";
 import { useLocale } from "@/i18n/use-locale";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useVisibleInterval } from "@/hooks/use-visible-interval";
+import type { WorkspaceSyncStatus } from "@/lib/git/git-service";
 import type { TFunction } from "i18next";
 
 const DISCORD_SUPPORT_URL = "https://discord.gg/hJa5TRTbTH";
 const GITHUB_REPO_URL = "https://github.com/cabinetai/cabinet";
 const CABINET_INVITE_URL = "https://runcabinet.com";
+
+const INITIAL_WORKSPACE_SYNC_STATUS: WorkspaceSyncStatus = {
+  state: "not-configured",
+  lastAttemptAt: null,
+  lastSuccessAt: null,
+  branch: null,
+  reason: null,
+  error: null,
+  pulled: false,
+  pushed: false,
+};
 
 // Word counter for the open page. The editor stores the page body as
 // markdown, so we strip markdown syntax that shouldn't count as prose
@@ -192,21 +203,27 @@ export function StatusBar() {
   const terminalOpen = useAppStore((s) => s.terminalOpen);
   const toggleTerminal = useAppStore((s) => s.toggleTerminal);
   const [isGitRepo, setIsGitRepo] = useState(false);
-  // Audit #049: track when the last successful pull completed so the Sync
-  // button's tooltip can answer "did the team's overnight work land?"
-  // without the user having to click and watch the spinner.
-  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(null);
+  const [workspaceSync, setWorkspaceSync] = useState<WorkspaceSyncStatus>(
+    INITIAL_WORKSPACE_SYNC_STATUS,
+  );
+  const workspaceSyncClientId = useId();
+  const syncInFlightRef = useRef(false);
+  const observedSyncAtRef = useRef<string | null>(null);
   const [syncTick, setSyncTick] = useState(0);
   useEffect(() => {
-    if (!lastSyncedAt) return;
+    if (!workspaceSync.lastSuccessAt) return;
     const id = window.setInterval(() => setSyncTick((n) => n + 1), 30_000);
     return () => window.clearInterval(id);
-  }, [lastSyncedAt]);
+  }, [workspaceSync.lastSuccessAt]);
   const lastSyncedLabel = useMemo(() => {
-    if (!lastSyncedAt) return null;
-    return formatRelativeSavedAgo(lastSyncedAt, Date.now(), t);
+    if (!workspaceSync.lastSuccessAt) return null;
+    return formatRelativeSavedAgo(
+      Date.parse(workspaceSync.lastSuccessAt),
+      Date.now(),
+      t,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastSyncedAt, syncTick]);
+  }, [workspaceSync.lastSuccessAt, syncTick, t]);
   const [uncommitted, setUncommitted] = useState(0);
   const [uncommittedFiles, setUncommittedFiles] = useState<Array<{ path: string; status: "M" | "?" | "A" | "D" | "R" }>>([]);
   // Audit #050: lightweight commit form inside the uncommitted popover.
@@ -219,8 +236,6 @@ export function StatusBar() {
   const [showUncommittedPopup, setShowUncommittedPopup] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [showCommunityPopup, setShowCommunityPopup] = useState(false);
-  const [pullStatus, setPullStatus] = useState<"idle" | "pulling" | "pulled" | "up-to-date" | "error">("idle");
-  const [pulling, setPulling] = useState(false);
   // Stars: shared store so cross-navigation re-mounts don't restart the
   // load-and-animate sequence (which is what produced the visible flicker
   // between fallback / mid-animation / final values). Component-local
@@ -233,7 +248,6 @@ export function StatusBar() {
   const [starsExploding, setStarsExploding] = useState(false);
   const starsAnimRef = useRef<number | null>(null);
   const starsAnimated = useRef(hasFetchedStarsOnce);
-  const didAutoPullRef = useRef(false);
   const appLevel = useHealthStore(selectAppLevel);
   const daemonLevel = useHealthStore(selectDaemonLevel);
   const installKind = useHealthStore((s) => s.installKind);
@@ -338,44 +352,89 @@ export function StatusBar() {
   };
 
 
-  const pullAndRefresh = useCallback(async () => {
-    if (pulling) return;
-    setPulling(true);
-    setPullStatus("pulling");
+  const syncAndRefresh = useCallback(async () => {
+    if (syncInFlightRef.current) return;
+    syncInFlightRef.current = true;
+    setWorkspaceSync((current) => ({ ...current, state: "syncing" }));
     try {
-      const res = await fetch("/api/git/pull", { method: "POST" });
+      const activePath = isEditorActive ? currentPath : null;
+      const res = await fetch("/api/git/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activePath }),
+      });
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as WorkspaceSyncStatus;
+        setWorkspaceSync(data);
         if (data.pulled) {
-          setPullStatus("pulled");
-          // Reload tree to reflect new/changed files
           await loadTree();
-        } else {
-          setPullStatus("up-to-date");
         }
-        setLastSyncedAt(Date.now());
       } else {
-        setPullStatus("error");
+        const body = await res.json().catch(() => ({}));
+        setWorkspaceSync((current) => ({
+          ...current,
+          state: "needs-attention",
+          reason: "request-failed",
+          error: typeof body?.error === "string" ? body.error : null,
+        }));
       }
     } catch {
-      setPullStatus("error");
+      setWorkspaceSync((current) => ({
+        ...current,
+        state: "offline",
+        reason: "status-unavailable",
+        error: null,
+      }));
     } finally {
-      setPulling(false);
-      // Reset status after 3 seconds
-      setTimeout(() => setPullStatus("idle"), 3000);
+      syncInFlightRef.current = false;
     }
-  }, [pulling, loadTree]);
+  }, [currentPath, isEditorActive, loadTree]);
 
-  // Auto-pull on mount (page load)
+  const fetchWorkspaceSyncStatus = useCallback(async () => {
+    try {
+      const response = await fetch("/api/git/sync", { cache: "no-store" });
+      if (!response.ok) return;
+      const data = (await response.json()) as WorkspaceSyncStatus;
+      setWorkspaceSync(data);
+      if (
+        data.lastSuccessAt &&
+        data.lastSuccessAt !== observedSyncAtRef.current
+      ) {
+        observedSyncAtRef.current = data.lastSuccessAt;
+        await loadTree();
+      }
+    } catch {
+      setWorkspaceSync((current) => ({
+        ...current,
+        state: "offline",
+        reason: "status-unavailable",
+        error: null,
+      }));
+    }
+  }, [loadTree]);
+
   useEffect(() => {
-    if (didAutoPullRef.current) return;
-    didAutoPullRef.current = true;
+    const activePath = isEditorActive ? currentPath : null;
+    void fetch("/api/git/sync", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clientId: workspaceSyncClientId, activePath }),
+    });
+  }, [currentPath, isEditorActive, workspaceSyncClientId]);
 
-    const initialPull = window.setTimeout(() => {
-      void pullAndRefresh();
-    }, 0);
-    return () => window.clearTimeout(initialPull);
-  }, [pullAndRefresh]);
+  useEffect(() => {
+    return () => {
+      void fetch("/api/git/sync", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clientId: workspaceSyncClientId }),
+        keepalive: true,
+      });
+    };
+  }, [workspaceSyncClientId]);
+
+  // The daemon owns automatic sync. The visible UI only reads its latest state.
+  useVisibleInterval(fetchWorkspaceSyncStatus, 15_000);
 
   // Poll git status. Audit #058: refresh on tab focus so a banner stuck
   // at "1 uncommitted" updates the moment the user comes back.
@@ -424,6 +483,38 @@ export function StatusBar() {
       if (starsAnimRef.current !== null) cancelAnimationFrame(starsAnimRef.current);
     };
   }, [githubStars]);
+
+  const workspaceSyncFailed =
+    workspaceSync.state === "offline" ||
+    workspaceSync.state === "needs-attention";
+  const WorkspaceSyncIcon =
+    workspaceSync.state === "syncing"
+      ? RefreshCw
+      : workspaceSync.state === "synced"
+        ? Check
+        : workspaceSyncFailed
+          ? AlertTriangle
+          : CircleDot;
+  const workspaceSyncLabel =
+    workspaceSync.state === "syncing"
+      ? t("status:git2.syncing")
+      : workspaceSync.state === "synced"
+        ? t("status:git2.upToDate")
+        : workspaceSync.state === "offline"
+          ? t("status:git2.offline")
+          : workspaceSync.state === "needs-attention"
+            ? t("status:git2.needsAttention")
+            : workspaceSync.reason === "automatic-sync-disabled"
+              ? t("status:git2.automaticSyncDisabled")
+              : t("status:git2.notConfigured");
+  const workspaceSyncTitle = [
+    lastSyncedLabel
+      ? t("status:git2.syncTitleWithLast", { when: lastSyncedLabel })
+      : t("status:git2.syncTitle"),
+    workspaceSyncLabel,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     /* Audit #060: status bar is contentinfo for the page. Audit #048: gap-3
@@ -752,29 +843,6 @@ export function StatusBar() {
             {wordCount.toLocaleString()} {wordCount === 1 ? t("status:save.word") : t("status:save.words")}
           </span>
         )}
-        {pullStatus === "pulling" && (
-          <span className="flex items-center gap-1 text-blue-400">
-            <CloudDownload className="h-3 w-3 animate-pulse" />
-            {t("status:git2.pulling")}
-          </span>
-        )}
-        {pullStatus === "pulled" && (
-          <span className="flex items-center gap-1 text-green-400">
-            <Check className="h-3 w-3" />
-            {t("status:git2.pulled")}
-          </span>
-        )}
-        {pullStatus === "up-to-date" && (
-          <span className="flex items-center gap-1 text-muted-foreground/60">
-            <Check className="h-3 w-3" />
-            {t("status:git2.upToDate")}
-          </span>
-        )}
-        {pullStatus === "error" && (
-          <span className="flex items-center gap-1 text-red-400">
-            {t("status:git2.pullFailed")}
-          </span>
-        )}
         {update?.updateStatus.state === "restart-required" && (
           <button
             onClick={() => setSection({ type: "settings" })}
@@ -968,25 +1036,26 @@ export function StatusBar() {
         </div>
         {isGitRepo && (
           <button
-            onClick={pullAndRefresh}
-            disabled={pulling}
-            aria-label={
-              lastSyncedLabel
-                ? t("status:git2.syncAriaLabelWithLast", { when: lastSyncedLabel })
-                : t("status:git2.syncAriaLabel")
-            }
-            className="flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1"
-            title={
-              lastSyncedLabel
-                ? t("status:git2.syncTitleWithLast", { when: lastSyncedLabel })
-                : t("status:git2.syncTitle")
-            }
+            onClick={() => void syncAndRefresh()}
+            disabled={workspaceSync.state === "syncing"}
+            aria-label={workspaceSyncTitle}
+            className={`flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-1 ${
+              workspaceSyncFailed
+                ? "text-red-500"
+                : workspaceSync.state === "synced"
+                  ? "text-emerald-500"
+                  : ""
+            }`}
+            title={workspaceSyncTitle}
           >
-            <RefreshCw className={`h-3 w-3 ${pulling ? "animate-spin" : ""}`} />
-            <span className="@max-[820px]:hidden">{t("status:git2.sync")}</span>
+            <WorkspaceSyncIcon
+              className={`h-3 w-3 ${
+                workspaceSync.state === "syncing" ? "animate-spin" : ""
+              }`}
+            />
+            <span className="@max-[820px]:hidden">{workspaceSyncLabel}</span>
           </button>
         )}
-        <WorkspaceSyncStatusIndicator />
         <button
           onClick={toggleTerminal}
           aria-label={terminalOpen ? t("status:git2.newTerminalTab") : t("status:git2.openTerminal")}

@@ -1642,7 +1642,13 @@
       "envVarHint1": "ניתן גם להגדיר את משתנה הסביבה ",
       "envVarHint2": " , שמקבל עדיפות על ההגדרה הזאת.",
       "failedToSave": "השמירה נכשלה.",
-      "failedToSaveDir": "שמירת ספריית הנתונים נכשלה."
+      "failedToSaveDir": "שמירת ספריית הנתונים נכשלה.",
+      "automaticSync": "סנכרון אוטומטי של סביבת העבודה",
+      "automaticSyncDescription": "שמירת Cabinet מסונכרן עם מאגר Git המרוחק שהוגדר כל עוד Cabinet פועל.",
+      "automaticSyncToggle": "סנכרון אוטומטי",
+      "automaticSyncHint": "פועל דרך הדמון של Cabinet כל 30 שניות, גם כשהחלון מוסתר או ממוזער.",
+      "syncLoadFailed": "לא ניתן לטעון את הגדרת הסנכרון.",
+      "syncSaveFailed": "לא ניתן לשמור את הגדרת הסנכרון."
     },
     "updates": {
       "checking": "בודק עדכונים ל-Cabinet…"
@@ -1896,7 +1902,12 @@
       "pulling": "מושך…",
       "pulled": "עודכן מהמרוחק",
       "upToDate": "מעודכן",
-      "pullFailed": "המשיכה נכשלה"
+      "pullFailed": "המשיכה נכשלה",
+      "automaticSyncDisabled": "סנכרון אוטומטי כבוי",
+      "needsAttention": "דורש תשומת לב",
+      "notConfigured": "לא מוגדר",
+      "offline": "לא מקוון",
+      "syncing": "מסנכרן…"
     },
     "update2": {
       "updateAvailable": "עדכון {{version}} זמין",

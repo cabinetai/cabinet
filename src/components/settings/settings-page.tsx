@@ -77,6 +77,7 @@ import { ICON_PICKER_KEYS, getIconByKey, friendlyIconName } from "@/lib/agents/i
 import { AGENT_PALETTE } from "@/lib/themes";
 import { StorageBackendSection } from "@/components/settings/storage-backend-section";
 import { DiagnosticsSection } from "@/components/settings/diagnostics-section";
+import { WorkspaceSyncSettings } from "@/components/settings/workspace-sync-settings";
 import { version as pkgVersion } from "../../../package.json";
 import releaseJson from "../../../cabinet-release.json";
 import {
@@ -1304,6 +1305,8 @@ export function SettingsPage() {
                   {t("settings:storage.envVarHint1")}<code className="px-1 py-0.5 rounded bg-muted text-[11px]">CABINET_DATA_DIR</code>{t("settings:storage.envVarHint2")}
                 </p>
               </div>
+
+              <WorkspaceSyncSettings />
 
               <StorageBackendSection />
 
