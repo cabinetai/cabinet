@@ -770,7 +770,9 @@ export function SettingsPage() {
           id: "integrations" as Tab,
           label: t("settings:tabs.integrations"),
           icon: <Blocks className="h-3.5 w-3.5" />,
-          onSelect: () => useAppStore.getState().setSection({ type: "integrations" }),
+          // pushSection (not setSection) so the hub's ReturnToChip can bring
+          // the user back to the settings tab they left from.
+          onSelect: () => useAppStore.getState().pushSection({ type: "integrations" }, { type: "settings", slug: tab }),
         },
         { id: "skills", label: t("settings:tabs.skills"), icon: <Asterisk className="h-3.5 w-3.5" /> },
         { id: "storage", label: t("settings:tabs.storage"), icon: <HardDrive className="h-3.5 w-3.5" /> },
@@ -828,7 +830,7 @@ export function SettingsPage() {
               {group.items.map((t) => (
                 <a
                   key={t.id}
-                  href={t.onSelect ? "/integrations" : `#/settings/${t.id}`}
+                  href={t.onSelect ? "#/integrations" : `#/settings/${t.id}`}
                   aria-current={tab === t.id ? "page" : undefined}
                   onClick={(e) => {
                     e.preventDefault();
@@ -857,7 +859,7 @@ export function SettingsPage() {
             {tabGroups.flatMap((g) => g.items).map((t) => (
               <a
                 key={t.id}
-                href={t.onSelect ? "/integrations" : `#/settings/${t.id}`}
+                href={t.onSelect ? "#/integrations" : `#/settings/${t.id}`}
                 aria-current={tab === t.id ? "page" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
