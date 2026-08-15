@@ -6,6 +6,7 @@ import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, ChevronLeftIcon, CheckIcon } from "lucide-react"
 import { DirIcon } from "@/components/ui/dir-icon"
+import { BrowserOverlayGuard } from "@/components/ui/browser-overlay-guard"
 
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
@@ -44,6 +45,7 @@ function ContextMenuContent({
   >) {
   return (
     <ContextMenuPrimitive.Portal>
+      <BrowserOverlayGuard />
       <ContextMenuPrimitive.Positioner
         className="isolate z-50 outline-none"
         align={align}

@@ -165,6 +165,14 @@ interface AppState {
   /** URL shown in browse mode; null until a link/bookmark sets it. */
   browseUrl: string | null;
   setAppMode: (mode: "edit" | "browse", url?: string | null) => void;
+  /**
+   * Count of open portal popups (dropdown/select/context menus). The native
+   * Electron browser view is composited above the entire DOM, so browse mode
+   * hides it while this is > 0 — the same trick its dialogs already use.
+   */
+  browserOverlayCount: number;
+  pushBrowserOverlay: () => void;
+  popBrowserOverlay: () => void;
   loadProviders: () => Promise<void>;
   /**
    * Hydrate one provider's real, entitlement-gated model list from
@@ -286,6 +294,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => ({
       appMode: mode,
       browseUrl: url !== undefined ? url : state.browseUrl,
+    })),
+  browserOverlayCount: 0,
+  pushBrowserOverlay: () =>
+    set((state) => ({ browserOverlayCount: state.browserOverlayCount + 1 })),
+  popBrowserOverlay: () =>
+    set((state) => ({
+      browserOverlayCount: Math.max(0, state.browserOverlayCount - 1),
     })),
 
   openProviderSetup: (providerId) => set({ providerSetupId: providerId }),

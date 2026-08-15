@@ -6,6 +6,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, ChevronLeftIcon, CheckIcon } from "lucide-react"
 import { DirIcon } from "@/components/ui/dir-icon"
+import { BrowserOverlayGuard } from "@/components/ui/browser-overlay-guard"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -34,6 +35,7 @@ function DropdownMenuContent({
   >) {
   return (
     <MenuPrimitive.Portal>
+      <BrowserOverlayGuard />
       <MenuPrimitive.Positioner
         className="isolate z-50 outline-none"
         align={align}
