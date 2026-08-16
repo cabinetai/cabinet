@@ -221,6 +221,21 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
 
   // ── Knowledge ───────────────────────────────────────────────────
   {
+    id: "lilbee",
+    name: "lilbee",
+    category: "knowledge",
+    logo: "/logos/lilbee.svg",
+    blurb: "Local AI for your cabinet: cited semantic search, plus models your agents pull and run on your own hardware.",
+    brand: "#f5b301",
+    implemented: true,
+    actions: [
+      "Search your cabinet with citations",
+      "Index folders, PDFs & crawled pages",
+      "Browse the model catalog & pull models",
+      "Manage installed models & GPU placement",
+    ],
+  },
+  {
     id: "apple-notes",
     name: "Apple Notes",
     category: "knowledge",
@@ -756,6 +771,7 @@ const COVERED_BY: Record<string, string> = {
 const LAUNCHED = new Set([
   "telegram",
   "discord",
+  "lilbee",
   "google-drive",
   "gmail",
   "google-workspace",
