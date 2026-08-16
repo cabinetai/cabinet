@@ -689,6 +689,79 @@ const MICROSOFT_365: CatalogEntry = {
   ],
 };
 
+const LILBEE: CatalogEntry = {
+  id: "lilbee",
+  label: "lilbee",
+  blurb:
+    "Local AI for your knowledge base: cited semantic search over your cabinet, and models your agents browse, pull, and run on your own hardware.",
+  iconSlug: "lilbee",
+  bgImage: "/integrations/lilbee-bg.webp",
+  logo: "/logos/lilbee.svg",
+  sourceUrl: "https://github.com/tobocop2/lilbee",
+  trustTier: "vendor",
+  vendorName: "lilbee",
+  authBackend: "token",
+  transport: "stdio",
+  mcpServerName: "cabinet-lilbee",
+  command: "npx",
+  // The shim bootstraps the lilbee binary locally, or bridges to a remote
+  // lilbee server when LILBEE_URL is set. Everything runs on the user's own
+  // hardware; there is no account and no cloud API.
+  args: ["-y", "lilbee-mcp@0.1.0"],
+  serverEnv: {
+    LILBEE_URL: "${LILBEE_URL}",
+    LILBEE_TOKEN: "${LILBEE_TOKEN}",
+    LILBEE_DATA_DIR: "${LILBEE_DATA_DIR}",
+  },
+  credentials: [
+    {
+      envKey: "LILBEE_DATA_DIR",
+      label: "Library location (optional)",
+      kind: "filepath",
+      required: false,
+      placeholder: "~/my-cabinet",
+      hint: "Folder lilbee indexes and searches. Leave empty for lilbee's default library.",
+    },
+    {
+      envKey: "LILBEE_URL",
+      label: "Remote server URL (optional)",
+      kind: "plain",
+      required: false,
+      placeholder: "http://localhost:8383/mcp",
+      hint: "Leave empty to run lilbee on this machine. Set it to use a lilbee server elsewhere, e.g. your GPU box.",
+    },
+    {
+      envKey: "LILBEE_TOKEN",
+      label: "Remote session token (optional)",
+      kind: "secret",
+      required: false,
+      placeholder: "paste from server.json",
+      hint: "Required with a remote URL. Found in server.json in the remote server's data directory. Stored only on this device.",
+    },
+  ],
+  actions: [
+    "Search your cabinet with citations",
+    "Index folders, PDFs & crawled pages",
+    "Browse the model catalog & pull models",
+    "Manage installed models & GPU placement",
+  ],
+  setupSteps: [
+    {
+      title: "No account needed",
+      body: "lilbee runs on your own hardware. Connecting starts it on demand via npx; the first local start downloads the lilbee binary.",
+    },
+    {
+      title: "Warm up the first start (recommended)",
+      body: "The one-time binary download is a few hundred MB. Run this once so the first connection is instant.",
+      copy: "npx -y lilbee-mcp prepare",
+    },
+    {
+      title: "Using a GPU box instead? (optional)",
+      body: "Start `lilbee serve` on the remote machine and paste its /mcp URL and session token below. With a URL set, nothing is downloaded locally.",
+    },
+  ],
+};
+
 const TELEGRAM: CatalogEntry = {
   id: "telegram",
   label: "Telegram",
@@ -1422,6 +1495,7 @@ export const MCP_CATALOG: CatalogEntry[] = [
   STRIPE,
   DISCORD,
   TELEGRAM,
+  LILBEE,
   LINKEDIN,
   META_ADS,
   GOOGLE_ADS,
