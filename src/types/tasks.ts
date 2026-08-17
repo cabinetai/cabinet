@@ -91,6 +91,8 @@ export interface Turn extends TurnMeta {
 
 export interface TaskRuntimeMeta {
   contextWindow?: number;
+  /** Wire-reported model id; see ConversationMeta.runtime.servedModel. */
+  servedModel?: string;
 }
 
 export interface TaskTokens {

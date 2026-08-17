@@ -132,6 +132,10 @@ export interface ConversationMeta {
   tokens?: ConversationTokens;
   runtime?: {
     contextWindow?: number;
+    /** Model id the provider actually reported on the wire (e.g. a local
+     * model ref served via an Anthropic-compatible endpoint). Shown in the
+     * task header when it differs from the requested alias. */
+    servedModel?: string;
   };
   doneAt?: string;
   archivedAt?: string;

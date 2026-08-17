@@ -794,6 +794,7 @@ export async function waitForConversationCompletion(
                         data.adapterUsage.outputTokens,
                     }
                   : undefined,
+                servedModel: data.adapterModel ?? undefined,
                 errorKind: data.adapterErrorKind ?? undefined,
                 errorHint: data.adapterErrorHint ?? undefined,
                 errorRetryAfterSec: data.adapterErrorRetryAfterSec ?? undefined,
@@ -1791,6 +1792,7 @@ export async function continueConversationRun(
       outputTokens: number;
       cachedInputTokens?: number;
     } | null;
+    adapterModel?: string | null;
     adapterErrorKind?:
       | import("../../types/conversations").ConversationErrorKind
       | null;
@@ -1844,6 +1846,7 @@ export async function continueConversationRun(
         adapterSessionId: result.adapterSessionId,
         adapterSessionParams: result.adapterSessionParams,
         adapterUsage: result.adapterUsage,
+        adapterModel: result.adapterModel ?? null,
         adapterErrorKind: result.adapterErrorKind,
         adapterErrorHint: result.adapterErrorHint,
         adapterErrorRetryAfterSec: result.adapterErrorRetryAfterSec,
@@ -1935,6 +1938,7 @@ export async function continueConversationRun(
                 result.adapterUsage.inputTokens + result.adapterUsage.outputTokens,
             }
           : undefined,
+        servedModel: result.adapterModel ?? undefined,
         errorKind: result.adapterErrorKind ?? undefined,
         errorHint: result.adapterErrorHint ?? undefined,
         errorRetryAfterSec: result.adapterErrorRetryAfterSec ?? undefined,

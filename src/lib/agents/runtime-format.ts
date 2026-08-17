@@ -7,7 +7,18 @@ import { formatEffortName } from "./runtime-options";
 export type RuntimeMetaLike = {
   adapterConfig?: Record<string, unknown> | null;
   providerId?: string | null;
+  runtime?: { servedModel?: string } | null;
 };
+
+/**
+ * Short display form of a wire-reported model id: the last path segment,
+ * minus a .gguf suffix. "unsloth/Qwen3-…-GGUF/Qwen3-Coder-30B-…-Q6_K.gguf"
+ * reads as "Qwen3-Coder-30B-…-Q6_K". Non-path ids pass through unchanged.
+ */
+export function formatServedModel(servedModel: string): string {
+  const last = servedModel.split("/").filter(Boolean).pop() ?? servedModel;
+  return last.replace(/\.gguf$/i, "");
+}
 
 function readModel(config?: Record<string, unknown> | null): string | null {
   if (!config || typeof config !== "object") return null;
@@ -49,7 +60,12 @@ export function formatProviderLabel(providerId?: string | null): string | null {
  * read identically.
  */
 export function buildRuntimeLabel(meta: RuntimeMetaLike): string | null {
-  const model = readModel(meta.adapterConfig);
+  // The wire-reported model wins over the requested alias: a provider CLI
+  // can resolve "sonnet" to whatever its endpoint actually serves (e.g. a
+  // local model behind an Anthropic-compatible URL), and the header must
+  // name the model that really answered.
+  const served = meta.runtime?.servedModel;
+  const model = served ? formatServedModel(served) : readModel(meta.adapterConfig);
   const effort = readEffort(meta.adapterConfig);
   const provider = formatProviderLabel(meta.providerId);
 

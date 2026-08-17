@@ -33,6 +33,7 @@ interface DaemonSessionOutput {
     outputTokens: number;
     cachedInputTokens?: number;
   } | null;
+  adapterModel?: string | null;
   adapterErrorKind?: ConversationErrorKind | null;
   adapterErrorHint?: string | null;
   adapterErrorRetryAfterSec?: number | null;

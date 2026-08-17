@@ -1863,7 +1863,7 @@ export function TaskConversationPage({
               ) : null}
             </div>
             <div className="mt-0.5 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span>{runtimeLabel}</span>
+              <span title={task?.meta.runtime?.servedModel || undefined}>{runtimeLabel}</span>
               <span>·</span>
               <TokenBar used={task.meta.tokens?.total ?? 0} window={contextWindow} />
               {task.meta.errorKind ? (

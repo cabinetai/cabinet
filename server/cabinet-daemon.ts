@@ -343,6 +343,8 @@ interface StructuredSession extends BaseSession {
     outputTokens: number;
     cachedInputTokens?: number;
   } | null;
+  /** Wire-reported model id from the adapter result. */
+  adapterModel?: string | null;
   /**
    * Classified error from the last failed run, written by the daemon so both
    * the poll path and `finalizeSessionConversation` can attach it to
@@ -485,6 +487,8 @@ async function finalizeSessionConversation(session: ActiveSession): Promise<void
   const plain = stripAnsi(session.output.join(""));
   const adapterUsage =
     session.kind === "structured" ? session.adapterUsage ?? null : null;
+  const adapterModel =
+    session.kind === "structured" ? session.adapterModel ?? null : null;
   const adapterErrorKind =
     session.kind === "structured" ? session.adapterErrorKind ?? null : null;
   const adapterErrorHint =
@@ -554,6 +558,7 @@ async function finalizeSessionConversation(session: ActiveSession): Promise<void
           total: adapterUsage.inputTokens + adapterUsage.outputTokens,
         }
       : undefined,
+    servedModel: adapterModel ?? undefined,
     errorKind: adapterErrorKind ?? undefined,
     errorHint: adapterErrorHint ?? undefined,
     errorRetryAfterSec: adapterErrorRetryAfterSec ?? undefined,
@@ -920,6 +925,7 @@ function createStructuredSession(input: {
       session.adapterSessionId = result.sessionId ?? null;
       session.adapterSessionParams = result.sessionParams ?? null;
       session.adapterUsage = result.usage ?? null;
+      session.adapterModel = result.model ?? null;
 
       // Classify failures so the UI can surface an actionable hint.
       // Prefer stderrBuffer, but fall back to the adapter-reported
@@ -1576,6 +1582,8 @@ const server = http.createServer(async (req, res) => {
               : null,
           adapterUsage:
             active.kind === "structured" ? active.adapterUsage ?? null : null,
+          adapterModel:
+            active.kind === "structured" ? active.adapterModel ?? null : null,
           adapterErrorKind:
             active.kind === "structured" ? active.adapterErrorKind ?? null : null,
           adapterErrorHint:
