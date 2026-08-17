@@ -704,10 +704,10 @@ const LILBEE: CatalogEntry = {
   transport: "stdio",
   mcpServerName: "cabinet-lilbee",
   command: "npx",
-  // The shim bootstraps the lilbee binary locally, or bridges to a remote
-  // lilbee server when LILBEE_URL is set. Everything runs on the user's own
-  // hardware; there is no account and no cloud API.
-  args: ["-y", "lilbee-mcp@0.1.0"],
+  // The lilbee npm launcher bootstraps the standalone binary locally, or
+  // bridges to a remote lilbee server when LILBEE_URL is set. Everything runs
+  // on the user's own hardware; there is no account and no cloud API.
+  args: ["-y", "lilbee@0.1.0", "mcp"],
   serverEnv: {
     LILBEE_URL: "${LILBEE_URL}",
     LILBEE_TOKEN: "${LILBEE_TOKEN}",
@@ -753,7 +753,7 @@ const LILBEE: CatalogEntry = {
     {
       title: "Warm up the first start (recommended)",
       body: "The one-time binary download is a few hundred MB. Run this once so the first connection is instant.",
-      copy: "npx -y lilbee-mcp prepare",
+      copy: "npx -y lilbee prepare",
     },
     {
       title: "Using a GPU box instead? (optional)",

@@ -1547,3 +1547,5 @@
 [2026-08-16] lilbee integration: added the browse-gallery card (knowledge category) and launch-list entry so the catalog entry is reachable from the Integrations hub; detail page and connect panel render from the MCP catalog entry with no further wiring.
 
 [2026-08-17] Serialized per-session transcript appends in the daemon: emitSessionOutput fire-and-forgot syncConversationChunk, whose meta-read-then-append raced under rapid small chunks and scrambled transcripts pairwise (local-model providers stream per-token deltas; hosted APIs send big throttled chunks and never hit it). Appends now chain on a per-session tail promise and finalizeSessionConversation drains the chain before reading the transcript.
+
+[2026-08-17] lilbee entry now invokes the general npm launcher: npx -y lilbee@0.1.0 mcp (package renamed from lilbee-mcp; same shim behavior, plus full CLI passthrough for npm users).
