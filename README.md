@@ -325,10 +325,10 @@ MIT License
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=cabinetai%2Fcabinet&type=date&legend=top-left" target="_blank" rel="noopener noreferrer">
+<a href="https://star-history.dera.page/#cabinetai/cabinet&type=date" target="_blank" rel="noopener noreferrer">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=cabinetai/cabinet&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=cabinetai/cabinet&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=cabinetai/cabinet&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=cabinetai/cabinet&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=cabinetai/cabinet&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=cabinetai/cabinet&type=date&legend=top-left" />
  </picture>
 </a>
