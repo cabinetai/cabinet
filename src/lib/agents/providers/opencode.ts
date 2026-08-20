@@ -1,9 +1,71 @@
+import fs from "fs";
+import os from "os";
+import path from "path";
 import type { AgentProvider, ProviderStatus } from "../provider-interface";
 import {
   checkCliProviderAvailable,
   execCli,
   resolveCliCommand,
 } from "../provider-cli";
+
+export async function syncOpenCodeGatewayConfig(baseURL: string, apiKey?: string, preferredModel?: string): Promise<string | boolean> {
+  try {
+    const home = process.env.HOME || os.homedir();
+    if (!home) return false;
+    const configDir = path.join(home, ".config", "opencode");
+    const configFile = path.join(configDir, "opencode.jsonc");
+
+    const modelsDict: Record<string, { name: string }> = {};
+    let selectedModel = preferredModel ? preferredModel.replace(/^openai\//, "") : "";
+
+    try {
+      const normalizedBase = baseURL.replace(/\/+$/, "");
+      const headers: Record<string, string> = {};
+      if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+      const res = await fetch(`${normalizedBase}/models`, {
+        headers,
+        signal: AbortSignal.timeout(5000),
+      });
+      if (res.ok) {
+        const json = (await res.json()) as { data?: Array<{ id: string }> };
+        if (Array.isArray(json.data) && json.data.length > 0) {
+          for (const m of json.data) {
+            modelsDict[m.id] = { name: m.id };
+          }
+          if (!selectedModel || !modelsDict[selectedModel]) {
+            selectedModel = json.data[0].id;
+          }
+        }
+      }
+    } catch {
+      // If /models unreachable, still write base config
+    }
+
+    if (!selectedModel) {
+      selectedModel = "gpt-4o";
+    }
+
+    const config = {
+      "$schema": "https://opencode.ai/config.json",
+      "model": `openai/${selectedModel}`,
+      "provider": {
+        "openai": {
+          "options": {
+            "baseURL": baseURL,
+            ...(apiKey ? { apiKey } : {}),
+          },
+          ...(Object.keys(modelsDict).length > 0 ? { models: modelsDict } : {}),
+        },
+      },
+    };
+
+    fs.mkdirSync(configDir, { recursive: true });
+    fs.writeFileSync(configFile, JSON.stringify(config, null, 2), "utf8");
+    return selectedModel;
+  } catch {
+    return false;
+  }
+}
 
 const OPENCODE_VARIANT_LEVELS = [
   { id: "minimal", name: "Minimal", description: "Skip extra reasoning" },
@@ -195,7 +257,7 @@ export const openCodeProvider: AgentProvider = {
 
       try {
         const cmd = resolveCliCommand(this);
-        const version = await execCli(cmd, ["--version"], { timeout: 5000 });
+        const version = await execCli(cmd, ["--version"], { timeout: 10000 });
         const base = version ? `OpenCode ${version}` : "OpenCode installed";
 
         // OpenCode routes to many providers; "ready" must not imply full
@@ -206,7 +268,7 @@ export const openCodeProvider: AgentProvider = {
         let suffix = "";
         try {
           const authOut = await execCli(cmd, ["auth", "list"], {
-            timeout: 6000,
+            timeout: 10000,
           });
           const auth = parseOpenCodeAuth(authOut);
           suffix = auth.configured

@@ -56,6 +56,7 @@ export interface ProviderSettingsUpdateInput {
   defaultModel?: string;
   defaultEffort?: string;
   disabledProviderIds?: string[];
+  customConfigs?: Record<string, import("./provider-settings").CustomProviderConfig>;
   migrations?: ProviderMigration[];
 }
 
@@ -218,6 +219,7 @@ export async function updateProviderSettingsWithMigrations(
     defaultModel: input.defaultModel ?? currentSettings.defaultModel,
     defaultEffort: input.defaultEffort ?? currentSettings.defaultEffort,
     disabledProviderIds: input.disabledProviderIds ?? currentSettings.disabledProviderIds,
+    customConfigs: input.customConfigs ?? currentSettings.customConfigs,
   });
   const usage = await getProviderUsage();
   const migrations = (input.migrations || []).filter(

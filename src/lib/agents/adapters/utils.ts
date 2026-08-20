@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { getNvmNodeBin } from "../nvm-path";
 import { readCabinetEnvFile } from "@/lib/runtime/cabinet-env";
+import { DATA_DIR } from "@/lib/storage/path-utils";
 
 const nvmBin = getNvmNodeBin();
 
@@ -63,7 +64,8 @@ export interface RunChildProcessResult {
 }
 
 export function withAdapterRuntimeEnv(
-  env: NodeJS.ProcessEnv = process.env
+  env: NodeJS.ProcessEnv = process.env,
+  providerId?: string
 ): NodeJS.ProcessEnv {
   // Merge `.cabinet.env` values at spawn time. mtime-cached, so this is
   // cheap on repeat calls and always reflects the latest disk contents
@@ -71,8 +73,38 @@ export function withAdapterRuntimeEnv(
   // wins over file values (so options.env / process.env shell-overrides
   // take precedence — consistent with dotenv conventions).
   const fileValues = readCabinetEnvFile().values;
+  const customOverrides: Record<string, string> = {};
+
+  try {
+    const providersFile = path.join(DATA_DIR, ".agents", ".config", "providers.json");
+    if (fs.existsSync(providersFile)) {
+      const raw = JSON.parse(fs.readFileSync(providersFile, "utf8"));
+      const customConfigs = raw?.customConfigs;
+      if (providerId && customConfigs?.[providerId]) {
+        const cfg = customConfigs[providerId];
+        if (cfg.baseURL) {
+          if (providerId === "opencode" || providerId === "codex-cli") {
+            customOverrides.OPENAI_BASE_URL = cfg.baseURL;
+          } else if (providerId === "claude-code") {
+            customOverrides.ANTHROPIC_BASE_URL = cfg.baseURL;
+          }
+        }
+        if (cfg.apiKeyEnvVar && fileValues[cfg.apiKeyEnvVar]) {
+          if (providerId === "opencode" || providerId === "codex-cli") {
+            customOverrides.OPENAI_API_KEY = fileValues[cfg.apiKeyEnvVar];
+          } else if (providerId === "claude-code") {
+            customOverrides.ANTHROPIC_API_KEY = fileValues[cfg.apiKeyEnvVar];
+          }
+        }
+      }
+    }
+  } catch {
+    // Ignore read errors
+  }
+
   return {
     ...fileValues,
+    ...customOverrides,
     ...env,
     PATH: getAdapterRuntimePath(),
   };

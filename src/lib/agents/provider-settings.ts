@@ -7,11 +7,17 @@ import { providerRegistry } from "./provider-registry";
 const CONFIG_DIR = path.join(DATA_DIR, ".agents", ".config");
 const PROVIDERS_FILE = path.join(CONFIG_DIR, "providers.json");
 
+export interface CustomProviderConfig {
+  baseURL?: string;
+  apiKeyEnvVar?: string;
+}
+
 export interface ProviderSettings {
   defaultProvider: string;
   defaultModel?: string;
   defaultEffort?: string;
   disabledProviderIds: string[];
+  customConfigs?: Record<string, CustomProviderConfig>;
 }
 
 function knownProviderIds(): string[] {
@@ -49,11 +55,31 @@ export function normalizeProviderSettings(raw: unknown): ProviderSettings {
       ? object.defaultEffort.trim()
       : undefined;
 
+  let customConfigs: Record<string, CustomProviderConfig> | undefined;
+  if (object.customConfigs && typeof object.customConfigs === "object") {
+    const rawConfigs = object.customConfigs as Record<string, unknown>;
+    const normalizedMap: Record<string, CustomProviderConfig> = {};
+    for (const [providerId, rawCfg] of Object.entries(rawConfigs)) {
+      if (rawCfg && typeof rawCfg === "object") {
+        const cfgObj = rawCfg as Record<string, unknown>;
+        const baseURL = typeof cfgObj.baseURL === "string" && cfgObj.baseURL.trim() ? cfgObj.baseURL.trim() : undefined;
+        const apiKeyEnvVar = typeof cfgObj.apiKeyEnvVar === "string" && cfgObj.apiKeyEnvVar.trim() ? cfgObj.apiKeyEnvVar.trim() : undefined;
+        if (baseURL || apiKeyEnvVar) {
+          normalizedMap[providerId] = { baseURL, apiKeyEnvVar };
+        }
+      }
+    }
+    if (Object.keys(normalizedMap).length > 0) {
+      customConfigs = normalizedMap;
+    }
+  }
+
   return {
     defaultProvider,
     defaultModel,
     defaultEffort,
     disabledProviderIds,
+    customConfigs,
   };
 }
 

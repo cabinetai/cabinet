@@ -2,6 +2,7 @@ import { spawn } from "child_process";
 import type { AgentProvider, CliProviderInvocation } from "./provider-interface";
 import { providerRegistry } from "./provider-registry";
 import { buildWindowsShellCommand, getRuntimePath, resolveCliCommand } from "./provider-cli";
+import { withAdapterRuntimeEnv } from "./adapters/utils";
 import { terminateChildProcess } from "./process-utils";
 import { assertAiAllowed } from "@/lib/cloud/tier";
 import {
@@ -157,10 +158,13 @@ export async function runOneShotProviderPrompt(input: {
   });
 
   return new Promise<string>((resolve, reject) => {
-    const env = {
-      ...process.env,
-      PATH: getRuntimePath(),
-    };
+    const env = withAdapterRuntimeEnv(
+      {
+        ...process.env,
+        PATH: getRuntimePath(),
+      },
+      provider.id
+    );
     const proc =
       process.platform === "win32"
         ? spawn(buildWindowsShellCommand(launch.command, launch.args), {

@@ -302,7 +302,7 @@ export async function checkCliProviderAvailable(provider: AgentProvider): Promis
       void terminateChildProcess(proc).finally(() => {
         settle(false);
       });
-    }, 5000);
+    }, 15000);
   });
 }
 

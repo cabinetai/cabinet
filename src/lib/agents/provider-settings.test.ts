@@ -84,3 +84,26 @@ test("resolveEnabledProviderId falls back to the configured default when the req
 
   assert.equal(providerId, "codex-cli");
 });
+
+test("normalizeProviderSettings normalizes customConfigs cleanly", () => {
+  const settings = normalizeProviderSettings({
+    defaultProvider: "opencode",
+    disabledProviderIds: [],
+    customConfigs: {
+      opencode: {
+        baseURL: "  http://192.168.0.204:8317/v1  ",
+        apiKeyEnvVar: "OPENAI_API_KEY",
+      },
+      invalid: {
+        baseURL: "",
+      },
+    },
+  });
+
+  assert.deepEqual(settings.customConfigs, {
+    opencode: {
+      baseURL: "http://192.168.0.204:8317/v1",
+      apiKeyEnvVar: "OPENAI_API_KEY",
+    },
+  });
+});
