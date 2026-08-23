@@ -80,6 +80,9 @@ test("Gemini API adapter streams output and normalizes usage", async (t) => {
   });
   assert.equal(result.billingType, "metered_api");
   assert.equal(result.provider, "gemini-api");
+  assert.equal(adapter.capabilities?.streaming, true);
+  assert.equal(adapter.capabilities?.tools, undefined);
+  assert.equal(adapter.capabilities?.structuredOutput, undefined);
 });
 
 test("Gemini API adapter reports missing credentials without calling the provider", async (t) => {
@@ -165,7 +168,7 @@ test("Gemini API environment failures distinguish auth from request errors", asy
   process.env.GOOGLE_AI_API_KEY = "test-google-key";
   t.after(() => restoreApiKey(previousKey));
 
-  const adapter = createGeminiApiAdapter({
+  const requestFailureAdapter = createGeminiApiAdapter({
     createClient: () => ({
       stream() {
         throw new Error("Gemini is temporarily unavailable");
@@ -173,8 +176,24 @@ test("Gemini API environment failures distinguish auth from request errors", asy
     }),
   });
 
-  const result = await adapter.testEnvironment!({ adapterType: adapter.type });
+  const requestFailure = await requestFailureAdapter.testEnvironment!({
+    adapterType: requestFailureAdapter.type,
+  });
 
-  assert.equal(result.status, "fail");
-  assert.equal(result.checks[0]?.code, "provider_request");
+  assert.equal(requestFailure.status, "fail");
+  assert.equal(requestFailure.checks[0]?.code, "provider_request");
+
+  const authFailureAdapter = createGeminiApiAdapter({
+    createClient: () => ({
+      stream() {
+        throw new Error("401 invalid API key");
+      },
+    }),
+  });
+  const authFailure = await authFailureAdapter.testEnvironment!({
+    adapterType: authFailureAdapter.type,
+  });
+
+  assert.equal(authFailure.status, "fail");
+  assert.equal(authFailure.checks[0]?.code, "provider_authentication");
 });

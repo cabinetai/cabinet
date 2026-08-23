@@ -275,12 +275,22 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
                       <button onClick={() => void runVerify()} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
                         {t("settings:providerSetup.tryAgain")}
                       </button>
-                      {vStatus === "auth_required" && loginStep && (
+                      {vStatus === "auth_required" && !isApiProvider && loginStep && (
                         <button onClick={() => runInTerminal(loginStep.command!)} className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
                           {t("settings:providerSetup.signInCta")}
                         </button>
                       )}
                     </div>
+                    {vStatus === "auth_required" && isApiProvider && apiKeyEnv && (
+                      <ApiKeyLogin
+                        envVar={apiKeyEnv}
+                        onDone={async () => {
+                          await onExternalDone();
+                          await runVerify();
+                        }}
+                        t={t}
+                      />
+                    )}
                     {loginUrl && <LoginLink url={loginUrl} t={t} />}
                   </div>
                 ) : (
@@ -520,7 +530,7 @@ function ClaudeLogin({ onDone, t }: { onDone: () => void; t: TFn }) {
   );
 }
 
-function ApiKeyLogin({ envVar, onDone, t }: { envVar: string; onDone: () => void; t: TFn }) {
+function ApiKeyLogin({ envVar, onDone, t }: { envVar: string; onDone: () => void | Promise<void>; t: TFn }) {
   const [key, setKey] = useState("");
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
@@ -530,7 +540,7 @@ function ApiKeyLogin({ envVar, onDone, t }: { envVar: string; onDone: () => void
     try {
       const r = await fetch("/api/agents/config/cabinet-env", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: envVar, value: key.trim() }) });
       if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error((d as { error?: string }).error || "Could not save key"); }
-      setKey(""); void onDone();
+      setKey(""); await onDone();
     } catch (e) { setErr(e instanceof Error ? e.message : String(e)); } finally { setSaving(false); }
   };
 

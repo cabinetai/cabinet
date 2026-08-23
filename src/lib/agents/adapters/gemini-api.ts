@@ -1,5 +1,5 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { streamText, type LanguageModelUsage } from "ai";
+import { APICallError, streamText, type LanguageModelUsage } from "ai";
 import { geminiApiProvider } from "@/lib/agents/providers/gemini-api";
 import {
   GEMINI_API_KEY_ENV_VAR,
@@ -76,6 +76,17 @@ function toUsage(usage: LanguageModelUsage): AdapterUsageSummary {
 function isTimeoutError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return /abort|timed? ?out|deadline exceeded/i.test(message);
+}
+
+function isAuthenticationError(error: unknown): boolean {
+  const message = [
+    error instanceof Error ? error.message : String(error),
+    APICallError.isInstance(error) ? error.responseBody || "" : "",
+  ].join(" ");
+  if (APICallError.isInstance(error) && error.statusCode === 401) return true;
+  return /unauthori[sz]ed|invalid api key|api key.{0,20}(invalid|not valid|expired)/i.test(
+    message
+  );
 }
 
 function failureResult(
@@ -208,7 +219,7 @@ async function testGeminiEnvironment(
       ctx?.adapterType || "gemini_api",
       "fail",
       "Gemini API request failed.",
-      "provider_request",
+      isAuthenticationError(error) ? "provider_authentication" : "provider_request",
       sanitizeError(error, apiKey)
     );
   }
@@ -231,8 +242,6 @@ export function createGeminiApiAdapter(
       streaming: true,
       sessions: false,
       detachedRuns: true,
-      tools: true,
-      structuredOutput: true,
     },
     models: geminiApiProvider.models,
     classifyError(stderr, exitCode) {
