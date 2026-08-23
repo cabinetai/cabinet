@@ -32,7 +32,6 @@ export interface GeminiApiClient {
     model: string;
     prompt: string;
     timeoutMs?: number;
-    abortSignal?: AbortSignal;
   }): GeminiApiStream;
 }
 
@@ -47,7 +46,6 @@ function createClient(apiKey: string): GeminiApiClient {
       const result = streamText({
         model: google(input.model),
         prompt: input.prompt,
-        abortSignal: input.abortSignal,
         maxRetries: 0,
         timeout: input.timeoutMs,
       });
@@ -138,7 +136,6 @@ async function executeGeminiRequest(
       model,
       prompt: ctx.prompt,
       timeoutMs: ctx.timeoutMs,
-      abortSignal: ctx.abortSignal,
     });
     for await (const chunk of generation.textStream) {
       if (!chunk) continue;
@@ -238,11 +235,6 @@ export function createGeminiApiAdapter(
     executionEngine: "api",
     supportsDetachedRuns: true,
     supportsSessionResume: false,
-    capabilities: {
-      streaming: true,
-      sessions: false,
-      detachedRuns: true,
-    },
     models: geminiApiProvider.models,
     classifyError(stderr, exitCode) {
       return classifyChain(stderr, exitCode, [

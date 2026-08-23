@@ -56,7 +56,6 @@ async function buildResponse() {
             executionEngine: adapter.executionEngine,
             supportsDetachedRuns: adapter.supportsDetachedRuns,
             supportsSessionResume: adapter.supportsSessionResume,
-            capabilities: adapter.capabilities,
           }));
 
         return {

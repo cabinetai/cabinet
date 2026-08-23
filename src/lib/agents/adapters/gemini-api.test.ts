@@ -80,9 +80,6 @@ test("Gemini API adapter streams output and normalizes usage", async (t) => {
   });
   assert.equal(result.billingType, "metered_api");
   assert.equal(result.provider, "gemini-api");
-  assert.equal(adapter.capabilities?.streaming, true);
-  assert.equal(adapter.capabilities?.tools, undefined);
-  assert.equal(adapter.capabilities?.structuredOutput, undefined);
 });
 
 test("Gemini API adapter reports missing credentials without calling the provider", async (t) => {

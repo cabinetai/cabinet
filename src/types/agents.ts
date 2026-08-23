@@ -172,13 +172,6 @@ export interface ProviderInfo {
     executionEngine?: string;
     supportsDetachedRuns?: boolean;
     supportsSessionResume?: boolean;
-    capabilities?: {
-      streaming?: boolean;
-      sessions?: boolean;
-      detachedRuns?: boolean;
-      tools?: boolean;
-      structuredOutput?: boolean;
-    };
   }>;
   usage?: {
     agentSlugs: string[];
