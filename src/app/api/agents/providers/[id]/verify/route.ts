@@ -1,6 +1,10 @@
 import { spawn } from "child_process";
 import { NextResponse } from "next/server";
 import { providerRegistry } from "@/lib/agents/provider-registry";
+import {
+  agentAdapterRegistry,
+  defaultAdapterTypeForProvider,
+} from "@/lib/agents/adapters";
 import { withAdapterRuntimeEnv } from "@/lib/agents/adapters/utils";
 import {
   getConfiguredDefaultProviderId,
@@ -19,7 +23,8 @@ type VerifyStatus =
 interface VerifyResult {
   status: VerifyStatus;
   failedStepTitle: string;
-  command: string;
+  command?: string;
+  adapterType?: string;
   exitCode: number | null;
   signal: string | null;
   output: string;
@@ -165,10 +170,46 @@ export async function POST(
   }
 
   if (!command) {
-    return NextResponse.json(
-      { error: `Provider ${id} has no verifiable command in its install steps.` },
-      { status: 400 }
-    );
+    const adapterType = defaultAdapterTypeForProvider(id);
+    const adapter = agentAdapterRegistry.get(adapterType);
+    if (!adapter?.testEnvironment) {
+      return NextResponse.json(
+        { error: `Provider ${id} has no verifiable command or adapter test.` },
+        { status: 400 }
+      );
+    }
+
+    const startedAt = Date.now();
+    const environment = await adapter.testEnvironment({ adapterType });
+    const durationMs = Date.now() - startedAt;
+    const detail = environment.checks
+      .map((check) => check.detail || check.message)
+      .filter(Boolean)
+      .join("\n");
+    const status: VerifyStatus =
+      environment.status === "pass"
+        ? "pass"
+        : environment.checks.some((check) => check.code === "provider_authentication")
+          ? "auth_required"
+          : "other_error";
+
+    emitTelemetry("provider.verified", {
+      provider: id,
+      success: status === "pass",
+      durationMs,
+    });
+
+    return NextResponse.json({
+      status,
+      failedStepTitle: status === "pass" ? "" : stepTitle,
+      adapterType,
+      exitCode: status === "pass" ? 0 : 1,
+      signal: null,
+      output: truncate(detail),
+      stderr: status === "pass" ? "" : truncate(detail),
+      durationMs,
+      ...(status === "pass" ? {} : { hint: detail || "Provider adapter verification failed." }),
+    });
   }
 
   const startedAt = Date.now();

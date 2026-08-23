@@ -1,30 +1,21 @@
 /**
  * Shared filters for deciding which providers surface where in the UI.
  *
- * Historically UI surfaces hardcoded `provider.type === "cli"` because the
- * adapter runtime only shipped CLI-backed providers. When API-backed providers
- * land (Anthropic API, OpenAI API, etc.) they'll reuse this filter so that
- * flipping a single predicate here lights them up across onboarding, settings,
- * providers-demo, agents-workspace, and the composer — instead of hunting
- * every call site.
- *
- * Note: the server-side provider registry already fully supports API
- * providers (see `provider-runtime.ts` runPrompt branch). The gate is purely
- * UX: without install steps, verify commands, model metadata, and a runtime
- * picker entry tailored to API providers, surfacing them to users would
- * expose half-built experiences.
+ * Provider surfaces should select providers with registered adapters rather
+ * than branching on whether the adapter launches a CLI or calls an API.
  */
 
-export interface ProviderTypeInfo {
-  type: "cli" | "api";
+export interface ProviderSelectionInfo {
+  defaultAdapterType?: string;
+  adapters?: ReadonlyArray<{ type: string }>;
 }
 
 /**
- * Whether a provider should be shown in user-facing runtime surfaces today.
- * Returns `true` for CLI providers; returns `false` for API providers until
- * we flip the switch. Kept intentionally simple — if you need additional
- * gating (enabled / available / authenticated) compose with `isProviderReady`.
+ * Whether a provider has a registered execution adapter and can be shown in
+ * user-facing runtime surfaces. Availability and authentication are separate
+ * concerns handled by each surface.
  */
-export function isAgentProviderSelectable(provider: ProviderTypeInfo): boolean {
-  return provider.type === "cli";
+export function isAgentProviderSelectable(provider: ProviderSelectionInfo): boolean {
+  if (!provider.defaultAdapterType || !provider.adapters) return false;
+  return provider.adapters.some((adapter) => adapter.type === provider.defaultAdapterType);
 }

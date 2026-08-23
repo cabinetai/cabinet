@@ -1399,7 +1399,7 @@ export function SettingsPage() {
                       </div>
 
                       <h4 className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                        {t("settings:providers.cliAgents")}
+                        {t("settings:providers.title")}
                       </h4>
                       <div className="space-y-2">
                         {providers

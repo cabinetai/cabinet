@@ -107,9 +107,8 @@ export interface AgentProvider {
    */
   supportsTerminalResume?: boolean;
 
-  // API providers
+  // API provider metadata
   apiKeyEnvVar?: string;
-  runPrompt?(prompt: string, context: string): Promise<string>;
 
   /**
    * Optional dynamic model discovery. Providers that can list their available

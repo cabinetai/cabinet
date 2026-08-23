@@ -28,6 +28,7 @@ export interface AdapterExecutionContext {
   prompt: string;
   cwd: string;
   timeoutMs?: number;
+  abortSignal?: AbortSignal;
   sessionId?: string | null;
   sessionParams?: Record<string, unknown> | null;
   onLog: (stream: "stdout" | "stderr", chunk: string) => Promise<void>;
@@ -88,6 +89,14 @@ export interface AgentAdapterModel {
   description?: string;
 }
 
+export interface AgentAdapterCapabilities {
+  streaming?: boolean;
+  sessions?: boolean;
+  detachedRuns?: boolean;
+  tools?: boolean;
+  structuredOutput?: boolean;
+}
+
 export interface AgentAdapterEffortLevel {
   id: string;
   name: string;
@@ -127,6 +136,7 @@ export interface AgentExecutionAdapter {
   experimental?: boolean;
   supportsSessionResume?: boolean;
   supportsDetachedRuns?: boolean;
+  capabilities?: AgentAdapterCapabilities;
   models?: AgentAdapterModel[];
   effortLevels?: AgentAdapterEffortLevel[];
   sessionCodec?: AdapterSessionCodec;

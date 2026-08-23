@@ -19,6 +19,7 @@ test("legacy adapter registry exposes the current compatibility adapters", () =>
     "copilot_local",
     "cursor_cli_legacy",
     "cursor_local",
+    "gemini_api",
     "gemini_cli_legacy",
     "gemini_local",
     "grok_cli_legacy",
@@ -93,11 +94,36 @@ test("provider-to-adapter defaults map current providers onto structured adapter
   assert.equal(defaultAdapterTypeForProvider("claude-code"), "claude_local");
   assert.equal(defaultAdapterTypeForProvider("codex-cli"), "codex_local");
   assert.equal(defaultAdapterTypeForProvider("gemini-cli"), "gemini_local");
+  assert.equal(defaultAdapterTypeForProvider("gemini-api"), "gemini_api");
   assert.equal(defaultAdapterTypeForProvider("cursor-cli"), "cursor_local");
   assert.equal(defaultAdapterTypeForProvider("opencode"), "opencode_local");
   assert.equal(defaultAdapterTypeForProvider("pi"), "pi_local");
   assert.equal(defaultAdapterTypeForProvider("grok-cli"), "grok_local");
   assert.equal(defaultAdapterTypeForProvider("copilot-cli"), "copilot_local");
+});
+
+test("provider-to-adapter defaults discover registered external adapters", () => {
+  const adapter = {
+    type: "test_api_adapter",
+    name: "Test API Adapter",
+    providerId: "test-api-provider",
+    executionEngine: "api" as const,
+    async testEnvironment() {
+      return {
+        adapterType: "test_api_adapter",
+        status: "pass" as const,
+        checks: [],
+        testedAt: new Date().toISOString(),
+      };
+    },
+  };
+
+  agentAdapterRegistry.registerExternal(adapter);
+  try {
+    assert.equal(defaultAdapterTypeForProvider("test-api-provider"), "test_api_adapter");
+  } finally {
+    agentAdapterRegistry.unregisterExternal(adapter.type);
+  }
 });
 
 test("execution provider resolution prefers explicit legacy adapter mappings", () => {

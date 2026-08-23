@@ -14,7 +14,14 @@ import { ProviderSetupSteps, type SetupStep } from "@/components/settings/provid
 // the moment a step completes the dialog advances on its own; sign-in is
 // auto-verified so we only celebrate when the model is actually reachable.
 
-interface ProviderInfo { id: string; name: string; iconAsset?: string; installSteps?: SetupStep[]; }
+interface ProviderInfo {
+  id: string;
+  name: string;
+  type?: "cli" | "api";
+  iconAsset?: string;
+  apiKeyEnvVar?: string;
+  installSteps?: SetupStep[];
+}
 interface ProviderStatus { id: string; name: string; available: boolean; authenticated: boolean; }
 
 // Providers whose API doesn't return an iconAsset but whose logo ships anyway.
@@ -22,6 +29,7 @@ const ICON_FALLBACK: Record<string, string> = {
   "claude-code": "/providers/claude.svg",
   "codex-cli": "/providers/openai.png",
   "gemini-cli": "/providers/gemini.svg",
+  "gemini-api": "/providers/gemini.svg",
 };
 // Single-API-key providers get an inline key field (writes .cabinet.env).
 const API_KEY_ENV: Record<string, string> = { "grok-cli": "XAI_API_KEY" };
@@ -89,6 +97,7 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
 
   const name = info?.name ?? providerId;
   const iconSrc = info?.iconAsset ?? ICON_FALLBACK[providerId];
+  const isApiProvider = info?.type === "api";
 
   const refreshStatus = useCallback(async () => {
     try {
@@ -120,7 +129,7 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
   const loginStep = findStep(steps, /^log\s?in$/i);
   const available = status?.available ?? false;
   const authed = status?.authenticated ?? false;
-  const apiKeyEnv = API_KEY_ENV[providerId];
+  const apiKeyEnv = info?.apiKeyEnvVar || API_KEY_ENV[providerId];
 
   const vStatus = verify?.status;
   const verified = vStatus === "pass";
@@ -303,15 +312,29 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
               </div>
             </div>
 
-            {/* RIGHT — the live console */}
+            {/* RIGHT — provider-specific activity */}
             <div className="flex min-h-0 flex-col p-4">
-              <div className="mb-2 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                {t("settings:providerSetup.consoleLabel")}
-              </div>
-              <div className="min-h-[320px] flex-1 overflow-hidden rounded-xl border border-border">
-                <WebTerminal ref={termRef} sessionId={termSessionId} adapterType="shell" themeSurface="page" onData={handleTermData} onClose={() => {}} />
-              </div>
+              {isApiProvider ? (
+                <div className="flex min-h-[320px] flex-1 flex-col justify-center rounded-xl border border-border bg-muted/20 p-6">
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold">{name} API</p>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      Add the API key on the left. Cabinet will make a live request
+                      during verification, then use the same adapter for agent runs.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-2 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    {t("settings:providerSetup.consoleLabel")}
+                  </div>
+                  <div className="min-h-[320px] flex-1 overflow-hidden rounded-xl border border-border">
+                    <WebTerminal ref={termRef} sessionId={termSessionId} adapterType="shell" themeSurface="page" onData={handleTermData} onClose={() => {}} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}

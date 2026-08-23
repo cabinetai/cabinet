@@ -21,6 +21,7 @@ import {
   getDefaultAdapterTypeForProviderInfo,
   resolveAdapterTypeForProvider,
 } from "@/lib/agents/adapter-options";
+import { isAgentProviderSelectable } from "@/lib/agents/provider-filters";
 import { useLocale } from "@/i18n/use-locale";
 
 interface GoalInput {
@@ -80,7 +81,7 @@ export function EditAgentDialog({ open, onOpenChange, slug, onSaved }: EditAgent
       .then((r) => r.json())
       .then((data) => {
         const nextProviders = (data.providers || []).filter(
-          (entry: ProviderInfo) => entry.type === "cli" && entry.enabled
+          (entry: ProviderInfo) => isAgentProviderSelectable(entry) && entry.enabled
         );
         setProviders(nextProviders);
         setDefaultProvider(data.defaultProvider || "claude-code");

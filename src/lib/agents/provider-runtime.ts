@@ -1,6 +1,11 @@
 import { spawn } from "child_process";
+import { randomUUID } from "crypto";
 import type { AgentProvider, CliProviderInvocation } from "./provider-interface";
 import { providerRegistry } from "./provider-registry";
+import {
+  agentAdapterRegistry,
+  defaultAdapterTypeForProvider,
+} from "./adapters";
 import { buildWindowsShellCommand, getRuntimePath, resolveCliCommand } from "./provider-cli";
 import { terminateChildProcess } from "./process-utils";
 import { assertAiAllowed } from "@/lib/cloud/tier";
@@ -144,8 +149,29 @@ export async function runOneShotProviderPrompt(input: {
   assertAiAllowed(); // free-tier cloud tenants can't run one-shot prompts (server backstop)
   const provider = resolveProviderOrThrow(input.providerId);
 
-  if (provider.type === "api" && provider.runPrompt) {
-    return provider.runPrompt(input.prompt, "");
+  const adapter = agentAdapterRegistry.get(defaultAdapterTypeForProvider(provider.id));
+  if (adapter?.providerId === provider.id && adapter.execute) {
+    const chunks: string[] = [];
+    const result = await adapter.execute({
+      runId: randomUUID(),
+      adapterType: adapter.type,
+      config: {
+        ...(input.model ? { model: input.model } : {}),
+        ...(input.effort ? { effort: input.effort } : {}),
+      },
+      prompt: input.prompt,
+      cwd: input.cwd,
+      timeoutMs: input.timeoutMs,
+      onLog: async (stream, chunk) => {
+        if (stream === "stdout") chunks.push(chunk);
+      },
+    });
+
+    if (result.exitCode !== 0 || result.errorMessage) {
+      throw new Error(result.errorMessage || `Provider ${provider.name} failed`);
+    }
+
+    return result.output?.trim() || chunks.join("").trim();
   }
 
   const launch = getOneShotLaunchSpec({

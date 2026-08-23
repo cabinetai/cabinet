@@ -7,16 +7,14 @@ import { geminiCliProvider } from "../providers/gemini-cli";
 import { grokCliProvider } from "../providers/grok-cli";
 import { openCodeProvider } from "../providers/opencode";
 import { piProvider } from "../providers/pi";
-import type {
-  AdapterEnvironmentTestContext,
-  AgentExecutionAdapter,
-} from "./types";
+import type { AgentExecutionAdapter } from "./types";
 import { claudeLocalAdapter } from "./claude-local";
 import { codexLocalAdapter } from "./codex-local";
 import { copilotLocalAdapter } from "./copilot-local";
 import { cursorLocalAdapter } from "./cursor-local";
 import { providerStatusToEnvironmentTest } from "./environment";
 import { geminiLocalAdapter } from "./gemini-local";
+import { geminiApiAdapter } from "./gemini-api";
 import { grokLocalAdapter } from "./grok-local";
 import { openCodeLocalAdapter } from "./opencode-local";
 import { piLocalAdapter } from "./pi-local";
@@ -36,6 +34,7 @@ export const DEFAULT_ADAPTER_BY_PROVIDER_ID: Record<string, string> = {
   "claude-code": claudeLocalAdapter.type,
   "codex-cli": codexLocalAdapter.type,
   "gemini-cli": geminiLocalAdapter.type,
+  "gemini-api": geminiApiAdapter.type,
   "cursor-cli": cursorLocalAdapter.type,
   "opencode": openCodeLocalAdapter.type,
   "pi": piLocalAdapter.type,
@@ -72,7 +71,7 @@ function buildLegacyCliAdapter(input: {
     supportsDetachedRuns: true,
     models: provider.models,
     effortLevels: provider.effortLevels,
-    async testEnvironment(_ctx?: AdapterEnvironmentTestContext) {
+    async testEnvironment() {
       return providerStatusToEnvironmentTest(
         input.type,
         await provider.healthCheck(),
@@ -185,6 +184,7 @@ export const agentAdapterRegistry = new AgentAdapterRegistry();
 agentAdapterRegistry.register(claudeLocalAdapter);
 agentAdapterRegistry.register(codexLocalAdapter);
 agentAdapterRegistry.register(geminiLocalAdapter);
+agentAdapterRegistry.register(geminiApiAdapter);
 agentAdapterRegistry.register(cursorLocalAdapter);
 agentAdapterRegistry.register(openCodeLocalAdapter);
 agentAdapterRegistry.register(piLocalAdapter);
@@ -205,6 +205,11 @@ export function defaultAdapterTypeForProvider(
   if (providerId && DEFAULT_ADAPTER_BY_PROVIDER_ID[providerId]) {
     return DEFAULT_ADAPTER_BY_PROVIDER_ID[providerId];
   }
+
+  const registeredAdapter = providerId
+    ? agentAdapterRegistry.findByProviderId(providerId)
+    : undefined;
+  if (registeredAdapter) return registeredAdapter.type;
 
   const defaultProviderId = providerRegistry.defaultProvider;
   return (

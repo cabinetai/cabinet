@@ -56,6 +56,7 @@ async function buildResponse() {
             executionEngine: adapter.executionEngine,
             supportsDetachedRuns: adapter.supportsDetachedRuns,
             supportsSessionResume: adapter.supportsSessionResume,
+            capabilities: adapter.capabilities,
           }));
 
         return {
@@ -66,6 +67,7 @@ async function buildResponse() {
           iconAsset: p.iconAsset,
           installMessage: p.installMessage,
           installSteps: p.installSteps,
+          apiKeyEnvVar: p.apiKeyEnvVar,
           models: p.models || [],
           effortLevels: p.effortLevels || [],
           // Capability flag so UIs switch on a trait, not a hardcoded id list

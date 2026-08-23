@@ -186,6 +186,13 @@ function getSelectableProviders(providers: ProviderInfo[]): ProviderInfo[] {
   return providers;
 }
 
+function supportsTerminalRuntime(provider: ProviderInfo): boolean {
+  const adapter = provider.adapters?.find(
+    (candidate) => candidate.type === provider.defaultAdapterType
+  );
+  return adapter?.executionEngine !== "api";
+}
+
 function resolveSelectedProvider(
   providers: ProviderInfo[],
   providerId?: string,
@@ -269,9 +276,11 @@ function normalizeSelection(
       : undefined
   );
 
-  const runtimeMode: ConversationRuntimeMode =
+  const requestedRuntimeMode: ConversationRuntimeMode =
     value.runtimeMode === "terminal" ? "terminal" : "native";
-  const isTerminal = runtimeMode === "terminal";
+  const isTerminal =
+    requestedRuntimeMode === "terminal" &&
+    (!selectedProvider || supportsTerminalRuntime(selectedProvider));
   return {
     providerId: selectedProvider?.id,
     adapterType: getDefaultAdapterTypeForProviderInfo(
@@ -291,7 +300,7 @@ function normalizeSelection(
         : allowDefaultEffortFallback
           ? selectedEffort?.id
           : undefined,
-    runtimeMode,
+    runtimeMode: isTerminal ? "terminal" : "native",
   };
 }
 
@@ -642,7 +651,8 @@ export function RuntimeMatrixPicker({
   trailing,
 }: RuntimeMatrixPickerProps) {
   const { t } = useLocale();
-  const runtimeMode: RuntimeMode = value.runtimeMode === "terminal" ? "terminal" : "native";
+  const requestedRuntimeMode: RuntimeMode =
+    value.runtimeMode === "terminal" ? "terminal" : "native";
   const selectableProviders = useMemo(() => {
     const base = includeUnavailable
       ? providers.filter((provider) => provider.enabled ?? true)
@@ -688,6 +698,14 @@ export function RuntimeMatrixPicker({
     [currentProvider, currentModel?.id]
   );
 
+  const terminalProviders = useMemo(
+    () => selectableProviders.filter(supportsTerminalRuntime),
+    [selectableProviders]
+  );
+  const isTerminal =
+    requestedRuntimeMode === "terminal" &&
+    (!currentProvider || supportsTerminalRuntime(currentProvider));
+
   if (selectableProviders.length === 0) {
     return (
       <div
@@ -709,6 +727,7 @@ export function RuntimeMatrixPicker({
       "";
     if (!targetProviderId) return;
     if (nextMode === "terminal") {
+      if (currentProvider && !supportsTerminalRuntime(currentProvider)) return;
       onChange({
         providerId: targetProviderId,
         runtimeMode: "terminal",
@@ -722,8 +741,6 @@ export function RuntimeMatrixPicker({
       });
     }
   };
-
-  const isTerminal = runtimeMode === "terminal";
 
   const togglePanel = (panel: "provider" | "model" | "effort") =>
     setOpenPanel((prev) => (prev === panel ? null : panel));
@@ -783,7 +800,7 @@ export function RuntimeMatrixPicker({
 
   return (
     <div className={cn("flex flex-col", className)}>
-      {showRuntimeModeToggle && (
+      {showRuntimeModeToggle && terminalProviders.length > 0 && (
         <div
           role="tablist"
           aria-label={t("runtime:modeAriaLabel")}
@@ -809,6 +826,7 @@ export function RuntimeMatrixPicker({
             role="tab"
             aria-selected={isTerminal}
             onClick={() => setRuntimeMode("terminal")}
+            disabled={Boolean(currentProvider && !supportsTerminalRuntime(currentProvider))}
             className={cn(
               "relative inline-flex h-9 items-center justify-center gap-2 rounded-t-md border border-b-0 px-4 transition-colors",
               isTerminal
@@ -825,7 +843,7 @@ export function RuntimeMatrixPicker({
 
       {isTerminal ? (
         <TerminalProviderPanel
-          providers={selectableProviders}
+          providers={terminalProviders}
           readyProviderIds={readyProviderIds}
           selectedProviderId={value.providerId ?? currentProvider?.id ?? null}
           onSelect={(providerId) =>

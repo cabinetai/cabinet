@@ -12,6 +12,8 @@ import {
   resolveProviderId,
   runOneShotProviderPrompt,
 } from "./provider-runtime";
+import { agentAdapterRegistry } from "./adapters";
+import type { AgentExecutionAdapter } from "./adapters/types";
 import { claudeCodeProvider } from "./providers/claude-code";
 import { codexCliProvider } from "./providers/codex-cli";
 
@@ -213,4 +215,62 @@ test("runOneShotProviderPrompt closes stdin for CLI providers", async (t) => {
   });
 
   assert.equal(output, "OK");
+});
+
+test("runOneShotProviderPrompt executes API providers through their adapter", async (t) => {
+  const previousDefaultProvider = providerRegistry.defaultProvider;
+  const provider: AgentProvider = {
+    id: "test-api-provider",
+    name: "Test API Provider",
+    type: "api",
+    icon: "bot",
+    async isAvailable() {
+      return true;
+    },
+    async healthCheck() {
+      return { available: true, authenticated: true, version: "test" };
+    },
+  };
+  const adapter: AgentExecutionAdapter = {
+    type: "test_api_adapter",
+    name: "Test API Adapter",
+    providerId: provider.id,
+    executionEngine: "api",
+    testEnvironment: async () => ({
+      adapterType: "test_api_adapter",
+      status: "pass",
+      checks: [],
+      testedAt: new Date().toISOString(),
+    }),
+    execute: async (ctx) => {
+      assert.equal(ctx.prompt, "Hello API");
+      assert.equal(ctx.config.model, "test-model");
+      await ctx.onLog("stdout", "adapter output");
+      return {
+        exitCode: 0,
+        signal: null,
+        timedOut: false,
+        provider: provider.id,
+        model: "test-model",
+        output: "adapter output",
+      };
+    },
+  };
+
+  providerRegistry.register(provider);
+  agentAdapterRegistry.registerExternal(adapter);
+  t.after(() => {
+    providerRegistry.providers.delete(provider.id);
+    providerRegistry.defaultProvider = previousDefaultProvider;
+    agentAdapterRegistry.unregisterExternal(adapter.type);
+  });
+
+  const output = await runOneShotProviderPrompt({
+    providerId: provider.id,
+    prompt: "Hello API",
+    cwd: process.cwd(),
+    model: "test-model",
+  });
+
+  assert.equal(output, "adapter output");
 });
