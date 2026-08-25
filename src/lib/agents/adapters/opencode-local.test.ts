@@ -46,7 +46,8 @@ printf '%s\n' \
   assert.equal(result.model, "openai/gpt-5.2-codex");
   assert.deepEqual(result.usage, {
     inputTokens: 100,
-    outputTokens: 25,
+    outputTokens: 20,
+    reasoningTokens: 5,
     cachedInputTokens: 30,
   });
   assert.equal(result.output, "Reading files.\nDone.");
@@ -72,4 +73,55 @@ test("opencode session codec round-trips session params", () => {
 
   assert.equal(codec.serialize({}), null);
   assert.equal(codec.deserialize({}), null);
+});
+
+test("injects OPENCODE_CONFIG_CONTENT with compaction settings into the child process env", async () => {
+  const scriptPath = await createExecutableScript(`#!/bin/sh
+cat >/dev/null
+printf '%s\n' \
+  '{"type":"text","part":{"text":"compaction-test"}}'
+`);
+
+  const metaCalls: Array<Record<string, unknown>> = [];
+  const result = await openCodeLocalAdapter.execute?.({
+    runId: "run-oc-cfg",
+    adapterType: "opencode_local",
+    config: { command: scriptPath, model: "deepseek/deepseek-v4-pro" },
+    prompt: "test compaction env",
+    cwd: process.cwd(),
+    onMeta: async (meta) => {
+      metaCalls.push(meta as unknown as Record<string, unknown>);
+    },
+    onLog: async () => {},
+  });
+
+  assert.ok(result);
+  assert.equal(result.exitCode, 0);
+
+  // Verify onMeta reports OPENCODE_CONFIG_CONTENT in the env
+  assert.ok(metaCalls.length > 0, "onMeta should have been called");
+  const metaEnv = metaCalls[0].env as Record<string, string> | undefined;
+  assert.ok(metaEnv, "onMeta should include env");
+  assert.ok(
+    typeof metaEnv.OPENCODE_CONFIG_CONTENT === "string" &&
+      metaEnv.OPENCODE_CONFIG_CONTENT.length > 0,
+    "OPENCODE_CONFIG_CONTENT should be set in meta env"
+  );
+
+  // Verify the content is valid JSON and contains compaction settings
+  const parsed = JSON.parse(metaEnv.OPENCODE_CONFIG_CONTENT);
+  assert.ok(parsed.compaction, "config should include compaction settings");
+  assert.equal(parsed.compaction.auto, true);
+  assert.equal(parsed.compaction.prune, true);
+  assert.ok(
+    typeof parsed.compaction.reserved === "number",
+    "compaction.reserved should be a number"
+  );
+
+  // OPENCODE_DISABLE_PROJECT_CONFIG must still be set to prevent leakage
+  assert.equal(
+    metaEnv.OPENCODE_DISABLE_PROJECT_CONFIG,
+    "true",
+    "project config must still be disabled"
+  );
 });

@@ -41,6 +41,12 @@ export interface ProviderModel {
   description?: string;
   effortLevels?: ProviderEffortLevel[];
   /**
+   * Known context window (max input tokens) for this model. Populated from
+   * the provider's model metadata (e.g. `opencode models --verbose`).
+   * Falls through to the UI's `DEFAULT_CONTEXT_WINDOW` when undefined.
+   */
+  contextWindow?: number;
+  /**
    * Auth/plan gate for this model. `"api_key"` means the provider's backend
    * only accepts the model when the user is authenticated with a direct API
    * key (not a consumer subscription like ChatGPT Codex). UIs should badge

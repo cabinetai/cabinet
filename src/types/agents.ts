@@ -106,6 +106,12 @@ export interface ProviderModel {
   description?: string;
   effortLevels?: ProviderEffortLevel[];
   /**
+   * Known context window (max input tokens) for this model. Populated from
+   * the provider's model metadata. Falls through to `DEFAULT_CONTEXT_WINDOW`
+   * (200k) when undefined.
+   */
+  contextWindow?: number;
+  /**
    * Auth/plan gate advertised by the provider. UIs should badge models
    * that `requires === "api_key"` so users don't pick an unsupported
    * model on a ChatGPT-plan Codex account.

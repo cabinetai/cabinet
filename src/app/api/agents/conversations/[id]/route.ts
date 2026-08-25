@@ -14,6 +14,7 @@ import {
 } from "@/lib/agents/conversation-runner";
 import { normalizeRuntimeOverride } from "@/lib/agents/runtime-overrides";
 import { publishConversationEvent } from "@/lib/agents/conversation-events";
+import { providerRegistry } from "@/lib/agents/provider-registry";
 import type { ConversationMeta } from "@/types/conversations";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,21 @@ export async function GET(
 
   if (!detail) {
     return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+  }
+
+  // Backfill contextWindow from provider model list (static or dynamically
+  // cached) when missing. Covers conversations created before the field was
+  // populated on meta — including those using models discovered via
+  // `listModels()` with IDs that differ from the static fallback list.
+  if (!detail.meta.runtime?.contextWindow && detail.meta.providerId && detail.meta.adapterConfig?.model) {
+    const modelId = String(detail.meta.adapterConfig.model);
+    const modelInfo = providerRegistry.getProviderModels(detail.meta.providerId).find((m) => m.id === modelId);
+    if (modelInfo?.contextWindow) {
+      detail.meta = {
+        ...detail.meta,
+        runtime: { ...detail.meta.runtime, contextWindow: modelInfo.contextWindow },
+      };
+    }
   }
 
   return NextResponse.json(detail);

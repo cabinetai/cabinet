@@ -10,7 +10,7 @@ interface OpenCodeEventPayload {
       input?: number;
       output?: number;
       reasoning?: number;
-      cache?: { read?: number };
+      cache?: { read?: number; write?: number };
     };
     state?: { status?: string; error?: string };
     cost?: number;
@@ -36,7 +36,7 @@ export function createOpenCodeStreamAccumulator(): OpenCodeStreamAccumulator {
     buffer: "",
     display: "",
     sessionId: null,
-    usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0 },
+    usage: { inputTokens: 0, outputTokens: 0, cachedInputTokens: 0, reasoningTokens: 0, cacheWriteInputTokens: 0 },
     hasUsage: false,
     costUsd: 0,
     messages: [],
@@ -115,13 +115,19 @@ function consumeLine(
         accumulator.hasUsage = true;
       }
       if (typeof tokens.reasoning === "number") {
-        accumulator.usage.outputTokens += tokens.reasoning;
+        accumulator.usage.reasoningTokens =
+          (accumulator.usage.reasoningTokens || 0) + tokens.reasoning;
         accumulator.hasUsage = true;
       }
       const cacheRead = tokens.cache?.read;
       if (typeof cacheRead === "number") {
         accumulator.usage.cachedInputTokens =
           (accumulator.usage.cachedInputTokens || 0) + cacheRead;
+      }
+      const cacheWrite = tokens.cache?.write;
+      if (typeof cacheWrite === "number") {
+        accumulator.usage.cacheWriteInputTokens =
+          (accumulator.usage.cacheWriteInputTokens || 0) + cacheWrite;
       }
     }
     if (typeof payload.part.cost === "number") {
@@ -194,6 +200,18 @@ export function getOpenCodeUsage(
     accumulator.usage.cachedInputTokens > 0
   ) {
     usage.cachedInputTokens = accumulator.usage.cachedInputTokens;
+  }
+  if (
+    typeof accumulator.usage.reasoningTokens === "number" &&
+    accumulator.usage.reasoningTokens > 0
+  ) {
+    usage.reasoningTokens = accumulator.usage.reasoningTokens;
+  }
+  if (
+    typeof accumulator.usage.cacheWriteInputTokens === "number" &&
+    accumulator.usage.cacheWriteInputTokens > 0
+  ) {
+    usage.cacheWriteInputTokens = accumulator.usage.cacheWriteInputTokens;
   }
   return usage;
 }

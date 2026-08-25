@@ -66,6 +66,16 @@ const OPENCODE_STDERR_NOISE_PATTERNS = [
   /^Database migration complete/i,
 ];
 
+// Minimal injected opencode config. Prevents loading project-level config
+// (which could interfere with Cabinet's runtime) while enabling auto-
+// compaction + tool-output pruning for long-running sessions. Pruning
+// removes stale tool outputs that bloat context without aiding cache
+// reuse — especially important for DeepSeek's disk-based KV cache where
+// clean prefixes drive higher cache-hit rates.
+const OPENCODE_INJECTED_CONFIG = JSON.stringify({
+  compaction: { auto: true, prune: true, reserved: 10000 },
+});
+
 function filterOpenCodeStderr(chunk: string): string {
   return chunk
     .split(/\r?\n/)
@@ -123,12 +133,16 @@ async function runOpenCodeOnce(
     env: {
       PATH: getAdapterRuntimePath(),
       OPENCODE_DISABLE_PROJECT_CONFIG: "true",
+      OPENCODE_CONFIG_CONTENT: OPENCODE_INJECTED_CONFIG,
     },
   });
 
   const result = await runChildProcess(command, args, {
     cwd: ctx.cwd,
-    env: { OPENCODE_DISABLE_PROJECT_CONFIG: "true" },
+    env: {
+      OPENCODE_DISABLE_PROJECT_CONFIG: "true",
+      OPENCODE_CONFIG_CONTENT: OPENCODE_INJECTED_CONFIG,
+    },
     stdin: ctx.prompt,
     timeoutMs: ctx.timeoutMs,
     onSpawn: ctx.onSpawn,

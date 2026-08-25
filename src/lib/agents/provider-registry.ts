@@ -1,4 +1,4 @@
-import type { AgentProvider, ProviderRegistry } from "./provider-interface";
+import type { AgentProvider, ProviderRegistry, ProviderModel } from "./provider-interface";
 import { claudeCodeProvider } from "./providers/claude-code";
 import { codexCliProvider } from "./providers/codex-cli";
 import { copilotCliProvider } from "./providers/copilot-cli";
@@ -11,6 +11,8 @@ import { piProvider } from "./providers/pi";
 class ProviderRegistryImpl implements ProviderRegistry {
   providers = new Map<string, AgentProvider>();
   defaultProvider = "claude-code";
+  #modelsCache = new Map<string, { models: ProviderModel[]; fetchedAt: number }>();
+  readonly #CACHE_TTL = 60_000;
 
   register(provider: AgentProvider): void {
     this.providers.set(provider.id, provider);
@@ -36,6 +38,25 @@ class ProviderRegistryImpl implements ProviderRegistry {
       }
     }
     return results;
+  }
+
+  /**
+   * Get models for a provider, preferring the cached dynamic list over the
+   * static fallback. This ensures lookups (e.g. contextWindow resolution)
+   * find models discovered via `listModels()` even when their IDs differ
+   * from the static fallback list.
+   */
+  getProviderModels(providerId: string): ProviderModel[] {
+    const cached = this.#modelsCache.get(providerId);
+    if (cached && Date.now() - cached.fetchedAt < this.#CACHE_TTL) {
+      return cached.models;
+    }
+    return this.providers.get(providerId)?.models ?? [];
+  }
+
+  /** Cache dynamic models from a provider's `listModels()` response. */
+  setProviderModelsCache(providerId: string, models: ProviderModel[]): void {
+    this.#modelsCache.set(providerId, { models, fetchedAt: Date.now() });
   }
 }
 
