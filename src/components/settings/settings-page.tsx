@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { GatewayCustomConfig } from "@/components/settings/provider-setup-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SkillLibrary } from "@/components/skills/skill-library";
 import { DataLocationsSection } from "@/components/settings/data-locations-section";
@@ -1401,6 +1402,15 @@ export function SettingsPage() {
                       <h4 className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
                         {t("settings:providers.cliAgents")}
                       </h4>
+
+                      {/* Standalone AI Gateway & OpenAI-compatible endpoints quick-access */}
+                      <div className="mb-4">
+                        <GatewayCustomConfig
+                          providerId={defaultProvider || "opencode"}
+                          onDone={() => void refresh(true, true)}
+                          t={t}
+                        />
+                      </div>
                       <div className="space-y-2">
                         {providers
                           .filter(isAgentProviderSelectable)

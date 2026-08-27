@@ -172,7 +172,7 @@ export async function POST(
   }
 
   const startedAt = Date.now();
-  const result = await runShellCommand(command);
+  const result = await runShellCommand(command, id);
   const durationMs = Date.now() - startedAt;
 
   const { status, hint } = classify(
@@ -202,7 +202,10 @@ export async function POST(
   });
 }
 
-function runShellCommand(command: string): Promise<{
+function runShellCommand(
+  command: string,
+  providerId?: string
+): Promise<{
   exitCode: number | null;
   signal: string | null;
   stdout: string;
@@ -213,7 +216,7 @@ function runShellCommand(command: string): Promise<{
     // withAdapterRuntimeEnv merges .cabinet.env and sets PATH via the adapter
     // runtime path (#108); the Windows branch runs through the shell since
     // there's no /bin/sh on Windows (#130/#93).
-    const env = withAdapterRuntimeEnv(process.env);
+    const env = withAdapterRuntimeEnv(process.env, providerId);
     const child =
       process.platform === "win32"
         ? spawn(command, {

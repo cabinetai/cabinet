@@ -192,11 +192,17 @@ export function getPublicDaemonWsOriginForRequest(
 }
 
 export function getDaemonUrl(): string {
-  return (
-    normalizeOrigin(process.env.CABINET_DAEMON_URL) ||
-    normalizeOrigin(readRuntimePorts().daemon?.origin) ||
-    getPublicDaemonOrigin()
-  );
+  const explicit = normalizeOrigin(process.env.CABINET_DAEMON_URL);
+  if (explicit) return explicit;
+  const runtimeOrigin = normalizeOrigin(readRuntimePorts().daemon?.origin);
+  if (runtimeOrigin) return runtimeOrigin;
+  const publicOrigin = normalizeOrigin(process.env.CABINET_PUBLIC_DAEMON_ORIGIN);
+  if (publicOrigin) {
+    if (publicOrigin.startsWith("ws://")) return publicOrigin.replace(/^ws:/, "http:");
+    if (publicOrigin.startsWith("wss://")) return publicOrigin.replace(/^wss:/, "https:");
+    return publicOrigin;
+  }
+  return `http://127.0.0.1:${getDaemonPort()}`;
 }
 
 export function getReleaseManifestUrl(): string {

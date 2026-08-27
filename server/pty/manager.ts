@@ -1,6 +1,9 @@
 import * as pty from "node-pty";
 import { WebSocket } from "ws";
+import fs from "fs";
+import path from "path";
 import { readCabinetEnvFile } from "../../src/lib/runtime/cabinet-env";
+import { DATA_DIR } from "../../src/lib/storage/path-utils";
 import {
   getOneShotLaunchSpec,
   getSessionLaunchSpec,
@@ -155,6 +158,33 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
     // edited via the UI without a daemon restart. mtime-cached; cheap.
     // process.env wins over file values (shell-supplied keys debug-override).
     const cabinetEnvValues = readCabinetEnvFile().values;
+    const customOverrides: Record<string, string> = {};
+    try {
+      const providersFile = path.join(DATA_DIR, ".agents", ".config", "providers.json");
+      if (fs.existsSync(providersFile)) {
+        const raw = JSON.parse(fs.readFileSync(providersFile, "utf8"));
+        const customConfigs = raw?.customConfigs;
+        if (resolvedProviderId && customConfigs?.[resolvedProviderId]) {
+          const cfg = customConfigs[resolvedProviderId];
+          if (cfg.baseURL) {
+            if (resolvedProviderId === "opencode" || resolvedProviderId === "codex-cli") {
+              customOverrides.OPENAI_BASE_URL = cfg.baseURL;
+            } else if (resolvedProviderId === "claude-code") {
+              customOverrides.ANTHROPIC_BASE_URL = cfg.baseURL;
+            }
+          }
+          if (cfg.apiKeyEnvVar && cabinetEnvValues[cfg.apiKeyEnvVar]) {
+            if (resolvedProviderId === "opencode" || resolvedProviderId === "codex-cli") {
+              customOverrides.OPENAI_API_KEY = cabinetEnvValues[cfg.apiKeyEnvVar];
+            } else if (resolvedProviderId === "claude-code") {
+              customOverrides.ANTHROPIC_API_KEY = cabinetEnvValues[cfg.apiKeyEnvVar];
+            }
+          }
+        }
+      }
+    } catch {
+      // Ignore read errors
+    }
     const invocation = buildPtyCliInvocation(launch.command, launch.args);
     const term = pty.spawn(invocation.command, invocation.args, {
       name: "xterm-256color",
@@ -163,6 +193,7 @@ export function createPtyManager(deps: PtyManagerDeps): PtyManager {
       cwd,
       env: {
         ...cabinetEnvValues,
+        ...customOverrides,
         ...(process.env as Record<string, string>),
         PATH: deps.enrichedPath,
         TERM: "xterm-256color",

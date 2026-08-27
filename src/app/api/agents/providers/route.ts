@@ -94,6 +94,7 @@ async function buildResponse() {
     defaultProvider: getConfiguredDefaultProviderId(settings),
     defaultModel: settings.defaultModel || null,
     defaultEffort: settings.defaultEffort || null,
+    customConfigs: settings.customConfigs || {},
   };
 }
 
@@ -129,7 +130,7 @@ export async function PUT(req: Request) {
       defaultProvider:
         typeof body.defaultProvider === "string"
           ? body.defaultProvider
-          : providerRegistry.defaultProvider,
+          : undefined,
       defaultModel:
         typeof body.defaultModel === "string"
           ? body.defaultModel
@@ -140,7 +141,11 @@ export async function PUT(req: Request) {
           : undefined,
       disabledProviderIds: Array.isArray(body.disabledProviderIds)
         ? body.disabledProviderIds.filter((value: unknown): value is string => typeof value === "string")
-        : [],
+        : undefined,
+      customConfigs:
+        body.customConfigs && typeof body.customConfigs === "object"
+          ? (body.customConfigs as Record<string, import("@/lib/agents/provider-settings").CustomProviderConfig>)
+          : undefined,
       migrations: Array.isArray(body.migrations)
         ? body.migrations.flatMap((value: unknown) => {
             if (!value || typeof value !== "object") return [];
@@ -158,6 +163,31 @@ export async function PUT(req: Request) {
           })
         : [],
     });
+
+    let autoModel: string | undefined = undefined;
+    const opencodeCfg = result.settings.customConfigs?.opencode;
+    if (opencodeCfg?.baseURL) {
+      const { readCabinetEnvFile } = await import("@/lib/runtime/cabinet-env");
+      const envValues = readCabinetEnvFile().values;
+      const apiKey = opencodeCfg.apiKeyEnvVar ? envValues[opencodeCfg.apiKeyEnvVar] || process.env[opencodeCfg.apiKeyEnvVar] : undefined;
+      const { syncOpenCodeGatewayConfig } = await import("@/lib/agents/providers/opencode");
+      const synced = await syncOpenCodeGatewayConfig(opencodeCfg.baseURL, apiKey, typeof body.defaultModel === "string" ? body.defaultModel : undefined);
+      if (synced && typeof synced === "string") {
+        autoModel = `openai/${synced}`;
+      }
+    }
+
+    if (body.defaultModel) {
+      const updated = await updateProviderSettingsWithMigrations({
+        defaultModel: body.defaultModel,
+      });
+      result.settings = updated.settings;
+    } else if (autoModel && (!result.settings.defaultModel || result.settings.defaultModel === "openai/gpt-5.4")) {
+      const updated = await updateProviderSettingsWithMigrations({
+        defaultModel: autoModel,
+      });
+      result.settings = updated.settings;
+    }
 
     return NextResponse.json({
       ok: true,

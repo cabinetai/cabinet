@@ -189,7 +189,10 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
   };
 
   const onExternalDone = async () => {
-    await refreshStatus(); await loadProviders(); await promoteSoleReadyDefault(providerId);
+    await refreshStatus();
+    await loadProviders();
+    await promoteSoleReadyDefault(providerId);
+    await runVerify();
   };
 
   return (
@@ -225,6 +228,11 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
           <div className="grid min-h-0 flex-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             {/* LEFT — the current phase, front and center */}
             <div className="min-h-0 space-y-4 overflow-y-auto border-b border-border p-5 md:border-b-0 md:border-e">
+              {/* Always allow configuring Gateway / Custom Endpoint regardless of CLI phase flicker */}
+              {(providerId === "opencode" || providerId === "codex-cli" || providerId === "claude-code") && (
+                <GatewayCustomConfig providerId={providerId} onDone={onExternalDone} t={t} />
+              )}
+
               {phase === "install" && (
                 <HeroAction
                   heading={t("settings:providerSetup.installHeading", { name })}
@@ -259,25 +267,29 @@ function ProviderSetupPanel({ providerId }: { providerId: string }) {
 
               {phase === "verify" && (
                 verifyFailed ? (
-                  <div className="space-y-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
-                    <h3 className="text-[15px] font-semibold text-amber-800 dark:text-amber-200">{t("settings:providerSetup.almostThere")}</h3>
-                    <p className="text-xs text-amber-700 dark:text-amber-300">{verify?.hint || vStatus}</p>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button onClick={() => void runVerify()} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
-                        {t("settings:providerSetup.tryAgain")}
-                      </button>
-                      {vStatus === "auth_required" && loginStep && (
-                        <button onClick={() => runInTerminal(loginStep.command!)} className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
-                          {t("settings:providerSetup.signInCta")}
+                  <div className="space-y-3">
+                    <div className="space-y-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+                      <h3 className="text-[15px] font-semibold text-amber-800 dark:text-amber-200">{t("settings:providerSetup.almostThere")}</h3>
+                      <p className="text-xs text-amber-700 dark:text-amber-300">{verify?.hint || vStatus}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button onClick={() => void runVerify()} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
+                          {t("settings:providerSetup.tryAgain")}
                         </button>
-                      )}
+                        {vStatus === "auth_required" && loginStep && (
+                          <button onClick={() => runInTerminal(loginStep.command!)} className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
+                            {t("settings:providerSetup.signInCta")}
+                          </button>
+                        )}
+                      </div>
+                      {loginUrl && <LoginLink url={loginUrl} t={t} />}
                     </div>
-                    {loginUrl && <LoginLink url={loginUrl} t={t} />}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-4">
-                    <Loader2 className="h-5 w-5 shrink-0 animate-spin text-primary" />
-                    <p className="text-sm">{t("settings:providerSetup.verifyingNow")}</p>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-4">
+                      <Loader2 className="h-5 w-5 shrink-0 animate-spin text-primary" />
+                      <p className="text-sm">{t("settings:providerSetup.verifyingNow")}</p>
+                    </div>
                   </div>
                 )
               )}
@@ -493,6 +505,231 @@ function ClaudeLogin({ onDone, t }: { onDone: () => void; t: TFn }) {
         </div>
       )}
       {err && <p className="text-xs text-destructive">{err}</p>}
+    </div>
+  );
+}
+
+export function GatewayCustomConfig({ providerId, onDone }: { providerId: string; onDone: () => void; t: TFn }) {
+  const [baseURL, setBaseURL] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [selectedModel, setSelectedModel] = useState("");
+  const [availableModels, setAvailableModels] = useState<Array<{ id: string; name: string }>>([]);
+  const [fetchingModels, setFetchingModels] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [expanded, setExpanded] = useState(false);
+
+  const envKey = providerId === "claude-code" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY";
+
+  const fetchModels = useCallback(async (url: string, key?: string) => {
+    if (!url.trim()) return;
+    setFetchingModels(true);
+    try {
+      const normalized = url.trim().replace(/\/+$/, "");
+      const headers: Record<string, string> = {};
+      if (key?.trim()) headers["Authorization"] = `Bearer ${key.trim()}`;
+      
+      const res = await fetch(`${normalized}/models`, {
+        headers,
+        signal: AbortSignal.timeout(6000),
+      });
+      if (res.ok) {
+        const d = (await res.json()) as { data?: Array<{ id: string }> };
+        if (Array.isArray(d.data)) {
+          const list = d.data.map((m) => {
+            const formatted = providerId === "opencode"
+              ? m.id.startsWith("openai/") ? m.id : `openai/${m.id}`
+              : m.id;
+            return { id: formatted, name: formatted };
+          });
+          setAvailableModels(list);
+          if (list.length > 0) {
+            setSelectedModel((curr) => curr || list[0].id);
+          }
+        }
+      }
+    } catch {
+      // ignore
+    } finally {
+      setFetchingModels(false);
+    }
+  }, [providerId]);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const r = await fetch("/api/agents/providers", { cache: "no-store" });
+        if (!r.ok) return;
+        const d = (await r.json()) as {
+          defaultModel?: string;
+          customConfigs?: Record<string, { baseURL?: string; apiKeyEnvVar?: string }>;
+        };
+        const cfg = d.customConfigs?.[providerId];
+        if (alive) {
+          if (d.defaultModel) {
+            setSelectedModel(d.defaultModel);
+          }
+          if (cfg?.baseURL) {
+            setBaseURL(cfg.baseURL);
+            setExpanded(true);
+            void fetchModels(cfg.baseURL);
+          }
+        }
+      } catch { /* ignore */ }
+    })();
+    return () => { alive = false; };
+  }, [providerId, fetchModels]);
+
+  const handleFetchClick = () => {
+    void fetchModels(baseURL, apiKey);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    setMsg(null);
+    try {
+      if (apiKey.trim()) {
+        const envRes = await fetch("/api/agents/config/cabinet-env", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key: envKey, value: apiKey.trim() }),
+        });
+        if (!envRes.ok) throw new Error("Could not save API key in .cabinet.env");
+      }
+
+      const provRes = await fetch("/api/agents/providers", { cache: "no-store" });
+      const provData = await provRes.json();
+      const currentConfigs = provData.customConfigs || {};
+
+      const nextConfigs = {
+        ...currentConfigs,
+        [providerId]: baseURL.trim()
+          ? { baseURL: baseURL.trim(), apiKeyEnvVar: envKey }
+          : undefined,
+      };
+
+      const putRes = await fetch("/api/agents/providers", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          defaultProvider: providerId,
+          defaultModel: selectedModel.trim() || undefined,
+          customConfigs: nextConfigs,
+        }),
+      });
+      if (!putRes.ok) throw new Error("Could not update provider settings");
+
+      setMsg({ text: "Gateway & default model saved successfully", ok: true });
+      void onDone();
+    } catch (e) {
+      setMsg({ text: e instanceof Error ? e.message : String(e), ok: false });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-border/80 bg-muted/20 p-3 space-y-2">
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="flex w-full items-center justify-between text-xs font-semibold text-foreground/90 hover:text-foreground"
+      >
+        <span>AI Gateway / Custom Endpoint (OpenRouter, LiteLLM, vLLM)</span>
+        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")} />
+      </button>
+
+      {expanded && (
+        <div className="space-y-2 pt-1">
+          <p className="text-[11px] text-muted-foreground">
+            Override the API endpoint and key to route this CLI through an AI gateway or OpenAI-compatible server.
+          </p>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Base URL
+              </label>
+              <button
+                type="button"
+                onClick={handleFetchClick}
+                disabled={!baseURL.trim() || fetchingModels}
+                className="text-[10px] text-primary hover:underline disabled:opacity-50"
+              >
+                {fetchingModels ? "Fetching models..." : "Test & Discover Models"}
+              </button>
+            </div>
+            <input
+              type="text"
+              value={baseURL}
+              onChange={(e) => setBaseURL(e.target.value)}
+              placeholder="e.g. https://openrouter.ai/api/v1 or http://192.168.0.204:8317/v1"
+              className="w-full rounded-md border border-border bg-background px-2.5 py-1.5 font-mono text-xs outline-none focus-visible:ring-1 focus-visible:ring-ring/60"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              API Key ({envKey})
+            </label>
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="Leave blank to keep existing key"
+              className="w-full rounded-md border border-border bg-background px-2.5 py-1.5 font-mono text-xs outline-none focus-visible:ring-1 focus-visible:ring-ring/60"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Default Model
+            </label>
+            {availableModels.length > 0 ? (
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="w-full rounded-md border border-border bg-background px-2.5 py-1.5 font-mono text-xs outline-none focus-visible:ring-1 focus-visible:ring-ring/60"
+              >
+                {availableModels.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                placeholder="e.g. openai/gpt-4o or Antigravity-pro2/gemini-3.7-flash-high"
+                className="w-full rounded-md border border-border bg-background px-2.5 py-1.5 font-mono text-xs outline-none focus-visible:ring-1 focus-visible:ring-ring/60"
+              />
+            )}
+            {availableModels.length > 0 && (
+              <p className="text-[10px] text-muted-foreground">
+                {availableModels.length} models discovered from gateway.
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
+            <button
+              type="button"
+              onClick={save}
+              disabled={saving}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              Save Gateway Config
+            </button>
+            {msg && (
+              <span className={cn("text-[11px]", msg.ok ? "text-emerald-600 dark:text-emerald-400" : "text-destructive")}>
+                {msg.text}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
