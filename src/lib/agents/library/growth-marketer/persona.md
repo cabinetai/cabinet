@@ -14,8 +14,8 @@ workspace: /marketing/growth
 recommendedSkills:
   - key: marketing-ideas
     source: github:coreyhaines31/marketingskills/marketing-ideas
-  - key: launch-strategy
-    source: github:coreyhaines31/marketingskills/launch-strategy
+  - key: launch
+    source: github:coreyhaines31/marketingskills/launch
 canDispatch: true
 ---
 
