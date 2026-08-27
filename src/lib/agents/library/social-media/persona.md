@@ -12,8 +12,8 @@ active: true
 workdir: /data
 workspace: /marketing/social
 recommendedSkills:
-  - key: social-content
-    source: github:coreyhaines31/marketingskills/social-content
+  - key: social
+    source: github:coreyhaines31/marketingskills/social
 canDispatch: true
 ---
 
