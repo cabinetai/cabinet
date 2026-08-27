@@ -13,7 +13,7 @@ import {
   validateVersion,
 } from "./paths.js";
 import { log, success, warning } from "./log.js";
-import { npmCommand } from "./process.js";
+import { runNpm, describeSpawnFailure } from "./process.js";
 import { fetchReleaseManifest, resolveAppBundle, type ReleaseAppBundle } from "./release-manifest.js";
 
 const REPO_URL = "https://github.com/cabinetai/cabinet";
@@ -210,12 +210,9 @@ async function installFromSource(version: string, appDir: string): Promise<void>
 
   if (!fs.existsSync(path.join(appDir, "node_modules", "next"))) {
     log("Installing dependencies...");
-    const result = spawnSync(npmCommand(), ["install"], {
-      cwd: appDir,
-      stdio: "inherit",
-    });
-    if (result.status !== 0) {
-      throw new Error("Failed to install dependencies");
+    const result = runNpm(["install"], { cwd: appDir });
+    if (result.error || result.status !== 0) {
+      throw new Error(`Failed to install dependencies: ${describeSpawnFailure(result)}`);
     }
   }
 

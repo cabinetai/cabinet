@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
-import { spawnSync } from "child_process";
 import { findCabinetRoot } from "./paths.js";
 import { appVersionDir } from "./paths.js";
-import { npmCommand } from "./process.js";
+import { runNpm, describeSpawnFailure } from "./process.js";
+import { warning } from "./log.js";
 import { isPortFree, parsePort } from "./ports.js";
 
 export interface CheckResult {
@@ -81,7 +81,10 @@ export function checkAppDeps(version: string): CheckResult {
       status: "fail",
       message: "Dependencies not installed.",
       fix: () => {
-        spawnSync(npmCommand(), ["install"], { cwd: appDir, stdio: "inherit" });
+        const result = runNpm(["install"], { cwd: appDir });
+        if (result.error || result.status !== 0) {
+          warning(`npm install failed: ${describeSpawnFailure(result)}`);
+        }
       },
     };
   }
