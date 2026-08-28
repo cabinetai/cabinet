@@ -60,6 +60,16 @@ function isSkillsRelative(relativePath: string): boolean {
   return false;
 }
 
+/** Managed connector state contains OAuth refresh tokens and local API secrets. */
+export function isCLIProxyStateRelative(relativePath: string): boolean {
+  if (!relativePath) return false;
+  const segments = relativePath.split(path.sep);
+  for (let i = 0; i < segments.length - 1; i++) {
+    if (segments[i] === ".cabinet-state" && segments[i + 1] === "cli-proxy") return true;
+  }
+  return false;
+}
+
 async function ensureBackupRoot(): Promise<void> {
   await fs.mkdir(BACKUP_ROOT, { recursive: true });
 }
@@ -81,6 +91,7 @@ export async function createDataBackup(
     recursive: true,
     filter: (src) => {
       const relative = path.relative(DATA_DIR, src);
+      if (isCLIProxyStateRelative(relative)) return false;
       if (!options.includeSkills && isSkillsRelative(relative)) return false;
       return true;
     },
@@ -112,6 +123,7 @@ export function createDataBackupSync(
     recursive: true,
     filter: (src) => {
       const relative = path.relative(DATA_DIR, src);
+      if (isCLIProxyStateRelative(relative)) return false;
       if (!options.includeSkills && isSkillsRelative(relative)) return false;
       return true;
     },
@@ -140,6 +152,7 @@ export async function createProjectSnapshotBackup(
     filter: (src) => {
       const relative = path.relative(PROJECT_ROOT, src);
       if (!shouldCopyProjectRelative(relative)) return false;
+      if (isCLIProxyStateRelative(relative)) return false;
       if (!options.includeEnvKeys && isEnvKeysRelative(relative)) return false;
       if (!options.includeSkills && isSkillsRelative(relative)) return false;
       return true;

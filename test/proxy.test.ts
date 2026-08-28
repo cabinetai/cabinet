@@ -118,3 +118,55 @@ test("daemon's authCookieHeader passes the proxy gate on /api/* when locked", as
     }
   }
 });
+
+test("proxy rewrites /api to the daemon origin when CABINET_API_VIA_DAEMON=1", async () => {
+  process.env.CABINET_API_VIA_DAEMON = "1";
+  process.env.CABINET_DAEMON_URL = "http://127.0.0.1:4100";
+  const prevPassword = process.env.KB_PASSWORD;
+  delete process.env.KB_PASSWORD;
+  try {
+    const res = await proxy(makeReq("/api/cabinets?x=1"));
+    assert.equal(
+      res.headers.get("x-middleware-rewrite"),
+      "http://127.0.0.1:4100/api/cabinets?x=1"
+    );
+  } finally {
+    delete process.env.CABINET_API_VIA_DAEMON;
+    delete process.env.CABINET_DAEMON_URL;
+    if (prevPassword !== undefined) process.env.KB_PASSWORD = prevPassword;
+  }
+});
+
+test("proxy leaves pages and flag-off requests alone", async () => {
+  process.env.CABINET_DAEMON_URL = "http://127.0.0.1:4100";
+  const prevPassword = process.env.KB_PASSWORD;
+  delete process.env.KB_PASSWORD;
+  try {
+    delete process.env.CABINET_API_VIA_DAEMON;
+    const flagOff = await proxy(makeReq("/api/cabinets"));
+    assert.equal(flagOff.headers.get("x-middleware-rewrite"), null);
+
+    process.env.CABINET_API_VIA_DAEMON = "1";
+    const page = await proxy(makeReq("/tasks"));
+    assert.equal(page.headers.get("x-middleware-rewrite"), null);
+  } finally {
+    delete process.env.CABINET_API_VIA_DAEMON;
+    delete process.env.CABINET_DAEMON_URL;
+    if (prevPassword !== undefined) process.env.KB_PASSWORD = prevPassword;
+  }
+});
+
+test("proxy still 401s unauthenticated /api requests before any rewrite", async () => {
+  process.env.CABINET_API_VIA_DAEMON = "1";
+  process.env.CABINET_DAEMON_URL = "http://127.0.0.1:4100";
+  process.env.KB_PASSWORD = "hunter2";
+  try {
+    const res = await proxy(makeReq("/api/cabinets"));
+    assert.equal(res.status, 401);
+    assert.equal(res.headers.get("x-middleware-rewrite"), null);
+  } finally {
+    delete process.env.CABINET_API_VIA_DAEMON;
+    delete process.env.CABINET_DAEMON_URL;
+    delete process.env.KB_PASSWORD;
+  }
+});

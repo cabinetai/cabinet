@@ -5,6 +5,7 @@ import {
   cloudUserSub,
   hasValidKbAuthCookie,
 } from "@/lib/auth/request-gate";
+import { getDaemonUrl } from "@/lib/runtime/runtime-config";
 
 // ---------------------------------------------------------------------------
 // Cabinet Cloud gate (CABINET_CLOUD=1)
@@ -23,13 +24,34 @@ import {
 // The JWT verification itself lives in @/lib/auth/request-gate so routes
 // excluded from the matcher below (/api/upload) can apply the identical gate.
 
+// Transitional switch for the Express-backend migration: when enabled, the
+// proxy forwards authorized /api/* requests to the daemon's embedded Express
+// app instead of the local Next route handlers. /api/upload never reaches
+// this code — it is excluded from the matcher below (Next buffers matched
+// request bodies), and keeps hitting its Next route until migration step 2.
+function apiViaDaemon(): boolean {
+  return process.env.CABINET_API_VIA_DAEMON === "1";
+}
+
+function maybeRewriteApi(
+  req: NextRequest,
+  requestHeaders?: Headers
+): NextResponse | null {
+  const { pathname, search } = req.nextUrl;
+  if (!apiViaDaemon() || !pathname.startsWith("/api/")) return null;
+  const target = new URL(pathname + search, getDaemonUrl());
+  return requestHeaders
+    ? NextResponse.rewrite(target, { request: { headers: requestHeaders } })
+    : NextResponse.rewrite(target);
+}
+
 async function cloudProxy(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
 
   // Liveness/readiness probes must answer without a user session so the host
   // agent / orchestrator can tell a booting container from a dead one.
   if (pathname.startsWith("/api/health")) {
-    return NextResponse.next();
+    return maybeRewriteApi(req) ?? NextResponse.next();
   }
 
   const sub = await cloudUserSub(req);
@@ -55,7 +77,9 @@ async function cloudProxy(req: NextRequest): Promise<NextResponse> {
   // from a verified token — never spoofed by the caller.
   const headers = new Headers(req.headers);
   headers.set("x-cabinet-user", sub);
-  return NextResponse.next({ request: { headers } });
+  return (
+    maybeRewriteApi(req, headers) ?? NextResponse.next({ request: { headers } })
+  );
 }
 
 export async function proxy(req: NextRequest) {
@@ -70,19 +94,19 @@ export async function proxy(req: NextRequest) {
 
   // Auth disabled — no password set
   if (!isAuthEnabled()) {
-    return NextResponse.next();
+    return maybeRewriteApi(req) ?? NextResponse.next();
   }
 
   const { pathname } = req.nextUrl;
 
   // Allow login page and login API
   if (pathname === "/login" || pathname === "/api/auth/login" || pathname === "/api/auth/check") {
-    return NextResponse.next();
+    return maybeRewriteApi(req) ?? NextResponse.next();
   }
 
   // Allow health check
   if (pathname.startsWith("/api/health")) {
-    return NextResponse.next();
+    return maybeRewriteApi(req) ?? NextResponse.next();
   }
 
   // Check auth cookie (constant-time; expected token is memoized so this is
@@ -96,7 +120,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next();
+  return maybeRewriteApi(req) ?? NextResponse.next();
 }
 
 export const config = {

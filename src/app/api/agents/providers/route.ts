@@ -14,6 +14,40 @@ import {
   getProviderUsage,
   updateProviderSettingsWithMigrations,
 } from "@/lib/agents/provider-management";
+import { getDaemonUrl, getOrCreateDaemonToken } from "@/lib/agents/daemon-auth";
+
+async function connectedCLIProxyProviders(): Promise<Set<string>> {
+  try {
+    const token = await getOrCreateDaemonToken();
+    const headers = { Authorization: `Bearer ${token}` };
+    const [statusResponse, accountsResponse] = await Promise.all([
+      fetch(`${getDaemonUrl()}/cli-proxy/status`, {
+        headers,
+        cache: "no-store",
+        signal: AbortSignal.timeout(2_000),
+      }),
+      fetch(`${getDaemonUrl()}/cli-proxy/accounts`, {
+        headers,
+        cache: "no-store",
+        signal: AbortSignal.timeout(2_000),
+      }),
+    ]);
+    if (!statusResponse.ok || !accountsResponse.ok) return new Set();
+    const status = await statusResponse.json() as { running?: boolean; routingEnabled?: boolean };
+    if (!status.running || !status.routingEnabled) return new Set();
+    const body = await accountsResponse.json() as {
+      accounts?: Array<{ provider?: string; disabled?: boolean; unavailable?: boolean }>;
+    };
+    return new Set(
+      (body.accounts || [])
+        .filter((account) => !account.disabled && !account.unavailable)
+        .map((account) => account.provider === "anthropic" ? "claude" : account.provider || "")
+        .filter(Boolean)
+    );
+  } catch {
+    return new Set();
+  }
+}
 
 // Short in-memory cache: the GET response is driven by spawning 8 CLI probes,
 // and the page fires this endpoint on every mount. Cache shared across requests.
@@ -25,10 +59,23 @@ async function buildResponse() {
   const providers = providerRegistry.listAll();
   const settings = await readProviderSettings();
   const usage = await getProviderUsage();
+  const proxyProviders = await connectedCLIProxyProviders();
 
   const results = await Promise.all(
       providers.map(async (p) => {
-        const status = await p.healthCheck();
+        const directStatus = await p.healthCheck();
+        const proxyProvider = p.id === "claude-code" ? "claude" : p.id === "codex-cli" ? "codex" : null;
+        const connectedViaProxy = Boolean(
+          directStatus.available && proxyProvider && proxyProviders.has(proxyProvider)
+        );
+        const status = connectedViaProxy
+          ? {
+              ...directStatus,
+              authenticated: true,
+              version: "Connected via Cabinet CLIProxyAPI",
+              error: undefined,
+            }
+          : directStatus;
         const defaultAdapterType = defaultAdapterTypeForProvider(p.id);
         const adapters = agentAdapterRegistry
           .listAll()
@@ -76,6 +123,7 @@ async function buildResponse() {
           defaultAdapterType,
           adapters,
           supportsTerminalResume: p.supportsTerminalResume === true,
+          connector: connectedViaProxy ? "cli-proxy" : null,
           enabled: isProviderEnabled(p.id, settings),
           usage: usage[p.id] || {
             agentSlugs: [],
