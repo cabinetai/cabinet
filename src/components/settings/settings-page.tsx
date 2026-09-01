@@ -67,6 +67,7 @@ import { showError } from "@/lib/ui/toast";
 import { confirmDialog } from "@/lib/ui/confirm";
 import type { ProviderInfo } from "@/types/agents";
 import { ConnectClaudeCard } from "@/components/settings/connect-claude-card";
+import { CLIProxyConnectorCard } from "@/components/settings/cli-proxy-connector-card";
 import { UserAvatar } from "@/components/layout/user-avatar";
 import {
   refreshUserProfile,
@@ -1344,6 +1345,7 @@ export function SettingsPage() {
             <>
               {/* Cloud: one-click Connect-Claude (setup-token) — inert on desktop/self-host. */}
               <ConnectClaudeCard />
+              <CLIProxyConnectorCard />
               <div>
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-[14px] font-semibold">{t("settings:providers.title")}</h3>
