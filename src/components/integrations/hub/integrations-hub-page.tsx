@@ -11,7 +11,8 @@ import {
 } from "@/lib/integrations/preview-catalog";
 import { IntegrationDetailPage } from "@/components/integrations/hub/integration-detail-page";
 import { LayoutGallery } from "@/components/integrations/hub/layouts/layout-gallery";
-import { useAppStore } from "@/stores/app-store";
+import { useAppStore, type SelectedSection } from "@/stores/app-store";
+import { ReturnToChip } from "@/components/layout/return-to-chip";
 import { CliMcpSection } from "@/components/settings/cli-mcp-section";
 import { ApiKeysSection } from "@/components/settings/api-keys-section";
 import { BuiltInToolsSection } from "@/components/settings/built-in-tools-section";
@@ -47,7 +48,13 @@ export function IntegrationsHubPage() {
   const selectedVia = useAppStore((s) =>
     s.section.type === "integrations" ? s.section.integrationVia ?? null : null,
   );
-  const setSection = useAppStore((s) => s.setSection);
+  // Intra-hub navigation (gallery ↔ connector detail). Plain setSection would
+  // clear `returnTo` and lose the "Back to Settings" chip, so re-push it.
+  const navigateWithinHub = (section: SelectedSection) => {
+    const { returnTo, pushSection, setSection } = useAppStore.getState();
+    if (returnTo) pushSection(section, returnTo);
+    else setSection(section);
+  };
 
   // Which connectors (and suites) are actually connected — drives the only badge
   // we show. Re-checked when returning from a detail (a connect may have landed).
@@ -110,7 +117,7 @@ export function IntegrationsHubPage() {
       <IntegrationDetailPage
         item={selected}
         via={selectedVia}
-        onBack={() => setSection({ type: "integrations" })}
+        onBack={() => navigateWithinHub({ type: "integrations" })}
       />
     );
   }
@@ -121,6 +128,7 @@ export function IntegrationsHubPage() {
         <div className="mx-auto max-w-6xl px-6 pt-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
+              <ReturnToChip />
               <h1 className="text-xl font-semibold tracking-tight text-foreground">
                 Integrations
               </h1>
@@ -185,7 +193,7 @@ export function IntegrationsHubPage() {
                 id === "google-drive" || id === "gmail"
                   ? id
                   : connectTargetFor(id);
-              setSection({
+              navigateWithinHub({
                 type: "integrations",
                 slug,
                 // Remember the actual card when it routes to a suite, so the
