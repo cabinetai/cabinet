@@ -1,20 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import {
-  Mail,
-  CheckCircle,
-  Loader2,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  Trash2,
-} from "lucide-react";
+import { Mail, CheckCircle, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface GmailStatus {
   connected: boolean;
+  needsReconnect?: boolean;
   email: string | null;
   method: "imap" | null;
   lastIndexed: string | null;
@@ -28,13 +21,14 @@ export function GmailSection() {
   const [connecting, setConnecting] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [instructionsOpen, setInstructionsOpen] = useState(false);
 
   const loadStatus = useCallback(async () => {
     try {
       const res = await fetch("/api/gmail/status", { cache: "no-store" });
       const data = await res.json() as GmailStatus;
       setStatus(data);
+      // Reconnect flow: keep the saved address so only the password is retyped.
+      if (data.needsReconnect && data.email) setEmail((v) => v || data.email!);
     } catch {
       // ignore
     } finally {
@@ -142,6 +136,14 @@ export function GmailSection() {
       ) : (
         /* Not connected state */
         <div className="space-y-3">
+          {status?.needsReconnect && (
+            <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-[12px] text-amber-900 dark:text-amber-100">
+              <span className="font-medium">Reconnect needed.</span> Cabinet can no
+              longer read the saved App Password for {status.email} (its encryption
+              key changed). Paste the App Password again — the one Google already
+              gave you usually still works.
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-[12px] font-medium" htmlFor="gmail-email">
               Gmail address
@@ -173,62 +175,6 @@ export function GmailSection() {
 
           {error && (
             <p className="text-[12px] text-destructive">{error}</p>
-          )}
-
-          {/* Instructions toggle */}
-          <button
-            type="button"
-            className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors"
-            onClick={() => setInstructionsOpen((v) => !v)}
-          >
-            <Mail className="h-3.5 w-3.5" />
-            How to get an App Password
-            {instructionsOpen ? (
-              <ChevronUp className="h-3 w-3" />
-            ) : (
-              <ChevronDown className="h-3 w-3" />
-            )}
-          </button>
-
-          {instructionsOpen && (
-            <div className="rounded-md border border-border bg-muted/20 px-3.5 py-3 text-[12px] space-y-1.5">
-              <p className="text-muted-foreground">
-                App Passwords require 2-Step Verification to be enabled on your Google account.
-              </p>
-              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                <li>
-                  Go to{" "}
-                  <button
-                    type="button"
-                    className="underline underline-offset-2 hover:text-foreground inline-flex items-center gap-0.5"
-                    onClick={() =>
-                      window.open("https://myaccount.google.com/security", "_blank")
-                    }
-                  >
-                    myaccount.google.com/security
-                    <ExternalLink className="h-2.5 w-2.5" />
-                  </button>
-                </li>
-                <li>Under &ldquo;How you sign in to Google&rdquo;, open 2-Step Verification</li>
-                <li>Scroll to the bottom &rarr; App passwords</li>
-                <li>Select app: Mail, device: Other &rarr; name it &ldquo;Cabinet&rdquo;</li>
-                <li>Copy the 16-character password and paste it above</li>
-              </ol>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-[11px] mt-1"
-                onClick={() =>
-                  window.open(
-                    "https://myaccount.google.com/apppasswords",
-                    "_blank"
-                  )
-                }
-              >
-                <ExternalLink className="h-3 w-3 me-1.5" />
-                Open App Passwords page
-              </Button>
-            </div>
           )}
 
           <Button

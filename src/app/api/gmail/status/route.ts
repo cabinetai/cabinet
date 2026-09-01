@@ -1,15 +1,27 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { decryptPassword } from "@/lib/gmail/crypto";
 
 export async function GET() {
   try {
     const db = getDb();
     const row = db
-      .prepare("SELECT email, method FROM gmail_credentials WHERE id = 'default'")
-      .get() as { email: string; method: string } | undefined;
+      .prepare("SELECT email, method, imap_password FROM gmail_credentials WHERE id = 'default'")
+      .get() as { email: string; method: string; imap_password: string } | undefined;
 
     if (!row) {
       return NextResponse.json({ connected: false, email: null, method: null, lastIndexed: null });
+    }
+
+    // A row alone doesn't mean the connection works: if the encryption secret
+    // changed since the password was saved, every real Gmail call 500s while
+    // this endpoint claims "connected". Verify decryptability so the UI can
+    // show a reconnect prompt instead.
+    let needsReconnect = false;
+    try {
+      decryptPassword(row.imap_password);
+    } catch {
+      needsReconnect = true;
     }
 
     // Get last indexed time from gmail_index
@@ -18,7 +30,8 @@ export async function GET() {
       .get() as { last: string | null } | undefined;
 
     return NextResponse.json({
-      connected: true,
+      connected: !needsReconnect,
+      needsReconnect,
       email: row.email,
       method: row.method as "imap",
       lastIndexed: indexed?.last ?? null,

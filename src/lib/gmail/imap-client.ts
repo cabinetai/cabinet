@@ -164,6 +164,86 @@ function extractBodyText(raw: string): string {
   return raw.slice(sep + 4, sep + 4 + 4000).replace(/\s+/g, " ").trim();
 }
 
+export interface GmailLabel {
+  path: string;
+  specialUse?: string;
+}
+
+function validateLabelName(name: unknown): string {
+  if (typeof name !== "string") throw new Error("Label name required");
+  const trimmed = name.trim();
+  // eslint-disable-next-line no-control-regex
+  if (!trimmed || trimmed.length > 100 || /[\x00-\x1f"\\]/.test(trimmed)) {
+    throw new Error("Invalid label name");
+  }
+  return trimmed;
+}
+
+/**
+ * Gmail exposes labels as IMAP mailboxes. System folders live under [Gmail]/.
+ */
+export async function listLabels(): Promise<GmailLabel[]> {
+  const client = createImapClient();
+  await client.connect();
+  try {
+    const boxes = await client.list();
+    return boxes
+      .filter((b) => {
+        if (b.path === "INBOX" || b.path === "[Gmail]" || b.path.startsWith("[Gmail]/")) return false;
+        if (b.flags?.has?.("\\Noselect")) return false;
+        return true;
+      })
+      .map((b) => ({ path: b.path, specialUse: b.specialUse }))
+      .sort((a, b) => a.path.localeCompare(b.path));
+  } finally {
+    await client.logout();
+  }
+}
+
+async function ensureMailbox(client: ImapFlow, path: string): Promise<void> {
+  try {
+    await client.mailboxCreate(path);
+  } catch {
+    // Gmail answers ALREADYEXISTS for existing labels — verify before giving up.
+    const boxes = await client.list();
+    if (!boxes.some((b) => b.path === path)) throw new Error(`Could not create label "${path}"`);
+  }
+}
+
+export async function createLabel(name: string): Promise<string> {
+  const label = validateLabelName(name);
+  const client = createImapClient();
+  await client.connect();
+  try {
+    await ensureMailbox(client, label);
+    return label;
+  } finally {
+    await client.logout();
+  }
+}
+
+/**
+ * Applying a Gmail label over IMAP = copying the message into the label's
+ * mailbox. The message stays in the inbox. Creates the label if missing.
+ */
+export async function applyLabel(messageId: string, name: string): Promise<string> {
+  if (typeof messageId !== "string" || !messageId.trim()) throw new Error("messageId required");
+  const label = validateLabelName(name);
+  const client = createImapClient();
+  await client.connect();
+  try {
+    await ensureMailbox(client, label);
+    await client.mailboxOpen("INBOX");
+    const searchResult = await client.search({ header: { "message-id": messageId } }, { uid: true });
+    const uids: number[] = Array.isArray(searchResult) ? searchResult : [];
+    if (uids.length === 0) throw new Error("Message not found in INBOX");
+    await client.messageCopy(uids.map(String).join(","), label, { uid: true });
+    return label;
+  } finally {
+    await client.logout();
+  }
+}
+
 export async function getUnread(maxResults = 20): Promise<EmailSummary[]> {
   const all = await searchEmails({ unseen: true });
   // Sort newest first

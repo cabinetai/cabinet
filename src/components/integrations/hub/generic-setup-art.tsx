@@ -50,6 +50,7 @@ export function stepArtFor(opts: {
   if (id === "discord") return (i) => <DiscordStepArt step={i} brand={brand} />;
   if (id === "telegram") return (i) => <TelegramStepArt step={i} brand={brand} />;
   if (id === "google-drive") return (i) => <GoogleDriveStepArt step={i} brand={brand} />;
+  if (id === "gmail") return (i) => <GmailArt step={i} brand={brand} />;
   if (id === "microsoft-365") return (i) => <MicrosoftArt step={i} brand={brand} />;
   if (id === "shopify") return () => <ShopifyArt brand={brand} />;
   if (id === "figma") return () => <FigmaArt brand={brand} />;
@@ -266,6 +267,65 @@ function LinkedInArt({ step, brand }: { step: number; brand: string }) {
         <div className="text-foreground">✓ Logged in, session saved to ~/.linkedin-mcp</div>
       </div>
       <Hint brand={brand}>Now click Connect. Your agent drives your own logged-in session.</Hint>
+    </MockWindow>
+  );
+}
+
+/** Gmail — Google's 2-Step Verification → App passwords flow (IMAP App Password). */
+// Indices map to the gmail `setupSteps` in preview-catalog.ts:
+// 0 turn on 2SV · 1 open App passwords · 2 create "Cabinet" password · 3 connect.
+function GmailArt({ step, brand }: { step: number; brand: string }) {
+  if (step === 0) {
+    return (
+      <MockWindow title="Google Account · Security" brand={brand}>
+        <div className="text-[10px] font-medium text-muted-foreground">How you sign in to Google</div>
+        <div className="mt-1.5">
+          <ToggleRow label="2-Step Verification" brand={brand} on />
+        </div>
+        <Hint brand={brand}>If it shows Off, click it and follow Google&apos;s prompts to turn it on.</Hint>
+      </MockWindow>
+    );
+  }
+  if (step === 1) {
+    return (
+      <MockWindow title="2-Step Verification" brand={brand}>
+        <div className="space-y-1">
+          <KvRow k="Passkeys and security keys" v="✓" />
+          <KvRow k="Authenticator" v="✓" />
+          <KvRow k="Phone number" v="✓" />
+        </div>
+        <div className="mt-2 flex items-center justify-between rounded-md px-2 py-1.5" style={{ background: `${brand}14` }}>
+          <span className="text-[10.5px] font-medium text-foreground">App passwords</span>
+          <span className="text-[10px] font-medium" style={{ color: brand }}>None ›</span>
+        </div>
+        <Hint brand={brand}>Scroll all the way down — App passwords is the last section on the page.</Hint>
+      </MockWindow>
+    );
+  }
+  if (step === 2) {
+    return (
+      <MockWindow title="App passwords" brand={brand}>
+        <div className="text-[10px] text-muted-foreground">App name</div>
+        <FieldMock>Cabinet</FieldMock>
+        <div className="mt-2 flex justify-end">
+          <BtnMock brand={brand}>Create</BtnMock>
+        </div>
+        <div className="mt-2 flex items-center justify-between rounded-md bg-foreground/[0.06] px-2 py-1.5">
+          <span className="font-mono text-[10px] tracking-wider text-foreground">abcd efgh ijkl mnop</span>
+          <span className="text-[10px] font-medium" style={{ color: brand }}>Copy</span>
+        </div>
+        <Hint brand={brand}>Google shows the 16-character password only once — copy it right away.</Hint>
+      </MockWindow>
+    );
+  }
+  return (
+    <MockWindow title="Connect Gmail" brand={brand}>
+      <div className="text-[10px] font-medium text-foreground">Gmail address</div>
+      <FieldMock>you@gmail.com</FieldMock>
+      <div className="mt-2 text-[10px] font-medium text-foreground">App Password</div>
+      <FieldMock>abcd efgh ijkl mnop</FieldMock>
+      <BtnMock brand={brand} full>Connect</BtnMock>
+      <Hint brand={brand}>Paste both into the panel on the right →</Hint>
     </MockWindow>
   );
 }

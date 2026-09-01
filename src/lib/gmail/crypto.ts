@@ -5,7 +5,7 @@
 
 import crypto from "crypto";
 import { DATA_DIR } from "@/lib/storage/path-utils";
-import { upsertCabinetEnv } from "@/lib/runtime/cabinet-env";
+import { readCabinetEnvFile, upsertCabinetEnv } from "@/lib/runtime/cabinet-env";
 
 const ALGORITHM = "aes-256-gcm";
 const SALT = "cabinet-gmail-v1";
@@ -23,15 +23,33 @@ const KEY_SECRET_ENV = "CABINET_GMAIL_KEY_SECRET";
  * file write fails.
  */
 function getKeySecret(): string {
+  // The FILE is the durable source of truth, so prefer it over process.env:
+  // encrypting under an in-memory secret that a sibling process (app vs daemon)
+  // has since overwritten on disk orphans the ciphertext on the next restart.
+  // Decrypt tries both secrets, so a user-set env var that diverges still works.
+  const fromFile = readCabinetEnvFile().values[KEY_SECRET_ENV]?.trim();
+  if (fromFile) {
+    process.env[KEY_SECRET_ENV] = fromFile;
+    return fromFile;
+  }
   const existing = process.env[KEY_SECRET_ENV]?.trim();
   if (existing) return existing;
   const secret = crypto.randomBytes(32).toString("hex");
-  process.env[KEY_SECRET_ENV] = secret;
   try {
     upsertCabinetEnv(KEY_SECRET_ENV, secret);
+    // Re-read: if a sibling process won a concurrent first-write race, adopt
+    // its secret instead of ours so everyone encrypts under what's on disk.
+    // ponytail: tiny race window remains (no file lock); harmless because
+    // decrypt also tries the file secret on every attempt.
+    const persisted = readCabinetEnvFile().values[KEY_SECRET_ENV]?.trim();
+    if (persisted) {
+      process.env[KEY_SECRET_ENV] = persisted;
+      return persisted;
+    }
   } catch {
     // Best-effort persistence; the in-process value keeps this run consistent.
   }
+  process.env[KEY_SECRET_ENV] = secret;
   return secret;
 }
 
@@ -69,8 +87,15 @@ export function decryptPassword(stored: string): string {
   const encrypted = Buffer.from(encHex, "hex");
   // Try the strong (secret-derived) key first, then the legacy key so passwords
   // stored before the secret existed still decrypt. GCM's auth tag makes a wrong
-  // key fail in final(), so the fallback is unambiguous.
-  for (const key of [deriveKey(getKeySecret()), deriveLegacyKey()]) {
+  // key fail in final(), so the fallback is unambiguous. Also try the on-disk
+  // secret when it diverges from this process's env — processes that booted
+  // without the env var must not be locked out of file-persisted secrets.
+  const envSecret = getKeySecret();
+  const keys = [deriveKey(envSecret)];
+  const fileSecret = readCabinetEnvFile().values[KEY_SECRET_ENV]?.trim();
+  if (fileSecret && fileSecret !== envSecret) keys.push(deriveKey(fileSecret));
+  keys.push(deriveLegacyKey());
+  for (const key of keys) {
     try {
       const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
       decipher.setAuthTag(authTag);
