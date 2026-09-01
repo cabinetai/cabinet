@@ -127,6 +127,21 @@ const RAW_INTEGRATIONS: IntegrationItem[] = [
     actions: ["Send messages & announcements", "Run agents & search Cabinet from your phone", "React to messages"],
   },
   {
+    id: "whatsapp",
+    name: "WhatsApp",
+    category: "communication",
+    logo: L("whatsapp.svg"),
+    blurb: "Watch your personal WhatsApp chats as a read-only channel feed. Pair with a code, no MCP or send path.",
+    brand: "#25D366",
+    implemented: true,
+    native: true,
+    actions: [
+      "See incoming DMs & group messages in a channel board",
+      "Reference WhatsApp context in agent runs",
+      "Read-only by design — Cabinet can never send or mark chats read",
+    ],
+  },
+  {
     id: "microsoft-teams",
     name: "Microsoft Teams",
     category: "communication",
