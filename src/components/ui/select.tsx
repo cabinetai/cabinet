@@ -5,6 +5,7 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
+import { BrowserOverlayGuard } from "@/components/ui/browser-overlay-guard"
 
 const Select = SelectPrimitive.Root
 
@@ -72,6 +73,7 @@ function SelectContent({
   >) {
   return (
     <SelectPrimitive.Portal>
+      <BrowserOverlayGuard />
       <SelectPrimitive.Positioner
         side={side}
         sideOffset={sideOffset}

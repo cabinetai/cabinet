@@ -652,6 +652,9 @@ export function BrowserView() {
   const { t } = useLocale();
   const url = useAppStore((s) => s.browseUrl);
   const setAppMode = useAppStore((s) => s.setAppMode);
+  // Open popups (dropdown/select/context menu) anywhere in the app would be
+  // painted over by the native view, so they hide it like the dialogs below.
+  const popupOverlayOpen = useAppStore((s) => s.browserOverlayCount > 0);
 
   // Sandbox for the fallback iframe. `allow-same-origin` is only safe for
   // *cross-origin* pages: there it just lets the external site use its own
@@ -1403,7 +1406,7 @@ export function BrowserView() {
     };
   }, [browserMode]);
 
-  const isDialogOpen = managerOpen || bookmarkDialogOpen || managerEditDialogOpen;
+  const isOverlayOpen = managerOpen || bookmarkDialogOpen || managerEditDialogOpen || popupOverlayOpen;
 
   useEffect(() => {
     const bridge = getBridge();
@@ -1413,7 +1416,7 @@ export function BrowserView() {
     }
     const setBrowserViewVisible = bridge.setBrowserViewVisible;
     if (!setBrowserViewVisible) return;
-    const shouldShow = !isDialogOpen;
+    const shouldShow = !isOverlayOpen;
     if (shouldShow) {
       updateBoundsRef.current();
     }
@@ -1433,7 +1436,7 @@ export function BrowserView() {
           setInitAttempt((value) => value + 1);
         }
       });
-  }, [browserMode, isDialogOpen]);
+  }, [browserMode, isOverlayOpen]);
 
   useEffect(() => {
     if (browserMode !== "iframe") {
