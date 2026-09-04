@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, FileText, MessageCircle, Repeat, Zap } from "lucide-react";
+import { ChevronDown, FileText, Plus, Repeat, Zap } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,20 +30,10 @@ import { useLocale } from "@/i18n/use-locale";
 
 /**
  * Shared "+ ▾" create button used in nav bars outside the Tasks board (KB
- * pages via ViewerToolbar, Agents workspace, etc.). Audit #014: the previous
- * filled brand-orange "+ New Task" pulled the eye away from the actual
- * primary action on whatever surface the user was on. Now: neutral icon-only
- * trigger with a context-aware popover. Filled brand color is reserved for
- * the surface's main CTA (e.g., the AI input's Send button).
- *
- * The dialog is mounted locally so opening it doesn't yank the user out of
- * their current surface — the previous implementation routed to
- * section=tasks first, which left users stranded on the tasks board if they
- * dismissed the composer (audit #130).
+ * pages via ViewerToolbar, Agents workspace, etc.).
  */
 export function NewTaskButton() {
   const { t } = useLocale();
-  const openTaskPanelCompose = useAppStore((s) => s.openTaskPanelCompose);
   const section = useAppStore((s) => s.section);
   const setSection = useAppStore((s) => s.setSection);
   const setTaskPanelConversation = useAppStore(
@@ -72,21 +62,18 @@ export function NewTaskButton() {
   // selectedPath is the page path like "data/foo/bar"; the parent is the
   // path with the last segment dropped.
   const pageParentPath = (() => {
-    if (section.type !== "page") return null;
-    if (!selectedPath) return null;
+    if (section.type !== "page") return "";
+    if (!selectedPath) return "";
     const lastSlash = selectedPath.lastIndexOf("/");
     return lastSlash > 0 ? selectedPath.slice(0, lastSlash) : "";
   })();
   const pageParentLabel = (() => {
-    if (pageParentPath == null) return null;
     if (!pageParentPath) return "Data";
     const last = pageParentPath.split("/").pop() || pageParentPath;
     return last;
   })();
 
-  // Fetch agents on first open (and refetch if the cabinet changes between
-  // opens). The overview client dedupes inflight requests and caches for 3s,
-  // so this is cheap when other surfaces have already loaded the cabinet.
+  // Fetch agents on first open
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
@@ -110,7 +97,7 @@ export function NewTaskButton() {
 
   const submitPage = async () => {
     const title = pageTitle.trim();
-    if (!title || pageParentPath == null) return;
+    if (!title) return;
     setCreatingPage(true);
     try {
       await createPage(pageParentPath, title);
@@ -131,87 +118,67 @@ export function NewTaskButton() {
     }
   };
 
-  // Order of menu items is context-aware. On a page surface, "New page in
-  // <folder>" sits first because it's the action the user is most likely to
-  // want next. Everywhere else, "New task" leads.
-  const showPageItem = pageParentPath != null;
-
   return (
     <>
       <DropdownMenu>
-        {/* Split button: the primary half opens the AI Editor drawer; the
-            chevron half opens the create menu (page / task / routine). */}
-        <div className="inline-flex h-7 items-stretch overflow-hidden rounded-md">
+        {/* Split button: the primary half (+ icon) launches New Task; the
+            chevron half opens the create menu (New page / New task / New routine). */}
+        <div className="inline-flex h-6 items-stretch overflow-hidden rounded-md">
           <button
             type="button"
-            onClick={() =>
-              openTaskPanelCompose(
-                section.type === "page" && selectedPath
-                  ? {
-                      source: "editor",
-                      pinnedPagePath: selectedPath,
-                      defaultAgentSlug: "editor",
-                    }
-                  : undefined
-              )
-            }
-            title={t("common:aiPanel.open")}
-            aria-label={t("common:aiPanel.open")}
-            className="inline-flex items-center gap-1.5 bg-primary px-2.5 text-[11.5px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            onClick={() => launch("now")}
+            title={t("newTaskButton:newTask", "New task")}
+            aria-label={t("newTaskButton:newTask", "New task")}
+            className="inline-flex items-center justify-center bg-primary px-1.5 text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            <MessageCircle className="size-3.5" />
-            <span>New Chat</span>
+            <Plus className="size-3" />
           </button>
           <div className="w-px bg-primary-foreground/20" aria-hidden />
           <DropdownMenuTrigger
-            className="inline-flex items-center bg-primary pl-1.5 pr-1 text-primary-foreground transition-colors hover:bg-primary/90 data-[popup-open]:bg-primary/90"
-            title={t("newTaskButton:createNew")}
-            aria-label={t("newTaskButton:createNew")}
+            className="inline-flex items-center justify-center bg-[#D3BEAA] px-1.5 text-white transition-colors hover:bg-[#c4ad98] data-[state=open]:bg-[#c4ad98]"
+            title={t("newTaskButton:createNew", "Create new")}
+            aria-label={t("newTaskButton:createNew", "Create new")}
           >
-            <ChevronDown className="size-3.5" />
+            <ChevronDown className="size-3" />
           </DropdownMenuTrigger>
         </div>
         <DropdownMenuContent align="end" className="min-w-[240px]">
-          {showPageItem && (
-            <DropdownMenuItem
-              onClick={() => {
-                setPageTitle("");
-                setPageDialogOpen(true);
-              }}
-              className="flex items-start gap-2 py-2"
-            >
-              <FileText className="mt-0.5 size-3.5 text-foreground/70" />
-              <div className="flex flex-col">
-                <span className="text-[13px] font-medium">
-                  New page in {pageParentLabel}
-                </span>
-                <span className="text-[11px] text-muted-foreground">
-                  Sibling of the current page
-                </span>
-              </div>
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            onClick={() => {
+              setPageTitle("");
+              setPageDialogOpen(true);
+            }}
+            className="flex items-start gap-2 py-2 cursor-pointer"
+          >
+            <FileText className="mt-0.5 size-3.5 text-foreground/70" />
+            <div className="flex flex-col">
+              <span className="text-[13px] font-medium">New page</span>
+              <span className="text-[11px] text-muted-foreground">
+                Create a new page
+              </span>
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => launch("now")}
-            className="flex items-start gap-2 py-2"
+            className="flex items-start gap-2 py-2 cursor-pointer"
           >
             <Zap className="mt-0.5 size-3.5 text-foreground/70" />
             <div className="flex flex-col">
-              <span className="text-[13px] font-medium">{t("newTaskButton:newTask")}</span>
+              <span className="text-[13px] font-medium">New task</span>
               <span className="text-[11px] text-muted-foreground">
-                Run once, right now
+                Ask an agent to act now
               </span>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => launch("recurring")}
-            className="flex items-start gap-2 py-2"
+            className="flex items-start gap-2 py-2 cursor-pointer"
           >
-            <Repeat className="mt-0.5 size-3.5 text-indigo-500" />
+            <Repeat className="mt-0.5 size-3.5 text-foreground/70" />
             <div className="flex flex-col">
-              <span className="text-[13px] font-medium">{t("newTaskButton:newRoutine")}</span>
+              <span className="text-[13px] font-medium">New routine</span>
               <span className="text-[11px] text-muted-foreground">
-                Run this prompt on a schedule
+                Ask an agent to act later
               </span>
             </div>
           </DropdownMenuItem>

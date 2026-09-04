@@ -1,0 +1,2333 @@
+
+> cabinet@0.4.4 test
+> tsx --test $(find test src -name '*.test.ts')
+
+TAP version 13
+# Subtest: form login: wrong password → 303 to RELATIVE /login?error=1
+ok 1 - form login: wrong password → 303 to RELATIVE /login?error=1
+  ---
+  duration_ms: 19.241959
+  type: 'test'
+  ...
+# Subtest: form login: correct password → 303 to RELATIVE / with HttpOnly auth cookie
+ok 2 - form login: correct password → 303 to RELATIVE / with HttpOnly auth cookie
+  ---
+  duration_ms: 6.157083
+  type: 'test'
+  ...
+# Subtest: redirect Location ignores spoofed Host / X-Forwarded-Host (no open redirect)
+ok 3 - redirect Location ignores spoofed Host / X-Forwarded-Host (no open redirect)
+  ---
+  duration_ms: 2.442625
+  type: 'test'
+  ...
+# Subtest: JSON login: correct → ok + cookie; wrong → 401
+ok 4 - JSON login: correct → ok + cookie; wrong → 401
+  ---
+  duration_ms: 4.281166
+  type: 'test'
+  ...
+# Subtest: JSON login: locks out after N failed attempts (429 + Retry-After)
+ok 5 - JSON login: locks out after N failed attempts (429 + Retry-After)
+  ---
+  duration_ms: 4.650333
+  type: 'test'
+  ...
+# Subtest: form login: over-limit → 303 /login?error=rate with Retry-After
+ok 6 - form login: over-limit → 303 /login?error=rate with Retry-After
+  ---
+  duration_ms: 1.823541
+  type: 'test'
+  ...
+# Subtest: a successful login resets the client's failure budget
+ok 7 - a successful login resets the client's failure budget
+  ---
+  duration_ms: 1.578084
+  type: 'test'
+  ...
+# Subtest: resolveDispatchRuntime — same-provider parent pushes model + effort to child
+ok 8 - resolveDispatchRuntime — same-provider parent pushes model + effort to child
+  ---
+  duration_ms: 2.442917
+  type: 'test'
+  ...
+# Subtest: resolveDispatchRuntime — parent provider overrides target persona's default provider
+ok 9 - resolveDispatchRuntime — parent provider overrides target persona's default provider
+  ---
+  duration_ms: 0.305709
+  type: 'test'
+  ...
+# Subtest: resolveDispatchRuntime — action providerId override wins over parent
+ok 10 - resolveDispatchRuntime — action providerId override wins over parent
+  ---
+  duration_ms: 0.207292
+  type: 'test'
+  ...
+# Subtest: resolveDispatchRuntime — action model + effort override both parent + persona
+ok 11 - resolveDispatchRuntime — action model + effort override both parent + persona
+  ---
+  duration_ms: 0.316042
+  type: 'test'
+  ...
+# Subtest: resolveDispatchRuntime — effort is dropped when resolved provider doesn't advertise it
+ok 12 - resolveDispatchRuntime — effort is dropped when resolved provider doesn't advertise it
+  ---
+  duration_ms: 0.155167
+  type: 'test'
+  ...
+# Subtest: resolveDispatchRuntime — falls back to target persona when parent has no provider
+ok 13 - resolveDispatchRuntime — falls back to target persona when parent has no provider
+  ---
+  duration_ms: 0.134333
+  type: 'test'
+  ...
+# Subtest: readSkillCatalog returns nothing from a fresh legacy home
+ok 14 - readSkillCatalog returns nothing from a fresh legacy home
+  ---
+  duration_ms: 1.438375
+  type: 'test'
+  ...
+# Subtest: readSkillCatalog reads heading + description from SKILL.md
+ok 15 - readSkillCatalog reads heading + description from SKILL.md
+  ---
+  duration_ms: 12.525792
+  type: 'test'
+  ...
+# Subtest: syncSkillsToTmpdir symlinks selected skills, ignores unknown
+ok 16 - syncSkillsToTmpdir symlinks selected skills, ignores unknown
+  ---
+  duration_ms: 5.6885
+  type: 'test'
+  ...
+# Subtest: syncSkillsToTmpdir returns null when selection or catalog is empty
+ok 17 - syncSkillsToTmpdir returns null when selection or catalog is empty
+  ---
+  duration_ms: 1.541667
+  type: 'test'
+  ...
+# Subtest: syncSkillsToTmpdir is idempotent — re-sync reflects new selection
+ok 18 - syncSkillsToTmpdir is idempotent — re-sync reflects new selection
+  ---
+  duration_ms: 2.32425
+  type: 'test'
+  ...
+# Subtest: claudeLocalAdapter executes a structured print-mode stream
+ok 19 - claudeLocalAdapter executes a structured print-mode stream
+  ---
+  duration_ms: 275.690083
+  type: 'test'
+  ...
+# Subtest: codexLocalAdapter executes a structured json event stream
+ok 20 - codexLocalAdapter executes a structured json event stream
+  ---
+  duration_ms: 385.85775
+  type: 'test'
+  ...
+# Subtest: codexLocalAdapter surfaces in-stream {type:error} events as errorMessage and classifies model_unavailable
+ok 21 - codexLocalAdapter surfaces in-stream {type:error} events as errorMessage and classifies model_unavailable
+  ---
+  duration_ms: 1919.856166
+  type: 'test'
+  ...
+# Subtest: codexLocalAdapter suppresses codex tracing diagnostics (skill-load errors) from stderr
+ok 22 - codexLocalAdapter suppresses codex tracing diagnostics (skill-load errors) from stderr
+  ---
+  duration_ms: 120.7695
+  type: 'test'
+  ...
+# Subtest: cursorLocalAdapter parses stream-json assistant + result events
+ok 23 - cursorLocalAdapter parses stream-json assistant + result events
+  ---
+  duration_ms: 139.940583
+  type: 'test'
+  ...
+# Subtest: cursor session codec round-trips session params
+ok 24 - cursor session codec round-trips session params
+  ---
+  duration_ms: 0.200208
+  type: 'test'
+  ...
+# Subtest: geminiLocalAdapter executes a structured stream-json run
+ok 25 - geminiLocalAdapter executes a structured stream-json run
+  ---
+  duration_ms: 182.830167
+  type: 'test'
+  ...
+# Subtest: legacy-ids covers every provider registered on the server
+ok 26 - legacy-ids covers every provider registered on the server
+  ---
+  duration_ms: 0.660125
+  type: 'test'
+  ...
+# Subtest: isLegacyAdapterType flags every registered legacy type
+ok 27 - isLegacyAdapterType flags every registered legacy type
+  ---
+  duration_ms: 0.0815
+  type: 'test'
+  ...
+# Subtest: isLegacyAdapterType returns false for structured adapters and junk input
+ok 28 - isLegacyAdapterType returns false for structured adapters and junk input
+  ---
+  duration_ms: 0.046458
+  type: 'test'
+  ...
+# Subtest: openCodeLocalAdapter parses JSONL run output, usage, and session id
+ok 29 - openCodeLocalAdapter parses JSONL run output, usage, and session id
+  ---
+  duration_ms: 1629.610667
+  type: 'test'
+  ...
+# Subtest: opencode session codec round-trips session params
+ok 30 - opencode session codec round-trips session params
+  ---
+  duration_ms: 0.3005
+  type: 'test'
+  ...
+# Subtest: piLocalAdapter parses JSONL lifecycle events and usage
+ok 31 - piLocalAdapter parses JSONL lifecycle events and usage
+  ---
+  duration_ms: 834.258167
+  type: 'test'
+  ...
+# Subtest: pi session codec round-trips session file path
+ok 32 - pi session codec round-trips session file path
+  ---
+  duration_ms: 0.136041
+  type: 'test'
+  ...
+# Subtest: legacy adapter registry exposes the current compatibility adapters
+ok 33 - legacy adapter registry exposes the current compatibility adapters
+  ---
+  duration_ms: 0.655583
+  type: 'test'
+  ...
+# Subtest: provider-to-adapter defaults map current providers onto structured adapters when available
+ok 34 - provider-to-adapter defaults map current providers onto structured adapters when available
+  ---
+  duration_ms: 0.065834
+  type: 'test'
+  ...
+# Subtest: execution provider resolution prefers explicit legacy adapter mappings
+ok 35 - execution provider resolution prefers explicit legacy adapter mappings
+  ---
+  duration_ms: 0.0545
+  type: 'test'
+  ...
+# Subtest: legacy execution resolution rejects unsupported adapter types
+ok 36 - legacy execution resolution rejects unsupported adapter types
+  ---
+  duration_ms: 0.157792
+  type: 'test'
+  ...
+# Subtest: continueConversationRun in resume mode sends only the follow-up to the adapter
+ok 37 - continueConversationRun in resume mode sends only the follow-up to the adapter
+  ---
+  duration_ms: 261.820709
+  type: 'test'
+  ...
+# Subtest: continueConversationRun in replay mode includes prior turns + full agent context
+ok 38 - continueConversationRun in replay mode includes prior turns + full agent context
+  ---
+  duration_ms: 53.215208
+  type: 'test'
+  ...
+# Subtest: continueConversationRun parses ARTIFACT: paths into meta.artifactPaths
+ok 39 - continueConversationRun parses ARTIFACT: paths into meta.artifactPaths
+  ---
+  duration_ms: 35.7445
+  type: 'test'
+  ...
+# Subtest: continueConversationRun flips awaitingInput when agent ends with a question
+ok 40 - continueConversationRun flips awaitingInput when agent ends with a question
+  ---
+  duration_ms: 26.573542
+  type: 'test'
+  ...
+# Subtest: continueConversationRun falls back to replay when adapter reports session expired
+ok 41 - continueConversationRun falls back to replay when adapter reports session expired
+  ---
+  duration_ms: 34.555875
+  type: 'test'
+  ...
+# Subtest: continueConversationRun clears doneAt when user sends a follow-up
+ok 42 - continueConversationRun clears doneAt when user sends a follow-up
+  ---
+  duration_ms: 22.55475
+  type: 'test'
+  ...
+# Subtest: continueConversationRun with failing adapter marks turn + conversation failed
+ok 43 - continueConversationRun with failing adapter marks turn + conversation failed
+  ---
+  duration_ms: 22.617583
+  type: 'test'
+  ...
+# Subtest: continueConversationRun classifies a spawn-time crash (missing CLI) as cli_not_found
+ok 44 - continueConversationRun classifies a spawn-time crash (missing CLI) as cli_not_found
+  ---
+  duration_ms: 20.114
+  type: 'test'
+  ...
+# [history] agent-run status failed for 2026-06-26T19-40-17-704Z-dbe0cc16-general-manual: GitError: Error: spawn git ENOENT
+#     at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+#     at onErrorNT (node:internal/child_process:483:16)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+#     at Object.action (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/plugins/error-detection.plugin.ts:42:29)
+#     at PluginStore.exec (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/plugins/plugin-store.ts:54:29)
+#     at <anonymous> (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:124:42)
+#     at new Promise (<anonymous>)
+#     at GitExecutorChain.handleTaskData (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:121:14)
+#     at GitExecutorChain.attemptRemoteTask (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:97:40)
+#     at async GitExecutorChain.attemptTask (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:61:18) {
+#   task: {
+#     format: 'utf-8',
+#     commands: [ 'status', '--porcelain', '-b', '-u', '--null' ],
+#     parser: [Function: parser]
+#   }
+# }
+# Subtest: dispatch epilogue contains no concretely-dispatchable example
+ok 45 - dispatch epilogue contains no concretely-dispatchable example
+  ---
+  duration_ms: 33.221208
+  type: 'test'
+  ...
+# Subtest: readConversationTurns synthesizes turn 1 from prompt + transcript on a single-shot
+ok 46 - readConversationTurns synthesizes turn 1 from prompt + transcript on a single-shot
+  ---
+  duration_ms: 241.027875
+  type: 'test'
+  ...
+# Subtest: readConversationTurns fabricates a pending agent turn while running with no output yet
+ok 47 - readConversationTurns fabricates a pending agent turn while running with no output yet
+  ---
+  duration_ms: 4.617542
+  type: 'test'
+  ...
+# Subtest: appendUserTurn + appendAgentTurn build up multi-turn state and aggregate tokens
+ok 48 - appendUserTurn + appendAgentTurn build up multi-turn state and aggregate tokens
+  ---
+  duration_ms: 28.174167
+  type: 'test'
+  ...
+# Subtest: appendAgentTurn with awaitingInput flips meta.awaitingInput=true
+ok 49 - appendAgentTurn with awaitingInput flips meta.awaitingInput=true
+  ---
+  duration_ms: 18.05525
+  type: 'test'
+  ...
+# Subtest: updateAgentTurn settles a pending turn
+ok 50 - updateAgentTurn settles a pending turn
+  ---
+  duration_ms: 18.049625
+  type: 'test'
+  ...
+# Subtest: finalizeConversation preserves artifacts merged from later turns
+ok 51 - finalizeConversation preserves artifacts merged from later turns
+  ---
+  duration_ms: 25.38
+  type: 'test'
+  ...
+# Subtest: read-repair strips placeholder artifacts and then stays idempotent
+ok 52 - read-repair strips placeholder artifacts and then stays idempotent
+  ---
+  duration_ms: 16.844708
+  type: 'test'
+  ...
+# Subtest: writeSession + readSession round-trip
+ok 53 - writeSession + readSession round-trip
+  ---
+  duration_ms: 7.660417
+  type: 'test'
+  ...
+# Subtest: summaryEditedAt within 5 minutes prevents auto-update
+ok 54 - summaryEditedAt within 5 minutes prevents auto-update
+  ---
+  duration_ms: 17.31025
+  type: 'test'
+  ...
+# Subtest: readConversationDetail with withTurns returns turns + session
+ok 55 - readConversationDetail with withTurns returns turns + session
+  ---
+  duration_ms: 15.152
+  type: 'test'
+  ...
+# Subtest: backward compat: existing single-shot conversations without withTurns look identical
+ok 56 - backward compat: existing single-shot conversations without withTurns look identical
+  ---
+  duration_ms: 8.700916
+  type: 'test'
+  ...
+# Subtest: ARTIFACT line with comma-separated paths yields one artifact per file
+ok 57 - ARTIFACT line with comma-separated paths yields one artifact per file
+  ---
+  duration_ms: 14.167917
+  type: 'test'
+  ...
+# Subtest: normalizeArtifactPaths splits mixed separators and rejects placeholders
+ok 58 - normalizeArtifactPaths splits mixed separators and rejects placeholders
+  ---
+  duration_ms: 0.138334
+  type: 'test'
+  ...
+# Subtest: isCabinetBlockMissing returns true when the agent reply has no cabinet block
+ok 59 - isCabinetBlockMissing returns true when the agent reply has no cabinet block
+  ---
+  duration_ms: 0.122417
+  type: 'test'
+  ...
+# Subtest: isCabinetBlockMissing returns false for a well-formed cabinet block (with or without ARTIFACT)
+ok 60 - isCabinetBlockMissing returns false for a well-formed cabinet block (with or without ARTIFACT)
+  ---
+  duration_ms: 0.0725
+  type: 'test'
+  ...
+# Subtest: isCabinetBlockMissing returns true for empty output
+ok 61 - isCabinetBlockMissing returns true for empty output
+  ---
+  duration_ms: 0.023709
+  type: 'test'
+  ...
+# Subtest: isCabinetBlockMissing returns true for an empty cabinet fence (no fields)
+ok 62 - isCabinetBlockMissing returns true for an empty cabinet fence (no fields)
+  ---
+  duration_ms: 0.024208
+  type: 'test'
+  ...
+# Subtest: finalizeConversation classifies codex model_unavailable when errorHint is omitted
+ok 63 - finalizeConversation classifies codex model_unavailable when errorHint is omitted
+  ---
+  duration_ms: 12.001208
+  type: 'test'
+  ...
+# [history] agent-run status failed for 2026-06-26T19-40-18-101Z-dbe0cc16-general-manual: GitError: fatal: not a git repository (or any of the parent directories): .git
+#     at Object.action (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/plugins/error-detection.plugin.ts:42:29)
+#     at PluginStore.exec (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/plugins/plugin-store.ts:54:29)
+#     at <anonymous> (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:124:42)
+#     at new Promise (<anonymous>)
+#     at GitExecutorChain.handleTaskData (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:121:14)
+#     at GitExecutorChain.attemptRemoteTask (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:97:40)
+#     at async GitExecutorChain.attemptTask (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:61:18) {
+#   task: {
+#     format: 'utf-8',
+#     commands: [ 'status', '--porcelain', '-b', '-u', '--null' ],
+#     parser: [Function: parser]
+#   }
+# }
+not ok 64 - /Users/odebroqueville/Developer/cabinet/src/lib/agents/conversation-store-turns.test.ts
+  ---
+  duration_ms: 13.365917
+  location: '/Users/odebroqueville/Developer/cabinet/src/lib/agents/conversation-store-turns.test.ts:2:1678'
+  failureType: 'hookFailed'
+  error: "ENOTEMPTY: directory not empty, rmdir '/var/folders/td/dfw9bskj5lj13_zq3h5067nh0000gn/T/cabinet-convo-turns-test-aQoev9/Cabinet/.git'"
+  code: 'ENOTEMPTY'
+  ...
+# [history] agent-run status failed for 2026-06-26T19-40-17-898Z-dbe0cc16-general-manual: GitError: fatal: not a git repository (or any of the parent directories): .git
+#     at Object.action (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/plugins/error-detection.plugin.ts:42:29)
+#     at PluginStore.exec (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/plugins/plugin-store.ts:54:29)
+#     at <anonymous> (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:124:42)
+#     at new Promise (<anonymous>)
+#     at GitExecutorChain.handleTaskData (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:121:14)
+#     at GitExecutorChain.attemptRemoteTask (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:97:40)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+#     at async GitExecutorChain.attemptTask (/Users/odebroqueville/Developer/cabinet/node_modules/simple-git/src/lib/runners/git-executor-chain.ts:61:18) {
+#   task: {
+#     format: 'utf-8',
+#     commands: [ 'status', '--porcelain', '-b', '-u', '--null' ],
+#     parser: [Function: parser]
+#   }
+# }
+# Subtest: terminateChildProcess uses taskkill on Windows when pid exists
+ok 65 - terminateChildProcess uses taskkill on Windows when pid exists
+  ---
+  duration_ms: 0.697041
+  type: 'test'
+  ...
+# Subtest: terminateChildProcess falls back to proc.kill on Windows when taskkill fails
+ok 66 - terminateChildProcess falls back to proc.kill on Windows when taskkill fails
+  ---
+  duration_ms: 0.295042
+  type: 'test'
+  ...
+# Subtest: terminateChildProcess uses proc.kill on non-Windows
+ok 67 - terminateChildProcess uses proc.kill on non-Windows
+  ---
+  duration_ms: 0.053958
+  type: 'test'
+  ...
+# Subtest: terminateChildProcess handles missing pid on Windows without throwing
+ok 68 - terminateChildProcess handles missing pid on Windows without throwing
+  ---
+  duration_ms: 0.152417
+  type: 'test'
+  ...
+# Subtest: resolveCliCommand prefers an existing command candidate path
+ok 69 - resolveCliCommand prefers an existing command candidate path
+  ---
+  duration_ms: 7.203417
+  type: 'test'
+  ...
+# Subtest: resolveCliCommand skips non-executable POSIX command candidate paths
+ok 70 - resolveCliCommand skips non-executable POSIX command candidate paths
+  ---
+  duration_ms: 1.816
+  type: 'test'
+  ...
+# Subtest: checkCliProviderAvailable uses resolved command candidates
+ok 71 - checkCliProviderAvailable uses resolved command candidates
+  ---
+  duration_ms: 1723.092375
+  type: 'test'
+  ...
+# Subtest: buildRuntimePath uses Windows delimiters and npm global bin paths
+ok 72 - buildRuntimePath uses Windows delimiters and npm global bin paths
+  ---
+  duration_ms: 0.223
+  type: 'test'
+  ...
+# Subtest: buildRuntimePath uses requested platform path semantics even on a different host OS
+ok 73 - buildRuntimePath uses requested platform path semantics even on a different host OS
+  ---
+  duration_ms: 0.066
+  type: 'test'
+  ...
+# Subtest: buildRuntimePath uses POSIX separators when a POSIX platform is requested
+ok 74 - buildRuntimePath uses POSIX separators when a POSIX platform is requested
+  ---
+  duration_ms: 0.040917
+  type: 'test'
+  ...
+# Subtest: buildCommandCandidates only returns Windows cmd paths plus bare command
+ok 75 - buildCommandCandidates only returns Windows cmd paths plus bare command
+  ---
+  duration_ms: 0.391708
+  type: 'test'
+  ...
+# Subtest: resolveCliCommand prefers a bare Windows command when it is on PATH
+ok 76 - resolveCliCommand prefers a bare Windows command when it is on PATH
+  ---
+  duration_ms: 0.150167
+  type: 'test'
+  ...
+# Subtest: resolveCliCommand skips unsafe non-path command candidates during lookup
+ok 77 - resolveCliCommand skips unsafe non-path command candidates during lookup
+  ---
+  duration_ms: 0.230417
+  type: 'test'
+  ...
+# Subtest: provider settings update reports conflicts for providers still assigned to agents and jobs
+ok 78 - provider settings update reports conflicts for providers still assigned to agents and jobs
+  ---
+  duration_ms: 27.247292
+  type: 'test'
+  ...
+# Subtest: provider settings update migrates assigned personas and jobs before disabling a provider
+ok 79 - provider settings update migrates assigned personas and jobs before disabling a provider
+  ---
+  duration_ms: 18.611667
+  type: 'test'
+  ...
+# Subtest: Codex provider builds the expected launch arguments
+ok 80 - Codex provider builds the expected launch arguments
+  ---
+  duration_ms: 0.862834
+  type: 'test'
+  ...
+# Subtest: Claude provider keeps the prompt injection session contract
+ok 81 - Claude provider keeps the prompt injection session contract
+  ---
+  duration_ms: 0.104417
+  type: 'test'
+  ...
+# Subtest: provider runtime resolves launch specs through registered providers
+ok 82 - provider runtime resolves launch specs through registered providers
+  ---
+  duration_ms: 6.300584
+  type: 'test'
+  ...
+# Subtest: provider runtime falls back to the enabled default when the requested provider is disabled
+ok 83 - provider runtime falls back to the enabled default when the requested provider is disabled
+  ---
+  duration_ms: 1.108042
+  type: 'test'
+  ...
+# Subtest: runOneShotProviderPrompt closes stdin for CLI providers
+ok 84 - runOneShotProviderPrompt closes stdin for CLI providers
+  ---
+  duration_ms: 1698.460459
+  type: 'test'
+  ...
+# Subtest: normalizeProviderSettings keeps a valid enabled default provider
+ok 85 - normalizeProviderSettings keeps a valid enabled default provider
+  ---
+  duration_ms: 0.565417
+  type: 'test'
+  ...
+# Subtest: normalizeProviderSettings falls back when the requested default is disabled
+ok 86 - normalizeProviderSettings falls back when the requested default is disabled
+  ---
+  duration_ms: 0.093584
+  type: 'test'
+  ...
+# Subtest: normalizeProviderSettings falls back to the first enabled provider when needed
+ok 87 - normalizeProviderSettings falls back to the first enabled provider when needed
+  ---
+  duration_ms: 0.089916
+  type: 'test'
+  ...
+# Subtest: resolveEnabledProviderId falls back to the configured default when the requested provider is disabled
+ok 88 - resolveEnabledProviderId falls back to the configured default when the requested provider is disabled
+  ---
+  duration_ms: 0.058625
+  type: 'test'
+  ...
+# Subtest: summarize counts safe/low risks as passing
+ok 89 - summarize counts safe/low risks as passing
+  ---
+  duration_ms: 0.389542
+  type: 'test'
+  ...
+# Subtest: summarize treats missing audit blocks as not present
+ok 90 - summarize treats missing audit blocks as not present
+  ---
+  duration_ms: 0.053333
+  type: 'test'
+  ...
+# Subtest: summarize on empty input is unavailable
+ok 91 - summarize on empty input is unavailable
+  ---
+  duration_ms: 0.036916
+  type: 'test'
+  ...
+# Subtest: fetchAuditsBatch hits the audit endpoint with correct query
+ok 92 - fetchAuditsBatch hits the audit endpoint with correct query
+  ---
+  duration_ms: 8.309833
+  type: 'test'
+  ...
+# Subtest: fetchAuditsBatch caches per (source, key) within TTL
+ok 93 - fetchAuditsBatch caches per (source, key) within TTL
+  ---
+  duration_ms: 0.242375
+  type: 'test'
+  ...
+# Subtest: fetchAuditsBatch only re-requests cache misses, returns hits from memory
+ok 94 - fetchAuditsBatch only re-requests cache misses, returns hits from memory
+  ---
+  duration_ms: 0.424875
+  type: 'test'
+  ...
+# Subtest: fetchAuditsBatch returns unavailable on HTTP error
+ok 95 - fetchAuditsBatch returns unavailable on HTTP error
+  ---
+  duration_ms: 0.093541
+  type: 'test'
+  ...
+# Subtest: fetchAuditsBatch returns unavailable when fetch throws (e.g. timeout abort)
+ok 96 - fetchAuditsBatch returns unavailable when fetch throws (e.g. timeout abort)
+  ---
+  duration_ms: 0.128667
+  type: 'test'
+  ...
+# Subtest: fetchAuditsBatch with empty input returns empty map without fetching
+ok 97 - fetchAuditsBatch with empty input returns empty map without fetching
+  ---
+  duration_ms: 0.17475
+  type: 'test'
+  ...
+# Subtest: parses github: shorthand without skill
+ok 98 - parses github: shorthand without skill
+  ---
+  duration_ms: 0.632334
+  type: 'test'
+  ...
+# Subtest: parses github: shorthand with path-style skill
+ok 99 - parses github: shorthand with path-style skill
+  ---
+  duration_ms: 0.181834
+  type: 'test'
+  ...
+# Subtest: parses skills.sh URL with three segments
+ok 100 - parses skills.sh URL with three segments
+  ---
+  duration_ms: 0.250708
+  type: 'test'
+  ...
+# Subtest: parses skills.sh URL without skill segment
+ok 101 - parses skills.sh URL without skill segment
+  ---
+  duration_ms: 0.038209
+  type: 'test'
+  ...
+# Subtest: parses github.com URL with .git suffix
+ok 102 - parses github.com URL with .git suffix
+  ---
+  duration_ms: 0.044542
+  type: 'test'
+  ...
+# Subtest: parses github.com URL with /tree/<ref>/<path>
+ok 103 - parses github.com URL with /tree/<ref>/<path>
+  ---
+  duration_ms: 0.039333
+  type: 'test'
+  ...
+# Subtest: parses local: with absolute path
+ok 104 - parses local: with absolute path
+  ---
+  duration_ms: 0.079792
+  type: 'test'
+  ...
+# Subtest: trims whitespace before parsing
+ok 105 - trims whitespace before parsing
+  ---
+  duration_ms: 0.036583
+  type: 'test'
+  ...
+# Subtest: returns null for empty input
+ok 106 - returns null for empty input
+  ---
+  duration_ms: 0.15375
+  type: 'test'
+  ...
+# Subtest: returns null for unrecognized format
+ok 107 - returns null for unrecognized format
+  ---
+  duration_ms: 0.228875
+  type: 'test'
+  ...
+# Subtest: returns null for local: with empty path
+ok 108 - returns null for local: with empty path
+  ---
+  duration_ms: 0.03375
+  type: 'test'
+  ...
+# Subtest: preserves non-https github URLs
+ok 109 - preserves non-https github URLs
+  ---
+  duration_ms: 0.03225
+  type: 'test'
+  ...
+# Subtest: github: shorthand with @skill filter
+ok 110 - github: shorthand with @skill filter
+  ---
+  duration_ms: 0.072125
+  type: 'test'
+  ...
+# Subtest: github: shorthand with \#ref
+ok 111 - github: shorthand with \#ref
+  ---
+  duration_ms: 0.03325
+  type: 'test'
+  ...
+# Subtest: github: shorthand combining \#ref and @skill
+ok 112 - github: shorthand combining \#ref and @skill
+  ---
+  duration_ms: 0.029042
+  type: 'test'
+  ...
+# Subtest: github: shorthand with path infers last segment as skillName
+ok 113 - github: shorthand with path infers last segment as skillName
+  ---
+  duration_ms: 0.031667
+  type: 'test'
+  ...
+# Subtest: github: shorthand with multi-segment path
+ok 114 - github: shorthand with multi-segment path
+  ---
+  duration_ms: 0.05975
+  type: 'test'
+  ...
+# Subtest: gitlab: shorthand basic
+ok 115 - gitlab: shorthand basic
+  ---
+  duration_ms: 0.030917
+  type: 'test'
+  ...
+# Subtest: gitlab: shorthand with subgroup
+ok 116 - gitlab: shorthand with subgroup
+  ---
+  duration_ms: 0.034333
+  type: 'test'
+  ...
+# Subtest: gitlab.com URL with tree/ref/path
+ok 117 - gitlab.com URL with tree/ref/path
+  ---
+  duration_ms: 0.090791
+  type: 'test'
+  ...
+# Subtest: github.com URL with /tree/<ref>/<path>
+ok 118 - github.com URL with /tree/<ref>/<path>
+  ---
+  duration_ms: 0.029792
+  type: 'test'
+  ...
+# Subtest: listSkills includes legacy-home origin entries
+ok 119 - listSkills includes legacy-home origin entries
+  ---
+  duration_ms: 2.846875
+  type: 'test'
+  ...
+# Subtest: readSkill returns the bundle including body
+ok 120 - readSkill returns the bundle including body
+  ---
+  duration_ms: 1.0275
+  type: 'test'
+  ...
+# Subtest: readSkill returns null for unknown key
+ok 121 - readSkill returns null for unknown key
+  ---
+  duration_ms: 0.208875
+  type: 'test'
+  ...
+# Subtest: resolveDesiredSkills hydrates persona's skill keys, drops missing
+ok 122 - resolveDesiredSkills hydrates persona's skill keys, drops missing
+  ---
+  duration_ms: 1.465083
+  type: 'test'
+  ...
+# Subtest: buildSkillIndex returns null for empty input
+ok 123 - buildSkillIndex returns null for empty input
+  ---
+  duration_ms: 0.089083
+  type: 'test'
+  ...
+# Subtest: buildSkillIndex lists name + description
+ok 124 - buildSkillIndex lists name + description
+  ---
+  duration_ms: 0.929708
+  type: 'test'
+  ...
+# Subtest: listSkills sorts by key for stable ordering
+ok 125 - listSkills sorts by key for stable ordering
+  ---
+  duration_ms: 7.449417
+  type: 'test'
+  ...
+# Subtest: readSkillsLock returns v2 default when file is missing
+ok 126 - readSkillsLock returns v2 default when file is missing
+  ---
+  duration_ms: 1.75875
+  type: 'test'
+  ...
+# Subtest: updateSkillsLock writes a v2 entry with provenance
+ok 127 - updateSkillsLock writes a v2 entry with provenance
+  ---
+  duration_ms: 41.445541
+  type: 'test'
+  ...
+# Subtest: removeFromSkillsLock deletes the entry
+ok 128 - removeFromSkillsLock deletes the entry
+  ---
+  duration_ms: 9.354709
+  type: 'test'
+  ...
+# Subtest: v1 lock entries (computedHash schema) read as v2 with sourceType preserved
+ok 129 - v1 lock entries (computedHash schema) read as v2 with sourceType preserved
+  ---
+  duration_ms: 3.211792
+  type: 'test'
+  ...
+# Subtest: verifySkillsLock reports `missing` for locked-but-absent skills
+ok 130 - verifySkillsLock reports `missing` for locked-but-absent skills
+  ---
+  duration_ms: 10.834
+  type: 'test'
+  ...
+# Subtest: scanForSkills walks linked-repo skill dirs
+ok 131 - scanForSkills walks linked-repo skill dirs
+  ---
+  duration_ms: 47.07
+  type: 'test'
+  ...
+# Subtest: scanForSkills uses frontmatter `name:` when present
+ok 132 - scanForSkills uses frontmatter `name:` when present
+  ---
+  duration_ms: 10.14375
+  type: 'test'
+  ...
+# Subtest: scanForSkills falls back to slug when no frontmatter name
+ok 133 - scanForSkills falls back to slug when no frontmatter name
+  ---
+  duration_ms: 7.436667
+  type: 'test'
+  ...
+# Subtest: scanForSkills returns empty when no recognizable subdirs exist
+ok 134 - scanForSkills returns empty when no recognizable subdirs exist
+  ---
+  duration_ms: 10.314083
+  type: 'test'
+  ...
+# Subtest: scanForSkills skips dotfile dirs that aren't named skills
+ok 135 - scanForSkills skips dotfile dirs that aren't named skills
+  ---
+  duration_ms: 7.527375
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: explicit <ask_user> marker wins
+ok 136 - looksLikeAwaitingInput: explicit <ask_user> marker wins
+  ---
+  duration_ms: 0.65525
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: <ask_user> wins even when last line is a period
+ok 137 - looksLikeAwaitingInput: <ask_user> wins even when last line is a period
+  ---
+  duration_ms: 0.122625
+  type: 'test'
+  ...
+# Subtest: stripAskUserMarkers unwraps the question text
+ok 138 - stripAskUserMarkers unwraps the question text
+  ---
+  duration_ms: 0.1215
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: yes when last line ends with '?'
+ok 139 - looksLikeAwaitingInput: yes when last line ends with '?'
+  ---
+  duration_ms: 0.081042
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: no when last line is a period
+ok 140 - looksLikeAwaitingInput: no when last line is a period
+  ---
+  duration_ms: 0.037625
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: no when question is inside a code fence
+ok 141 - looksLikeAwaitingInput: no when question is inside a code fence
+  ---
+  duration_ms: 0.035375
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: no when content is mostly code
+ok 142 - looksLikeAwaitingInput: no when content is mostly code
+  ---
+  duration_ms: 0.079667
+  type: 'test'
+  ...
+# Subtest: looksLikeAwaitingInput: yes when a question comes after a code block
+ok 143 - looksLikeAwaitingInput: yes when a question comes after a code block
+  ---
+  duration_ms: 0.034208
+  type: 'test'
+  ...
+# Subtest: deriveSummary returns first sentence of latest settled agent turn
+ok 144 - deriveSummary returns first sentence of latest settled agent turn
+  ---
+  duration_ms: 0.230042
+  type: 'test'
+  ...
+# Subtest: deriveSummary falls back to first user turn when no agent turns
+ok 145 - deriveSummary falls back to first user turn when no agent turns
+  ---
+  duration_ms: 0.266708
+  type: 'test'
+  ...
+# Subtest: deriveSummary skips pending agent turns
+ok 146 - deriveSummary skips pending agent turns
+  ---
+  duration_ms: 0.047583
+  type: 'test'
+  ...
+# Subtest: deriveSummary truncates very long first sentences
+ok 147 - deriveSummary truncates very long first sentences
+  ---
+  duration_ms: 0.041417
+  type: 'test'
+  ...
+# Subtest: chooseAction creates when the note is new
+ok 148 - chooseAction creates when the note is new
+  ---
+  duration_ms: 0.3295
+  type: 'test'
+  ...
+# Subtest: chooseAction updates when Notes is newer than the stored page
+ok 149 - chooseAction updates when Notes is newer than the stored page
+  ---
+  duration_ms: 0.049916
+  type: 'test'
+  ...
+# Subtest: chooseAction skips when the stored page is up to date
+ok 150 - chooseAction skips when the stored page is up to date
+  ---
+  duration_ms: 0.035708
+  type: 'test'
+  ...
+# Subtest: chooseAction updates a page that has no stored modified date
+ok 151 - chooseAction updates a page that has no stored modified date
+  ---
+  duration_ms: 0.030292
+  type: 'test'
+  ...
+# Subtest: deriveAuthToken == PBKDF2-HMAC-SHA256 reference (algo/encoding/length)
+ok 152 - deriveAuthToken == PBKDF2-HMAC-SHA256 reference (algo/encoding/length)
+  ---
+  duration_ms: 3.346042
+  type: 'test'
+  ...
+# Subtest: getPbkdf2Iterations: default, override, invalid
+ok 153 - getPbkdf2Iterations: default, override, invalid
+  ---
+  duration_ms: 0.487792
+  type: 'test'
+  ...
+# Subtest: timingSafeEqualHex: equal, off-by-one, length mismatch
+ok 154 - timingSafeEqualHex: equal, off-by-one, length mismatch
+  ---
+  duration_ms: 0.196792
+  type: 'test'
+  ...
+# Subtest: getAuthSalt: legacy fallback + trim
+ok 155 - getAuthSalt: legacy fallback + trim
+  ---
+  duration_ms: 0.132667
+  type: 'test'
+  ...
+# Subtest: isAuthEnabled / getKbPassword read env at call time
+ok 156 - isAuthEnabled / getKbPassword read env at call time
+  ---
+  duration_ms: 0.160042
+  type: 'test'
+  ...
+# Subtest: authCookieHeader: {} when auth off, valid kb-auth cookie when on
+ok 157 - authCookieHeader: {} when auth off, valid kb-auth cookie when on
+  ---
+  duration_ms: 3.025666
+  type: 'test'
+  ...
+# Subtest: expectedToken memoizes and re-keys when env changes
+ok 158 - expectedToken memoizes and re-keys when env changes
+  ---
+  duration_ms: 0.881125
+  type: 'test'
+  ...
+# Subtest: clientKeyFromForwardedFor: first hop, trimmed, or 'unknown'
+ok 159 - clientKeyFromForwardedFor: first hop, trimmed, or 'unknown'
+  ---
+  duration_ms: 1.260333
+  type: 'test'
+  ...
+# Subtest: locks a client after MAX failed attempts
+ok 160 - locks a client after MAX failed attempts
+  ---
+  duration_ms: 0.61725
+  type: 'test'
+  ...
+# Subtest: a success reset clears the client's failure budget
+ok 161 - a success reset clears the client's failure budget
+  ---
+  duration_ms: 0.347708
+  type: 'test'
+  ...
+# Subtest: global bucket trips even when client keys rotate (spoof-resistant)
+ok 162 - global bucket trips even when client keys rotate (spoof-resistant)
+  ---
+  duration_ms: 0.253583
+  type: 'test'
+  ...
+# Subtest: normalizeJobConfig derives the current default adapter type from the selected provider
+ok 163 - normalizeJobConfig derives the current default adapter type from the selected provider
+  ---
+  duration_ms: 1.826291
+  type: 'test'
+  ...
+# Subtest: normalizeJobConfig uses the structured codex adapter by default
+ok 164 - normalizeJobConfig uses the structured codex adapter by default
+  ---
+  duration_ms: 0.14725
+  type: 'test'
+  ...
+# Subtest: normalizeJobConfig preserves explicit adapter settings
+ok 165 - normalizeJobConfig preserves explicit adapter settings
+  ---
+  duration_ms: 0.310125
+  type: 'test'
+  ...
+# Subtest: htmlToMarkdown converts Tiptap task items to GFM checkboxes
+ok 166 - htmlToMarkdown converts Tiptap task items to GFM checkboxes
+  ---
+  duration_ms: 4.087792
+  type: 'test'
+  ...
+# Subtest: task list survives a full markdown round-trip
+ok 167 - task list survives a full markdown round-trip
+  ---
+  duration_ms: 8.345333
+  type: 'test'
+  ...
+# Subtest: convertWikiLinksToOkf - single wiki-link
+ok 168 - convertWikiLinksToOkf - single wiki-link
+  ---
+  duration_ms: 0.490791
+  type: 'test'
+  ...
+# Subtest: convertWikiLinksToOkf - multiple wiki-links
+ok 169 - convertWikiLinksToOkf - multiple wiki-links
+  ---
+  duration_ms: 0.099875
+  type: 'test'
+  ...
+# Subtest: convertWikiLinksToOkf - mixed resolved and unresolved links
+ok 170 - convertWikiLinksToOkf - mixed resolved and unresolved links
+  ---
+  duration_ms: 0.086459
+  type: 'test'
+  ...
+# Subtest: convertWikiLinksToOkf - no wiki-links
+ok 171 - convertWikiLinksToOkf - no wiki-links
+  ---
+  duration_ms: 0.033917
+  type: 'test'
+  ...
+# Subtest: convertWikiLinksToOkf - empty markdown
+ok 172 - convertWikiLinksToOkf - empty markdown
+  ---
+  duration_ms: 0.033583
+  type: 'test'
+  ...
+# Subtest: parseJsxAttributes handles strings, expressions, and booleans
+ok 173 - parseJsxAttributes handles strings, expressions, and booleans
+  ---
+  duration_ms: 0.669166
+  type: 'test'
+  ...
+# Subtest: transformMdxToHtml rewrites a self-closing registered component
+ok 174 - transformMdxToHtml rewrites a self-closing registered component
+  ---
+  duration_ms: 0.265708
+  type: 'test'
+  ...
+# Subtest: transformMdxToHtml rewrites a component with children
+ok 175 - transformMdxToHtml rewrites a component with children
+  ---
+  duration_ms: 0.296292
+  type: 'test'
+  ...
+# Subtest: transformMdxToHtml ignores unregistered components and code fences
+ok 176 - transformMdxToHtml ignores unregistered components and code fences
+  ---
+  duration_ms: 0.227208
+  type: 'test'
+  ...
+# Subtest: serializeMdxComponent round-trips self-closing and child forms
+ok 177 - serializeMdxComponent round-trips self-closing and child forms
+  ---
+  duration_ms: 0.217416
+  type: 'test'
+  ...
+# Subtest: stripMdxForPlaintext produces semantic plain text
+ok 178 - stripMdxForPlaintext produces semantic plain text
+  ---
+  duration_ms: 0.304292
+  type: 'test'
+  ...
+# Subtest: nested same-name components match the correct closing tag
+ok 179 - nested same-name components match the correct closing tag
+  ---
+  duration_ms: 0.0835
+  type: 'test'
+  ...
+# Subtest: stripNotionId removes the trailing hash, keeps name + extension
+ok 180 - stripNotionId removes the trailing hash, keeps name + extension
+  ---
+  duration_ms: 0.46725
+  type: 'test'
+  ...
+# Subtest: rewriteLinks: page links → wiki-links, assets → same-dir relative
+ok 181 - rewriteLinks: page links → wiki-links, assets → same-dir relative
+  ---
+  duration_ms: 0.339708
+  type: 'test'
+  ...
+# Subtest: cleanNotionExport transforms a realistic export tree
+ok 182 - cleanNotionExport transforms a realistic export tree
+  ---
+  duration_ms: 18.422
+  type: 'test'
+  ...
+# Subtest: ensureContainerDir promotes a standalone page into a container
+ok 183 - ensureContainerDir promotes a standalone page into a container
+  ---
+  duration_ms: 27.7145
+  type: 'test'
+  ...
+# Subtest: ensureContainerDir heals an already-broken dir+sibling pair
+ok 184 - ensureContainerDir heals an already-broken dir+sibling pair
+  ---
+  duration_ms: 28.164917
+  type: 'test'
+  ...
+# Subtest: ensureContainerDir is a no-op without a sibling .md
+ok 185 - ensureContainerDir is a no-op without a sibling .md
+  ---
+  duration_ms: 9.827625
+  type: 'test'
+  ...
+# Subtest: resolvePageBySlug matches human-named imported pages by slug
+ok 186 - resolvePageBySlug matches human-named imported pages by slug
+  ---
+  duration_ms: 0.473708
+  type: 'test'
+  ...
+# Subtest: resolvePageBySlug still matches native slug-named pages
+ok 187 - resolvePageBySlug still matches native slug-named pages
+  ---
+  duration_ms: 0.060333
+  type: 'test'
+  ...
+# Subtest: resolvePageBySlug prefers a sibling on ambiguous slugs
+ok 188 - resolvePageBySlug prefers a sibling on ambiguous slugs
+  ---
+  duration_ms: 0.070166
+  type: 'test'
+  ...
+# Subtest: scaffoldCabinet seeds getting-started docs into new cabinets
+ok 189 - scaffoldCabinet seeds getting-started docs into new cabinets
+  ---
+  duration_ms: 38.732958
+  type: 'test'
+  ...
+# Subtest: seedGettingStartedDir preserves existing docs while filling missing files
+ok 190 - seedGettingStartedDir preserves existing docs while filling missing files
+  ---
+  duration_ms: 24.586208
+  type: 'test'
+  ...
+# Subtest: cabinet discovery includes the root cabinet and nested cabinets
+ok 191 - cabinet discovery includes the root cabinet and nested cabinets
+  ---
+  duration_ms: 92.011959
+  type: 'test'
+  ...
+# Subtest: cabinet overview keeps own scope separate from descendant scope
+ok 192 - cabinet overview keeps own scope separate from descendant scope
+  ---
+  duration_ms: 145.613
+  type: 'test'
+  ...
+# Subtest: job manager reads and writes only cabinet-level .jobs files
+ok 193 - job manager reads and writes only cabinet-level .jobs files
+  ---
+  duration_ms: 19.785084
+  type: 'test'
+  ...
+# Subtest: task inbox stores handoffs inside the owning cabinet
+ok 194 - task inbox stores handoffs inside the owning cabinet
+  ---
+  duration_ms: 17.132542
+  type: 'test'
+  ...
+# Subtest: resolveOrBootstrapCabinetRoot bootstraps the current directory when no cabinet exists
+ok 195 - resolveOrBootstrapCabinetRoot bootstraps the current directory when no cabinet exists
+  ---
+  duration_ms: 4.380958
+  type: 'test'
+  ...
+# Subtest: resolveOrBootstrapCabinetRoot reuses an existing parent cabinet
+ok 196 - resolveOrBootstrapCabinetRoot reuses an existing parent cabinet
+  ---
+  duration_ms: 1.816417
+  type: 'test'
+  ...
+# Subtest: conversation notifications only enqueue on a non-terminal to terminal transition
+ok 197 - conversation notifications only enqueue on a non-terminal to terminal transition
+  ---
+  duration_ms: 0.775667
+  type: 'test'
+  ...
+# Subtest: conversation notification identities are cabinet-aware
+ok 198 - conversation notification identities are cabinet-aware
+  ---
+  duration_ms: 0.183042
+  type: 'test'
+  ...
+# Subtest: conversation start notifications fire for background triggers only
+ok 199 - conversation start notifications fire for background triggers only
+  ---
+  duration_ms: 0.10375
+  type: 'test'
+  ...
+# Subtest: duplicate conversation notifications are deduped by conversation identity
+ok 200 - duplicate conversation notifications are deduped by conversation identity
+  ---
+  duration_ms: 0.426291
+  type: 'test'
+  ...
+# Subtest: parseCabinetBlock strips Claude spinner noise from artifact lines
+ok 201 - parseCabinetBlock strips Claude spinner noise from artifact lines
+  ---
+  duration_ms: 1.602416
+  type: 'test'
+  ...
+# Subtest: manual cabinet-scoped prompts explicitly pin work to the cabinet root
+ok 202 - manual cabinet-scoped prompts explicitly pin work to the cabinet root
+  ---
+  duration_ms: 15.005583
+  type: 'test'
+  ...
+# Subtest: parseCabinetBlock ignores echoed cabinet template placeholders from Claude prompt echo
+ok 203 - parseCabinetBlock ignores echoed cabinet template placeholders from Claude prompt echo
+  ---
+  duration_ms: 0.415292
+  type: 'test'
+  ...
+# Subtest: transcriptShowsCompletedRun waits for a real Claude cabinet result before the idle prompt
+ok 204 - transcriptShowsCompletedRun waits for a real Claude cabinet result before the idle prompt
+  ---
+  duration_ms: 0.23425
+  type: 'test'
+  ...
+# Subtest: transcriptShowsCompletedRun accepts a real Claude cabinet result once the prompt returns
+ok 205 - transcriptShowsCompletedRun accepts a real Claude cabinet result once the prompt returns
+  ---
+  duration_ms: 0.248375
+  type: 'test'
+  ...
+# Subtest: transcriptShowsCompletedRun accepts Claude's idle prompt banner after fragmented result output
+ok 206 - transcriptShowsCompletedRun accepts Claude's idle prompt banner after fragmented result output
+  ---
+  duration_ms: 0.307708
+  type: 'test'
+  ...
+# Subtest: transcriptShowsCompletedRun stays running when Claude is still interruptible after a partial result
+ok 207 - transcriptShowsCompletedRun stays running when Claude is still interruptible after a partial result
+  ---
+  duration_ms: 0.3165
+  type: 'test'
+  ...
+# Subtest: transcriptShowsCompletedRun detects completion when timing verb and prompt merge onto one line
+ok 208 - transcriptShowsCompletedRun detects completion when timing verb and prompt merge onto one line
+  ---
+  duration_ms: 0.121375
+  type: 'test'
+  ...
+# Subtest: transcriptShowsCompletedRun handles any cooking verb in the completion timing line
+ok 209 - transcriptShowsCompletedRun handles any cooking verb in the completion timing line
+  ---
+  duration_ms: 0.397792
+  type: 'test'
+  ...
+# Subtest: getScheduleEvents emits one heartbeat event per cron occurrence
+ok 210 - getScheduleEvents emits one heartbeat event per cron occurrence
+  ---
+  duration_ms: 6.977
+  type: 'test'
+  ...
+# Subtest: getScheduleEvents dedups the same agent across multiple cabinet scopes (audit \#070)
+ok 211 - getScheduleEvents dedups the same agent across multiple cabinet scopes (audit \#070)
+  ---
+  duration_ms: 22.96275
+  type: 'test'
+  ...
+# Subtest: getScheduleEvents keeps separate events when cron expressions differ
+ok 212 - getScheduleEvents keeps separate events when cron expressions differ
+  ---
+  duration_ms: 4.990375
+  type: 'test'
+  ...
+# Subtest: getScheduleEvents dedups jobs with identical schedule + scopedId
+ok 213 - getScheduleEvents dedups jobs with identical schedule + scopedId
+  ---
+  duration_ms: 5.588917
+  type: 'test'
+  ...
+# Subtest: withinSeriesWindow: until is an exclusive upper bound
+ok 214 - withinSeriesWindow: until is an exclusive upper bound
+  ---
+  duration_ms: 0.912791
+  type: 'test'
+  ...
+# Subtest: withinSeriesWindow: since is an inclusive lower bound
+ok 215 - withinSeriesWindow: since is an inclusive lower bound
+  ---
+  duration_ms: 0.125917
+  type: 'test'
+  ...
+# Subtest: withinSeriesWindow: open bounds are unbounded
+ok 216 - withinSeriesWindow: open bounds are unbounded
+  ---
+  duration_ms: 0.047958
+  type: 'test'
+  ...
+# Subtest: capped series (until) emits only occurrences before the split
+ok 217 - capped series (until) emits only occurrences before the split
+  ---
+  duration_ms: 3.979292
+  type: 'test'
+  ...
+# Subtest: forked series (since) emits nothing before the split — no backward leak
+ok 218 - forked series (since) emits nothing before the split — no backward leak
+  ---
+  duration_ms: 7.590667
+  type: 'test'
+  ...
+# Subtest: split halves partition the week with no day double-booked
+ok 219 - split halves partition the week with no day double-booked
+  ---
+  duration_ms: 15.964417
+  type: 'test'
+  ...
+# Subtest: explicit ws:// override is returned as-is
+ok 220 - explicit ws:// override is returned as-is
+  ---
+  duration_ms: 28.360375
+  type: 'test'
+  ...
+# Subtest: explicit wss:// override is returned as-is
+ok 221 - explicit wss:// override is returned as-is
+  ---
+  duration_ms: 0.1745
+  type: 'test'
+  ...
+# Subtest: explicit http:// override is upgraded to ws://
+ok 222 - explicit http:// override is upgraded to ws://
+  ---
+  duration_ms: 0.0895
+  type: 'test'
+  ...
+# Subtest: explicit https:// override is upgraded to wss://
+ok 223 - explicit https:// override is upgraded to wss://
+  ---
+  duration_ms: 0.273791
+  type: 'test'
+  ...
+# Subtest: LAN browser: derives ws://<host>:<daemonPort> from Host header
+ok 224 - LAN browser: derives ws://<host>:<daemonPort> from Host header
+  ---
+  duration_ms: 0.557458
+  type: 'test'
+  ...
+# Subtest: Bonjour .local hostname is preserved
+ok 225 - Bonjour .local hostname is preserved
+  ---
+  duration_ms: 0.567292
+  type: 'test'
+  ...
+# Subtest: reverse proxy: x-forwarded-proto: https → wss://
+ok 226 - reverse proxy: x-forwarded-proto: https → wss://
+  ---
+  duration_ms: 0.502708
+  type: 'test'
+  ...
+# Subtest: x-forwarded-proto with comma-list takes the first proto
+ok 227 - x-forwarded-proto with comma-list takes the first proto
+  ---
+  duration_ms: 0.508291
+  type: 'test'
+  ...
+# Subtest: IPv6 host like [::1]:4000 parses correctly and gets daemon port
+ok 228 - IPv6 host like [::1]:4000 parses correctly and gets daemon port
+  ---
+  duration_ms: 0.734041
+  type: 'test'
+  ...
+# Subtest: loopback Host stays loopback (single-host case still works)
+ok 229 - loopback Host stays loopback (single-host case still works)
+  ---
+  duration_ms: 0.552625
+  type: 'test'
+  ...
+# Subtest: scheme-less explicit override falls through to Host derivation
+ok 230 - scheme-less explicit override falls through to Host derivation
+  ---
+  duration_ms: 0.379667
+  type: 'test'
+  ...
+# Subtest: missing Host header falls back to loopback (legacy helper)
+ok 231 - missing Host header falls back to loopback (legacy helper)
+  ---
+  duration_ms: 0.34175
+  type: 'test'
+  ...
+# Subtest: null request falls back to loopback
+ok 232 - null request falls back to loopback
+  ---
+  duration_ms: 0.607542
+  type: 'test'
+  ...
+# Subtest: parseHash handles canonical agents route under root cabinet
+ok 233 - parseHash handles canonical agents route under root cabinet
+  ---
+  duration_ms: 1.192458
+  type: 'test'
+  ...
+# Subtest: parseHash handles canonical tasks route under root cabinet
+ok 234 - parseHash handles canonical tasks route under root cabinet
+  ---
+  duration_ms: 0.127333
+  type: 'test'
+  ...
+# Subtest: parseHash handles canonical page-with-cabinet form
+ok 235 - parseHash handles canonical page-with-cabinet form
+  ---
+  duration_ms: 0.154125
+  type: 'test'
+  ...
+# Subtest: parseHash handles bare page form
+ok 236 - parseHash handles bare page form
+  ---
+  duration_ms: 0.071833
+  type: 'test'
+  ...
+# Subtest: parseHash: deep cabinet root round-trips (no marker = cabinet root)
+ok 237 - parseHash: deep cabinet root round-trips (no marker = cabinet root)
+  ---
+  duration_ms: 0.13975
+  type: 'test'
+  ...
+# Subtest: parseHash: deep page with the real 'doubled' path stays put
+ok 238 - parseHash: deep page with the real 'doubled' path stays put
+  ---
+  duration_ms: 0.067875
+  type: 'test'
+  ...
+# Subtest: parseHash: a page path that itself contains 'data' still works
+ok 239 - parseHash: a page path that itself contains 'data' still works
+  ---
+  duration_ms: 0.100833
+  type: 'test'
+  ...
+# Subtest: parseHash: deep agents list
+ok 240 - parseHash: deep agents list
+  ---
+  duration_ms: 0.043583
+  type: 'test'
+  ...
+# Subtest: parseHash: deep agents sub-tab
+ok 241 - parseHash: deep agents sub-tab
+  ---
+  duration_ms: 0.150625
+  type: 'test'
+  ...
+# Subtest: parseHash: deep agent detail
+ok 242 - parseHash: deep agent detail
+  ---
+  duration_ms: 0.243583
+  type: 'test'
+  ...
+# Subtest: parseHash: deep tasks list + task detail
+ok 243 - parseHash: deep tasks list + task detail
+  ---
+  duration_ms: 0.047958
+  type: 'test'
+  ...
+# Subtest: round-trip: nested cabinet root
+ok 244 - round-trip: nested cabinet root
+  ---
+  duration_ms: 0.170084
+  type: 'test'
+  ...
+# Subtest: round-trip: nested page
+ok 245 - round-trip: nested page
+  ---
+  duration_ms: 0.106875
+  type: 'test'
+  ...
+# Subtest: round-trip: nested agents sub-tab and task
+ok 246 - round-trip: nested agents sub-tab and task
+  ---
+  duration_ms: 0.1875
+  type: 'test'
+  ...
+# Subtest: slugifyHeading matches the editor decoration scheme
+ok 247 - slugifyHeading matches the editor decoration scheme
+  ---
+  duration_ms: 0.630083
+  type: 'test'
+  ...
+# Subtest: addHeadingIds injects ids into bare headings
+ok 248 - addHeadingIds injects ids into bare headings
+  ---
+  duration_ms: 0.435042
+  type: 'test'
+  ...
+# Subtest: addHeadingIds dedupes repeated headings
+ok 249 - addHeadingIds dedupes repeated headings
+  ---
+  duration_ms: 0.115875
+  type: 'test'
+  ...
+# Subtest: addHeadingIds slugs from text, preserving inner markup
+ok 250 - addHeadingIds slugs from text, preserving inner markup
+  ---
+  duration_ms: 0.081333
+  type: 'test'
+  ...
+# Subtest: MyST Markdown Parser - Admonitions
+ok 251 - MyST Markdown Parser - Admonitions
+  ---
+  duration_ms: 6.217166
+  type: 'test'
+  ...
+# Subtest: MyST Markdown Parser - Roles
+ok 252 - MyST Markdown Parser - Roles
+  ---
+  duration_ms: 0.992292
+  type: 'test'
+  ...
+# Subtest: MyST Markdown Serializer - Callouts to Admonitions
+ok 253 - MyST Markdown Serializer - Callouts to Admonitions
+  ---
+  duration_ms: 2.147292
+  type: 'test'
+  ...
+# Subtest: normalizeAgentText is a no-op for clean text
+ok 254 - normalizeAgentText is a no-op for clean text
+  ---
+  duration_ms: 0.466083
+  type: 'test'
+  ...
+# Subtest: normalizeAgentText strips a leading `running .zshenv` line
+ok 255 - normalizeAgentText strips a leading `running .zshenv` line
+  ---
+  duration_ms: 0.144334
+  type: 'test'
+  ...
+# Subtest: normalizeAgentText only strips shell-init noise from the top, not mid-text
+ok 256 - normalizeAgentText only strips shell-init noise from the top, not mid-text
+  ---
+  duration_ms: 0.042
+  type: 'test'
+  ...
+# Subtest: normalizeAgentText splits concatenated sub-agent status lines
+ok 257 - normalizeAgentText splits concatenated sub-agent status lines
+  ---
+  duration_ms: 0.16725
+  type: 'test'
+  ...
+# Subtest: normalizeAgentText handles both pathologies together
+ok 258 - normalizeAgentText handles both pathologies together
+  ---
+  duration_ms: 0.043375
+  type: 'test'
+  ...
+# Subtest: normalizeAgentText doesn't break on prose that mentions agents
+ok 259 - normalizeAgentText doesn't break on prose that mentions agents
+  ---
+  duration_ms: 0.033709
+  type: 'test'
+  ...
+# Subtest: notebookToMdast
+    # Subtest: converts markdown cells to MDAST nodes
+    ok 1 - converts markdown cells to MDAST nodes
+      ---
+      duration_ms: 8.586375
+      type: 'test'
+      ...
+    # Subtest: converts code cells without outputs to code nodes
+    ok 2 - converts code cells without outputs to code nodes
+      ---
+      duration_ms: 0.086042
+      type: 'test'
+      ...
+    # Subtest: wraps code cells with outputs in NotebookCell component
+    ok 3 - wraps code cells with outputs in NotebookCell component
+      ---
+      duration_ms: 0.134292
+      type: 'test'
+      ...
+    # Subtest: converts error outputs to ErrorOutput component
+    ok 4 - converts error outputs to ErrorOutput component
+      ---
+      duration_ms: 0.108375
+      type: 'test'
+      ...
+    # Subtest: converts image/png output to ImageOutput component
+    ok 5 - converts image/png output to ImageOutput component
+      ---
+      duration_ms: 0.0555
+      type: 'test'
+      ...
+    # Subtest: converts pandas HTML to DataFrame component
+    ok 6 - converts pandas HTML to DataFrame component
+      ---
+      duration_ms: 0.048084
+      type: 'test'
+      ...
+    # Subtest: converts Plotly JSON to PlotlyChart component
+    ok 7 - converts Plotly JSON to PlotlyChart component
+      ---
+      duration_ms: 0.089709
+      type: 'test'
+      ...
+    # Subtest: preserves notebook metadata in root.data
+    ok 8 - preserves notebook metadata in root.data
+      ---
+      duration_ms: 15.925958
+      type: 'test'
+      ...
+    1..8
+ok 260 - notebookToMdast
+  ---
+  duration_ms: 31.514417
+  type: 'suite'
+  ...
+# Subtest: notebookRootToMdx
+    # Subtest: serializes markdown + code to MDX
+    ok 1 - serializes markdown + code to MDX
+      ---
+      duration_ms: 22.880042
+      type: 'test'
+      ...
+    # Subtest: serializes NotebookCell with outputs as JSX
+    ok 2 - serializes NotebookCell with outputs as JSX
+      ---
+      duration_ms: 1.490209
+      type: 'test'
+      ...
+    # Subtest: serializes self-closing components for outputs without children
+    ok 3 - serializes self-closing components for outputs without children
+      ---
+      duration_ms: 0.159417
+      type: 'test'
+      ...
+    1..3
+ok 261 - notebookRootToMdx
+  ---
+  duration_ms: 24.648667
+  type: 'suite'
+  ...
+# Subtest: ipynbToMdx (full pipeline)
+    # Subtest: parses ipynb JSON string end-to-end
+    ok 1 - parses ipynb JSON string end-to-end
+      ---
+      duration_ms: 3.315042
+      type: 'test'
+      ...
+    1..1
+ok 262 - ipynbToMdx (full pipeline)
+  ---
+  duration_ms: 3.357875
+  type: 'suite'
+  ...
+# Subtest: parses env-var providers through ANSI codes (configured)
+ok 263 - parses env-var providers through ANSI codes (configured)
+  ---
+  duration_ms: 10.358584
+  type: 'test'
+  ...
+# Subtest: zero credentials AND zero env vars → not configured (Zen-free only)
+ok 264 - zero credentials AND zero env vars → not configured (Zen-free only)
+  ---
+  duration_ms: 0.468791
+  type: 'test'
+  ...
+# Subtest: stored credentials count as configured
+ok 265 - stored credentials count as configured
+  ---
+  duration_ms: 0.067916
+  type: 'test'
+  ...
+# Subtest: singular grammar (1 credential / 1 environment variable)
+ok 266 - singular grammar (1 credential / 1 environment variable)
+  ---
+  duration_ms: 0.114667
+  type: 'test'
+  ...
+# Subtest: empty / unparseable output → conservatively not configured
+ok 267 - empty / unparseable output → conservatively not configured
+  ---
+  duration_ms: 0.142792
+  type: 'test'
+  ...
+# Subtest: parses vendor/model ids into model entries with variant effort levels
+ok 268 - parses vendor/model ids into model entries with variant effort levels
+  ---
+  duration_ms: 0.688791
+  type: 'test'
+  ...
+# Subtest: drops blank lines and non-id CLI chrome (lines without a slash)
+ok 269 - drops blank lines and non-id CLI chrome (lines without a slash)
+  ---
+  duration_ms: 0.081625
+  type: 'test'
+  ...
+# Subtest: empty / whitespace / nullish output falls back to the offline list
+ok 270 - empty / whitespace / nullish output falls back to the offline list
+  ---
+  duration_ms: 0.0795
+  type: 'test'
+  ...
+# Subtest: output that is only noise (no slash anywhere) falls back, never blank
+ok 271 - output that is only noise (no slash anywhere) falls back, never blank
+  ---
+  duration_ms: 0.087542
+  type: 'test'
+  ...
+# Subtest: movePage moves a standalone markdown file out of a linked directory
+ok 272 - movePage moves a standalone markdown file out of a linked directory
+  ---
+  duration_ms: 20.302167
+  type: 'test'
+  ...
+# Subtest: parses one model id per line with thinking effort levels
+ok 273 - parses one model id per line with thinking effort levels
+  ---
+  duration_ms: 0.638458
+  type: 'test'
+  ...
+# Subtest: drops blank lines and \# comment/banner lines
+ok 274 - drops blank lines and \# comment/banner lines
+  ---
+  duration_ms: 0.065
+  type: 'test'
+  ...
+# Subtest: output that is ONLY a banner falls back instead of going blank
+ok 275 - output that is ONLY a banner falls back instead of going blank
+  ---
+  duration_ms: 0.066583
+  type: 'test'
+  ...
+# Subtest: empty / nullish output falls back to the offline list
+ok 276 - empty / nullish output falls back to the offline list
+  ---
+  duration_ms: 0.140958
+  type: 'test'
+  ...
+# Subtest: Claude keeps detached prompt runs in session mode
+ok 277 - Claude keeps detached prompt runs in session mode
+  ---
+  duration_ms: 0.74225
+  type: 'test'
+  ...
+# Subtest: Codex keeps detached prompt runs in one-shot mode
+ok 278 - Codex keeps detached prompt runs in one-shot mode
+  ---
+  duration_ms: 0.140417
+  type: 'test'
+  ...
+# Subtest: OpenCode verify command: model-less mirrors the install step
+ok 279 - OpenCode verify command: model-less mirrors the install step
+  ---
+  duration_ms: 0.427042
+  type: 'test'
+  ...
+# Subtest: OpenCode verify command: pins the resolved default model
+ok 280 - OpenCode verify command: pins the resolved default model
+  ---
+  duration_ms: 0.134375
+  type: 'test'
+  ...
+# Subtest: Pi verify command: model-less mirrors the install step
+ok 281 - Pi verify command: model-less mirrors the install step
+  ---
+  duration_ms: 0.111167
+  type: 'test'
+  ...
+# Subtest: Pi verify command: pins the resolved default model
+ok 282 - Pi verify command: pins the resolved default model
+  ---
+  duration_ms: 0.068292
+  type: 'test'
+  ...
+# Subtest: verify command keeps the exact 'Reply with exactly OK' probe (classifier contract)
+ok 283 - verify command keeps the exact 'Reply with exactly OK' probe (classifier contract)
+  ---
+  duration_ms: 0.138125
+  type: 'test'
+  ...
+# Subtest: proxy passes through every path when KB_PASSWORD is unset
+ok 284 - proxy passes through every path when KB_PASSWORD is unset
+  ---
+  duration_ms: 19.069375
+  type: 'test'
+  ...
+# Subtest: proxy lets the login page and health check through even when locked
+ok 285 - proxy lets the login page and health check through even when locked
+  ---
+  duration_ms: 0.974958
+  type: 'test'
+  ...
+# Subtest: proxy 401s API requests without a valid auth cookie when locked
+ok 286 - proxy 401s API requests without a valid auth cookie when locked
+  ---
+  duration_ms: 7.19375
+  type: 'test'
+  ...
+# Subtest: proxy redirects unauthenticated page requests to /login when locked
+ok 287 - proxy redirects unauthenticated page requests to /login when locked
+  ---
+  duration_ms: 0.28
+  type: 'test'
+  ...
+# Subtest: proxy admits authenticated requests when locked
+ok 288 - proxy admits authenticated requests when locked
+  ---
+  duration_ms: 0.898334
+  type: 'test'
+  ...
+# Subtest: daemon's authCookieHeader passes the proxy gate on /api/* when locked
+ok 289 - daemon's authCookieHeader passes the proxy gate on /api/* when locked
+  ---
+  duration_ms: 4.511542
+  type: 'test'
+  ...
+# Subtest: rename rewrites every inbound wiki-link and leaves others alone
+ok 290 - rename rewrites every inbound wiki-link and leaves others alone
+  ---
+  duration_ms: 138.298083
+  type: 'test'
+  ...
+# Subtest: ambiguous slugs: only links resolving to the renamed page are rewritten
+ok 291 - ambiguous slugs: only links resolving to the renamed page are rewritten
+  ---
+  duration_ms: 47.550292
+  type: 'test'
+  ...
+# Subtest: undo restores directory, title and every rewritten file byte-for-byte
+ok 292 - undo restores directory, title and every rewritten file byte-for-byte
+  ---
+  duration_ms: 20.697416
+  type: 'test'
+  ...
+# Subtest: renaming a typed file without extension preserves its original extension
+ok 293 - renaming a typed file without extension preserves its original extension
+  ---
+  duration_ms: 1.042416
+  type: 'test'
+  ...
+# Subtest: renaming a typed file with a new extension uses the provided extension
+ok 294 - renaming a typed file with a new extension uses the provided extension
+  ---
+  duration_ms: 0.839042
+  type: 'test'
+  ...
+# Subtest: sibling-pattern rename moves the .md and its companion folder together
+ok 295 - sibling-pattern rename moves the .md and its companion folder together
+  ---
+  duration_ms: 21.556375
+  type: 'test'
+  ...
+# Subtest: no-op rename (same slug) reports nothing and no undo token
+ok 296 - no-op rename (same slug) reports nothing and no undo token
+  ---
+  duration_ms: 1.067458
+  type: 'test'
+  ...
+# Subtest: case-only rename preserves the new casing on disk
+ok 297 - case-only rename preserves the new casing on disk
+  ---
+  duration_ms: 18.3735
+  type: 'test'
+  ...
+# Subtest: re-roots a cwd-relative artifact path under the task's cabinetPath
+ok 298 - re-roots a cwd-relative artifact path under the task's cabinetPath
+  ---
+  duration_ms: 0.504125
+  type: 'test'
+  ...
+# Subtest: strips index.md / .md while re-rooting
+ok 299 - strips index.md / .md while re-rooting
+  ---
+  duration_ms: 0.111125
+  type: 'test'
+  ...
+# Subtest: strips a leading data/ prefix before re-rooting
+ok 300 - strips a leading data/ prefix before re-rooting
+  ---
+  duration_ms: 0.041
+  type: 'test'
+  ...
+# Subtest: is idempotent — never double-prefixes an already cabinet-rooted path
+ok 301 - is idempotent — never double-prefixes an already cabinet-rooted path
+  ---
+  duration_ms: 0.042209
+  type: 'test'
+  ...
+# Subtest: no-ops when cabinetPath is absent, empty, or the root cabinet
+ok 302 - no-ops when cabinetPath is absent, empty, or the root cabinet
+  ---
+  duration_ms: 0.088917
+  type: 'test'
+  ...
+# Subtest: tolerates surrounding slashes on the cabinetPath
+ok 303 - tolerates surrounding slashes on the cabinetPath
+  ---
+  duration_ms: 0.03475
+  type: 'test'
+  ...
+# Subtest: empty artifact path stays empty
+ok 304 - empty artifact path stays empty
+  ---
+  duration_ms: 0.066917
+  type: 'test'
+  ...
+# Subtest: flags absolute system paths as external
+ok 305 - flags absolute system paths as external
+  ---
+  duration_ms: 0.043708
+  type: 'test'
+  ...
+# Subtest: does NOT flag in-cabinet / data-rooted paths as external
+ok 306 - does NOT flag in-cabinet / data-rooted paths as external
+  ---
+  duration_ms: 0.158125
+  type: 'test'
+  ...
+# Subtest: does NOT flag relative paths whose first segment looks like a system dir
+ok 307 - does NOT flag relative paths whose first segment looks like a system dir
+  ---
+  duration_ms: 0.236667
+  type: 'test'
+  ...
+# Subtest: flags home-relative (~) paths as external
+ok 308 - flags home-relative (~) paths as external
+  ---
+  duration_ms: 0.039334
+  type: 'test'
+  ...
+# Subtest: resolver never prefixes an external path with the cabinet
+ok 309 - resolver never prefixes an external path with the cabinet
+  ---
+  duration_ms: 0.028375
+  type: 'test'
+  ...
+# Subtest: buildPath: globals
+ok 310 - buildPath: globals
+  ---
+  duration_ms: 0.439708
+  type: 'test'
+  ...
+# Subtest: buildPath: content mirrors the file tree (no /data/, no doubling)
+ok 311 - buildPath: content mirrors the file tree (no /data/, no doubling)
+  ---
+  duration_ms: 0.066041
+  type: 'test'
+  ...
+# Subtest: buildPath: cabinet views behind the /-/ marker
+ok 312 - buildPath: cabinet views behind the /-/ marker
+  ---
+  duration_ms: 0.060041
+  type: 'test'
+  ...
+# Subtest: parsePath: globals
+ok 313 - parsePath: globals
+  ---
+  duration_ms: 0.345958
+  type: 'test'
+  ...
+# Subtest: parsePath: deep content is a single content route
+ok 314 - parsePath: deep content is a single content route
+  ---
+  duration_ms: 0.098292
+  type: 'test'
+  ...
+# Subtest: parsePath: /-/ marker splits cabinet from view at any depth
+ok 315 - parsePath: /-/ marker splits cabinet from view at any depth
+  ---
+  duration_ms: 0.17075
+  type: 'test'
+  ...
+# Subtest: round-trip: parsePath(buildPath(x)) is stable for nested paths
+ok 316 - round-trip: parsePath(buildPath(x)) is stable for nested paths
+  ---
+  duration_ms: 0.158208
+  type: 'test'
+  ...
+# Subtest: a content path that itself contains 'tasks'/'agents' is not mis-split
+ok 317 - a content path that itself contains 'tasks'/'agents' is not mis-split
+  ---
+  duration_ms: 0.034791
+  type: 'test'
+  ...
+# Subtest: dynamic + not hydrated: an unknown saved id is preserved, not snapped to models[0]
+ok 318 - dynamic + not hydrated: an unknown saved id is preserved, not snapped to models[0]
+  ---
+  duration_ms: 0.600791
+  type: 'test'
+  ...
+# Subtest: dynamic + not hydrated: fallbackModel is preserved when no requestedModel
+ok 319 - dynamic + not hydrated: fallbackModel is preserved when no requestedModel
+  ---
+  duration_ms: 0.06375
+  type: 'test'
+  ...
+# Subtest: dynamic + not hydrated: a direct match still wins over the preserve guard
+ok 320 - dynamic + not hydrated: a direct match still wins over the preserve guard
+  ---
+  duration_ms: 0.046125
+  type: 'test'
+  ...
+# Subtest: dynamic + hydrated: unknown id snaps to models[0] (real list is authoritative)
+ok 321 - dynamic + hydrated: unknown id snaps to models[0] (real list is authoritative)
+  ---
+  duration_ms: 0.041167
+  type: 'test'
+  ...
+# Subtest: non-dynamic provider: unchanged legacy behavior (unknown id → models[0])
+ok 322 - non-dynamic provider: unchanged legacy behavior (unknown id → models[0])
+  ---
+  duration_ms: 0.040709
+  type: 'test'
+  ...
+# Subtest: no models → undefined regardless of dynamic flag
+ok 323 - no models → undefined regardless of dynamic flag
+  ---
+  duration_ms: 0.030542
+  type: 'test'
+  ...
+# Subtest: search scoped to a room returns only that room's results
+ok 324 - search scoped to a room returns only that room's results
+  ---
+  duration_ms: 1.050584
+  type: 'test'
+  ...
+# Subtest: search from room A never returns room B
+ok 325 - search from room A never returns room B
+  ---
+  duration_ms: 0.156167
+  type: 'test'
+  ...
+# Subtest: fails closed when no room is resolved (no cross-room leak)
+ok 326 - fails closed when no room is resolved (no cross-room leak)
+  ---
+  duration_ms: 0.268625
+  type: 'test'
+  ...
+# Subtest: explicit includeOtherRooms returns results across rooms
+ok 327 - explicit includeOtherRooms returns results across rooms
+  ---
+  duration_ms: 0.084084
+  type: 'test'
+  ...
+# Subtest: nested cabinets within a room stay visible; siblings do not
+ok 328 - nested cabinets within a room stay visible; siblings do not
+  ---
+  duration_ms: 0.206625
+  type: 'test'
+  ...
+# Subtest: task routes use the short root alias for the root cabinet
+ok 329 - task routes use the short root alias for the root cabinet
+  ---
+  duration_ms: 0.405125
+  type: 'test'
+  ...
+# Subtest: task routes preserve cabinet scope for nested cabinets
+ok 330 - task routes preserve cabinet scope for nested cabinets
+  ---
+  duration_ms: 0.119584
+  type: 'test'
+  ...
+# Subtest: parseAllowedUsers accepts comma/space separated numeric ids
+ok 331 - parseAllowedUsers accepts comma/space separated numeric ids
+  ---
+  duration_ms: 0.735083
+  type: 'test'
+  ...
+# Subtest: parseAllowedUsers drops junk, negatives, and dupes; empty input → []
+ok 332 - parseAllowedUsers drops junk, negatives, and dupes; empty input → []
+  ---
+  duration_ms: 0.087792
+  type: 'test'
+  ...
+# Subtest: parseAtMention extracts slug + rest and lowercases the slug
+ok 333 - parseAtMention extracts slug + rest and lowercases the slug
+  ---
+  duration_ms: 0.210917
+  type: 'test'
+  ...
+# Subtest: parseAtMention rejects bare @slug and non-mention text
+ok 334 - parseAtMention rejects bare @slug and non-mention text
+  ---
+  duration_ms: 0.154667
+  type: 'test'
+  ...
+# Subtest: escapeMarkdownV2 escapes every special character
+ok 335 - escapeMarkdownV2 escapes every special character
+  ---
+  duration_ms: 0.071833
+  type: 'test'
+  ...
+# Subtest: renderMarkdownV2 converts bold, inline code, and links
+ok 336 - renderMarkdownV2 converts bold, inline code, and links
+  ---
+  duration_ms: 0.329083
+  type: 'test'
+  ...
+# Subtest: renderMarkdownV2 keeps fenced code blocks intact and escapes around them
+ok 337 - renderMarkdownV2 keeps fenced code blocks intact and escapes around them
+  ---
+  duration_ms: 0.293375
+  type: 'test'
+  ...
+# Subtest: chunkText is a no-op under the limit
+ok 338 - chunkText is a no-op under the limit
+  ---
+  duration_ms: 0.112375
+  type: 'test'
+  ...
+# Subtest: chunkText splits at paragraph boundaries and respects the limit
+ok 339 - chunkText splits at paragraph boundaries and respects the limit
+  ---
+  duration_ms: 0.234416
+  type: 'test'
+  ...
+# Subtest: chunkText reopens code fences across chunk boundaries
+ok 340 - chunkText reopens code fences across chunk boundaries
+  ---
+  duration_ms: 0.278042
+  type: 'test'
+  ...
+# Subtest: previewText flattens whitespace and truncates with an ellipsis
+ok 341 - previewText flattens whitespace and truncates with an ellipsis
+  ---
+  duration_ms: 0.077459
+  type: 'test'
+  ...
+# Subtest: splitBootBacklog drops stale updates and keeps fresh ones
+ok 342 - splitBootBacklog drops stale updates and keeps fresh ones
+  ---
+  duration_ms: 0.091375
+  type: 'test'
+  ...
+# Subtest: splitBootBacklog treats updates without a message date as stale
+ok 343 - splitBootBacklog treats updates without a message date as stale
+  ---
+  duration_ms: 0.030875
+  type: 'test'
+  ...
+# Subtest: rate limit allows a burst then trips, and the window rolls
+ok 344 - rate limit allows a burst then trips, and the window rolls
+  ---
+  duration_ms: 0.088
+  type: 'test'
+  ...
+# Subtest: switchRoom clears the conversation pointer and cached orchestrator
+ok 345 - switchRoom clears the conversation pointer and cached orchestrator
+  ---
+  duration_ms: 0.039625
+  type: 'test'
+  ...
+# Subtest: markers are non-control, non-whitespace PUA codepoints
+ok 346 - markers are non-control, non-whitespace PUA codepoints
+  ---
+  duration_ms: 0.375167
+  type: 'test'
+  ...
+# Subtest: stripToolOutput removes a fenced region entirely
+ok 347 - stripToolOutput removes a fenced region entirely
+  ---
+  duration_ms: 0.154875
+  type: 'test'
+  ...
+# Subtest: stripToolOutput drops an unterminated (still-streaming) region
+ok 348 - stripToolOutput drops an unterminated (still-streaming) region
+  ---
+  duration_ms: 0.071458
+  type: 'test'
+  ...
+# Subtest: stripToolOutput is a no-op when there are no markers
+ok 349 - stripToolOutput is a no-op when there are no markers
+  ---
+  duration_ms: 0.034875
+  type: 'test'
+  ...
+# Subtest: parseTranscript keeps fenced output as a separate tool block
+ok 350 - parseTranscript keeps fenced output as a separate tool block
+  ---
+  duration_ms: 0.37325
+  type: 'test'
+  ...
+# Subtest: consecutive tool regions separated by whitespace merge with a step count
+ok 351 - consecutive tool regions separated by whitespace merge with a step count
+  ---
+  duration_ms: 0.159333
+  type: 'test'
+  ...
+# Subtest: prose between tool regions keeps them as distinct blocks
+ok 352 - prose between tool regions keeps them as distinct blocks
+  ---
+  duration_ms: 0.193375
+  type: 'test'
+  ...
+# Subtest: unterminated tool region (mid-stream) still collapses, not leaks
+ok 353 - unterminated tool region (mid-stream) still collapses, not leaks
+  ---
+  duration_ms: 0.092708
+  type: 'test'
+  ...
+# Subtest: transcript with no markers parses exactly as before
+ok 354 - transcript with no markers parses exactly as before
+  ---
+  duration_ms: 0.1635
+  type: 'test'
+  ...
+# Subtest: markdown bullet list is text, not a diff block
+ok 355 - markdown bullet list is text, not a diff block
+  ---
+  duration_ms: 0.735375
+  type: 'test'
+  ...
+# Subtest: English bullet list with dashes stays text
+ok 356 - English bullet list with dashes stays text
+  ---
+  duration_ms: 0.18525
+  type: 'test'
+  ...
+# Subtest: a real header-less hunk (has @@) still renders as a diff
+ok 357 - a real header-less hunk (has @@) still renders as a diff
+  ---
+  duration_ms: 0.0755
+  type: 'test'
+  ...
+# Subtest: a diff with +++/--- file markers still renders as a diff
+ok 358 - a diff with +++/--- file markers still renders as a diff
+  ---
+  duration_ms: 0.057917
+  type: 'test'
+  ...
+# Subtest: prose that happens to start lines with a dash is not a diff
+ok 359 - prose that happens to start lines with a dash is not a diff
+  ---
+  duration_ms: 0.088583
+  type: 'test'
+  ...
+# Subtest: compareVersions sorts stable semver values correctly
+ok 360 - compareVersions sorts stable semver values correctly
+  ---
+  duration_ms: 0.401958
+  type: 'test'
+  ...
+# Subtest: isStableVersion only accepts plain stable semver
+ok 361 - isStableVersion only accepts plain stable semver
+  ---
+  duration_ms: 0.077333
+  type: 'test'
+  ...
+# Subtest: bundled release manifest stays aligned with the local package version
+ok 362 - bundled release manifest stays aligned with the local package version
+  ---
+  duration_ms: 2.643333
+  type: 'test'
+  ...
+# Subtest: detectInstallKind respects explicit environment hints first
+ok 363 - detectInstallKind respects explicit environment hints first
+  ---
+  duration_ms: 0.138166
+  type: 'test'
+  ...
+# Subtest: inferElectronInstallKind maps Windows and macOS runtimes distinctly
+ok 364 - inferElectronInstallKind maps Windows and macOS runtimes distinctly
+  ---
+  duration_ms: 0.050167
+  type: 'test'
+  ...
+# Subtest: normalizeVirtualPath converts Windows separators to cabinet paths
+ok 365 - normalizeVirtualPath converts Windows separators to cabinet paths
+  ---
+  duration_ms: 0.375917
+  type: 'test'
+  ...
+# Subtest: buildPageApiUrl normalizes and encodes page paths
+ok 366 - buildPageApiUrl normalizes and encodes page paths
+  ---
+  duration_ms: 0.073458
+  type: 'test'
+  ...
+1..366
+# tests 375
+# suites 3
+# pass 374
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4113.368917

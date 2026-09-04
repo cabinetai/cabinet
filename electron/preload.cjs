@@ -6,6 +6,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 // onBrowserView* methods, which return an unsubscribe function.
 const browserViewNavigateListeners = new Set();
 const browserViewLoadFailedListeners = new Set();
+const extensionInstalledListeners = new Set();
+const browserViewNavigateRequestListeners = new Set();
+const browserViewClosedListeners = new Set();
 
 ipcRenderer.on("cabinet:browser-view-navigated", (_event, payload) => {
   for (const listener of browserViewNavigateListeners) {
@@ -17,6 +20,30 @@ ipcRenderer.on("cabinet:browser-view-navigated", (_event, payload) => {
 
 ipcRenderer.on("cabinet:browser-view-load-failed", (_event, payload) => {
   for (const listener of browserViewLoadFailedListeners) {
+    try {
+      listener(payload);
+    } catch {}
+  }
+});
+
+ipcRenderer.on("cabinet:extension-installed", (_event, payload) => {
+  for (const listener of extensionInstalledListeners) {
+    try {
+      listener(payload);
+    } catch {}
+  }
+});
+
+ipcRenderer.on("cabinet:browser-view-navigate", (_event, payload) => {
+  for (const listener of browserViewNavigateRequestListeners) {
+    try {
+      listener(payload);
+    } catch {}
+  }
+});
+
+ipcRenderer.on("cabinet:browser-view-closed", (_event, payload) => {
+  for (const listener of browserViewClosedListeners) {
     try {
       listener(payload);
     } catch {}
@@ -38,7 +65,8 @@ ipcRenderer.on("cabinet:fullscreen-changed", (_event, isFull) => {
 });
 
 function normalizeBridgeUrl(value) {
-  return typeof value === "string" ? value.trim() : "";
+  if (typeof value !== "string") return "";
+  return value.trim();
 }
 
 contextBridge.exposeInMainWorld("CabinetDesktop", {
@@ -76,8 +104,14 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
     ipcRenderer.invoke("cabinet:browser-view-reload", { viewId }),
   showBrowserBookmarksMenu: (payload) =>
     ipcRenderer.invoke("cabinet:show-browser-bookmarks-menu", payload),
+  showExtensionsMenu: (payload) =>
+    ipcRenderer.invoke("cabinet:show-extensions-menu", payload),
   destroyBrowserView: (viewId) =>
     ipcRenderer.invoke("cabinet:destroy-browser-view", { viewId }),
+  executeBrowserViewJavaScript: (viewId, code) =>
+    ipcRenderer.invoke("cabinet:execute-browser-view-javascript", { viewId, code }),
+  openBrowserViewDevTools: (viewId) =>
+    ipcRenderer.invoke("cabinet:open-browser-view-devtools", { viewId }),
   onBrowserViewNavigated: (listener) => {
     if (typeof listener !== "function") return () => {};
     browserViewNavigateListeners.add(listener);
@@ -92,6 +126,20 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
       browserViewLoadFailedListeners.delete(listener);
     };
   },
+  onBrowserViewNavigateRequest: (listener) => {
+    if (typeof listener !== "function") return () => {};
+    browserViewNavigateRequestListeners.add(listener);
+    return () => {
+      browserViewNavigateRequestListeners.delete(listener);
+    };
+  },
+  onBrowserViewClosed: (listener) => {
+    if (typeof listener !== "function") return () => {};
+    browserViewClosedListeners.add(listener);
+    return () => {
+      browserViewClosedListeners.delete(listener);
+    };
+  },
   /**
    * Trigger the in-app macOS uninstall flow. Returns
    * `{ ok: true, dataPath }` on success — the renderer should show a
@@ -99,6 +147,11 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
    * cabinet content is preserved.
    */
   uninstallApp: () => ipcRenderer.invoke("cabinet:uninstall-app"),
+  /**
+   * Restart the desktop app so the embedded server rebinds to the active
+   * cabinet's content root. Called after switching cabinets via PATCH /api/cabinets.
+   */
+  relaunch: () => ipcRenderer.invoke("cabinet:relaunch"),
   /**
    * Open a local file with the OS default application. Used for file://
    * links clicked in the editor (e.g. open a PDF in Preview).
@@ -125,6 +178,23 @@ contextBridge.exposeInMainWorld("CabinetDesktop", {
    * hash route, so two windows can sit in different rooms at once.
    */
   openWindow: (hash) => ipcRenderer.invoke("cabinet:open-window", hash),
+  installExtension: (urlOrId) => ipcRenderer.invoke("cabinet:install-extension", { urlOrId }),
+  uninstallExtension: (id) => ipcRenderer.invoke("cabinet:uninstall-extension", { id }),
+  toggleExtension: (id, enabled) => ipcRenderer.invoke("cabinet:toggle-extension", { id, enabled }),
+  getExtensions: () => ipcRenderer.invoke("cabinet:get-extensions"),
+  updateExtension: (id, updates) => ipcRenderer.invoke("cabinet:update-extension", { id, updates }),
+  showExtensionPopup: (payload) => ipcRenderer.invoke("cabinet:show-extension-popup", payload),
+  showNativeToast: (payload) => ipcRenderer.invoke("cabinet:show-native-toast", payload),
+  readFile: (filePath) => ipcRenderer.invoke("cabinet:read-file", { path: filePath }),
+  writeFile: (filePath, content) => ipcRenderer.invoke("cabinet:write-file", { path: filePath, content }),
+  savePdf: (payload) => ipcRenderer.invoke("cabinet:save-pdf", payload),
+  onExtensionInstalled: (listener) => {
+    if (typeof listener !== "function") return () => {};
+    extensionInstalledListeners.add(listener);
+    return () => {
+      extensionInstalledListeners.delete(listener);
+    };
+  },
   /**
    * Subscribe to native full-screen changes (macOS hides the traffic lights in
    * full-screen). Fires immediately with the current state, then on every

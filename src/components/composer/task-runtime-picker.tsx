@@ -38,6 +38,17 @@ import type {
 
 export type TaskRuntimeSelection = ConversationRuntimeOverride;
 
+/** Metadata passed alongside `TaskRuntimePicker` onChange calls. Lets callers
+ *  distinguish explicit user selections (worth persisting) from the internal
+ *  normalization pass that fires once providers hydrate. */
+export interface TaskRuntimeChangeMeta {
+  userInitiated: boolean;
+  /** True when the user clicked the "App default" reset — callers that
+   *  persist the selection should clear their stored override instead of
+   *  pinning the resolved default model. */
+  isAppDefault?: boolean;
+}
+
 
 const AUTO_EFFORT_ID = "__auto__";
 
@@ -191,12 +202,20 @@ function resolveSelectedProvider(
   providerId?: string,
   fallbackProviderId?: string | null
 ): ProviderInfo | undefined {
+  // An explicitly requested provider always wins when it exists at all — even
+  // if it isn't currently "ready" (uninstalled / unauthenticated). Snapping to
+  // the ready default here would silently rewrite an agent's pinned runtime
+  // (e.g. an Editor pinned to codex-cli/gpt-5.2 would surface gemini-2.5-pro,
+  // since the fallback provider can't host gpt-5.2). Only fall back to the
+  // default when no provider was requested or the requested id is unknown.
+  if (providerId) {
+    const requested = providers.find((provider) => provider.id === providerId);
+    if (requested) return requested;
+  }
   const selectable = getSelectableProviders(providers);
   return (
-    selectable.find((provider) => provider.id === providerId) ||
     selectable.find((provider) => provider.id === fallbackProviderId) ||
     selectable[0] ||
-    providers.find((provider) => provider.id === providerId) ||
     providers.find((provider) => provider.id === fallbackProviderId)
   );
 }
@@ -1232,7 +1251,7 @@ export function TaskRuntimePicker({
   compact = false,
 }: {
   value: TaskRuntimeSelection;
-  onChange: (value: TaskRuntimeSelection) => void;
+  onChange: (value: TaskRuntimeSelection, meta?: TaskRuntimeChangeMeta) => void;
   align?: "start" | "center" | "end";
   className?: string;
   /** Icon-only trigger (no model/effort labels) — used in tight surfaces
@@ -1374,22 +1393,25 @@ export function TaskRuntimePicker({
       defaultModel,
       defaultEffort
     );
-    onChange({
-      ...normalized,
-      runtimeMode: runtimeMode ?? value.runtimeMode ?? "native",
-      // Terminal mode should not carry model/effort — PTY uses the CLI's own
-      // defaults, so clear them to keep the conversation override honest.
-      ...(runtimeMode === "terminal"
-        ? { model: undefined, effort: undefined }
-        : {}),
-    });
+    onChange(
+      {
+        ...normalized,
+        runtimeMode: runtimeMode ?? value.runtimeMode ?? "native",
+        // Terminal mode should not carry model/effort — PTY uses the CLI's own
+        // defaults, so clear them to keep the conversation override honest.
+        ...(runtimeMode === "terminal"
+          ? { model: undefined, effort: undefined }
+          : {}),
+      },
+      { userInitiated: true }
+    );
     // Only close the dropdown on provider/model selection, not when toggling
     // mode — users should see the toggle animate.
     if (runtimeMode === undefined) setOpen(false);
   }
 
   function resetToDefault() {
-    onChange(appDefaultSelection);
+    onChange(appDefaultSelection, { userInitiated: true, isAppDefault: true });
     setOpen(false);
   }
 

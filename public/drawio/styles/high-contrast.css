@@ -1,0 +1,128 @@
+:root {
+	--ge-panel-color: #ffffff;
+	--border-color: #000000;
+	--text-color: #000000;
+	--toolbar-color: #ffffff;
+	--primary-color: #ffffff;
+	--dark-text-color: #ffffff;
+	--ge-dark-panel-color: #121212;
+	--dark-toolbar-color: #121212;
+}
+
+.geSidebar *:not(svg *, .mxDisabled, [disabled]),
+.geToolbar *:not(svg *, .mxDisabled, [disabled]) {
+	opacity: 1 !important;
+}
+
+*:not(svg *, .mxDisabled, [disabled], .spinner *, .geBackground, .geDragPreview, .geButton) {
+	border-color: light-dark(#000000, #FFFFFF) !important;
+}
+
+button, .geBtn, *::-webkit-scrollbar-thumb {
+	border-color: light-dark(#000000, #FFFFFF) !important;
+	color: light-dark(#000000, #FFFFFF) !important;
+}
+
+button, .geBtn {
+	border-style: solid !important;
+	border-width: 1px !important;
+}
+
+.geSimple .geDiagramContainer {
+	border-top-style: none !important;
+	border-bottom-style: none !important;
+}
+
+button:not(:hover), .geBtn:not(:hover) {
+	background-color: transparent !important;
+}
+
+.gePrimaryBtn {
+	border-width: 3px !important;
+}
+
+.geActivePage, .geActiveFormatTitle {
+	text-decoration: underline;
+}
+
+.geActivePage {
+	background-color: light-dark(#ffffff, #000000) !important;
+	color: inherit !important;
+	filter: invert(1);
+}
+
+.geBigButton>img:not(.geDarkMode *) {
+	filter: invert(1);
+}
+
+.geEditor,
+.geTitle,
+.geFormatTitle  {
+	font-size: 15px;
+}
+
+.geTab,
+.geFormatContainer,
+.geSearchSidebar input,
+.geSpinnerStatus {
+	font-size: 14px !important;
+	line-height: 14px !important;
+}
+
+.geEditor div.mxTooltip {
+	font-size: 12px;
+}
+
+.geHint {
+	font-size: 11pt;
+}
+
+/* Dialogs: restore solid backgrounds and visible borders */
+.geDialog {
+	background-color: light-dark(#ffffff, var(--ge-dark-panel-color)) !important;
+	border: 1px solid light-dark(#000000, #FFFFFF) !important;
+	box-shadow: none !important;
+}
+
+html body.geDarkMode .geDialog,
+html body.geDarkMode div.mxWindow,
+html body div.mxWindow.geDarkMode {
+	background-color: var(--ge-dark-panel-color) !important;
+	border-color: #FFFFFF !important;
+	box-shadow: none !important;
+}
+
+.geDialog,
+html div.mxWindow {
+	box-shadow: none !important;
+}
+
+/* Dialog overlay: solid opaque background */
+.geBackground {
+	background-color: light-dark(#ffffff, #000000) !important;
+	opacity: 0.9 !important;
+	backdrop-filter: none !important;
+}
+
+/* Dialog close button: full opacity for visibility */
+.geDialog > .geButton {
+	opacity: 1 !important;
+}
+
+/* Dialog title and footer: solid visible borders */
+.geDialogTitle {
+	border-bottom: 1px solid light-dark(#000000, #FFFFFF) !important;
+}
+
+.geDialogFooter {
+	border-top: 1px solid light-dark(#000000, #FFFFFF) !important;
+}
+
+/* Input fields: solid visible borders */
+.geDialog input[type="text"],
+.geDialog input[type="number"],
+.geDialog textarea,
+.geDialog select {
+	border: 1px solid light-dark(#000000, #FFFFFF) !important;
+	background-color: light-dark(#ffffff, #000000) !important;
+}

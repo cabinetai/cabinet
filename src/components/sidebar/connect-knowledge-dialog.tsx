@@ -39,6 +39,7 @@ export function ConnectKnowledgeDialog({
   onCloud,
   onNotion,
   onAppleNotes,
+  onGithub,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -50,6 +51,8 @@ export function ConnectKnowledgeDialog({
   onNotion: () => void;
   /** Apple Notes → the macOS-only import dialog (handled by the caller). */
   onAppleNotes: () => void;
+  /** GitHub → the remote repository clone & link dialog. */
+  onGithub: () => void;
 }) {
   const setSection = useAppStore((s) => s.setSection);
   const cloud = useIsCloud();
@@ -107,8 +110,14 @@ export function ConnectKnowledgeDialog({
       onOpenChange(false);
       return;
     }
-    if (tile.kind === "local") onLocal();
-    else if (tile.kind === "cloud" && tile.provider) onCloud(tile.provider);
+    if (tile.kind === "local") {
+      onLocal();
+    } else if (tile.kind === "github") {
+      onGithub();
+      onOpenChange(false);
+    } else if (tile.kind === "cloud" && tile.provider) {
+      onCloud(tile.provider);
+    }
   };
 
   return (

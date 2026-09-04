@@ -61,6 +61,12 @@ const PRESETS: Preset[] = [
     hint: "For Gemini-related skills that don't use the Gemini CLI directly",
   },
   {
+    id: "gemini-cli",
+    label: "Gemini CLI",
+    envVar: "GEMINI_API_KEY",
+    hint: "Used by the Gemini agent execution CLI",
+  },
+  {
     id: "google-sa",
     label: "Google Service Account",
     envVar: "GOOGLE_APPLICATION_CREDENTIALS",

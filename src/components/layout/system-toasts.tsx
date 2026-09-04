@@ -59,6 +59,7 @@ export function SystemToasts() {
 
   useEffect(() => {
     function handler(event: Event) {
+      if (event.defaultPrevented) return;
       const detail = (event as CustomEvent).detail as
         | {
             kind?: ToastKind;
@@ -91,7 +92,7 @@ export function SystemToasts() {
   if (toasts.length === 0 && !importProgress) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-4 z-[100] mx-auto flex w-fit flex-col gap-2">
+    <div className="fixed inset-x-0 bottom-4 z-100 mx-auto flex w-fit flex-col gap-2">
       {importProgress && (
         <div className="flex w-56 flex-col gap-1.5 rounded-lg border border-border bg-popover px-3 py-2 text-[12px] shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-2 fade-in duration-200">
           <div className="flex items-center gap-2">

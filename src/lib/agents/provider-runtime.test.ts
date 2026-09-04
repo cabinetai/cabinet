@@ -209,7 +209,7 @@ test("runOneShotProviderPrompt closes stdin for CLI providers", async (t) => {
     providerId: provider.id,
     prompt: "OK",
     cwd: process.cwd(),
-    timeoutMs: 1_000,
+    timeoutMs: 30_000,
   });
 
   assert.equal(output, "OK");

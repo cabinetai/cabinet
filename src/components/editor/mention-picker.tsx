@@ -12,7 +12,7 @@ interface EditorMentionPickerProps {
   editor: Editor | null;
 }
 
-export function EditorMentionPicker({ editor: _editor }: EditorMentionPickerProps) {
+export function EditorMentionPicker({}: EditorMentionPickerProps) {
   // Re-render whenever the singleton state changes via window event.
   const [tick, setTick] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -118,7 +118,7 @@ export function EditorMentionPicker({ editor: _editor }: EditorMentionPickerProp
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 w-[280px] bg-popover border border-border rounded-lg shadow-lg py-1 overflow-hidden max-h-[320px] overflow-y-auto"
+      className="fixed z-50 w-70 bg-popover border border-border rounded-lg shadow-lg py-1 overflow-hidden max-h-80 overflow-y-auto"
       style={{ top, left, right }}
     >
       {sections.map((section) => {

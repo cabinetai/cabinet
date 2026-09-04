@@ -25,11 +25,11 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
   const { data: frontmatter, content: body } = matter(agentMd);
 
-  // Read workspace index.md if exists
+  // Read workspace metadata if exists
   let workspaceIndex: string | null = null;
-  const wsIndexPath = path.join(DATA_DIR, ".agents", slug, "workspace", "index.md");
+  const wsPath = path.join(DATA_DIR, ".agents", slug, "workspace", "workspace.md");
   try {
-    workspaceIndex = await fs.readFile(wsIndexPath, "utf-8");
+    workspaceIndex = await fs.readFile(wsPath, "utf-8");
   } catch { /* no workspace */ }
 
   const bundle = {

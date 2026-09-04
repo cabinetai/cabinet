@@ -23,6 +23,7 @@ test("legacy adapter registry exposes the current compatibility adapters", () =>
     "gemini_local",
     "grok_cli_legacy",
     "grok_local",
+    "ollama_legacy",
     "opencode_legacy",
     "opencode_local",
     "pi_legacy",
@@ -42,6 +43,7 @@ test("legacy adapter registry exposes the current compatibility adapters", () =>
     "cursor-cli",
     "gemini-cli",
     "grok-cli",
+    "ollama",
     "opencode",
     "pi",
   ]);

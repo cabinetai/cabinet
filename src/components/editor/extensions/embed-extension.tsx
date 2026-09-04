@@ -36,6 +36,7 @@ function ProviderIcon({ provider, className }: { provider: EmbedProvider; classN
     case "tiktok": return <Music2 className={className} />;
     case "spotify": return <Music className={className} />;
     case "video": return <VideoIcon className={className} />;
+    case "audio": return <Music className={className} />;
     case "iframe": return <Globe className={className} />;
   }
 }
@@ -101,6 +102,15 @@ function EmbedComponent(props: NodeViewProps) {
           src={attrs.src}
           controls
           className="w-full rounded-md bg-black"
+        />
+      );
+    }
+    if (attrs.provider === "audio") {
+      return (
+        <audio
+          src={attrs.src}
+          controls
+          className="w-full rounded-md"
         />
       );
     }
@@ -233,6 +243,19 @@ export const EmbedExtension = Node.create({
           "data-original-url": originalUrl ?? src,
         }),
         ["video", { src, controls: "true" }],
+      ];
+    }
+
+    if (provider === "audio") {
+      return [
+        "div",
+        mergeAttributes({
+          "data-embed": "true",
+          "data-provider": provider,
+          "data-src": src,
+          "data-original-url": originalUrl ?? src,
+        }),
+        ["audio", { src, controls: "true" }],
       ];
     }
 

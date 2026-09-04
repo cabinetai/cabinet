@@ -1,4 +1,4 @@
-import { geminiCliProvider } from "../providers/gemini-cli";
+import { geminiCliProvider, buildGeminiHeadlessEnv } from "../providers/gemini-cli";
 import { resolveCliCommand } from "../provider-cli";
 import { providerStatusToEnvironmentTest } from "./environment";
 import {
@@ -76,6 +76,7 @@ export const geminiLocalAdapter: AgentExecutionAdapter = {
     const command =
       readStringConfig(ctx.config, "command") || resolveCliCommand(geminiCliProvider);
     const args = buildGeminiArgs(ctx.config, ctx.prompt);
+    const headlessEnv = buildGeminiHeadlessEnv();
     const stdoutAccumulator = createGeminiStreamAccumulator();
     const stderrAccumulator = createGeminiStderrAccumulator();
 
@@ -85,12 +86,14 @@ export const geminiLocalAdapter: AgentExecutionAdapter = {
       commandArgs: args,
       cwd: ctx.cwd,
       env: {
+        ...headlessEnv,
         PATH: getAdapterRuntimePath(),
       },
     });
 
     const result = await runChildProcess(command, args, {
       cwd: ctx.cwd,
+      env: headlessEnv,
       timeoutMs: ctx.timeoutMs,
       onSpawn: ctx.onSpawn,
       onStdout: (chunk) => {

@@ -3,13 +3,14 @@ import type { TreeNode } from "@/types";
 import {
   fetchTree,
   createPageApi,
+  createFolderApi,
   deletePageApi,
   movePageApi,
   renamePageApi,
   undoRenameApi,
 } from "@/lib/api/client";
 import { useEditorStore } from "@/stores/editor-store";
-import { slugifyPageName } from "@/lib/markdown/wiki-links";
+import { slugifyFileName } from "@/lib/markdown/wiki-links";
 
 export type DragZone = "before" | "into" | "after";
 
@@ -57,6 +58,7 @@ interface TreeState {
   toggleExpand: (path: string) => void;
   expandPath: (path: string) => void;
   createPage: (parentPath: string, title: string) => Promise<void>;
+  createFolder: (parentPath: string, name: string) => Promise<void>;
   deletePage: (path: string) => Promise<void>;
   movePage: (
     fromPath: string,
@@ -89,25 +91,6 @@ interface TreeState {
 
 const TREE_CACHE_KEY = "kb-tree-cache";
 
-function loadExpandedPaths(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const stored = localStorage.getItem("kb-expanded-paths");
-    return stored ? new Set(JSON.parse(stored)) : new Set();
-  } catch {
-    return new Set();
-  }
-}
-
-function loadShowHiddenFiles(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return localStorage.getItem("kb-show-hidden-files") === "true";
-  } catch {
-    return false;
-  }
-}
-
 function loadSortAlphabetical(): boolean {
   if (typeof window === "undefined") return true;
   try {
@@ -128,47 +111,88 @@ function loadFoldersFirst(): boolean {
   }
 }
 
+export type CabinetPathKind = "cabinet" | "non-cabinet" | "unknown";
+
+function findTreeNodeByPath(
+  nodes: TreeNode[],
+  target: string
+): TreeNode | null {
+  for (const node of nodes) {
+    if (node.path === target) return node;
+    if (node.children?.length) {
+      const found = findTreeNodeByPath(node.children, target);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 /**
- * Recursively sort tree nodes. When `sortAlphabetical` is on, sort by name
- * (optionally folders-first); otherwise honor the manual `frontmatter.order`
- * with name as a tiebreaker.
+ * Classify a cabinet path against the in-memory tree, no server round trip.
+ * Returns "unknown" when the tree hasn't loaded the path yet (cold deep
+ * links) so callers can safely fall back to a network check. Used to gate
+ * the cabinet-overview fetch: a "non-cabinet" directory carries no `.cabinet`
+ * manifest and the overview route would only 404 for it.
  */
+export function getCabinetPathKind(path: string): CabinetPathKind {
+  const node = findTreeNodeByPath(useTreeStore.getState().rawNodes, path);
+  if (!node) return "unknown";
+  return node.type === "cabinet" ? "cabinet" : "non-cabinet";
+}
+
 export function sortTreeNodes(
   nodes: TreeNode[],
   sortAlphabetical: boolean,
   foldersFirst: boolean
 ): TreeNode[] {
-  return [...nodes]
-    .map((node) => {
-      if (node.children && node.children.length > 0) {
-        return {
-          ...node,
-          children: sortTreeNodes(node.children, sortAlphabetical, foldersFirst),
-        };
-      }
-      return node;
-    })
-    .sort((a, b) => {
-      const isFolderA = a.type === "directory" || a.type === "cabinet";
-      const isFolderB = b.type === "directory" || b.type === "cabinet";
+  return [...nodes].map((node) => {
+    if (node.children && node.children.length > 0) {
+      return {
+        ...node,
+        children: sortTreeNodes(node.children, sortAlphabetical, foldersFirst),
+      };
+    }
+    return node;
+  }).sort((a, b) => {
+    const isFolderA = a.type === "directory" || a.type === "cabinet";
+    const isFolderB = b.type === "directory" || b.type === "cabinet";
 
-      if (sortAlphabetical && foldersFirst && isFolderA !== isFolderB) {
-        return isFolderA ? -1 : 1;
-      }
+    if (sortAlphabetical && foldersFirst && isFolderA !== isFolderB) {
+      return isFolderA ? -1 : 1;
+    }
 
-      if (sortAlphabetical) {
-        const nameA = a.frontmatter?.title || a.name;
-        const nameB = b.frontmatter?.title || b.name;
-        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
-      } else {
-        const orderA = a.frontmatter?.order ?? Number.POSITIVE_INFINITY;
-        const orderB = b.frontmatter?.order ?? Number.POSITIVE_INFINITY;
-        if (orderA !== orderB) return orderA - orderB;
-        const nameA = a.frontmatter?.title || a.name;
-        const nameB = b.frontmatter?.title || b.name;
-        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
-      }
-    });
+    if (sortAlphabetical) {
+      const nameA = a.frontmatter?.title || a.name;
+      const nameB = b.frontmatter?.title || b.name;
+      return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+    } else {
+      const orderA = a.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+      const orderB = b.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+      if (orderA !== orderB) return orderA - orderB;
+      const nameA = a.frontmatter?.title || a.name;
+      const nameB = b.frontmatter?.title || b.name;
+      return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+    }
+  });
+}
+
+function loadExpandedPaths(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const stored = localStorage.getItem("kb-expanded-paths");
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function loadShowHiddenFiles(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem("kb-show-hidden-files") === "true";
+  } catch {
+    return false;
+  }
 }
 
 function saveExpandedPaths(paths: Set<string>) {
@@ -301,9 +325,20 @@ export const useTreeStore = create<TreeState>((set, get) => ({
   },
 
   createPage: async (parentPath: string, title: string) => {
-    const slug = slugifyPageName(title);
+    const slug = slugifyFileName(title);
     const fullPath = parentPath ? `${parentPath}/${slug}` : slug;
     await createPageApi(fullPath, title);
+    if (parentPath) {
+      get().expandPath(parentPath);
+    }
+    await get().loadTree();
+    set({ selectedPath: fullPath });
+  },
+
+  createFolder: async (parentPath: string, name: string) => {
+    const slug = slugifyFileName(name);
+    const fullPath = parentPath ? `${parentPath}/${slug}` : slug;
+    await createFolderApi(fullPath, name);
     if (parentPath) {
       get().expandPath(parentPath);
     }
@@ -317,6 +352,18 @@ export const useTreeStore = create<TreeState>((set, get) => ({
     if (selectedPath === path) {
       set({ selectedPath: null });
     }
+
+    // The page (or its containing folder) is gone from disk. If it's open in
+    // the editor, drop it — otherwise the stale currentPath survives and the
+    // next autosave recreates the just-deleted file, resurrecting it on disk.
+    const editor = useEditorStore.getState();
+    if (
+      editor.currentPath === path ||
+      editor.currentPath?.startsWith(path + "/")
+    ) {
+      editor.clear();
+    }
+
     await get().loadTree();
   },
 
@@ -362,6 +409,19 @@ export const useTreeStore = create<TreeState>((set, get) => ({
       }
       await get().loadTree();
       set({ selectedPath: newPath });
+
+      // The move renamed files underneath the editor. If the moved page is
+      // open, follow it to the new path — otherwise the editor keeps the
+      // stale path and its next autosave recreates the file at the original
+      // location, leaving a real on-disk copy behind. The open page can also
+      // be a descendant of a moved folder, so remap that prefix too.
+      const editor = useEditorStore.getState();
+      if (editor.currentPath === fromPath) {
+        editor.loadPage(newPath);
+      } else if (editor.currentPath?.startsWith(fromPath + "/")) {
+        editor.loadPage(newPath + editor.currentPath.slice(fromPath.length));
+      }
+
       if (typeof window !== "undefined") {
         window.dispatchEvent(
           new CustomEvent("cabinet:toast", {
@@ -419,6 +479,10 @@ export const useTreeStore = create<TreeState>((set, get) => ({
     if (editor.currentPath === pagePath) {
       // The renamed page itself is open → follow it to the new path.
       editor.loadPage(newPath);
+    } else if (editor.currentPath?.startsWith(pagePath + "/")) {
+      // A folder was renamed and the open page lives inside it → remap the
+      // stale prefix, otherwise a later autosave writes back to the old path.
+      editor.loadPage(newPath + editor.currentPath.slice(pagePath.length));
     } else if (
       editor.currentPath &&
       references.changedPages.includes(editor.currentPath) &&

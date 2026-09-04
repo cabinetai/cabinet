@@ -71,7 +71,7 @@ test("provider settings update reports conflicts for providers still assigned to
   };
   const agentDir = await writeRawPersona(slug, "claude-code");
   await writeRawJob(slug, "job-conflict", "claude-code");
-  const providersPath = path.join(process.cwd(), "data", ".agents", ".config", "providers.json");
+  const providersPath = path.join(AGENTS_DIR, ".config", "providers.json");
   const originalSettings = await fs.readFile(providersPath, "utf8").catch(() => null);
 
   t.after(async () => {
@@ -120,7 +120,7 @@ test("provider settings update migrates assigned personas and jobs before disabl
   const agentDir = await writeRawPersona(slug, "claude-code");
   const jobPath = await writeRawJob(slug, "job-migrate", "claude-code");
   const personaPath = path.join(agentDir, "persona.md");
-  const providersPath = path.join(process.cwd(), "data", ".agents", ".config", "providers.json");
+  const providersPath = path.join(AGENTS_DIR, ".config", "providers.json");
   const originalSettings = await fs.readFile(providersPath, "utf8").catch(() => null);
 
   t.after(async () => {

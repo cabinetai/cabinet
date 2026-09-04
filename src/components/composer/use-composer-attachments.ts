@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
+import { buildSafeFileForm } from "@/lib/upload/safe-file-form";
 
 export type AttachmentStatus = "uploading" | "ready" | "error";
 

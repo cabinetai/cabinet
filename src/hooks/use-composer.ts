@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import type { UseComposerAttachmentsReturn } from "@/components/composer/use-composer-attachments";
 
 export interface MentionableItem {
@@ -39,6 +39,7 @@ export interface UseComposerOptions {
    * changes to a different page.
    */
   pinnedPagePath?: string | null;
+  pinnedPagePaths?: string[];
   getMentionInsertBehavior?: (item: MentionableItem) => MentionInsertBehavior | void;
   attachments?: UseComposerAttachmentsReturn;
   stagingClientUuid?: string;
@@ -70,6 +71,7 @@ export function useComposer({
   attachments,
   stagingClientUuid,
   pinnedPagePath = null,
+  pinnedPagePaths = [],
 }: UseComposerOptions): UseComposerReturn {
   const initialAgentsRef = useRef(initialMentionedAgents ?? []);
   const [input, setInput] = useState("");
@@ -97,21 +99,37 @@ export function useComposer({
     );
   }, [items, mentionQuery, showDropdown]);
 
-  const pinnedActive =
-    pinnedPagePath && dismissedPinnedPath !== pinnedPagePath
-      ? pinnedPagePath
-      : null;
-
-  // The pinned page is merged into the reported/submitted paths without
-  // living in `mentionedPaths` state, so the @-label auto-removal in
-  // handleChange never touches it.
-  const effectivePaths = useMemo(
+  const pinnedBasePaths = useMemo(
     () =>
-      pinnedActive
-        ? [pinnedActive, ...mentionedPaths.filter((p) => p !== pinnedActive)]
-        : mentionedPaths,
-    [pinnedActive, mentionedPaths]
+      Array.from(
+        new Set(
+          [
+            ...(pinnedPagePath ? [pinnedPagePath] : []),
+            ...pinnedPagePaths,
+          ].filter((path): path is string => !!path)
+        )
+      ),
+    [pinnedPagePath, pinnedPagePaths]
   );
+
+  const pinnedActivePaths = useMemo(
+    () => pinnedBasePaths.filter((path) => dismissedPinnedPath !== path),
+    [pinnedBasePaths, dismissedPinnedPath]
+  );
+
+  const effectivePaths = useMemo(
+    () => [
+      ...pinnedActivePaths,
+      ...mentionedPaths.filter((path) => !pinnedActivePaths.includes(path)),
+    ],
+    [pinnedActivePaths, mentionedPaths]
+  );
+
+  useEffect(() => {
+    if (!dismissedPinnedPath) return;
+    if (pinnedBasePaths.includes(dismissedPinnedPath)) return;
+    setDismissedPinnedPath(null);
+  }, [dismissedPinnedPath, pinnedBasePaths]);
 
   const findLabelForMention = useCallback(
     (type: "page" | "agent" | "skill", id: string): string => {
@@ -216,14 +234,14 @@ export function useComposer({
     (type: "page" | "agent" | "skill", id: string) => {
       if (type === "page") {
         setMentionedPaths((prev) => prev.filter((p) => p !== id));
-        if (id === pinnedPagePath) setDismissedPinnedPath(pinnedPagePath);
+        if (pinnedBasePaths.includes(id)) setDismissedPinnedPath(id);
       } else if (type === "skill") {
         setMentionedSkills((prev) => prev.filter((k) => k !== id));
       } else {
         setMentionedAgents((prev) => prev.filter((a) => a !== id));
       }
     },
-    [pinnedPagePath]
+    [pinnedBasePaths]
   );
 
   const reset = useCallback(() => {

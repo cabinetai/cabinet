@@ -41,7 +41,7 @@ export function classifyCommonError(
 
   // ---- auth_expired ------------------------------------------------------
   if (
-    /(?:not (?:logged in|authenticated)|unauthori[sz]ed|401(?!\d)|403\s*.*(?:auth|login)|missing api key|api[-_ ]?key\s*(?:not\s*(?:set|provided|found)|invalid|expired)|please (?:sign|log) ?in|run .{0,30}(?:login|auth)|session.{0,20}expired|token.{0,20}expired|invalid credentials|credentials (?:not found|missing))/i.test(
+    /(?:not (?:logged in|authenticated)|unauthori[sz]ed|401(?!\d)|403\s*.*(?:auth|login)|missing api key|api[-_ ]?key\s*(?:not\s*(?:set|provided|found)|invalid|expired)|please (?:sign|log) ?in|run .{0,30}(?:login|auth)|set an auth method|session.{0,20}expired|token.{0,20}expired|invalid credentials|credentials (?:not found|missing))/i.test(
       text
     )
   ) {

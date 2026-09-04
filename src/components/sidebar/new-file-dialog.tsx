@@ -181,7 +181,7 @@ export function NewFileDialog({
                         "flex flex-col items-start gap-1 rounded-lg border p-3 text-start transition-colors",
                         isActive
                           ? "border-primary/50 bg-primary/5 ring-1 ring-primary/30"
-                          : "border-border hover:bg-foreground/[0.03]"
+                          : "border-border hover:bg-foreground/3"
                       )}
                     >
                       <span className="flex items-center gap-2">

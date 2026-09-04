@@ -315,7 +315,7 @@ export function RecentTasks({
                 style={padStyle}
                 title={tooltip}
               >
-                <span className="relative mt-[1px] inline-flex size-1.5 shrink-0">
+                <span className="relative mt-px inline-flex size-1.5 shrink-0">
                   {dotPulseColor && (
                     <span
                       className="absolute inset-0 rounded-full animate-ping opacity-70"
@@ -408,8 +408,8 @@ export function RecentTasks({
                       }}
                       className={cn(
                         itemClass(false),
-                        "py-[3px] text-[11px] font-normal text-foreground/75",
-                        "hover:bg-foreground/[0.04] hover:text-foreground",
+                        "py-0.75 text-[11px] font-normal text-foreground/75",
+                        "hover:bg-foreground/4 hover:text-foreground",
                         "animate-in fade-in slide-in-from-top-0.5 duration-150 ease-out"
                       )}
                       style={{

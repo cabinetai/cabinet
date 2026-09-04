@@ -8,9 +8,8 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
-  Archive,
   Blocks,
-  ChevronDown,
+  Plug,
   PanelLeftClose,
   PanelLeft,
   Plus,
@@ -29,8 +28,7 @@ import {
 import { NavArrows } from "@/components/layout/nav-arrows";
 import { RoomSwitcher } from "./room-switcher";
 import { TreeView } from "./tree-view";
-import { NewPageDialog } from "./new-page-dialog";
-import { NewCabinetDialog } from "./new-cabinet-dialog";
+import { NewItemMenu } from "./new-item-menu";
 import { useAppStore } from "@/stores/app-store";
 import { useRoomsStore } from "@/stores/rooms-store";
 import { useTreeStore } from "@/stores/tree-store";
@@ -88,9 +86,6 @@ export function Sidebar() {
       ? section.cabinetPath
       : defaultRoom || "";
   const [refreshing, setRefreshing] = useState(false);
-  // Footer "New" split button drives both create dialogs in controlled mode.
-  const [newPageOpen, setNewPageOpen] = useState(false);
-  const [newCabinetOpen, setNewCabinetOpen] = useState(false);
   const lastRefreshAtRef = useRef(0);
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     if (typeof window === "undefined") return SIDEBAR_DEFAULT_WIDTH;
@@ -218,7 +213,7 @@ export function Sidebar() {
           className="flex h-full flex-col"
           style={{ width: panelWidth }}
         >
-        <div className="sidebar-header flex items-center justify-between gap-1 px-3 py-2">
+        <header className="sidebar-header flex items-center justify-between gap-1 px-3 py-3">
           <div className="flex min-w-0 items-center gap-1">
             <button
               onClick={() => setSection({ type: "home" })}
@@ -273,7 +268,7 @@ export function Sidebar() {
               <PanelLeftClose className="h-3.5 w-3.5 rtl:rotate-180" />
             </Button>
           </div>
-        </div>
+        </header>
         <TreeView />
 
         {/* Integrations gets a labeled rail entry instead of hiding as a
@@ -312,43 +307,9 @@ export function Sidebar() {
 
         <div className="p-2 flex items-center gap-1">
           {sidebarDrawer === "data" && (
-            <div className="min-w-0 flex-1">
-              {/* One "New" split button instead of two truncating labels. Page
-                  and cabinet are both created *inside* the current cabinet (a
-                  child), not at the data-dir (home) root. New top-level rooms
-                  come from the home switcher's "Add room". */}
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  title={t("sidebar:new")}
-                  className="flex w-full min-w-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
-                >
-                  <Plus className="h-4 w-4 shrink-0" />
-                  <span className="min-w-0 truncate">{t("sidebar:new")}</span>
-                  <ChevronDown className="ms-auto h-3 w-3 shrink-0 opacity-60" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" side="top">
-                  <DropdownMenuItem onClick={() => setNewPageOpen(true)}>
-                    <Plus className="h-4 w-4" />
-                    {t("sidebar:newPage")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setNewCabinetOpen(true)}>
-                    <Archive className="h-4 w-4" />
-                    {t("dialogs:newCabinet.trigger")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <NewPageDialog
-                parentPath={currentCabinetParent}
-                open={newPageOpen}
-                onOpenChange={setNewPageOpen}
-                hideTrigger
-              />
-              <NewCabinetDialog
-                parentPath={currentCabinetParent}
-                open={newCabinetOpen}
-                onOpenChange={setNewCabinetOpen}
-              />
-            </div>
+            // The "+" menu creates a page, folder, or nested cabinet, placing
+            // each inside the active selection or the current cabinet.
+            <NewItemMenu cabinetParent={currentCabinetParent} />
           )}
           {sidebarDrawer === "agents" && (
             <button
@@ -394,7 +355,7 @@ export function Sidebar() {
             aria-label={t("sidebar:settings")}
             title={t("sidebar:settings")}
             className={cn(
-              "h-7 w-7 shrink-0 text-muted-foreground/60 hover:text-muted-foreground",
+              "h-7 w-7 shrink-0 ms-auto text-muted-foreground/60 hover:text-muted-foreground",
               section.type === "settings" && "bg-accent text-foreground hover:text-foreground"
             )}
             onClick={() => setSection({ type: "settings" })}
@@ -405,7 +366,7 @@ export function Sidebar() {
         </div>
       </aside>
       {!isMobile && !collapsed && (
-        <div className="relative -ms-px h-screen w-px shrink-0 bg-border">
+        <div className="relative -ms-px h-screen w-[2px] shrink-0 bg-transparent">
           <div
             role="separator"
             aria-orientation="vertical"
@@ -430,7 +391,7 @@ export function Sidebar() {
                 setSidebarWidth(SIDEBAR_DEFAULT_WIDTH);
               }
             }}
-            className="absolute inset-y-0 inset-x-0 mx-auto w-3 cursor-col-resize bg-transparent focus-visible:outline-none focus-visible:bg-primary/40"
+            className="absolute inset-y-0 inset-x-0 mx-auto w-[2px] bg-[#e8d7d1] cursor-col-resize focus-visible:outline-none focus-visible:bg-primary/40 before:content-[''] before:absolute before:inset-y-0 before:-inset-x-2 before:cursor-col-resize"
           />
         </div>
       )}

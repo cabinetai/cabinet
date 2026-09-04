@@ -15,6 +15,10 @@ export interface RenameUndoRecord {
   dirFrom: string;
   /** Directory the rename moved *from*. */
   dirTo: string;
+  /** Extra moves to reverse alongside the primary one — e.g. the sibling
+   * `<name>.md` that travels with a `<name>/` folder. Each `{ from, to }` is
+   * reversed by renaming `from` (post-rename) back to `to` (pre-rename). */
+  extraMoves?: { from: string; to: string }[];
   /** Pre-rename file contents, keyed by the absolute path they belong at
    * once the directory move has been reversed. */
   files: { fsPath: string; before: string }[];
@@ -71,6 +75,17 @@ export async function undoRename(token: string): Promise<UndoOutcome> {
   // 1. Reverse the directory move so original file paths exist again.
   if (rec.dirFrom !== rec.dirTo) {
     await fs.rename(rec.dirFrom, rec.dirTo);
+  }
+
+  // 1b. Reverse any companion moves (e.g. the sibling `<name>.md`).
+  for (const m of rec.extraMoves ?? []) {
+    if (m.from !== m.to) {
+      try {
+        await fs.rename(m.from, m.to);
+      } catch {
+        // Best-effort: a single failed move shouldn't abort the rest.
+      }
+    }
   }
 
   // 2. Restore every rewritten file's pre-rename content.

@@ -2,6 +2,8 @@ import type {
   CabinetOverview,
   CabinetVisibilityMode,
 } from "@/types/cabinets";
+import { getCabinetPathKind } from "@/stores/tree-store";
+import { handleStaleResponse } from "@/lib/api/stale-process-client";
 
 // Client-side fetcher for /api/cabinets/overview with in-flight dedupe and a
 // short TTL cache. Six components (tree-view, home-screen, ai-panel,
@@ -45,9 +47,25 @@ export async function fetchCabinetOverviewClient(
     if (existing) return existing;
   }
 
+  // Gate: if the in-memory tree already knows this path is a plain directory
+  // (no `.cabinet` manifest), skip the request. The overview route would only
+  // 404, and we'd cache null anyway — so short-circuit to the same empty-state
+  // result without the pointless round trip (and the 404 log noise). Paths the
+  // tree hasn't loaded yet ("unknown": cold deep links) fall through to the
+  // fetch, which still handles a 404 gracefully.
+  if (getCabinetPathKind(path) === "non-cabinet") {
+    cache.set(key, { data: null, fetchedAt: Date.now() });
+    return null;
+  }
+
   const params = new URLSearchParams({ path, visibility });
   const promise = (async () => {
     const res = await fetch(`/api/cabinets/overview?${params.toString()}`);
+    if (handleStaleResponse(res)) {
+      // Active cabinet switched on disk; recovery (reload) is under way. Don't
+      // cache this transient null so a fresh process refetches after reload.
+      return null;
+    }
     if (res.status === 404) {
       // Cabinet doesn't exist on disk (yet). Cache the null so consumers
       // render an empty state instead of throwing on every tick.

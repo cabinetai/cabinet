@@ -7,8 +7,24 @@ import { cn } from "@/lib/utils"
 import { ChevronRightIcon, ChevronLeftIcon, CheckIcon } from "lucide-react"
 import { DirIcon } from "@/components/ui/dir-icon"
 
-function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
-  return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+function DropdownMenu({ open, defaultOpen, onOpenChange, ...props }: MenuPrimitive.Root.Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen === true)
+  const isControlled = open !== undefined
+  const resolvedOpen = isControlled ? open === true : uncontrolledOpen
+
+  return (
+    <MenuPrimitive.Root
+      data-slot="dropdown-menu"
+      {...props}
+      open={resolvedOpen}
+      onOpenChange={(nextOpen, details) => {
+        if (!isControlled) {
+          setUncontrolledOpen(nextOpen === true)
+        }
+        onOpenChange?.(nextOpen, details)
+      }}
+    />
+  )
 }
 
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {

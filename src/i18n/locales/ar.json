@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "تصدير الصفحة",
+      "focus": "تركيز",
+      "exitFocus": "إنهاء التركيز",
       "copyMarkdown": "نسخ Markdown",
       "copyForLlms": "نسخ للنماذج اللغوية الكبيرة",
       "copyAsHtml": "نسخ كـ HTML",

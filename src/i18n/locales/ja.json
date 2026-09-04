@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "ページをエクスポート",
+      "focus": "フォーカス",
+      "exitFocus": "フォーカスを終了",
       "copyMarkdown": "Markdownをコピー",
       "copyForLlms": "LLM向けにコピー",
       "copyAsHtml": "HTMLとしてコピー",

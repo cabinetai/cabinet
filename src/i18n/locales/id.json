@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Ekspor halaman",
+      "focus": "Fokus",
+      "exitFocus": "Keluar fokus",
       "copyMarkdown": "Salin Markdown",
       "copyForLlms": "Salin untuk LLM",
       "copyAsHtml": "Salin sebagai HTML",

@@ -29,7 +29,7 @@ import { HeartbeatsTab } from "./heartbeats-tab";
 import { ScheduleView } from "@/components/cabinets/schedule-view";
 import { ContentSheet } from "@/components/layout/content-sheet";
 import { FolderTabs } from "@/components/layout/folder-tabs";
-import { TaskRailToggle } from "@/components/tasks/rail/task-rail-toggle";
+import { PanelsDropdown } from "@/components/layout/panels-dropdown";
 
 export type AgentsTabKey = "agents" | "routines" | "heartbeats" | "schedule" | "channels";
 
@@ -158,7 +158,7 @@ function TopBar({
         <Divider className="hidden md:block" />
         <MasterToggle />
         <NewButton tab={tab} />
-        <TaskRailToggle />
+        <PanelsDropdown />
       </div>
     </header>
   );

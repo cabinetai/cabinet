@@ -41,7 +41,7 @@ test("rename rewrites every inbound wiki-link and leaves others alone", async ()
       "Alpha Prime"
     );
 
-    assert.equal(newPath, `${root}/alpha-prime`);
+    assert.equal(newPath, `${root}/Alpha-Prime`);
     assert.equal(references.linkCount, 3);
     assert.equal(references.pageCount, 2);
 
@@ -113,14 +113,123 @@ test("undo restores directory, title and every rewritten file byte-for-byte", as
   }
 });
 
+test("renaming a typed file without extension preserves its original extension", async () => {
+  const root = uniqueRoot();
+  try {
+    const oldPath = path.join(DATA_DIR, root, "photo.jpg");
+    await fs.mkdir(path.dirname(oldPath), { recursive: true });
+    await fs.writeFile(oldPath, "jpeg-bytes", "utf8");
+
+    const { newPath } = await renamePage(`${root}/photo.jpg`, "holiday");
+
+    assert.equal(newPath, `${root}/holiday.jpg`);
+    await assert.rejects(() => fs.stat(path.join(DATA_DIR, root, "photo.jpg")));
+    const nextBytes = await fs.readFile(path.join(DATA_DIR, root, "holiday.jpg"), "utf8");
+    assert.equal(nextBytes, "jpeg-bytes");
+  } finally {
+    await fs.rm(path.join(DATA_DIR, root), { recursive: true, force: true });
+  }
+});
+
+test("renaming a typed file with a new extension uses the provided extension", async () => {
+  const root = uniqueRoot();
+  try {
+    const oldPath = path.join(DATA_DIR, root, "photo.jpg");
+    await fs.mkdir(path.dirname(oldPath), { recursive: true });
+    await fs.writeFile(oldPath, "jpeg-bytes", "utf8");
+
+    const { newPath } = await renamePage(`${root}/photo.jpg`, "holiday.png");
+
+    assert.equal(newPath, `${root}/holiday.png`);
+    await assert.rejects(() => fs.stat(path.join(DATA_DIR, root, "photo.jpg")));
+    const nextBytes = await fs.readFile(path.join(DATA_DIR, root, "holiday.png"), "utf8");
+    assert.equal(nextBytes, "jpeg-bytes");
+  } finally {
+    await fs.rm(path.join(DATA_DIR, root), { recursive: true, force: true });
+  }
+});
+
+async function writeSiblingPage(
+  root: string,
+  rel: string,
+  title: string,
+  body: string
+) {
+  const mdPath = path.join(DATA_DIR, root, `${rel}.md`);
+  await fs.mkdir(path.dirname(mdPath), { recursive: true });
+  await fs.writeFile(mdPath, `---\ntitle: ${title}\n---\n\n${body}\n`, "utf8");
+}
+
+test("sibling-pattern rename moves the .md and its companion folder together", async () => {
+  const root = uniqueRoot();
+  try {
+    // `parent.md` is the page; `parent/` holds its sub-pages (Sibling Pattern).
+    await writeSiblingPage(root, "parent", "Parent", "# Parent");
+    await writeSiblingPage(root, "parent/child", "Child", "Up to [[Parent]].");
+    await writeSiblingPage(root, "beta", "Beta", "See [[Parent]] page.");
+
+    const { newPath, references } = await renamePage(
+      `${root}/parent`,
+      "Parent Renamed"
+    );
+
+    assert.equal(newPath, `${root}/Parent-Renamed`);
+
+    // Both artifacts moved; the old ones are gone.
+    await fs.stat(path.join(DATA_DIR, root, "Parent-Renamed.md"));
+    await fs.stat(path.join(DATA_DIR, root, "Parent-Renamed", "child.md"));
+    await assert.rejects(() => fs.stat(path.join(DATA_DIR, root, "parent.md")));
+    await assert.rejects(() => fs.stat(path.join(DATA_DIR, root, "parent")));
+
+    // Inbound links from both the sub-page and an outside page are rewritten.
+    const beta = await fs.readFile(
+      path.join(DATA_DIR, root, "beta.md"),
+      "utf8"
+    );
+    assert.match(beta, /\[\[Parent Renamed\]\]/);
+    const child = await fs.readFile(
+      path.join(DATA_DIR, root, "Parent-Renamed", "child.md"),
+      "utf8"
+    );
+    assert.match(child, /\[\[Parent Renamed\]\]/);
+
+    // Undo restores the original on-disk shape and link bytes.
+    assert.ok(references.undoToken);
+    const outcome = await undoRename(references.undoToken!);
+    assert.equal(outcome.ok, true);
+    await fs.stat(path.join(DATA_DIR, root, "parent.md"));
+    await fs.stat(path.join(DATA_DIR, root, "parent", "child.md"));
+    const betaBack = await fs.readFile(
+      path.join(DATA_DIR, root, "beta.md"),
+      "utf8"
+    );
+    assert.match(betaBack, /\[\[Parent\]\]/);
+    assert.ok(!/Renamed/.test(betaBack));
+  } finally {
+    await fs.rm(path.join(DATA_DIR, root), { recursive: true, force: true });
+  }
+});
+
 test("no-op rename (same slug) reports nothing and no undo token", async () => {
   const root = uniqueRoot();
   try {
-    await writePageDir(root, "alpha", "Alpha", "# Alpha");
-    const { newPath, references } = await renamePage(`${root}/alpha`, "Alpha");
-    assert.equal(newPath, `${root}/alpha`);
+    await writePageDir(root, "Alpha", "Alpha", "# Alpha");
+    const { newPath, references } = await renamePage(`${root}/Alpha`, "Alpha");
+    assert.equal(newPath, `${root}/Alpha`);
     assert.equal(references.linkCount, 0);
     assert.equal(references.undoToken, null);
+  } finally {
+    await fs.rm(path.join(DATA_DIR, root), { recursive: true, force: true });
+  }
+});
+
+test("case-only rename preserves the new casing on disk", async () => {
+  const root = uniqueRoot();
+  try {
+    await writePageDir(root, "eureka", "eureka", "# eureka");
+    const { newPath } = await renamePage(`${root}/eureka`, "Eureka");
+    assert.equal(newPath, `${root}/Eureka`);
+    await fs.stat(path.join(DATA_DIR, root, "Eureka", "index.md"));
   } finally {
     await fs.rm(path.join(DATA_DIR, root), { recursive: true, force: true });
   }

@@ -22,12 +22,18 @@ const {
   BrowserWindow,
   WebContentsView,
   Menu,
+  nativeImage,
   session,
   shell,
   ipcMain,
 } = require("electron");
+const { ElectronChromeExtensions } = require("electron-chrome-extensions");
 
 const BROWSER_VIEW_PARTITION = "persist:cabinet-browser";
+
+let extensionsManager = null;
+let activeWebContents = null;
+let openExtensionPanelWindow = null;
 
 // Injected by initBrowserViews() so this module stays decoupled from main.cjs.
 let getMainWindow = () => null;
@@ -121,6 +127,61 @@ function userAgentPlatformToken() {
 // desktop Chrome rather than Electron, so they don't downgrade or block.
 function setupBrowserSession() {
   const browserSession = getBrowserSession();
+
+  try {
+    extensionsManager = new ElectronChromeExtensions({
+      session: browserSession,
+      license: "GPL-3.0",
+      createTab(details) {
+        const url = typeof details?.url === "string" ? details.url : "";
+        if (!url) return;
+        if (url.startsWith("chrome-extension://")) {
+          if (typeof openExtensionPanelWindow === "function") {
+            openExtensionPanelWindow(url);
+          }
+        } else {
+          if (activeWebContents && !activeWebContents.isDestroyed()) {
+            activeWebContents.loadURL(url);
+          }
+        }
+      },
+      selectTab(tab) {
+        let foundViewId = null;
+        for (const [viewId, entry] of browserViews.entries()) {
+          if (entry.view.webContents === tab) {
+            foundViewId = viewId;
+            break;
+          }
+        }
+        if (foundViewId) {
+          const entry = browserViews.get(foundViewId);
+          if (entry && !entry.view.webContents.isDestroyed()) {
+            entry.view.setVisible(true);
+            activeWebContents = entry.view.webContents;
+          }
+        }
+      },
+      removeTab(tab) {
+        let foundViewId = null;
+        for (const [viewId, entry] of browserViews.entries()) {
+          if (entry.view.webContents === tab) {
+            foundViewId = viewId;
+            break;
+          }
+        }
+        if (foundViewId) {
+          destroyBrowserView(foundViewId);
+          const win = liveMainWindow();
+          if (win && !win.isDestroyed()) {
+            win.webContents.send("cabinet:browser-view-closed", { viewId: foundViewId });
+          }
+        }
+      }
+    });
+  } catch (err) {
+    console.error("[cabinet] Failed to initialize ElectronChromeExtensions:", err);
+  }
+
   const filter = { urls: ["*://*.google.com/*"] };
   browserSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
     details.requestHeaders["Sec-CH-UA"] =
@@ -232,6 +293,9 @@ function destroyBrowserView(viewId) {
   if (!entry || !win) {
     browserViews.delete(viewId);
     return;
+  }
+  if (activeWebContents === entry.view.webContents) {
+    activeWebContents = null;
   }
   try {
     win.contentView.removeChildView(entry.view);
@@ -365,6 +429,10 @@ function registerHandlers() {
     });
     view.setBounds({ x: 0, y: 0, width: 0, height: 0 });
     view.setVisible(false);
+    view.setBackgroundColor("#00ffffff");
+    if (typeof view.setBorderRadius === "function") {
+      view.setBorderRadius(20);
+    }
 
     const defaultUA = view.webContents.userAgent || "";
     view.webContents.userAgent = defaultUA
@@ -374,7 +442,28 @@ function registerHandlers() {
     win.contentView.addChildView(view);
     browserViews.set(viewId, { view, ownerWebContentsId: event.sender.id });
 
-    view.webContents.on("did-navigate", (_navEvent, nextUrl) => {
+    if (extensionsManager) {
+      extensionsManager.addTab(view.webContents, win);
+      extensionsManager.selectTab(view.webContents);
+    }
+
+    // Forward console messages from the browser view to the main renderer
+    // so extension content-script errors are visible in the app's DevTools.
+    view.webContents.on("console-message", (event) => {
+      const level = event?.level;
+      const message = event?.message ?? "";
+      const sourceId = event?.sourceId ?? "";
+      const line = event?.lineNumber ?? 0;
+      const prefix = `[browser-view]`;
+      const levelStr = typeof level === "string" ? level : String(level);
+      if (levelStr === "error" || levelStr === "warning" || levelStr === "3" || levelStr === "2") {
+        const fn = levelStr === "error" || levelStr === "3" ? console.error : console.warn;
+        fn(`${prefix} ${message}`, sourceId ? `(${sourceId}:${line})` : "");
+      }
+    });
+
+    view.webContents.on("did-finish-load", () => {
+      const nextUrl = view.webContents.getURL();
       sendBrowserViewNavigateEvent(event.sender.id, viewId, String(nextUrl || "about:blank"));
     });
     view.webContents.on("did-navigate-in-page", (_navEvent, nextUrl) => {
@@ -440,13 +529,13 @@ function registerHandlers() {
       }
       const wc = entry.view.webContents;
       if (nextUrl === "__cabinet_nav_back__") {
-        if (!wc.canGoBack()) return { ok: true, skipped: true };
-        wc.goBack();
+        if (!wc.navigationHistory.canGoBack()) return { ok: true, skipped: true };
+        wc.navigationHistory.goBack();
         return { ok: true };
       }
       if (nextUrl === "__cabinet_nav_forward__") {
-        if (!wc.canGoForward()) return { ok: true, skipped: true };
-        wc.goForward();
+        if (!wc.navigationHistory.canGoForward()) return { ok: true, skipped: true };
+        wc.navigationHistory.goForward();
         return { ok: true };
       }
       if (nextUrl === "__cabinet_nav_reload__") {
@@ -496,6 +585,14 @@ function registerHandlers() {
     }
     try {
       entry.view.setVisible(visible);
+      if (visible) {
+        activeWebContents = entry.view.webContents;
+        if (extensionsManager) {
+          extensionsManager.selectTab(entry.view.webContents);
+        }
+      } else if (activeWebContents === entry.view.webContents) {
+        activeWebContents = null;
+      }
     } catch {}
     return { ok: true };
   });
@@ -508,8 +605,8 @@ function registerHandlers() {
       return { ok: false, error: "not-found" };
     }
     const wc = entry.view.webContents;
-    if (!wc.canGoBack()) return { ok: true, skipped: true };
-    wc.goBack();
+    if (!wc.navigationHistory.canGoBack()) return { ok: true, skipped: true };
+    wc.navigationHistory.goBack();
     return { ok: true };
   });
 
@@ -521,8 +618,8 @@ function registerHandlers() {
       return { ok: false, error: "not-found" };
     }
     const wc = entry.view.webContents;
-    if (!wc.canGoForward()) return { ok: true, skipped: true };
-    wc.goForward();
+    if (!wc.navigationHistory.canGoForward()) return { ok: true, skipped: true };
+    wc.navigationHistory.goForward();
     return { ok: true };
   });
 
@@ -546,6 +643,103 @@ function registerHandlers() {
     }
     destroyBrowserView(viewId);
     return { ok: true };
+  });
+
+  ipcMain.handle("cabinet:execute-browser-view-javascript", async (event, payload) => {
+    if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
+    const viewId = typeof payload?.viewId === "string" ? payload.viewId : "";
+    const code = typeof payload?.code === "string" ? payload.code : "";
+    const entry = browserViews.get(viewId);
+    if (!entry || entry.ownerWebContentsId !== event.sender.id) {
+      return { ok: false, error: "not-found" };
+    }
+    try {
+      const result = await entry.view.webContents.executeJavaScript(code);
+      return { ok: true, result };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle("cabinet:open-browser-view-devtools", async (event, payload) => {
+    if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
+    const viewId = typeof payload?.viewId === "string" ? payload.viewId : "";
+    const entry = browserViews.get(viewId);
+    if (!entry || entry.ownerWebContentsId !== event.sender.id) {
+      return { ok: false, error: "not-found" };
+    }
+    try {
+      if (!entry.view.webContents.isDevToolsOpened()) {
+        entry.view.webContents.openDevTools({ mode: "detach" });
+      } else {
+        entry.view.webContents.closeDevTools();
+      }
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle("cabinet:show-extensions-menu", async (event, payload) => {
+    if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win || win.isDestroyed()) return { ok: false, error: "window-unavailable" };
+
+    const x = Number.isFinite(payload?.x) ? Math.max(0, Math.round(payload.x)) : 0;
+    const y = Number.isFinite(payload?.y) ? Math.max(0, Math.round(payload.y)) : 0;
+    const items = Array.isArray(payload?.items) ? payload.items : [];
+
+    if (items.length === 0) return { ok: true, cancelled: true };
+
+    return await new Promise((resolve) => {
+      let resolved = false;
+      const resolveOnce = (value) => {
+        if (resolved) return;
+        resolved = true;
+        resolve(value);
+      };
+
+      const template = items.map((item) => {
+        let icon = null;
+        if (item.iconDataUrl) {
+          try {
+            const img = nativeImage.createFromDataURL(item.iconDataUrl);
+            if (!img.isEmpty()) {
+              icon = img.resize({ width: 16, height: 16 });
+            }
+          } catch {}
+        }
+        return {
+          label: item.name || item.id,
+          ...(icon ? { icon } : {}),
+          submenu: [
+            {
+              label: "Open",
+              click: () => {
+                resolveOnce({ ok: true, extensionId: item.id });
+              },
+            },
+            { type: "separator" },
+            {
+              label: item.pinned ? "Unpin from toolbar" : "Pin to toolbar",
+              click: () => {
+                resolveOnce({ ok: true, togglePinId: item.id });
+              },
+            },
+          ],
+        };
+      });
+
+      const menu = Menu.buildFromTemplate(template);
+      menu.popup({
+        window: win,
+        x,
+        y,
+        callback: () => {
+          resolveOnce({ ok: true, cancelled: true });
+        },
+      });
+    });
   });
 
   ipcMain.handle("cabinet:show-browser-bookmarks-menu", async (event, payload) => {
@@ -595,6 +789,162 @@ function registerHandlers() {
       });
     });
   });
+
+  // Native toast popup — renders above the WebContentsView via Menu.popup(),
+  // following the same pattern as the extensions/bookmarks menus.
+  ipcMain.handle("cabinet:show-native-toast", async (event, payload) => {
+    if (!isMainRendererSender(event)) return { ok: false, error: "unauthorized" };
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (!win || win.isDestroyed()) return { ok: false, error: "window-unavailable" };
+    showNativeToast(win, payload || {});
+    return { ok: true };
+  });
+
+  // Return focus to the parent window after clicking the toast's copy button.
+  ipcMain.on("cabinet:toast-refocus", (event) => {
+    try {
+      const senderWin = BrowserWindow.fromWebContents(event.sender);
+      if (senderWin && !senderWin.isDestroyed()) {
+        const parent = BrowserWindow.getAllWindows().find(
+          (w) => !w.isDestroyed() && w !== senderWin && !w.isSkipTaskbar()
+        );
+        if (parent) parent.focus();
+      }
+    } catch {}
+  });
+}
+
+/**
+ * Show a toast popup above the BrowserView using a frameless BrowserWindow.
+ * Unlike Menu.popup(), this gives full CSS control over styling and supports
+ * a copy-to-clipboard button. The window is always-on-top, transparent, and
+ * auto-dismisses after `durationMs` (default 4.5s).
+ */
+function showNativeToast(win, { kind, message, durationMs }) {
+  if (!win || win.isDestroyed()) return;
+  const ttl = Number.isFinite(durationMs) && durationMs > 0 ? durationMs : 4500;
+
+  const iconColor =
+    kind === "error" ? "#dc2626" :
+    kind === "success" ? "#16a34a" :
+    "#475569";
+  const iconChar =
+    kind === "error" ? "\u2715" :
+    kind === "success" ? "\u2713" :
+    "\u2139";
+
+  const escapedMsg = String(message).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f5f5f5;
+    color: #333333;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    padding: 8px 12px 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 440px;
+  }
+  .icon { color: ${iconColor}; font-size: 14px; flex-shrink: 0; }
+  .msg { flex: 1; min-width: 0; word-break: break-word; }
+  .copy-btn {
+    flex-shrink: 0;
+    background: none;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    color: #666;
+    cursor: pointer;
+    padding: 3px 6px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: #e8e8e8; color: #333; border-color: #999; }
+  .copy-btn.copied { color: #2d9d5f; border-color: #2d9d5f; }
+</style>
+</head>
+<body>
+  <div class="toast">
+    <span class="icon">${iconChar}</span>
+    <span class="msg">${escapedMsg}</span>
+    <button class="copy-btn" title="Copy message">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+  </div>
+  <script>
+    document.querySelector('.copy-btn').addEventListener('click', () => {
+      try { require('electron').clipboard.writeText(${JSON.stringify(String(message))}); } catch(e) {}
+      var btn = document.querySelector('.copy-btn');
+      btn.classList.add('copied');
+      setTimeout(function() { btn.classList.remove('copied'); }, 1500);
+      // Return focus to the parent window so the toast doesn't keep it.
+      try { require('electron').ipcRenderer.send('cabinet:toast-refocus'); } catch(e) {}
+    });
+    setTimeout(() => { window.close(); }, ${ttl});
+  </script>
+</body>
+</html>`;
+
+  const TOAST_WIDTH = 460;
+  const TOAST_HEIGHT = 48;
+
+  const [mw, mh] = win.getContentSize();
+  const [px, py] = win.getPosition();
+  const x = px + Math.max(0, Math.round((mw - TOAST_WIDTH) / 2));
+  const y = py + Math.max(0, Math.round(mh - TOAST_HEIGHT - 16));
+
+  const toastWin = new BrowserWindow({
+    width: TOAST_WIDTH,
+    height: TOAST_HEIGHT,
+    x,
+    y,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: false,
+    focusable: true,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    hasShadow: false,
+    hiddenInMissionControl: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  toastWin.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html));
+  toastWin.showInactive();
+
+  // Close if the parent window closes
+  if (win && !win.isDestroyed()) {
+    win.once("closed", () => {
+      try { toastWin.destroy(); } catch {}
+    });
+  }
 }
 
 /**
@@ -610,8 +960,13 @@ function initBrowserViews(opts) {
   getMainWindow = opts?.getMainWindow ?? (() => null);
   getBaseAppUrl = opts?.getBaseAppUrl ?? (() => null);
   isDev = opts?.isDev === true;
+  openExtensionPanelWindow = opts?.openExtensionPanelWindow ?? (() => null);
   setupBrowserSession();
   registerHandlers();
 }
 
-module.exports = { initBrowserViews, destroyAllBrowserViews };
+function getExtensionsManager() {
+  return extensionsManager;
+}
+
+module.exports = { initBrowserViews, destroyAllBrowserViews, getExtensionsManager };

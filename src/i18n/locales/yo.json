@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Kó ojú-ìwé jáde",
+      "focus": "Idojukọ",
+      "exitFocus": "Jade kuro ninu idojukọ",
       "copyMarkdown": "Ṣàwòkọ Markdown",
       "copyForLlms": "Ṣàwòkọ fún àwọn LLM",
       "copyAsHtml": "Ṣàwòkọ bí HTML",

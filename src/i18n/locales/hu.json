@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Oldal exportálása",
+      "focus": "Fókusz",
+      "exitFocus": "Kilépés a fókuszból",
       "copyMarkdown": "Markdown másolása",
       "copyForLlms": "Másolás LLM-eknek",
       "copyAsHtml": "Másolás HTML-ként",

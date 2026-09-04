@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { agentAdapterRegistry } from "./adapters/registry";
+import { classifyCommonError } from "./adapters/error-classification";
 import type { AgentExecutionAdapter } from "./adapters/types";
 
 let tempRoot: string;
@@ -22,7 +23,17 @@ before(async () => {
 });
 
 after(async () => {
-  if (tempRoot) await fs.rm(tempRoot, { recursive: true, force: true });
+  if (tempRoot) {
+    for (let i = 0; i < 5; i++) {
+      try {
+        await fs.rm(tempRoot, { recursive: true, force: true });
+        break;
+      } catch (err) {
+        if (i === 4) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+  }
 });
 
 interface Capture {
@@ -429,4 +440,58 @@ test("continueConversationRun with failing adapter marks turn + conversation fai
   assert.equal(last.exitCode, 1);
 
   agentAdapterRegistry.unregisterExternal("mock_continue");
+});
+
+test("continueConversationRun classifies a spawn-time crash (missing CLI) as cli_not_found", async () => {
+  // Simulate a missing CLI binary: runChildProcess rejects on the child
+  // 'error' event, which propagates out of adapter.execute as a thrown
+  // "spawn <cmd> ENOENT". The in-process catch must classify that message so
+  // the UI surfaces an Install CTA instead of an opaque "Adapter crashed".
+  const crashAdapter: AgentExecutionAdapter = {
+    type: "mock_crash",
+    name: "Mock Crash",
+    executionEngine: "structured_cli",
+    providerId: "mock",
+    supportsSessionResume: false,
+    async testEnvironment() {
+      return {
+        adapterType: "mock_crash",
+        status: "pass",
+        checks: [],
+        testedAt: new Date().toISOString(),
+      };
+    },
+    classifyError(stderr, exitCode) {
+      return (
+        classifyCommonError(stderr, exitCode, {
+          providerDisplayName: "Mock CLI",
+          cliCommand: "mockcli",
+        }) ?? { kind: "unknown" }
+      );
+    },
+    async execute() {
+      throw new Error("spawn mockcli ENOENT");
+    },
+  };
+  agentAdapterRegistry.registerExternal(crashAdapter);
+
+  const meta = await seedConversation("mock_crash");
+  await store.finalizeConversation(meta.id, {
+    status: "completed",
+    exitCode: 0,
+    output: "ok.\n```cabinet\nSUMMARY: ok\n```",
+  });
+
+  await runner.continueConversationRun(meta.id, {
+    userMessage: "try to run it",
+  });
+
+  const reread = await store.readConversationMeta(meta.id);
+  assert.equal(reread?.errorKind, "cli_not_found");
+  assert.ok(
+    reread?.errorHint && reread.errorHint.length > 0,
+    "expected a remediation hint to accompany cli_not_found"
+  );
+
+  agentAdapterRegistry.unregisterExternal("mock_crash");
 });

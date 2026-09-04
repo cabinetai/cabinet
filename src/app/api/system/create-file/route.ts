@@ -11,12 +11,13 @@ import {
 import { createPage } from "@/lib/storage/page-io";
 import { invalidateTreeCache } from "@/lib/storage/tree-builder";
 import { autoCommit } from "@/lib/git/git-service";
-import { slugifyPageName } from "@/lib/markdown/wiki-links";
+import { slugifyFileName } from "@/lib/markdown/wiki-links";
 import { blankOffice, type BlankOfficeKind } from "@/lib/storage/office-templates";
+import { appendOrder, setEntryOrder } from "@/lib/storage/order-store";
 
 export const dynamic = "force-dynamic";
 
-// Types that become a *page* (directory + index.md) rather than a flat file.
+// Types that become a *page* (standalone .md file) rather than a flat file.
 const PAGE_TYPES = new Set(["markdown", "gdoc", "gsheet", "gslides"]);
 const GOOGLE_KIND: Record<string, "docs" | "sheets" | "slides"> = {
   gdoc: "docs",
@@ -44,9 +45,8 @@ interface CreateFileRequest {
 
 function sanitizeBaseName(name: string): string {
   return name
-    .trim()
-    .replace(/[/\\]+/g, "-")
-    .replace(/[^a-zA-Z0-9._ -]/g, "")
+    .replace(/[\x00-\x1f\x7f<>:"/\\|?*]/g, "-")
+    .replace(/\.\.+/g, "-")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -82,13 +82,14 @@ export async function POST(req: NextRequest) {
 
     // ── Page types: markdown + Google embeds ──────────────────────────────
     if (PAGE_TYPES.has(type)) {
-      const slug = slugifyPageName(rawName);
+      const slug = slugifyFileName(rawName);
       if (!slug) {
         return NextResponse.json({ error: "Invalid name" }, { status: 400 });
       }
       const virtualPath = parentPath ? `${parentPath}/${slug}` : slug;
       const resolved = resolveContentPath(virtualPath);
-      if (await fileExists(path.join(resolved, "index.md"))) {
+      const mdPath = `${resolved}.md`;
+      if (await fileExists(mdPath)) {
         return NextResponse.json(
           { error: `A page named "${slug}" already exists here.` },
           { status: 409 }
@@ -98,23 +99,25 @@ export async function POST(req: NextRequest) {
       if (type === "markdown") {
         await createPage(virtualPath, rawName);
       } else {
-        // Google embed page: write index.md with google: frontmatter.
         const kind = GOOGLE_KIND[type];
         const url = (body.googleUrl || "").trim();
-        await ensureDirectory(resolved);
-        const now = new Date().toISOString();
+        const order = await appendOrder(parentPath);
         const fm = {
+          type: "Untyped",
           title: rawName,
-          created: now,
-          modified: now,
+          created: new Date().toISOString(),
+          modified: new Date().toISOString(),
           tags: [] as string[],
+          order,
           google: { kind, ...(url ? { url } : { url: "" }) },
         };
         const content = url
           ? `\n# ${rawName}\n`
           : `\n# ${rawName}\n\n> Paste a shareable Google link in this page's settings to embed it.\n`;
+        const mdPath = `${resolved}.md`;
+        await ensureDirectory(path.dirname(mdPath));
         await writeFileContent(
-          path.join(resolved, "index.md"),
+          mdPath,
           matter.stringify(content, fm)
         );
       }
@@ -154,6 +157,12 @@ export async function POST(req: NextRequest) {
     }
 
     const virtualPath = parentPath ? `${parentPath}/${filename}` : filename;
+    try {
+      const order = await appendOrder(parentPath);
+      await setEntryOrder(parentPath, filename, order);
+    } catch (err) {
+      console.error("Failed to assign order to created file:", err);
+    }
     invalidateTreeCache();
     autoCommit(virtualPath, "Add");
     return NextResponse.json({ ok: true, path: virtualPath, isPage: false });

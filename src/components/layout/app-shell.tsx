@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/sidebar/sidebar";
 import { Header } from "@/components/layout/header";
 import { KBEditor } from "@/components/editor/editor";
 import { BrowserView } from "@/components/layout/browser-view";
+import { CanvasView } from "@/components/layout/canvas-view";
 import { WebsiteViewer } from "@/components/editor/website-viewer";
 import { PdfViewer } from "@/components/editor/pdf-viewer";
 import { CsvViewer } from "@/components/editor/csv-viewer";
@@ -15,6 +16,7 @@ import { ImageViewer } from "@/components/editor/image-viewer";
 import { MediaViewer } from "@/components/editor/media-viewer";
 import { MermaidViewer } from "@/components/editor/mermaid-viewer";
 import { LatexViewer } from "@/components/editor/latex-viewer";
+import { TypstViewer } from "@/components/editor/typst-viewer";
 import { FileFallbackViewer } from "@/components/editor/file-fallback-viewer";
 import dynamic from "next/dynamic";
 import { GoogleDocViewer } from "@/components/editor/google-doc-viewer";
@@ -29,6 +31,10 @@ const XlsxViewer = dynamic(
 );
 const PptxViewer = dynamic(
   () => import("@/components/editor/office/pptx-viewer").then((m) => m.PptxViewer),
+  { ssr: false }
+);
+const Model3dViewer = dynamic(
+  () => import("@/components/editor/model3d-viewer").then((m) => m.Model3dViewer),
   { ssr: false }
 );
 import { HomeScreen } from "@/components/home/home-screen";
@@ -192,6 +198,7 @@ export function AppShell() {
   const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
   const setAiPanelCollapsed = useAppStore((s) => s.setAiPanelCollapsed);
   const setTaskPanelConversation = useAppStore((s) => s.setTaskPanelConversation);
+  const browseUrl = useAppStore((s) => s.browseUrl);
   const {
     update,
     refreshing: updateRefreshing,
@@ -391,10 +398,10 @@ export function AppShell() {
     return () => window.clearTimeout(id);
   }, [selectedPath, section.cabinetPath]);
 
-  // Browse mode only makes sense over a page/cabinet surface; leaving those
-  // sections (settings, help, etc.) drops back to the editor.
+  // Browse mode only makes sense over a page/cabinet/home/settings surface;
+  // leaving those sections (help, etc.) drops back to the editor.
   useEffect(() => {
-    if (section.type !== "page" && section.type !== "cabinet" && appMode !== "edit") {
+    if (section.type !== "page" && section.type !== "cabinet" && section.type !== "home" && section.type !== "settings" && appMode !== "edit") {
       setAppMode("edit");
     }
   }, [section.type, appMode, setAppMode]);
@@ -758,7 +765,11 @@ export function AppShell() {
         if (lower.endsWith(".pptx")) return "pptx";
         if (lower.endsWith(".ipynb")) return "notebook";
         if (lower.endsWith(".mmd") || lower.endsWith(".mermaid")) return "mermaid";
+        if (lower.endsWith(".drawio") || lower.endsWith(".dio") || lower.endsWith(".drawio.svg")) return "drawio";
+        if (lower.endsWith(".excalidraw") || lower.endsWith(".excalidraw.svg")) return "excalidraw";
         if (lower.endsWith(".tex") || lower.endsWith(".latex")) return "latex";
+        if (lower.endsWith(".typ")) return "typst";
+        if (lower.endsWith(".glb") || lower.endsWith(".gltf")) return "model3d";
         if (/\.(png|jpe?g|gif|webp|svg|bmp)$/.test(lower)) return "image";
         if (/\.(mp4|mov|webm|avi|mkv)$/.test(lower)) return "video";
         if (/\.(mp3|wav|ogg|flac|m4a)$/.test(lower)) return "audio";
@@ -771,6 +782,7 @@ export function AppShell() {
   const nodeType = selectedNode?.type || inferredType;
   const isWebsite = nodeType === "website";
   const isApp = nodeType === "app";
+  const prevIsApp = useRef(false);
   const isPdf = nodeType === "pdf";
   const isCsv = nodeType === "csv";
   const isCode = nodeType === "code";
@@ -779,10 +791,14 @@ export function AppShell() {
   const isVideo = nodeType === "video";
   const isAudio = nodeType === "audio";
   const isMermaid = nodeType === "mermaid";
+  const isDrawio = nodeType === "drawio";
+  const isExcalidraw = nodeType === "excalidraw";
   const isLatex = nodeType === "latex";
+  const isTypst = nodeType === "typst";
   const isDocx = nodeType === "docx";
   const isXlsx = nodeType === "xlsx";
   const isPptx = nodeType === "pptx";
+  const isModel3d = nodeType === "model3d";
   const isUnknown = nodeType === "unknown";
   const googleFrontmatter = selectedNode?.frontmatter?.google;
   const hasPersistentUpdateState =
@@ -804,7 +820,6 @@ export function AppShell() {
   // explicit exit-fullscreen button or by just navigating to a non-app node.
   // Previously only the button restored state, so leaving any other way left
   // the sidebar collapsed (and persisted collapsed) indefinitely.
-  const prevIsApp = useRef(false);
   const preAppSidebarCollapsed = useRef(sidebarCollapsed);
   const preAppAiPanelCollapsed = useRef(false);
   useEffect(() => {
@@ -819,6 +834,70 @@ export function AppShell() {
     prevIsApp.current = !!isApp;
   }, [isApp, setSidebarCollapsed, setAiPanelCollapsed]);
 
+  useEffect(() => {
+    if (isDrawio && (selectedNode || selectedPath)) {
+      const path = selectedNode?.path || selectedPath!;
+      const targetUrl = `${window.location.origin}/drawio/editor.html?path=${path}`;
+      if (browseUrl !== targetUrl) {
+        setAppMode("browse", targetUrl);
+      }
+    }
+  }, [isDrawio, selectedNode, selectedPath, browseUrl, setAppMode]);
+
+  useEffect(() => {
+    if (isExcalidraw && (selectedNode || selectedPath)) {
+      const path = selectedNode?.path || selectedPath!;
+      const targetUrl = `${window.location.origin}/excalidraw/editor?path=${path}`;
+      if (browseUrl !== targetUrl) {
+        setAppMode("browse", targetUrl);
+      }
+    }
+  }, [isExcalidraw, selectedNode, selectedPath, browseUrl, setAppMode]);
+
+  useEffect(() => {
+    const handleExit = () => {
+      setAppMode("edit");
+      loadTree();
+      
+      // If the selected path itself is a drawio diagram or excalidraw drawing, deselect it to parent
+      // directory to prevent redirect loop
+      const currentPath = useTreeStore.getState().selectedPath;
+      if (currentPath && (
+        currentPath.toLowerCase().endsWith(".drawio.svg") ||
+        currentPath.toLowerCase().endsWith(".drawio") ||
+        currentPath.toLowerCase().endsWith(".dio") ||
+        currentPath.toLowerCase().endsWith(".excalidraw.svg") ||
+        currentPath.toLowerCase().endsWith(".excalidraw")
+      )) {
+        const lastSlash = currentPath.lastIndexOf("/");
+        const parentPath = lastSlash > 0 ? currentPath.slice(0, lastSlash) : null;
+        useTreeStore.getState().selectPage(parentPath);
+      }
+    };
+
+    const handleEditorMessage = (event: MessageEvent) => {
+      if (event.data?.type === "drawio-saved" || event.data?.type === "excalidraw-saved") {
+        handleExit();
+      }
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (
+        event.key === "cabinet.drawio.last_saved_path" ||
+        event.key === "cabinet.excalidraw.last_saved_path"
+      ) {
+        handleExit();
+      }
+    };
+
+    window.addEventListener("message", handleEditorMessage);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("message", handleEditorMessage);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [setAppMode, loadTree]);
+
   const handleExitApp = () => {
     setSidebarCollapsed(preAppSidebarCollapsed.current);
     setAiPanelCollapsed(preAppAiPanelCollapsed.current);
@@ -827,13 +906,20 @@ export function AppShell() {
   // Determine what to render in the main area
   const renderContent = () => {
     // System sections (non-page views)
+    if (section.type === "home" && appMode === "browse") return <BrowserView />;
+    if (section.type === "home" && appMode === "canvas") return <CanvasView />;
     if (section.type === "home") return <HomeScreen />;
     if (section.type === "registry") return <RegistryBrowser />;
+    if (section.type === "settings" && appMode === "browse") return <BrowserView />;
+    if (section.type === "settings" && appMode === "canvas") return <CanvasView />;
     if (section.type === "settings") return <SettingsPage />;
     if (section.type === "integrations") return <IntegrationsHubPage />;
     if (section.type === "help") return <HelpPage />;
     if ((section.type === "cabinet" || section.type === "page") && appMode === "browse") {
       return <BrowserView />;
+    }
+    if ((section.type === "cabinet" || section.type === "page") && appMode === "canvas") {
+      return <CanvasView />;
     }
     if (section.type === "cabinet" && section.cabinetPath) {
       return <CabinetView cabinetPath={section.cabinetPath} />;
@@ -989,6 +1075,11 @@ export function AppShell() {
       const imgTitle = selectedNode?.frontmatter?.title || selectedNode?.name || imgPath.split("/").pop() || "Image";
       return <ImageViewer path={imgPath} title={imgTitle} />;
     }
+    if (isModel3d && (selectedNode || selectedPath)) {
+      const modelPath = selectedNode?.path || selectedPath!;
+      const modelTitle = selectedNode?.frontmatter?.title || selectedNode?.name || modelPath.split("/").pop() || "Model";
+      return <Model3dViewer path={modelPath} title={modelTitle} />;
+    }
     if ((isVideo || isAudio) && (selectedNode || selectedPath)) {
       const mediaPath = selectedNode?.path || selectedPath!;
       const mediaTitle = selectedNode?.frontmatter?.title || selectedNode?.name || mediaPath.split("/").pop() || "Media";
@@ -1001,10 +1092,24 @@ export function AppShell() {
       return <MermaidViewer path={mmdPath} title={mmdTitle} />;
     }
 
+    if ((isDrawio || isExcalidraw) && (selectedNode || selectedPath)) {
+      return (
+        <div className="flex-1 flex items-center justify-center bg-background">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      );
+    }
+
     if (isLatex && (selectedNode || selectedPath)) {
       const texPath = selectedNode?.path || selectedPath!;
       const texTitle = selectedNode?.frontmatter?.title || selectedNode?.name || texPath.split("/").pop() || "LaTeX";
       return <LatexViewer key={texPath} path={texPath} title={texTitle} />;
+    }
+
+    if (isTypst && (selectedNode || selectedPath)) {
+      const typPath = selectedNode?.path || selectedPath!;
+      const typTitle = selectedNode?.frontmatter?.title || selectedNode?.name || typPath.split("/").pop() || "Typst";
+      return <TypstViewer path={typPath} title={typTitle} />;
     }
 
     if (isDocx && (selectedNode || selectedPath)) {
@@ -1079,7 +1184,7 @@ export function AppShell() {
     !driveLoading &&
     !isApp && !isCsv && !isPdf && !isWebsite && !isNotebook && !isCode &&
     !isImage && !isVideo && !isAudio && !isMermaid && !isLatex && !isDocx &&
-    !isXlsx && !isPptx && !isUnknown && !googleFrontmatter?.url;
+    !isXlsx && !isPptx && !isModel3d && !isUnknown && !googleFrontmatter?.url;
 
   // Viewers migrated to ViewerLayout put their toolbar on the desk and wrap
   // only their body in a ContentSheet — so they, like the editor, opt out of
@@ -1088,7 +1193,7 @@ export function AppShell() {
     isCsv || isCode || isImage || isMermaid ||
     isPdf || isVideo || isAudio || isUnknown || isLatex ||
     isWebsite || isApp || isDocx || isXlsx || isPptx || isNotebook ||
-    !!googleFrontmatter?.url;
+    isModel3d || !!googleFrontmatter?.url;
 
   // Views that place their controls on the desk and their body in a
   // ContentSheet manage their own layout — skip the app-shell sheet wrapper.
@@ -1097,10 +1202,11 @@ export function AppShell() {
     isSelfSheetedViewer ||
     section.type === "tasks" ||
     section.type === "agents" ||
+    (section.type === "settings" && appMode === "edit") ||
     // The room/cabinet dashboard puts its header on the desk and wraps its body
     // in a ContentSheet, like agents/tasks — but only in edit mode; browse mode
     // hands off to BrowserView, which still wants the app-shell sheet.
-    (section.type === "cabinet" && appMode !== "browse");
+    ((section.type === "home" || section.type === "cabinet") && appMode !== "browse");
 
   return (
     <TaskRailProvider>
@@ -1109,7 +1215,7 @@ export function AppShell() {
         and the fixed, full-height rail — a floating capsule of avatars —
         lives in that gutter. */}
     <div
-      className="flex h-screen bg-[var(--gutter)] text-foreground transition-[padding] duration-200 ease-out"
+      className="flex h-screen bg-(--gutter) text-foreground transition-[padding] duration-200 ease-out"
       style={
         isMobile || focusMode
           ? undefined

@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { sanitizeHtml } from "./sanitize";
 import { markdownToHtml } from "@/lib/markdown/to-html";
+import { renderLatexToHtml } from "@/components/editor/latex-render";
 
 // Two halves, and both matter.
 //
@@ -126,6 +127,20 @@ test("rich: a healed provider iframe embed survives, but not with srcdoc", async
 test("rich: inline style is dropped (overlay/clickjacking vector, unused by the pipeline)", () => {
   const clean = sanitizeHtml('<div style="position:fixed;inset:0">x</div>', "rich");
   assert.ok(!clean.includes("style"), `inline style survived: ${clean}`);
+});
+
+test("latex: preserves KaTeX layout styles for superscripts and fractions", () => {
+  const rendered = renderLatexToHtml(String.raw`$$\frac{x^2}{y_1}$$`);
+  const clean = sanitizeHtml(rendered.html, "latex");
+  assert.match(clean, /style="[^"]*(?:top|vertical-align):/);
+  assert.match(clean, /class="[^"]*frac-line/);
+});
+
+test("latex: still strips active content and refuses KaTeX HTML extensions", () => {
+  const rendered = renderLatexToHtml(String.raw`$$\htmlStyle{position:fixed;inset:0}{X}$$`);
+  const clean = sanitizeHtml(`${rendered.html}<script>alert(1)</script><img src=x onerror=alert(1)>`, "latex");
+  assert.ok(!XSS(clean), `active content survived: ${clean}`);
+  assert.doesNotMatch(clean, /style="[^"]*position\s*:/, `untrusted KaTeX style survived: ${clean}`);
 });
 
 // ------------------------------------------------------------------------ svg

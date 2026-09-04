@@ -8,6 +8,7 @@ export type EmbedProvider =
   | "tiktok"
   | "spotify"
   | "video"
+  | "audio"
   | "iframe";
 
 export interface DetectedEmbed {
@@ -26,7 +27,8 @@ const FACEBOOK = /^https?:\/\/(?:www\.)?facebook\.com\/.+/;
 const INSTAGRAM = /^https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/([^/?#]+)/;
 const TIKTOK = /^https?:\/\/(?:www\.)?tiktok\.com\/@[^/]+\/video\/(\d+)/;
 const SPOTIFY = /^https?:\/\/open\.spotify\.com\/(track|album|playlist|episode|show)\/([A-Za-z0-9]+)/;
-const VIDEO_FILE = /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i;
+const VIDEO_FILE = /\.(mp4|webm|ogg|mov|m4v|mkv|avi|ogv)(\?|$)/i;
+const AUDIO_FILE = /\.(mp3|wav|ogg|m4a|aac|flac)(\?|$)/i;
 
 export function detectEmbed(raw: string): DetectedEmbed | null {
   const url = raw.trim();
@@ -101,6 +103,10 @@ export function detectEmbed(raw: string): DetectedEmbed | null {
     };
   }
 
+  if (AUDIO_FILE.test(url)) {
+    return { provider: "audio", embedUrl: url, originalUrl: url };
+  }
+
   if (VIDEO_FILE.test(url) || url.startsWith("/api/assets/")) {
     return { provider: "video", embedUrl: url, originalUrl: url };
   }
@@ -124,6 +130,7 @@ export function providerLabel(p: EmbedProvider): string {
     case "tiktok": return "TikTok";
     case "spotify": return "Spotify";
     case "video": return "Video file";
+    case "audio": return "Audio file";
     case "iframe": return "Web page";
   }
 }

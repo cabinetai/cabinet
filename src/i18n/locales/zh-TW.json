@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "匯出頁面",
+      "focus": "聚焦",
+      "exitFocus": "退出聚焦",
       "copyMarkdown": "複製 Markdown",
       "copyForLlms": "複製給 LLM",
       "copyAsHtml": "複製為 HTML",

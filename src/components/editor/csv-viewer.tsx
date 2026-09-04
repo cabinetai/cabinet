@@ -6,67 +6,11 @@ import { ViewerToolbar } from "@/components/layout/viewer-toolbar";
 import { ViewerLayout } from "@/components/layout/viewer-layout";
 import { ToolbarButton } from "@/components/layout/toolbar-button";
 import { useLocale } from "@/i18n/use-locale";
+import { parseCsv, rowsToCsv } from "@/lib/csv/parse";
 
 interface CsvViewerProps {
   path: string;
   title: string;
-}
-
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let current = "";
-  let inQuotes = false;
-  let row: string[] = [];
-
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const next = text[i + 1];
-
-    if (inQuotes) {
-      if (ch === '"' && next === '"') {
-        current += '"';
-        i++;
-      } else if (ch === '"') {
-        inQuotes = false;
-      } else {
-        current += ch;
-      }
-    } else {
-      if (ch === '"') {
-        inQuotes = true;
-      } else if (ch === ",") {
-        row.push(current);
-        current = "";
-      } else if (ch === "\n" || (ch === "\r" && next === "\n")) {
-        row.push(current);
-        current = "";
-        if (row.length > 0) rows.push(row);
-        row = [];
-        if (ch === "\r") i++;
-      } else {
-        current += ch;
-      }
-    }
-  }
-  row.push(current);
-  if (row.some((c) => c !== "")) rows.push(row);
-
-  return rows;
-}
-
-function rowsToCsv(rows: string[][]): string {
-  return rows
-    .map((row) =>
-      row
-        .map((cell) => {
-          if (cell.includes(",") || cell.includes('"') || cell.includes("\n")) {
-            return `"${cell.replace(/"/g, '""')}"`;
-          }
-          return cell;
-        })
-        .join(",")
-    )
-    .join("\n");
 }
 
 export function CsvViewer({ path }: CsvViewerProps) {

@@ -32,7 +32,6 @@ export function ContentSheet({
           ? {}
           : {
               borderRadius: "var(--sheet-radius)",
-              boxShadow: "var(--sheet-shadow)",
               // The desk supplies top + inline-end padding (app-shell); add the
               // inline-start + bottom gutter here so the sheet floats on all
               // four sides and every rounded corner is visible (#089).

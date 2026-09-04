@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Exportovat stránku",
+      "focus": "Zaměřit",
+      "exitFocus": "Ukončit zaměření",
       "copyMarkdown": "Kopírovat Markdown",
       "copyForLlms": "Kopírovat pro LLM",
       "copyAsHtml": "Kopírovat jako HTML",

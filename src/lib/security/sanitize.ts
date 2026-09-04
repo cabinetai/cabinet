@@ -146,13 +146,19 @@ const TABLE: Config = {
   ALLOWED_URI_REGEXP: SAFE_URI,
 };
 
-export type SanitizeProfile = "rich" | "svg" | "code" | "table";
+const LATEX: Config = {
+  ...RICH,
+  FORBID_ATTR: BASE_FORBID_ATTR.filter((attr) => attr !== "style"),
+};
+
+export type SanitizeProfile = "rich" | "svg" | "code" | "table" | "latex";
 
 const PROFILES: Record<SanitizeProfile, Config> = {
   rich: RICH,
   svg: SVG,
   code: CODE,
   table: TABLE,
+  latex: LATEX,
 };
 
 /**

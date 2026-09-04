@@ -16,8 +16,7 @@ import {
   Tags,
   Trash2,
   Blocks,
-  Pin,
-  PinOff,
+  Bug,
 } from "lucide-react";
 import type { IconNode } from "lucide-react";
 import {
@@ -28,15 +27,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Header } from "@/components/layout/header";
 import { useAppStore } from "@/stores/app-store";
 import { useLocale } from "@/i18n/use-locale";
+import { useTreeStore } from "@/stores/tree-store";
+import { openExternalUrl } from "@/lib/runtime/open-url";
 
 type BrowserViewBounds = { x: number; y: number; width: number; height: number };
 type BrowserViewNavResult = {
@@ -88,9 +83,33 @@ type BrowserBridge = {
     }) => void
   ) => () => void;
   destroyBrowserView: (viewId: string) => Promise<{ ok: boolean }>;
+  executeBrowserViewJavaScript?: (viewId: string, code: string) => Promise<{ ok: boolean; result?: unknown; error?: string }>;
+  openBrowserViewDevTools?: (viewId: string) => Promise<{ ok: boolean; error?: string }>;
+  onBrowserViewNavigateRequest?: (
+    listener: (payload: { url?: string }) => void
+  ) => () => void;
+  onBrowserViewClosed?: (
+    listener: (payload: { viewId?: string }) => void
+  ) => () => void;
   getExtensions?: () => Promise<BrowserExtension[]>;
   updateExtension?: (id: string, updates: Partial<BrowserExtension>) => Promise<{ ok: boolean }>;
-  showExtensionPopup?: (payload: { extensionId: string; x: number; y: number }) => Promise<{ ok: boolean }>;
+  showExtensionPopup?: (payload: { extensionId: string; x: number; y: number }) => Promise<{ ok: boolean; error?: string }>;
+  showNativeToast?: (payload: { kind?: string; message: string; durationMs?: number }) => Promise<{ ok: boolean }>;
+  showExtensionsMenu?: (payload: {
+    x: number;
+    y: number;
+    items: { id: string; name: string; iconDataUrl?: string | null; pinned?: boolean }[];
+  }) => Promise<{ ok: boolean; cancelled?: boolean; extensionId?: string; togglePinId?: string }>;
+};
+
+type ThreeJsEditorWindow = Window & {
+  __lastImportedFile?: string;
+  editor?: {
+    clear?: () => void;
+    loader?: {
+      loadFiles?: (files: File[]) => void;
+    };
+  };
 };
 
 type BrowserExtension = {
@@ -103,6 +122,7 @@ type BrowserExtension = {
   pinned?: boolean;
   iconDataUrl?: string | null;
   popupHtml?: string | null;
+  contentScriptMatches?: string[];
 };
 
 type BrowserSessionState = {
@@ -160,21 +180,7 @@ function normalizeBookmarkNodes(nodes: BookmarkNode[]): BookmarkNode[] {
 function normalizeBookmarkUrl(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "about:blank";
-  if (trimmed.toLowerCase() === "about:blank") return "about:blank";
-  // Protocol-relative → assume https.
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  // host:port (e.g. localhost:3000, 127.0.0.1:8080) — the colon is a port
-  // separator, not a URL scheme, so keep the target and prefix https.
-  if (/^[a-zA-Z0-9.-]+:\d+(?:[/?#]|$)/.test(trimmed)) {
-    return `https://${trimmed}`;
-  }
-  const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
-  if (schemeMatch) {
-    const scheme = schemeMatch[1].toLowerCase();
-    // Only allow web schemes; reject file:, javascript:, data:, etc.
-    if (scheme === "http" || scheme === "https") return trimmed;
-    return "about:blank";
-  }
+  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed) || trimmed.startsWith("//")) return trimmed;
   return `https://${trimmed}`;
 }
 
@@ -198,10 +204,49 @@ function toBridgeBookmarkMenuItems(nodes: BookmarkNode[]): BrowserBookmarkMenuIt
 }
 
 function getBridge(): Partial<BrowserBridge> & { runtime?: "electron" } {
-  // Guard for SSR / non-browser environments where `window` is undefined.
-  if (typeof window === "undefined") return {};
   return (window as unknown as { CabinetDesktop?: Partial<BrowserBridge> & { runtime?: "electron" } })
     .CabinetDesktop ?? {};
+}
+
+function matchPatternToUrl(pattern: string): string | null {
+  // <all_urls> matches every URL — no single target to navigate to.
+  if (pattern === "<all_urls>") return null;
+  // Chrome match patterns: <scheme>://<host>/<path>
+  // e.g. "https://www.youtube.com/*" → "https://www.youtube.com/"
+  try {
+    const match = pattern.match(/^(\*|https?|file|ftp):\/\/(\*|[^/]+)\/(.*)$/);
+    if (!match) return null;
+    const scheme = match[1] === "*" ? "https" : match[1];
+    const host = match[2] === "*" ? "" : match[2];
+    if (!host) return null;
+    return `${scheme}://${host}/`;
+  } catch {
+    return null;
+  }
+}
+
+function urlMatchesPattern(url: string, pattern: string): boolean {
+  // <all_urls> matches any http(s) URL.
+  if (pattern === "<all_urls>") {
+    try {
+      const target = new URL(url);
+      return target.protocol === "http:" || target.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+  try {
+    const match = pattern.match(/^(\*|https?|file|ftp):\/\/(\*|[^/]+)\/(.*)$/);
+    if (!match) return false;
+    const [, schemePart, hostPart, pathPart] = match;
+    const target = new URL(url);
+    if (schemePart !== "*" && target.protocol.replace(":", "") !== schemePart) return false;
+    if (hostPart !== "*" && target.hostname !== hostPart) return false;
+    const pathGlob = pathPart.replace(/\*$/, "");
+    return target.pathname.startsWith(pathGlob) || pathPart === "*";
+  } catch {
+    return false;
+  }
 }
 
 const TAG_CLOUD_DATA_URL_PREFIX = "data:text/html;cabinet-tag-cloud=1;charset=utf-8,";
@@ -652,29 +697,7 @@ export function BrowserView() {
   const { t } = useLocale();
   const url = useAppStore((s) => s.browseUrl);
   const setAppMode = useAppStore((s) => s.setAppMode);
-
-  // Sandbox for the fallback iframe. `allow-same-origin` is only safe for
-  // *cross-origin* pages: there it just lets the external site use its own
-  // origin, and it can't reach our app. For a page served from our OWN origin,
-  // `allow-same-origin` + `allow-scripts` would let it script the host app and
-  // escape the sandbox, so we omit it for same-origin/unknown URLs.
-  const iframeSandbox = (() => {
-    const base = "allow-scripts allow-forms allow-modals allow-top-navigation-by-user-activation";
-    try {
-      if (url && typeof window !== "undefined") {
-        const u = new URL(url, window.location.origin);
-        if (
-          (u.protocol === "http:" || u.protocol === "https:") &&
-          u.origin !== window.location.origin
-        ) {
-          return `${base} allow-same-origin`;
-        }
-      }
-    } catch {
-      // fall through to the restrictive sandbox
-    }
-    return base;
-  })();
+  const selectedPath = useTreeStore((s) => s.selectedPath);
   const initialSessionRef = useRef<BrowserSessionState>(loadBrowserSessionState());
   const [addressValue, setAddressValue] = useState(toAddressBarValue(url ?? initialSessionRef.current.url ?? ""));
   const [browserMode, setBrowserMode] = useState<"initializing" | "electron" | "iframe">(() => {
@@ -685,9 +708,11 @@ export function BrowserView() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bookmarksMenuRef = useRef<HTMLDivElement | null>(null);
   const bookmarksTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const extensionsTriggerRef = useRef<HTMLButtonElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const iframeLoadTokenRef = useRef(0);
   const iframeLoadedTokenRef = useRef(0);
+  const [iframeLoadedToken, setIframeLoadedToken] = useState(0);
   const iframeHistoryRef = useRef<string[]>(initialSessionRef.current.history);
   const iframeHistoryIndexRef = useRef<number>(initialSessionRef.current.index);
   const iframeNavActionRef = useRef<"back" | "forward" | null>(null);
@@ -722,38 +747,7 @@ export function BrowserView() {
   useEffect(() => {
     if (url == null) return;
     setAddressValue(toAddressBarValue(url));
-
-    // In iframe mode there's no Electron navigation event to record history
-    // from (that's owned by onBrowserViewNavigated in electron mode), so track
-    // it here. Without this, iframeHistoryRef never grows and Back/Forward
-    // can't replay earlier pages.
-    if (browserMode !== "iframe") return;
-    const normalized = normalizeSessionUrl(url);
-    const navAction = iframeNavActionRef.current;
-    if (navAction === "back" || navAction === "forward") {
-      // Back/forward already moved the index; just clear the pending action.
-      iframeNavActionRef.current = null;
-      persistBrowserSessionState({
-        history: iframeHistoryRef.current,
-        index: iframeHistoryIndexRef.current,
-        url: normalized,
-      });
-      return;
-    }
-    const history = iframeHistoryRef.current;
-    const currentIndex = iframeHistoryIndexRef.current;
-    if (currentIndex >= 0 && history[currentIndex] === normalized) return;
-    // Genuine navigation: drop any forward entries and push the new URL.
-    const nextHistory = currentIndex >= 0 ? history.slice(0, currentIndex + 1) : [];
-    nextHistory.push(normalized);
-    iframeHistoryRef.current = nextHistory;
-    iframeHistoryIndexRef.current = nextHistory.length - 1;
-    persistBrowserSessionState({
-      history: nextHistory,
-      index: iframeHistoryIndexRef.current,
-      url: normalized,
-    });
-  }, [url, browserMode]);
+  }, [url]);
 
   useEffect(() => {
     const bridge = getBridge();
@@ -956,24 +950,115 @@ export function BrowserView() {
     setAddressValue("");
   };
 
-  const handleToggleExtensionPin = async (ext: BrowserExtension) => {
+  const handleRunExtension = async (ext: BrowserExtension, rect: { left: number; bottom: number }) => {
     const bridge = getBridge();
-    const newPinned = !ext.pinned;
-    if (bridge.updateExtension) {
-      await bridge.updateExtension(ext.id, { pinned: newPinned });
-      setExtensions(prev => prev.map(e => e.id === ext.id ? { ...e, pinned: newPinned } : e));
+    if (!bridge.showExtensionPopup) return;
+    const result = await bridge.showExtensionPopup({
+      extensionId: ext.id,
+      x: Math.round(rect.left),
+      y: Math.round(rect.bottom + 8),
+    });
+    if (!result?.ok) {
+      if (result?.error === "No popup defined" && ext.contentScriptMatches?.length) {
+        // Content-script extension: navigate to a supported page so the
+        // extension's content script can inject. If we're already on a
+        // matching page, just inform the user.
+        const currentUrl = addressValue || url || "";
+        const alreadyOnMatch = ext.contentScriptMatches.some((pattern) =>
+          urlMatchesPattern(currentUrl, pattern)
+        );
+        if (alreadyOnMatch) {
+          window.dispatchEvent(
+            new CustomEvent("cabinet:toast", {
+              detail: {
+                kind: "info",
+                message: `${ext.name} is active on this page — look for its UI on the page.`,
+              },
+            })
+          );
+        } else {
+          // Navigate to the first match pattern's origin (e.g. https://www.youtube.com/)
+          const target = matchPatternToUrl(ext.contentScriptMatches[0]);
+          if (target) {
+            setAppMode("browse", target);
+            setAddressValue(toAddressBarValue(target));
+            window.dispatchEvent(
+              new CustomEvent("cabinet:toast", {
+                detail: {
+                  kind: "info",
+                  message: `Opening ${target} — ${ext.name} will activate on supported pages.`,
+                },
+              })
+            );
+          } else {
+            const isAllUrls = ext.contentScriptMatches.some(
+              (p) => p === "<all_urls>" || p === "*://*/*"
+            );
+            window.dispatchEvent(
+              new CustomEvent("cabinet:toast", {
+                detail: {
+                  kind: "info",
+                  message: isAllUrls
+                    ? `${ext.name} works on any web page — open a site in the browser to use it.`
+                    : `${ext.name} runs on supported pages — navigate to a matching site in the browser to use it.`,
+                },
+              })
+            );
+          }
+        }
+      } else {
+        const message =
+          result?.error === "No popup defined"
+            ? `${ext.name} has no popup UI — it runs directly on supported pages (open one in the browser to use it).`
+            : `Couldn't open ${ext.name}: ${result?.error || "unknown error"}`;
+        window.dispatchEvent(
+          new CustomEvent("cabinet:toast", {
+            detail: { kind: "info", message },
+          })
+        );
+      }
     }
   };
 
-  const handleRunExtension = async (ext: BrowserExtension, event: React.MouseEvent) => {
+  const openExtensionsNativeMenu = async () => {
+    const trigger = extensionsTriggerRef.current;
+    if (!trigger) return;
     const bridge = getBridge();
-    if (bridge.showExtensionPopup) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      await bridge.showExtensionPopup({
-        extensionId: ext.id,
-        x: Math.round(rect.left),
-        y: Math.round(rect.bottom + 8),
-      });
+    if (!bridge.showExtensionsMenu) return;
+    const enabledExts = extensions.filter(ext => ext.enabled !== false);
+    if (enabledExts.length === 0) return;
+
+    const rect = trigger.getBoundingClientRect();
+    const x = Math.max(0, Math.round(rect.left));
+    const y = Math.max(0, Math.round(rect.bottom + 6));
+
+    const result = await bridge.showExtensionsMenu({
+      x,
+      y,
+      items: enabledExts.map(ext => ({
+        id: ext.id,
+        name: ext.name,
+        iconDataUrl: ext.iconDataUrl,
+        pinned: ext.pinned,
+      })),
+    });
+    if (!result?.ok || result.cancelled) return;
+    if (result.togglePinId) {
+      const ext = extensions.find(e => e.id === result.togglePinId);
+      if (ext) {
+        const newPinned = !ext.pinned;
+        if (bridge.updateExtension) {
+          await bridge.updateExtension(ext.id, { pinned: newPinned });
+          setExtensions(prev => prev.map(e => e.id === ext.id ? { ...e, pinned: newPinned } : e));
+        }
+      }
+      return;
+    }
+    if (result.extensionId) {
+      const ext = extensions.find(e => e.id === result.extensionId);
+      if (ext) {
+        handleRunExtension(ext, { left: rect.left, bottom: rect.bottom });
+      }
     }
   };
 
@@ -1002,19 +1087,10 @@ export function BrowserView() {
   const navigateBack = () => {
     const applyAppHistoryBack = () => {
       const nextIndex = iframeHistoryIndexRef.current - 1;
-      const target = nextIndex >= 0 ? iframeHistoryRef.current[nextIndex] : null;
-      // No earlier real page to return to (we're at the first browsed page, and
-      // index 0 is the empty session seed). Rather than dead-ending on
-      // about:blank, fall back to the KB article we came from by exiting browse
-      // mode — this is the "back to the article" affordance.
-      if (nextIndex < 0 || !target || target === "about:blank") {
-        iframeNavActionRef.current = null;
-        setAppMode("edit");
-        return;
-      }
+      if (nextIndex < 0) return;
       iframeHistoryIndexRef.current = nextIndex;
       iframeNavActionRef.current = "back";
-      setAppMode("browse", target);
+      setAppMode("browse", iframeHistoryRef.current[nextIndex] || "about:blank");
     };
     if (browserMode === "electron") {
       const viewId = viewIdRef.current;
@@ -1185,15 +1261,7 @@ export function BrowserView() {
       }
       void createBrowserView(useAppStore.getState().browseUrl || "about:blank")
         .then((result) => {
-          if (cancelled) {
-            // We unmounted while the view was being created — the cleanup ran
-            // before viewIdRef was set, so destroy the now-orphaned view here
-            // to avoid leaking a whole WebContentsView (a Chromium renderer).
-            if (result?.ok && result.viewId && destroyBrowserView) {
-              void destroyBrowserView(result.viewId);
-            }
-            return;
-          }
+          if (cancelled) return;
           if (!result?.ok || !result.viewId) {
             failToIframe();
             return;
@@ -1276,6 +1344,160 @@ export function BrowserView() {
     };
   }, []);
 
+  useEffect(() => {
+    const bridge = getBridge();
+    const subscribe = bridge.onBrowserViewNavigateRequest;
+    if (!subscribe) return;
+    const unsubscribe = subscribe((payload) => {
+      const targetUrl = payload?.url;
+      if (!targetUrl) return;
+      // Navigate the browser view to the requested URL (e.g. extension settings page)
+      const viewId = viewIdRef.current;
+      if (viewId && bridge.loadBrowserViewUrl) {
+        void bridge.loadBrowserViewUrl(viewId, targetUrl);
+        setAddressValue(toAddressBarValue(targetUrl));
+      } else {
+        setAppMode("browse", targetUrl);
+        setAddressValue(toAddressBarValue(targetUrl));
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [setAppMode]);
+
+  useEffect(() => {
+    const bridge = getBridge();
+    const subscribe = bridge.onBrowserViewClosed;
+    if (!subscribe) return;
+    const unsubscribe = subscribe((payload) => {
+      const activeViewId = viewIdRef.current;
+      if (!activeViewId || payload?.viewId !== activeViewId) return;
+      setAppMode("edit");
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [setAppMode]);
+
+  const handleAutoImportGlb = async (viewId: string, filePath: string) => {
+    const bridge = getBridge();
+    if (!bridge.executeBrowserViewJavaScript) return;
+
+    try {
+      // 1. Fetch the file content from the local API asset route
+      const response = await fetch(`/api/assets/${filePath.split("/").map(encodeURIComponent).join("/")}`);
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      
+      // 2. Convert the file contents to Base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Str = reader.result as string;
+        const filename = filePath.split("/").pop() || "model.glb";
+
+        // 3. Construct the script to execute inside Three.js editor
+        const code = `
+          (async () => {
+            const checkReady = () => {
+              return window.editor && window.editor.loader && typeof window.editor.loader.loadFiles === 'function';
+            };
+
+            const run = async () => {
+              try {
+                // Prevent duplicate imports of the same file
+                if (window.__lastImportedFile === ${JSON.stringify(filename)}) {
+                  return;
+                }
+                window.__lastImportedFile = ${JSON.stringify(filename)};
+
+                const base64Data = ${JSON.stringify(base64Str)};
+                const response = await fetch(base64Data);
+                const blob = await response.blob();
+                const file = new File([blob], ${JSON.stringify(filename)}, { type: "model/gltf-binary" });
+                
+                // Clear existing editor scene first to make it a clean import
+                if (typeof window.editor.clear === 'function') {
+                  window.editor.clear();
+                }
+
+                window.editor.loader.loadFiles([file]);
+              } catch (err) {
+                console.error("Auto-import failed:", err);
+              }
+            };
+
+            if (checkReady()) {
+              run();
+            } else {
+              const interval = setInterval(() => {
+                if (checkReady()) {
+                  clearInterval(interval);
+                  run();
+                }
+              }, 100);
+            }
+          })();
+        `;
+
+        // 4. Inject script into the electron browser view
+        await bridge.executeBrowserViewJavaScript!(viewId, code);
+      };
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      console.error("Failed to read/encode GLB file for auto-import", err);
+    }
+  };
+
+  const handleIframeAutoImportGlb = async (iframe: HTMLIFrameElement, filePath: string) => {
+    if (!filePath) return;
+    try {
+      const response = await fetch(`/api/assets/${filePath.split("/").map(encodeURIComponent).join("/")}`);
+      if (!response.ok) return;
+
+      const blob = await response.blob();
+      const filename = filePath.split("/").pop() || "model.glb";
+
+      const win = iframe.contentWindow as ThreeJsEditorWindow | null;
+      if (!win) return;
+
+      const checkReady = () => {
+        return typeof win.editor?.loader?.loadFiles === 'function';
+      };
+
+      const run = async () => {
+        try {
+          if (win.__lastImportedFile === filename) {
+            return;
+          }
+          win.__lastImportedFile = filename;
+
+          const file = new File([blob], filename, { type: "model/gltf-binary" });
+          
+          if (typeof win.editor?.clear === 'function') {
+            win.editor.clear();
+          }
+          win.editor?.loader?.loadFiles?.([file]);
+        } catch (err) {
+          console.error("Iframe auto-import failed:", err);
+        }
+      };
+
+      if (checkReady()) {
+        run();
+      } else {
+        const interval = setInterval(() => {
+          if (checkReady()) {
+            clearInterval(interval);
+            run();
+          }
+        }, 100);
+      }
+    } catch (err) {
+      console.error("Failed to read/encode GLB file for iframe auto-import", err);
+    }
+  };
 
   useEffect(() => {
     const bridge = getBridge();
@@ -1285,6 +1507,12 @@ export function BrowserView() {
       const activeViewId = viewIdRef.current;
       if (!activeViewId || payload?.viewId !== activeViewId) return;
       const nextUrl = normalizeSessionUrl(payload?.url || "about:blank");
+
+      // Auto-import GLB/GLTF model if loading Three.js editor
+      if (nextUrl.includes("/threejs-editor/") && selectedPath && (selectedPath.toLowerCase().endsWith(".glb") || selectedPath.toLowerCase().endsWith(".gltf"))) {
+        handleAutoImportGlb(activeViewId, selectedPath);
+      }
+
       const history = iframeHistoryRef.current;
       const currentIndex = iframeHistoryIndexRef.current;
       const navAction = iframeNavActionRef.current;
@@ -1344,7 +1572,25 @@ export function BrowserView() {
     return () => {
       unsubscribe();
     };
-  }, [setAppMode]);
+  }, [setAppMode, selectedPath]);
+
+  // Load model when selectedPath changes while Three.js editor is active
+  useEffect(() => {
+    const is3dModel = selectedPath && (selectedPath.toLowerCase().endsWith(".glb") || selectedPath.toLowerCase().endsWith(".gltf"));
+    if (!is3dModel || !url?.includes("/threejs-editor/")) return;
+
+    if (browserMode === "electron") {
+      const activeViewId = viewIdRef.current;
+      if (activeViewId) {
+        handleAutoImportGlb(activeViewId, selectedPath);
+      }
+    } else if (browserMode === "iframe") {
+      const iframe = iframeRef.current;
+      if (iframe) {
+        handleIframeAutoImportGlb(iframe, selectedPath);
+      }
+    }
+  }, [selectedPath, url, browserMode]);
 
   useEffect(() => {
     const bridge = getBridge();
@@ -1403,6 +1649,30 @@ export function BrowserView() {
     };
   }, [browserMode]);
 
+  // In Electron browse mode, the native WebContentsView sits above all DOM
+  // content — CSS z-index can't raise toasts above it. Intercept toast events
+  // and forward them to the Electron main process, which renders a native
+  // Menu.popup() above the BrowserView (same pattern as the extensions menu).
+  useEffect(() => {
+    if (browserMode !== "electron") return;
+    const bridge = getBridge();
+    if (!bridge.showNativeToast) return;
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent).detail as
+        | { kind?: string; message?: string; durationMs?: number }
+        | undefined;
+      if (!detail?.message) return;
+      event.preventDefault();
+      void bridge.showNativeToast!({
+        kind: detail.kind,
+        message: detail.message,
+        durationMs: detail.durationMs,
+      });
+    };
+    window.addEventListener("cabinet:toast", handler);
+    return () => window.removeEventListener("cabinet:toast", handler);
+  }, [browserMode]);
+
   const isDialogOpen = managerOpen || bookmarkDialogOpen || managerEditDialogOpen;
 
   useEffect(() => {
@@ -1444,6 +1714,11 @@ export function BrowserView() {
       setIframePolicyBlocked(false);
       return;
     }
+    const isInternalRoute = url.startsWith("/") || (typeof window !== "undefined" && url.startsWith(window.location.origin));
+    if (isInternalRoute) {
+      setIframePolicyBlocked(false);
+      return;
+    }
     let cancelled = false;
     const check = async () => {
       try {
@@ -1477,11 +1752,11 @@ export function BrowserView() {
       setIframeFailure(null);
       return;
     }
-    // Bump the token for each load attempt so the timeout below can tell
-    // whether *this* load fired onLoad. onLoad copies this value into
-    // iframeLoadedTokenRef; if it never does, loadedToken stays behind and we
-    // flag a failure.
-    iframeLoadTokenRef.current += 1;
+    const isInternalRoute = url.startsWith("/") || (typeof window !== "undefined" && url.startsWith(window.location.origin));
+    if (isInternalRoute) {
+      setIframeFailure(null);
+      return;
+    }
     const loadToken = iframeLoadTokenRef.current;
     const timer = window.setTimeout(() => {
       if (iframePolicyBlocked) {
@@ -1525,11 +1800,7 @@ export function BrowserView() {
     return () => {
       window.clearTimeout(timer);
     };
-    // NOTE: deliberately not depending on the load-completion signal — the
-    // timer reads iframeLoadedTokenRef directly. Re-running on load completion
-    // would bump the load token again and flag a false failure on a page that
-    // actually loaded fine.
-  }, [browserMode, url, iframeReloadKey, iframePolicyBlocked]);
+  }, [browserMode, url, iframeLoadedToken, iframePolicyBlocked]);
 
   useEffect(() => {
     void fetchBookmarks();
@@ -1684,8 +1955,8 @@ export function BrowserView() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <Header />
-      <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
-        <div className="grid grid-cols-[1fr_minmax(0,720px)_1fr] items-center gap-3 border-b border-border/70 bg-background/80 px-4 py-2 text-sm text-muted-foreground">
+      <div className="flex flex-1 min-h-0 flex-col overflow-hidden bg-(--gutter)">
+        <div className="grid grid-cols-[1fr_minmax(0,720px)_1fr] items-center gap-3 border-b border-border/70 bg-[#F1E4D3] px-4 py-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2 truncate">
             <button
               type="button"
@@ -1723,6 +1994,23 @@ export function BrowserView() {
             >
               <RefreshCw className="h-3.5 w-3.5" />
             </button>
+            {browserMode === "electron" && (
+              <button
+                type="button"
+                onClick={() => {
+                  const bridge = getBridge();
+                  const viewId = viewIdRef.current;
+                  if (viewId && bridge.openBrowserViewDevTools) {
+                    void bridge.openBrowserViewDevTools(viewId);
+                  }
+                }}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-transparent text-foreground hover:border-border hover:bg-muted"
+                aria-label="Toggle DevTools"
+                title="Toggle DevTools — inspect the browser page and see content script errors"
+              >
+                <Bug className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <input
@@ -1789,12 +2077,13 @@ export function BrowserView() {
               <button
                 key={ext.id}
                 type="button"
-                onClick={(e) => handleRunExtension(ext, e)}
+                onClick={(e) => handleRunExtension(ext, e.currentTarget.getBoundingClientRect())}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-foreground hover:border-border hover:bg-muted"
                 title={ext.name}
                 aria-label={ext.name}
               >
                 {ext.iconDataUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- icon is a data URL; next/image adds no value
                   <img src={ext.iconDataUrl} alt="" className="w-4 h-4 object-contain" />
                 ) : (
                   <Blocks className="h-4 w-4" />
@@ -1802,49 +2091,19 @@ export function BrowserView() {
               </button>
             ))}
 
-            {/* Extensions Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-foreground hover:border-border hover:bg-muted cursor-pointer"
-                title="Extensions"
-                aria-label="Extensions"
-              >
-                <Blocks className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                {extensions.filter(ext => ext.enabled !== false).length === 0 ? (
-                  <div className="p-3 text-xs text-muted-foreground text-center">No extensions enabled</div>
-                ) : (
-                  extensions.filter(ext => ext.enabled !== false).map(ext => (
-                    <div key={ext.id} className="flex items-center justify-between px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground rounded-sm group">
-                      <button
-                        type="button"
-                        onClick={(e) => handleRunExtension(ext, e)}
-                        className="flex items-center gap-2 flex-1 overflow-hidden text-left cursor-pointer focus:outline-none"
-                      >
-                        {ext.iconDataUrl ? (
-                          <img src={ext.iconDataUrl} alt="" className="w-4 h-4 object-contain shrink-0" />
-                        ) : (
-                          <Blocks className="h-4 w-4 shrink-0 text-muted-foreground" />
-                        )}
-                        <span className="truncate">{ext.name}</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleExtensionPin(ext);
-                        }}
-                        className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1 hover:bg-muted rounded text-muted-foreground"
-                        title={ext.pinned ? "Unpin extension" : "Pin extension"}
-                      >
-                        {ext.pinned ? <PinOff className="w-3.5 h-3.5" /> : <Pin className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  ))
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Extensions Button (native menu) */}
+            <button
+              ref={extensionsTriggerRef}
+              type="button"
+              onClick={() => {
+                void openExtensionsNativeMenu();
+              }}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-foreground hover:border-border hover:bg-muted"
+              title="Extensions"
+              aria-label="Extensions"
+            >
+              <Blocks className="h-4 w-4" />
+            </button>
           </div>
           <div className="flex justify-end gap-2">
             {url ? (
@@ -1861,7 +2120,7 @@ export function BrowserView() {
           </div>
         </div>
         {bookmarksBarVisible ? (
-          <div className="border-b border-border/70 bg-background/80 px-4 py-1.5">
+          <div className="border-b border-border/70 bg-[#F1E4D3] px-4 py-1.5">
             <div className="flex items-center gap-1.5 overflow-x-auto">
               {bookmarkBarNodes.length > 0 ? (
                 bookmarkBarNodes.map((node) => (
@@ -1884,7 +2143,15 @@ export function BrowserView() {
             </div>
           </div>
         ) : null}
-        <div ref={containerRef} className="relative flex-1 min-h-0">
+        <div
+          ref={containerRef}
+          className="relative flex-1 min-h-0 rounded-[20px] overflow-hidden bg-background"
+          style={{
+            transform: "translate3d(0, 0, 0)",
+            clipPath: "inset(0% 0% 0% 0% round 20px)",
+            isolation: "isolate",
+          }}
+        >
           {browserMode === "iframe" ? (
             <>
               <iframe
@@ -1894,22 +2161,46 @@ export function BrowserView() {
                 src={url || "about:blank"}
                 onLoad={() => {
                   iframeLoadedTokenRef.current = iframeLoadTokenRef.current;
+                  setIframeLoadedToken(iframeLoadTokenRef.current);
+
+                  // Same-origin auto-import fallback for web browsers
+                  const iframe = iframeRef.current;
+                  const is3dModel = selectedPath && (selectedPath.toLowerCase().endsWith(".glb") || selectedPath.toLowerCase().endsWith(".gltf"));
+                  if (iframe && is3dModel && url?.includes("/threejs-editor/")) {
+                    handleIframeAutoImportGlb(iframe, selectedPath);
+                  }
                 }}
-                className="h-full w-full border-0 bg-white"
-                sandbox={iframeSandbox}
+                className="h-full w-full border-0 bg-transparent"
+                style={{
+                  clipPath: "inset(0% 0% 0% 0% round 20px)",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                }}
+                sandbox="allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-top-navigation-by-user-activation"
               />
               {iframeFailure ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/85 p-6 text-center">
                   <div className="max-w-md rounded border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
                     <div>This page can’t be rendered in an iframe.</div>
-                    <div className="mt-1">Use “Open externally”.</div>
+                    {url ? (
+                      <button
+                        type="button"
+                        onClick={() => openExternalUrl(url)}
+                        className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs text-foreground hover:bg-muted transition-colors"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        Open in new tab
+                      </button>
+                    ) : (
+                      <div className="mt-1">Use “Open externally”.</div>
+                    )}
                   </div>
                 </div>
               ) : null}
             </>
           ) : (
             <>
-              <div className="h-full w-full bg-white" />
+              <div className="h-full w-full bg-transparent" />
               {electronFailure ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/85 p-6 text-center">
                   <div className="max-w-xl rounded border border-border bg-background px-4 py-3 text-sm text-muted-foreground">

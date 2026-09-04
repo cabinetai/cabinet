@@ -48,7 +48,7 @@ export function ListShell({
       ) : null}
 
       <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[200px] flex-1">
+        <div className="relative min-w-50 flex-1">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
@@ -99,7 +99,7 @@ function EmptyOrChildren({
   const isEmpty = Array.isArray(children) && children.length === 0;
   if (isEmpty) {
     return (
-      <div className="flex h-full min-h-[160px] flex-col items-center justify-center gap-2 text-center">
+      <div className="flex h-full min-h-40 flex-col items-center justify-center gap-2 text-center">
         <ListFilter className="size-5 text-muted-foreground/60" />
         <p className="text-[13px] text-muted-foreground">{empty.title}</p>
         {empty.hint ? (

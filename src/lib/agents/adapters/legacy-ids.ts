@@ -17,6 +17,7 @@ export const LEGACY_ADAPTER_TYPES = [
   "pi_legacy",
   "grok_cli_legacy",
   "copilot_cli_legacy",
+  "ollama_legacy",
 ] as const;
 
 const LEGACY_SET = new Set<string>(LEGACY_ADAPTER_TYPES);

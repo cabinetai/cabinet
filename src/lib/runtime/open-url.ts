@@ -21,15 +21,7 @@ export function openUrlInAppropriateContext(
   // file:// URLs can't be loaded in a browser view or window.open —
   // Electron blocks them. Use shell.openPath to open with the OS default app.
   if (url.startsWith("file://")) {
-    const rawPath = url.slice("file://".length);
-    // decodeURIComponent throws on malformed percent-encoding — fall back to the
-    // raw path instead of crashing the click handler.
-    let filePath: string;
-    try {
-      filePath = decodeURIComponent(rawPath);
-    } catch {
-      filePath = rawPath;
-    }
+    const filePath = decodeURIComponent(url.slice("file://".length));
     if (isElectron && bridge.openLocalFile) {
       void bridge.openLocalFile(filePath);
       return;
@@ -57,39 +49,22 @@ export function openUrlInAppropriateContext(
   if (isElectron) {
     openInBrowseMode(url);
   } else {
-    // noopener,noreferrer prevents the opened page from reaching back via
-    // window.opener and navigating/altering this app.
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(url, "_blank");
   }
 }
 
 /**
- * Force an http(s) URL into the user's SYSTEM default browser, bypassing the
- * in-app browse view. Use this for OAuth sign-in links: the embedded browser
- * doesn't carry the user's provider session, and providers like Google/Slack
- * often refuse to authorize inside a webview. In the web build there's no
- * in-app browser anyway, so this is just a normal new-tab open.
+ * Open a URL in the user's SYSTEM default browser (never the in-app browse
+ * view). Used for OAuth sign-in flows where the embedded browser lacks the
+ * user's provider session. Falls back to window.open in the web build.
  */
-function toHttpExternalUrl(url: string): string | null {
-  try {
-    const parsed = new URL(url.trim());
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-    return parsed.toString();
-  } catch {
-    return null;
-  }
-}
-
 export function openExternalUrl(url: string): void {
-  // Validate once so both paths are guarded — window.open would otherwise honor
-  // custom schemes or javascript: URLs that the Electron IPC already rejects.
-  const externalUrl = toHttpExternalUrl(url);
-  if (!externalUrl) return;
-
   const bridge = getBridge();
   if (bridge.runtime === "electron" && bridge.openExternal) {
-    void bridge.openExternal(externalUrl);
+    void bridge.openExternal(url);
     return;
   }
-  window.open(externalUrl, "_blank", "noopener,noreferrer");
+  if (typeof window !== "undefined") {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 }

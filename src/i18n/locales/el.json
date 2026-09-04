@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Εξαγωγή σελίδας",
+      "focus": "Εστίαση",
+      "exitFocus": "Έξοδος από την εστίαση",
       "copyMarkdown": "Αντιγραφή Markdown",
       "copyForLlms": "Αντιγραφή για LLMs",
       "copyAsHtml": "Αντιγραφή ως HTML",

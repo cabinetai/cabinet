@@ -24,6 +24,8 @@ import { TEXT_COLORS, HIGHLIGHT_COLORS } from "./extensions/color-highlight";
 import { LinkPopover } from "./link-popover";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/i18n/use-locale";
+import { useAppStore } from "@/stores/app-store";
+import { Edit2 } from "lucide-react";
 
 interface Props {
   editor: Editor | null;
@@ -151,6 +153,25 @@ export function EditorBubbleMenu({ editor }: Props) {
     <>
       <BubbleMenu
         editor={editor}
+        shouldShow={({ editor: e, state }) => {
+          // Preserve Tiptap's built-in behaviour: only show on text selections.
+          if (state.selection.empty) return false;
+          // Hide when a block/node is selected (NodeSelection), e.g. images or MDX components.
+          if (state.selection.constructor.name === "NodeSelection") {
+            return false;
+          }
+          // Hide the formatting toolbar when a math node is selected —
+          // the math-specific Edit Equation bubble menu handles that case.
+          if (e.isActive("inlineMath")) return false;
+          // Hide when a slash-command popover (math editor, media, etc.) is open.
+          try {
+            if (e.view.dom.hasAttribute("data-popover-open")) return false;
+          } catch (err) {
+            // View is not ready/mounted yet, hide bubble menu
+            return false;
+          }
+          return true;
+        }}
         options={{ placement: "top", offset: 8 }}
         className="flex items-center gap-0.5 px-1 py-1 bg-popover border border-border rounded-md shadow-lg"
       >
@@ -326,6 +347,57 @@ export function EditorBubbleMenu({ editor }: Props) {
           />
         </div>
       )}
+
+      <BubbleMenu
+        editor={editor}
+        shouldShow={({ editor: e }) => {
+          if (!e) return false;
+          try {
+            const { selection } = e.state;
+            if (selection && selection.constructor.name === "NodeSelection" && (selection as any).node?.type.name === "image") {
+              const src = ((selection as any).node?.attrs.src ?? "") as string;
+              const lower = src.toLowerCase();
+              return lower.endsWith(".drawio.svg") || lower.endsWith(".excalidraw.svg");
+            }
+          } catch (err) {}
+          return false;
+        }}
+        options={{ placement: "top", offset: 12 }}
+        className="flex items-center gap-1 p-1 bg-popover border border-border rounded-md shadow-md"
+      >
+        <button
+          type="button"
+          onClick={() => {
+            if (!editor) return;
+            try {
+              const { selection } = editor.state;
+              const src = ((selection as any).node?.attrs.src ?? "") as string;
+              if (src) {
+                let path = src;
+                if (path.startsWith("/api/assets/")) {
+                  path = path.slice("/api/assets/".length);
+                }
+                path = decodeURIComponent(path);
+                
+                const lowerPath = path.toLowerCase();
+                const editorUrl = lowerPath.endsWith(".excalidraw.svg")
+                  ? `${window.location.origin}/excalidraw/editor?path=${encodeURIComponent(path)}`
+                  : `${window.location.origin}/drawio/editor.html?path=${encodeURIComponent(path)}`;
+                useAppStore.getState().setAppMode("browse", editorUrl);
+              }
+            } catch (err) {
+              console.error("Failed to open drawing editor from image selection:", err);
+            }
+          }}
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-popover-foreground hover:bg-muted rounded-sm transition-colors"
+        >
+          <Edit2 className="w-3.5 h-3.5" />
+          {editor && editor.state.selection &&
+           (((editor.state.selection as any).node?.attrs.src ?? "") as string).toLowerCase().endsWith(".excalidraw.svg")
+            ? "Edit Drawing"
+            : "Edit Diagram"}
+        </button>
+      </BubbleMenu>
     </>
   );
 }

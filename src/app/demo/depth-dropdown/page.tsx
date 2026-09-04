@@ -241,7 +241,7 @@ function SidebarMock({
         </div>
         <div
           role="tablist"
-          className="mx-[9px] grid grid-cols-3 gap-1 rounded-b-lg bg-muted/40 p-1 pt-2 border border-border/60"
+          className="mx-[5px] mt-1 grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1 pt-2 border border-border/60"
         >
           {[
             { id: "data", label: "Data", Icon: BookOpen },

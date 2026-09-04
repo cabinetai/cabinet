@@ -97,16 +97,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // If parentPath points to a standalone .md file, promote it to a directory
+    // If parentPath points to a standalone .md file, simply ensure the parent
+    // directory exists (for the sibling folder pattern). The .md file remains.
     if (parentPath) {
       const parentDir = resolveContentPath(parentPath);
-      const parentMdFile = `${parentDir}.md`;
-      const parentDirExists = await fileExists(parentDir);
-      const parentMdExists = !parentDirExists && await fileExists(parentMdFile);
-      if (parentMdExists) {
-        await fs.mkdir(parentDir, { recursive: true });
-        await fs.rename(parentMdFile, path.join(parentDir, "index.md"));
-      }
+      await ensureDirectory(parentDir);
     }
 
     // Ensure parent directory exists for the symlink

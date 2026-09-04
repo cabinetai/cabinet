@@ -57,6 +57,7 @@ function buildLaunchSpec(
   if (mode === "session" && provider.buildSessionInvocation) {
     invocation = provider.buildSessionInvocation(prompt, workdir, {
       resumeId: opts?.resumeId,
+      model: opts?.model,
     });
   }
 

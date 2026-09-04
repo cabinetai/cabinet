@@ -1,0 +1,3289 @@
+:root {
+	--ge-panel-color: #f1f3f4;
+	--toolbar-color: #f1f3f4;
+	--workspace-color: #ececec;
+	--dark-toolbar-color: #1e2022;
+	--inactive-color: #e4e4e4;
+	--active-color: #c4c4c4;
+	--primary-color: #c2e7ff;
+	--primary-hover-color: #abcfe7;
+	--accent-color: #e1e9f7;
+	--accent-hover-color: #d8e5f8;
+	--accent-text-color: #0b57d0;
+	--border-color: #dadada;
+	--highlight-color: #e2e2e2;
+	--scrollbar-hover-color: #959798;
+	--text-color: #3F3F3F;
+	--dark-color: #121212;
+	--ge-dark-panel-color: #1B1D1E;
+	--dark-border-color: #333333;
+	--dark-text-color: #C0C0C0;
+	--dark-accent-color: #003555;
+	--dark-accent-text-color: #52a5f6;
+	--dark-active-accent-color: #004A77;
+	--dark-inverse-active-color: #c4c4c4;
+	--dark-highlight-color: #000000;
+	--dark-header-color: #1B1D1E;
+}
+
+.geEditor * {
+	forced-color-adjust: none;
+}
+
+.geEditor {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+	color-scheme: light dark;
+	position: absolute;
+	overflow: hidden;
+	font-size: 14px;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	display: grid;
+	grid-template-rows: min-content min-content 1fr min-content;
+	grid-template-columns: min-content min-content 1fr min-content;
+}
+
+html:has(.geFullscreen),
+.geEditor,
+.mxWindow,
+.geDialogTitle,
+.geShapePicker,
+.geDialogFooter,
+.geSidebarTooltip {
+	background-color: light-dark(var(--ge-panel-color), var(--ge-dark-panel-color));
+}
+
+.geEditor>svg,
+div[id*="dgeMermaidOutput-"] {
+	position: absolute;
+	margin: -9999px 0 0 -9999px;
+	z-index: -1;
+}
+
+.geEditor>#geInfo {
+	grid-column: 1 / -1;
+	grid-row: 1 / -1;
+}
+
+.geSimpleMainMenu,
+.geEditor>.geMenubarContainer {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	width: 100%;
+	height: 60px;
+	margin-top: 4px;
+}
+
+.geCompactMode .geAppIcon,
+.geCompactMode .geFilenameContainer,
+.geSimple .geMenubarContainer:not(.geMinimal *),
+.geCompactMode .geButtonContainer:not(.geAtlas *, .geEmbed *),
+.geSimple>.geToolbarContainer:not(.geSimpleMainMenu, .geSketch *),
+.geSketch>.geToolbarContainer:has(.geToolbar) {
+	display: none;
+}
+
+.geEditor.geAtlas>.geMenubarContainer,
+.geEditor.geCompactMode>.geMenubarContainer {
+	margin-top: 0;
+	height: 30px;
+}
+
+.geEditor.geCompactMode>.geToolbarContainer:not(.geSketch *, .geAtlas *) {
+	padding-left: 8px;
+}
+
+.geEditor.geSimple>.geToolbarContainer:not(.geVerticalToolbar) {
+	padding: 0 10px;
+	height: 50px;
+}
+
+.geEditor.geSketch>.geToolbarContainer:not(.geVerticalToolbar) {
+	height: 44px;
+}
+
+.geSketchMainMenu {
+	left: 10px;
+	top: 10px;
+}
+
+.geEditor:not(.geSimple) .geSimpleMainMenu {
+	display: none;
+}
+
+.geEditor.geCompactMode>.geMenubarContainer>.geMenubar {
+	padding-left: 4px;
+	top: 0;
+}
+
+.geToolbarContainer:not(.geVerticalToolbar) {
+	height: 38px;
+}
+
+.geEditor>.geToolbarContainer:not(.geSketch *) {
+	grid-column: 1 / -1;
+	grid-row: 2;
+	padding: 0 8px 0 16px;
+	width: 100%;
+}
+
+.geEditor.geClassic>.geToolbarContainer {
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+}
+
+.geEditor>.geSidebarContainer:not(.geFormatContainer) {
+	min-height: 0;
+	grid-column: 1;
+	grid-row: 3;
+}
+
+.geEditor>.geSidebarContainer.geFormatContainer {
+	min-height: 0;
+	grid-column: 4;
+	grid-row: 3;
+}
+
+.geEditor>.geHsplit {
+	grid-column: 2;
+	grid-row: 3;
+	z-index: 2;
+}
+
+.geEditor>.geDiagramContainer {
+	min-height: 0;
+	margin-left: -10px;
+	grid-column: 3;
+	grid-row: 3;
+}
+
+.geEmbedInline>div.geDiagramContainer {
+	margin-left: 0;
+}
+
+.geInlineNoUi .geToolbarContainer,
+.geInlineNoUi .mxWindow {
+	display: none !important;
+}
+
+.geEditor>.geTabContainer {
+	grid-column: 1 / -1;
+	grid-row: 4;
+	width: 100%;
+}
+
+.geSmallAppIcon {
+	padding: 0 4px 0 8px;
+}
+
+.geAtlas .geSmallAppIcon {
+	padding-left: 8px;
+}
+
+.geAppIcon {
+	display: block;
+	position: absolute;
+	top: 10px;
+	left: 16px;
+	width: 32px;
+	height: 36px;
+	border-radius: 4px;
+	background-color: rgb(240, 135, 5);
+	background-position: center center;
+	background-repeat: no-repeat;
+	transition: 0.1s linear;
+	cursor: pointer;
+	background-size: 100%;
+	opacity: 0.9;
+}
+
+.geMenubar {
+	top: 28px;
+	width: 100%;
+	height: 30px;
+	display: flex;
+	position: absolute;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 0px 2px 0px 58px;
+}
+
+.geFilenameContainer {
+	position: absolute;
+	right: 260px;
+	left: 60px;
+	top: 4px;
+	height: 26px;
+	display: block;
+	margin-left: 0px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geFilename {
+	padding: 3px 4px;
+	display: inline;
+	font-size: 18px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.geEditor,
+.geEditor tr.mxPopupMenuItemHover,
+.geEditor tr.mxPopupMenuItem {
+	color: light-dark(var(--text-color), var(--dark-text-color));
+}
+
+:where(.geEditor *):not(svg *, .mxCellEditor *, .mxRubberband) {
+	border-color: light-dark(var(--border-color), var(--dark-border-color));
+}
+
+:where(.geEditor button):not(svg *),
+:where(.geEditor select):not(svg *),
+:where(.geEditor input):not(svg *),
+:where(.geEditor textarea):not(svg *) {
+	color: light-dark(var(--text-color), var(--dark-text-color));
+	background-color: transparent;
+	border: 1px solid;
+	border-radius: 4px;
+	padding: 2px;
+}
+
+.geEditor input:not(svg *, .geButton) {
+	background-color: light-dark(white, var(--dark-toolbar-color));
+}
+
+.geHsplit {
+	background: linear-gradient(light-dark(var(--dark-accent-text-color), var(--accent-text-color)), light-dark(var(--dark-accent-text-color), var(--accent-text-color))) no-repeat left/2px 100%;
+	transition: opacity 0.1s linear 0.1s;
+	cursor: ew-resize;
+	width: 10px;
+	opacity: 0;
+}
+
+.geHsplit:hover {
+	opacity: 1;
+}
+
+.geDialog .geToolbarContainer,
+.geSketch .geToolbarContainer:not(.mxWindow *) {
+	position: absolute;
+}
+
+.geSketch .geHsplit,
+.geSketch .geTabContainer {
+	display: none;
+}
+
+.geSketch .geToolbarContainer:not(.geDialog *, .mxWindow *),
+.geSketch .mxWindow,
+.geEditor.geMinimal .mxPopupMenu,
+.geMinimal .mxWindow,
+.geMinimal .geTabItem {
+	background-color: light-dark(var(--toolbar-color), var(--dark-toolbar-color));
+}
+
+.geMinimal .geMenubarContainer,
+.geToolbar {
+	display: flex;
+	align-items: center;
+	flex-grow: 1;
+}
+
+.geMinimal .geMenubarContainer {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	box-sizing: border-box;
+	padding: 8px;
+	height: 48px;
+	margin: 0;
+}
+
+.geToolbarContainer,
+.geFormatTitleContainer {
+	margin: 0;
+	display: flex;
+	box-sizing: border-box;
+	align-items: center;
+}
+
+.geFormatTitleContainer {
+	justify-content: center;
+}
+
+.geButton,
+.geHelpIcon:not(.geTitle *),
+.mxPopupMenuItem>div:not(:has(img)),
+.geTitle,
+.geBtnStepper>div {
+	position: relative;
+}
+
+.geFreehandMode,
+.geFreehandMode * {
+	cursor: crosshair !important;
+}
+
+.geDarkMode .geButton,
+.geDarkMode .geHelpIcon:not(.geTitle *),
+.geDarkMode .mxPopupMenuItem>div:not(:has(img)),
+.geDarkMode .geButtonContainer .geButton.geRoundButton img:not(.geAdaptiveAsset),
+.geDarkMode .geAdaptiveAsset,
+.geDarkMode .geTitle,
+.geDarkMode .geBtnStepper>div,
+.geDarkMode .geColorDropper,
+.geDarkMode .geStyleMenuItem,
+.geDarkMode .gePropHeader,
+.geDarkMode .geStyleBtn .geAdaptiveAsset.geArrow,
+.geAtlas .geMenubar .geButtonContainer .geButton:empty,
+.geAtlas .geMenubar .geButtonContainer .geButton .geAdaptiveAsset:not(.geDarkMode *),
+.geAtlas .geMenubar .geButtonContainer .geButton img:last-child {
+	filter: invert(1);
+	outline: none;
+}
+
+.geDarkMode .geStyleBtn .geAdaptiveAsset.geArrow {
+	color: black;
+}
+
+.geDarkMode .geButtonContainer .geButton.geRoundButton img:last-child {
+	filter: none;
+}
+
+.geMinimal .geButtonContainer .geButton {
+	margin: 0;
+}
+
+.gePrimaryBtn {
+	background-color: light-dark(var(--primary-color), var(--dark-accent-color));
+	box-shadow: none;
+	border: none;
+}
+
+.geFormatTitleContainer {
+	height: 34px;
+	margin-bottom: 12px;
+	/* Bleed back across the scrollbar gutter reserved on .geFormatContainer so
+	   the tabs span the full panel width (the gutter is a right margin for the
+	   inset content panels only, not the full-bleed tab header). Keep in sync
+	   with the ::-webkit-scrollbar width. */
+	margin-right: -10px;
+}
+
+.geFormatTitle {
+	background: light-dark(var(--inactive-color), black);
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-width: 1px;
+	display: inline-flex;
+	text-overflow: ellipsis;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+	font-size: 13px;
+	cursor: pointer;
+	height: 100%;
+	flex: 1;
+}
+
+.geFormatTitle.geActiveFormatTitle {
+	background: transparent;
+	border-bottom-style: none;
+}
+
+.geFormatTitle:first-child {
+	border-left-style: none;
+}
+
+.geTitle,
+.geFormatTitle>div {
+	font-weight: 500;
+}
+
+.geFormatTitle>div {
+	display: inline;
+	text-align: center;
+	white-space: nowrap;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 6px;
+}
+
+.gePageTab>div.geButton {
+	width: 20px !important;
+}
+
+.gePageTab:hover {
+	background-color: light-dark(var(--highlight-color), var(--dark-border-color));
+	opacity: 1;
+}
+
+.geFormatContent {
+	margin-left: 12px;
+	margin-right: 0;
+}
+
+div.geActivePage {
+	background-color: light-dark(var(--accent-color), var(--dark-accent-color));
+	color: light-dark(var(--accent-text-color), var(--dark-accent-text-color));
+}
+
+div.geActivePage:hover {
+	background-color: light-dark(var(--accent-hover-color), var(--dark-active-accent-color));
+}
+
+.geGraphStylePreview {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 88px;
+	height: 76px;
+	cursor: pointer;
+	margin: 2px 6px;
+	overflow: hidden;
+	border-radius: 8px;
+	opacity: 0.7;
+}
+
+.geSwitcher {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+	position: relative;
+}
+
+.geSwitcher>.geSwitcherDot {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	margin-left: 4px;
+	margin-right: 3px;
+	border-radius: 3px;
+	cursor: pointer;
+	border: 1px solid rgb(181, 182, 183);
+}
+
+.geGraphStylePreview>div {
+	position: relative;
+	pointer-events: none;
+	width: 60px;
+	height: 60px;
+}
+
+.mxPopupMenuIcon img,
+.geStyleBtn .geAdaptiveAsset,
+.geGraphStylePreview:active {
+	opacity: 0.75;
+}
+
+.geSidebarContainer:has(.geSidebarFooter)>div:first-child {
+	position: relative;
+	overflow: hidden auto;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	box-sizing: border-box;
+	max-height: calc(100% - 44px);
+}
+
+.geSidebarFooter {
+	position: absolute;
+	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-height: 100%;
+	padding-top: 2px;
+	height: 44px;
+	width: 100%;
+}
+
+.geSidebarFooter .gePrimaryBtn {
+	padding: 8px 12px;
+	margin: 0px;
+}
+
+.geSidebarFooter .gePrimaryBtn span {
+	font-size: 18px;
+	margin-right: 5px;
+}
+
+html body.geEditor .gePrimaryBtn:hover:not([disabled]) {
+	background-color: light-dark(var(--primary-hover-color), var(--dark-active-accent-color));
+	box-shadow: none;
+	border: none;
+}
+
+.geStatus {
+	padding: 4px 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geButtonGroup {
+	display: inline-flex;
+	align-items: center;
+	height: 24px;
+	border-radius: 6px;
+	margin-right: 6px;
+	padding: 3px 8px;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .11), inset 0 -1px 0 0 rgba(0, 0, 0, .08), 0 1px 2px 0 rgba(0, 0, 0, .04);
+}
+
+.geDarkMode .geButtonGroup {
+	border-style: solid;
+    border-width: 1px;
+}
+
+.geButtonGroup .geButton {
+	background-size: 22px;
+	margin: 0 4px;
+}
+
+.geTabItem.geTabZoom {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-right: 16px;
+	width: 50px;
+	right: 0px;
+	bottom: 0px;
+	box-sizing: content-box;
+	background-position: right 6px center;
+	background-repeat: no-repeat;
+	background-size: 13px;
+	z-index: 1;
+	cursor: pointer;
+}
+
+.geButton>span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 13px;
+}
+
+html body.geSimple .mxWindow {
+	z-index: 3;
+	font-size: 12px;
+}
+
+html body.geSimple table.mxWindow {
+	font-size: 12px;
+}
+
+.geSimple .geStatus>div {
+	max-width: 100%;
+	box-sizing: border-box;
+	text-overflow: ellipsis;
+}
+
+.geSimple .geBtn button {
+	min-width: 72px !important;
+}
+
+.geSimple div.geToolbarContainer a.geButton:not(.geSketch *) {
+	margin: 0px;
+	padding: 0 2px 4px 2px;
+}
+
+html body.geSimple div.geToolbarContainer a.geColorBtn {
+	margin: 2px;
+}
+
+.geToolbarContainer.geDialogToolbar {
+	position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 32px;
+    overflow: hidden;
+    padding: 3px 4px 4px;
+    border-width: 1px 0px 0px;
+    border-style: solid;
+    white-space: nowrap;
+}
+
+.geSimpletable.mxWindow td.mxWindowPane button.geColorBtn {
+	padding: 0px;
+	box-sizing: border-box;
+}
+
+html body.geSimple .geMenuItem {
+	font-size: 14px;
+	text-decoration: none;
+	font-weight: normal;
+	padding: 6px 10px 6px 10px;
+	border: none;
+	border-radius: 5px;
+	color: light-dark(#353535, #cccccc);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .11), inset 0 -1px 0 0 rgba(0, 0, 0, .08), 0 1px 2px 0 rgba(0, 0, 0, .04);
+}
+
+html body div.mxPopupMenu {
+	border-radius: 5px;
+	border: 1px solid #c0c0c0;
+	padding: 5px 0 5px 0;
+	box-shadow: 0px 4px 17px -4px rgba(96, 96, 96, 1);
+}
+
+html table.mxPopupMenu td.mxPopupMenuItem {
+	font-size: 14px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+html tr.mxPopupMenuItem,
+html td.mxPopupMenuItem {
+	transition-property: none !important;
+}
+
+html body td.mxWindowTitle {
+	padding-right: 14px;
+}
+
+html body.geEditor.geDarkMode *,
+html body .mxWindow.geDarkMode {
+	box-shadow: none !important;
+}
+
+html body.geDarkMode .mxCellEditor {
+	color: #f0f0f0;
+}
+
+html body.geDarkMode.geEditor div.mxPopupMenu {
+	border: 1px solid var(--dark-border-color);
+	background-color: var(--ge-dark-panel-color);
+}
+
+html body.geDarkMode.geEditor div.mxPopupMenu.geToolbarMenu {
+	box-shadow: 0px 0px 3px 1px #d1d1d1;
+}
+
+.geTabContainer {
+	border-left-color: var(--dark-border-color);
+	border-right-color: var(--dark-border-color);
+}
+
+html body.geDarkMode.geEditor div.mxPopupMenu hr {
+	background-color: var(--dark-border-color);
+}
+
+.geDragPreview {
+	border: 1px dashed light-dark(black, #cccccc);
+}
+
+.geEditor .geTemplate {
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	position: relative;
+	cursor: pointer;
+	margin: 5px;
+	height: 135px;
+	width: 135px;
+	font-size: 14pt;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: transparent;
+}
+
+.geTemplate.geTemplateSelected {
+	border-color: light-dark(var(--dark-accent-text-color), var(--accent-text-color));
+}
+
+div.geTemplatePreview {
+	position: absolute;
+	display: inline-flex;
+	background-origin: content-box;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+	opacity: 0.7;
+	padding: 8px;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.geTemplate:has(span) .geTemplatePreview {
+	opacity: 0.2;
+}
+
+.geTemplateSelected .geTemplatePreview {
+	opacity: 1 !important;
+}
+
+.geTemplate span {
+	position: absolute;
+	display: inline-block;
+	padding: 2px 8px;
+	user-select: none;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.7);
+	max-width: 80%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.3em;
+	text-align: center;
+}
+
+.geGenerateDiagramForm {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.geGenerateDiagramDescription {
+	position: absolute;
+	font-family: sans-serif;
+	outline: none;
+	inset: 0px 0px 38px;
+	resize: none;
+	font-size: 12px;
+	border: none;
+	margin: 8px;
+}
+
+.geBtn.geGenerateDiagramButton {
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+	margin: 8px;
+}
+
+.geTemplateSelected:has(div) span {
+	display: none;
+}
+
+.geEditor .geTemplate .geButton.geRoundButton {
+	position: absolute;
+	background: white;
+	margin: 0;
+	padding: 2px;
+	opacity: 1 !important;
+	width: 16px;
+	height: 16px;
+	right: 0px;
+	top: 0px;
+}
+
+.geTemplate .geGenerateDiagramForm .geButton.geRoundButton {
+    margin: -6px -6px 0 0;
+    padding: 2px !important;
+}
+
+.geDarkMode .geTemplate {
+	color: #000000;
+}
+
+html body.geDarkMode.geEditor button.geAdaptiveAsset:hover:not([disabled]) {
+	background-color: #fff;
+}
+
+html body.geDarkMode.geEditor button.geAdaptiveAsset:not([disabled]) {
+	border-color: #a2a2a2;
+}
+
+.geDarkMode .geInsertTablePicker,
+.geDarkMode .geInsertTablePicker * {
+	border-color: var(--dark-border-color);
+}
+
+html body.geDarkMode .geSketch .geToolbarContainer {
+	border-style: solid;
+}
+
+body.geDarkMode .geInverseAdaptiveAsset,
+.geDarkMode .geCommentUserImg {
+	filter: none !important
+}
+
+.geAdaptiveAsset {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+html body.geDarkMode .geFooterContainer,
+html body.geDarkMode .geFooterContainer td {
+	border-color: var(--dark-border-color);
+}
+
+html body.geDarkMode .geFooterContainer a {
+	background-color: none;
+}
+
+html body.geDarkMode .geBigStandardButton {
+	border: 1px solid var(--dark-border-color);
+}
+
+html body.geDarkMode .geFooterContainer td:hover,
+html body.geDarkMode #geFooterItem1:hover,
+html body.geDarkMode .geBigStandardButton:hover {
+	background-color: #000000;
+}
+
+html body.geDarkMode.geEditor table.mxPopupMenu tr.mxPopupMenuItemHover {
+	background-color: #000000;
+}
+
+html body.geDarkMode.geEditor .geBaseButton:hover {
+	background-color: var(--dark-color);
+}
+
+html body.geDarkMode .geToolbarContainer .geSeparator {
+	background-color: var(--dark-border-color);
+}
+
+html body.geDarkMode table.mxPopupMenu hr {
+	border-color: var(--dark-border-color);
+	background-color: var(--dark-color);
+}
+
+html body.geDarkMode .geDialog,
+html body.geDarkMode div.mxWindow,
+html body div.mxWindow.geDarkMode {
+	background-color: #2a2a2a;
+	border-color: #838383;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+html .geDarkMode .geCommentContainer {
+	background-color: transparent;
+	border-width: 1px;
+	color: inherit;
+}
+
+.mxCellEditor {
+	font-family: initial;
+}
+
+.geDialog,
+html div.mxWindow,
+.geSketch .geToolbarContainer:not(.geDialog *, .mxWindow *) {
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.geSketch .geToolbarContainer:not(.geDialog *, .mxWindow *) {
+	border-style: solid;
+	border-width: 1px;
+	padding: 6px;
+}
+
+div td.mxWindowTitle {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	font-size: 13px;
+	height: 22px;
+}
+
+.mxWindowTitle>div>img {
+	padding: 4px;
+}
+
+/* Dock preview overlay shown during window drag */
+.geDockPreview {
+	position: fixed;
+	z-index: 9999;
+	background-color: rgba(41, 182, 242, 0.15);
+	border: 2px solid rgba(41, 182, 242, 0.6);
+	pointer-events: none;
+	display: none;
+	transition: opacity 0.15s ease-in-out;
+	box-sizing: border-box;
+}
+
+/* Docked window styles */
+html div.mxWindow.mxWindowDocked {
+	z-index: 2 !important;
+}
+
+.geBackground {
+	background-color: light-dark(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5));
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	opacity: 1;
+	backdrop-filter: blur(2px);
+}
+
+.geDialog,
+.geBackground,
+.geEditor .picker-dialog,
+.geEditor .picker-dialog-bg {
+	z-index: 10002;
+}
+
+.geEditor input[type=text]::-ms-clear {
+	display: none;
+}
+
+.geButtonContainer {
+	padding-right: 14px;
+	display: inline-flex;
+	align-items: center;
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+.geMenubar .geButtonContainer {
+	margin-top: -42px;
+}
+
+.geToolbarContainer .geButtonContainer {
+	padding-right: 0px;
+}
+
+.geButtonContainer .gePrimaryBtn:not(.geEmbedBtn) {
+	margin: 0 4px;
+	width: auto;
+	height: 32px;
+}
+
+.geButtonContainer .gePrimaryBtn .geButton {
+	background-position: left center;
+	padding: 0 2px 0 24px;
+	width: auto;
+}
+
+.geEditor .geTabItem {
+	border-width: 1px;
+	border-top-style: solid;
+}
+
+.geEditor div.mxTooltip {
+	background-color: light-dark(var(--ge-panel-color), var(--ge-dark-panel-color));
+	color: light-dark(var(--text-color), var(--dark-text-color));
+	box-shadow: 1px 1px 2px 0px #ddd;
+	font-size: 11px;
+	padding: 6px;
+}
+
+.geSimpleMainMenu {
+	justify-content: start;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	padding: 0 12px;
+	height: 48px;
+	gap: 8px;
+	top: 0px;
+}
+
+.geSimpleMainMenu .geButton:not(.geZoomInput) {
+	background-size: 24px;
+}
+
+.geSketch .geToolbarContainer .geButton:not(.geZoomInput, .gePageMenu, .geFooterToolbar *) {
+	background-size: 22px;
+}
+
+.geSketch .geFooterToolbar:not(.geEmbedInline *) {
+	bottom: 12px;
+	right: 12px;
+}
+
+.geSketch .geFooterToolbar>* {
+	margin: 0;
+}
+
+.geSketchMainMenu {
+	left: 10px;
+	top: 10px;
+}
+
+.geEmbed .geMenubarContainer:not(.geMinimal *) {
+	padding: 0 28px 0 16px;
+}
+
+.geEditor.geClassic .geMenubarContainer {
+	padding-left: 4px;
+}
+
+.geSidebarContainer a,
+.geMenubarContainer a,
+.geToolbar a {
+	text-decoration: none;
+}
+
+.geMenubarContainer,
+.geToolbarContainer,
+.geDiagramContainer,
+.geSidebarContainer {
+	overflow: hidden;
+	white-space: nowrap;
+	position: relative;
+}
+
+div.geFormatContainer {
+	overflow-y: auto;
+	/* Reserve the scrollbar gutter so the panel width does not jump (and the
+	   right-anchored color controls do not get squeezed) when the styled
+	   scrollbar appears. The custom ::-webkit-scrollbar makes it a classic,
+	   space-consuming bar, so the gutter is the panel's effective right margin
+	   - hence margin-right: 0 on .geFormatContent below. */
+	scrollbar-gutter: stable;
+	font-size: 12px;
+	width: 240px;
+}
+
+.geDiagramContainer {
+	background-color: light-dark(var(--workspace-color), var(--ge-dark-panel-color));
+	font-size: 0px;
+	outline: none;
+}
+
+.geDiagramContainer:has(.geRuler) {
+	margin: 14px 0 0 4px;
+}
+
+.geSketch .geDiagramContainer:has(.geRuler),
+.geMinimal .geDiagramContainer:has(.geRuler) {
+	margin-left: 14px;
+}
+
+.geRuler {
+	background: light-dark(#ffffff, var(--dark-color));
+}
+
+.geBackgroundPage {
+	box-shadow: 0px 0px 3px 0px #a0a0a0;
+}
+
+.geEditor .geHint {
+	background-color: light-dark(var(--ge-panel-color), var(--ge-dark-panel-color));
+	border-color: light-dark(var(--border-color), var(--dark-border-color));
+	box-shadow: 1px 1px 2px 0px #ddd;
+	border-style: solid;
+	border-width: 1px;
+	padding: 4px 16px 4px 16px;
+	border-radius: 3px;
+	opacity: 0.8;
+	font-size: 9pt;
+}
+
+.geHint img {
+	opacity: 0.7;
+}
+
+.geStatus>* {
+	overflow: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	display: inline-block;
+	font-size: 12px;
+}
+
+.geStatus {
+	display: inline-flex;
+	align-items: center;
+	white-space: nowrap;
+	min-width: 0;
+	height: 100%;
+}
+
+.geStatus *[data-action] {
+	cursor: pointer;
+}
+
+.geStatus img {
+	max-width: 16px;
+	vertical-align: bottom;
+}
+
+.geStatus div {
+	border-radius: 4px;
+}
+
+.geStatus div+div {
+	margin-left: 8px;
+}
+
+.geStatus .geStatusBox {
+	font-size: 10px;
+	padding: 2px 4px;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.geStatus .geStatusAlert {
+	padding: 4px 10px;
+	background-color: light-dark(#eacccc, #a20025);
+	color: light-dark(#b62623, white) !important;
+}
+
+.geStatusDiv {
+	text-overflow: ellipsis;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.geEmbed.geMinimal .geMenubarContainer .geStatusDiv {
+	flex-shrink: 1;
+	min-width: 0;
+}
+
+.geEmbed.geMinimal .geMenubarContainer .geButtonGroup {
+	flex-shrink: 1;
+	overflow: hidden;
+	min-width: 0;
+}
+
+.geEmbed.geAtlas>.geMenubarContainer>.geStatusDiv,
+.geClassic.geEmbed.geCompactMode>.geMenubarContainer>.geStatusDiv {
+	position: fixed;
+    right: 16px;
+    top: 6px;
+}
+
+.geClassic.geEmbed.geCompactMode>.geMenubarContainer>.geStatusDiv {
+    top: 6px;
+}
+
+.geEmbed.geAtlas>.geMenubarContainer>.geStatusDiv {
+    top: 12px;
+}
+
+html body div.geBtn.geSmallBanner {
+	border-radius: 20px;
+	font-size: inherit;
+	padding: 6px 12px 6px 20px;
+	display: flex;
+	height: auto;
+	bottom: 4px;
+}
+
+.geSpinnerStatus {
+	position: absolute;
+    white-space: nowrap;
+    border-radius: 6px;
+	color: #ffffff;
+	background: #4B4243;
+	transform: translate(-50%, -50%);
+    box-shadow: light-dark(#dddddd, transparent) 2px 2px 3px 0px;
+	padding: 6px 10px;
+	font-size: 9pt;
+    z-index: 2000000000;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	cursor: default;
+}
+
+.geSmallBanner .geLibraryButton {
+	background-color: light-dark(var(--primary-hover-color), var(--dark-active-accent-color));
+	filter: brightness(0.9);
+	margin-left: 6px;
+	opacity: 0.5;
+}
+
+.geSmallBanner .geLibraryButton:hover {
+	background-color: light-dark(var(--primary-hover-color), var(--dark-active-accent-color));
+	opacity: 1;
+}
+
+.geAlert {
+	position: absolute;
+	white-space: nowrap;
+	padding: 14px;
+	background-color: #f2dede;
+	border: 1px solid #ebccd1;
+	color: #a94442;
+	border-radius: 3px;
+	-webkit-box-shadow: 2px 2px 3px 0px #ddd;
+	-moz-box-shadow: 2px 2px 3px 0px #ddd;
+	box-shadow: 2px 2px 3px 0px #ddd;
+}
+
+.geColorDropper {
+	position: relative;
+	cursor: pointer;
+	width: auto;
+	height: 14px;
+	opacity: 0.7;
+	right: -20px;
+	top: -1px;
+}
+
+.geBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 550;
+	height: 30px;
+	margin: 0 0 0 8px;
+	min-width: 72px;
+	outline: 0;
+	padding: 0 8px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.geBtn.geBanner {
+	display: block;
+	position: absolute;
+	bottom: 10px;
+	left: 50%;
+	max-width: 90%;
+	white-space: nowrap;
+	cursor: pointer;
+	font-size: 16px;
+	padding: 18px 34px 30px 20px;
+	font-weight: bold;
+	transform: translate(-50%, 0%);
+	transition: 1000ms;
+	box-shadow: rgb(221, 221, 221) 1px 1px 2px 0px;
+}
+
+.geBtn:hover:not([disabled]),
+.geBtn:focus {
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.geShapePicker {
+	position: absolute;
+	width: 142px;
+	border-radius: 10px;
+	border-style: solid;
+	border-width: 1px;
+	padding: 6px 0 8px 0;
+	text-align: center;
+	box-shadow: 0px 0px 3px 1px #d1d1d1;
+	white-space: normal;
+}
+
+.geBtnStepper {
+	display: inline-block;
+	border-radius: 3px;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.geBtnStepper>div {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 18px;
+	position: relative;
+	padding: 1px 0 0 0;
+}
+
+.geBtnStepper>div:active {
+	background-color: #4d90fe;
+}
+
+.geColorBtn {
+	padding: 0px;
+}
+
+.geStyleBtn {
+	display: inline-flex;
+	box-sizing: border-box;
+	border-radius: 4px;
+	height: 22px;
+	width: 64px;
+	border-width: 1px;
+	border-style: solid;
+	margin: 2px;
+	padding: 0;
+}
+
+.geStyleBtn>span {
+	position: absolute;
+	display: block;
+	text-align: center;
+	top: 3px;
+	left: 3px;
+	right: 13px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geStyleBtn .geAdaptiveAsset {
+	background-size: 18px 18px;
+	flex-grow: 1;
+}
+
+.geStyleBtn .geAdaptiveAsset>div.gePatternPreview {
+	height: 1px;
+	border-color: black;
+	border-width: 1px;
+	margin-left: -6px;
+}
+
+.geStyleMenuItem {
+	display: flex;
+	align-items: center;
+	padding: 4px 8px;
+}
+
+.geStyleBtn .geAdaptiveAsset>div {
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+td.mxPopupMenuIcon .geStyleMenuItem {
+	margin: auto;
+}
+
+td.mxPopupMenuIcon .geStyleMenuItem>div {
+	background-position: bottom left;
+	background-repeat: repeat-x;
+	border-color: black;
+	border-width: 1px;
+	margin: 8px 0;
+	height: 1px;
+	width: 100%;
+}
+
+.geStyleBtn .geAdaptiveAsset.geArrow {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	font-size: 13px;
+	padding-right: 8px;
+	position: relative;
+	align-items: center;
+	justify-content: center;
+	background-position: right;
+	box-sizing: border-box;
+}
+
+.geStyleLabel {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 180px;
+}
+
+.geFullWidthElement {
+	width: 212px;
+}
+
+.geBtn[disabled],
+.geButton[disabled] {
+	opacity: 0.3;
+}
+
+.geButton.gePageMenu {
+	background-position: right center;
+	padding: 0 18px 0 10px;
+	background-size: 18px;
+}
+
+.geButton.gePageMenu>span {
+	padding: 0px;
+	max-width: 160px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geSimple .geButton.geZoomInput:not(.geSketch *, .geMinimal *) {
+	border-style: solid;
+	font-size: 12px;
+}
+
+.geButton.geZoomInput {
+    cursor: initial;
+    font-size: 14px;
+    border-style: none;
+    border-color: #000000;
+    padding: 0px 16px 0px 2px;
+    background-position: right 2px center;
+    text-align: center;
+    height: 28px;
+    width: 62px;
+}
+
+.geClassic .geZoomInput {
+	padding-top: 1px;
+}
+
+.geSimple .geButton.geZoomInput {
+	height: 20px;
+}
+
+.geSketch .geZoomInput {
+	border-style: none;
+}
+
+.geAlertLink {
+	color: #843534;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.geMenubarContainer .geItem {
+	border-radius: 6px;
+	padding: 4px 8px;
+	cursor: default;
+}
+
+.geEditor .geItem:active:not(.mxDisabled, [disabled]):not(.geStatus),
+.geEditor .geBtn:active:not([disabled]),
+.geEditor .geStatus:has(div[data-action]:not(.mxDisabled, [disabled])):active,
+.geEditor .geTitle:active,
+.geEditor .geButton:active:not(.mxDisabled, .mxDisabled *, [disabled], .geBtn *),
+.geEditor .geHelpIcon:active,
+.geEditor button:active:not([disabled], .geBigButton, .geShareBtn),
+.geEditor .geFormatTitle:active,
+.geEditor .geBtnStepper>div:active,
+.geEditor .geTab:active:not(.mxDisabled, [disabled]),
+.geDarkMode .mxPopupMenuItem>div:not(:has(img)),
+.geTitle,
+.geBtnStepper>div,
+.geHelpIcon,
+.geStatus>div:not(.geStatusAlert) {
+	opacity: 0.75;
+}
+
+.geEditor .geButton:not(.mxDisabled, .mxDisabled *, [disabled]) {
+	opacity: 0.65;
+}
+
+.geItem:hover:not(.mxDisabled, [disabled]),
+.geBtn:hover:not([disabled]),
+.geBtnStepper>div:hover,
+.geHelpIcon:hover,
+.geColorDropper:hover,
+.geTitle>div>img:hover,
+.geFormatTitle.geActiveFormatTitle,
+.geHint img:hover,
+.geGraphStylePreview:hover,
+.geActiveItem:not(.geButton *, .geButton *),
+.gePageTab .geButton:hover:not([disabled]),
+.geButtonGroup .geButton:hover:not([disabled]),
+button:hover:not([disabled], .geBigButton, .geShareBtn),
+select:hover:not([disabled]),
+.geColorBtn:hover:not([disabled]),
+.geStyleBtn:hover:not([disabled]),
+table.mxPopupMenu tr.mxPopupMenuItemHover,
+.geTitle:hover,
+.geButton:hover:not(.mxDisabled, .mxDisabled *, [disabled], .gePageTab *, .geSimpleMainMenu *, .geBtn *, .geButtonGroup *, .geAdaptiveAsset, .gePrimaryBtn) {
+	opacity: 1;
+}
+
+.gePaletteDragging .geTitle:hover {
+	opacity: inherit;
+	background-color: inherit;
+}
+
+.geTitle.gePaletteDragPlaceholder {
+	visibility: hidden;
+}
+
+.gePageTab.gePageTabDragPlaceholder {
+	visibility: hidden;
+}
+
+button:hover:not([disabled], .geBigButton, .geShareBtn),
+select:hover:not([disabled]),
+.geColorBtn:hover:not([disabled]),
+.geStyleBtn:hover:not([disabled]),
+table.mxPopupMenu tr.mxPopupMenuItemHover {
+	background-color: light-dark(var(--highlight-color), var(--dark-border-color));
+}
+
+.geTitle:hover,
+.geButton:hover:not(.mxDisabled, .mxDisabled *, [disabled], .gePageTab *, .geSimpleMainMenu *, .geBtn *, .geButtonGroup *, .geAdaptiveAsset, .gePrimaryBtn) {
+	background-color: light-dark(var(--highlight-color), white);
+}
+
+.geGraphStylePreview:hover,
+.geItem:hover:not([disabled]) {
+	background-color: light-dark(var(--highlight-color), var(--dark-highlight-color));
+}
+
+.geActiveItem:not(.geButton *, .geButton *) {
+	background-color: light-dark(lightgray, darkgray);
+}
+
+.mxDisabled:hover {
+	background-color: inherit !important;
+}
+
+a.geStatus>div {
+	display: inline-flex;
+	align-items: center;
+}
+
+.geSidebarContainer:not(.geFormatContainer, .mxWindowPane *) {
+	border-right-style: solid;
+	border-right-width: 1px;
+}
+
+.geClassic .geSidebarContainer:not(.geFormatContainer)>div {
+	padding: 0 4px;
+}
+
+.geFormatContainer:not(.mxWindowPane *) {
+	border-left-style: solid;
+	border-left-width: 1px;
+}
+
+.geSidebarContainer {
+	box-sizing: border-box;
+}
+
+.geSidebarContainer button {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.geToolbarEnd {
+	margin-left: 8px;
+	flex-grow: 0;
+	order: 1;
+}
+
+.geToolbarContainer.geVerticalToolbar {
+	flex-direction: column;
+	max-height: 100%;
+	left: 10px;
+	top: 50%;
+	transition: transform 0.1s ease-out;
+}
+
+.geToolbarContainer.geVerticalToolbar:not(.geEmbedInline *) {
+	transform: translate(0, -50%);
+}
+
+.geVerticalToolbar.geCollapsedToolbar {
+	top: auto;
+	bottom: 12px;
+	transform: none !important;
+}
+
+.geToolbarContainer.geVerticalToolbar>* {
+	display: flex;
+	overflow: visible;
+	margin: 2px 0;
+}
+
+.geVerticalToolbar.geCollapsedToolbar>* {
+	margin: 0;
+	width: 24px !important;
+}
+
+.geVerticalToolbar>.geButton {
+	width: 34px;
+	height: 34px;
+}
+
+.geVerticalToolbar .geItem {
+	position: relative;
+	border-radius: 6px;
+}
+
+.geShortcutKey {
+	position: absolute;
+	font-size: 8px;
+	opacity: 0.4;
+	bottom: -2px;
+	right: 1px;
+}
+
+.geToolbar {
+	height: 100%;
+}
+
+.geButton>div:not(.geShortcutKey) {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	background-position: left 2px center;
+	background-repeat: no-repeat;
+	background-size: 18px;
+}
+
+.geButton,
+.geTitle,
+.geItem {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 18px;
+	white-space: nowrap;
+	z-index: 1;
+	padding: 2px;
+}
+
+.geItem {
+	overflow: hidden;
+}
+
+.geButton,
+.geTitle {
+	color: black;
+	border-radius: 6px;
+	box-sizing: border-box;
+	margin: 2px;
+}
+
+.geSidebarText {
+	margin: 4px 8px;
+	text-align: center;
+	font-size: 11px;
+	padding: 6px 0px 0px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: default;
+}
+
+.geButton:not([disabled], .geZoomInput),
+.geTitle:not([disabled]),
+.geItem:not([disabled]) {
+	cursor: pointer;
+}
+
+.geButton {
+	height: 28px;
+	flex-shrink: 0;
+	flex-grow: 0;
+}
+
+.mxPopupMenuItem:empty:has(+ .mxPopupMenuItem:empty),
+.mxPopupMenuItem:empty + .mxPopupMenuItem:empty {
+	display: none;
+}
+
+.mxPopupMenuIcon>img.geButton:empty {
+	width: 22px;
+}
+
+.geButton:empty:not(.geVerticalToolbar *, .geZoomInput, .geTemplate *, .geSidebarTooltip *) {
+	width: 28px;
+}
+
+.geButton[disabled] {
+	cursor: default;
+}
+
+.geShapePicker>* {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	padding: 1px;
+}
+
+.geButton.geRoundButton:not(.geEmbed.geCompactMode .geButtonContainer .geButton) {
+	background-size: 24px 24px;
+	justify-content: center;
+	box-sizing: content-box;
+	border-radius: 50%;
+	padding: 6px;
+}
+
+.geSketch .geButton.geRoundButton {
+	padding: 4px;
+}
+
+.geRoundButton img {
+	width: 26px;
+	border-radius: 50%;
+}
+
+/* Account icon: a div with a background-image (set in App.updateButtonContainer).
+   The default silhouette also carries geAdaptiveAsset so it inverts in dark mode
+   via the generic .geDarkMode .geAdaptiveAsset rule; a real account picture
+   (geUserPhoto) is cover-fitted and never inverted. See #5364. The selector
+   outweighs ".geButton > div" (which would stretch the div to width/height 100%). */
+.geButton.geRoundButton > .geUserAvatar {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	/* Scale the SVG silhouette to fill the box like the original <img> did
+	   (.geRoundButton img { width: 26px }); without this it falls back to the
+	   image's intrinsic 24px and renders too small. See #5364. */
+	background-size: contain;
+}
+
+.geButton.geRoundButton > .geUserPhoto {
+	background-size: cover;
+}
+
+/* In dark mode the parent .geButton already inverts its whole subtree
+   (.geDarkMode .geButton), which lightens the default silhouette. So the avatar
+   must NOT invert again via geAdaptiveAsset, or it double-inverts back to dark
+   (the #5364 bug). A real photo, conversely, must counter the parent invert so it
+   is never rendered as a negative. */
+.geDarkMode .geUserAvatar.geAdaptiveAsset {
+	filter: none;
+}
+
+.geDarkMode .geUserPhoto {
+	filter: invert(1);
+}
+
+.geSeparator {
+	display: inline-block;
+	background-color: #e5e5e5;
+	margin-left: 6px;
+	margin-right: 6px;
+	height: 20px;
+	width: 1px;
+}
+
+.geHelpIcon {
+	width: 16px;
+	margin: 0 4px;
+	vertical-align: text-bottom
+}
+
+.geFormatSection {
+	padding: 6px 0;
+	position: relative;
+	white-space: nowrap;
+	border-top: 1px solid light-dark(#e0e0e0, #3a3a3a);
+}
+
+.geFormatSection:first-child {
+	border-top: none;
+}
+
+.geFormatSection:last-child {
+	padding-bottom: 0;
+}
+
+.geFormatSection select {
+	position: absolute;
+	text-align: center;
+	text-overflow: ellipsis;
+	height: 24px;
+	border-radius: 4px;
+}
+
+.geFormatSection table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.geFormatSection table td {
+	vertical-align: middle;
+	max-width: 50%;
+	width: 50%;
+	padding: 0 0 0 2px;
+}
+
+.geFormatSection table td select {
+	position: relative;
+}
+
+.geFormatSection *:empty:not(input),
+.geToolbarContainer *:not(input) {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.geFormatSection input:not([type="checkbox"], [type="radio"]),
+.geFormatSection button {
+	box-sizing: border-box;
+	height: 24px;
+	border-radius: 4px;
+}
+
+.geFormatSection input:not([type="checkbox"], [type="radio"]) {
+	text-align: right;
+}
+
+.geFormatSectionTitle {
+	padding: 0px 0 6px 0;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 210px;
+	font-weight: bold;
+}
+
+.geCollapsibleTitle {
+	cursor: pointer;
+	-webkit-user-select: none;
+	user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 0;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.geCollapsibleTitle::before {
+	content: '';
+	display: inline-block;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 4px 0 4px 6px;
+	border-color: transparent transparent transparent light-dark(#5f6368, #9aa0a6);
+	transition: transform 0.15s ease;
+	flex-shrink: 0;
+}
+
+.geCollapsibleTitle.geExpanded::before {
+	transform: rotate(90deg);
+}
+
+.geCollapsibleContent {
+	position: relative;
+}
+
+.geCollapsibleContent.geCollapsed {
+	display: none;
+}
+
+.geFormatEntry {
+	display: flex;
+	position: relative;
+	align-items: center;
+	white-space: nowrap;
+	/* clip (not hidden) plus a small margin so the focus ring of a left-aligned
+	   checkbox is not cut off. The label self-truncates via .geStyleLabel, so
+	   this only needs to clip content overflowing to the right; the 2px bleed
+	   lands in the 12px .geFormatContent left margin with no layout shift. */
+	overflow: clip;
+	overflow-clip-margin: 4px;
+	min-height: 28px;
+}
+
+.geFormatEntry .geColorBtn {
+	position: absolute;
+	left: 166px;
+}
+
+.geFormatEntry input {
+	box-sizing: border-box;
+}
+
+.geFormatEntry input[type="checkbox"] {
+	margin: 0 8px 0 0;
+}
+
+.mxWindowPane .geSidebarContainer {
+	position: absolute;
+	width: 100% !important;
+	top: 0;
+	bottom: 28px;
+}
+
+.mxWindowPane .geSidebarContainer.geFormatContainer {
+	bottom: 0;
+}
+
+.geEditor>div>.geMenubarContainer {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+}
+
+.geTabContainer {
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 0 20px 0 12px;
+	display: flex;
+	height: 32px;
+	z-index: 1;
+}
+
+.geMinimal .geTabContainer .geZoomInput {
+	margin-left: auto;
+}
+
+.geTabContainer .geZoomInput {
+	margin: auto -16px auto 0;
+	font-size: 12px;
+	width: 56px;
+}
+
+.geTabScroller {
+	display: inline-block;
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	overflow-x: auto;
+	margin: 0 8px;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	left: 0px;
+}
+
+.geTab .geButton {
+	border-radius: 50%;
+	margin-left: 0px;
+}
+
+.gePageTab:not(.geActivePage) .geButton {
+	display: none;
+}
+
+.gePageTab:not(.geActivePage) {
+	padding-right: 16px;
+}
+
+.gePageTab {
+	padding: 0px 0px 0px 16px;
+}
+
+.geControlTab {
+	width: 30px;
+	margin: 0 4px;
+}
+
+.geTab {
+	height: 100%;
+	box-sizing: border-box;
+	text-overflow: ellipsis;
+	font-size: 13px;
+	display: inline-flex;
+	align-items: center;
+	cursor: move;
+}
+
+.geSidebar {
+	transform-origin: top left;
+	padding: 4px 6px 8px 14px;
+	overflow: hidden;
+	white-space: normal;
+}
+
+.geEditor .geSearchSidebar {
+	box-sizing: border-box;
+	padding: 8px 4px 4px 4px;
+	width: 100%;
+}
+
+.geTitle {
+	display: flex;
+	font-size: 13px;
+	background-repeat: no-repeat;
+	background-position: 2px 50%;
+	background-size: 20px;
+	border-radius: 14px;
+	padding: 8px 0px 8px 22px;
+	margin: 2px 4px 4px 4px;
+	cursor: default;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	justify-content: start;
+	align-items: center;
+	height: 30px;
+}
+
+.geTitle>span {
+	flex-grow: 1;
+	flex-shrink: 1;
+	width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geSidebarContainer .geDropTarget {
+	border: 2px dotted currentcolor;
+	border-radius: 10px;
+	text-align: center;
+	font-size: 12px;
+	opacity: 0.6;
+	padding: 6px;
+	margin: 4px 6px 4px 0;
+}
+
+.geTitle>div {
+	display: flex;
+	flex-grow: 0;
+	padding-right: 4px;
+}
+
+.geLibraryButton {
+	position: relative;
+	border-radius: 50%;
+	padding: 2px;
+	width: 14px;
+	cursor: pointer;
+	margin: 0px 1px;
+	opacity: 0.75;
+}
+
+.geLibraryButton:hover {
+	background-color: var(--active-color);
+}
+
+.geTitle .geButton {
+	border: 1px solid transparent;
+	padding: 3px;
+	border-radius: 2px;
+}
+
+.geTitle .geButton:hover {
+	border: 1px solid gray;
+}
+
+.geSidebar .geItem,
+.geShapePicker .geItem {
+	overflow: hidden;
+	display: inline-block;
+	padding: 2px;
+	border-radius: 4px;
+	transition: transform 100ms ease-out;
+	opacity: 0.75;
+}
+
+.geSidebar .geItem:active,
+.geShapePicker .geItem:active {
+	transform: scale(0.8, 0.8);
+}
+
+.geSidebarTooltip {
+	position: absolute;
+	overflow: hidden;
+	border-width: 1px;
+	border-style: solid;
+	box-shadow: 0 2px 6px 2px rgba(60, 64, 67, .15);
+	border-radius: 6px;
+}
+
+.geSidebarTooltip .geButton {
+	position: absolute;
+	padding: 2px;
+	margin: 0;
+	right: 2px;
+	top: 2px;
+	width: 20px;
+	height: 20px;
+}
+
+.geDialog {
+	position: absolute;
+	background-color: light-dark(#f0f0f0, #2a2a2a);
+	line-height: 1em;
+	overflow: hidden;
+	padding: 24px;
+	border: light-dark(none, 1px solid rgba(255, 255, 255, 0.1));
+	left: 50%;
+	top: 50%;
+	max-height: 100%;
+	max-width: 100%;
+	transform: translate(-50%, -50%);
+	box-sizing: border-box;
+}
+
+/* Tall dialogs: cap the content area to the dialog's content box and let
+   it scroll. The close button (.geButton) is a positioned-absolute sibling
+   of the content so it stays at the top-right regardless of scroll. */
+.geDialog > :first-child {
+	max-height: 100%;
+	overflow-y: auto;
+	box-sizing: border-box;
+}
+
+.geDialog > .geButton {
+	top: 8px !important;
+	right: 8px !important;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background-size: 10px;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.5;
+	transition: opacity 0.1s ease, background-color 0.1s ease;
+}
+
+.geDialog > .geButton:hover {
+	opacity: 0.8;
+	background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+}
+
+.geDialog input[type="text"],
+.geDialog input[type="number"],
+.geDialog textarea,
+.geDialog select {
+	border-radius: 6px;
+	border: light-dark(1px solid rgba(0, 0, 0, 0.15), 1px solid rgba(255, 255, 255, 0.15));
+	background-color: light-dark(white, #1e1e1e);
+	padding: 4px 8px;
+	font-size: 13px;
+	outline: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.geDialog input[type="text"]:focus,
+.geDialog input[type="number"]:focus,
+.geDialog textarea:focus,
+.geDialog select:focus {
+	border-color: light-dark(#007aff, #0a84ff);
+	box-shadow: 0 0 0 3px light-dark(rgba(0, 122, 255, 0.25), rgba(10, 132, 255, 0.25));
+}
+
+/* Dialog form sections and layout */
+.geDialogSection {
+	background: light-dark(rgba(0, 0, 0, 0.035), rgba(255, 255, 255, 0.05));
+	border: light-dark(1px solid rgba(0, 0, 0, 0.06), 1px solid rgba(255, 255, 255, 0.06));
+	border-radius: 8px;
+	padding: 10px 12px;
+	margin-bottom: 10px;
+}
+
+.geDialogSection > input[type="checkbox"],
+.geDialogSection > input[type="radio"] {
+	margin-top: 6px !important;
+}
+
+.geDialogSection > input[type="checkbox"]:first-child,
+.geDialogSection > input[type="radio"]:first-child {
+	margin-top: 0 !important;
+}
+
+.geDialogFormRow {
+	display: flex;
+	align-items: center;
+	min-height: 28px;
+	column-gap: 8px;
+}
+
+.geDialogFormLabel {
+	color: light-dark(#1d1d1f, #e0e0e0);
+	min-width: 100px;
+	flex-shrink: 0;
+}
+
+.geDialogFormRow input[type="text"],
+.geDialogFormRow input[type="number"],
+.geDialogFormRow select,
+.geDialogFormRow textarea {
+	flex: 1;
+	min-width: 0;
+}
+
+.geDialogCheckRow {
+	display: flex;
+	align-items: center;
+	min-height: 28px;
+}
+
+/* Uniform vertical spacing between rows in a section, regardless of row type */
+.geDialogSection > .geDialogFormRow,
+.geDialogSection > .geDialogCheckRow,
+.geDialogSection > .geDialogInlineFields {
+	margin-top: 6px;
+}
+
+.geDialogSection > .geDialogFormRow:first-child,
+.geDialogSection > .geDialogCheckRow:first-child,
+.geDialogSection > .geDialogInlineFields:first-child {
+	margin-top: 0;
+}
+
+.geDialogCheckRow input[type="checkbox"],
+.geDialogCheckRow input[type="radio"] {
+	margin: 0 8px 0 0;
+	flex-shrink: 0;
+}
+
+.geDialogCheckRow label {
+	color: light-dark(#1d1d1f, #e0e0e0);
+	cursor: pointer;
+}
+
+.geDialogCheckRow select {
+	margin-left: 8px;
+	flex: 1;
+	min-width: 0;
+}
+
+.geDialogInlineFields {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+.geDialogInlineField {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+	min-width: 0;
+}
+
+.geDialog .geCollapsibleTitle {
+	margin-top: 4px;
+}
+
+.geDialogInlineField label {
+	color: light-dark(#1d1d1f, #e0e0e0);
+	white-space: nowrap;
+}
+
+.geDialogInlineField input[type="text"],
+.geDialogInlineField input[type="number"] {
+	flex: 1;
+	min-width: 0;
+}
+
+.geDialog.geInlineDialog {
+	padding: 0px;
+	left: auto;
+	transform: none;
+	z-index: 4;
+}
+
+.geTransDialog {
+	position: absolute;
+	overflow: hidden;
+}
+
+.geDialogTitle {
+	box-sizing: border-box;
+	white-space: nowrap;
+	border-bottom: light-dark(1px solid rgba(0, 0, 0, 0.1), 1px solid rgba(255, 255, 255, 0.1));
+	font-size: 13px;
+	font-weight: 600;
+	text-align: center;
+	color: light-dark(#1d1d1f, #e0e0e0);
+}
+
+.geDialogFooter {
+	white-space: nowrap;
+	text-align: right;
+	box-sizing: border-box;
+	border-top: light-dark(1px solid rgba(0, 0, 0, 0.1), 1px solid rgba(255, 255, 255, 0.1));
+}
+
+.geMoreShapesSectionHeader {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: light-dark(#6e6e73, #98989d);
+	background-color: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04));
+	padding: 8px 12px 8px 16px;
+	border-bottom: light-dark(1px solid rgba(0, 0, 0, 0.06), 1px solid rgba(255, 255, 255, 0.06));
+	user-select: none;
+}
+
+.geMoreShapesItem {
+	display: flex;
+	align-items: center;
+	padding: 6px 0 6px 16px;
+	cursor: pointer;
+	font-size: 13px;
+	line-height: normal;
+	color: light-dark(#1d1d1f, #e0e0e0);
+	transition: background-color 0.1s ease;
+}
+
+.geMoreShapesItem:hover {
+	background-color: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.07));
+}
+
+.geMoreShapesItem.geMoreShapesItemSelected {
+	background-color: light-dark(#d4e4f7, rgba(10, 132, 255, 0.2));
+}
+
+.geMoreShapesItem.geMoreShapesItemSelected:hover {
+	background-color: light-dark(#c4d8f0, rgba(10, 132, 255, 0.25));
+}
+
+.geMoreShapesItem input[type="checkbox"] {
+	margin: 0 8px 0 0;
+	flex-shrink: 0;
+}
+
+.geMoreShapesItem span {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.geMoreShapesPreview {
+	border-left: light-dark(1px solid rgba(0, 0, 0, 0.1), 1px solid rgba(255, 255, 255, 0.1));
+}
+
+.geMoreShapesPreview img {
+	background-color: #ffffff;
+}
+
+.geMoreShapesFooterChecks {
+	display: inline-flex;
+	align-items: center;
+	gap: 16px;
+	width: 204px;
+	flex-shrink: 0;
+}
+
+.geMoreShapesFooterCheck {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: light-dark(#1d1d1f, #e0e0e0);
+	cursor: pointer;
+	user-select: none;
+}
+
+.geMoreShapesFooterCheck input[type="checkbox"] {
+	margin: 0;
+	flex-shrink: 0;
+}
+
+.geEditor .geBaseButton {
+	padding: 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	border-width: 1px;
+	border-style: solid;
+}
+
+.geEditor .geBaseButton:hover {
+	background-color: #ececec;
+}
+
+.geEditor button.geBigButton {
+	color: #ffffff;
+	border: none;
+	padding: 4px 10px;
+	font-size: 14px;
+	white-space: nowrap;
+	border-radius: 3px;
+	background-color: #0052cc;
+	cursor: pointer;
+	transition: background-color 0.1s ease-out;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geEditor button.geBigButton:hover {
+	background-color: #0065ff;
+}
+
+.geEditor button.geBigButton:active {
+	background-color: #0747a6;
+}
+
+html body .geBigStandardButton {
+	color: #344563;
+	background-color: rgba(9, 30, 66, 0.08);
+}
+
+html body .geBigStandardButton:hover {
+	background-color: rgba(9, 30, 66, 0.13);
+}
+
+html body .geBigStandardButton:active {
+	background-color: #F8C382;
+	color: #600000;
+}
+
+@media print {
+	div.geNoPrint {
+		display: none !important;
+	}
+}
+
+html div.mxRubberband {
+	border-color: light-dark(#0000DD, white);
+	background-color: light-dark(#99ccff, var(--dark-border-color));
+}
+
+.geDarkMode div.mxRubberband {
+	border-style: dashed;
+}
+
+.geEditor div.mxPopupMenu {
+	box-shadow: 0px 0px 2px #C0C0C0;
+	background-color: var(--ge-panel-color);
+	background-image: none;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: lightgray;
+	padding: 3px;
+}
+
+.geEditor div.mxPopupMenu.geToolbarMenu {
+	border-radius: 10px;
+	box-shadow: 0px 0px 3px 1px #d1d1d1;
+	padding: 10px 14px 12px 14px;
+	background-color: light-dark(var(--ge-panel-color), var(--ge-dark-panel-color));
+}
+
+.geToolbarMenu tr.mxPopupMenuItemHover {
+	background-color: transparent !important;
+}
+
+.geToolbarMenu input[type="checkbox"] {
+	margin: 0 6px 0 0;
+}
+
+.geToolbarMenu label {
+	font-size: 13px;
+}
+
+.geSearchSidebar input {
+	font-size: 12px;
+	box-sizing: border-box;
+	border-radius: 18px;
+	width: 100%;
+	outline: none;
+	padding: 6px 20px 6px 10px
+}
+
+.geSearchSidebar>div {
+	margin-bottom: 4px;
+}
+
+.geSearchSidebar>div>img.geAdaptiveAsset {
+	position: relative;
+	top: 4px;
+	left: -24px;
+	height: 16px;
+	opacity: 0.75;
+	cursor: pointer;
+}
+
+html table.mxPopupMenu {
+	border-collapse: collapse;
+	margin: 0px;
+}
+
+html td.mxPopupMenuItem {
+	padding: 7px 30px 7px 30px;
+	font-size: 10pt;
+}
+
+html td.mxPopupMenuIcon {
+	background-color: transparent;
+	padding: 0px;
+}
+
+table.mxPopupMenu tr {
+	font-size: 4pt;
+}
+
+table.mxPopupMenu hr {
+	color: light-dark(var(--border-color), var(--dark-border-color));
+	background-color: light-dark(var(--border-color), var(--dark-border-color));
+	border: none;
+	height: 1px;
+}
+
+html td.mxWindowTitle {
+	color: light-dark(var(--text-color), var(--dark-text-color));
+	background-image: none;
+	padding: 4px;
+}
+
+table.geProperties {
+	table-layout: fixed;
+}
+
+table.geProperties tr td,
+table.geProperties tr th {
+	height: 21px;
+}
+
+.gePropValue {
+	width: 100%;
+    overflow: hidden;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.gePropHeader,
+.gePropRow {
+	border: 1px solid light-dark(var(--border-color), var(--dark-border-color));
+}
+
+.gePropHeader>.gePropHeaderCell {
+	border-top: 0;
+	border-bottom: 0;
+	text-align: left;
+	width: 50%;
+}
+
+.gePropHeader>.gePropHeaderCell:first-child {
+	border-left: none;
+}
+
+.gePropHeader>.gePropHeaderCell:last-child {
+	border-right: none;
+}
+
+.gePropHeader {
+	background-color: #e5e5e5;
+	color: black;
+}
+
+.gePropRowCell {
+	vertical-align: middle;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-width: 50%;
+}
+
+.gePropHeaderCell:nth-child(2),
+.gePropRowCell:nth-child(2) {
+	border-left: 1px solid light-dark(var(--border-color), var(--dark-border-color));
+}
+
+.gePropRow>.gePropRowCell {
+	background-color: light-dark(#fff, var(--ge-dark-panel-color));
+}
+
+.gePropRowAlt>.gePropRowCell {
+	background-color: light-dark(#fcfcfc, var(--ge-dark-panel-color));
+}
+
+.gePropRowDark>.gePropRowCell {
+	background-color: light-dark(#fff, var(--ge-dark-panel-color));
+	color: light-dark(#305496, #cccccc);
+	font-weight: bold;
+}
+
+.gePropRowDarkAlt>.gePropRowCell {
+	background-color: light-dark(#D9E1F2, #000000);
+	color: light-dark(#305496, #cccccc);
+	font-weight: bold;
+}
+
+.gePropEditor input:invalid {
+	border: 1px solid red;
+}
+
+/* Comments CSS */
+.geCommentsWin {
+	user-select: none;
+	height: 100%;
+	margin-bottom: 10px;
+	overflow: auto;
+}
+
+.geCommentsToolbar {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	overflow: hidden;
+	border-width: 1px 0px 0px 0px;
+	border-style: solid;
+	white-space: nowrap;
+}
+
+.geCommentsList {
+	position: absolute;
+	overflow: auto;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+}
+
+.geCommentContainer {
+	position: relative;
+	padding: 12px;
+	margin: 5px;
+	min-height: 50px;
+	display: block;
+	background-color: white;
+	border-width: 0px 0px 1px 0px;
+	border-style: solid;
+	border-radius: 10px;
+	white-space: nowrap;
+	box-shadow: 2px 2px 6px rgba(60, 64, 67, .15);
+	color: #3C4043;
+}
+
+.geCommentHeader {
+	width: 100%;
+	height: 32px;
+}
+
+.geCommentUserImg {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	float: left;
+	background-color: whitesmoke;
+}
+
+.geCommentHeaderTxt {
+	overflow: hidden;
+	height: 32px;
+	padding-left: 5px;
+}
+
+.geCommentUsername {
+	overflow: hidden;
+	height: 18px;
+	font-size: 15px;
+	font-weight: bold;
+	text-overflow: ellipsis;
+}
+
+.geCommentDate {
+	color: #707070;
+	overflow: hidden;
+	height: 14px;
+	font-size: 11px;
+	text-overflow: ellipsis;
+}
+
+.geCommentDate::first-letter {
+	text-transform: uppercase;
+}
+
+.geCommentTxt {
+	font-size: 14px;
+	padding-top: 5px;
+	white-space: normal;
+	min-height: 12px;
+}
+
+.geCommentEditTxtArea {
+	margin-top: 5px;
+	font-size: 14px !important;
+	min-height: 12px;
+	max-width: 100%;
+	min-width: 100%;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.geCommentEditBtns {
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: 5px;
+	height: 20px;
+}
+
+.geCommentEditBtn {
+	padding: 3px 8px 3px 8px !important;
+	float: right !important;
+	margin-left: 5px;
+}
+
+.geCommentActions {
+	color: #707070;
+	font-size: 12px;
+}
+
+.geCommentActionsList {
+	list-style-type: disc;
+	margin: 0px;
+	padding: 10px 0 0 0;
+}
+
+.geCommentAction {
+	display: inline-block;
+	padding: 0;
+}
+
+.geCommentAction:before {
+	content: "\2022";
+	padding: 5px;
+}
+
+.geCommentAction:first-child:before {
+	content: "";
+	padding: 0;
+}
+
+.geCommentActionLnk {
+	cursor: pointer;
+	color: #707070;
+	text-decoration: none;
+}
+
+.geCommentActionLnk:hover {
+	text-decoration: underline;
+}
+
+.geCheckedBtn {
+	background-color: #ccc;
+	border-top: 1px solid black !important;
+	border-left: 1px solid black !important;
+}
+
+.geCommentBusyImg {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.geAspectDlgListItem {
+	width: 120px;
+	height: 120px;
+	display: inline-block;
+	border: 3px solid #F0F0F0;
+	border-radius: 5px;
+	padding: 5px;
+	margin: 2px 2px 20px 2px;
+}
+
+.geAspectDlgListItem:hover {
+	border: 3px solid #c5c5c5;
+}
+
+.geAspectDlgListItemSelected {
+	border: 3px solid #3b73af;
+}
+
+.geAspectDlgListItemSelected:hover {
+	border: 3px solid #405a86;
+}
+
+.geAspectDlgListItemText {
+	text-overflow: ellipsis;
+	max-width: 100%;
+	min-height: 2em;
+	overflow: hidden;
+	text-align: center;
+	margin-top: 10px;
+}
+
+.geAspectDlgList {
+	min-height: 184px;
+	white-space: nowrap;
+	overflow-x: auto;
+}
+
+.geStripedTable {
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.geStripedTable td,
+.geStripedTable th {
+	border: 1px solid #ddd;
+	text-align: left;
+	padding: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.geStripedTable tr:nth-child(odd) {
+	background-color: #f2f2f2;
+}
+
+.geStripedTable tr:hover {
+	background-color: #ddd;
+}
+
+.geStripedTable th {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	background-color: #bbb;
+}
+
+.geNotification-box {
+	display: flex;
+	text-align: center;
+	position: relative;
+	cursor: pointer;
+	margin-right: 6px;
+	width: 20px;
+	order: -1;
+}
+
+.geNotification-bell {
+	animation: geBellAnim 1s 1s both;
+}
+
+.geNotification-bell * {
+	display: block;
+	margin: 0 auto;
+	background-color: light-dark(#656565, #aaa);
+}
+
+.geBell-top {
+	width: 2px;
+	height: 2px;
+	border-radius: 1px 1px 0 0;
+}
+
+.geBell-middle {
+	width: 12px;
+	height: 12px;
+	margin-top: -1px;
+	border-radius: 7px 7px 0 0;
+}
+
+.geBell-bottom {
+	position: relative;
+	z-index: 0;
+	width: 16px;
+	height: 1px;
+}
+
+.geBell-bottom::before,
+.geBell-bottom::after {
+	content: '';
+	position: absolute;
+	top: -4px;
+}
+
+.geBell-bottom::before {
+	left: 1px;
+	border-bottom-width: 4px;
+	border-right: 0 solid transparent;
+	border-left: 4px solid transparent;
+}
+
+.geBell-bottom::after {
+	right: 1px;
+	border-bottom-width: 4px;
+	border-right: 4px solid transparent;
+	border-left: 0 solid transparent;
+}
+
+.geBell-rad {
+	width: 3px;
+	height: 2px;
+	margin-top: 0.5px;
+	border-radius: 0 0 2px 2px;
+	animation: geRadAnim 1s 2s both;
+}
+
+.geNotification-count {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: -4px;
+	width: 13px;
+	height: 13px;
+	line-height: 13px;
+	font-size: 8px;
+	border-radius: 50%;
+	background-color: #ff4927;
+	color: #FFF;
+	animation: geZoomAnim 1s 1s both;
+}
+
+@keyframes geBellAnim {
+	0% {
+		transform: rotate(0);
+	}
+
+	10% {
+		transform: rotate(30deg);
+	}
+
+	20% {
+		transform: rotate(0);
+	}
+
+	80% {
+		transform: rotate(0);
+	}
+
+	90% {
+		transform: rotate(-30deg);
+	}
+
+	100% {
+		transform: rotate(0);
+	}
+}
+
+@keyframes geRadAnim {
+	0% {
+		transform: translateX(0);
+	}
+
+	10% {
+		transform: translateX(5px);
+	}
+
+	20% {
+		transform: translateX(0);
+	}
+
+	80% {
+		transform: translateX(0);
+	}
+
+	90% {
+		transform: translateX(-5px);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@keyframes geZoomAnim {
+	0% {
+		opacity: 0;
+		transform: scale(0);
+	}
+
+	50% {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.geNotifPanel {
+	height: 300px;
+	width: 300px;
+	background-color: #fff;
+	border-radius: 3px;
+	overflow: hidden;
+	box-shadow: 10px 10px 15px 0 rgba(0, 0, 0, 0.3);
+	transition: all .5s ease-in-out;
+	position: absolute;
+	right: 100px;
+	top: 42px;
+	z-index: 150;
+}
+
+.geNotifPanel .header {
+	background-color: light-dark(#cecece, #424242);
+	color: light-dark(#707070, #ccc);
+	font-size: 15px;
+}
+
+.geNotifPanel .header .title {
+	display: block;
+	text-align: center;
+	line-height: 30px;
+	font-weight: 600;
+}
+
+.geNotifPanel .header .closeBtn {
+	position: absolute;
+	line-height: 30px;
+	cursor: pointer;
+	right: 15px;
+	top: 0;
+}
+
+.geNotifPanel .notifications {
+	position: relative;
+	background-color: light-dark(transparent, #707070);
+	height: 270px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.geNotifPanel .notifications .line {
+	position: absolute;
+	top: 0;
+	left: 27px;
+	height: 100%;
+	width: 3px;
+	background-color: #EBEBEB;
+}
+
+.geNotifPanel .notifications .notification {
+	position: relative;
+	z-index: 2;
+	margin: 25px 20px 25px 43px;
+}
+
+.geNotifPanel .notifications .notification:nth-child(n+1) {
+	animation: geHere-am-i 0.5s ease-out 0.4s;
+	animation-fill-mode: both;
+}
+
+.geNotifPanel .notifications .notification:hover {
+	color: #1B95E0;
+	cursor: pointer;
+}
+
+.geNotifPanel .notifications .notification .circle {
+	box-sizing: border-box;
+	position: absolute;
+	height: 11px;
+	width: 11px;
+	background-color: #fff;
+	border: 2px solid #1B95E0;
+	box-shadow: 0 0 0 3px #fff;
+	border-radius: 6px;
+	top: 0;
+	left: -20px;
+}
+
+.geNotifPanel .notifications .notification .circle.active {
+	background-color: #1B95E0;
+}
+
+.geNotifPanel .notifications .notification .time {
+	display: block;
+	font-size: 11px;
+	line-height: 11px;
+	margin-bottom: 2px;
+}
+
+.geNotifPanel .notifications .notification p {
+	font-size: 15px;
+	line-height: 20px;
+	margin: 0;
+}
+
+.geNotifPanel .notifications .notification p b {
+	font-weight: 600;
+}
+
+@-webkit-keyframes geHere-am-i {
+	from {
+		transform: translate3d(0, 50px, 0);
+		opacity: 0;
+	}
+
+	to {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+
+@keyframes geHere-am-i {
+	from {
+		transform: translate3d(0, 50px, 0);
+		opacity: 0;
+	}
+
+	to {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+}
+
+.geTempTree {
+	margin: 0;
+	padding: 0;
+}
+
+.geTempTree,
+.geTempTreeActive,
+.geTempTreeNested {
+	list-style-type: none;
+	transition: all 0.5s;
+}
+
+.geTempTreeCaret {
+	box-sizing: border-box;
+	cursor: pointer;
+	user-select: none;
+	padding: 6px;
+	width: 100%;
+	transition: all 0.5s;
+}
+
+.geTempTreeCaret::before {
+	content: "\25B6";
+	display: inline-block;
+	font-size: 10px;
+	margin-right: 6px;
+}
+
+.geTempTreeCaret-down::before {
+	transform: rotate(90deg);
+}
+
+.geTempTreeNested {
+	height: 0;
+	opacity: 0;
+}
+
+.geTempTreeActive {
+	height: 100%;
+	opacity: 1;
+}
+
+.geTempTreeActive,
+.geTempTreeNested {
+	padding-left: 15px;
+}
+
+.geTempTreeActive>li,
+.geTempTreeNested>li {
+	box-sizing: border-box;
+	padding: 3px;
+	width: 100%;
+	cursor: pointer;
+	user-select: none;
+	transition: all 0.5s;
+}
+
+/*Electron Window Controls*/
+#geWindow-controls {
+	display: grid;
+	grid-template-columns: repeat(3, 30px);
+	position: absolute;
+	top: 2px;
+	right: 3px;
+	height: 22px;
+	-webkit-app-region: no-drag;
+}
+
+#geWindow-controls .button {
+	grid-row: 1 / span 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	user-select: none;
+}
+
+#min-button {
+	grid-column: 1;
+}
+
+#max-button,
+#restore-button {
+	grid-column: 2;
+}
+
+#close-button {
+	grid-column: 3;
+}
+
+#geWindow-controls .button.dark:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+#geWindow-controls .button.dark:active {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+#geWindow-controls .button.white:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+#geWindow-controls .button.white:active {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+#close-button:hover {
+	background-color: #E81123 !important;
+}
+
+#close-button:active {
+	background-color: #F1707A !important;
+}
+
+#restore-button {
+	display: none !important;
+}
+
+.geMaximized #restore-button {
+	display: flex !important;
+}
+
+.geMaximized #max-button {
+	display: none;
+}
+
+.geAtlas .geMenubarContainer:not(.geDarkMode *),
+.geAtlas .gePrimaryBtn.geEmbedBtn:not(.geDarkMode *) {
+	background-color: #1868db;
+	color: #ffffff;
+}
+
+.geAtlas .gePrimaryBtn.geEmbedBtn:not(.geDarkMode *) {
+	border: black;
+}
+
+.geAtlas .gePrimaryBtn.geEmbedBtn:hover:not(.geDarkMode *, [disabled]) {
+	background-color: #1558bc !important;
+}
+
+.geAtlas .geMenubarContainer .geItem:hover:not(.geDarkMode *) {
+	background-color: rgba(9, 30, 66, 0.48) !important;
+}
+
+.geAtlas .geMenubar .geButtonContainer {
+	margin-top: 0px;
+}
+
+.geAtlas .geStatus,
+.geAtlas .geStatus>div:not(.geStatusAlert) {
+	opacity: 1;
+}
+
+.geAtlas .geMenubar .geButtonContainer .geButton {
+	margin: 0;
+	opacity: 0.85;
+}
+
+.geAtlas .geMenubar .geButtonContainer .geButton:hover {
+	background-color: transparent;
+	opacity: 1 !important;
+}
+
+.geEditor.geAtlas>.geMenubarContainer {
+	height: 40px;
+}
+
+.geEditor.geAtlas>.geMenubarContainer .geMenubar {
+	padding-left: 12px;
+	height: 100%;
+	top: 0;
+}
+
+.geAtlas .geMenubarContainer .geItem {
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.geEditor *::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+.geEditor *::-webkit-scrollbar-track {
+	background-clip: padding-box;
+	border: solid transparent;
+	border-width: 1px;
+}
+
+.geEditor *::-webkit-scrollbar-corner {
+	background-color: transparent;
+}
+
+.geEditor *::-webkit-scrollbar-thumb {
+	background-color: light-dark(#e2e2e2, #2c2c2c);
+	background-clip: padding-box;
+	border: solid transparent;
+	border-radius: 4px;
+}
+
+.geEditor *::-webkit-scrollbar-thumb:hover {
+	background-color: light-dark(var(--scrollbar-hover-color), var(--dark-border-color));
+}
+
+[draggable="true"] {
+	transform: translate(0, 0);
+	z-index: 0;
+}

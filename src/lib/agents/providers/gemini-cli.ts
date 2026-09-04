@@ -58,6 +58,67 @@ function detectGeminiAuthSource(): string | null {
   return null;
 }
 
+/**
+ * Extra env vars to inject into every headless Gemini CLI spawn.
+ *
+ * Two gates block non-interactive runs of Gemini CLI 0.42+ that don't affect
+ * the in-UI verify path (which inherits the Next.js server's richer env):
+ *
+ *  - Folder trust: agents execute in arbitrary project directories that
+ *    Gemini treats as untrusted, which aborts the run ("not a trusted
+ *    directory", exit 55). `GEMINI_CLI_TRUST_WORKSPACE=true` opts the
+ *    workspace into trust without an interactive prompt. Older CLIs without
+ *    the folder-trust feature ignore it, so it's safe to always set.
+ *
+ *  - Auth method: when the user is "Signed in with Google" (oauth_creds.json
+ *    present) but `settings.json` has no `selectedAuthType`, headless Gemini
+ *    refuses to auto-select OAuth and errors with "Please set an Auth method"
+ *    (exit 41). `GOOGLE_GENAI_USE_GCA=true` points it at the existing Google
+ *    sign-in. We only set an auth selector when no explicit key / Vertex
+ *    config is present, mirroring `detectGeminiAuthSource`'s precedence so we
+ *    never override a user-configured method.
+ */
+export function buildGeminiHeadlessEnv(): Record<string, string> {
+  const env: Record<string, string> = {
+    GEMINI_CLI_TRUST_WORKSPACE: "true",
+  };
+
+  if (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) {
+    return env;
+  }
+
+  const serviceAccountPath =
+    typeof process.env.GOOGLE_APPLICATION_CREDENTIALS === "string"
+      ? process.env.GOOGLE_APPLICATION_CREDENTIALS
+      : undefined;
+  if (fileExists(serviceAccountPath)) {
+    return env;
+  }
+
+  const oauthCredsPath = path.join(process.env.HOME || "", ".gemini", "oauth_creds.json");
+  const googleAccountPath = path.join(process.env.HOME || "", ".gemini", "google_account_id");
+  if (fileExists(oauthCredsPath) || fileExists(googleAccountPath)) {
+    env.GOOGLE_GENAI_USE_GCA = "true";
+    return env;
+  }
+
+  const adcPath = path.join(
+    process.env.HOME || "",
+    ".config",
+    "gcloud",
+    "application_default_credentials.json"
+  );
+  if (
+    fileExists(adcPath) &&
+    typeof process.env.GOOGLE_CLOUD_PROJECT === "string" &&
+    process.env.GOOGLE_CLOUD_PROJECT.trim()
+  ) {
+    env.GOOGLE_GENAI_USE_VERTEXAI = "true";
+  }
+
+  return env;
+}
+
 export const geminiCliProvider: AgentProvider = {
   id: "gemini-cli",
   name: "Gemini CLI",

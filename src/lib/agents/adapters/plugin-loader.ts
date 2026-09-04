@@ -102,9 +102,8 @@ export async function loadExternalAdapters(): Promise<LoadedPlugin[]> {
 
     for (const entry of entries) {
       if (!entry || entry.enabled === false) continue;
-
-      const loadedModule = await importPluginModule(entry);
-      const adapter = extractAdapter(loadedModule);
+      const pluginModule = await importPluginModule(entry);
+      const adapter = extractAdapter(pluginModule);
       if (!adapter) {
         console.warn(
           `[cabinet] Adapter plugin "${entry.package || entry.path}" did not export a valid adapter.`

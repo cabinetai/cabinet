@@ -10,9 +10,12 @@ let mod: typeof import("./path-utils");
 before(async () => {
   tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cabinet-path-utils-test-"));
   process.env.CABINET_DATA_DIR = tempRoot;
-  // A room with one real subfolder; the stale "/home" subfolder is absent.
-  await fs.mkdir(path.join(tempRoot, "dragonstone", "home", "reports"), { recursive: true });
   mod = await import("./path-utils");
+  // A room with one real subfolder; the stale "/home" subfolder is absent.
+  // Cabinet's managed data dir appends the active cabinet name, so the content
+  // root (mod.DATA_DIR) is <tempRoot>/Cabinet — build the fixture there so it
+  // lines up with where resolveAgentCwd resolves room subfolders.
+  await fs.mkdir(path.join(mod.DATA_DIR, "dragonstone", "home", "reports"), { recursive: true });
 });
 
 after(async () => {

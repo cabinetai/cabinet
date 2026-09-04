@@ -38,6 +38,7 @@ export function TaskComposeBody({ context }: TaskComposeBodyProps) {
   const [agents, setAgents] = useState<AgentListItem[]>([]);
 
   const pinnedPagePath = context?.pinnedPagePath ?? null;
+  const pinnedPagePaths = context?.pinnedPagePaths ?? (pinnedPagePath ? [pinnedPagePath] : []);
   const editorScoped = context?.source === "editor";
   const defaultAgentSlug = context?.defaultAgentSlug ?? (editorScoped ? "editor" : "");
 
@@ -129,6 +130,7 @@ export function TaskComposeBody({ context }: TaskComposeBodyProps) {
   const composer = useComposer({
     items: mentionItems,
     pinnedPagePath,
+    pinnedPagePaths,
     attachments,
     stagingClientUuid,
     onSubmit: async ({

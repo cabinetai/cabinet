@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "Xuất trang",
+      "focus": "Tập trung",
+      "exitFocus": "Thoát khỏi tập trung",
       "copyMarkdown": "Sao chép Markdown",
       "copyForLlms": "Sao chép cho LLM",
       "copyAsHtml": "Sao chép dưới dạng HTML",

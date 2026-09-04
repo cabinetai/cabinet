@@ -1063,6 +1063,8 @@
   "editor": {
     "header": {
       "exportPage": "페이지 내보내기",
+      "focus": "포커스",
+      "exitFocus": "포커스 종료",
       "copyMarkdown": "Markdown 복사",
       "copyForLlms": "LLM용 복사",
       "copyAsHtml": "HTML로 복사",

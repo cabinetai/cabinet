@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Upload, Link as LinkIcon, Clipboard } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buildSafeFileForm } from "@/lib/upload/safe-file-form";
 
 export type MediaKind = "image" | "video" | "file";
 
@@ -18,10 +19,9 @@ async function uploadFile(
   pagePath: string,
   file: File
 ): Promise<{ url: string; filename: string } | null> {
-  const formData = new FormData();
-  formData.append("file", file);
+  const { form, headers } = buildSafeFileForm(file);
   try {
-    const res = await fetch(`/api/upload/${pagePath}`, { method: "POST", body: formData });
+    const res = await fetch(`/api/upload/${pagePath}`, { method: "POST", headers, body: form });
     if (!res.ok) return null;
     const data = await res.json();
     return { url: data.url, filename: data.filename };

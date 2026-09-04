@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import yaml from "js-yaml";
 import simpleGit from "simple-git";
-import { DATA_DIR } from "@/lib/storage/path-utils";
+import { DATA_DIR, DATA_PARENT_DIR } from "@/lib/storage/path-utils";
 import { fileExists } from "@/lib/storage/fs-operations";
 import { CABINET_MANIFEST_FILE } from "@/lib/cabinets/files";
 import { ROOT_CABINET_PATH, normalizeCabinetPath } from "@/lib/cabinets/paths";
@@ -126,9 +126,13 @@ export interface HomeConfig {
   lastActiveRoom: string | null;
   /** Deepest valid path the user was on, restored on reopen (PRD §10.5). */
   lastActivePath: string | null;
+  /** Active cabinet (root cabinet) — the data-folder child used as content root. */
+  activeCabinet: string | null;
 }
 
-const HOME_CONFIG_PATH = path.join(DATA_DIR, ".home", "home.json");
+// home.json lives in the shared data folder (parent of all cabinets): it carries
+// the cross-cabinet `activeCabinet` pointer and must not be scoped to one cabinet.
+const HOME_CONFIG_PATH = path.join(DATA_PARENT_DIR, ".home", "home.json");
 
 /** Read the home container config (`data/.home/home.json`). */
 export async function getHomeConfig(): Promise<HomeConfig> {
@@ -146,9 +150,20 @@ export async function getHomeConfig(): Promise<HomeConfig> {
         typeof parsed.lastActivePath === "string"
           ? parsed.lastActivePath
           : null,
+      activeCabinet:
+        typeof parsed.activeCabinet === "string"
+          ? parsed.activeCabinet
+          : typeof parsed.activeVault === "string"
+          ? parsed.activeVault
+          : null,
     };
   } catch {
-    return { defaultRoom: null, lastActiveRoom: null, lastActivePath: null };
+    return {
+      defaultRoom: null,
+      lastActiveRoom: null,
+      lastActivePath: null,
+      activeCabinet: null,
+    };
   }
 }
 
@@ -182,9 +197,27 @@ async function patchHomeConfig(patch: Partial<HomeConfig>): Promise<void> {
     if (patch.lastActivePath === null) delete current.lastActivePath;
     else current.lastActivePath = patch.lastActivePath;
   }
+  if (patch.activeCabinet !== undefined) {
+    if (patch.activeCabinet === null) {
+      delete current.activeCabinet;
+      delete current.activeVault;
+    } else {
+      current.activeCabinet = patch.activeCabinet;
+      delete current.activeVault;
+    }
+  }
   const tmp = `${HOME_CONFIG_PATH}.tmp-${process.pid}-${Date.now()}`;
   await fs.writeFile(tmp, JSON.stringify(current, null, 2), "utf-8");
   await fs.rename(tmp, HOME_CONFIG_PATH);
+}
+
+/**
+ * Persist the active cabinet (root cabinet) pointer into the shared home config.
+ * The caller is responsible for validating the cabinet exists and for triggering
+ * the server restart that makes the new content root take effect.
+ */
+export async function writeActiveCabinet(name: string): Promise<void> {
+  await patchHomeConfig({ activeCabinet: name });
 }
 
 /**

@@ -1,0 +1,516 @@
+/* Stylesheet for Jupyter Notebook Previews */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap');
+
+.preview-container {
+  transition: all 0.3s ease;
+  font-variant-ligatures: common-ligatures;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: #F5F2EB; /* Limestone White */
+}
+
+/* Force Fira Code 10pt, slate grey background, and wrapping text for all preview code blocks */
+.preview-container pre,
+.code-cell-preview pre {
+  background-color: #1e293b !important; /* Slate grey */
+  color: #f8fafc !important; /* Slate 50 */
+  border: 1px solid #334155 !important; /* Slate 700 */
+  border-radius: 6px !important;
+  font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 10pt !important;
+  padding: 12px 16px !important;
+  margin: 1.25rem 0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden !important; /* Remove horizontal scrollbars */
+  white-space: pre-wrap !important; /* Force line wrapping */
+  overflow-wrap: break-word !important; /* Break long words */
+}
+
+.preview-container code,
+.code-cell-preview code {
+  font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 10pt !important;
+  background: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: break-word !important;
+}
+
+/* --- PREVIEW PANE SYNTAX HIGHLIGHTING (Slate theme) --- */
+.preview-container pre code .hljs-keyword,
+.preview-container pre code .hljs-selector-tag,
+.preview-container pre code .hljs-built_in,
+.code-cell-preview pre code .hljs-keyword,
+.code-cell-preview pre code .hljs-selector-tag,
+.code-cell-preview pre code .hljs-built_in {
+  color: #38bdf8 !important; /* sky-400 */
+  font-weight: 600;
+}
+
+.preview-container pre code .hljs-string,
+.preview-container pre code .hljs-attr,
+.code-cell-preview pre code .hljs-string,
+.code-cell-preview pre code .hljs-attr {
+  color: #34d399 !important; /* emerald-400 */
+}
+
+.preview-container pre code .hljs-number,
+.preview-container pre code .hljs-literal,
+.code-cell-preview pre code .hljs-number,
+.code-cell-preview pre code .hljs-literal {
+  color: #fb923c !important; /* orange-400 */
+}
+
+.preview-container pre code .hljs-comment,
+.code-cell-preview pre code .hljs-comment {
+  color: #64748b !important; /* slate-500 */
+  font-style: italic;
+}
+
+.preview-container pre code .hljs-function,
+.preview-container pre code .hljs-title,
+.code-cell-preview pre code .hljs-function,
+.code-cell-preview pre code .hljs-title {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+.preview-container pre code .hljs-type,
+.preview-container pre code .hljs-class,
+.code-cell-preview pre code .hljs-type,
+.code-cell-preview pre code .hljs-class {
+  color: #2dd4bf !important; /* teal-400 */
+}
+
+.preview-container pre code .hljs-params,
+.preview-container pre code .hljs-variable,
+.code-cell-preview pre code .hljs-params,
+.code-cell-preview pre code .hljs-variable {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+.preview-container pre code .hljs-meta,
+.code-cell-preview pre code .hljs-meta {
+  color: #f43f5e !important; /* rose-500 */
+}
+
+/* --- EDITOR PANE SYNTAX HIGHLIGHTING (Parchment theme) --- */
+.notebook-editor-pane pre code .hljs-keyword,
+.notebook-editor-pane pre code .hljs-selector-tag,
+.notebook-editor-pane pre code .hljs-built_in {
+  color: #8B5E3C; /* Warm brown */
+  font-weight: 600;
+}
+
+.notebook-editor-pane pre code .hljs-string,
+.notebook-editor-pane pre code .hljs-attr {
+  color: #8B2E3E; /* Red-brown */
+}
+
+.notebook-editor-pane pre code .hljs-number,
+.notebook-editor-pane pre code .hljs-literal {
+  color: #b25e2e;
+}
+
+.notebook-editor-pane pre code .hljs-comment {
+  color: #7A6B5D; /* Muted brown */
+  font-style: italic;
+}
+
+.notebook-editor-pane pre code .hljs-function,
+.notebook-editor-pane pre code .hljs-title {
+  color: #8B5E3C;
+}
+
+/* Editor Pane Dark Mode Syntax Highlights */
+.dark .notebook-editor-pane pre code .hljs-keyword,
+.dark .notebook-editor-pane pre code .hljs-selector-tag,
+.dark .notebook-editor-pane pre code .hljs-built_in {
+  color: #38bdf8 !important; /* sky-400 */
+}
+
+.dark .notebook-editor-pane pre code .hljs-string,
+.dark .notebook-editor-pane pre code .hljs-attr {
+  color: #34d399 !important; /* emerald-400 */
+}
+
+.dark .notebook-editor-pane pre code .hljs-number,
+.dark .notebook-editor-pane pre code .hljs-literal {
+  color: #fb923c !important; /* orange-400 */
+}
+
+.dark .notebook-editor-pane pre code .hljs-comment {
+  color: #64748b !important; /* slate-500 */
+}
+
+.dark .notebook-editor-pane pre code .hljs-function,
+.dark .notebook-editor-pane pre code .hljs-title {
+  color: #818cf8 !important; /* indigo-400 */
+}
+
+/* --- SUBSTACK TEMPLATE --- */
+.preview-substack {
+  background-color: var(--color-bg-substack, #F5F2EB);
+  color: var(--color-text-substack, #292929);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.62;
+  font-size: 17px;
+  padding: 2.5rem 2rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.preview-substack h1,
+.preview-substack h2,
+.preview-substack h3,
+.preview-substack h4 {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  font-weight: 700;
+  color: var(--color-title-substack, #1a1a1a);
+  line-height: 1.25;
+  margin-top: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.preview-substack h1 { font-size: 32px; letter-spacing: -0.015em; }
+.preview-substack h2 { font-size: 24px; border-bottom: none; padding-bottom: 0; }
+.preview-substack h3 { font-size: 20px; }
+
+.preview-substack p {
+  margin-bottom: 1.25rem;
+}
+
+.preview-substack a {
+  color: #ff6719;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.2s;
+}
+.preview-substack a:hover {
+  opacity: 0.8;
+}
+
+.preview-substack blockquote {
+  border-left: 3px solid #1a1a1a;
+  padding-left: 1.25rem;
+  font-style: italic;
+  font-size: 19px;
+  color: #555555;
+  margin: 1.5rem 0;
+}
+
+.preview-substack ul,
+.preview-substack ol {
+  padding-left: 1.5rem;
+  margin: 1.25rem 0;
+}
+.preview-substack ul { list-style-type: disc; }
+.preview-substack ol { list-style-type: decimal; }
+.preview-substack li {
+  margin-bottom: 0.5rem;
+}
+.preview-substack li:last-child {
+  margin-bottom: 0;
+}
+
+.preview-substack code:not(pre code) {
+  background-color: #f3f3f3;
+  color: #e01e5a;
+  padding: 0.15em 0.3em;
+  border-radius: 3px;
+}
+
+/* Substack image figures */
+.preview-substack figure {
+  margin: 2rem 0;
+  text-align: center;
+}
+.preview-substack figcaption {
+  font-size: 13px;
+  color: #666666;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* --- MEDIUM TEMPLATE --- */
+.preview-medium {
+  background-color: var(--color-bg-medium, #F5F2EB);
+  color: var(--color-text-medium, #292929);
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  line-height: 1.58;
+  font-size: 18px;
+  padding: 3rem 2.5rem;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.preview-medium h1,
+.preview-medium h2,
+.preview-medium h3,
+.preview-medium h4 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-weight: 700;
+  color: var(--color-title-medium, #292929);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.preview-medium h1 { font-size: 34px; }
+.preview-medium h2 { font-size: 26px; }
+.preview-medium h3 { font-size: 22px; }
+
+.preview-medium p {
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.003em;
+}
+
+.preview-medium a {
+  color: #1a8917;
+  text-decoration: underline;
+}
+
+.preview-medium blockquote {
+  font-family: Georgia, serif;
+  font-style: italic;
+  border-left: 3px solid #292929;
+  padding-left: 1.5rem;
+  margin: 1.8rem 0;
+  color: #666666;
+}
+
+.preview-medium ul,
+.preview-medium ol {
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+}
+.preview-medium ul { list-style-type: disc; }
+.preview-medium ol { list-style-type: decimal; }
+.preview-medium li {
+  margin-bottom: 0.5rem;
+}
+.preview-medium li:last-child {
+  margin-bottom: 0;
+}
+
+.preview-medium code:not(pre code) {
+  background-color: rgba(242, 242, 242, 1);
+  color: rgba(41, 41, 41, 1);
+  padding: 2px 4px;
+}
+
+/* --- DEV.TO / MARKDOWN TEMPLATE --- */
+.preview-markdown {
+  background-color: var(--color-bg-markdown, #F5F2EB);
+  color: var(--color-text-markdown, #090909);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-size: 16px;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.preview-markdown h1,
+.preview-markdown h2,
+.preview-markdown h3,
+.preview-markdown h4 {
+  font-weight: 800;
+  color: var(--color-title-markdown, #090909);
+  line-height: 1.25;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #eef0f1;
+  padding-bottom: 0.3em;
+}
+
+.preview-markdown h1 { font-size: 30px; }
+.preview-markdown h2 { font-size: 24px; }
+.preview-markdown h3 { font-size: 20px; border-bottom: none; }
+
+.preview-markdown p {
+  margin-bottom: 1rem;
+}
+
+.preview-markdown a {
+  color: #3b49df;
+  text-decoration: none;
+  font-weight: 500;
+}
+.preview-markdown a:hover {
+  text-decoration: underline;
+}
+
+.preview-markdown blockquote {
+  border-left: 4px solid #d6d6d7;
+  padding-left: 1rem;
+  color: #575757;
+  margin: 1rem 0;
+}
+
+.preview-markdown ul,
+.preview-markdown ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.preview-markdown ul { list-style-type: disc; }
+.preview-markdown ol { list-style-type: decimal; }
+.preview-markdown li {
+  margin-bottom: 0.4rem;
+}
+.preview-markdown li:last-child {
+  margin-bottom: 0;
+}
+
+.preview-markdown code:not(pre code) {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* --- DEFAULT / CLEAN TEMPLATE --- */
+.preview-default {
+  background-color: var(--color-bg-default, #F5F2EB);
+  color: var(--color-text-default, #1f2937);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.7;
+  font-size: 16px;
+  padding: 2.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.preview-default h1,
+.preview-default h2,
+.preview-default h3,
+.preview-default h4 {
+  font-weight: 700;
+  color: var(--color-title-default, #111827);
+  line-height: 1.2;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.preview-default h1 { font-size: 2.25rem; }
+.preview-default h2 { font-size: 1.75rem; }
+.preview-default h3 { font-size: 1.35rem; }
+
+.preview-default p {
+  margin-bottom: 1.25rem;
+}
+
+.preview-default a {
+  color: #2563eb;
+  text-decoration: none;
+}
+.preview-default a:hover {
+  text-decoration: underline;
+}
+
+.preview-default blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1.25rem;
+  color: #4b5563;
+  font-style: italic;
+  margin: 1.5rem 0;
+}
+
+.preview-default ul,
+.preview-default ol {
+  padding-left: 1.5rem;
+  margin: 1.25rem 0;
+}
+.preview-default ul { list-style-type: disc; }
+.preview-default ol { list-style-type: decimal; }
+.preview-default li {
+  margin-bottom: 0.5rem;
+}
+.preview-default li:last-child {
+  margin-bottom: 0;
+}
+
+.preview-default code:not(pre code) {
+  background-color: #f3f4f6;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+/* --- DARK MODE ADAPTATIONS --- */
+.dark .preview-container {
+  background-color: #0f172a !important;
+}
+.dark .preview-substack {
+  --color-bg-substack: #18181c;
+  --color-text-substack: #e1e1e6;
+  --color-title-substack: #ffffff;
+}
+.dark .preview-substack blockquote {
+  border-left-color: #e1e1e6;
+  color: #a1a1a6;
+}
+.dark .preview-substack code:not(pre code) {
+  background-color: #2c2c35;
+  color: #ff527b;
+}
+
+.dark .preview-medium {
+  --color-bg-medium: #121212;
+  --color-text-medium: #e1e1e6;
+  --color-title-medium: #ffffff;
+}
+.dark .preview-medium blockquote {
+  border-left-color: #e1e1e6;
+  color: #a1a1a6;
+}
+.dark .preview-medium code:not(pre code) {
+  background-color: #242424;
+  color: #ffffff;
+}
+
+.dark .preview-markdown {
+  --color-bg-markdown: #15181f;
+  --color-text-markdown: #f0f6fc;
+  --color-title-markdown: #f0f6fc;
+}
+.dark .preview-markdown h1,
+.dark .preview-markdown h2,
+.dark .preview-markdown h3,
+.dark .preview-markdown h4 {
+  border-bottom-color: #21262d;
+}
+.dark .preview-markdown blockquote {
+  border-left-color: #30363d;
+  color: #8b949e;
+}
+.dark .preview-markdown code:not(pre code) {
+  background-color: rgba(110, 118, 129, 0.2);
+}
+
+.dark .preview-default {
+  --color-bg-default: #0f172a;
+  --color-text-default: #cbd5e1;
+  --color-title-default: #f8fafc;
+}
+.dark .preview-default blockquote {
+  border-left-color: #334155;
+  color: #94a3b8;
+}
+.dark .preview-default code:not(pre code) {
+  background-color: #1e293b;
+}
+
+/* Hide styling triggers */
+.preview-hidden-input {
+  display: none !important;
+}
+.preview-hidden-cell {
+  display: none !important;
+}
+.preview-hidden-output {
+  display: none !important;
+}

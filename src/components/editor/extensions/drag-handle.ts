@@ -1,6 +1,7 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey, NodeSelection, TextSelection, type Transaction } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
+import type { Node as PMNode } from "@tiptap/pm/model";
 
 /**
  * Move the top-level block containing the current selection up or down
@@ -101,6 +102,49 @@ function getOrCreateAddButton(): HTMLButtonElement {
   return el;
 }
 
+const LIST_TYPES = new Set(["bulletList", "orderedList", "taskList"]);
+
+/** Vertical-hit test against a node's rendered box. */
+function domContainsY(view: EditorView, pos: number, top: number): boolean {
+  const dom = view.nodeDOM(pos);
+  if (!(dom instanceof HTMLElement)) return false;
+  const r = dom.getBoundingClientRect();
+  return top >= r.top && top <= r.bottom;
+}
+
+/** Find the direct child of `listNode` whose rendered box contains `top`. */
+function childItemAtY(
+  view: EditorView,
+  listPos: number,
+  listNode: PMNode,
+  top: number
+): { pos: number; node: PMNode } | null {
+  let found: { pos: number; node: PMNode } | null = null;
+  listNode.forEach((child, offset) => {
+    if (found) return;
+    const childPos = listPos + 1 + offset; // +1 enters the list node
+    if (domContainsY(view, childPos, top)) found = { pos: childPos, node: child };
+  });
+  return found;
+}
+
+/** Within a list item, find a nested sub-list whose box contains `top`. */
+function nestedListAtY(
+  view: EditorView,
+  itemPos: number,
+  itemNode: PMNode,
+  top: number
+): { pos: number; node: PMNode } | null {
+  let found: { pos: number; node: PMNode } | null = null;
+  itemNode.forEach((child, offset) => {
+    if (found) return;
+    if (!LIST_TYPES.has(child.type.name)) return;
+    const childPos = itemPos + 1 + offset;
+    if (domContainsY(view, childPos, top)) found = { pos: childPos, node: child };
+  });
+  return found;
+}
+
 function findBlockAt(view: EditorView, coords: { left: number; top: number }) {
   const pos = view.posAtCoords(coords);
   if (!pos) return null;
@@ -108,16 +152,56 @@ function findBlockAt(view: EditorView, coords: { left: number; top: number }) {
   while ($pos.depth > 0 && !$pos.parent.type.isBlock) {
     $pos = view.state.doc.resolve($pos.before());
   }
-  // Walk up until we find a top-level child of the doc
-  let depth = $pos.depth;
-  while (depth > 1) {
-    const parent = view.state.doc.resolve($pos.before(depth)).parent;
-    if (parent.type.name === "doc") break;
-    depth -= 1;
+
+  // Step 1: resolve the top-level block (child of doc) under the cursor.
+  let nodePos: number;
+  if ($pos.depth === 0) {
+    // posAtCoords landed on a boundary between top-level blocks (inside:-1).
+    // This happens when the pointer is in a block's margin or past the end of
+    // short text — e.g. hovering a heading whose text doesn't reach the probe
+    // X. Picking nodePos 0 here was the bug (it always returned the first
+    // node). Instead choose the adjacent top-level child whose rendered box
+    // vertically contains coords.top, preferring the node after the boundary.
+    const afterPos = $pos.pos;
+    const beforePos = $pos.nodeBefore ? $pos.pos - $pos.nodeBefore.nodeSize : -1;
+    if ($pos.nodeAfter && domContainsY(view, afterPos, coords.top)) nodePos = afterPos;
+    else if ($pos.nodeBefore && domContainsY(view, beforePos, coords.top)) nodePos = beforePos;
+    else if ($pos.nodeAfter) nodePos = afterPos;
+    else if (beforePos >= 0) nodePos = beforePos;
+    else return null;
+  } else {
+    // Walk up until we find a top-level child of the doc
+    let depth = $pos.depth;
+    while (depth > 1) {
+      const parent = view.state.doc.resolve($pos.before(depth)).parent;
+      if (parent.type.name === "doc") break;
+      depth -= 1;
+    }
+    nodePos = $pos.before(Math.max(depth, 1));
   }
-  const nodePos = depth === 0 ? 0 : $pos.before(Math.max(depth, 1));
-  const node = view.state.doc.nodeAt(nodePos);
+
+  let node = view.state.doc.nodeAt(nodePos);
   if (!node) return null;
+
+  // Step 2: if the block is a list, descend to the individual list item under
+  // the cursor's Y (Notion-style per-item handles), recursing into nested
+  // sub-lists so the handle targets the deepest item the pointer is over.
+  while (node && LIST_TYPES.has(node.type.name)) {
+    const item = childItemAtY(view, nodePos, node, coords.top);
+    if (!item) break;
+    const nested = nestedListAtY(view, item.pos, item.node, coords.top);
+    if (nested) {
+      // Cursor is over the nested portion → descend into the sub-list.
+      nodePos = nested.pos;
+      node = nested.node as typeof node;
+      continue;
+    }
+    // Cursor is on this item's own line → target the item itself.
+    nodePos = item.pos;
+    node = item.node as typeof node;
+    break;
+  }
+
   const dom = view.nodeDOM(nodePos) as HTMLElement | null;
   return { pos: nodePos, node, dom };
 }
@@ -168,7 +252,7 @@ export const DragHandle = Extension.create({
   },
 
   addProseMirrorPlugins() {
-    let currentBlock: { pos: number; node: { nodeSize: number }; dom: HTMLElement } | null = null;
+    let currentBlock: { pos: number; node: PMNode; dom: HTMLElement } | null = null;
 
     const handle = typeof document !== "undefined" ? getOrCreateHandle() : null;
     const addBtn = typeof document !== "undefined" ? getOrCreateAddButton() : null;
@@ -187,6 +271,11 @@ export const DragHandle = Extension.create({
 
           const onMouseMove = (event: MouseEvent) => {
             if (!view.editable) return;
+            // Ignore stale/duplicate editor views (e.g. React StrictMode or a
+            // detached instance left over from a remount). Their view.dom is
+            // disconnected and reports a zero rect, which would otherwise call
+            // hide() on every mousemove and fight the live instance → flicker.
+            if (!view.dom.isConnected) return;
             const rect = view.dom.getBoundingClientRect();
             if (
               event.clientX < rect.left - 60 ||
@@ -206,6 +295,21 @@ export const DragHandle = Extension.create({
             }
             currentBlock = block as typeof currentBlock;
             const domRect = block.dom.getBoundingClientRect();
+            // For list items the block DOM is the <li>, whose box starts at the
+            // text (the bullet/number marker is drawn just outside it). Anchoring
+            // to the <li> left would place the handle on top of the marker, so
+            // use the parent list element's edge instead — that sits left of the
+            // markers and lines up with paragraph handles (and indents naturally
+            // for nested sub-lists).
+            const blockType = (block.node as { type?: { name?: string } }).type?.name;
+            const isListItem = blockType === "listItem" || blockType === "taskItem";
+            const anchorEl =
+              isListItem && block.dom.parentElement instanceof HTMLElement
+                ? block.dom.parentElement
+                : block.dom;
+            const anchorRect = anchorEl.getBoundingClientRect();
+            const leftEdge = anchorRect.left;
+            const rightEdge = anchorRect.right;
             const isRtl =
               typeof document !== "undefined" &&
               document.documentElement.dir === "rtl";
@@ -217,12 +321,12 @@ export const DragHandle = Extension.create({
               handle.style.left = "auto";
               handle.style.right = `${
                 document.documentElement.clientWidth -
-                (window.scrollX + domRect.right) -
+                (window.scrollX + rightEdge) -
                 22
               }px`;
             } else {
               handle.style.right = "auto";
-              handle.style.left = `${window.scrollX + domRect.left - 22}px`;
+              handle.style.left = `${window.scrollX + leftEdge - 22}px`;
             }
             if (addBtn) {
               addBtn.style.display = "flex";
@@ -231,34 +335,48 @@ export const DragHandle = Extension.create({
                 addBtn.style.left = "auto";
                 addBtn.style.right = `${
                   document.documentElement.clientWidth -
-                  (window.scrollX + domRect.right) -
+                  (window.scrollX + rightEdge) -
                   44
                 }px`;
               } else {
                 addBtn.style.right = "auto";
-                addBtn.style.left = `${window.scrollX + domRect.left - 44}px`;
+                addBtn.style.left = `${window.scrollX + leftEdge - 44}px`;
               }
             }
           };
 
-          const onMouseLeave = () => hide();
-
           const onAddClick = () => {
             if (!currentBlock) return;
-            // Insert a new empty paragraph after the current block, then open slash menu
+            // Insert a new empty block after the current one, then open the slash
+            // menu. We insert an explicit node (rather than tr.split) because
+            // splitting a list item at the default depth produces an invalid
+            // empty listItem. The inserted node matches the context: a sibling
+            // list item inside lists, a paragraph otherwise.
+            const { schema } = view.state;
+            const paragraph = schema.nodes.paragraph;
+            if (!paragraph) return;
             const afterPos = currentBlock.pos + currentBlock.node.nodeSize;
-            const insertable = afterPos <= view.state.doc.content.size;
-            const tr = view.state.tr;
-            if (insertable) {
-              // Place cursor at end of current block content (before node closing mark)
-              const endContent = afterPos - 1;
-              const sel = TextSelection.create(view.state.doc, Math.min(endContent, view.state.doc.content.size));
-              view.dispatch(tr.setSelection(sel));
+            const blockType = currentBlock.node.type;
+            const isListItem =
+              blockType.name === "listItem" || blockType.name === "taskItem";
+
+            let tr = view.state.tr;
+            let cursorPos: number;
+            if (isListItem) {
+              // Sibling list item containing one empty paragraph. +2 to land the
+              // cursor inside the new item's paragraph (enter item, enter para).
+              const attrs = blockType.name === "taskItem" ? { checked: false } : null;
+              const newItem = blockType.create(attrs, paragraph.create());
+              tr = tr.insert(afterPos, newItem);
+              cursorPos = afterPos + 2;
+            } else {
+              tr = tr.insert(afterPos, paragraph.create());
+              cursorPos = afterPos + 1;
             }
+            const sel = TextSelection.create(tr.doc, Math.min(cursorPos, tr.doc.content.size));
+            tr = tr.setSelection(sel).scrollIntoView();
+            view.dispatch(tr);
             view.focus();
-            // Split the block to create a new paragraph, then trigger slash menu
-            const splitTr = view.state.tr.split(view.state.selection.from);
-            view.dispatch(splitTr);
             // Dispatch on view.dom so event.target is the ProseMirror element;
             // this lets the global "/" hotkey guard (isEditableTarget) skip it
             // while the slash-commands capture listener on window still fires.
@@ -293,14 +411,12 @@ export const DragHandle = Extension.create({
           };
 
           window.addEventListener("mousemove", onMouseMove);
-          view.dom.addEventListener("mouseleave", onMouseLeave);
           handle.addEventListener("dragstart", onDragStart);
           if (addBtn) addBtn.addEventListener("click", onAddClick);
 
           return {
             destroy() {
               window.removeEventListener("mousemove", onMouseMove);
-              view.dom.removeEventListener("mouseleave", onMouseLeave);
               handle.removeEventListener("dragstart", onDragStart);
               if (addBtn) addBtn.removeEventListener("click", onAddClick);
               hide();

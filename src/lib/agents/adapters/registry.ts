@@ -7,6 +7,7 @@ import { geminiCliProvider } from "../providers/gemini-cli";
 import { grokCliProvider } from "../providers/grok-cli";
 import { openCodeProvider } from "../providers/opencode";
 import { piProvider } from "../providers/pi";
+import { ollamaProvider } from "../providers/ollama";
 import type {
   AdapterEnvironmentTestContext,
   AgentExecutionAdapter,
@@ -30,6 +31,7 @@ export const LEGACY_ADAPTER_BY_PROVIDER_ID: Record<string, string> = {
   "pi": "pi_legacy",
   "grok-cli": "grok_cli_legacy",
   "copilot-cli": "copilot_cli_legacy",
+  "ollama": "ollama_legacy",
 };
 
 export const DEFAULT_ADAPTER_BY_PROVIDER_ID: Record<string, string> = {
@@ -41,6 +43,7 @@ export const DEFAULT_ADAPTER_BY_PROVIDER_ID: Record<string, string> = {
   "pi": piLocalAdapter.type,
   "grok-cli": grokLocalAdapter.type,
   "copilot-cli": copilotLocalAdapter.type,
+  "ollama": "ollama_legacy",
 };
 
 export const LEGACY_PROVIDER_ID_BY_ADAPTER: Record<string, string> = Object.fromEntries(
@@ -140,6 +143,13 @@ export const legacyCopilotCliAdapter = buildLegacyCliAdapter({
   providerId: copilotCliProvider.id,
 });
 
+export const legacyOllamaAdapter = buildLegacyCliAdapter({
+  type: "ollama_legacy",
+  name: "Ollama (Terminal)",
+  description: "Launch Ollama in a PTY terminal session.",
+  providerId: ollamaProvider.id,
+});
+
 class AgentAdapterRegistry {
   adapters = new Map<string, AgentExecutionAdapter>();
   private builtinFallbacks = new Map<string, AgentExecutionAdapter>();
@@ -198,6 +208,7 @@ agentAdapterRegistry.register(legacyOpenCodeAdapter);
 agentAdapterRegistry.register(legacyPiAdapter);
 agentAdapterRegistry.register(legacyGrokCliAdapter);
 agentAdapterRegistry.register(legacyCopilotCliAdapter);
+agentAdapterRegistry.register(legacyOllamaAdapter);
 
 export function defaultAdapterTypeForProvider(
   providerId?: string | null

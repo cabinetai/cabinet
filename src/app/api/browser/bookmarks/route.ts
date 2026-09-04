@@ -2,8 +2,7 @@ import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
-import { CABINET_INTERNAL_DIR } from "@/lib/storage/path-utils";
-import { safeFetch } from "@/lib/net/ssrf-guard";
+import { DATA_PARENT_DIR } from "@/lib/storage/path-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -66,7 +65,7 @@ type ResolveTitlePayload = {
 
 type PostPayload = AddBookmarkPayload | CreateFolderPayload | MarkUsedPayload | ResolveTitlePayload;
 
-const BOOKMARKS_PATH = path.join(CABINET_INTERNAL_DIR, "bookmarks.json");
+const BOOKMARKS_PATH = path.join(DATA_PARENT_DIR, "bookmarks.json");
 const EPOCH_OFFSET_US = BigInt("11644473600000000");
 
 function chromeNow(): string {
@@ -191,21 +190,14 @@ function sanitizeBookmarkFile(input: unknown): BookmarkFile {
 }
 
 async function readBookmarks(): Promise<BookmarkFile> {
-  let raw: string;
   try {
-    raw = await fs.readFile(BOOKMARKS_PATH, "utf-8");
-  } catch (err) {
-    // Only seed defaults when the file genuinely doesn't exist. A transient
-    // read error (permissions, EBUSY, …) must NOT overwrite existing data, so
-    // rethrow anything that isn't ENOENT.
-    if ((err as NodeJS.ErrnoException)?.code === "ENOENT") {
-      const defaults = makeDefaultBookmarks();
-      await writeBookmarks(defaults);
-      return defaults;
-    }
-    throw err;
+    const raw = await fs.readFile(BOOKMARKS_PATH, "utf-8");
+    return sanitizeBookmarkFile(JSON.parse(raw));
+  } catch {
+    const defaults = makeDefaultBookmarks();
+    await writeBookmarks(defaults);
+    return defaults;
   }
-  return sanitizeBookmarkFile(JSON.parse(raw));
 }
 
 async function writeBookmarks(bookmarks: BookmarkFile): Promise<void> {
@@ -215,29 +207,7 @@ async function writeBookmarks(bookmarks: BookmarkFile): Promise<void> {
     checksum: computeChecksum(bookmarks.roots, 1),
   };
   await fs.mkdir(path.dirname(BOOKMARKS_PATH), { recursive: true });
-  // Atomic write: serialize to a temp file then rename over the target so a
-  // crash mid-write can't truncate or corrupt the existing bookmarks file.
-  const tmpPath = `${BOOKMARKS_PATH}.${process.pid}.${Date.now()}.tmp`;
-  try {
-    await fs.writeFile(tmpPath, `${JSON.stringify(payload, null, 2)}\n`, "utf-8");
-    await fs.rename(tmpPath, BOOKMARKS_PATH);
-  } catch (err) {
-    await fs.rm(tmpPath, { force: true }).catch(() => {});
-    throw err;
-  }
-}
-
-// Serialize read-modify-write cycles so concurrent requests can't clobber each
-// other's updates or hand out duplicate ids. Single-process in-memory mutex —
-// each mutation waits for the previous one to settle.
-let mutationQueue: Promise<unknown> = Promise.resolve();
-function withBookmarkLock<T>(fn: () => Promise<T>): Promise<T> {
-  const run = mutationQueue.then(fn, fn);
-  mutationQueue = run.then(
-    () => undefined,
-    () => undefined
-  );
-  return run;
+  await fs.writeFile(BOOKMARKS_PATH, `${JSON.stringify(payload, null, 2)}\n`, "utf-8");
 }
 
 function walkNodes(folder: BookmarkFolderNode, visit: (node: BookmarkNode, parent: BookmarkFolderNode) => void): void {
@@ -309,22 +279,7 @@ function normalizeName(value: string | undefined, fallback: string): string {
 function normalizeUrl(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "about:blank";
-  if (trimmed.toLowerCase() === "about:blank") return "about:blank";
-  // Protocol-relative → assume https.
-  if (trimmed.startsWith("//")) return `https:${trimmed}`;
-  // host:port (e.g. localhost:3000, 127.0.0.1:8080) — the colon is a port
-  // separator, not a URL scheme, so keep the target and prefix https.
-  if (/^[a-zA-Z0-9.-]+:\d+(?:[/?#]|$)/.test(trimmed)) {
-    return `https://${trimmed}`;
-  }
-  const schemeMatch = /^([a-zA-Z][a-zA-Z\d+.-]*):/.exec(trimmed);
-  if (schemeMatch) {
-    const scheme = schemeMatch[1].toLowerCase();
-    // Only allow web schemes; reject file:, javascript:, data:, etc. so a
-    // dangerous URL can't be persisted and later navigated to.
-    if (scheme === "http" || scheme === "https") return trimmed;
-    return "about:blank";
-  }
+  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed) || trimmed.startsWith("//")) return trimmed;
   return `https://${trimmed}`;
 }
 
@@ -365,27 +320,27 @@ function extractTitleFromHtml(html: string): string | null {
   return cleaned.length > 0 ? cleaned : null;
 }
 
-// Cap the HTML we read while sniffing a <title> — it lives in <head>, so a
-// few hundred KB is plenty and protects against a hostile/huge response.
-const TITLE_FETCH_MAX_BYTES = 512 * 1024;
-
 async function resolveBookmarkTitle(nextUrl: string): Promise<string | null> {
+  let parsed: URL;
   try {
-    // SSRF guard: http(s) only, no private/loopback hosts (re-validated across
-    // redirects), with a timeout and a bounded read so this server-side fetch
-    // of a user-supplied URL can't be abused.
-    const result = await safeFetch(nextUrl, {
+    parsed = new URL(nextUrl);
+  } catch {
+    return null;
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    return null;
+  }
+  try {
+    const response = await fetch(parsed.toString(), {
       method: "GET",
-      timeoutMs: 8000,
+      redirect: "follow",
+      cache: "no-store",
       headers: {
         accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
       },
     });
-    if (result.status < 200 || result.status >= 300) {
-      result.dispose();
-      return null;
-    }
-    const html = await result.readText(TITLE_FETCH_MAX_BYTES);
+    if (!response.ok) return null;
+    const html = await response.text();
     return extractTitleFromHtml(html);
   } catch {
     return null;
@@ -405,82 +360,64 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const payload = (await request.json()) as PostPayload;
+    const bookmarks = await readBookmarks();
+    const now = chromeNow();
 
-    // resolveTitle performs no file mutation — handle it outside the lock so a
-    // slow title fetch can't block other bookmark writes.
+    if (payload.action === "addBookmark") {
+      const targetFolder = findFolderById(bookmarks, payload.parentId);
+      const nextUrl = normalizeUrl(payload.url);
+      const requestedName = payload.name?.trim();
+      const fetchedTitle = await resolveBookmarkTitle(nextUrl);
+      const nextName = fetchedTitle ?? (requestedName && requestedName.length > 0 ? requestedName : nextUrl);
+      const node: BookmarkUrlNode = {
+        id: getNextId(bookmarks),
+        name: nextName,
+        type: "url",
+        url: nextUrl,
+        date_added: now,
+        date_last_used: "0",
+        tags: normalizeTags(payload.tags),
+      };
+      targetFolder.children.push(node);
+      targetFolder.date_modified = now;
+      await writeBookmarks(bookmarks);
+      return NextResponse.json({ ok: true, bookmarks, node });
+    }
+
+    if (payload.action === "createFolder") {
+      const targetFolder = findFolderById(bookmarks, payload.parentId);
+      const folder: BookmarkFolderNode = {
+        id: getNextId(bookmarks),
+        name: normalizeName(payload.name, "New Folder"),
+        type: "folder",
+        date_added: now,
+        date_modified: now,
+        children: [],
+      };
+      targetFolder.children.push(folder);
+      targetFolder.date_modified = now;
+      await writeBookmarks(bookmarks);
+      return NextResponse.json({ ok: true, bookmarks, node: folder });
+    }
+
+    if (payload.action === "markUsed") {
+      const found = findNodeAndParent(bookmarks, payload.id);
+      if (!found || found.node.type !== "url") {
+        return NextResponse.json({ error: "Bookmark not found" }, { status: 404 });
+      }
+      found.node.date_last_used = now;
+      found.parent.date_modified = now;
+      await writeBookmarks(bookmarks);
+      return NextResponse.json({ ok: true, bookmarks });
+    }
+
     if (payload.action === "resolveTitle") {
       const nextUrl = normalizeUrl(payload.url);
       const title = await resolveBookmarkTitle(nextUrl);
       return NextResponse.json({ ok: true, title });
     }
 
-    // For addBookmark, resolve the name (possibly a network fetch) before
-    // taking the lock so we hold it only for the read-modify-write.
-    let resolvedName: string | null = null;
-    let normalizedAddUrl: string | null = null;
-    if (payload.action === "addBookmark") {
-      normalizedAddUrl = normalizeUrl(payload.url);
-      const requestedName = payload.name?.trim();
-      // Honor a user-supplied name verbatim; only fetch the page title when the
-      // user didn't provide one (avoids clobbering edits and the round-trip).
-      if (requestedName && requestedName.length > 0) {
-        resolvedName = requestedName;
-      } else {
-        const fetchedTitle = await resolveBookmarkTitle(normalizedAddUrl);
-        resolvedName = fetchedTitle ?? normalizedAddUrl;
-      }
-    }
-
-    return await withBookmarkLock(async () => {
-      const bookmarks = await readBookmarks();
-      const now = chromeNow();
-
-      if (payload.action === "addBookmark") {
-        const targetFolder = findFolderById(bookmarks, payload.parentId);
-        const node: BookmarkUrlNode = {
-          id: getNextId(bookmarks),
-          name: resolvedName ?? (normalizedAddUrl as string),
-          type: "url",
-          url: normalizedAddUrl as string,
-          date_added: now,
-          date_last_used: "0",
-          tags: normalizeTags(payload.tags),
-        };
-        targetFolder.children.push(node);
-        targetFolder.date_modified = now;
-        await writeBookmarks(bookmarks);
-        return NextResponse.json({ ok: true, bookmarks, node });
-      }
-
-      if (payload.action === "createFolder") {
-        const targetFolder = findFolderById(bookmarks, payload.parentId);
-        const folder: BookmarkFolderNode = {
-          id: getNextId(bookmarks),
-          name: normalizeName(payload.name, "New Folder"),
-          type: "folder",
-          date_added: now,
-          date_modified: now,
-          children: [],
-        };
-        targetFolder.children.push(folder);
-        targetFolder.date_modified = now;
-        await writeBookmarks(bookmarks);
-        return NextResponse.json({ ok: true, bookmarks, node: folder });
-      }
-
-      if (payload.action === "markUsed") {
-        const found = findNodeAndParent(bookmarks, payload.id);
-        if (!found || found.node.type !== "url") {
-          return NextResponse.json({ error: "Bookmark not found" }, { status: 404 });
-        }
-        found.node.date_last_used = now;
-        found.parent.date_modified = now;
-        await writeBookmarks(bookmarks);
-        return NextResponse.json({ ok: true, bookmarks });
-      }
-
-      return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
-    });
+    return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update bookmarks";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -493,34 +430,32 @@ export async function PATCH(request: NextRequest) {
     if (!payload.id) {
       return NextResponse.json({ error: "id is required" }, { status: 400 });
     }
-    return await withBookmarkLock(async () => {
-      const bookmarks = await readBookmarks();
-      const found = findNodeAndParent(bookmarks, payload.id!);
-      if (!found) {
-        return NextResponse.json({ error: "Node not found" }, { status: 404 });
+    const bookmarks = await readBookmarks();
+    const found = findNodeAndParent(bookmarks, payload.id);
+    if (!found) {
+      return NextResponse.json({ error: "Node not found" }, { status: 404 });
+    }
+    const now = chromeNow();
+    found.node.name = normalizeName(payload.name, found.node.name);
+    if (found.node.type === "url") {
+      if (typeof payload.url === "string") {
+        found.node.url = normalizeUrl(payload.url);
       }
-      const now = chromeNow();
-      found.node.name = normalizeName(payload.name, found.node.name);
-      if (found.node.type === "url") {
-        if (typeof payload.url === "string") {
-          found.node.url = normalizeUrl(payload.url);
-        }
-        if (payload.tags !== undefined) {
-          found.node.tags = normalizeTags(payload.tags);
-        }
-        if (typeof payload.parentId === "string") {
-          const targetFolder = findFolderById(bookmarks, payload.parentId);
-          if (targetFolder.id !== found.parent.id) {
-            found.parent.children = found.parent.children.filter((child) => child.id !== found.node.id);
-            targetFolder.children.push(found.node);
-            targetFolder.date_modified = now;
-          }
+      if (payload.tags !== undefined) {
+        found.node.tags = normalizeTags(payload.tags);
+      }
+      if (typeof payload.parentId === "string") {
+        const targetFolder = findFolderById(bookmarks, payload.parentId);
+        if (targetFolder.id !== found.parent.id) {
+          found.parent.children = found.parent.children.filter((child) => child.id !== found.node.id);
+          targetFolder.children.push(found.node);
+          targetFolder.date_modified = now;
         }
       }
-      found.parent.date_modified = now;
-      await writeBookmarks(bookmarks);
-      return NextResponse.json({ ok: true, bookmarks });
-    });
+    }
+    found.parent.date_modified = now;
+    await writeBookmarks(bookmarks);
+    return NextResponse.json({ ok: true, bookmarks });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to patch bookmarks";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -533,18 +468,16 @@ export async function DELETE(request: NextRequest) {
     if (!payload.id) {
       return NextResponse.json({ error: "id is required" }, { status: 400 });
     }
-    return await withBookmarkLock(async () => {
-      const bookmarks = await readBookmarks();
-      const found = findNodeAndParent(bookmarks, payload.id!);
-      if (!found) {
-        return NextResponse.json({ error: "Node not found" }, { status: 404 });
-      }
-      const now = chromeNow();
-      found.parent.children = found.parent.children.filter((child) => child.id !== payload.id);
-      found.parent.date_modified = now;
-      await writeBookmarks(bookmarks);
-      return NextResponse.json({ ok: true, bookmarks });
-    });
+    const bookmarks = await readBookmarks();
+    const found = findNodeAndParent(bookmarks, payload.id);
+    if (!found) {
+      return NextResponse.json({ error: "Node not found" }, { status: 404 });
+    }
+    const now = chromeNow();
+    found.parent.children = found.parent.children.filter((child) => child.id !== payload.id);
+    found.parent.date_modified = now;
+    await writeBookmarks(bookmarks);
+    return NextResponse.json({ ok: true, bookmarks });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete bookmark";
     return NextResponse.json({ error: message }, { status: 500 });

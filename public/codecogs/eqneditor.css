@@ -1,0 +1,129 @@
+/* CSS Document */
+
+
+/*.CC-EquationEditor-plugin-dialog {
+	height: auto !important;
+	max-height: none !important;
+	overflow-y: auto !important;
+}*/
+
+#CCequation-editor {
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 5px;
+	background: white;
+	color: black;
+	white-space: pre-wrap;
+ 	word-break: break-word;
+}
+
+#CCequation-editor img {
+	box-sizing: content-box;
+}
+
+#CCequation-editor .hint {
+	margin-top: 3px;
+	font-size: 70%;
+}
+
+/* ----- Inputs ----- */
+
+#CClatexInput {
+	text-align: left;
+
+	border:1px solid #003794;
+	border-radius: 5px;
+
+	padding:5px;
+	margin-top: 2px;
+
+	height: 150px;
+	overflow: auto;
+	resize: vertical;
+	white-space: pre-wrap;  /* Prevent long lines wrapping */
+	font-family: "Courier New";
+}
+
+#CClatexInput:focus {
+	outline: 1px solid black;
+}
+
+#CCequation-output {
+	text-align: center;
+	margin-top: 5px;
+	padding-top: 10px;
+	height: 125px;
+	background-color: beige;
+	width: 100%;
+	margin-bottom: 5px;
+	border: 1px dashed grey;
+	background-color: #eee;
+  justify-content: center;
+	align-items: center;
+
+	overflow-y: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#CChistory button {
+    background-color: transparent;
+    border: 0;
+}
+
+#CChistory button:hover{
+	 background-color: #d9d9d9;
+}
+
+#CCexport_options {
+	display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: auto;
+    column-gap: 3px;
+
+	padding-top: 5px;
+	z-index:10;
+}
+
+#CCexport_options select, #export_options button {
+	width:100px;
+	height:32px;
+	background-color: #003794;
+	border: 0px;
+	border-radius: 5px;
+	padding:5px 0 5px 10px;
+	margin:1px;
+	color:white;
+	text-align: left;
+	vertical-align: middle;
+	font-size:1.4ex;
+}
+
+#CCexport_options .eOptions {
+	display: none;
+}
+
+#CCexportmessage {
+	text-align: left;
+	font-size: 70%;
+	color:#000;
+}
+
+#CCeqcoderaw {
+	border:1px solid #dddddd;
+	background: #fefed0;
+	color:#000;
+	padding:3px 10px;
+	font-size: 1.6ex;
+	min-height: 70px;
+}
+
+#CCdownloadBtn {
+	background-color: #0E8324 !important;
+}
+
+@media screen and (max-width: 400px) {
+    #CClatexInput {
+        height: 100px;
+    }
+}

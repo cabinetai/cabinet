@@ -1,0 +1,242 @@
+{
+    "gelato-days": [
+        "#FFCBE1",
+        "#D6E5BD",
+        "#F9E1A8",
+        "#BCD8EC",
+        "#DCCCEC",
+        "#FFDAB4"
+    ],
+    "pastel-rainbow": [
+        "#FFB7B2",
+        "#FFDAC1",
+        "#E2F0CB",
+        "#B5EAD7",
+        "#C7CEEA",
+        "#FFC6FF"
+    ],
+    "summer-breeze": [
+        "#FF9AA2",
+        "#FFB7B2",
+        "#FFDAC1",
+        "#E2F0CB",
+        "#B5EAD7",
+        "#C7CEEA"
+    ],
+    "spring-blossom": [
+        "#FAD02C",
+        "#F8A1D1",
+        "#A3DE83",
+        "#29A19C",
+        "#A8E6CF",
+        "#DCEDC8"
+    ],
+    "candy-crush": [
+        "#FF85A1",
+        "#FBB1BD",
+        "#F9BEC7",
+        "#F7CAD0",
+        "#FAE0E4",
+        "#FF99C8"
+    ],
+    "blush-pink": [
+        "#FFE5EC",
+        "#FFC2D1",
+        "#FFB3C6",
+        "#FF8FAB",
+        "#FB6F92",
+        "#FFE3E8"
+    ],
+    "fall-harvest": [
+        "#E0A96D",
+        "#DCCCBB",
+        "#C2B28F",
+        "#A4907C",
+        "#8D7B68",
+        "#F5F5F7"
+    ],
+    "pink-perfection": [
+        "#FFC0CB",
+        "#FFB6C1",
+        "#FF69B4",
+        "#FF1493",
+        "#FFC5D9",
+        "#FFA6C9"
+    ],
+    "bubblegum-dreams": [
+        "#FFC1CC",
+        "#FFB3BA",
+        "#FFDFD3",
+        "#E2F0CB",
+        "#B5EAD7",
+        "#C7CEEA"
+    ],
+    "pixie-dust": [
+        "#E8A7A1",
+        "#ECC2B9",
+        "#F3D8C7",
+        "#D0D9CD",
+        "#BACBB6",
+        "#A5BEA1"
+    ],
+    "sunset-glow": [
+        "#F3A683",
+        "#F7D794",
+        "#778BEB",
+        "#E77F67",
+        "#CF6A87",
+        "#786FA6"
+    ],
+    "lazy-days": [
+        "#D4F0F0",
+        "#CCE2CB",
+        "#B6CFB6",
+        "#97C1A9",
+        "#FCB9AA",
+        "#FFDBCC"
+    ],
+    "fairy-princess": [
+        "#FFC3A0",
+        "#FFAFBD",
+        "#FFC3A0",
+        "#FFD1FF",
+        "#E8AAFF",
+        "#C4E0E5"
+    ],
+    "blue-lagoon": [
+        "#A8DADC",
+        "#457B9D",
+        "#1D3557",
+        "#E63946",
+        "#F1FAEE",
+        "#A2C2E8"
+    ],
+    "ocean-breeze": [
+        "#E0F7FA",
+        "#B2EBF2",
+        "#80DEEA",
+        "#4DD0E1",
+        "#26C6DA",
+        "#00BCD4"
+    ],
+    "sophisticated-vibe": [
+        "#D8E2DC",
+        "#FFE5D9",
+        "#FFCAD4",
+        "#F4ACB7",
+        "#9E8696",
+        "#9A8C98"
+    ],
+    "teal-harmony": [
+        "#E0F2F1",
+        "#B2DFDB",
+        "#80CBC4",
+        "#4DB6AC",
+        "#26A69A",
+        "#009688"
+    ],
+    "periwinkle-twilight": [
+        "#E8EAF6",
+        "#C5CAE9",
+        "#9FA8DA",
+        "#7986CB",
+        "#5C6BC0",
+        "#3F51B5"
+    ],
+    "garden-party": [
+        "#E8F5E9",
+        "#C8E6C9",
+        "#A5D6A7",
+        "#81C784",
+        "#66BB6A",
+        "#4CAF50"
+    ],
+    "enchanting-forest": [
+        "#E1F5FE",
+        "#B3E5FC",
+        "#81D4FA",
+        "#4FC3F7",
+        "#29B6F6",
+        "#03A9F4"
+    ],
+    "blush-bouquet": [
+        "#FFF3E0",
+        "#FFE0B2",
+        "#FFCC80",
+        "#FFB74D",
+        "#FFA726",
+        "#FF9800"
+    ],
+    "muted-earth": [
+        "#F5F5F5",
+        "#E0E0E0",
+        "#BDBDBD",
+        "#9E9E9E",
+        "#757575",
+        "#616161"
+    ],
+    "cotton-candy": [
+        "#FFD1DC",
+        "#FFF0F5",
+        "#E6E6FA",
+        "#F0F8FF",
+        "#F0FFFF",
+        "#FFF5EE"
+    ],
+    "lavender-fields": [
+        "#F3E5F5",
+        "#E1BEE7",
+        "#CE93D8",
+        "#BA68C8",
+        "#AB47BC",
+        "#9C27B0"
+    ],
+    "lilac-mist": [
+        "#EFEBE9",
+        "#D7CCC8",
+        "#BCAAA4",
+        "#8D6E63",
+        "#795548",
+        "#5D4037"
+    ],
+    "neutral-chic": [
+        "#FAF9F6",
+        "#F4F1EA",
+        "#EAE6DF",
+        "#DDD7CD",
+        "#D0C3B1",
+        "#C4B299"
+    ],
+    "coral-reef": [
+        "#FFEBEE",
+        "#FFCDD2",
+        "#EF9A9A",
+        "#E57373",
+        "#EF5350",
+        "#F44336"
+    ],
+    "golden-hour": [
+        "#FFFDE7",
+        "#FFF9C4",
+        "#FFF59D",
+        "#FFF176",
+        "#FFEE58",
+        "#FFEB3B"
+    ],
+    "red-velvet": [
+        "#FFEBEE",
+        "#FFCDD2",
+        "#EF9A9A",
+        "#E57373",
+        "#EF5350",
+        "#F44336"
+    ],
+    "spring-vibes": [
+        "#FFD6E8",
+        "#D6E3FF",
+        "#FFF5C0",
+        "#C8F4DE",
+        "#E2DBFF",
+        "#FFDEC6"
+    ]
+}
